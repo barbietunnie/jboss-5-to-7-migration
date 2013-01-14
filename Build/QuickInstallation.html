@@ -1,0 +1,84 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+
+<title>Installation:</title>
+
+<style>
+
+</style>
+</head>
+
+<body>
+
+<div style="width: 800px;">
+
+<h1 style='tab-stops:7.0in'>Quick Start Guide</h1>
+
+<h2 style='tab-stops:7.0in'>Installation:</h2>
+
+<ol>
+<li>Unzip the downloaded file into a folder, for example: <b>c:\esphere</b>.
+<li>Install MySQL version 5 on your server if you haven't done so (If you are installing your
+MySQL on another computer, make sure to allow the root user to login from a remote host).
+<li>Open "customize.properties" file under c:\esphere\build and modify mysql.host and mysql.port
+properties to point to your MySQL instance.
+<li>Open a DOS window and cd to c:\esphere\build.
+<li>Type "ant deploy" and press Enter key.
+<li>Type "ant create_db" and press Enter key, type your MySQL server's root password when asked.
+<li>cd to c:\esphere\build\jboss-4.2.1.GA\bin and type "run" and press Enter to start the server,
+to stop the server, press Ctrl-C, and answer "Y" when asked. 
+<br>(For security, the Emailsphere System Management Console can only be accessed locally.
+If you want to access Emailsphere System Management Console from other machines, use this command 
+to start the server: run -b 0.0.0.0)
+</ol>
+
+<h2 style='tab-stops:7.0in'>Configuration:</h2>
+
+<ol>
+<li>Open a browser and point the browser to: http://localhost:8080/MsgUI/.
+<li>Login as administrator using admin/admin as user id and password.
+<li>Click on "Configure Site Profiles".
+<li>Click on "System".
+<li>Make changes accordingly and save the changes.
+<li>Back to main page and click on "Configure POP/IMAP Accounts".
+<li>Add your POP3 or IMAP accounts and save the changes.
+<li>Back to main page and click on "Configure SMTP Servers".
+<li>Add your SMTP servers and save the changes.
+</ol>
+
+<h2 style='tab-stops:7.0in'>Restart server:</h2>
+
+<ol>
+<li>Go back to the DOS window where the server is running.
+<li>Press and hold Control button and then press button "C".
+<li>Type "Y" when asked.
+<li>Type "run" and press Enter key to restart the server.
+</ol>
+
+<h2 style='tab-stops:7.0in'>Apache James Server:</h2>
+
+Eamilsphere all-in-one package comes with a pre-configured POP/SMTP server. It is located under
+c:\esphere\james-2.3.1.
+<ul>
+<li>To start James server, open a DOS window, cd to c:\esphere\james-2.3.1\bin, type "run" and
+press Enter.
+<li>To stop the James server, go to the DOS window where James server was started, and press
+Ctrl-C, type "Y" when asked (ignore the error messages on the DOS screen).
+</ul>
+
+<h2 style='tab-stops:7.0in'>System Requirements:</h2>
+
+<ul>
+<li>Operating Systems: Windows 2000, Windows XP, Windows Vista
+<li>Processor Speed: Intel or AMD 1.6GHz or higher
+<li>System Memory: 1GB or more
+<li>Free Disk Space: 10GB or more
+</ul>
+
+</div>
+
+</body>
+
+</html>
