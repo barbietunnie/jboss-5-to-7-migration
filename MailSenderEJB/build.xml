@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="./" name="MailSenderEJB" default="compile">
+    
+    <property file="${basedir}/build.properties"/>
+    
+	<property name="path_to_common" value="../../build"/>
+	<import file="${path_to_common}/common.xml"/>
+	
+    <!--  ***** these are the properties calling ants need to override **** -->
+    <property name="source.dir" value="${basedir}/ejbModule"/>
+
+	<path id="compile.path">
+		<fileset dir="${core.dist.dir}">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${jboss.client.dir}">
+			<include name="*.jar"/>
+		</fileset>
+		<path refid="base.path"/>
+	</path>
+
+	<target name="build" depends="build_ejb3"/>
+	
+	<!-- build ejb jar -->
+	<target name="build_ejb3_local" depends="postCompile" >
+    	<buildnumber file="${source.dir}/build.number"/>
+    	<copy file="${source.dir}/build.number" todir="${class.dir}" overwrite="true"/>
+		<!-- 
+			### Note:
+			please to add jakarta-BCEL to your ant library to use "dependency". 
+		-->
+        <jar basedir="${class.dir}" 
+                manifest="${class.dir}/META-INF/MANIFEST.MF"
+                destfile="${dist.dir}/${msg.app}.jar">
+        </jar>
+		<mkdir dir="${dist.dir}/lib"/>
+		<copy todir="${dist.dir}/lib" verbose="false"
+			failonerror="false" overwrite="true" preservelastmodified="true">
+			<fileset dir="${basedir}/lib" includes="*.jar"/>
+		</copy>
+	</target>
+
+	<property name="build.dist3.dir" value="${basedir}/build"/>
+	<!-- build MailSender ear -->
+	<target name="build_mailsender_local" depends="init,build_core,build_ejb3_local">
+		<delete file="${build.dist3.dir}/${msg.mailSender3Ear}.ear" failonerror="no"/>
+		<ear destfile="${build.dist3.dir}/${msg.mailSender3Ear}.ear"
+			appxml="${basedir}/application_mailsender.xml">
+			<fileset dir="${core.dist.dir}" includes="${msg.core}.jar" />
+			<fileset dir="${dist.dir}" includes="*.jar,*.war" />
+			<fileset dir="${dist.dir}/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</ear>
+	</target>
+	
+</project>
