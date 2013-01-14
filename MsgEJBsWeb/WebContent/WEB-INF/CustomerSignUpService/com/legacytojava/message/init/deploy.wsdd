@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- Use this file to deploy some handlers/chains and services      --><!-- Two ways to do this:                                           --><!--   java org.apache.axis.client.AdminClient deploy.wsdd          --><!--      after the axis server is running                          --><!-- or                                                             --><!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   --><!--      from the same directory that the Axis engine runs         --><deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from CustomerSignUpService WSDL service -->
+
+  <service name="CustomerSignUp" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://init.message.legacytojava.com"/>
+      <parameter name="wsdlServiceElement" value="CustomerSignUpService"/>
+      <parameter name="schemaQualified" value="http://init.message.legacytojava.com,http://exception.message.legacytojava.com"/>
+      <parameter name="wsdlServicePort" value="CustomerSignUp"/>
+      <parameter name="className" value="com.legacytojava.message.init.CustomerSignUp"/>
+      <parameter name="wsdlPortType" value="CustomerSignUp"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation xmlns:operNS="http://init.message.legacytojava.com" xmlns:retNS="http://init.message.legacytojava.com" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="addToList" qname="operNS:addToList" returnQName="retNS:addToListReturn" returnType="rtns:int" soapAction="">
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:emailAddr" type="tns:string"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:listId" type="tns:string"/>
+        <fault xmlns:fns="http://init.message.legacytojava.com" xmlns:tns="http://exception.message.legacytojava.com" name="DataValidationException" qname="fns:fault" class="com.legacytojava.message.exception.DataValidationException" type="tns:DataValidationException"/>
+      </operation>
+      <operation xmlns:operNS="http://init.message.legacytojava.com" xmlns:retNS="http://init.message.legacytojava.com" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="signUpOnly" qname="operNS:signUpOnly" returnQName="retNS:signUpOnlyReturn" returnType="rtns:string" soapAction="">
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://init.message.legacytojava.com" qname="pns:dto" type="tns:CustomerDto"/>
+        <fault xmlns:fns="http://init.message.legacytojava.com" xmlns:tns="http://exception.message.legacytojava.com" name="DataValidationException" qname="fns:fault" class="com.legacytojava.message.exception.DataValidationException" type="tns:DataValidationException"/>
+      </operation>
+      <operation xmlns:operNS="http://init.message.legacytojava.com" xmlns:retNS="http://init.message.legacytojava.com" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="signUpAndSubscribe" qname="operNS:signUpAndSubscribe" returnQName="retNS:signUpAndSubscribeReturn" returnType="rtns:string" soapAction="">
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://init.message.legacytojava.com" qname="pns:dto" type="tns:CustomerDto"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:listId" type="tns:string"/>
+        <fault xmlns:fns="http://init.message.legacytojava.com" xmlns:tns="http://exception.message.legacytojava.com" name="DataValidationException" qname="fns:fault" class="com.legacytojava.message.exception.DataValidationException" type="tns:DataValidationException"/>
+      </operation>
+      <operation xmlns:operNS="http://init.message.legacytojava.com" xmlns:retNS="http://init.message.legacytojava.com" xmlns:rtns="http://init.message.legacytojava.com" name="getCustomer" qname="operNS:getCustomer" returnQName="retNS:getCustomerReturn" returnType="rtns:CustomerDto" soapAction="">
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:emailAddr" type="tns:string"/>
+        <fault xmlns:fns="http://init.message.legacytojava.com" xmlns:tns="http://exception.message.legacytojava.com" name="DataValidationException" qname="fns:fault" class="com.legacytojava.message.exception.DataValidationException" type="tns:DataValidationException"/>
+      </operation>
+      <operation xmlns:operNS="http://init.message.legacytojava.com" xmlns:retNS="http://init.message.legacytojava.com" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="updateCustomer" qname="operNS:updateCustomer" returnQName="retNS:updateCustomerReturn" returnType="rtns:string" soapAction="">
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://init.message.legacytojava.com" qname="pns:dto" type="tns:CustomerDto"/>
+        <fault xmlns:fns="http://init.message.legacytojava.com" xmlns:tns="http://exception.message.legacytojava.com" name="DataValidationException" qname="fns:fault" class="com.legacytojava.message.exception.DataValidationException" type="tns:DataValidationException"/>
+      </operation>
+      <operation xmlns:operNS="http://init.message.legacytojava.com" xmlns:retNS="http://init.message.legacytojava.com" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="removeCustomer" qname="operNS:removeCustomer" returnQName="retNS:removeCustomerReturn" returnType="rtns:int" soapAction="">
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:emailAddr" type="tns:string"/>
+        <fault xmlns:fns="http://init.message.legacytojava.com" xmlns:tns="http://exception.message.legacytojava.com" name="DataValidationException" qname="fns:fault" class="com.legacytojava.message.exception.DataValidationException" type="tns:DataValidationException"/>
+      </operation>
+      <operation xmlns:operNS="http://init.message.legacytojava.com" xmlns:retNS="http://init.message.legacytojava.com" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="removeFromList" qname="operNS:removeFromList" returnQName="retNS:removeFromListReturn" returnType="rtns:int" soapAction="">
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:emailAddr" type="tns:string"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:listId" type="tns:string"/>
+        <fault xmlns:fns="http://init.message.legacytojava.com" xmlns:tns="http://exception.message.legacytojava.com" name="DataValidationException" qname="fns:fault" class="com.legacytojava.message.exception.DataValidationException" type="tns:DataValidationException"/>
+      </operation>
+      <parameter name="allowedMethods" value="updateCustomer getCustomer addToList removeFromList removeCustomer signUpAndSubscribe signUpOnly"/>
+
+      <typeMapping xmlns:ns="http://exception.message.legacytojava.com" qname="ns:DataValidationException" type="java:com.legacytojava.message.exception.DataValidationException" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle=""/>
+      <typeMapping xmlns:ns="http://init.message.legacytojava.com" qname="ns:CustomerDto" type="java:com.legacytojava.message.init.CustomerDto" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle=""/>
+  </service>
+</deployment>

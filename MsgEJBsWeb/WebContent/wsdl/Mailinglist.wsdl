@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://init.message.legacytojava.com" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://init.message.legacytojava.com" xmlns:intf="http://init.message.legacytojava.com" xmlns:tns1="http://exception.message.legacytojava.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://init.message.legacytojava.com" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://exception.message.legacytojava.com"/>
+   <element name="subscribe">
+    <complexType>
+     <sequence>
+      <element name="emailAddr" type="xsd:string"/>
+      <element name="listId" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="subscribeResponse">
+    <complexType>
+     <sequence>
+      <element name="subscribeReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="fault" type="tns1:DataValidationException"/>
+   <element name="unSubscribe">
+    <complexType>
+     <sequence>
+      <element name="emailAddr" type="xsd:string"/>
+      <element name="listId" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="unSubscribeResponse">
+    <complexType>
+     <sequence>
+      <element name="unSubscribeReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="optInRequest">
+    <complexType>
+     <sequence>
+      <element name="emailAddr" type="xsd:string"/>
+      <element name="listId" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="optInRequestResponse">
+    <complexType/>
+   </element>
+   <element name="optInConfirm">
+    <complexType>
+     <sequence>
+      <element name="emailAddr" type="xsd:string"/>
+      <element name="listId" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="optInConfirmResponse">
+    <complexType/>
+   </element>
+   <element name="sendMail">
+    <complexType>
+     <sequence>
+      <element name="toAddr" type="xsd:string"/>
+      <element maxOccurs="unbounded" name="variables" type="impl:VariableDto"/>
+      <element name="templateId" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <complexType name="VariableDto">
+    <sequence>
+     <element name="name" nillable="true" type="xsd:string"/>
+     <element name="value" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <element name="sendMailResponse">
+    <complexType>
+     <sequence>
+      <element name="sendMailReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="updateOpenCount">
+    <complexType>
+     <sequence>
+      <element name="emailAddrId" type="xsd:long"/>
+      <element name="listId" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="updateOpenCountResponse">
+    <complexType>
+     <sequence>
+      <element name="updateOpenCountReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="updateClickCount">
+    <complexType>
+     <sequence>
+      <element name="emailAddrId" type="xsd:long"/>
+      <element name="listId" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="updateClickCountResponse">
+    <complexType>
+     <sequence>
+      <element name="updateClickCountReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="updateMsgOpenCount">
+    <complexType>
+     <sequence>
+      <element name="broadcastMsgId" type="xsd:long"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="updateMsgOpenCountResponse">
+    <complexType>
+     <sequence>
+      <element name="updateMsgOpenCountReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="updateMsgClickCount">
+    <complexType>
+     <sequence>
+      <element name="broadcastMsgId" type="xsd:long"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="updateMsgClickCountResponse">
+    <complexType>
+     <sequence>
+      <element name="updateMsgClickCountReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+  <schema elementFormDefault="qualified" targetNamespace="http://exception.message.legacytojava.com" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://init.message.legacytojava.com"/>
+   <complexType name="DataValidationException">
+    <sequence/>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="unSubscribeRequest">
+
+      <wsdl:part element="impl:unSubscribe" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="unSubscribeResponse">
+
+      <wsdl:part element="impl:unSubscribeResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateOpenCountResponse">
+
+      <wsdl:part element="impl:updateOpenCountResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="subscribeRequest">
+
+      <wsdl:part element="impl:subscribe" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="DataValidationException">
+
+      <wsdl:part element="impl:fault" name="fault"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateMsgOpenCountResponse">
+
+      <wsdl:part element="impl:updateMsgOpenCountResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendMailResponse">
+
+      <wsdl:part element="impl:sendMailResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="optInRequestResponse">
+
+      <wsdl:part element="impl:optInRequestResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="optInConfirmResponse">
+
+      <wsdl:part element="impl:optInConfirmResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendMailRequest">
+
+      <wsdl:part element="impl:sendMail" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="optInConfirmRequest">
+
+      <wsdl:part element="impl:optInConfirm" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateMsgClickCountRequest">
+
+      <wsdl:part element="impl:updateMsgClickCount" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateMsgClickCountResponse">
+
+      <wsdl:part element="impl:updateMsgClickCountResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="subscribeResponse">
+
+      <wsdl:part element="impl:subscribeResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateClickCountResponse">
+
+      <wsdl:part element="impl:updateClickCountResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateOpenCountRequest">
+
+      <wsdl:part element="impl:updateOpenCount" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateClickCountRequest">
+
+      <wsdl:part element="impl:updateClickCount" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="optInRequestRequest">
+
+      <wsdl:part element="impl:optInRequest" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateMsgOpenCountRequest">
+
+      <wsdl:part element="impl:updateMsgOpenCount" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="Mailinglist">
+
+      <wsdl:operation name="subscribe">
+
+         <wsdl:input message="impl:subscribeRequest" name="subscribeRequest"/>
+
+         <wsdl:output message="impl:subscribeResponse" name="subscribeResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="unSubscribe">
+
+         <wsdl:input message="impl:unSubscribeRequest" name="unSubscribeRequest"/>
+
+         <wsdl:output message="impl:unSubscribeResponse" name="unSubscribeResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="optInRequest">
+
+         <wsdl:input message="impl:optInRequestRequest" name="optInRequestRequest"/>
+
+         <wsdl:output message="impl:optInRequestResponse" name="optInRequestResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="optInConfirm">
+
+         <wsdl:input message="impl:optInConfirmRequest" name="optInConfirmRequest"/>
+
+         <wsdl:output message="impl:optInConfirmResponse" name="optInConfirmResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendMail">
+
+         <wsdl:input message="impl:sendMailRequest" name="sendMailRequest"/>
+
+         <wsdl:output message="impl:sendMailResponse" name="sendMailResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateOpenCount">
+
+         <wsdl:input message="impl:updateOpenCountRequest" name="updateOpenCountRequest"/>
+
+         <wsdl:output message="impl:updateOpenCountResponse" name="updateOpenCountResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateClickCount">
+
+         <wsdl:input message="impl:updateClickCountRequest" name="updateClickCountRequest"/>
+
+         <wsdl:output message="impl:updateClickCountResponse" name="updateClickCountResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateMsgOpenCount">
+
+         <wsdl:input message="impl:updateMsgOpenCountRequest" name="updateMsgOpenCountRequest"/>
+
+         <wsdl:output message="impl:updateMsgOpenCountResponse" name="updateMsgOpenCountResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateMsgClickCount">
+
+         <wsdl:input message="impl:updateMsgClickCountRequest" name="updateMsgClickCountRequest"/>
+
+         <wsdl:output message="impl:updateMsgClickCountResponse" name="updateMsgClickCountResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="MailinglistSoapBinding" type="impl:Mailinglist">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="subscribe">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="subscribeRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="subscribeResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="unSubscribe">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="unSubscribeRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="unSubscribeResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="optInRequest">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="optInRequestRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="optInRequestResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="optInConfirm">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="optInConfirmRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="optInConfirmResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendMail">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="sendMailRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="sendMailResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateOpenCount">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="updateOpenCountRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="updateOpenCountResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateClickCount">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="updateClickCountRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="updateClickCountResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateMsgOpenCount">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="updateMsgOpenCountRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="updateMsgOpenCountResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateMsgClickCount">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="updateMsgClickCountRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="updateMsgClickCountResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="MailinglistService">
+
+      <wsdl:port binding="impl:MailinglistSoapBinding" name="Mailinglist">
+
+         <wsdlsoap:address location="http://localhost:8080/MsgEJBsWeb/services/Mailinglist"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- Use this file to deploy some handlers/chains and services      --><!-- Two ways to do this:                                           --><!--   java org.apache.axis.client.AdminClient deploy.wsdd          --><!--      after the axis server is running                          --><!-- or                                                             --><!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   --><!--      from the same directory that the Axis engine runs         --><deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from SendmailService WSDL service -->
+
+  <service name="Sendmail" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://init.message.legacytojava.com"/>
+      <parameter name="wsdlServiceElement" value="SendmailService"/>
+      <parameter name="schemaQualified" value="http://init.message.legacytojava.com,http://exception.message.legacytojava.com"/>
+      <parameter name="wsdlServicePort" value="Sendmail"/>
+      <parameter name="className" value="com.legacytojava.message.init.Sendmail"/>
+      <parameter name="wsdlPortType" value="Sendmail"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation xmlns:operNS="http://init.message.legacytojava.com" xmlns:retNS="http://init.message.legacytojava.com" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="sendMailFromSite" qname="operNS:sendMailFromSite" returnQName="retNS:sendMailFromSiteReturn" returnType="rtns:int" soapAction="">
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:siteId" type="tns:string"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:toAddr" type="tns:string"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:subject" type="tns:string"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:body" type="tns:string"/>
+        <fault xmlns:fns="http://init.message.legacytojava.com" xmlns:tns="http://exception.message.legacytojava.com" name="DataValidationException" qname="fns:fault" class="com.legacytojava.message.exception.DataValidationException" type="tns:DataValidationException"/>
+      </operation>
+      <operation xmlns:operNS="http://init.message.legacytojava.com" xmlns:retNS="http://init.message.legacytojava.com" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="sendMail" qname="operNS:sendMail" returnQName="retNS:sendMailReturn" returnType="rtns:int" soapAction="">
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:fromAddr" type="tns:string"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:toAddr" type="tns:string"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:subject" type="tns:string"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:body" type="tns:string"/>
+        <fault xmlns:fns="http://init.message.legacytojava.com" xmlns:tns="http://exception.message.legacytojava.com" name="DataValidationException" qname="fns:fault" class="com.legacytojava.message.exception.DataValidationException" type="tns:DataValidationException"/>
+      </operation>
+      <operation xmlns:operNS="http://init.message.legacytojava.com" xmlns:retNS="http://init.message.legacytojava.com" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="sendMailToSite" qname="operNS:sendMailToSite" returnQName="retNS:sendMailToSiteReturn" returnType="rtns:int" soapAction="">
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:siteId" type="tns:string"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:fromAddr" type="tns:string"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:subject" type="tns:string"/>
+        <parameter xmlns:pns="http://init.message.legacytojava.com" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:body" type="tns:string"/>
+        <fault xmlns:fns="http://init.message.legacytojava.com" xmlns:tns="http://exception.message.legacytojava.com" name="DataValidationException" qname="fns:fault" class="com.legacytojava.message.exception.DataValidationException" type="tns:DataValidationException"/>
+      </operation>
+      <parameter name="allowedMethods" value="sendMailToSite sendMail sendMailFromSite"/>
+
+      <typeMapping xmlns:ns="http://exception.message.legacytojava.com" qname="ns:DataValidationException" type="java:com.legacytojava.message.exception.DataValidationException" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle=""/>
+  </service>
+</deployment>
