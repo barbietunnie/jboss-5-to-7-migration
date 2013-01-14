@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "http://logging.apache.org/log4j/docs/api/org/apache/log4j/xml/log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+   <!-- appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+      <param name="Target" value="System.out"/>
+      <param name="Threshold" value="DEBUG"/>
+
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="[%d] [%p,%c{1}] %m%n"/>
+      </layout>
+   </appender -->
+
+   <appender name="MSGFILE" class="org.apache.log4j.FileAppender">
+      <param name="File" value="${log4j.log.dir}/timerweb.log"/>
+      <param name="Append" value="false"/>
+      <param name="Threshold" value="DEBUG"/>
+ 
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="[%d] [%p,%c{1}] %m%n"/>
+      </layout>
+   </appender>
+
+   <category name="org.jboss.mq">
+      <!-- priority value="TRACE" class="org.jboss.logging.XLevel"/ -->
+      <priority value="ERROR" class="org.jboss.logging.XLevel"/>
+   </category>
+   
+   <logger name="org.apache">
+	  <level value="WARN"/>
+   </logger>
+
+   <logger name="org.springframework">
+	  <level value="INFO"/> 
+   </logger>
+
+   <logger name="com.legacytojava">
+	  <level value="DEBUG"/>
+   </logger>
+
+   <root>
+      <level value="DEBUG"/>
+      <!-- appender-ref ref="STDOUT"/ -->
+      <appender-ref ref="MSGFILE"/>
+   </root>
+</log4j:configuration>
