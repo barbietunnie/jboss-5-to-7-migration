@@ -46,7 +46,7 @@ public final class ServiceLocator {
 		return dataSource;
 	}
 
-	private static Context getInitialContext() throws NamingException {
+	public static Context getInitialContext() throws NamingException {
 		Hashtable<String,String> jndiProps = new Hashtable<String,String>();
 		/*
 		 * XXX Must use this property to load local context. JBoss 7.1 loads remote context by default 

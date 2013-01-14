@@ -111,14 +111,14 @@ public class TaskScheduler {
 		}
 	}
 
-	public synchronized static Map<String, String> getMailSenderJndi() {
+	private synchronized static Map<String, String> getMailSenderJndi() {
 		if (mailSenderJndi != null) {
 			return Collections.unmodifiableMap(mailSenderJndi);
 		}
 		mailSenderJndi = new Hashtable<String, String>();
 		Properties props = new Properties();
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		InputStream is = loader.getResourceAsStream("jndi.mailsender.properties");
+		InputStream is = loader.getResourceAsStream("jndi.properties");
 		try {
 			props.load(is);
 			Set<?> set = props.keySet();
@@ -137,10 +137,12 @@ public class TaskScheduler {
 
 	public static AbstractApplicationContext getMailSenderFactory() {
 		if (mailSenderFactory == null) {
-			// ClassLoader loader = Thread.currentThread().getContextClassLoader();
-			// URL url = loader.getResource("spring-mailsender-jms.xml");
-			// mailSenderFactory = new XmlBeanFactory(new UrlResource(url));
-			mailSenderFactory = new ClassPathXmlApplicationContext("spring-mailsender-jms.xml");
+			if (SpringUtil.isRunningInJBoss()) {
+				mailSenderFactory = new ClassPathXmlApplicationContext("spring-taskscheduler-jee.xml");
+			}
+			else {
+				mailSenderFactory = new ClassPathXmlApplicationContext("spring-taskscheduler-jms.xml");
+			}
 		}
 		return mailSenderFactory;
 	}

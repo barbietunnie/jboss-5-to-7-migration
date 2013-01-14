@@ -24,18 +24,11 @@ public class SpringUtil {
 	public static AbstractApplicationContext getAppContext() {
 		if (applContext == null) {
 			String[] fileNames = null;
-			try {
-				 ServiceLocator.listContext("java:comp");
-				 ServiceLocator.listContext("java:/queue");
-				 ServiceLocator.listContext("java:comp/env/jms");
-				 ServiceLocator.listContext("java:comp/env/jdbc");
-				 ServiceLocator.listContext("java:jboss");
-				// see if it's running under JBoss by doing a JNDI lookup
-				ServiceLocator.getDataSource("java:jboss/MessageDS");
+			if (isRunningInJBoss()) {
 				logger.info("getAppContext() - Running under JBoss, load server xmls");
 				fileNames = getServerConfigXmlFiles();
 			}
-			catch (javax.naming.NamingException e) {
+			else {
 				if (JbMain.getNumberOfThreadAtStart() < 0) {
 					logger.info("getAppContext() - running standalone, load standalone xmls");
 					fileNames = getStandaloneConfigXmlFiles();
@@ -50,6 +43,28 @@ public class SpringUtil {
 		return applContext;
 	}
 
+	private static boolean ListJBossJndiNames = false;
+	
+	public static boolean isRunningInJBoss() {
+		try {
+			// see if it's running under JBoss by doing a JNDI lookup
+			ServiceLocator.getDataSource("java:jboss/MessageDS");
+			logger.info("isRunningInJBoss() - Running in JBoss.");
+			if (ListJBossJndiNames) {
+				ServiceLocator.listContext("java:comp");
+				ServiceLocator.listContext("java:/queue");
+				ServiceLocator.listContext("java:comp/env/jms");
+				ServiceLocator.listContext("java:comp/env/jdbc");
+				ServiceLocator.listContext("java:jboss");
+			}
+			return true;
+		}
+		catch (javax.naming.NamingException e) {
+			logger.info("isRunningInJBoss() - Running standalone.");
+		}
+		return false;
+	}
+
 	/**
 	 * This method is intended to be used by table creation classes.
 	 * @return ApplicationContext
@@ -60,17 +75,15 @@ public class SpringUtil {
 		}
 		else if (daoAppCtx == null) {
 			List<String> fnames = new ArrayList<String>();
-			try {
-				// see if it's running under JBoss by doing a JNDI lookup
-				ServiceLocator.getDataSource("java:comp/env/jdbc/msgdb_pool");
+			fnames.add("classpath*:spring-dao-config.xml");
+			if (isRunningInJBoss()) {
 				logger.info("getDaoAppContext() - Running under JBoss, load jndi_ds xmls");
-				fnames.add("classpath*:spring-jndi_ds-config.xml");
+				fnames.add("classpath*:spring-jms_ds_jee-config.xml");
 			}
-			catch (javax.naming.NamingException e) {
+			else {
 				logger.info("getDaoAppContext() - running standalone, load mysql_ds xmls");
 				fnames.add("classpath*:spring-mysql_ds-config.xml");
 			}
-			fnames.add("classpath*:spring-dao-config.xml");
 			daoAppCtx = new ClassPathXmlApplicationContext(fnames.toArray(new String[]{}));
 		}
 		return daoAppCtx;
@@ -93,6 +106,7 @@ public class SpringUtil {
 		ClassLoader loader = JbMain.class.getClassLoader();
 		List<String> cfgFileNames = new ArrayList<String>();
 		cfgFileNames.add("classpath:spring-bo_jms-config.xml");
+		cfgFileNames.add("classpath:spring-jms_remote-config.xml");
 		cfgFileNames.add("classpath:spring-mysql_ds-config.xml");
 		cfgFileNames.add("classpath:spring-dao-config.xml");
 		cfgFileNames.add("classpath:spring-jbatch-config.xml");
@@ -119,11 +133,8 @@ public class SpringUtil {
 	public static String[] getServerConfigXmlFiles() {
 		List<String> cfgFileNames = new ArrayList<String>();
 		cfgFileNames.add("classpath*:spring-bo_jms-config.xml");
-		cfgFileNames.add("classpath*:spring-jms_jee-config.xml");
-		//cfgFileNames.add("classpath*:spring-jndi_ds-config.xml");
+		cfgFileNames.add("classpath*:spring-jms_ds_jee-config.xml");
 		cfgFileNames.add("classpath*:spring-dao-config.xml");
-		//String[] cfgFiles = new String[cfgFileNames.size()];
-		//System.arraycopy(cfgFileNames.toArray(), 0, cfgFiles, 0, cfgFiles.length);
 		return cfgFileNames.toArray(new String[]{});
 	}
 
@@ -133,8 +144,6 @@ public class SpringUtil {
 		cfgFileNames.add("classpath:spring-jms_remote-config.xml");
 		cfgFileNames.add("classpath:spring-mysql_ds-config.xml");
 		cfgFileNames.add("classpath:spring-dao-config.xml");
-		//String[] cfgFiles = new String[cfgFileNames.size()];
-		//System.arraycopy(cfgFileNames.toArray(), 0, cfgFiles, 0, cfgFiles.length);
 		return cfgFileNames.toArray(new String[]{});
 	}
 
