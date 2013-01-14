@@ -24,7 +24,7 @@ import com.legacytojava.message.bo.TaskScheduler;
 import com.legacytojava.message.exception.DataValidationException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/spring-mysql_ds-config.xml", "/spring-bo_jms-config.xml", "/spring-dao-config.xml"})
+@ContextConfiguration(locations={"/spring-mysql_ds-config.xml", "/spring-bo_jms-config.xml", "/spring-jms_remote-config.xml", "/spring-dao-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional
 public class MailSenderTest  {
