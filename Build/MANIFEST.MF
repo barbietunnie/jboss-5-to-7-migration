@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.0
+Created-By: 20.12-b01 (Sun Microsystems Inc.)
+Built-By: Emailsphere Team
+Implementation-Version: 1.00-b77
+Built-Date: January 14 2013
+
