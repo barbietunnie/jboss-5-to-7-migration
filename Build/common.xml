@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Common" basedir="./" default="compile">
+
+	<dirname property="common.basedir" file="${ant.file.Common}"/>
+	<property file="${common.basedir}/build.properties"/>
+	
+	<!-- property file="${basedir}/build.properties"/ -->
+
+	<!-- ***** these are the properties calling ants need to override **** -->
+	<property name="source.dir" value="${basedir}/ejbModule"/>
+	<property name="lib.dir" value="${basedir}/lib"/>
+	<property name="web.dir" value="${basedir}/WebContent"/>
+	<!-- ***** end of override ***** -->
+	
+	<property name="core.dir" value="../${msg.core}"/>
+	<property name="core.lib.dir" value="${core.dir}/lib"/>
+
+	<property name="jboss.client.dir" value="../${jboss.server.home}/bin/client"/>
+	<property name="jboss.modules.dir" value="../${jboss.server.home}/modules"/>
+	
+	<!-- ***** folders under build directory ***** -->
+	<property name="dist.dir" value="${common.basedir}/${msg.app}/dist"/>
+	<property name="class.dir" value="${dist.dir}/classes"/>
+	<property name="log.dir" value="${common.basedir}/${msg.app}/logs"/>
+	<property name="dist.web.dir" value="${common.basedir}/${msg.app}/dist/WebContent"/>
+	
+	<property name="core.dist.dir" value="${common.basedir}/${msg.core}/dist"/>
+	<property name="ejbclient.dist.dir" value="${common.basedir}/${msg.ejbs}/dist"/>
+
+	<!-- define classpath's -->
+	<path id="base.path">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="${jboss.client.dir}/jboss-client.jar"/>
+		<fileset dir="${core.lib.dir}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<path id="compile.path">
+		<fileset dir="${core.dist.dir}">
+			<include name="*.jar"/>
+		</fileset>
+		<path refid="base.path"/>
+	</path>
+
+    <path id="runtime.path">
+        <pathelement location="${dist.dir}/${msg.app}.jar"/>
+		<path refid="base.path"/>
+		<pathelement location="${jboss.client.dir}/jboss-client.jar"/>
+    </path>
+    
+	<!-- initialization -->
+	<target name="init">
+		<!-- pathconvert targetos="windows"  pathsep="," property="msg.xx" refid="compile.path"/>
+    	<echo message="compile path: ${msg.xx}"/ -->
+		<!-- Create the time stamp -->
+		<tstamp>
+			<format property="file.time" pattern="yyyyMMdd_HHmmss"/>
+			<format property="display.time" pattern="yyyy-MM-dd hh:mm:ss a"/>
+		</tstamp>
+		<mkdir dir="${dist.dir}"/>
+		<mkdir dir="${log.dir}"/>
+		<mkdir dir="${lib.dir}"/>
+		<echo message="${basedir} Starting Time: ${display.time}" />
+	</target>
+
+	<!-- cleanup compile output folder -->
+	<target name="cleanForCompile" >
+		<delete dir="${class.dir}" failonerror="false" />
+	</target>
+
+	<!-- compile -->
+	<target name="compile" depends="init" >
+		<echo message="base directory is ${basedir}" />
+		<echo message="compiling from directory ${source.dir}" />
+
+		<mkdir dir="${class.dir}"/>
+		<javac deprecation="true"  failonerror="true"
+            destdir="${class.dir}" 
+            srcdir="${source.dir}" debug="on"
+            verbose="false">
+			<classpath refid="compile.path"/>
+		</javac>
+	</target>
+
+	<!-- copy xml and properties files to classes folder -->
+	<target name="postCompile" depends="compile">
+		<echo message="copy xml and other properties files to ${class.dir} directory" />
+		<copy todir="${class.dir}" preservelastmodified="true" verbose="false">
+			<fileset dir="${source.dir}">
+				<include name="**/*.xml"/>
+				<include name="**/*.dtd"/>
+				<include name="**/*.properties"/>
+				<include name="**/*.MF"/>
+				<include name="*.conf"/>
+				<include name="*.txt"/>
+			</fileset>
+		</copy>
+	</target>
+
+    <!-- build message core jar -->
+    <target name="build_core" depends="postCompile" >
+    	<buildnumber file="${source.dir}/build.number"/>
+    	<copy file="${source.dir}/build.number" todir="${class.dir}" overwrite="true"/>
+        <jar destfile="${dist.dir}/${msg.app}.jar"
+            basedir="${class.dir}"
+        	excludes="**/*Test.class, **/*TestBase.class, **/*Suite.class, META-INF/*test.properties"
+            >
+	        <manifest>
+				<attribute name="Built-By" value="Legacytojava Team"/>
+				<attribute name="Main-Class" value="com.legacytojava.jbatch.JbMain"/>
+			</manifest>
+        </jar>
+        <jar destfile="${dist.dir}/${msg.app}_Test.jar"
+            basedir="${class.dir}"
+            includes="**/*Test.class, **/*TestBase.class, **/*Suite.class, META-INF/*test.properties"
+        />
+    	<mkdir dir="${dist.dir}/lib"/>
+		<copy todir="${dist.dir}/lib" preservelastmodified="true" verbose="false" >
+			<fileset dir="${lib.dir}"/>
+		</copy>
+    </target>
+	
+	<!-- build EJB Client jar -->
+	<target name="build_ejbclient" depends="postCompile" >
+    	<buildnumber file="${source.dir}/build.number"/>
+    	<copy file="${source.dir}/build.number" todir="${class.dir}" overwrite="true"/>
+		<jar destfile="${dist.dir}/${msg.app}.jar"
+            basedir="${class.dir}"
+            >
+			<manifest>
+				<attribute name="Built-By" value="Legacytojava Team"/>
+				<attribute name="Class-Path" value="spring.jar"/>
+			</manifest>
+		</jar>
+		<mkdir dir="${dist.dir}/lib"/>
+		<copy todir="${dist.dir}/lib" verbose="false"
+			failonerror="false" overwrite="true" preservelastmodified="true">
+			<fileset dir="${basedir}/lib" includes="*.jar"/>
+		</copy>
+	</target>
+	
+	<!-- build ejb jar -->
+	<!-- @deprecated replaced by build_ejb3 -->
+	<target name="build_ejb" depends="postCompile" >
+    	<buildnumber file="${source.dir}/build.number"/>
+    	<copy file="${source.dir}/build.number" todir="${class.dir}" overwrite="true"/>
+        <!-- manifest file="${dist.dir}/ejb-manifest.mf">
+            <attribute name="Class-Path" value="${msg.ejbclient}.jar"/>
+        </manifest -->
+		<!-- copy home and remote classes to ejb class folder -->
+		<copy todir="${class.dir}" preservelastmodified="true" verbose="false">
+			<fileset dir="${ejbclient.dist.dir}/classes">
+				<include name="**/*.*"/>
+				<exclude name="**/*.MF"/>
+			</fileset>
+		</copy>
+		<!-- 
+			### Note:
+			please to add jakarta-BCEL to your ant library to use "dependency". 
+		-->
+        <ejbjar srcdir="${class.dir}"
+                descriptordir="${class.dir}/META-INF"
+                dependency="super"
+                manifest="${class.dir}/META-INF/MANIFEST.MF"
+                basejarname="${msg.app}"
+                naming="basejarname">
+            <include name="**/*ejb-jar.xml"/>
+            <include name="**/*jboss.xml"/>
+        	<jboss destdir="${dist.dir}">
+        	</jboss>
+        	<classpath>
+        		<pathelement path="${ejbclient.dist.dir}/classes"/>
+        	</classpath>
+        	<dtd publicId="-//JBoss//DTD JBOSS 3.2//EN" location="${class.dir}/META-INF/jboss_3_2.dtd"/>
+        </ejbjar>
+		<mkdir dir="${dist.dir}/lib"/>
+		<copy todir="${dist.dir}/lib" verbose="false"
+			failonerror="false" overwrite="true" preservelastmodified="true">
+			<fileset dir="${basedir}/lib" includes="*.jar"/>
+		</copy>
+	</target>
+	
+	<!-- build ejb3 jar -->
+	<target name="build_ejb3" depends="postCompile" >
+    	<buildnumber file="${source.dir}/build.number"/>
+    	<copy file="${source.dir}/build.number" todir="${class.dir}" overwrite="true"/>
+        <jar basedir="${class.dir}" 
+                manifest="${class.dir}/META-INF/MANIFEST.MF"
+                destfile="${dist.dir}/${msg.app}.jar">
+        </jar>
+        <jar basedir="${class.dir}" 
+                manifest="${class.dir}/META-INF/MANIFEST.MF"
+                destfile="${dist.dir}/${msg.ejbclient}.jar"
+        	includes="**/*Local.class, **/*Remote.class">
+        </jar>
+		<mkdir dir="${dist.dir}/lib"/>
+		<copy todir="${dist.dir}/lib" verbose="false"
+			failonerror="false" overwrite="true" preservelastmodified="true">
+			<fileset dir="${basedir}/lib" includes="*.jar"/>
+		</copy>
+	</target>
+
+	<target name="copyWebContentToDist">
+		<mkdir dir="${dist.dir}/WebContent"/>
+		<copy todir="${dist.dir}/WebContent" verbose="false"
+			failonerror="false" overwrite="true" preservelastmodified="true">
+			<fileset dir="${web.dir}">
+				<exclude name="**/images/icons/**" />
+				<exclude name="**/corejsf/**" />
+				<exclude name="**/books/**" />
+				<exclude name="**/WEB-ONF/corejsf/**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- build war files -->
+	<target name="build_war" depends="postCompile,copyWebContentToDist">
+    	<buildnumber file="${source.dir}/build.number"/>
+    	<copy file="${source.dir}/build.number" todir="${class.dir}" overwrite="true"/>
+		<war destfile="${dist.dir}/${msg.app}.war" webxml="${dist.web.dir}/WEB-INF/web.xml">
+			<fileset dir="${dist.web.dir}"/>
+			<lib dir="${core.dist.dir}">
+				<include name="${msg.core}.jar"/>
+			</lib>
+			<lib dir="${ejbclient.dist.dir}">
+				<include name="${msg.ejbclient}.jar"/>
+			</lib>
+			<classes dir="${class.dir}" />
+			<!-- zipfileset dir="${web.dir}/images" prefix="images" / -->
+		</war>
+	</target>
+
+	<!-- build war files -->
+	<target name="build_war2" depends="postCompile,copyWebContentToDist">
+    	<buildnumber file="${source.dir}/build.number"/>
+    	<copy file="${source.dir}/build.number" todir="${class.dir}" overwrite="true"/>
+		<war destfile="${dist.dir}/${msg.app}.war" webxml="${dist.web.dir}/WEB-INF/web.xml">
+			<fileset dir="${dist.web.dir}"/>
+			<classes dir="${class.dir}" />
+		</war>
+	</target>
+
+	<!-- print out all the applictation specific properties -->
+	<target name="propertyList" >
+		<echoproperties prefix="msg"/>
+	</target>
+
+	<!-- cleanup -->
+	<target name="clean" depends="cleanForCompile">
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="${dist.dir}" includes="**/*"/>
+		</delete>
+		<delete dir="${deploy.dir}" failonerror="false" />
+	</target>
+
+</project>

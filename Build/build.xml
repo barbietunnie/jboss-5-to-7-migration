@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="master_build" basedir="./" default="init">
+
+	<property file="${basedir}/build.properties"/>
+	<property file="${basedir}/customize.properties"/>
+	<property name="build.dist.dir" value="${basedir}/dist"/>
+
+	<property name="jboss.root.dir" value="${jboss.server.home}"/>
+	<property name="jboss.server.dir" value="${jboss.root.dir}/standalone/deployments"/>
+	<property name="jboss.config.dir" value="${jboss.root.dir}/standalone/configuration"/>
+	<property name="jboss.client.dir" value="${jboss.root.dir}/bin/client"/>
+	
+	<property name="deploy.dir" value="${jboss.server.dir}/deploy"/>
+	
+	<property name="dist.dir" value="../../dist"/>
+	<property name="release.dir" value="../../release"/>
+
+	<!-- define classpath's -->
+	<path id="base.path">
+		<pathelement location="${jboss.client.dir}/jboss-client.jar"/>
+		<fileset dir="${basedir}/${msg.core}/dist/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<path id="runtime.path">
+		<pathelement path="${basedir}/${msg.core}/dist/classes"/>
+		<pathelement location="${basedir}/${msg.core}/dist/lib/${msg.core}.jar"/>
+		<path refid="base.path"/>
+		<pathelement location="${jboss.client.dir}/jbossall-client.jar"/>
+	</path>
+
+	<target name="init">
+		<mkdir dir="${build.dist.dir}" />
+		<tstamp>
+			<format property="file.time" pattern="yyyyMMdd_HHmmss"/>
+		</tstamp>
+	</target>
+	
+	<!--
+		This special section depends on workspace folder, not to be used by customers.
+	-->
+	<property name="workspace.root.dir" value="../workspace"/>
+	<target name="workspace_check">
+		<condition property="workspace.exists">
+			<available file="${workspace.root.dir}" type="dir"/>
+		</condition>
+	</target>
+
+	<!-- build all projects -->
+	<target name="build_projects" depends="workspace_check,init" if="workspace.exists">
+		<delete file="${basedir}/MANIFEST.MF"/>
+		<property name="version.num" value="1.00"/>
+		<tstamp>
+			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+		</tstamp>
+		<buildnumber file="${basedir}/build.num"/>
+		<manifest file="${basedir}/MANIFEST.MF">
+			<attribute name="Built-By" value="Emailsphere Team"/>
+			<attribute name="Implementation-Version" value="${version.num}-b${build.number}"/>
+			<attribute name="Built-Date" value="${TODAY}"/>
+		</manifest>
+		<ant antfile="${workspace.root.dir}/${msg.core}/build.xml" inheritall="false" target="build"/>
+		<ant antfile="${workspace.root.dir}/${msg.mailSenderEjb}/build.xml" inheritall="false" target="build"/>
+		<ant antfile="${workspace.root.dir}/${msg.msgEjbs}/build.xml" inheritall="false" target="build"/>
+		<ant antfile="${workspace.root.dir}/${msg.msgEjbsWeb}/build.xml" inheritall="false" target="build"/>
+		<ant antfile="${workspace.root.dir}/${msg.timerEjb}/build.xml" inheritall="false" target="build"/>
+		<ant antfile="${workspace.root.dir}/${msg.timerWeb}/build.xml" inheritall="false" target="build"/>
+		<ant antfile="${workspace.root.dir}/${msg.msgUi}/build.xml" inheritall="false" target="build"/>
+	</target>
+	<target name="clean_projects">
+		<ant antfile="${workspace.root.dir}/${msg.core}/build.xml" inheritall="false" target="clean"/>
+		<ant antfile="${workspace.root.dir}/${msg.mailSenderEjb}/build.xml" inheritall="false" target="clean"/>
+		<ant antfile="${workspace.root.dir}/${msg.msgEjbs}/build.xml" inheritall="false" target="clean"/>
+		<ant antfile="${workspace.root.dir}/${msg.msgEjbsWeb}/build.xml" inheritall="false" target="clean"/>
+		<ant antfile="${workspace.root.dir}/${msg.timerEjb}/build.xml" inheritall="false" target="clean"/>
+		<ant antfile="${workspace.root.dir}/${msg.timerWeb}/build.xml" inheritall="false" target="clean"/>
+		<ant antfile="${workspace.root.dir}/${msg.msgUi}/build.xml" inheritall="false" target="clean"/>
+	</target>
+	<!-- rebuild all projects -->
+	<target name="rebuild_projects" depends="clean_projects,build_projects"/>
+	<!-- end of special section -->
+
+	<!-- build all war and ear files -->
+	<target name="build_all">
+		<antcall target="build_msgui_ear"/>
+		<antcall target="build_mailengine"/>
+		<antcall target="build_mailreader"/>
+		<antcall target="build_mailsender"/>
+	</target>
+	
+	<!-- build MsgUI war -->
+	<target name="build_msgui_ear" depends="init,build_msgui">
+		<delete file="${build.dist.dir}/${msg.msgUiEar}.ear" failonerror="no"/>
+		<ear destfile="${build.dist.dir}/${msg.msgUiEar}.ear"
+			appxml="${basedir}/metadata/application_msgui.xml">
+			<fileset dir="${basedir}/${msg.msgUi}/dist" includes="*.jar,*.war" />
+			<!-- fileset dir="${basedir}/${msg.msgUi}/dist/lib" includes="*.jar" / -->
+		</ear>
+	</target>
+	
+	<!-- build MailEngine ear -->
+	<target name="build_mailengine" depends="init,build_core,build_msgEjbs3,build_msgEjbsWeb">
+		<delete file="${build.dist.dir}/${msg.mailEngineEar}.ear" failonerror="no"/>
+		<ear destfile="${build.dist.dir}/${msg.mailEngineEar}.ear"
+			appxml="${basedir}/metadata/application_mailengine.xml">
+			<zipfileset dir="${basedir}/${msg.msgEjbs}/dist" includes="${msg.msgEjbs}.jar" />
+			<zipfileset dir="${basedir}/${msg.msgEjbsWeb}/dist" includes="*.war" />
+			
+			<zipfileset dir="${basedir}/${msg.core}/dist" prefix="lib" includes="${msg.core}.jar" />
+			<zipfileset dir="${basedir}/${msg.msgEjbsWeb}/dist" prefix="lib" includes="*.jar" />
+			<zipfileset dir="${basedir}/${msg.core}/dist/lib/aspectj" prefix="lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${basedir}/${msg.core}/dist/lib/bsh" prefix="lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${basedir}/${msg.core}/dist/lib/cglib" prefix="lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${basedir}/${msg.core}/dist/lib/groovy" prefix="lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${basedir}/${msg.core}/dist/lib/jruby" prefix="lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${basedir}/${msg.core}/dist/lib/spring3.2" prefix="lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="${basedir}/${msg.core}/dist/lib/jakarta-commons" prefix="lib">
+				<include name="commons-lang.jar"/>
+				<include name="commons-collections.jar"/>
+			</zipfileset>
+			<zipfileset dir="${basedir}/${msg.core}/dist/lib" prefix="lib">
+				<include name="derby.jar"/>
+				<include name="htmlparser.jar"/>
+				<include name="aopalliance.jar"/>
+			</zipfileset>
+		</ear>
+	</target>
+	
+	<!-- build MailReader ear -->
+	<target name="build_mailreader" depends="init,build_core,build_timerEjb3,build_timerWeb">
+		<delete file="${build.dist.dir}/${msg.mailReaderEar}.ear" failonerror="no"/>
+		<ear destfile="${build.dist.dir}/${msg.mailReaderEar}.ear"
+			appxml="${basedir}/metadata/application_mailreader.xml">
+			<fileset dir="${basedir}/${msg.core}/dist" includes="${msg.core}.jar" />
+			<fileset dir="${basedir}/${msg.timerEjb}/dist" includes="*.jar,*.war" />
+			<fileset dir="${basedir}/${msg.timerWeb}/dist" includes="*.jar,*.war" />
+			<fileset dir="${basedir}/${msg.timerEjb}/dist/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</ear>
+	</target>
+	
+	<!-- build MailSender ear -->
+	<target name="build_mailsender" depends="init,build_core,build_mailSenderEjb3">
+		<delete file="${build.dist.dir}/${msg.mailSenderEar}.ear" failonerror="no"/>
+		<ear destfile="${build.dist.dir}/${msg.mailSenderEar}.ear"
+			appxml="${basedir}/metadata/application_mailsender.xml">
+			<fileset dir="${basedir}/${msg.core}/dist" includes="${msg.core}.jar" />
+			<fileset dir="${basedir}/${msg.mailSenderEjb}/dist" includes="*.jar,*.war" />
+			<fileset dir="${basedir}/${msg.mailSenderEjb}/dist/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</ear>
+	</target>
+	
+    <!-- re-build message core jar with new properties -->
+    <target name="build_core" depends="replace_for_core" >
+    	<delete file="${basedir}/${msg.core}/dist/${msg.core}.jar" failonerror="no"/>
+        <jar destfile="${basedir}/${msg.core}/dist/${msg.core}.jar"
+            basedir="${basedir}/${msg.core}/dist/classes"
+        	excludes="**/*Test.class, **/*TestBase.class, **/*PostScript.class, **/*Suite.class, META-INF/*test.properties"
+            >
+	        <manifest>
+				<attribute name="Built-By" value="Legacytojava Team"/>
+				<attribute name="Main-Class" value="com.legacytojava.jbatch.JbMain"/>
+			</manifest>
+        </jar>
+    </target>
+
+	<!-- build msgui war with new properties -->
+	<target name="build_msgui" depends="build_core,replace_jboss_mysql_ds">
+		<delete file="${basedir}/${msg.msgUi}/dist/${msg.msgUi}.war" failonerror="no"/>
+		<war destfile="${basedir}/${msg.msgUi}/dist/${msg.msgUi}.war" 
+			webxml="${basedir}/${msg.msgUi}/dist/WebContent/WEB-INF/web.xml">
+			<fileset dir="${basedir}/${msg.msgUi}/dist/WebContent"/>
+			<lib dir="${basedir}/${msg.core}/dist">
+				<include name="${msg.core}.jar"/>
+			</lib>
+			<lib dir="${basedir}/${msg.msgEjbs}/dist">
+				<include name="${msg.ejbclient}.jar"/>
+			</lib>
+			<classes dir="${basedir}/${msg.msgUi}/dist/classes" />
+		</war>
+	</target>
+	
+	<!-- build timerweb war with new properties -->
+	<target name="build_timerWeb" depends="init,build_timerEjb3">
+		<delete file="${basedir}/${msg.timerWeb}/dist/${msg.timerWeb}.war" failonerror="no"/>
+		<war destfile="${basedir}/${msg.timerWeb}/dist/${msg.timerWeb}.war" 
+			webxml="${basedir}/${msg.timerWeb}/dist/WebContent/WEB-INF/web.xml">
+			<fileset dir="${basedir}/${msg.timerWeb}/dist/WebContent"/>
+			<classes dir="${basedir}/${msg.timerWeb}/dist/classes" />
+		</war>
+	</target>
+	
+	<!-- build msgejbsweb war with new properties -->
+	<target name="build_msgEjbsWeb" depends="init,build_msgEjbs3">
+		<delete file="${basedir}/${msg.msgEjbsWeb}/dist/${msg.msgEjbsWeb}.war" failonerror="no"/>
+		<war destfile="${basedir}/${msg.msgEjbsWeb}/dist/${msg.msgEjbsWeb}.war" 
+			webxml="${basedir}/${msg.msgEjbsWeb}/dist/WebContent/WEB-INF/web.xml">
+			<fileset dir="${basedir}/${msg.msgEjbsWeb}/dist/WebContent"/>
+			<classes dir="${basedir}/${msg.msgEjbsWeb}/dist/classes" />
+		</war>
+	</target>
+	
+	<!-- build Msg ejbs jar with new properties -->
+	<target name="build_msgEjbs3" depends="init" >
+		<delete file="${basedir}/${msg.msgEjbs}/dist/${msg.msgEjbs}.jar" failonerror="no"/>
+        <jar basedir="${basedir}/${msg.msgEjbs}/dist/classes" 
+        		manifest="${basedir}/${msg.msgEjbs}/dist/classes/META-INF/MANIFEST.MF"
+                destfile="${basedir}/${msg.msgEjbs}/dist/${msg.msgEjbs}.jar">
+			<manifest>
+				<attribute name="Built-By" value="Legacytojava Team"/>
+			</manifest>
+        </jar>
+	</target>
+
+	<!-- build mail sender ejb jar with new properties -->
+	<target name="build_mailSenderEjb3" depends="init" >
+		<delete file="${basedir}/${msg.mailSenderEjb}/dist/${msg.mailSenderEjb}.jar" failonerror="no"/>
+        <jar basedir="${basedir}/${msg.mailSenderEjb}/dist/classes" 
+                manifest="${basedir}/${msg.mailSenderEjb}/dist/classes/META-INF/MANIFEST.MF"
+                destfile="${basedir}/${msg.mailSenderEjb}/dist/${msg.mailSenderEjb}.jar">
+			<manifest>
+				<attribute name="Built-By" value="Legacytojava Team"/>
+			</manifest>
+        </jar>
+	</target>
+
+	<!-- build timer ejb jar with new properties -->
+	<target name="build_timerEjb3" depends="" >
+		<delete file="${basedir}/${msg.timerEjb}/dist/${msg.timerEjb}.jar" failonerror="no"/>
+        <jar basedir="${basedir}/${msg.timerEjb}/dist/classes" 
+        		manifest="${basedir}/${msg.timerEjb}/dist/classes/META-INF/MANIFEST.MF"
+                destfile="${basedir}/${msg.timerEjb}/dist/${msg.timerEjb}.jar">
+			<manifest>
+				<attribute name="Built-By" value="Legacytojava Team"/>
+			</manifest>
+        </jar>
+	</target>
+
+	<!--
+		replace spring config and jndi properties
+	-->
+	<target name="replace_all_properties">
+		<antcall target="replace_for_core"/>
+		<antcall target="replace_jboss_mysql_ds"/>
+	</target>
+
+	<target name="replace_for_core">
+		<antcall target="copy_product_key"/>
+		<antcall target="replace_jndi_props"/>
+	</target>
+
+	<target name="copy_product_key" depends="init">
+		<copy todir="${basedir}/${msg.core}/dist/classes"
+			file="${basedir}/config/productkey.txt"
+			overwrite="true" failonerror="false" preservelastmodified="true"/>
+	</target>
+	
+	<target name="replace_jndi_props" depends="init">
+		<echo message="Updating jndi.properties" />
+		<copy todir="${basedir}/${msg.core}/dist/classes"
+			file="${basedir}/config/jndi.properties" overwrite="true"/>
+		<replace file="${basedir}/${msg.core}/dist/classes/jndi.properties">
+			<replacefilter token="remote://localhost:4447" 
+				value="jnp://${jndi.host}:${jndi.port}"/> 
+			<replacefilter token="appuser" 
+				value="${jndi.username}"/> 
+			<replacefilter token="apppswd" 
+				value="${jndi.password}"/> 
+		</replace>
+		<copy todir="${basedir}/${msg.core}/dist/classes"
+			file="${basedir}/config/jndi.mailsender.properties" overwrite="true"/>
+		<replace file="${basedir}/${msg.core}/dist/classes/jndi.mailsender.properties">
+			<replacefilter token="remote://localhost:4447" 
+				value="jnp://${mailsender.jndi.host}:${mailsender.jndi.port}"/> 
+			<replacefilter token="appuser" 
+				value="${mailsender.jndi.username}"/> 
+			<replacefilter token="apppswd" 
+				value="${mailsender.jndi.password}"/> 
+		</replace>
+	</target>
+	
+	<target name="replace_jboss_mysql_ds" depends="init">
+		<echo message="Updating standalone.xml mysql data source properties" />
+		<replace file="${jboss.config.dir}/standalone.xml">
+			<replacefilter token="jdbc:mysql://localhost:3306/" 
+				value="jdbc:mysql://${mysql.host}:${mysql.port}/"/>
+			<replacefilter token="email" 
+				value="${mysql.user}"/>
+			<replacefilter token="email" 
+				value="${mysql.pswd}"/>
+		</replace>
+	</target>
+	
+	<!-- end of replace -->
+	
+	<!--
+    	deploy war and ear files to Jboss's default server.
+     -->
+	<target name="deploy" depends="build_all">
+		<copy todir="${deploy.dir}" verbose="true"
+			failonerror="false" overwrite="true" preservelastmodified="true">
+			<fileset dir="${build.dist.dir}">
+				<!-- exclude name="MailReaderEar.ear"/ -->
+			</fileset>
+			<!-- fileset dir="${basedir}/${msg.msgUi}/dist" includes="*.war"/ -->
+		</copy>
+	</target>
+
+	<!-- start jboss -->
+	<target name="start" depends="init" >
+		<exec dir="${jboss.root.dir}/bin/" executable="cmd"  spawn="false"
+			output="${basedir}/output.log">
+		  <arg line="/c run.bat"/>
+		</exec>
+	</target>
+
+	<!-- stop jboss -->
+	<target name="stop" depends="init" >
+		<exec dir="${jboss.root.dir}/bin/" executable="cmd" output="${basedir}/shutdown.log">
+		  <arg line="/c shutdown.bat -S"/>
+		</exec>
+	</target>
+	
+	<!-- create database -->
+	<target name="create_db" depends="init">
+		<java classname="com.legacytojava.message.main.CreateDatabase"
+        	fork="true"
+        	failonerror="true"
+        	maxmemory="256m"
+			output="${basedir}/${msg.core}/logs/createdb_${file.time}.txt"
+        	>
+			<!-- classpath refid="runtime.path" / -->
+			<classpath>
+				<path refid="runtime.path"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="copy_build_to_dist">
+		<delete dir="${dist.dir}/build" failonerror="false"/>
+		<mkdir dir="${dist.dir}"/>
+		<mkdir dir="${dist.dir}/build"/>
+		<copy todir="${dist.dir}/build">
+			<fileset dir="." excludes="**/dist/*.jar,**/dist/*.war,**/logs/*.*,license/**,dist/**,.project,**/CVS"/>
+		</copy>
+		<copy tofile="${dist.dir}/build/license.txt" 
+			file="./license/mylicense.txt" overwrite="true">
+		</copy>
+		<replace file="${dist.dir}/build/build.xml" token="" value=""/>
+	</target>
+
+	<target name="update_properties">
+		<mkdir dir="${release.dir}"/>
+		<propertyfile
+		    file="${dist.dir}/build.properties"
+		    comment="Emailsphere Build properties">
+		  <entry  key="build.date" type="date" value="now" pattern="yyyy/MM/dd HH:mm"/>
+		  <entry  key="build.number" type="int" default="00" operation="+" pattern="00"/>
+		</propertyfile>
+		<!-- buildnumber file="${dist.dir}/build.number"/ -->
+	</target>
+	
+	<property file="${dist.dir}/build.properties"/>
+	
+	<target name="build_release_files" depends="update_properties">
+		<zip destfile="${release.dir}/esphere_allinone_${build.number}.zip"
+			basedir="${dist.dir}"
+			update="true"
+			excludes="**/logs/*.*"
+		  />
+		<zip destfile="${release.dir}/esphere_nojdk_${build.number}.zip"
+			basedir="${dist.dir}"
+			update="true"
+			excludes="jdk1.5.0_12/**,**/logs/*.*"
+		  />
+		<zip destfile="${release.dir}/esphere_serveronly_${build.number}.zip"
+			basedir="${dist.dir}"
+			update="true"
+			includes="build/**,apache-ant-1.7.0/**">
+		</zip>
+	</target>
+	
+    <target name="propertyList" >
+       <echoproperties prefix="msg"/>
+       <echoproperties prefix="mysql"/>
+    </target>
+
+	<!-- cleanup -->
+	<target name="clean">
+		<delete failonerror="false">
+			<fileset dir="${build.dist.dir}" includes="**/*.*"/>
+		</delete>
+	</target>
+
+</project>
