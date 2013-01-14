@@ -1,0 +1,1 @@
+Do not place log4j.jar in this directory. It will cause startup ERROR.
