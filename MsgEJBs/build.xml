@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="./" name="MsgEJBs" default="compile">
+    
+    <property file="${basedir}/build.properties"/>
+    
+	<property name="path_to_common" value="../../build"/>
+	
+    <!--  ***** these are the properties calling ants need to override **** -->
+    <property name="source.dir" value="${basedir}/ejbModule"/>
+    
+	<import file="${path_to_common}/common.xml"/>
+
+	<path id="compile.path">
+		<fileset dir="${core.dist.dir}">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${jboss.client.dir}">
+			<include name="*.jar"/>
+		</fileset>
+		<path refid="base.path"/>
+	</path>
+
+	<target name="build" depends="build_ejb3"/>
+</project>
