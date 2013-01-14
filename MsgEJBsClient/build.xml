@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="./" name="MsgEJBsClient" default="compile">
+    
+    <property file="${basedir}/build.properties"/>
+    
+	<property name="path_to_common" value="../../build"/>
+	
+    <!--  ***** these are the properties calling ants need to override **** -->
+    <property name="source.dir" value="${basedir}/ejbModule"/>
+    
+	<import file="${path_to_common}/common.xml"/>
+	
+	<target name="build" depends="build_ejbclient"/>
+</project>
