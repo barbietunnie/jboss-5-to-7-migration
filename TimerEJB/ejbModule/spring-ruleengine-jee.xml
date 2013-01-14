@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<context:property-placeholder ignore-resource-not-found="true" 
+		location="classpath:/META-INF/message-core.${env:dev}.properties"/>
+
+	<!-- =============== Please make change to jndiTemplate =============== -->
+	<!-- change the provider.url to the host where RuleEngineEar is deployed -->
+    <jee:jndi-lookup id="jmsConnectionFactory" jndi-name="java:/JmsXA" environment-ref="properties" resource-ref="false"/>
+	
+	<bean id="ruleEngineInput" parent="mailReaderOutput"
+	    class="org.springframework.jndi.JndiObjectFactoryBean">
+	</bean>
+
+	<!-- JMS Queues - JNDI Objects -->
+    <jee:jndi-lookup id="mailReaderOutput" jndi-name="java:/queue/mailReaderOutput" environment-ref="properties" resource-ref="false"/>
+    <jee:jndi-lookup id="ruleEngineOutput" jndi-name="java:/queue/ruleEngineOutput" environment-ref="properties" resource-ref="false"/>
+    <jee:jndi-lookup id="mailSenderInput" jndi-name="java:/queue/mailSenderInput" environment-ref="properties" resource-ref="false"/>
+    <jee:jndi-lookup id="unHandledOutput" jndi-name="java:/queue/unHandledOutput" environment-ref="properties" resource-ref="false"/>
+
+	<util:properties id="properties" >
+		<prop key="java.naming.factory.initial">org.jboss.as.naming.InitialContextFactory</prop>
+	</util:properties>
+
+	
+	<!-- end of JMS Queues -->
+	
+	<!-- Templates -->
+	<bean id="mailReaderOutputJmsTemplate" 
+	      class="org.springframework.jms.core.JmsTemplate">
+	    <property name="connectionFactory">
+	        <ref bean="jmsConnectionFactory"/>
+	    </property>
+	    <property name="defaultDestination">
+	        <ref bean="mailReaderOutput"/>
+	    </property>
+	    <property name="receiveTimeout">
+	        <value>2000</value>
+	    </property>
+	    <property name="priority">
+	    	<value>1</value>
+	    </property>
+	</bean>
+	
+	<bean id="ruleEngineInputJmsTemplate" parent="mailReaderOutputJmsTemplate"
+	      class="org.springframework.jms.core.JmsTemplate">
+	</bean>
+	
+	<bean id="ruleEngineOutputJmsTemplate" 
+	      class="org.springframework.jms.core.JmsTemplate">
+	    <property name="connectionFactory">
+	        <ref bean="jmsConnectionFactory"/>
+	    </property>
+	    <property name="defaultDestination">
+	        <ref bean="ruleEngineOutput"/>
+	    </property>
+	    <property name="receiveTimeout">
+	        <value>2000</value>
+	    </property>
+	</bean>
+	
+	<bean id="mailSenderInputJmsTemplate" 
+	      class="org.springframework.jms.core.JmsTemplate">
+	    <property name="connectionFactory">
+	        <ref bean="jmsConnectionFactory"/>
+	    </property>
+	    <property name="defaultDestination">
+	        <ref bean="mailSenderInput"/>
+	    </property>
+	    <property name="receiveTimeout">
+	        <value>2000</value>
+	    </property>
+	</bean>
+	
+	<bean id="unHandledOutputJmsTemplate" 
+	      class="org.springframework.jms.core.JmsTemplate">
+	    <property name="connectionFactory">
+	        <ref bean="jmsConnectionFactory"/>
+	    </property>
+	    <property name="defaultDestination">
+	        <ref bean="unHandledOutput"/>
+	    </property>
+	    <property name="receiveTimeout">
+	        <value>2000</value>
+	    </property>
+	</bean>
+	<!-- end of Templates -->
+	
+	<bean id="jmsProcessor" lazy-init="true"
+		class="com.legacytojava.jbatch.queue.JmsProcessor">
+	    <property name="jmsTemplate">
+	        <ref bean="mailReaderOutputJmsTemplate"/>
+	    </property>
+	    <property name="errorJmsTemplate">
+	        <ref bean="unHandledOutputJmsTemplate"/>
+	    </property>
+	    <property name="msgSelector">
+	    	<null/>
+	    </property>
+	    <property name="msgType">
+	    	<value>JMS</value>
+	    </property>
+	</bean>
+	
+</beans>
