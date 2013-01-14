@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://init.message.legacytojava.com" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://init.message.legacytojava.com" xmlns:intf="http://init.message.legacytojava.com" xmlns:tns1="http://exception.message.legacytojava.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://init.message.legacytojava.com" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://exception.message.legacytojava.com"/>
+   <element name="sendMailFromSite">
+    <complexType>
+     <sequence>
+      <element name="siteId" type="xsd:string"/>
+      <element name="toAddr" type="xsd:string"/>
+      <element name="subject" type="xsd:string"/>
+      <element name="body" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="sendMailFromSiteResponse">
+    <complexType>
+     <sequence>
+      <element name="sendMailFromSiteReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="fault" type="tns1:DataValidationException"/>
+   <element name="sendMail">
+    <complexType>
+     <sequence>
+      <element name="fromAddr" type="xsd:string"/>
+      <element name="toAddr" type="xsd:string"/>
+      <element name="subject" type="xsd:string"/>
+      <element name="body" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="sendMailResponse">
+    <complexType>
+     <sequence>
+      <element name="sendMailReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="sendMailToSite">
+    <complexType>
+     <sequence>
+      <element name="siteId" type="xsd:string"/>
+      <element name="fromAddr" type="xsd:string"/>
+      <element name="subject" type="xsd:string"/>
+      <element name="body" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="sendMailToSiteResponse">
+    <complexType>
+     <sequence>
+      <element name="sendMailToSiteReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+  <schema elementFormDefault="qualified" targetNamespace="http://exception.message.legacytojava.com" xmlns="http://www.w3.org/2001/XMLSchema">
+   <complexType name="DataValidationException">
+    <sequence/>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="sendMailRequest">
+
+      <wsdl:part element="impl:sendMail" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="DataValidationException">
+
+      <wsdl:part element="impl:fault" name="fault"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendMailFromSiteResponse">
+
+      <wsdl:part element="impl:sendMailFromSiteResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendMailToSiteResponse">
+
+      <wsdl:part element="impl:sendMailToSiteResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendMailResponse">
+
+      <wsdl:part element="impl:sendMailResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendMailToSiteRequest">
+
+      <wsdl:part element="impl:sendMailToSite" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="sendMailFromSiteRequest">
+
+      <wsdl:part element="impl:sendMailFromSite" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="Sendmail">
+
+      <wsdl:operation name="sendMailFromSite">
+
+         <wsdl:input message="impl:sendMailFromSiteRequest" name="sendMailFromSiteRequest"/>
+
+         <wsdl:output message="impl:sendMailFromSiteResponse" name="sendMailFromSiteResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendMail">
+
+         <wsdl:input message="impl:sendMailRequest" name="sendMailRequest"/>
+
+         <wsdl:output message="impl:sendMailResponse" name="sendMailResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendMailToSite">
+
+         <wsdl:input message="impl:sendMailToSiteRequest" name="sendMailToSiteRequest"/>
+
+         <wsdl:output message="impl:sendMailToSiteResponse" name="sendMailToSiteResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="SendmailSoapBinding" type="impl:Sendmail">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="sendMailFromSite">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="sendMailFromSiteRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="sendMailFromSiteResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendMail">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="sendMailRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="sendMailResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="sendMailToSite">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="sendMailToSiteRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="sendMailToSiteResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="SendmailService">
+
+      <wsdl:port binding="impl:SendmailSoapBinding" name="Sendmail">
+
+         <wsdlsoap:address location="http://localhost:8080/MsgEJBsWeb/services/Sendmail"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

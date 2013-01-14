@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://init.message.legacytojava.com" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://init.message.legacytojava.com" xmlns:intf="http://init.message.legacytojava.com" xmlns:tns1="http://exception.message.legacytojava.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://init.message.legacytojava.com" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://exception.message.legacytojava.com"/>
+   <element name="addToList">
+    <complexType>
+     <sequence>
+      <element name="emailAddr" type="xsd:string"/>
+      <element name="listId" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="addToListResponse">
+    <complexType>
+     <sequence>
+      <element name="addToListReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="fault" type="tns1:DataValidationException"/>
+   <element name="signUpOnly">
+    <complexType>
+     <sequence>
+      <element name="dto" type="impl:CustomerDto"/>
+     </sequence>
+    </complexType>
+   </element>
+   <complexType name="CustomerDto">
+    <sequence>
+     <element name="alias" nillable="true" type="xsd:string"/>
+     <element name="birthDate" nillable="true" type="xsd:dateTime"/>
+     <element name="cityName" nillable="true" type="xsd:string"/>
+     <element name="clientId" nillable="true" type="xsd:string"/>
+     <element name="country" nillable="true" type="xsd:string"/>
+     <element name="custId" nillable="true" type="xsd:string"/>
+     <element name="dayPhone" nillable="true" type="xsd:string"/>
+     <element name="emailAddr" nillable="true" type="xsd:string"/>
+     <element name="eveningPhone" nillable="true" type="xsd:string"/>
+     <element name="faxNumber" nillable="true" type="xsd:string"/>
+     <element name="firstName" nillable="true" type="xsd:string"/>
+     <element name="lastName" nillable="true" type="xsd:string"/>
+     <element name="memoText" nillable="true" type="xsd:string"/>
+     <element name="middleName" nillable="true" type="xsd:string"/>
+     <element name="mobilePhone" nillable="true" type="xsd:string"/>
+     <element name="msgDetail" nillable="true" type="xsd:string"/>
+     <element name="msgFooter" nillable="true" type="xsd:string"/>
+     <element name="msgHeader" nillable="true" type="xsd:string"/>
+     <element name="msgOptional" nillable="true" type="xsd:string"/>
+     <element name="postalCode" nillable="true" type="xsd:string"/>
+     <element name="prevEmailAddr" nillable="true" type="xsd:string"/>
+     <element name="profession" nillable="true" type="xsd:string"/>
+     <element name="provinceName" nillable="true" type="xsd:string"/>
+     <element name="securityAnswer" nillable="true" type="xsd:string"/>
+     <element name="securityQuestion" nillable="true" type="xsd:string"/>
+     <element name="ssnNumber" nillable="true" type="xsd:string"/>
+     <element name="stateCode" nillable="true" type="xsd:string"/>
+     <element name="streetAddress" nillable="true" type="xsd:string"/>
+     <element name="streetAddress2" nillable="true" type="xsd:string"/>
+     <element name="taxId" nillable="true" type="xsd:string"/>
+     <element name="timeZoneCode" nillable="true" type="xsd:string"/>
+     <element name="userPassword" nillable="true" type="xsd:string"/>
+     <element name="zipCode4" nillable="true" type="xsd:string"/>
+     <element name="zipCode5" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <element name="signUpOnlyResponse">
+    <complexType>
+     <sequence>
+      <element name="signUpOnlyReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="signUpAndSubscribe">
+    <complexType>
+     <sequence>
+      <element name="dto" type="impl:CustomerDto"/>
+      <element name="listId" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="signUpAndSubscribeResponse">
+    <complexType>
+     <sequence>
+      <element name="signUpAndSubscribeReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getCustomer">
+    <complexType>
+     <sequence>
+      <element name="emailAddr" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getCustomerResponse">
+    <complexType>
+     <sequence>
+      <element name="getCustomerReturn" type="impl:CustomerDto"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="updateCustomer">
+    <complexType>
+     <sequence>
+      <element name="dto" type="impl:CustomerDto"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="updateCustomerResponse">
+    <complexType>
+     <sequence>
+      <element name="updateCustomerReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="removeCustomer">
+    <complexType>
+     <sequence>
+      <element name="emailAddr" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="removeCustomerResponse">
+    <complexType>
+     <sequence>
+      <element name="removeCustomerReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="removeFromList">
+    <complexType>
+     <sequence>
+      <element name="emailAddr" type="xsd:string"/>
+      <element name="listId" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="removeFromListResponse">
+    <complexType>
+     <sequence>
+      <element name="removeFromListReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+  <schema elementFormDefault="qualified" targetNamespace="http://exception.message.legacytojava.com" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://init.message.legacytojava.com"/>
+   <complexType name="DataValidationException">
+    <sequence/>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="removeCustomerResponse">
+
+      <wsdl:part element="impl:removeCustomerResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateCustomerRequest">
+
+      <wsdl:part element="impl:updateCustomer" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="signUpOnlyResponse">
+
+      <wsdl:part element="impl:signUpOnlyResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeFromListRequest">
+
+      <wsdl:part element="impl:removeFromList" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="DataValidationException">
+
+      <wsdl:part element="impl:fault" name="fault"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeFromListResponse">
+
+      <wsdl:part element="impl:removeFromListResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="addToListRequest">
+
+      <wsdl:part element="impl:addToList" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getCustomerRequest">
+
+      <wsdl:part element="impl:getCustomer" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="signUpAndSubscribeResponse">
+
+      <wsdl:part element="impl:signUpAndSubscribeResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="removeCustomerRequest">
+
+      <wsdl:part element="impl:removeCustomer" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="signUpAndSubscribeRequest">
+
+      <wsdl:part element="impl:signUpAndSubscribe" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="signUpOnlyRequest">
+
+      <wsdl:part element="impl:signUpOnly" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateCustomerResponse">
+
+      <wsdl:part element="impl:updateCustomerResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getCustomerResponse">
+
+      <wsdl:part element="impl:getCustomerResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="addToListResponse">
+
+      <wsdl:part element="impl:addToListResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="CustomerSignUp">
+
+      <wsdl:operation name="addToList">
+
+         <wsdl:input message="impl:addToListRequest" name="addToListRequest"/>
+
+         <wsdl:output message="impl:addToListResponse" name="addToListResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="signUpOnly">
+
+         <wsdl:input message="impl:signUpOnlyRequest" name="signUpOnlyRequest"/>
+
+         <wsdl:output message="impl:signUpOnlyResponse" name="signUpOnlyResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="signUpAndSubscribe">
+
+         <wsdl:input message="impl:signUpAndSubscribeRequest" name="signUpAndSubscribeRequest"/>
+
+         <wsdl:output message="impl:signUpAndSubscribeResponse" name="signUpAndSubscribeResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getCustomer">
+
+         <wsdl:input message="impl:getCustomerRequest" name="getCustomerRequest"/>
+
+         <wsdl:output message="impl:getCustomerResponse" name="getCustomerResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateCustomer">
+
+         <wsdl:input message="impl:updateCustomerRequest" name="updateCustomerRequest"/>
+
+         <wsdl:output message="impl:updateCustomerResponse" name="updateCustomerResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeCustomer">
+
+         <wsdl:input message="impl:removeCustomerRequest" name="removeCustomerRequest"/>
+
+         <wsdl:output message="impl:removeCustomerResponse" name="removeCustomerResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeFromList">
+
+         <wsdl:input message="impl:removeFromListRequest" name="removeFromListRequest"/>
+
+         <wsdl:output message="impl:removeFromListResponse" name="removeFromListResponse"/>
+
+         <wsdl:fault message="impl:DataValidationException" name="DataValidationException"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="CustomerSignUpSoapBinding" type="impl:CustomerSignUp">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="addToList">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="addToListRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="addToListResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="signUpOnly">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="signUpOnlyRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="signUpOnlyResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="signUpAndSubscribe">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="signUpAndSubscribeRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="signUpAndSubscribeResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getCustomer">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getCustomerRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getCustomerResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateCustomer">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="updateCustomerRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="updateCustomerResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeCustomer">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="removeCustomerRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="removeCustomerResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="removeFromList">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="removeFromListRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="removeFromListResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="DataValidationException">
+
+            <wsdlsoap:fault name="DataValidationException" use="literal"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="CustomerSignUpService">
+
+      <wsdl:port binding="impl:CustomerSignUpSoapBinding" name="CustomerSignUp">
+
+         <wsdlsoap:address location="http://localhost:8080/MsgEJBsWeb/services/CustomerSignUp"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
