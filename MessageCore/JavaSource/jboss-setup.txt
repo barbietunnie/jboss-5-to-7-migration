@@ -1,0 +1,562 @@
+0) JBoss 5.1 - add following to run_conf.bat under bin folder:
+
+rem ### to make NullanleStringConverter work with Tomcat 6 and 7 - JW
+set "JAVA_OPTS=%JAVA_OPTS% -Dorg.apache.el.parser.COERCE_TO_ZERO=false
+
+set "JAVA_HOME=../../jdk1.6.0_37"
+
+1) modify server\default\conf\jboss-log4j.xml:
+
+1.1) add application appenders
+
+   <!-- ============================ -->
+   <!-- Define Application appenders -->
+   <!-- ============================ -->
+
+   <appender name="MSG_ENGINE_FILE" class="org.jboss.logging.appender.RollingFileAppender">
+     <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+     <param name="File" value="${jboss.server.log.dir}/MailEngine.log"/>
+     <param name="Append" value="true"/>
+     <param name="Threshold" value="DEBUG"/>
+     <param name="MaxFileSize" value="10000KB"/>
+     <param name="MaxBackupIndex" value="3"/>
+
+     <layout class="org.apache.log4j.PatternLayout">
+       <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
+     </layout>
+     
+     <filter class="org.jboss.logging.filter.TCLFilter">
+         <param name="AcceptOnMatch" value="true"/>
+         <param name="DeployURL" value="MailEngineEar.ear"/>
+     </filter>
+   </appender>
+
+   <appender name="MSG_UI_FILE" class="org.jboss.logging.appender.RollingFileAppender">
+     <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+     <param name="File" value="${jboss.server.log.dir}/MsgUI.log"/>
+     <param name="Append" value="true"/>
+     <param name="Threshold" value="DEBUG"/>
+     <param name="MaxFileSize" value="10000KB"/>
+     <param name="MaxBackupIndex" value="3"/>
+
+     <layout class="org.apache.log4j.PatternLayout">
+       <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
+     </layout>
+     
+     <filter class="org.jboss.logging.filter.TCLFilter">
+         <param name="AcceptOnMatch" value="true"/>
+         <param name="DeployURL" value="MsgUIEar.ear"/>
+     </filter>
+   </appender>
+
+   <appender name="MSG_READER_FILE" class="org.jboss.logging.appender.RollingFileAppender">
+     <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+     <param name="File" value="${jboss.server.log.dir}/MailReader.log"/>
+     <param name="Append" value="true"/>
+     <param name="Threshold" value="DEBUG"/>
+     <param name="MaxFileSize" value="10000KB"/>
+     <param name="MaxBackupIndex" value="3"/>
+
+     <layout class="org.apache.log4j.PatternLayout">
+       <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
+     </layout>
+     
+     <filter class="org.jboss.logging.filter.TCLFilter">
+         <param name="AcceptOnMatch" value="true"/>
+         <param name="DeployURL" value="MailReaderEar.ear"/>
+     </filter>
+   </appender>
+
+   <appender name="MSG_SENDER_FILE" class="org.jboss.logging.appender.RollingFileAppender">
+     <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+     <param name="File" value="${jboss.server.log.dir}/MailSender.log"/>
+     <param name="Append" value="true"/>
+     <param name="Threshold" value="DEBUG"/>
+     <param name="MaxFileSize" value="10000KB"/>
+     <param name="MaxBackupIndex" value="3"/>
+
+     <layout class="org.apache.log4j.PatternLayout">
+       <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
+     </layout>
+     
+     <filter class="org.jboss.logging.filter.TCLFilter">
+         <param name="AcceptOnMatch" value="true"/>
+         <param name="DeployURL" value="MailSenderEar.ear"/>
+     </filter>
+   </appender>
+
+
+1.2) add application categories
+
+   <!-- ============================= -->
+   <!-- Define Application categories -->
+   <!-- ============================= -->
+
+   <category name="org.springframework">
+     <priority value="INFO" />
+     <appender-ref ref="MSG_ENGINE_FILE"/>
+     <appender-ref ref="MSG_UI_FILE"/>
+     <appender-ref ref="MSG_READER_FILE"/>
+     <appender-ref ref="MSG_SENDER_FILE"/>
+   </category>
+
+   <category name="org.jboss">
+     <priority value="INFO" />
+     <appender-ref ref="MSG_ENGINE_FILE"/>
+     <appender-ref ref="MSG_UI_FILE"/>
+     <appender-ref ref="MSG_READER_FILE"/>
+     <appender-ref ref="MSG_SENDER_FILE"/>
+   </category>
+
+   <category name="com.legacytojava">
+     <priority value="DEBUG" />
+     <appender-ref ref="MSG_ENGINE_FILE"/>
+     <appender-ref ref="MSG_UI_FILE"/>
+     <appender-ref ref="MSG_READER_FILE"/>
+     <appender-ref ref="MSG_SENDER_FILE"/>
+   </category>
+
+
+2) 
+
+2.1) jboss4.2 - add mysql-ds.xml to server\default\deploy folder:
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id: jboss-setup.txt,v 1.9 2011/10/17 02:52:17 twang Exp $ -->
+<!--  Datasource config for MySQL using 3.0.9 available from:
+http://www.mysql.com/downloads/api-jdbc-stable.html
+-->
+
+<datasources>
+  <local-tx-datasource>
+    <jndi-name>MessageDS</jndi-name>
+    <connection-url>jdbc:mysql://localhost:3306/message</connection-url>
+    <driver-class>com.mysql.jdbc.Driver</driver-class>
+    <user-name>email</user-name>
+    <password>email</password>
+    <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.MySQLExceptionSorter</exception-sorter-class-name>
+    <!-- should only be used on drivers after 3.22.1 with "ping" support
+    <valid-connection-checker-class-name>org.jboss.resource.adapter.jdbc.vendor.MySQLValidConnectionChecker</valid-connection-checker-class-name>
+    -->
+    <!-- sql to call when connection is created
+    <new-connection-sql>some arbitrary sql</new-connection-sql>
+      -->
+    <!-- sql to call on an existing pooled connection when it is obtained from pool - MySQLValidConnectionChecker is preferred for newer drivers
+    <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql>
+      -->
+
+    <!-- corresponding type-mapping in the standardjbosscmp-jdbc.xml (optional) -->
+    <metadata>
+       <type-mapping>mySQL</type-mapping>
+    </metadata>
+  </local-tx-datasource>
+</datasources>
+
+2.2) jboss-5.1 - add mysql-xa-ds.xml to server\default\deploy folder:
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about local-tx-datasource -->
+<!-- $Id: jboss-setup.txt,v 1.9 2011/10/17 02:52:17 twang Exp $ -->
+<!--  Datasource config for MySQL using 3.0.9 available from:
+http://www.mysql.com/downloads/api-jdbc-stable.html
+-->
+
+<datasources>
+     <xa-datasource>
+         <jndi-name>MessageDS</jndi-name>
+         <xa-datasource-property name="URL">jdbc:mysql://localhost:3306/message</xa-datasource-property>
+         <xa-datasource-class>com.mysql.jdbc.jdbc2.optional.MysqlXADataSource</xa-datasource-class>
+         <user-name>email</user-name>
+         <password>email</password>
+         <track-connection-by-tx>true</track-connection-by-tx>
+         <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.MySQLExceptionSorter</exception-sorter-class-name>
+         <valid-connection-checker-class-name>org.jboss.resource.adapter.jdbc.vendor.MySQLValidConnectionChecker</valid-connection-checker-class-name>
+         <min-pool-size>1</min-pool-size>
+         <max-pool-size>10</max-pool-size>
+         <idle-timeout-minutes>10</idle-timeout-minutes>
+         
+         <!-- corresponding type-mapping in the standardjbosscmp-jdbc.xml (optional) -->
+         <metadata>
+             <type-mapping>mySQL</type-mapping>
+         </metadata>
+     </xa-datasource>
+ </datasources>
+ 
+ 
+
+3) 
+3.1) jboss 4.2 - add jbatch-destinations-service.xml to server\default\deploy\jms folder:
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id: jboss-setup.txt,v 1.9 2011/10/17 02:52:17 twang Exp $ -->
+
+<!-- 
+   | This file defines the default Queues and Topics that JBossMQ
+   | ships with.  The default Queues and Topics are used by the 
+   | JBoss test suite and by the sample jms programs.
+   |
+   | You can add other destinations to this file, or you can create other
+   | *-service.xml files to contain your application's destinations.
+ -->
+
+<server>
+  <!-- Destination without a configured SecurityManager or without a 
+       a SecurityConf will default to role guest with read=true, write=true,
+       create=false.
+  -->
+
+  <mbean code="org.jboss.mq.server.jmx.Queue"
+	 name="jboss.mq.destination:service=Queue,name=mailReaderOutput">
+    <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+  </mbean>
+  <mbean code="org.jboss.mq.server.jmx.Queue"
+	 name="jboss.mq.destination:service=Queue,name=ruleEngineOutput">
+    <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+  </mbean>
+  <mbean code="org.jboss.mq.server.jmx.Queue"
+	 name="jboss.mq.destination:service=Queue,name=mailSenderInput">
+	 <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+  </mbean>
+  <mbean code="org.jboss.mq.server.jmx.Queue"
+	 name="jboss.mq.destination:service=Queue,name=mailSenderOutput">
+	 <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+  </mbean>
+  <mbean code="org.jboss.mq.server.jmx.Queue"
+	 name="jboss.mq.destination:service=Queue,name=customerCareInput">
+	 <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+  </mbean>
+  <mbean code="org.jboss.mq.server.jmx.Queue"
+	 name="jboss.mq.destination:service=Queue,name=rmaRequestInput">
+	 <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+  </mbean>
+  <mbean code="org.jboss.mq.server.jmx.Queue"
+	 name="jboss.mq.destination:service=Queue,name=unHandledOutput">
+    <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+  </mbean>
+  <mbean code="org.jboss.mq.server.jmx.Queue"
+	 name="jboss.mq.destination:service=Queue,name=testQueue">
+    <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+  </mbean>
+
+</server>
+
+
+3.2) jboss 5.1 - add jbatch-destinations-service.xml to server\default\deploy\messaging folder:
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id: jboss-setup.txt,v 1.9 2011/10/17 02:52:17 twang Exp $ -->
+
+<!-- 
+   | This file defines the default Queues and Topics that JBossMQ
+   | ships with.  The default Queues and Topics are used by the 
+   | JBoss test suite and by the sample jms programs.
+   |
+   | You can add other destinations to this file, or you can create other
+   | *-service.xml files to contain your application's destinations.
+ -->
+
+<server>
+  <!-- Destination without a configured SecurityManager or without a 
+       a SecurityConf will default to role guest with read=true, write=true,
+       create=false.
+  -->
+
+  <mbean code="org.jboss.jms.server.destination.QueueService"
+       name="jboss.messaging.destination:service=Queue,name=mailReaderOutput"
+       xmbean-dd="xmdesc/Queue-xmbean.xml">
+   <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+   <depends>jboss.messaging:service=PostOffice</depends>
+    <attribute name="DLQ">
+      jboss.messaging.destination:service=Queue,name=unHandledOutput
+    </attribute>
+    <!-- attribute name="SecurityConfig">
+      <security>
+         <role name="guest" read="true" write="true"/>
+      </security>
+    </attribute -->
+    <attribute name="JNDIName">queue/mailReaderOutput</attribute>
+    <attribute name="RedeliveryDelay">1000</attribute>
+    <attribute name="MaxDeliveryAttempts">4</attribute>
+  </mbean>
+  <mbean code="org.jboss.jms.server.destination.QueueService"
+       name="jboss.messaging.destination:service=Queue,name=ruleEngineOutput"
+       xmbean-dd="xmdesc/Queue-xmbean.xml">
+   <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+   <depends>jboss.messaging:service=PostOffice</depends>
+  </mbean>
+  <mbean code="org.jboss.jms.server.destination.QueueService"
+       name="jboss.messaging.destination:service=Queue,name=mailSenderInput"
+       xmbean-dd="xmdesc/Queue-xmbean.xml">
+   <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+   <depends>jboss.messaging:service=PostOffice</depends>
+  </mbean>
+  <mbean code="org.jboss.jms.server.destination.QueueService"
+       name="jboss.messaging.destination:service=Queue,name=mailSenderOutput"
+       xmbean-dd="xmdesc/Queue-xmbean.xml">
+   <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+   <depends>jboss.messaging:service=PostOffice</depends>
+  </mbean>
+  <mbean code="org.jboss.jms.server.destination.QueueService"
+       name="jboss.messaging.destination:service=Queue,name=customerCareInput"
+       xmbean-dd="xmdesc/Queue-xmbean.xml">
+   <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+   <depends>jboss.messaging:service=PostOffice</depends>
+  </mbean>
+  <mbean code="org.jboss.jms.server.destination.QueueService"
+       name="jboss.messaging.destination:service=Queue,name=rmaRequestInput"
+       xmbean-dd="xmdesc/Queue-xmbean.xml">
+   <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+   <depends>jboss.messaging:service=PostOffice</depends>
+  </mbean>
+  <mbean code="org.jboss.jms.server.destination.QueueService"
+       name="jboss.messaging.destination:service=Queue,name=unHandledOutput"
+       xmbean-dd="xmdesc/Queue-xmbean.xml">
+   <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+   <depends>jboss.messaging:service=PostOffice</depends>
+  </mbean>
+  <mbean code="org.jboss.jms.server.destination.QueueService"
+       name="jboss.messaging.destination:service=Queue,name=testQueue"
+       xmbean-dd="xmdesc/Queue-xmbean.xml">
+   <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+   <depends>jboss.messaging:service=PostOffice</depends>
+  </mbean>
+
+</server>
+
+4)
+jboss 4.2 - modify jboss-service.xml in server/default/conf folder:
+jboss 5.1 - modify bindings-jboss-bean.xml to server/default/conf/bindingservice.beans/META-INF folder:
+
+Modify ports for Jboss NamingService:
+from 1099 to 2099
+from 1098 to 2098
+
+5) Copy mySql connector jar (version 5.1.22) to server/default/lib
+
+6) Modify ear-deployer-jboss-beans.xml to enable isolated classloading for ears
+	open server\default\deployers\ear-deployer-jboss-beans.xml
+	Change 
+		<property name="isolated">false</property>
+	to
+		<property name="isolated">true</property>
+
+
+=================================================
+Side Notes:
+
+Configure Connection Factory for JBoss Messaging (jboss5.1):
+
+ <?xml version="1.0" encoding="UTF-8"?>
+ <server>
+    <loader-repository>jboss.messaging:loader=ScopedLoaderRepository
+       <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
+    </loader-repository>
+    <mbean code="org.jboss.jms.server.connectionfactory.ConnectionFactory"
+       name="jboss.messaging.destination:service=ConnectionFactory"
+       xmbean-dd="xmdesc/ConnectionFactory-xmbean.xml">
+       <constructor>
+          <arg type="java.lang.String" value="myClientID"/>
+       </constructor>
+       <depends optional-attribute-name="ServerPeer">jboss.messaging:service=ServerPeer</depends>
+       <depends optional-attribute-name="Connector">jboss.messaging:service=Connector,transport=socket</depends>
+       <attribute name="PrefetchSize">10</attribute>
+       <attribute name="DefaultTempQueueFullSize">1000</attribute>
+       <attribute name="DefaultTempQueuePageSize">50</attribute>
+       <attribute name="DefaultTempQueueDownCacheSize">50</attribute>
+       <attribute name="JNDIBindings">
+          <bindings>
+             <binding>/MyConnectionFactory1</binding>
+             <binding>/factories/cf1</binding>>
+          </bindings>
+       </attribute>
+    </mbean>
+ </server>
+
+
+=================================================
+JBoss AS 7.1 Setup:
+
+1) standalone.conf - set JAVA_HOME="../../jdk1.6.0_37"
+   standalone.xml - set deployment-timeout="120000" in deployment-scanner tag
+
+2) Change ports under folder %JBOSS_HOME%/standalone/configuration:
+  A) standalone.xml: 8090 -> 8190, 8080 -> 8090
+  B) standalone-full.xml: 8090 -> 8190, 8080 -> 8090
+
+3) Setup MySQL data source:
+  A) create mysql/main under %JBOSS_HOME%/modules folder
+  B) create module.xml in the folder with following content:
+	<?xml version="1.0" encoding="UTF-8"?>
+	<module xmlns="urn:jboss:module:1.0" name="com.mysql">
+	  <resources>
+	    <resource-root path="mysql-connector-java-5.1.22-bin.jar"/>
+	  </resources>
+	  <dependencies>
+	    <module name="javax.api"/>
+	  </dependencies>
+	</module>
+  C) copy mysql connector jar file to the folder
+  D) Add following to standalone/xml inside datasources tag under %JBOSS_HOME%/standalone/configuration:
+  
+                  <datasource jndi-name="java:/MessageDS" pool-name="msgdb_pool"
+                    enabled="true" jta="true" use-java-context="true" use-ccm="true">
+                  <connection-url>jdbc:mysql://localhost:3306/message</connection-url>
+                  <driver-class>com.mysql.jdbc.Driver</driver-class>
+                  <driver>mysql</driver>
+                  <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+                  <pool>
+                      <min-pool-size>2</min-pool-size>
+                      <max-pool-size>20</max-pool-size>
+                      <prefill>true</prefill>
+                      <use-strict-min>false</use-strict-min>
+                  </pool>
+                  <security>
+                      <user-name>email</user-name>
+                      <password>email</password>
+                  </security>
+                  <validation>
+                      <validate-on-match>false</validate-on-match>
+                      <background-validation>false</background-validation>
+                  </validation>
+                  <statement>
+                      <prepared-statement-cache-size>100</prepared-statement-cache-size>
+                      <share-prepared-statements/>
+                  </statement>
+                </datasource>
+   E: Add following to standalone/xml inside drivers tag under %JBOSS_HOME%/standalone/configuration:
+                <driver name="mysql" module="com.mysql">
+               		<xa-datasource-class>com.mysql.jdbc.jdbc2.optional.MysqlXADataSource</xa-datasource-class>
+                </driver>
+   
+ 4) Setup JMS messaging
+   A) Add following to standalone/xml inside subsystem xmlns="urn:jboss:domain:ejb3:1.2":
+            <mdb>
+                <resource-adapter-ref resource-adapter-name="hornetq-ra"/>
+                <bean-instance-pool-ref pool-name="mdb-strict-max-pool"/>
+            </mdb>
+   B) Add following to standalone.xml inside profile tag:
+           <subsystem xmlns="urn:jboss:domain:messaging:1.1">
+            <hornetq-server>
+                <persistence-enabled>true</persistence-enabled>
+                <journal-file-size>102400</journal-file-size>
+                <journal-min-files>2</journal-min-files>
+
+                <connectors>
+                    <netty-connector name="netty" socket-binding="messaging"/>
+                    <netty-connector name="netty-throughput" socket-binding="messaging-throughput">
+                        <param key="batch-delay" value="50"/>
+                    </netty-connector>
+                    <in-vm-connector name="in-vm" server-id="0"/>
+                </connectors>
+
+                <acceptors>
+                    <netty-acceptor name="netty" socket-binding="messaging"/>
+                    <netty-acceptor name="netty-throughput" socket-binding="messaging-throughput">
+                        <param key="batch-delay" value="50"/>
+                        <param key="direct-deliver" value="false"/>
+                    </netty-acceptor>
+                    <in-vm-acceptor name="in-vm" server-id="0"/>
+                </acceptors>
+
+                <security-settings>
+                    <security-setting match="#">
+                        <permission type="send" roles="guest"/>
+                        <permission type="consume" roles="guest"/>
+                        <permission type="createNonDurableQueue" roles="guest"/>
+                        <permission type="deleteNonDurableQueue" roles="guest"/>
+                    </security-setting>
+                </security-settings>
+
+                <address-settings>
+                    <address-setting match="#">
+                        <dead-letter-address>jms.queue.DLQ</dead-letter-address>
+                        <expiry-address>jms.queue.ExpiryQueue</expiry-address>
+                        <redelivery-delay>0</redelivery-delay>
+                        <max-size-bytes>10485760</max-size-bytes>
+                        <address-full-policy>BLOCK</address-full-policy>
+                        <message-counter-history-day-limit>10</message-counter-history-day-limit>
+                    </address-setting>
+                    <address-setting match="jms.queue.mailReaderOutput">
+                        <dead-letter-address>jms.queue.unHandledOutput</dead-letter-address>
+                        <redelivery-delay>1000</redelivery-delay>
+                        <max-delivery-attempts>4</max-delivery-attempts>
+                    </address-setting>
+                </address-settings>
+
+                <jms-connection-factories>
+                    <connection-factory name="InVmConnectionFactory">
+                        <connectors>
+                            <connector-ref connector-name="in-vm"/>
+                        </connectors>
+                        <entries>
+                            <entry name="java:/ConnectionFactory"/>
+                        </entries>
+                    </connection-factory>
+                    <connection-factory name="RemoteConnectionFactory">
+                        <connectors>
+                            <connector-ref connector-name="netty"/>
+                        </connectors>
+                        <entries>
+                            <entry name="RemoteConnectionFactory"/>
+                            <entry name="java:jboss/exported/jms/RemoteConnectionFactory"/>
+                        </entries>
+                    </connection-factory>
+                    <pooled-connection-factory name="hornetq-ra">
+                        <transaction mode="xa"/>
+                        <connectors>
+                            <connector-ref connector-name="in-vm"/>
+                        </connectors>
+                        <entries>
+                            <entry name="java:/JmsXA"/>
+                        </entries>
+                    </pooled-connection-factory>
+                </jms-connection-factories>
+
+                <jms-destinations>
+                    <jms-queue name="testQueue">
+                        <entry name="queue/test"/>
+                        <entry name="java:jboss/exported/jms/queue/test"/>
+                    </jms-queue>
+                    <jms-queue name="mailReaderOutput">
+                        <entry name="queue/mailReaderOutput"/>
+                        <entry name="java:jboss/exported/jms/queue/mailReaderOutput"/>
+                    </jms-queue>
+                    <jms-queue name="ruleEngineOutput">
+                        <entry name="queue/ruleEngineOutput"/>
+                        <entry name="java:jboss/exported/jms/queue/ruleEngineOutput"/>
+                    </jms-queue>
+                    <jms-queue name="mailSenderInput">
+                        <entry name="queue/mailSenderInput"/>
+                        <entry name="java:jboss/exported/jms/queue/mailSenderInput"/>
+                    </jms-queue>
+                    <jms-queue name="mailSenderOutput">
+                        <entry name="queue/mailSenderOutput"/>
+                        <entry name="java:jboss/exported/jms/queue/mailSenderOutput"/>
+                    </jms-queue>
+                    <jms-queue name="customerCareInput">
+                        <entry name="queue/customerCareInput"/>
+                        <entry name="java:jboss/exported/jms/queue/customerCareInput"/>
+                    </jms-queue>
+                    <jms-queue name="rmaRequestInput">
+                        <entry name="queue/rmaRequestInput"/>
+                        <entry name="java:jboss/exported/jms/queue/rmaRequestInput"/>
+                    </jms-queue>
+                    <jms-queue name="unHandledOutput">
+                        <entry name="queue/unHandledOutput"/>
+                        <entry name="java:jboss/exported/jms/queue/unHandledOutput"/>
+                    </jms-queue>
+                    <jms-topic name="testTopic">
+                        <entry name="topic/test"/>
+                        <entry name="java:jboss/exported/jms/topic/test"/>
+                    </jms-topic>
+                </jms-destinations>
+            </hornetq-server>
+        </subsystem>
+    C) Add following to standalone.xml inside socket-binding-group tag:
+        <socket-binding name="messaging" port="5445"/>
+        <socket-binding name="messaging-throughput" port="5455"/>
+      
