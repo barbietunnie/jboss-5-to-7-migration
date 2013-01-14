@@ -144,12 +144,13 @@
 		<delete file="${build.dist.dir}/${msg.mailReaderEar}.ear" failonerror="no"/>
 		<ear destfile="${build.dist.dir}/${msg.mailReaderEar}.ear"
 			appxml="${basedir}/metadata/application_mailreader.xml">
-			<fileset dir="${basedir}/${msg.core}/dist" includes="${msg.core}.jar" />
-			<fileset dir="${basedir}/${msg.timerEjb}/dist" includes="*.jar,*.war" />
-			<fileset dir="${basedir}/${msg.timerWeb}/dist" includes="*.jar,*.war" />
-			<fileset dir="${basedir}/${msg.timerEjb}/dist/lib">
+			<zipfileset dir="${basedir}/${msg.core}/dist" prefix="lib" includes="${msg.core}.jar" />
+			<zipfileset dir="${basedir}/${msg.timerEjb}/dist" includes="TimerEJB.jar" />
+			<zipfileset dir="${basedir}/${msg.timerEjb}/dist" prefix="lib" includes="*Client.jar" />
+			<zipfileset dir="${basedir}/${msg.timerWeb}/dist" includes="*.war" />
+			<zipfileset dir="${basedir}/${msg.timerEjb}/dist/lib" prefix="lib">
 				<include name="*.jar"/>
-			</fileset>
+			</zipfileset>
 		</ear>
 	</target>
 	
@@ -158,11 +159,11 @@
 		<delete file="${build.dist.dir}/${msg.mailSenderEar}.ear" failonerror="no"/>
 		<ear destfile="${build.dist.dir}/${msg.mailSenderEar}.ear"
 			appxml="${basedir}/metadata/application_mailsender.xml">
-			<fileset dir="${basedir}/${msg.core}/dist" includes="${msg.core}.jar" />
-			<fileset dir="${basedir}/${msg.mailSenderEjb}/dist" includes="*.jar,*.war" />
-			<fileset dir="${basedir}/${msg.mailSenderEjb}/dist/lib">
+			<zipfileset dir="${basedir}/${msg.core}/dist" prefix="lib" includes="${msg.core}.jar" />
+			<zipfileset dir="${basedir}/${msg.mailSenderEjb}/dist" includes="*.jar" />
+			<zipfileset dir="${basedir}/${msg.mailSenderEjb}/dist/lib" prefix="lib">
 				<include name="*.jar"/>
-			</fileset>
+			</zipfileset>
 		</ear>
 	</target>
 	
