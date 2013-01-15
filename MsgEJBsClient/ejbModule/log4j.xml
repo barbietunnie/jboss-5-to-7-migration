@@ -8,7 +8,7 @@
       <param name="Threshold" value="DEBUG"/>
 
       <layout class="org.apache.log4j.PatternLayout">
-         <param name="ConversionPattern" value="[%d] [%p,%c{1}] %m%n"/>
+         <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
       </layout>
    </appender>
 
@@ -17,7 +17,7 @@
       <param name="Append" value="false"/>
 
       <layout class="org.apache.log4j.PatternLayout">
-         <param name="ConversionPattern" value="[%d] [%p,%c{1}] %m%n"/>
+         <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
       </layout>
    </appender>
 
