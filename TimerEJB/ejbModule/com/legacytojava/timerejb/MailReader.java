@@ -10,13 +10,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.annotation.Resource.AuthenticationType;
 import javax.ejb.EJBException;
 import javax.ejb.Local;
 import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.Remote;
-import javax.ejb.Remove;
 import javax.ejb.Schedule;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
@@ -207,8 +207,9 @@ public class MailReader implements MailReaderRemote, MailReaderLocal {
 		startMailReader(60);
 	}
 	
-	@Remove // only applicable to Stateful session bean
-	public void remove() {
+	//@Remove // only applicable to Stateful session bean
+	@PreDestroy
+	public void shutdownThreadPool() {
 		if (pool != null) {
 			pool.shutdown();
 		}
