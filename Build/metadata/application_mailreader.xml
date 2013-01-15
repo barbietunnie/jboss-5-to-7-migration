@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application id="Application_ID" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd"
+	version="5">
+	<display-name>MailReaderEar</display-name>
+	<module id="WebModule_1185478877484">
+		<web>
+			<web-uri>TimerWeb.war</web-uri>
+			<context-root>TimerWeb</context-root>
+		</web>
+	</module>
+	<module id="EjbModule_1185487743828">
+		<ejb>TimerEJB.jar</ejb>
+	</module>
+</application>
