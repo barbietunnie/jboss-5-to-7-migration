@@ -17,6 +17,7 @@ import javax.ejb.Local;
 import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.Remote;
 import javax.ejb.Remove;
+import javax.ejb.Schedule;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.Timeout;
@@ -83,6 +84,7 @@ public class MailReader implements MailReaderRemote, MailReaderLocal {
 
 	public void startMailReader(int interval) {
 		stopMailReader(); // stop pending timers
+		readers.clear();
 		readers.addAll(getMailReaders());
 		INTERVAL = interval < MINIMUM_WAIT ? MINIMUM_WAIT : interval;
 		 // at least 5 seconds
@@ -148,24 +150,17 @@ public class MailReader implements MailReaderRemote, MailReaderLocal {
 	
 	@Timeout
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public void ejbTimeout(Timer timer) {
+	public void programmaticTimeout(Timer timer) {
 		if (readers.isEmpty()) {
 			logger.warn("########## Mail Reader list is empty ##########");
 			return;
 		}
-		logger.info("ejbTimeout() - " + timer.getInfo());
+		logger.info("programmaticTimeout() - " + timer.getInfo());
 		if ("DuplicateCheck".equals(timer.getInfo())) {
 			duplicateCheck.purge(24); // purge records older than 24 hours
 			context.getTimerService().createTimer(60 * 60 * 1000, "DuplicateCheck");
 		}
 		else { // MailReader
-			java.util.Date currTime = new java.util.Date();
-			if ((currTime.getTime() - lastUpdtTime.getTime()) > (15*60*1000)) {
-				// reload mailboxes every 15 minutes
-				readers.clear();
-				readers.addAll(getMailReaders());
-				lastUpdtTime = currTime;
-			}
 			Future<?>[] futures = new Future[readers.size()];
 			for (int i = 0; i < futures.length; i++) {
 				MailReaderBoImpl reader = (MailReaderBoImpl) readers.get(i);
@@ -192,8 +187,24 @@ public class MailReader implements MailReaderRemote, MailReaderLocal {
 					logger.error("ExecutionException caught", e);
 				}
 			}
+			java.util.Date currTime = new java.util.Date();
+			if ((currTime.getTime() - lastUpdtTime.getTime()) > (15*60*1000)) {
+				// reload mailboxes every 15 minutes
+				readers.clear();
+				readers.addAll(getMailReaders());
+				lastUpdtTime = currTime;
+			}
 			context.getTimerService().createTimer(INTERVAL * 1000, "MailReader");
 		}
+	}
+	
+	/*
+	 * XXX NOT working with JBoss 7.1.
+	 */
+	@Schedule(second="0/30", info="Single Timer")
+	public void automaticTimeout(Timer timer) {
+		logger.info("Automatic timeout occurred : " + timer.getInfo());
+		startMailReader(60);
 	}
 	
 	@Remove // only applicable to Stateful session bean
