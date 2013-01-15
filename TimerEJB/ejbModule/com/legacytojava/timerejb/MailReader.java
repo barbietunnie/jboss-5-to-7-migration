@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.annotation.Resource.AuthenticationType;
@@ -19,7 +20,8 @@ import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.Remote;
 import javax.ejb.Schedule;
 import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerService;
@@ -43,7 +45,13 @@ import com.legacytojava.message.vo.MailBoxVo;
 /**
  * Session Bean implementation class MailReader
  */
-@Stateless(name="MailReader",mappedName="ejb/MailReader")
+/*
+ * Use Startup annotation to ensures that bean is loaded when server is started
+ * so that lifecycle callback methods (@PostConstruct) will be invoked.
+ */
+@Startup
+@Singleton(name="MailReader",mappedName="ejb/MailReader")
+//@Stateless(name="MailReader",mappedName="ejb/MailReader")
 @TransactionManagement(TransactionManagementType.CONTAINER)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Resource(mappedName = "java:jboss/MessageDS", 
@@ -82,8 +90,14 @@ public class MailReader implements MailReaderRemote, MailReaderLocal {
 		//pool = Executors.newCachedThreadPool();
     }
 
+    @PostConstruct
+	public void starttUp() {
+		logger.info("Entering startUp() method, starting Mail Readers...");
+		startMailReader(60);
+	}
+
 	public void startMailReader(int interval) {
-		stopMailReader(); // stop pending timers
+ 		stopMailReader(); // stop pending timers
 		readers.clear();
 		readers.addAll(getMailReaders());
 		INTERVAL = interval < MINIMUM_WAIT ? MINIMUM_WAIT : interval;
@@ -201,13 +215,12 @@ public class MailReader implements MailReaderRemote, MailReaderLocal {
 	/*
 	 * XXX NOT working with JBoss 7.1.
 	 */
-	@Schedule(second="0/30", info="Single Timer")
+	@Schedule(second="0/30", info="Single Timer") // expire once on the next 30th second.
 	public void automaticTimeout(Timer timer) {
-		logger.info("Automatic timeout occurred : " + timer.getInfo());
+		logger.info("Automatic timeout occured : "  + timer.getInfo());
 		startMailReader(60);
 	}
-	
-	//@Remove // only applicable to Stateful session bean
+
 	@PreDestroy
 	public void shutdownThreadPool() {
 		if (pool != null) {
