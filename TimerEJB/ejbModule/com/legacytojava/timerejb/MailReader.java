@@ -148,8 +148,9 @@ public class MailReader implements MailReaderRemote, MailReaderLocal {
 	private void stopTimer(Timer timer) {
 		if (timer != null) {
 			try {
+				Object info = timer.getInfo();
 				timer.cancel();
-				logger.info("stopTimer(): timer stopped.");
+				logger.info("stopTimer(): timer stopped : " + info);
 			}
 			catch (NoSuchObjectLocalException e) {
 				logger.error("NoSuchObjectLocalException caught", e);
