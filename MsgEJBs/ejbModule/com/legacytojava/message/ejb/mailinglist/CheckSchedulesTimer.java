@@ -3,6 +3,7 @@ package com.legacytojava.message.ejb.mailinglist;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.annotation.Resource.AuthenticationType;
 import javax.ejb.EJB;
@@ -10,7 +11,8 @@ import javax.ejb.Local;
 import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerService;
@@ -28,7 +30,8 @@ import com.legacytojava.message.vo.ReloadFlagsVo;
 /**
  * Session Bean implementation class CheckSchedulesTimer
  */
-@Stateless(mappedName = "ejb/CheckSchedulesTimer")
+@Startup
+@Singleton(mappedName = "ejb/CheckSchedulesTimer")
 @TransactionManagement(TransactionManagementType.CONTAINER)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Resource(mappedName = "java:jboss/MessageDS", 
@@ -49,16 +52,10 @@ public class CheckSchedulesTimer implements CheckSchedulesTimerRemote, CheckSche
      * Default constructor. 
      */
     public CheckSchedulesTimer() {
-    	//reloadFlagsDao = (ReloadFlagsDao)SpringUtil.getAppContext().getBean("reloadFlagsDao");
+    	reloadFlagsDao = (ReloadFlagsDao)SpringUtil.getAppContext().getBean("reloadFlagsDao");
     }
 
-    private ReloadFlagsDao getReloadFlagsDao() {
-    	if (reloadFlagsDao == null) {
-    		reloadFlagsDao = (ReloadFlagsDao)SpringUtil.getAppContext().getBean("reloadFlagsDao");
-    	}
-    	return reloadFlagsDao;
-    }
-
+    @PostConstruct
     public void startTimers() {
 		logger.info("Entering startTimers()... ");
 		stopTimers();
@@ -81,7 +78,9 @@ public class CheckSchedulesTimer implements CheckSchedulesTimerRemote, CheckSche
 	private void stopTimer(Timer timer) {
 		if (timer != null) {
 			try {
+				Object info = timer.getInfo();
 				timer.cancel();
+				logger.info("stopTimer(): timer stopped : " + info);
 			}
 			catch (NoSuchObjectLocalException e) {
 				logger.error("NoSuchObjectLocalException caught", e);
@@ -99,7 +98,7 @@ public class CheckSchedulesTimer implements CheckSchedulesTimerRemote, CheckSche
 	public void ejbTimeout(Timer timer) {
 		//if (isDebugEnabled)
 		//	logger.debug("Entering ejbTimeout() - " + timer.getInfo());
-		ReloadFlagsVo vo = getReloadFlagsDao().select();
+		ReloadFlagsVo vo = reloadFlagsDao.select();
 		if (reloadFlagsVo != null && vo != null) {
 			if (reloadFlagsVo.getSchedules() < vo.getSchedules() ||
 					reloadFlagsVo.getTemplates() < vo.getTemplates()) {

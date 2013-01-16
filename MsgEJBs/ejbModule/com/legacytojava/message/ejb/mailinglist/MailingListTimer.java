@@ -13,7 +13,7 @@ import javax.ejb.Local;
 import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerService;
@@ -37,7 +37,7 @@ import com.legacytojava.message.vo.emailaddr.EmailTemplateVo;
 /**
  * Session Bean implementation class MailingListTimer
  */
-@Stateless(mappedName = "ejb/MailingListTimer")
+@Singleton(mappedName = "ejb/MailingListTimer")
 @TransactionManagement(TransactionManagementType.CONTAINER)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Resource(mappedName = "java:jboss/MessageDS", 
@@ -183,7 +183,9 @@ public class MailingListTimer implements MailingListTimerRemote, MailingListTime
 	private void stopTimer(Timer timer) {
 		if (timer != null) {
 			try {
+				Object info = timer.getInfo();
 				timer.cancel();
+				logger.info("stopTimer(): timer stopped : " + info);
 			}
 			catch (NoSuchObjectLocalException e) {
 				logger.error("NoSuchObjectLocalException caught", e);
