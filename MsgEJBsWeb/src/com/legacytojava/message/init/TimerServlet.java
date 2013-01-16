@@ -126,8 +126,8 @@ public class TimerServlet extends javax.servlet.http.HttpServlet implements java
 		try {
 			mailingListTimer.scheduleTimerTasks();
 			logger.info("startTimerEjb() - MailingListTimer started");
-			checkScehdulesTimer.startTimers();
-			logger.info("startTimerEjb() - CheckSchedulesTimer started");
+			//checkScehdulesTimer.startTimers();
+			//logger.info("startTimerEjb() - CheckSchedulesTimer started");
 		}
 		catch (EJBException e) {
 			logger.error("EJBException caught", e);
