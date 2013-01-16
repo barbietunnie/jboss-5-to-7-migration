@@ -47,9 +47,7 @@ public class TimerServlet extends javax.servlet.http.HttpServlet implements java
 			throws ServletException, IOException {
 		logger.warn("doPost() - " + request.getQueryString());
 	}
-
-	static boolean isEjb3_1Supported = true;
-
+	
 	/* (non-Javadoc)
 	 * @see javax.servlet.GenericServlet#init()
 	 */
@@ -57,14 +55,12 @@ public class TimerServlet extends javax.servlet.http.HttpServlet implements java
 		super.init();
 		//servletContext = getServletContext();
 		initLog4J();
-		if (isEjb3_1Supported == false) {
-			try {
-				startTimerEjb();
-			}
-			catch (Exception e) {
-				logger.error("Exception caught", e);
-				throw new ServletException(e.getMessage());
-			}
+		try {
+			//startTimerEjb();
+		}
+		catch (Exception e) {
+			logger.error("Exception caught", e);
+			throw new ServletException(e.getMessage());
 		}
 	}
 	
