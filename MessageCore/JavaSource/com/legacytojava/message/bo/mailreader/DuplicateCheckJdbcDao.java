@@ -1,5 +1,6 @@
 package com.legacytojava.message.bo.mailreader;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -7,8 +8,13 @@ import java.util.GregorianCalendar;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
-import com.legacytojava.jbatch.JbMain;
+import com.legacytojava.jbatch.SpringUtil;
 
 /**
  * This class is used to check duplicate messages. It uses derby database as its
@@ -16,13 +22,24 @@ import com.legacytojava.jbatch.JbMain;
  * called with its SMTP message-id, and the return should be evaluated to see if
  * it's a duplicate message.
  */
+@Component("duplicateCheck")
 public class DuplicateCheckJdbcDao implements DuplicateCheckDao {
 	static final Logger logger = Logger.getLogger(DuplicateCheckJdbcDao.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
-	private DataSource dataSource;
-	private String purgeAfter;
+	@Autowired
+	private DataSource mysqlDataSource;
+	private String purgeAfter = "24";
+
+	private JdbcTemplate jdbcTemplate;
 	
+	private JdbcTemplate getJdbcTemplate() {
+		if (jdbcTemplate == null) {
+			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
+		}
+		return jdbcTemplate;
+	}
+
 	/**
 	DROP INDEX MSGIDDUP_index;
 	DROP TABLE MSGIDDUP;
@@ -36,19 +53,15 @@ public class DuplicateCheckJdbcDao implements DuplicateCheckDao {
 	use ("jdbc:cloudscape:dbcache;create=true");
 	*/
 	
-	/** 
-	 * Constructor
-	 */
-	public DuplicateCheckJdbcDao() {
-	}
-	
 	public static void main(String[] args) {
-		DuplicateCheckDao dCheck = (DuplicateCheckDao) JbMain.getBatchAppContext()
+		DuplicateCheckDao dCheck = (DuplicateCheckDao) SpringUtil.getDaoAppContext()
 				.getBean("duplicateCheck");
 		try {
 			String msgId = "1223344556788990";
 			boolean isDuplicate = dCheck.isDuplicate(msgId);
 			System.out.println("Is " + msgId + " duplicate? " + isDuplicate);
+			
+			dCheck.process(new PurgeTask());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -56,6 +69,12 @@ public class DuplicateCheckJdbcDao implements DuplicateCheckDao {
 		System.exit(0);
 	}
 	
+	private static class PurgeTask extends java.util.TimerTask {
+        public void run() {
+            logger.info("Time's up!");
+        }
+    }
+
 	/**
 	 * processor entry point called by Timer task
 	 * 
@@ -65,7 +84,7 @@ public class DuplicateCheckJdbcDao implements DuplicateCheckDao {
 	 *             if any error
 	 */
 	public void process(Object req) throws Exception {
-		if (req!=null && req instanceof java.util.TimerTask) {
+		if (req instanceof java.util.TimerTask) {
 			// perform purge (on MSGIDDUP table) hourly
 			logger.info("Prepare to purge aged records...");
 			int hours=0;
@@ -85,83 +104,45 @@ public class DuplicateCheckJdbcDao implements DuplicateCheckDao {
 	 * @return - true - duplicate key
 	 */
 	public synchronized boolean isDuplicate(String msg_id) {
-		boolean duplicate = false;
-		if (dataSource==null) return duplicate;
-		
-		java.sql.Connection con=null;
-		try {
-			con = dataSource.getConnection();
-			// prepare for insert of a message-
-			java.sql.PreparedStatement pstmt = con.prepareStatement(
-				"insert into MSGIDDUP values "
+		String sql = "insert into MSGIDDUP values "
 				+ "(?"
 				+ ", ?"
-				+ ")");
-			
-			java.sql.Timestamp tms = new java.sql.Timestamp(new Date().getTime());
-			pstmt.clearParameters();
-			pstmt.setString(1,msg_id);
-			pstmt.setTimestamp(2,tms);
-			
-			pstmt.executeUpdate();
-			pstmt.close();
-			if (!con.getAutoCommit())
-				con.commit();
+				+ ")";
+		ArrayList<Object> fields = new ArrayList<Object>();
+		fields.add(msg_id);
+		fields.add(new java.sql.Timestamp(System.currentTimeMillis()));
+		try {
+			getJdbcTemplate().update(sql, fields.toArray());
 		}
-		catch (java.sql.SQLException e)	{
-			logger.error("SQLException caught during insert", e);
+		catch(DuplicateKeyException dke) {
+			logger.error("DuplicateKeyException caught: " + dke.getMessage());
+			return true;
+		}
+		catch (BadSqlGrammarException e) {
+			logger.error("Exception caught during insert", e);
 			if (e.getMessage().toLowerCase().indexOf("does not exist") >= 0 /* Derby */
 					|| e.getMessage().toLowerCase().indexOf("doesn't exist") >= 0 /* MySQL */) {
 				// table does not exist, create one.
 				try {
-					java.sql.PreparedStatement pstmt = con.prepareStatement(
+					String sql_create =
 						"create table MSGIDDUP ("
 						+ "message_id varchar(200) not null primary key "
 						+ ",add_time timestamp not null"
-						+ ")");
-					pstmt.executeUpdate();
-					pstmt.close();
-					
-					pstmt = con.prepareStatement(
-						"create index MSGIDDUP_INDEX on MSGIDDUP ("
-						+ "add_time"
-						+ ")");
-					pstmt.executeUpdate();
-					pstmt.close();
-					if (!con.getAutoCommit())
-						con.commit();
-					
+						+ ")";
+					getJdbcTemplate().update(sql_create);
 					logger.info("DuplicateCheck: table MSGIDDUP and its index created.");
 				}
-				catch (java.sql.SQLException se) {
+				catch (Exception se) {
 					logger.error("Failed to create MSGIDDUP table/index", se);
 				}
 			}
 			else if (e.getMessage().indexOf("duplicate key") >= 0 /* Derby */
 					|| e.getMessage().indexOf("Duplicate entry") >= 0 /* MySQL */) {
-				duplicate = true;
+				// deprecated - should be caught by DuplicateKeyException
+				return true;
 			}
-			
-			try { 
-				con.rollback(); 
-			}
-			catch (Exception e2) {}
 		}
-		catch (Exception e)	{
-			logger.error("Exception caught during insert", e);
-			try { 
-				con.rollback();
-			}
-			catch (Exception e2) {}
-		}
-		finally	{
-			try	{
-				if (con!=null)
-					con.close();
-			}
-			catch (Exception e) {}
-		}
-		return duplicate;
+		return false;
 	}
 	
 	/**
@@ -171,59 +152,20 @@ public class DuplicateCheckJdbcDao implements DuplicateCheckDao {
 	 *            records older than the hours will be purged
 	 */
 	public synchronized void purge(int hours) {
-		if (dataSource==null) return;
 		logger.info("purge() - purge records older than " + hours + " hours...");
-		java.sql.Connection con=null;
-		try	{
-			con = dataSource.getConnection();
-			java.sql.PreparedStatement pstmt = null;
-			// prepare for delete of aged records
-			pstmt = con.prepareStatement(
-				"delete from MSGIDDUP"
-				+ " where ADD_TIME < ?"
-				);
-			pstmt.clearParameters();
-			
-			Calendar calendar = new GregorianCalendar();
-			calendar.add(Calendar.HOUR,-hours);
-			Date go_back=calendar.getTime();
-			pstmt.setTimestamp(1,new java.sql.Timestamp(go_back.getTime()));
-			
-			int rows = pstmt.executeUpdate();
-			pstmt.close();
-			if (!con.getAutoCommit())
-				con.commit();
-			logger.info("purge() - number of records purged: "+rows);
-		}
-		catch (java.sql.SQLException e)	{
-			logger.error("SQLException caught during delete", e);
-			try {
-				con.rollback();
-			}
-			catch (Exception e2) {}
-		}
-		catch (Exception e)	{
-			logger.error("Exception caught during delete", e);
-			try {
-				con.rollback();
-			}
-			catch (Exception e2) {}
-		}
-		finally	{
-			try	{
-				if (con!=null)
-					con.close();
-			}
-			catch (Exception e) {}
-		}
-	}
+		// prepare for delete of aged records
+		String sql =
+			"delete from MSGIDDUP"
+			+ " where ADD_TIME < ?";
+		
+		Calendar calendar = new GregorianCalendar();
+		calendar.add(Calendar.HOUR, -hours);
+		Date go_back=calendar.getTime();
 
-	public DataSource getDataSource() {
-		return dataSource;
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
+		ArrayList<Object> fields = new ArrayList<Object>();
+		fields.add(new java.sql.Timestamp(go_back.getTime()));
+		int rows = getJdbcTemplate().update(sql, fields.toArray());
+		logger.info("purge() - number of records purged: "+rows);
 	}
 
 	public String getPurgeAfter() {
