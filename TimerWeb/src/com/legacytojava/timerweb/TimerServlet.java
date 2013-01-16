@@ -68,6 +68,8 @@ public class TimerServlet extends javax.servlet.http.HttpServlet implements java
 		}
 	}
 	
+	boolean useJbossLogger = true;
+
 	private void initLog4J() {
 		Properties props = new Properties();
 		Properties sysProps = System.getProperties();
@@ -87,8 +89,8 @@ public class TimerServlet extends javax.servlet.http.HttpServlet implements java
 		// the System Properties.
 		sysProps.putAll(props);
 		
-		boolean jbossLog4j = true;
-		if (jbossLog4j) return; // use jboss's log4j.xml
+		if (useJbossLogger) return; // use jboss's log4j.xml
+
 		URL log4jUrl = getAsUrl("log4j-timer.xml");
 		// following codes are ignored.
 		if (log4jUrl != null) {
