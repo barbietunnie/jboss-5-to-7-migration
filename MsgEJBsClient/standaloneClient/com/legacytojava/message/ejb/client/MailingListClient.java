@@ -22,31 +22,32 @@ import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
  */
 public class MailingListClient {
 	static final Logger logger = Logger.getLogger(MailingListClient.class);
+	static boolean testMailingList = true;
 	public static void main(String[] args) {
 		MailingListClient mailingListClient = new MailingListClient();
 		try {
-			if (true) {
+			if (testMailingList) {
 				mailingListClient.broadcast("SampleNewsletter2");
 			}
-			if (true) {
+			if (testMailingList) {
 				String toAddr = "testto@localhost";
 				Map<String, String> vars = new HashMap<String, String>();
 				vars.put("CustomerName", "List Subscriber");
 				mailingListClient.sendMail(toAddr, vars, "SampleNewsletter2");
 			}
-			if (true) {
+			if (testMailingList) {
 				mailingListClient.unSubscribe("twang@localhost", "SMPLLST1");
 			}
-			if (true) {
+			if (testMailingList) {
 				mailingListClient.subscribe("twang@localhost", "SMPLLST1");
 			}
-			if (true) {
+			if (testMailingList) {
 				mailingListClient.updateClickCount("jsmith@test.com", "SMPLLST1");
 			}
-			if (true) {
+			if (testMailingList) {
 				mailingListClient.optInRequest("test2@test.com", "SMPLLST1");
 			}
-			if (true) {
+			if (testMailingList) {
 				mailingListClient.optInConfirm("test2@test.com", "SMPLLST1");
 			}
 		}
