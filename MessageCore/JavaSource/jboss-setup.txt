@@ -402,15 +402,15 @@ JBoss AS 7.1 Setup:
   C) copy mysql connector jar file to the folder
   D) Add following to standalone/xml inside datasources tag under %JBOSS_HOME%/standalone/configuration:
   
-                  <datasource jndi-name="java:/MessageDS" pool-name="msgdb_pool"
+                  <datasource jndi-name="java:jboss/MessageDS" pool-name="msgdb_pool"
                     enabled="true" jta="true" use-java-context="true" use-ccm="true">
                   <connection-url>jdbc:mysql://localhost:3306/message</connection-url>
                   <driver-class>com.mysql.jdbc.Driver</driver-class>
                   <driver>mysql</driver>
                   <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
                   <pool>
-                      <min-pool-size>2</min-pool-size>
-                      <max-pool-size>20</max-pool-size>
+                      <min-pool-size>5</min-pool-size>
+                      <max-pool-size>50</max-pool-size>
                       <prefill>true</prefill>
                       <use-strict-min>false</use-strict-min>
                   </pool>
@@ -442,6 +442,7 @@ JBoss AS 7.1 Setup:
            <subsystem xmlns="urn:jboss:domain:messaging:1.1">
             <hornetq-server>
                 <persistence-enabled>true</persistence-enabled>
+                <security-enabled>false</security-enabled>
                 <journal-file-size>102400</journal-file-size>
                 <journal-min-files>2</journal-min-files>
 
