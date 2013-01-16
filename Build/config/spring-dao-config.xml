@@ -19,11 +19,5 @@
 
 	<context:component-scan base-package="com.legacytojava.message.dao, com.legacytojava.message.bo" />
 	<context:annotation-config/>
-	
-	<bean id="duplicateCheck"
-		class="com.legacytojava.message.bo.mailreader.DuplicateCheckJdbcDao">
-		<property name="dataSource" ref="mysqlDataSource" />
-		<property name="purgeAfter" value="24"/>
-	</bean>
 
 </beans>

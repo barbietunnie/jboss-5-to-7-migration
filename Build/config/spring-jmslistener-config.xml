@@ -39,12 +39,10 @@
 	        <prop key="java.naming.factory.initial">
 	          org.jboss.naming.remote.client.InitialContextFactory
 	        </prop>
-	        <prop key="java.naming.provider.url">${jdbc.url}</prop>
-	        <prop key="java.naming.factory.url.pkgs">
-	          org.jboss.ejb.client.naming
-	        </prop>
-	        <prop key="java.naming.security.principal">${dataSource.username}</prop>
-	        <prop key="java.naming.security.credentials">${dataSource.password}</prop>
+	        <prop key="java.naming.provider.url">${jndi.url}</prop>
+	        <prop key="java.naming.factory.url.pkgs">org.jboss.ejb.client.naming</prop>
+	        <prop key="java.naming.security.principal">${jndi.username}</prop>
+	        <prop key="java.naming.security.credentials">${jndi.password}</prop>
 	      </props>
 	    </property>
 	</bean>
@@ -54,7 +52,7 @@
 	        <ref bean="jndiTemplate"/>
 	    </property>
     	<property name="jndiName">
-        	<value>java:/JmsXA</value>
+        	<value>jms/RemoteConnectionFactory</value>
     	</property>
 	</bean>
 	
@@ -64,7 +62,7 @@
 	        <ref bean="jndiTemplate"/>
 	    </property>
 	    <property name="jndiName">
-	        <value>queue/testQueue</value>
+	        <value>jms/queue/test</value>
 	    </property>
 	</bean>
 	
