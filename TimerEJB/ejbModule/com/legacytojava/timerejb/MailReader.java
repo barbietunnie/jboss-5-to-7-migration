@@ -51,7 +51,6 @@ import com.legacytojava.message.vo.MailBoxVo;
  */
 @Startup
 @Singleton(name="MailReader",mappedName="ejb/MailReader")
-//@Stateless(name="MailReader",mappedName="ejb/MailReader")
 @TransactionManagement(TransactionManagementType.CONTAINER)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Resource(mappedName = "java:jboss/MessageDS", 
@@ -91,7 +90,7 @@ public class MailReader implements MailReaderRemote, MailReaderLocal {
     }
 
     @PostConstruct
-	public void starttUp() {
+	public void startUp() {
 		logger.info("Entering startUp() method, starting Mail Readers...");
 		startMailReader(60);
 	}
