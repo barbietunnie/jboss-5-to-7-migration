@@ -18,6 +18,7 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -324,7 +325,19 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 				try {
 					insert(emailAddrVo);
 					return emailAddrVo;
+				} catch (DuplicateKeyException e) {
+					logger.error("findByAddress() - DuplicateKeyException caught", e);
+					if (retries < 0) {
+						// retry once may overcome concurrency issue. (the retry
+						// never worked and the reason might be that it is under
+						// a same transaction). So no retry from now on.
+						logger.info("findByAddress() - duplicate key error, retry...");
+						return findByAddress(address, retries + 1);
+					} else {
+						throw e;
+					}
 				} catch (DataIntegrityViolationException e) {
+					// shouldn't reach here, should be caught by DuplicateKeyException
 					logger.error(
 							"findByAddress() - DataIntegrityViolationException caught",
 							e);
