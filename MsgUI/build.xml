@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="./" name="MsgUI" default="compile">
+    
+    <property file="${basedir}/build.properties"/>
+    
+	<property name="path_to_common" value="../../build"/>
+	
+    <!--  ***** these are the properties calling ants need to override **** -->
+	<property name="source.dir" value="${basedir}/src"/>
+	<property name="web.dir" value="${basedir}/WebContent"/>
+ 	<property name="lib.dir" value="${web.dir}/WEB-INF/lib"/>
+
+	<import file="${path_to_common}/common.xml"/>
+
+	<path id="compile.path">
+		<!-- fileset dir="${jboss.server.dir}/lib">
+			<include name="*.jar"/>
+		</fileset -->
+		<pathelement location="${jboss.modules.dir}/javax/servlet/api/main/jboss-servlet-api_3.0_spec-1.0.0.Final.jar"/>
+		<pathelement location="${jboss.modules.dir}/javax/el/api/main/jboss-el-api_2.2_spec-1.0.0.Final.jar"/>
+		<pathelement location="${jboss.modules.dir}/javax/servlet/jsp/api/main/jboss-jsp-api_2.2_spec-1.0.0.Final.jar"/>
+		<pathelement location="${jboss.modules.dir}/javax/servlet/jstl/api/main/jboss-jstl-api_1.2_spec-1.0.2.Final.jar"/>
+		<pathelement location="${core.dist.dir}/${msg.core}.jar"/>
+		<pathelement location="${ejbclient.dist.dir}/${msg.ejbclient}.jar"/>
+		<path refid="base.path"/>
+	</path>
+
+	<target name="build" depends="build_war"/>
+</project>
