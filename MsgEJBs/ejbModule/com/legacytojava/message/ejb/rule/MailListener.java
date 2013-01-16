@@ -43,7 +43,8 @@ import com.legacytojava.message.exception.DataValidationException;
 @MessageDriven(
 		activationConfig = {
 			@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"), 
-			@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/mailReaderOutput")
+			@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/mailReaderOutput"),
+			@ActivationConfigProperty(propertyName = "maxSession", propertyValue = "4")
 			}, 
 		mappedName = "mailReaderOutput")
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
