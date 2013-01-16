@@ -1,0 +1,893 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faces-config
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd"
+    version="1.2">
+    
+    <!-- define locales -->
+   <application>
+   	<locale-config>
+   		<default-locale>en</default-locale>
+   		<supported-locale>de</supported-locale>
+   	</locale-config>
+   </application>
+
+	<!-- define managed beans -->
+	
+	<!-- Define Application scoped beans -->
+	<managed-bean>
+		<managed-bean-name>debug</managed-bean-name>
+		<managed-bean-class>com.legacytojava.msgui.bean.DebugBean</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>codes</managed-bean-name>
+		<managed-bean-class>com.legacytojava.msgui.util.StaticCodes</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>dynacodes</managed-bean-name>
+		<managed-bean-class>com.legacytojava.msgui.util.DynamicCodes</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+	<!-- end application scoped beans -->
+   
+   <managed-bean> 
+      <managed-bean-name>phaseform</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.PhaseTrackerSetterBean</managed-bean-class> 
+      <managed-bean-scope>session</managed-bean-scope> 
+   </managed-bean>
+   
+   <managed-bean> 
+      <managed-bean-name>login</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.LoginBean</managed-bean-class> 
+      <managed-bean-scope>request</managed-bean-scope> 
+      <managed-property>
+         <property-name>source</property-name>
+         <value>#{param.source}</value>
+      </managed-property>
+   </managed-bean>
+   
+   <managed-bean> 
+      <managed-bean-name>changePassword</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.ChangePasswordBean</managed-bean-class> 
+      <managed-bean-scope>request</managed-bean-scope>
+   </managed-bean>
+   
+   <managed-bean> 
+      <managed-bean-name>enterProductKey</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.EnterProductKeyBean</managed-bean-class> 
+      <managed-bean-scope>request</managed-bean-scope>
+   </managed-bean>
+   
+	<!-- define managed beans for Getting Started page -->
+   <managed-bean>
+      <managed-bean-name>gettingStarted</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.GettingStarted</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+      <managed-property>
+         <property-name>titleKey</property-name>
+         <value>gettingStartedHeaderText</value>
+      </managed-property>
+      <!-- managed-property>
+         <property-name>functionKey</property-name>
+         <value>#{param.functionKey}</value>
+      </managed-property -->
+   </managed-bean>
+   
+   <!-- define managed beans for Customer pages -->
+   <managed-bean>
+   	<managed-bean-name>customers</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.CustomersListBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+   
+   <!-- define managed beans for Mailbox pages -->
+   <managed-bean>
+      <managed-bean-name>mailboxes</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.MailboxesBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+   
+   <!-- define managed beans for Smtp Servers pages -->
+   <managed-bean>
+      <managed-bean-name>smtpsvrs</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.SmtpServersBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+   
+   <!-- define managed beans for Message Rule pages -->
+   <managed-bean>
+      <managed-bean-name>msgrules</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.MsgRulesBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+   
+   <managed-bean>
+      <managed-bean-name>builtinrules</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.MsgBuiltInRulesBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+   
+   <!-- define managed beans for Message Action Class pages -->
+   <managed-bean>
+      <managed-bean-name>actiondetails</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.MsgActionDetailsBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+
+   <!-- define managed beans for Mailing Lists pages -->
+   <managed-bean>
+      <managed-bean-name>maillsts</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.MailingListsBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+   
+   <!-- define managed beans for Email Variable Class pages -->
+   <managed-bean>
+      <managed-bean-name>emailvariables</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.EmailVariablesBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+
+   <!-- define managed beans for Email Template Class pages -->
+   <managed-bean>
+      <managed-bean-name>emailtemplates</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.EmailTemplatesBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+
+   <!-- define managed beans for Message Inbox/Outbox Class pages -->
+   <managed-bean>
+      <managed-bean-name>msgfolder</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.MsgInboxBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+
+   <!-- define managed beans for Simple Mail Tracking Class pages -->
+   <managed-bean>
+      <managed-bean-name>mailtracking</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.SimpleMailTrackingMenu</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+
+   <!-- define managed beans for Mailing List Composition pages -->
+   <managed-bean>
+      <managed-bean-name>maillistcomp</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.MailingListComposeBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+
+   <!-- define managed beans for Managing User Accounts pages -->
+   <managed-bean>
+      <managed-bean-name>useraccounts</managed-bean-name>
+      <managed-bean-class>com.legacytojava.msgui.bean.UserAccountsBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+   
+   <!-- define managed bean for site profile pages -->
+   <managed-bean>
+   	<managed-bean-name>profileBean</managed-bean-name>
+   	<managed-bean-class>com.legacytojava.msgui.bean.EmailProfileBean</managed-bean-class>
+   	<managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+   
+   <!-- define managed bean for subscriber list page -->
+   <managed-bean>
+   	<managed-bean-name>subscribersListBean</managed-bean-name>
+   	<managed-bean-class>com.legacytojava.msgui.bean.SubscribersListBean</managed-bean-class>
+   	<managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+
+   <!-- define managed bean for email address list pages -->
+   <managed-bean>
+   	<managed-bean-name>emailAddrsBean</managed-bean-name>
+   	<managed-bean-class>com.legacytojava.msgui.bean.EmailAddrsListBean</managed-bean-class>
+   	<managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+
+   <!-- define managed bean for subscriber list page -->
+   <managed-bean>
+   	<managed-bean-name>broadcastsListBean</managed-bean-name>
+   	<managed-bean-class>com.legacytojava.msgui.bean.BroadcastMsgListBean</managed-bean-class>
+   	<managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+
+   
+	<!-- define navigation rules -->
+   <navigation-rule>
+      <navigation-case>
+         <from-outcome>login</from-outcome>
+         <to-view-id>/login.jsp</to-view-id>
+      </navigation-case>
+   </navigation-rule>
+   <navigation-rule>
+   	<from-view-id>/login.jsp</from-view-id>
+   	<navigation-case>
+   		<from-outcome>admin</from-outcome>
+   		<to-view-id>/main.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>user</from-outcome>
+   		<to-view-id>/welcome.jsp</to-view-id>
+    	</navigation-case>
+   </navigation-rule>
+
+   <navigation-rule>
+   	<from-view-id>/changePassword.jsp</from-view-id>
+   	<navigation-case>
+   		<from-outcome>changepswd.saved</from-outcome>
+   		<to-view-id>/main.jsp</to-view-id>
+   	</navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+   	<from-view-id>/enterProductKey.jsp</from-view-id>
+   	<navigation-case>
+   		<from-outcome>enterkey.saved</from-outcome>
+   		<to-view-id>/main.jsp</to-view-id>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>enterkey.failed</from-outcome>
+   		<to-view-id>/enterProductKey.jsp</to-view-id>
+   	</navigation-case>
+   </navigation-rule>
+   
+   <!-- 
+   	use redirect element for pages that users might want to bookmark.
+   	however, with the redirect element, the request scope data is lost.
+    -->
+   
+   <!--
+   	Getting Started
+   	-->
+
+   <!-- Site Profile List/Edit -->
+   <navigation-rule>
+   	<from-view-id>/admin/configureSiteProfiles.jsp</from-view-id>
+   	<navigation-case>
+   		<from-outcome>siteprofile.edit</from-outcome>
+   		<to-view-id>/admin/emailProfileEdit.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+   	<from-view-id>/admin/emailProfileEdit.jsp</from-view-id>
+   	<navigation-case>
+   		<from-outcome>siteprofile.canceled</from-outcome>
+   		<to-view-id>/admin/configureSiteProfiles.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+    	<navigation-case>
+   		<from-outcome>siteprofile.saved</from-outcome>
+   		<to-view-id>/admin/configureSiteProfiles.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>emailprofile.deleted</from-outcome>
+   		<to-view-id>/admin/configureSiteProfiles.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   </navigation-rule>
+   
+   <!-- Mailboxes -->
+   <navigation-rule>
+      <from-view-id>/admin/configureMailboxes.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>mailbox.edit</from-outcome>
+         <to-view-id>/admin/mailboxEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/admin/mailboxEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>mailbox.saved</from-outcome>
+         <to-view-id>/admin/configureMailboxes.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>mailbox.canceled</from-outcome>
+         <to-view-id>/admin/configureMailboxes.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <!-- SMTP Servers -->
+   <navigation-rule>
+      <from-view-id>/admin/configureSmtpServers.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>smtpserver.edit</from-outcome>
+         <to-view-id>/admin/smtpServerEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/admin/smtpServerEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>smtpserver.saved</from-outcome>
+         <to-view-id>/admin/configureSmtpServers.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>smtpserver.canceled</from-outcome>
+         <to-view-id>/admin/configureSmtpServers.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <!-- Build-In Rules -->
+   <navigation-rule>
+      <from-view-id>/customizeBuiltInRules.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>msgrule.msgaction.builtin.edit</from-outcome>
+         <to-view-id>/msgActionBuiltInEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/msgActionBuiltInEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>msgrule.saved</from-outcome>
+         <to-view-id>/customizeBuiltInRules.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.canceled</from-outcome>
+         <to-view-id>/customizeBuiltInRules.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <!-- Custom Rules -->
+   <navigation-rule>
+      <from-view-id>/configureCustomRules.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>msgrule.edit</from-outcome>
+         <to-view-id>/msgRuleEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.subrule.edit</from-outcome>
+         <to-view-id>/msgSubRuleEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.msgaction.edit</from-outcome>
+         <to-view-id>/msgActionEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.failed</from-outcome>
+         <to-view-id>/configureCustomRules.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.toself</from-outcome>
+         <to-view-id>/configureCustomRules.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/msgRuleEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>msgrule.saved</from-outcome>
+         <to-view-id>/configureCustomRules.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.canceled</from-outcome>
+         <to-view-id>/configureCustomRules.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.ruleelement.edit</from-outcome>
+         <to-view-id>/msgRuleElementEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.toself</from-outcome>
+         <to-view-id>/msgRuleEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/msgRuleElementEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>msgrule.ruleelement.done</from-outcome>
+         <to-view-id>/msgRuleEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.canceled</from-outcome>
+         <to-view-id>/msgRuleEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.toself</from-outcome>
+         <to-view-id>/msgRuleElementEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/msgSubRuleEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>msgrule.saved</from-outcome>
+         <to-view-id>/configureCustomRules.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.canceled</from-outcome>
+         <to-view-id>/configureCustomRules.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/msgActionEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>msgrule.saved</from-outcome>
+         <to-view-id>/configureCustomRules.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>msgrule.canceled</from-outcome>
+         <to-view-id>/configureCustomRules.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <!-- Message Action Details -->
+   <navigation-rule>
+      <from-view-id>/maintainActionDetails.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>actiondetail.edit</from-outcome>
+         <to-view-id>/msgActionDetailEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/msgActionDetailEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>actiondetail.saved</from-outcome>
+         <to-view-id>/maintainActionDetails.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>actiondetail.canceled</from-outcome>
+         <to-view-id>/maintainActionDetails.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <!-- Mailing Lists -->
+   <navigation-rule>
+      <from-view-id>/configureMailingLists.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>mailinglist.edit</from-outcome>
+         <to-view-id>/mailingListEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/mailingListEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>mailinglist.saved</from-outcome>
+         <to-view-id>/configureMailingLists.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>mailinglist.canceled</from-outcome>
+         <to-view-id>/configureMailingLists.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+   	<from-view-id>/subscribersList.jsp</from-view-id>
+   	<navigation-case>
+   		<from-outcome>subscriberlist.canceled</from-outcome>
+   		<to-view-id>/configureMailingLists.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>subscriberlist.saved</from-outcome>
+   		<to-view-id>/subscribersList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>subscriberlist.deleted</from-outcome>
+   		<to-view-id>/subscribersList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>subscriberlist.paging</from-outcome>
+   		<to-view-id>/subscribersList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   </navigation-rule>
+   
+   <!-- Email Variables -->
+   <navigation-rule>
+      <from-view-id>/configureEmailVariables.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>emailvariable.edit</from-outcome>
+         <to-view-id>/emailVariableEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/emailVariableEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>emailvariable.saved</from-outcome>
+         <to-view-id>/configureEmailVariables.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>emailvariable.canceled</from-outcome>
+         <to-view-id>/configureEmailVariables.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <!-- Email Templates -->
+   <navigation-rule>
+      <from-view-id>/configureEmailTemplates.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>emailtemplate.edit</from-outcome>
+         <to-view-id>/emailTemplateEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>emailschedules.edit</from-outcome>
+         <to-view-id>/emailSchedulesEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/emailTemplateEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>emailtemplate.saved</from-outcome>
+         <to-view-id>/configureEmailTemplates.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>emailtemplate.canceled</from-outcome>
+         <to-view-id>/configureEmailTemplates.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/emailSchedulesEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>emailschedules.saved</from-outcome>
+         <to-view-id>/configureEmailTemplates.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>emailtemplate.canceled</from-outcome>
+         <to-view-id>/configureEmailTemplates.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <!-- Message Inbox List/Edit -->
+   <navigation-rule>
+      <from-view-id>/msgInboxList.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>message.edit</from-outcome>
+         <to-view-id>/msgInboxView.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>message.search</from-outcome>
+         <to-view-id>/msgInboxList.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>message.toself</from-outcome>
+         <to-view-id>/msgInboxList.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>message.paging</from-outcome>
+         <to-view-id>/msgInboxList.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/msgInboxView.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>message.deleted</from-outcome>
+         <to-view-id>/msgInboxList.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>message.canceled</from-outcome>
+         <to-view-id>/msgInboxList.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>message.closed</from-outcome>
+         <to-view-id>/msgInboxList.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-action>#{msgfolder.replyMessage}</from-action>
+         <from-outcome>message.reply</from-outcome>
+         <to-view-id>/msgInboxSend.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-action>#{msgfolder.forwardMessage}</from-action>
+         <from-outcome>message.forward</from-outcome>
+         <to-view-id>/msgInboxSend.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/msgInboxSend.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>message.canceled</from-outcome>
+         <to-view-id>/msgInboxView.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>message.sent</from-outcome>
+         <to-view-id>/msgInboxList.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <!-- Mailing List Compose/Preview -->
+   <navigation-rule>
+      <from-view-id>/mailingListCompose.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>mailinglist.preview</from-outcome>
+         <to-view-id>/mailingListPreview.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>mailinglist.sent</from-outcome>
+         <to-view-id>/main.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>mailinglist.canceled</from-outcome>
+         <to-view-id>/main.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>mailinglist.copytemplate</from-outcome>
+         <to-view-id>/mailingListCompose.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <!-- Email Address List/Edit -->
+   <navigation-rule>
+   	<from-view-id>/emailAddressList.jsp</from-view-id>
+   	<navigation-case>
+   		<from-outcome>emailAddrlist.edit</from-outcome>
+   		<to-view-id>/emailAddressEdit.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>emailAddrlist.canceled</from-outcome>
+   		<to-view-id>/main.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>emailAddrlist.saved</from-outcome>
+   		<to-view-id>/emailAddressList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>emailAddrlist.deleted</from-outcome>
+   		<to-view-id>/emailAddressList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>emailAddrlist.toself</from-outcome>
+   		<to-view-id>/emailAddressList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>emailAddrlist.paging</from-outcome>
+   		<to-view-id>/emailAddressList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   </navigation-rule>
+
+   <navigation-rule>
+   	<from-view-id>/emailAddressEdit.jsp</from-view-id>
+   	<navigation-case>
+   		<from-outcome>emailAddrlist.saved</from-outcome>
+   		<to-view-id>/emailAddressList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>emailAddrlist.canceled</from-outcome>
+   		<to-view-id>/emailAddressList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   </navigation-rule>
+   
+   <!-- Broadcast List and Broadcast Message View -->
+   <navigation-rule>
+      <from-view-id>/broadcastsList.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>broadcastlist.view</from-outcome>
+         <to-view-id>/broadcastMsgView.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>broadcastlist.paging</from-outcome>
+         <to-view-id>/broadcastsList.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>broadcastlist.deleted</from-outcome>
+         <to-view-id>/broadcastsList.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>broadcastlist.canceled</from-outcome>
+         <to-view-id>/main.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+    <from-view-id>/broadcastMsgView.jsp</from-view-id>
+   	<navigation-case>
+   		<from-outcome>broadcastlist.saved</from-outcome>
+   		<to-view-id>/broadcastsList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>broadcastlist.canceled</from-outcome>
+   		<to-view-id>/broadcastsList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>broadcastlist.failed</from-outcome>
+   		<to-view-id>/broadcastMsgView.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   </navigation-rule>
+
+
+   <!-- Customer List/Edit -->
+   <navigation-rule>
+   	<from-view-id>/customersList.jsp</from-view-id>
+   	<navigation-case>
+   		<from-outcome>customerlist.edit</from-outcome>
+   		<to-view-id>/customerEdit.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>customerlist.canceled</from-outcome>
+   		<to-view-id>/main.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>customerlist.deleted</from-outcome>
+   		<to-view-id>/customersList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>customerlist.toself</from-outcome>
+   		<to-view-id>/customersList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>customerlist.paging</from-outcome>
+   		<to-view-id>/customersList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+    <from-view-id>/customerEdit.jsp</from-view-id>
+   	<navigation-case>
+   		<from-outcome>customerlist.saved</from-outcome>
+   		<to-view-id>/customersList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   	<navigation-case>
+   		<from-outcome>customerlist.canceled</from-outcome>
+   		<to-view-id>/customersList.jsp</to-view-id>
+   		<redirect/>
+   	</navigation-case>
+   </navigation-rule>
+
+   <!-- User Accounts -->
+   <navigation-rule>
+      <from-view-id>/admin/manageUserAccounts.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>useraccount.edit</from-outcome>
+         <to-view-id>/admin/userAccountEdit.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>useraccount.canceled</from-outcome>
+         <to-view-id>/main.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <navigation-rule>
+      <from-view-id>/admin/userAccountEdit.jsp</from-view-id>
+      <navigation-case>
+         <from-outcome>useraccount.saved</from-outcome>
+         <to-view-id>/admin/manageUserAccounts.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+      <navigation-case>
+         <from-outcome>useraccount.canceled</from-outcome>
+         <to-view-id>/admin/manageUserAccounts.jsp</to-view-id>
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
+   <!-- define converters -->
+   <converter>
+    <converter-id>NullableStringConverter</converter-id>
+  	<converter-class>com.legacytojava.msgui.converter.NullableStringConverter</converter-class>
+   </converter>
+   
+   <!-- define validators -->
+   <validator>
+   	<validator-id>msgui.EmailAddressValidator</validator-id>
+   	<validator-class>com.legacytojava.msgui.validator.EmailAddressValidator</validator-class>
+   </validator>
+
+   <validator>
+   	<validator-id>passwordValidator</validator-id>
+   	<validator-class>com.legacytojava.msgui.validator.PasswordValidator</validator-class>
+   </validator>
+
+   <!-- define PhaseTracker listener -->
+   <lifecycle>
+      <phase-listener>com.legacytojava.msgui.listener.PhaseTracker</phase-listener>
+   </lifecycle>
+   
+   <!-- define PostRedirectGet listener -->
+   <!-- lifecycle>
+      <phase-listener>com.legacytojava.msgui.listener.PostRedirectGetListener</phase-listener>
+   </lifecycle -->
+
+   <!-- define Back Button phase listener -->
+   <lifecycle>
+   	<phase-listener>com.legacytojava.msgui.listener.CacheControlPhaseListener</phase-listener>
+   </lifecycle>
+
+   <!-- define messages resource bundle -->
+   <application>
+      <resource-bundle>
+         <base-name>com.legacytojava.msgui.messages</base-name>
+         <var>msgs</var>
+      </resource-bundle>
+   </application>
+
+</faces-config>

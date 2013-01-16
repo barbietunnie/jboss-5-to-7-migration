@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	<display-name>MsgUI</display-name>
+	<!-- define spring context listener -->
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+	<!-- define spring config file location -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<!-- param-value>/WEB-INF/spring-*-config.xml</param-value -->
+		<param-value>
+			classpath:spring-dao-config.xml
+			classpath:spring-jndi_ds-config.xml
+			classpath:spring-bo_jms-config.xml
+		</param-value>
+	</context-param>
+
+	<!-- define phase paremeter for Phase Tracker -->
+	<context-param>
+		<param-name>listener.phaseTracker.phase</param-name>
+		<param-value>INVOKE_APPLICATION</param-value>
+	</context-param>
+
+	<!-- set state saving method to Client -->
+	<context-param>
+		<description>
+		    State saving method: "client" or "server" (= default)
+		    See JSF Specification 2.5.2
+		</description>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>client</param-value>
+    </context-param>
+
+	<!-- use JBoss Serialization provider to speed up client-side state saving -->
+	<context-param>
+		<param-name>com.sun.faces.serializationProvider</param-name>
+		<param-value>
+			org.jboss.web.jsf.integration.serialization.JBossSerializationProvider
+		</param-value>
+	</context-param>
+
+	<!-- define welcome pages -->
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- define JSF servlet -->
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- define servlet for Apache Tiles -->
+	<servlet>
+		<servlet-name>tiles</servlet-name>
+		<servlet-class>
+			org.apache.tiles.web.startup.TilesServlet
+		</servlet-class>
+	    <init-param>
+	        <param-name>
+	          org.apache.tiles.impl.BasicTilesContainer.DEFINITIONS_CONFIG
+	        </param-name>
+	        <param-value>
+	          /WEB-INF/tiles.xml
+	        </param-value>
+	    </init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<!-- define file download servlet -->
+	<servlet>
+	    <servlet-name>File Servlet</servlet-name>
+	    <servlet-class>com.legacytojava.msgui.servlet.FileServlet</servlet-class>
+	    <load-on-startup>3</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>File Servlet</servlet-name>
+	    <url-pattern>/file/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- define attachment upload servlet -->
+	<servlet>
+		<servlet-name>Upload Servlet</servlet-name>
+		<servlet-class>com.legacytojava.msgui.servlet.UploadServlet</servlet-class>
+		<load-on-startup>4</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Upload Servlet</servlet-name>
+		<url-pattern>/upload/uploadServlet</url-pattern>
+	</servlet-mapping>
+
+	<!-- define session timeout -->
+	<session-config>
+		<session-timeout>30<!-- minutes --></session-timeout>
+	</session-config>
+
+	<!-- define JSF mapping -->
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.faces</url-pattern>
+	</servlet-mapping>
+
+	<!-- define session expired listener -->
+	<listener>
+		<listener-class>
+			com.legacytojava.msgui.listener.SessionExpiredListener
+		</listener-class>
+	</listener>
+	
+	<!-- define session timeout filter -->
+	<filter>
+		<filter-name>SessionTimeoutFilter</filter-name>
+		<filter-class>com.legacytojava.msgui.filter.SessionTimeoutFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>SessionTimeoutFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- define multipart filter -->
+	<filter>
+	    <description>
+	    	Check for multipart HttpServletRequests and parse the
+	    	multipart form data so that all regular form fields are
+	    	available in the parameterMap of the HttpServletRequest and
+	    	that all form file fields are available as attribute of the
+	    	HttpServletRequest. The attribute value of a form file field
+	    	can be an instance of FileItem or FileUploadException.
+	    </description>
+	    <filter-name>multipartFilter</filter-name>
+	    <filter-class>com.legacytojava.msgui.filter.MultipartFilter</filter-class>
+	    <init-param>
+	        <description>
+	        	Sets the maximum file size of the uploaded file in
+	        	bytes. Set to 0 to indicate an unlimited file size. The
+	        	example value of 5242880 indicates a maximum file size
+	        	of 5MB. This parameter is not required and can be
+	        	removed safely.
+	        </description>
+	        <param-name>maxFileSize</param-name>
+	        <param-value>5242880</param-value>
+	    </init-param>
+	    <init-param>
+	        <description>
+	        	Sets the maximum total file size of all the uploaded
+	        	files in bytes. Set to 0 to indicate an unlimited file
+	        	size. The example value of 10485760 indicates a size of
+	        	10MB. This parameter is not required and can be removed
+	        	safely.
+	        </description>
+	        <param-name>totalFileSize</param-name>
+	        <param-value>10485760</param-value>
+	    </init-param>
+	</filter>
+	<filter-mapping>
+	    <filter-name>multipartFilter</filter-name>
+	    <url-pattern>/upload/*</url-pattern>
+	</filter-mapping>
+
+	<!-- ejb-ref>
+		<description>A reference to MailingListEjb</description>
+		<ejb-ref-name>ejb/MailingList</ejb-ref-name>
+		<ejb-ref-type>Session</ejb-ref-type>
+		<home>com.legacytojava.message.ejb.mailinglist.MailingListHome</home>
+		<remote>com.legacytojava.message.ejb.mailinglist.MailingList</remote>
+	</ejb-ref -->
+
+	<!-- define jdbc resource reference -->
+	<resource-ref>
+		<res-ref-name>jdbc/msgdb_pool</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
+
+</web-app>

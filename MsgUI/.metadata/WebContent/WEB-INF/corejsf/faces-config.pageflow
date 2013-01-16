@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf12071559788120" configfile="/MsgUI/WebContent/WEB-INF/corejsf/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="welcome" x="338" y="370" id="pf12216658753280" referenceLink="//@navigationRule.2/@navigationCase.0/@toViewId|" inlinks="pf12216658753281 pf12216658753282" path="/welcome.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="*" x="122" y="1138" id="pf12216658753283" outlinks="pf12216658753282 pf12216658753284 pf12216658753285" path="*"/>
+  <nodes xsi:type="pageflow:PFPage" name="payment" x="338" y="1906" id="pf12216658753286" referenceLink="//@navigationRule.6/@navigationCase.0/@toViewId|" outlinks="pf12216658753287" inlinks="pf12216658753288" path="/payment.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="paymentresult" x="122" y="1906" id="pf12216658753289" referenceLink="//@navigationRule.6/@fromViewId|" outlinks="pf12216658753288" inlinks="pf12216658753287" path="/paymentresult.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="rushmore" x="338" y="754" id="pf122166587532810" referenceLink="//@navigationRule.8/@fromViewId|" outlinks="pf122166587532811 pf122166587532812 pf122166587532813 pf122166587532814" inlinks="pf12216658753285" path="/rushmore.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="customerList" x="338" y="2290" id="pf122166587532815" referenceLink="//@navigationRule.10/@navigationCase.0/@toViewId|" outlinks="pf122166587532816" inlinks="pf122166587532817" path="/customerList.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="customerEdit" x="122" y="2290" id="pf122166587532818" referenceLink="//@navigationRule.10/@fromViewId|" outlinks="pf122166587532817" inlinks="pf122166587532816" path="/customerEdit.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="gettingStarted" x="338" y="4412" id="pf122166587532819" referenceLink="//@navigationRule.22/@navigationCase.1/@toViewId|" outlinks="pf122166587532820 pf122166587532821 pf122166587532822 pf122166587532823 pf122166587532824 pf122166587532825 pf122166587532826" inlinks="pf122166587532827 pf122166587532828 pf122166587532829 pf122166587532830 pf122166587532831 pf122166587532832 pf122166587532833 pf122166587532834 pf122166587532835 pf122166587532836 pf122166587532837 pf122166587532838 pf122166587532839 pf122166587532840" path="/gettingStarted.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="mailboxEdit" x="122" y="3260" id="pf122166587532841" referenceLink="//@navigationRule.12/@fromViewId|" outlinks="pf122166587532827 pf122166587532828" inlinks="pf122166587532820" path="/mailboxEdit.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="smtpServerEdit" x="122" y="3644" id="pf122166587532842" referenceLink="//@navigationRule.14/@fromViewId|" outlinks="pf122166587532829 pf122166587532830" inlinks="pf122166587532821" path="/smtpServerEdit.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="msgActionBuiltInEdit" x="122" y="4028" id="pf122166587532843" referenceLink="//@navigationRule.16/@fromViewId|" outlinks="pf122166587532831 pf122166587532832" inlinks="pf122166587532822" path="/msgActionBuiltInEdit.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="msgRuleEdit" x="122" y="4412" id="pf122166587532844" referenceLink="//@navigationRule.18/@fromViewId|" outlinks="pf122166587532833 pf122166587532834" inlinks="pf122166587532823" path="/msgRuleEdit.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="msgSubRuleEdit" x="122" y="4796" id="pf122166587532845" referenceLink="//@navigationRule.19/@fromViewId|" outlinks="pf122166587532835 pf122166587532836" inlinks="pf122166587532824" path="/msgSubRuleEdit.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="msgActionEdit" x="122" y="5180" id="pf122166587532846" referenceLink="//@navigationRule.20/@fromViewId|" outlinks="pf122166587532837 pf122166587532838" inlinks="pf122166587532825" path="/msgActionEdit.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="msgActionDetailEdit" x="122" y="5564" id="pf122166587532847" referenceLink="//@navigationRule.22/@fromViewId|" outlinks="pf122166587532839 pf122166587532840" inlinks="pf122166587532826" path="/msgActionDetailEdit.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="msgInboxList" x="554" y="2897" id="pf122166587532848" referenceLink="//@navigationRule.25/@navigationCase.1/@toViewId|" outlinks="pf122166587532849" inlinks="pf122166587532850 pf122166587532851 pf122166587532852" path="/msgInboxList.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="msgInboxView" x="122" y="2876" id="pf122166587532853" referenceLink="//@navigationRule.25/@navigationCase.0/@toViewId|" outlinks="pf122166587532850 pf122166587532851 pf122166587532854 pf122166587532855" inlinks="pf122166587532849 pf122166587532856" path="/msgInboxView.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="msgInboxSend" x="338" y="2674" id="pf122166587532857" referenceLink="//@navigationRule.25/@fromViewId|" outlinks="pf122166587532856 pf122166587532852" inlinks="pf122166587532854 pf122166587532855" path="/msgInboxSend.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="login" id="pf122166587532858" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf12216658753281" path="/login.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="quiz" id="pf122166587532859" referenceLink="//@navigationRule.1/@navigationCase.0/@toViewId|" outlinks="pf122166587532860" inlinks="pf122166587532860" path="/quiz.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="index" id="pf122166587532861" referenceLink="//@navigationRule.3/@fromViewId|" outlinks="pf122166587532862" path="/index.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="thankYou" id="pf122166587532863" referenceLink="//@navigationRule.3/@navigationCase.0/@toViewId|" inlinks="pf122166587532862" path="/thankYou.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="showInformation" id="pf122166587532864" referenceLink="//@navigationRule.4/@navigationCase.0/@toViewId|" inlinks="pf12216658753284" path="/showInformation.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="washington" id="pf122166587532865" referenceLink="//@navigationRule.8/@navigationCase.0/@toViewId|" inlinks="pf122166587532811" path="/washington.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="jefferson" id="pf122166587532866" referenceLink="//@navigationRule.8/@navigationCase.1/@toViewId|" inlinks="pf122166587532812" path="/jefferson.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="roosevelt" id="pf122166587532867" referenceLink="//@navigationRule.8/@navigationCase.2/@toViewId|" inlinks="pf122166587532813" path="/roosevelt.jsp"/>
+  <nodes xsi:type="pageflow:PFPage" name="lincoln" id="pf122166587532868" referenceLink="//@navigationRule.8/@navigationCase.3/@toViewId|" inlinks="pf122166587532814" path="/lincoln.jsp"/>
+  <links id="pf122166587532820" target="pf122166587532841" source="pf122166587532819" outcome="mailbox.edit"/>
+  <links id="pf122166587532827" target="pf122166587532819" source="pf122166587532841" outcome="mailbox.saved"/>
+  <links id="pf122166587532828" target="pf122166587532819" source="pf122166587532841" outcome="mailbox.canceled"/>
+  <links id="pf122166587532821" target="pf122166587532842" source="pf122166587532819" outcome="smtpserver.edit"/>
+  <links id="pf122166587532829" target="pf122166587532819" source="pf122166587532842" outcome="smtpserver.saved"/>
+  <links id="pf122166587532830" target="pf122166587532819" source="pf122166587532842" outcome="smtpserver.canceled"/>
+  <links id="pf122166587532822" target="pf122166587532843" source="pf122166587532819" outcome="msgrule.msgaction.builtin.edit"/>
+  <links id="pf122166587532831" target="pf122166587532819" source="pf122166587532843" outcome="msgrule.saved"/>
+  <links id="pf122166587532832" target="pf122166587532819" source="pf122166587532843" outcome="msgrule.canceled"/>
+  <links id="pf122166587532823" target="pf122166587532844" source="pf122166587532819" outcome="msgrule.edit"/>
+  <links id="pf122166587532824" target="pf122166587532845" source="pf122166587532819" outcome="msgrule.subrule.edit"/>
+  <links id="pf122166587532825" target="pf122166587532846" source="pf122166587532819" outcome="msgrule.msgaction.edit"/>
+  <links id="pf122166587532833" target="pf122166587532819" source="pf122166587532844" outcome="msgrule.saved"/>
+  <links id="pf122166587532834" target="pf122166587532819" source="pf122166587532844" outcome="msgrule.canceled"/>
+  <links id="pf122166587532835" target="pf122166587532819" source="pf122166587532845" outcome="msgrule.saved"/>
+  <links id="pf122166587532836" target="pf122166587532819" source="pf122166587532845" outcome="msgrule.canceled"/>
+  <links id="pf122166587532837" target="pf122166587532819" source="pf122166587532846" outcome="msgrule.saved"/>
+  <links id="pf122166587532838" target="pf122166587532819" source="pf122166587532846" outcome="msgrule.canceled"/>
+  <links id="pf122166587532826" target="pf122166587532847" source="pf122166587532819" outcome="actiondetail.edit"/>
+  <links id="pf122166587532839" target="pf122166587532819" source="pf122166587532847" outcome="actiondetail.saved"/>
+  <links id="pf122166587532840" target="pf122166587532819" source="pf122166587532847" outcome="actiondetail.canceled"/>
+  <links id="pf122166587532849" target="pf122166587532853" source="pf122166587532848" outcome="message.edit"/>
+  <links id="pf122166587532850" target="pf122166587532848" source="pf122166587532853" outcome="message.deleted"/>
+  <links id="pf122166587532851" target="pf122166587532848" source="pf122166587532853" outcome="message.canceled"/>
+  <links id="pf122166587532854" target="pf122166587532857" source="pf122166587532853" outcome="message.reply" fromaction="#{msgfolder.replyMessage}"/>
+  <links id="pf122166587532855" target="pf122166587532857" source="pf122166587532853" outcome="message.forward" fromaction="#{msgfolder.forwardMessage}"/>
+  <links id="pf122166587532856" target="pf122166587532853" source="pf122166587532857" outcome="message.canceled"/>
+  <links id="pf122166587532852" target="pf122166587532848" source="pf122166587532857" outcome="message.sent"/>
+  <links id="pf12216658753281" target="pf12216658753280" source="pf122166587532858" outcome="login"/>
+  <links id="pf122166587532860" target="pf122166587532859" source="pf122166587532859" outcome="next"/>
+  <links id="pf12216658753282" target="pf12216658753280" source="pf12216658753283" outcome="welcome"/>
+  <links id="pf122166587532862" target="pf122166587532863" source="pf122166587532861" outcome="thankYou"/>
+  <links id="pf12216658753284" target="pf122166587532864" source="pf12216658753283" outcome="showInformation"/>
+  <links id="pf12216658753287" target="pf12216658753289" source="pf12216658753286" outcome="process"/>
+  <links id="pf12216658753288" target="pf12216658753286" source="pf12216658753289" outcome="back"/>
+  <links id="pf12216658753285" target="pf122166587532810" source="pf12216658753283" outcome="rushmore"/>
+  <links id="pf122166587532811" target="pf122166587532865" source="pf122166587532810" outcome="washington"/>
+  <links id="pf122166587532812" target="pf122166587532866" source="pf122166587532810" outcome="jefferson"/>
+  <links id="pf122166587532813" target="pf122166587532867" source="pf122166587532810" outcome="roosevelt"/>
+  <links id="pf122166587532814" target="pf122166587532868" source="pf122166587532810" outcome="lincoln"/>
+  <links id="pf122166587532816" target="pf122166587532818" source="pf122166587532815" outcome="edit" redirect="true"/>
+  <links id="pf122166587532817" target="pf122166587532815" source="pf122166587532818" outcome="success" redirect="true"/>
+</pageflow:Pageflow>
