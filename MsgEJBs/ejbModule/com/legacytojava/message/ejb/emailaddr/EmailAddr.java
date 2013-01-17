@@ -13,6 +13,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -41,6 +44,9 @@ import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
 	authenticationType = AuthenticationType.CONTAINER)
 @Remote(EmailAddrRemote.class)
 @Local(EmailAddrLocal.class)
+
+@WebService
+@SOAPBinding(style = SOAPBinding.Style.RPC)
 public class EmailAddr implements EmailAddrRemote, EmailAddrLocal {
 	protected static final Logger logger = Logger.getLogger(EmailAddr.class);
 	@PersistenceContext(unitName = "EntityPersistence")
@@ -64,6 +70,7 @@ public class EmailAddr implements EmailAddrRemote, EmailAddrLocal {
 		emailAddrDao = (EmailAddrDao)SpringUtil.getAppContext().getBean("emailAddrDao");
     }
 
+    @WebMethod
 	public EmailAddrVo findByAddrId(int addrId) {
 		EmailAddrVo emailAddrVo = emailAddrDao.getByAddrId(addrId);
 		return emailAddrVo;
