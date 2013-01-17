@@ -18,7 +18,7 @@ import com.legacytojava.message.dao.inbox.MsgStreamDao;
 import com.legacytojava.message.dao.outbox.MsgRenderedDao;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/spring-mysql_ds-config.xml", "/spring-dao-config.xml"})
+@ContextConfiguration(locations={"/spring-mysql-config.xml", "/spring-common-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=false)
 @Transactional
 public class CreateAllTablesPostScript {

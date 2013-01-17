@@ -28,7 +28,7 @@ import com.legacytojava.message.constant.RuleNameType;
 import com.legacytojava.message.constant.XHeaderName;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/spring-mysql_ds-config.xml", "/spring-bo_jms-config.xml", "/spring-dao-config.xml"})
+@ContextConfiguration(locations={"/spring-mysql-config.xml", "/spring-jmsqueue_rmt-config.xml", "/spring-common-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional
 public class RuleMatchTest {
@@ -189,25 +189,38 @@ public class RuleMatchTest {
 		
 		// test #11 - Subscribe
 		mBean.setRuleName(null);
-		//mBean.setTo(InternetAddress.parse("demolist1@localhost"));
+		mBean.setTo(InternetAddress.parse("demolist1@localhost"));
+		mBean.setSubject("subscribe  ");
+		mBean.setValue(new Date()+ "Test body message.");
+		mBean.setAttachments(null);
+		String ruleName_s1 = matcher.match(mBean, loader.getRuleSet(), loader.getSubRuleSet());
+		logger.info("##### RuleName: "+ruleName_s1+LF);
+		
 		mBean.setTo(InternetAddress.parse("demolist1@espheredemo.com"));
 		mBean.setSubject("subscribe  ");
 		mBean.setValue(new Date()+ "Test body message.");
 		mBean.setAttachments(null);
-		ruleName = matcher.match(mBean, loader.getRuleSet(), loader.getSubRuleSet());
-		logger.info("##### RuleName: "+ruleName+LF);
-		assertEquals(RuleNameType.SUBSCRIBE.toString(), ruleName);
+		String ruleName_s2 = matcher.match(mBean, loader.getRuleSet(), loader.getSubRuleSet());
+		logger.info("##### RuleName: "+ruleName_s2+LF);
+		assertTrue(RuleNameType.SUBSCRIBE.toString().equals(ruleName_s1) || RuleNameType.SUBSCRIBE.toString().equals(ruleName_s2));
 		
 		// test #12 - UnSubscribe
 		mBean.setRuleName(null);
-		//mBean.setTo(InternetAddress.parse("demolist1@localhost"));
-		mBean.setTo(InternetAddress.parse("demolist1@espheredemo.com"));
+		mBean.setTo(InternetAddress.parse("demolist1@localhost"));
 		mBean.setSubject("unsubscribe");
 		mBean.setValue(new Date()+ "Test body message.");
 		mBean.setAttachments(null);
-		ruleName = matcher.match(mBean, loader.getRuleSet(), loader.getSubRuleSet());
-		logger.info("##### RuleName: "+ruleName+LF);
-		assertEquals(RuleNameType.UNSUBSCRIBE.toString(), ruleName);
+		String ruleName_u1 = matcher.match(mBean, loader.getRuleSet(), loader.getSubRuleSet());
+		logger.info("##### RuleName: "+ruleName_u1+LF);
+
+		mBean.setRuleName(null);
+		mBean.setTo(InternetAddress.parse("demolist1@localhost"));
+		mBean.setSubject("unsubscribe");
+		mBean.setValue(new Date()+ "Test body message.");
+		mBean.setAttachments(null);
+		String ruleName_u2 = matcher.match(mBean, loader.getRuleSet(), loader.getSubRuleSet());
+		logger.info("##### RuleName: "+ruleName_u2+LF);
+		assertTrue(RuleNameType.UNSUBSCRIBE.toString().equals(ruleName_u1)||RuleNameType.UNSUBSCRIBE.toString().equals(ruleName_u2));
 		
 		// test #13 - Contact Us
 		mBean.setRuleName(null);

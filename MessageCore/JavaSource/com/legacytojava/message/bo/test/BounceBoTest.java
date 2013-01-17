@@ -36,8 +36,13 @@ public class BounceBoTest extends BoTestBase {
 		addrVo = selectByAddress(messageBean.getFromAsString());
 		assertNotNull(addrVo);
 		assertTrue(addrVo.getBounceCount()>beforeFromCount);
-		if (StringUtils.isNotBlank(messageBean.getFinalRcpt())) {
-			addrVo = selectByAddress(messageBean.getFinalRcpt());
+//		if (StringUtils.isNotBlank(messageBean.getFinalRcpt())) {
+//			addrVo = selectByAddress(messageBean.getFinalRcpt());
+//			assertNotNull(addrVo);
+//			assertTrue(addrVo.getBounceCount()>0);
+//		}
+		if (StringUtils.isNotBlank(messageBean.getFromAsString())) {
+			addrVo = selectByAddress(messageBean.getFromAsString());
 			assertNotNull(addrVo);
 			assertTrue(addrVo.getBounceCount()>0);
 		}

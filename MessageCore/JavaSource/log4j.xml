@@ -27,7 +27,6 @@
    </category>
    
    <category name="org.jboss.remoting">
-      <!-- priority value="TRACE" class="org.jboss.logging.XLevel"/ -->
       <priority value="INFO"/>
    </category>
    
