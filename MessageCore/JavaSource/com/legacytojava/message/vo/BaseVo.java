@@ -8,27 +8,48 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import com.legacytojava.message.constant.StatusIdCode;
 import com.legacytojava.message.util.Printf;
 
+@XmlAccessorType (XmlAccessType.NONE)
+@XmlRootElement (name = "baseVo")
 public class BaseVo implements java.io.Serializable, Cloneable {
 	private static final long serialVersionUID = 2438423000525545863L;
 	
 	final static String LF = System.getProperty("line.separator", "\n");
+	@XmlElement
 	protected int rowId = -1;
-	protected String primaryKey = null;	
+	@XmlElement
+	protected String primaryKey = null;
+	@XmlElement
 	private String statusId = StatusIdCode.ACTIVE;
+	@XmlElement
+    @XmlJavaTypeAdapter(TimestampAdapter.class)
 	protected Timestamp updtTime = null;
+    @XmlElement
 	protected String updtUserId = null;
-	
+    @XmlElement
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp origUpdtTime = null;
+
+    @XmlTransient
 	private List<ChangeLog> changeLogs = null;
 
 	/**
 	 * Define fields and methods used by UI components
 	 */
+	@XmlTransient
 	protected boolean editable = true;
+	@XmlTransient
 	protected boolean markedForDeletion = false;
+	@XmlTransient
 	protected boolean markedForEdition = false;
 	
 	public BaseVo() {
