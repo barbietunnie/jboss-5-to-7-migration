@@ -33,6 +33,12 @@
 		org.apache.axis.transport.http.AdminServlet</servlet-class>
 		<load-on-startup>100</load-on-startup>
 	</servlet>
+	<!-- JAX-WS POJO RPC -->
+	<servlet>
+	    <servlet-name>SignUpService</servlet-name>
+	    <servlet-class>com.legacytojava.message.init.SignUpService</servlet-class>
+  	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>TimerServlet</servlet-name>
 		<url-pattern>/TimerServlet</url-pattern>
@@ -53,7 +59,11 @@
 		<servlet-name>AdminServlet</servlet-name>
 		<url-pattern>/servlet/AdminServlet</url-pattern>
 	</servlet-mapping>
-
+	<!-- JAX-WS POJO RPC Endpoint Mapping -->
+	<servlet-mapping>
+		<servlet-name>SignUpService</servlet-name>
+		<url-pattern>/signup/*</url-pattern>
+	</servlet-mapping>
 	<!-- define welcome pages -->
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
