@@ -21,7 +21,7 @@ import com.legacytojava.message.exception.OutOfServiceException;
 import com.legacytojava.message.exception.TemplateNotFoundException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/spring-mysql_ds-config.xml", "/spring-bo_jms-config.xml", "/spring-jms_remote-config.xml", "/spring-dao-config.xml"})
+@ContextConfiguration(locations={"/spring-mysql-config.xml", "/spring-jmsqueue_rmt-config.xml", "/spring-common-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional
 public class MailingListBoTest {

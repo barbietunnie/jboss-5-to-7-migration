@@ -11,6 +11,8 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
+	<import resource="classpath:spring-jms_tmplt-config.xml"/>
+	
     <!-- Transaction Managers -->
 	<bean id="jmsTransactionManager" lazy-init="true"
 		class="org.springframework.jms.connection.JmsTransactionManager">

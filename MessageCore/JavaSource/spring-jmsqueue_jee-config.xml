@@ -9,6 +9,8 @@
        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
+	<import resource="classpath:spring-jms_tmplt-config.xml"/>
+	
 	<jee:jndi-lookup id="mysqlDataSource" jndi-name="java:jboss/MessageDS" resource-ref="false">
 		 <jee:environment>
 		 	java.naming.factory.initial=org.jboss.as.naming.InitialContextFactory

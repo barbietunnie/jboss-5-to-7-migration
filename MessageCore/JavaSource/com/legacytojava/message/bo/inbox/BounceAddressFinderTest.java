@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.legacytojava.message.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/spring-mysql_ds-config.xml", "/spring-bo_jms-config.xml", "/spring-dao-config.xml"})
+@ContextConfiguration(locations={"/spring-mysql-config.xml", "/spring-jmsqueue_rmt-config.xml", "/spring-common-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional
 public class BounceAddressFinderTest {

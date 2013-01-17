@@ -75,14 +75,14 @@ public class SpringUtil {
 		}
 		else if (daoAppCtx == null) {
 			List<String> fnames = new ArrayList<String>();
-			fnames.add("classpath*:spring-dao-config.xml");
+			fnames.add("classpath*:spring-common-config.xml");
 			if (isRunningInJBoss()) {
 				logger.info("getDaoAppContext() - Running under JBoss, load jndi_ds xmls");
-				fnames.add("classpath*:spring-jms_ds_jee-config.xml");
+				fnames.add("classpath*:spring-jmsqueue_jee-config.xml");
 			}
 			else {
 				logger.info("getDaoAppContext() - running standalone, load mysql_ds xmls");
-				fnames.add("classpath*:spring-mysql_ds-config.xml");
+				fnames.add("classpath*:spring-mysql-config.xml");
 			}
 			daoAppCtx = new ClassPathXmlApplicationContext(fnames.toArray(new String[]{}));
 		}
@@ -105,10 +105,9 @@ public class SpringUtil {
 	private static String[] getBatchConfigXmlFiles() {
 		ClassLoader loader = JbMain.class.getClassLoader();
 		List<String> cfgFileNames = new ArrayList<String>();
-		cfgFileNames.add("classpath:spring-bo_jms-config.xml");
-		cfgFileNames.add("classpath:spring-jms_remote-config.xml");
-		cfgFileNames.add("classpath:spring-mysql_ds-config.xml");
-		cfgFileNames.add("classpath:spring-dao-config.xml");
+		cfgFileNames.add("classpath:spring-jmsqueue_rmt-config.xml");
+		cfgFileNames.add("classpath:spring-mysql-config.xml");
+		cfgFileNames.add("classpath:spring-common-config.xml");
 		cfgFileNames.add("classpath:spring-jbatch-config.xml");
 		URL mreader = loader.getResource("spring-jbatch-mailreader.xml");
 		URL msender = loader.getResource("spring-jbatch-mailsender.xml");
@@ -132,18 +131,16 @@ public class SpringUtil {
 
 	public static String[] getServerConfigXmlFiles() {
 		List<String> cfgFileNames = new ArrayList<String>();
-		cfgFileNames.add("classpath*:spring-bo_jms-config.xml");
-		cfgFileNames.add("classpath*:spring-jms_ds_jee-config.xml");
-		cfgFileNames.add("classpath*:spring-dao-config.xml");
+		cfgFileNames.add("classpath*:spring-jmsqueue_jee-config.xml");
+		cfgFileNames.add("classpath*:spring-common-config.xml");
 		return cfgFileNames.toArray(new String[]{});
 	}
 
 	public static String[] getStandaloneConfigXmlFiles() {
 		List<String> cfgFileNames = new ArrayList<String>();
-		cfgFileNames.add("classpath:spring-bo_jms-config.xml");
-		cfgFileNames.add("classpath:spring-jms_remote-config.xml");
-		cfgFileNames.add("classpath:spring-mysql_ds-config.xml");
-		cfgFileNames.add("classpath:spring-dao-config.xml");
+		cfgFileNames.add("classpath:spring-jmsqueue_rmt-config.xml");
+		cfgFileNames.add("classpath:spring-mysql-config.xml");
+		cfgFileNames.add("classpath:spring-common-config.xml");
 		return cfgFileNames.toArray(new String[]{});
 	}
 

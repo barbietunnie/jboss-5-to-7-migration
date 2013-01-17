@@ -19,7 +19,7 @@ import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
 import com.legacytojava.message.vo.emailaddr.UnsubCommentsVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/spring-mysql_ds-config.xml", "/spring-dao-config.xml"})
+@ContextConfiguration(locations={"/spring-mysql-config.xml", "/spring-common-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional
 public class UnsubCommentsTest {

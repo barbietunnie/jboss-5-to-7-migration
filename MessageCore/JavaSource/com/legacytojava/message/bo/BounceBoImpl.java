@@ -96,6 +96,11 @@ public class BounceBoImpl extends TaskBaseAdaptor {
 					emailAddrDao.updateBounceCount(emailAddrVo);
 					addrsUpdated++;
 				}
+				else {
+					if (isDebugEnabled) {
+						logger.debug("Address (" + addr + ") does not exist, failed to increase bounce count!");
+					}
+				}
 			}
 		}
 		return Long.valueOf(addrsUpdated);
