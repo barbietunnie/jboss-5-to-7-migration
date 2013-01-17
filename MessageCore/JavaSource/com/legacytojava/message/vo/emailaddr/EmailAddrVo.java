@@ -3,23 +3,45 @@ package com.legacytojava.message.vo.emailaddr;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import com.legacytojava.message.constant.Constants;
 import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.BaseVo;
+import com.legacytojava.message.vo.TimestampAdapter;
 
+@XmlAccessorType (XmlAccessType.NONE)
+@XmlRootElement(name = "emailAddrVo") 
 public class EmailAddrVo extends BaseVo implements Serializable {
 	private static final long serialVersionUID = 824782085344620557L;
+	@XmlElement
 	private long emailAddrId = -1;
+	@XmlElement
 	private String emailAddr = "";
+	@XmlElement
+    @XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp statusChangeTime = null;
+    @XmlElement
 	private String statusChangeUserId = null;
+    @XmlElement
 	private int bounceCount = 0;
+    @XmlElement
+    @XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastBounceTime = null;
+    @XmlElement
+    @XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastSentTime = null;
+    @XmlElement
+    @XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastRcptTime= null;
+    @XmlElement
 	private String acceptHtml = Constants.YES_CODE;
-	
-	// used when join with MsgInbox table
+
+    // used when join with MsgInbox table
 	private String ruleName = null;
 	// used when joining Customers table to get customer name
 	private String custId = null;
