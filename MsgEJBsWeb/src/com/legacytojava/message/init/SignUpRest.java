@@ -15,6 +15,11 @@ import com.legacytojava.message.ejb.customer.CustomerSignupLocal;
 import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.CustomerVo;
 
+/**
+ * Sample implementation of JAX-RS service.
+ * @author wangjack
+ *
+ */
 @Path("/signup")
 @Consumes({"application/json"})
 @Produces({"application/json"})
