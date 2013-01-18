@@ -105,9 +105,9 @@ public class SpringUtil {
 	private static String[] getBatchConfigXmlFiles() {
 		ClassLoader loader = JbMain.class.getClassLoader();
 		List<String> cfgFileNames = new ArrayList<String>();
-		cfgFileNames.add("classpath:spring-jmsqueue_rmt-config.xml");
-		cfgFileNames.add("classpath:spring-mysql-config.xml");
 		cfgFileNames.add("classpath:spring-common-config.xml");
+		cfgFileNames.add("classpath:spring-mysql-config.xml");
+		cfgFileNames.add("classpath:spring-jmsqueue_rmt-config.xml");
 		cfgFileNames.add("classpath:spring-jbatch-config.xml");
 		URL mreader = loader.getResource("spring-jbatch-mailreader.xml");
 		URL msender = loader.getResource("spring-jbatch-mailsender.xml");
@@ -131,16 +131,16 @@ public class SpringUtil {
 
 	public static String[] getServerConfigXmlFiles() {
 		List<String> cfgFileNames = new ArrayList<String>();
-		cfgFileNames.add("classpath*:spring-jmsqueue_jee-config.xml");
 		cfgFileNames.add("classpath*:spring-common-config.xml");
+		cfgFileNames.add("classpath*:spring-jmsqueue_jee-config.xml");
 		return cfgFileNames.toArray(new String[]{});
 	}
 
 	public static String[] getStandaloneConfigXmlFiles() {
 		List<String> cfgFileNames = new ArrayList<String>();
+		cfgFileNames.add("classpath:spring-common-config.xml");
 		cfgFileNames.add("classpath:spring-jmsqueue_rmt-config.xml");
 		cfgFileNames.add("classpath:spring-mysql-config.xml");
-		cfgFileNames.add("classpath:spring-common-config.xml");
 		return cfgFileNames.toArray(new String[]{});
 	}
 
