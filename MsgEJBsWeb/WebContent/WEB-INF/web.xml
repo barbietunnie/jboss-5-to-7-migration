@@ -64,6 +64,11 @@
 		<servlet-name>SignUpService</servlet-name>
 		<url-pattern>/signup/*</url-pattern>
 	</servlet-mapping>
+	<!-- JAX-RS POJO Endpoint Mapping, Context root is defined in jboss-web.xml -->
+	<servlet-mapping>
+        <servlet-name>javax.ws.rs.core.Application</servlet-name>
+        <url-pattern>/restservices/*</url-pattern>
+    </servlet-mapping>
 	<!-- define welcome pages -->
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

@@ -1,8 +1,11 @@
 package com.legacytojava.message.init;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
@@ -12,15 +15,16 @@ import com.legacytojava.message.ejb.customer.CustomerSignupLocal;
 import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.CustomerVo;
 
-@WebService
-@SOAPBinding(style = SOAPBinding.Style.RPC)
-public class SignUpService {
-	protected static final Logger logger = Logger.getLogger(SignUpService.class);
+@Path("/signup")
+@Consumes({"application/json"})
+@Produces({"application/json"})
+public class SignUpRest {
+	protected static final Logger logger = Logger.getLogger(SignUpRest.class);
 
 	private CustomerSignupLocal customerSignup;
 	private CustomerLocal customer;
 
-	public SignUpService() {
+	public SignUpRest() {
 		// LookupUtil.lookupLocalEjb(...) caused Exception been thrown from JBoss CXF module.
 	}
 	
@@ -38,7 +42,6 @@ public class SignUpService {
 		return customer;
 	}
 
-	@WebMethod
 	public String signUpOnly(CustomerDto dto)  {
 		CustomerVo vo = new CustomerVo();
 		try {
@@ -67,7 +70,6 @@ public class SignUpService {
 		}
 	}
 
-	@WebMethod
 	public String signUpAndSubscribe(CustomerDto dto, String listId) {
 		CustomerVo vo = new CustomerVo();
 		try {
@@ -91,8 +93,9 @@ public class SignUpService {
 		}
 	}
 
-	@WebMethod
-	public CustomerDto getCustomer(String emailAddr) {
+	@GET
+	@Path("/customer/{email}")
+	public CustomerDto getCustomer(@PathParam("email") String emailAddr) {
 		logger.info("getCustomer() - about to retrieve Customer by Email Address: " + emailAddr
 				+ " from the database.");
 		try {
@@ -121,7 +124,6 @@ public class SignUpService {
 		}
 	}
 
-	@WebMethod
 	public String updateCustomer(CustomerDto dto)  {
 		logger.info("updateCustomer() - calling signUpOnly() to perform update...");
 		try {
@@ -133,7 +135,6 @@ public class SignUpService {
 		}
 	}
 
-	@WebMethod
 	public int removeCustomer(String emailAddr) {
 		logger.info("removeCustomer() - about to remove Customer with Email Address: " + emailAddr
 				+ " from the database.");
@@ -149,8 +150,9 @@ public class SignUpService {
 		}
 	}
 
-	@WebMethod
-	public int addToList(String emailAddr, String listId) {
+	@GET
+	@Path("/addtolist")
+	public int addToList(@QueryParam("email") String emailAddr, @QueryParam("list")String listId) {
 		logger.info("addToList() - about to add Customer: " + emailAddr + " to list: " + listId);
 		try {
 			int emailsSignedUp = getCustomerSignup().addToList(emailAddr, listId);
@@ -164,8 +166,9 @@ public class SignUpService {
 		}
 	}
 
-	@WebMethod
-	public int removeFromList(String emailAddr, String listId) {
+	@GET
+	@Path("/removefromlist")
+	public int removeFromList(@QueryParam("email") String emailAddr, @QueryParam("list")String listId) {
 		logger.info("removeFromList() - about to remove Customer: " + emailAddr + " from list: "
 				+ listId);
 		try {
@@ -181,7 +184,7 @@ public class SignUpService {
 	}
 	
 	public static void main(String[] args) {
-		SignUpService signup = new SignUpService();
+		SignUpRest signup = new SignUpRest();
 		try {
 			signup.addToList("jsmith@test.com", "SMPLLST1");
 			signup.removeFromList("jsmith@test.com", "SMPLLST1");

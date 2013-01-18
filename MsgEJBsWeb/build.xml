@@ -14,6 +14,7 @@
 
 	<path id="compile.path">
 		<pathelement location="${jboss.modules.dir}/javax/servlet/api/main/jboss-servlet-api_3.0_spec-1.0.0.Final.jar"/>
+		<pathelement location="${jboss.modules.dir}/javax/ws/rs/api/main/jboss-jaxrs-api_1.1_spec-1.0.0.Final.jar"/>
 		<pathelement location="${core.dist.dir}/${msg.core}.jar"/>
 		<pathelement location="${ejbclient.dist.dir}/${msg.ejbclient}.jar"/>
 		<path refid="base.path"/>
