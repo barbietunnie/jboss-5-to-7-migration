@@ -12,6 +12,11 @@ import com.legacytojava.message.ejb.customer.CustomerSignupLocal;
 import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.CustomerVo;
 
+/**
+ * Sample implementation of JAX-WS service.
+ * @author wangjack
+ *
+ */
 @WebService
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public class SignUpService {
