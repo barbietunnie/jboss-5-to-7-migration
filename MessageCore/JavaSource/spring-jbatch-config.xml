@@ -9,9 +9,6 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
     
-    <!-- Import Alfresco base configuration -->
-	<!-- import resource="classpath:alfresco/application-context.xml" / -->
-	
     <!-- define custom scope bean for thread scope -->
 	<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
 		<property name="scopes">
@@ -219,7 +216,7 @@
 	      class="com.legacytojava.message.bean.SimpleEmailSender">
 	    <constructor-arg index="0" ref="smtpProperties"/>
 	</bean>
-		
+
 	<!-- 
 		Timer Section. Default is to use TestProcessor.
 	 -->
