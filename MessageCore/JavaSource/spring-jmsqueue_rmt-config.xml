@@ -129,7 +129,7 @@
 	        <ref bean="jndiTemplate"/>
 	    </property>
 	    <property name="jndiName">
-	        <value>jms/queue/mailSenderInput</value>
+	        <value>jms/queue/test</value>
 	    </property>
 	</bean>
 	

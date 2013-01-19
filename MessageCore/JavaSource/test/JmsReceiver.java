@@ -13,7 +13,7 @@ public class JmsReceiver {
 		AbstractApplicationContext factory = SpringUtil.getAppContext();
 		
 		javax.jms.Queue queue = (javax.jms.Queue) factory.getBean("customerCareInput");
-		queue = (javax.jms.Queue) factory.getBean("unHandledOutput");
+		queue = (javax.jms.Queue) factory.getBean("destination");
 		
 		try {
 			JmsReceiver test = (JmsReceiver)factory.getBean("jmsReceiver");

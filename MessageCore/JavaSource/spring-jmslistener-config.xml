@@ -40,7 +40,7 @@
 	          org.jboss.naming.remote.client.InitialContextFactory
 	        </prop>
 	        <prop key="java.naming.provider.url">${jndi.url}</prop>
-	        <prop key="java.naming.factory.url.pkgs">org.jboss.ejb.client.naming</prop>
+	        <prop key="java.naming.factory.url.pkgs">org.jboss.naming.remote.client</prop>
 	        <prop key="java.naming.security.principal">${jndi.username}</prop>
 	        <prop key="java.naming.security.credentials">${jndi.password}</prop>
 	      </props>
