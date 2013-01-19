@@ -36,8 +36,10 @@ public class JmsQueueReceiver {
 		System.out.println("Will wait " + (template.getReceiveTimeout() / 1000) + " seconds...");
 
 		Message msg = template.receive(destination);
-		System.out.println("Message class name: " + msg.getClass().getName());
-		System.out.println("Received Message: " + msg);
+		if (msg != null) {
+			System.out.println("Message class name: " + msg.getClass().getName());
+			System.out.println("Received Message: " + msg);
+		}
 		
 		if (msg instanceof ObjectMessage) {
 			MessageBean msgBean = (MessageBean) ((ObjectMessage) msg).getObject();

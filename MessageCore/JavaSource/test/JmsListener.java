@@ -6,9 +6,8 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 public class JmsListener implements MessageListener {
@@ -29,16 +28,14 @@ public class JmsListener implements MessageListener {
 	}
 
 	public static void main(String[] args) {
-		DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
-		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
-		reader.loadBeanDefinitions(new ClassPathResource("spring-jmslistener-config.xml"));
+		AbstractApplicationContext factory = new ClassPathXmlApplicationContext("spring-jmslistener-config.xml");
 
 		new JmsListener().startListener(factory);
 		
 		System.exit(0);
 	}
 	
-	private void startListener(DefaultListableBeanFactory factory) {
+	private void startListener(AbstractApplicationContext factory) {
 		try {
 			DefaultMessageListenerContainer listener = (DefaultMessageListenerContainer) factory
 					.getBean("listenerContainer");
