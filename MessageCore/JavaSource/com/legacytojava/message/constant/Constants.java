@@ -19,6 +19,14 @@ public class Constants {
 	public final static String FreePremiumUpgradeTemplateId = "FreePremiumUpgradeReply";
 	public final static String FreePremiumUpgradeRuleName = "FreePremiumUpgrade";
 
+	public static enum YesOrNo {
+		Yes,No;
+	}
+
+	public static enum YorN {
+		Y,N;
+	}
+
 	//
 	// define mail types for rule engine
 	//

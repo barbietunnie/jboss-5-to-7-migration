@@ -14,8 +14,15 @@ public class VariableType {
 	public final static String COLLECTION = "C";
 	// a collection of <HashMap>s (for Table section)
 
-	// <HashMap> = list of variables
-	public static enum VARIABLE_TYPE {
-		ADDRESS, TEXT, NUMERIC, DATETIME, X_HEADER, LOB, COLLECTION
+	// enum class = list of variables
+	public static enum Variable {
+		ADDRESS("A"), TEXT("T"), NUMERIC("N"), DATETIME("D"), X_HEADER("X"), LOB("L"), COLLECTION("C");
+		private final String value;
+		private Variable(String value) {
+			this.value = value;
+		}
+		public String getValue() {
+			return value;
+		}
 	}
 }
