@@ -40,4 +40,7 @@ public class SpringUtil {
 		return cfgFileNames.toArray(new String[]{});
 	}
 
+	public static void main(String[] args) {
+		getAppContext();
+	}
 }
