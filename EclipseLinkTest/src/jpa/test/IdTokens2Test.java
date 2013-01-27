@@ -112,7 +112,7 @@ public class IdTokens2Test {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		tkn2.setClientId("JBatchCorp");
+		tkn2.getClientData().setClientId("JBatchCorp");
 		service.insert(tkn2);
 		
 		IdTokens tkn3 = service.getByClientId("JBatchCorp");
@@ -129,7 +129,7 @@ public class IdTokens2Test {
 			// expected
 		}
 		
-		assertTrue(0==service.deleteByClientId(tkn3.getClientId()));
+		assertTrue(0==service.deleteByClientId(tkn3.getClientData().getClientId()));
 		assertTrue(0==service.deleteByRowId(tkn3.getRowId()));
 	}
 	
@@ -148,14 +148,14 @@ public class IdTokens2Test {
 			throw new RuntimeException(e);
 		}
 
-		tkn1.setClientId("JBatchCorp");
+		tkn1.getClientData().setClientId("JBatchCorp");
 		service.insert(tkn1);
 		
-		IdTokens tkn2 = service.getByClientId(tkn1.getClientId());
+		IdTokens tkn2 = service.getByClientId(tkn1.getClientData().getClientId());
 		assertNotNull(tkn2);
 		
 		service.delete(tkn2);
-		service.getByClientId(tkn2.getClientId());
+		service.getByClientId(tkn2.getClientData().getClientId());
 	}
 
 	/* 
