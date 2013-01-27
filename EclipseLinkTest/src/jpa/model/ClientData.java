@@ -1,9 +1,14 @@
 package jpa.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -12,14 +17,20 @@ import org.eclipse.persistence.annotations.Index;
 import jpa.constant.Constants;
 
 @Entity
-@Table(name="Clients")
-public class Clients extends BaseModel implements Serializable {
+@Table(name="ClientData")
+public class ClientData extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 8789436921442107499L;
 
 	@Index
 	@Column(name="ClientId", unique=true, nullable=false, length=16)
 	private String clientId = "";
+	
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ClientData")
+	private List<ClientVariable> clientVariables;
 
+	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="ClientData")
+	private IdTokens idTokens;
+	
 	@Column(length=40, nullable=false)
 	private String clientName = "";
 	@Column(length=1, columnDefinition="char")
@@ -33,7 +44,7 @@ public class Clients extends BaseModel implements Serializable {
 	@Column(length=100)
 	private String webSiteUrl = null;
 	@Column(length=1, nullable=false, columnDefinition="char")
-	private String saveRawMsg = Constants.Code.YES_CODE.getValue();
+	private String isSaveRawMsg = Constants.Code.YES_CODE.getValue();
 	@Column(length=60)
 	private String contactName = null;
 	@Column(length=18)
@@ -51,11 +62,11 @@ public class Clients extends BaseModel implements Serializable {
 	@Column(length=255, nullable=false)
 	private String chaRspHndlrEmail = "";
 	@Column(length=3, nullable=false)
-	private String embedEmailId = "";
+	private String isEmbedEmailId = "";
 	@Column(length=50, nullable=false)
 	private String returnPathLeft = "";
 	@Column(length=3, nullable=false)
-	private String useTestAddr = Constants.Code.NO.getValue();
+	private String isUseTestAddr = Constants.Code.NO.getValue();
 	@Column(length=255)
 	private String testFromAddr = null; 
 	@Column(length=255)
@@ -75,35 +86,51 @@ public class Clients extends BaseModel implements Serializable {
 	@Column(length=30)
 	private String systemKey = null;
 	@Column(length=1, columnDefinition="char")
-	private String dikm = null;
+	private String isDikm = null;
 	@Column(length=1, columnDefinition="char")
 	private String domainKey = null;
 	@Column(length=200)
 	private String keyFilePath = null;
 	@Column(length=1, columnDefinition="char")
-	private String spf = null;
+	private String isSpf = null;
 
 	@Transient
 	private String origClientId = null;
 	
-	public Clients() {
+	public ClientData() {
 		// must have a no-argument constructor
 	}
 
+	public List<ClientVariable> getClientVariables() {
+		return clientVariables;
+	}
+
+	public void setClientVariables(List<ClientVariable> clientVariables) {
+		this.clientVariables = clientVariables;
+	}
+
+	public IdTokens getIdTokens() {
+		return idTokens;
+	}
+
+	public void setIdTokens(IdTokens idTokens) {
+		this.idTokens = idTokens;
+	}
+
 	/** define components for UI */
-	public boolean getUseTestAddress() {
-		return Constants.Code.YES.getValue().equalsIgnoreCase(useTestAddr);
+	public boolean isUseTestAddress() {
+		return Constants.Code.YES.getValue().equalsIgnoreCase(isUseTestAddr);
 	}
 	
-	public boolean getIsVerpAddressEnabled() {
+	public boolean isVerpAddressEnabled() {
 		return Constants.Code.YES.getValue().equalsIgnoreCase(isVerpEnabled);
 	}
 	
-	public boolean getIsEmbedEmailId() {
-		return Constants.Code.YES.getValue().equalsIgnoreCase(embedEmailId);
+	public boolean isEmbedEmailId() {
+		return Constants.Code.YES.getValue().equalsIgnoreCase(isEmbedEmailId);
 	}
 	
-	public boolean getIsSystemClient() {
+	public boolean isSystemClient() {
 		return Constants.DEFAULT_CLIENTID.equalsIgnoreCase(clientId);
 	}
 	/** end of UI components */
@@ -138,11 +165,11 @@ public class Clients extends BaseModel implements Serializable {
 	public void setIrsTaxId(String irsTaxId) {
 		this.irsTaxId = irsTaxId;
 	}
-	public String getSaveRawMsg() {
-		return saveRawMsg;
+	public String getIsSaveRawMsg() {
+		return isSaveRawMsg;
 	}
-	public void setSaveRawMsg(String saveRawMsg) {
-		this.saveRawMsg = saveRawMsg;
+	public void setIsSaveRawMsg(String saveRawMsg) {
+		this.isSaveRawMsg = saveRawMsg;
 	}
 	public String getWebSiteUrl() {
 		return webSiteUrl;
@@ -204,17 +231,17 @@ public class Clients extends BaseModel implements Serializable {
 	public void setSystemId(String systemId) {
 		this.systemId = systemId;
 	}
-	public String getEmbedEmailId() {
-		return embedEmailId;
+	public String getIsEmbedEmailId() {
+		return isEmbedEmailId;
 	}
-	public void setEmbedEmailId(String embedEmailId) {
-		this.embedEmailId = embedEmailId;
+	public void setIsEmbedEmailId(String embedEmailId) {
+		this.isEmbedEmailId = embedEmailId;
 	}
-	public String getUseTestAddr() {
-		return useTestAddr;
+	public String getIsUseTestAddr() {
+		return isUseTestAddr;
 	}
-	public void setUseTestAddr(String useTestAddr) {
-		this.useTestAddr = useTestAddr;
+	public void setIsUseTestAddr(String useTestAddr) {
+		this.isUseTestAddr = useTestAddr;
 	}
 	public String getTestFromAddr() {
 		return testFromAddr;
@@ -287,12 +314,12 @@ public class Clients extends BaseModel implements Serializable {
 		this.systemKey = systemKey;
 	}
 
-	public String getDikm() {
-		return dikm;
+	public String getIsDikm() {
+		return isDikm;
 	}
 
-	public void setDikm(String dikm) {
-		this.dikm = dikm;
+	public void setIsDikm(String dikm) {
+		this.isDikm = dikm;
 	}
 
 	public String getDomainKey() {
@@ -311,11 +338,11 @@ public class Clients extends BaseModel implements Serializable {
 		this.keyFilePath = keyFilePath;
 	}
 
-	public String getSpf() {
-		return spf;
+	public String getIsSpf() {
+		return isSpf;
 	}
 
-	public void setSpf(String spf) {
-		this.spf = spf;
+	public void setIsSpf(String spf) {
+		this.isSpf = spf;
 	}
 }

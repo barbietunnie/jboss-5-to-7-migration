@@ -1,7 +1,6 @@
 package jpa.model;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
@@ -9,11 +8,9 @@ import javax.persistence.Table;
 /*
  * XXX !!!!! Rollback will not work since this table is defined with MyISAM engine
  */
-public class ReloadFlags implements java.io.Serializable {	
+public class ReloadFlags extends BaseModel {	
 	private static final long serialVersionUID = -5657762883755527124L;
 
-	@Id
-	private int rowId = -1;
 	private int clients = 0;
 	private int rules = 0;
 	private int actions = 0;

@@ -4,18 +4,18 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import jpa.constant.Constants;
 
-@Entity
+@MappedSuperclass
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public abstract class BaseVariableModel implements Serializable
 {
@@ -34,14 +34,14 @@ public abstract class BaseVariableModel implements Serializable
 	 * Fix:
 	 * Use GenerationType.TABLE instead.
 	 */
-	@GeneratedValue(strategy = GenerationType.TABLE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	/*
 	 * XXX !!!!!!!!!! Very important !!!!!!!!!!
 	 * "name" attribute in Column annotation is required for native query
 	 * to map query results to the JPA model class.
 	 */
-	@Column(name="RowId") 
-	protected int rowId = -1;
+	@Column(name="Row_Id", updatable=false) 
+	protected int rowId = 0;
 	@Column(name="VariableName", nullable=false, length=26)
 	private String variableName = "";
 	@Column(name="StartTime", nullable=false)

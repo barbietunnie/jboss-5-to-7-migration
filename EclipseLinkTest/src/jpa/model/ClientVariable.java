@@ -2,27 +2,34 @@ package jpa.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="ClientVariable", uniqueConstraints=@UniqueConstraint(columnNames = {"clientId", "variableName", "startTime"}))
+@Table(name="ClientVariable", uniqueConstraints=@UniqueConstraint(columnNames = {"clientRowId", "variableName", "startTime"}))
 public class ClientVariable extends BaseVariableModel implements Serializable
 {
 	private static final long serialVersionUID = -5873779791693771806L;
-	@Column(name="ClientId", unique=true, nullable=false, length=16)
-	private String clientId = "";
+
+	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, optional=false)
+	@JoinColumn(name="ClientRowId", referencedColumnName="Row_Id")
+	private ClientData clientData;
+
 	@Column(name="VariableValue", columnDefinition="text")
 	private String variableValue = null;
 
-	public String getClientId() {
-		return clientId;
+	public ClientData getClientData() {
+		return clientData;
 	}
 
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
+	public void setClientData(ClientData clientData) {
+		this.clientData = clientData;
 	}
 	public String getVariableValue() {
 		return variableValue;

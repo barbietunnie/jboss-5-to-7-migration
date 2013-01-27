@@ -3,28 +3,28 @@ package jpa.model;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
-@Entity
+@MappedSuperclass
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public abstract class BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -3737571995910644181L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE)
-	@Column(name="RowId")
-	protected int rowId = -1;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="Row_Id", updatable=false)
+	protected int rowId = 0;
 
 	@Column(name="UpdtTime", nullable=false)
 	@Version
 	protected Timestamp updtTime = null;
-	@Column(name="UpdtUserId", length=10, nullable=false, columnDefinition="char")
+	@Column(name="UpdtUserId", length=10, nullable=false)
 	protected String updtUserId = null;
 
 	public Timestamp getUpdtTime() {
