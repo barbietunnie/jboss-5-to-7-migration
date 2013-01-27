@@ -1,6 +1,7 @@
 package jpa.constant;
 
 public class Constants {
+	public final static String DEFAULT_USER_ID = "MsgMaint";
 	public final static String DEFAULT_CLIENTID = "System";
 
 	public static enum Code {
