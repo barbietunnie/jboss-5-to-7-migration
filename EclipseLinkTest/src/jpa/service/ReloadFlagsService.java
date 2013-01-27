@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import jpa.constant.Constants;
 import jpa.model.ReloadFlags;
 
 @Component("reloadFlagsService")
@@ -47,6 +48,8 @@ public class ReloadFlagsService {
 	
 	private void repair() {
 		ReloadFlags record = new ReloadFlags();
+		record.setUpdtUserId(Constants.DEFAULT_USER_ID);
+		record.setUpdtTime(new java.sql.Timestamp(System.currentTimeMillis()));
 		update(record);
 	}
 

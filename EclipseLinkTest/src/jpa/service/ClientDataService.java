@@ -14,22 +14,22 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
-import jpa.model.Clients;
+import jpa.model.ClientData;
 import jpa.util.StringUtil;
 
-@Component("clientsService")
+@Component("clientDataService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class ClientsService {
-	static Logger logger = Logger.getLogger(ClientsService.class);
+public class ClientDataService {
+	static Logger logger = Logger.getLogger(ClientDataService.class);
 	
 	@Autowired
 	EntityManager em;
 
-	public Clients getByClientId(String clientId) throws NoResultException {
+	public ClientData getByClientId(String clientId) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from Clients t where t.clientId = :clientId");
+			Query query = em.createQuery("select t from ClientData t where t.clientId = :clientId");
 			query.setParameter("clientId", clientId);
-			Clients client = (Clients) query.getSingleResult();
+			ClientData client = (ClientData) query.getSingleResult();
 			em.lock(client, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return client;
 		}
@@ -37,11 +37,11 @@ public class ClientsService {
 		}
 	}
 	
-	public Clients getByRowId(int rowId) throws NoResultException {
+	public ClientData getByRowId(int rowId) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from Clients t where t.rowId = :rowId");
+			Query query = em.createQuery("select t from ClientData t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
-			Clients client = (Clients) query.getSingleResult();
+			ClientData client = (ClientData) query.getSingleResult();
 			em.lock(client, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return client;
 		}
@@ -49,22 +49,22 @@ public class ClientsService {
 		}
 	}
 	
-	public Clients getByDomainName(String domainName) throws NoResultException {
+	public ClientData getByDomainName(String domainName) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from Clients t where t.domainName = :domainName");
+			Query query = em.createQuery("select t from ClientData t where t.domainName = :domainName");
 			query.setParameter("domainName", domainName);
-			Clients clients = (Clients) query.getSingleResult();
+			ClientData clients = (ClientData) query.getSingleResult();
 			return clients;
 		}
 		finally {
 		}
 	}
 
-	public List<Clients> getAll() {
+	public List<ClientData> getAll() {
 		try {
-			Query query = em.createQuery("select t from Clients t");
+			Query query = em.createQuery("select t from ClientData t");
 			@SuppressWarnings("unchecked")
-			List<Clients> list = query.getResultList();
+			List<ClientData> list = query.getResultList();
 			return list;
 		}
 		finally {
@@ -73,7 +73,7 @@ public class ClientsService {
 	
 	public String getSystemId() throws NoResultException {
 		try {
-			Query query = em.createQuery("select t.systemId from Clients t where t.clientId = :clientId");
+			Query query = em.createQuery("select t.systemId from ClientData t where t.clientId = :clientId");
 			query.setParameter("clientId", Constants.DEFAULT_CLIENTID);
 			String systemId = (String) query.getSingleResult();
 			return systemId;
@@ -84,7 +84,7 @@ public class ClientsService {
 
 	public String getSystemKey() throws NoResultException {
 		try {
-			Query query = em.createQuery("select t.systemKey from Clients t where t.clientId = :clientId");
+			Query query = em.createQuery("select t.systemKey from ClientData t where t.clientId = :clientId");
 			query.setParameter("clientId", Constants.DEFAULT_CLIENTID);
 			String systemKey = (String) query.getSingleResult();
 			return systemKey;
@@ -93,7 +93,7 @@ public class ClientsService {
 		}		
 	}
 
-	public void delete(Clients client) {
+	public void delete(ClientData client) {
 		if (client==null) return;
 		try {
 			em.remove(client);
@@ -104,7 +104,7 @@ public class ClientsService {
 
 	public int deleteByClientId(String clientId) {
 		try {
-			Query query = em.createQuery("delete from Clients t where t.clientId=:clientId");
+			Query query = em.createQuery("delete from ClientData t where t.clientId=:clientId");
 			query.setParameter("clientId", clientId);
 			int rows = query.executeUpdate();
 			return rows;
@@ -115,7 +115,7 @@ public class ClientsService {
 
 	public int deleteByRowId(int rowId) {
 		try {
-			Query query = em.createQuery("delete from Clients t where t.rowId=:rowId");
+			Query query = em.createQuery("delete from ClientData t where t.rowId=:rowId");
 			query.setParameter("rowId", rowId);
 			int rows = query.executeUpdate();
 			return rows;
@@ -126,7 +126,8 @@ public class ClientsService {
 
 	@Autowired
 	private ReloadFlagsService reloadFlagsService;
-	public void insert(Clients client) {
+
+	public void insert(ClientData client) {
 		try {
 			validateClient(client);
 			em.persist(client);
@@ -136,17 +137,17 @@ public class ClientsService {
 		}
 	}
 	
-	public void update(Clients client) {
+	public void update(ClientData client) {
 		insert(client);
 	}
 	
-	private void validateClient(Clients client) {
-		if (client.getUseTestAddress()) {
+	private void validateClient(ClientData client) {
+		if (client.isUseTestAddress()) {
 			if (StringUtil.isEmpty(client.getTestToAddr())) {
 				throw new IllegalStateException("Test TO Address was null");
 			}
 		}
-		if (client.getIsVerpAddressEnabled()) {
+		if (client.isVerpAddressEnabled()) {
 			if (StringUtil.isEmpty(client.getVerpInboxName())) {
 				throw new IllegalStateException("VERP bounce inbox name was null");
 			}
