@@ -72,13 +72,13 @@ public class IdTokens1Test {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		tkn2.setClientId("JBatchCorp");
+		tkn2.getClientData().setClientId("JBatchCorp");
 		service.insert(tkn2);
 		
 		IdTokens tkn3 = service.getByClientId("JBatchCorp");
 		assertNotNull(tkn3);
 		assertTrue(tkn1.getRowId()!=tkn3.getRowId());
 		
-		assertTrue(1==service.deleteByClientId(tkn3.getClientId()));
+		assertTrue(1==service.deleteByClientId(tkn3.getClientData().getClientId()));
 	}
 }

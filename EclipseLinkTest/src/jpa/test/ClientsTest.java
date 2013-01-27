@@ -7,8 +7,8 @@ import java.util.List;
 import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
-import jpa.model.Clients;
-import jpa.service.ClientsService;
+import jpa.model.ClientData;
+import jpa.service.ClientDataService;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.BeforeClass;
@@ -32,14 +32,14 @@ public class ClientsTest {
 	}
 
 	@Autowired
-	ClientsService service;
+	ClientDataService service;
 
 	@Test
 	public void ClientsService() {
-		List<Clients> list = service.getAll();
+		List<ClientData> list = service.getAll();
 		assertFalse(list.isEmpty());
 		
-		Clients tkn0 = service.getByClientId(Constants.DEFAULT_CLIENTID);
+		ClientData tkn0 = service.getByClientId(Constants.DEFAULT_CLIENTID);
 		assertNotNull(tkn0);
 		
 		assertTrue(tkn0.getSystemId().equals(service.getSystemId()));
@@ -50,12 +50,12 @@ public class ClientsTest {
 		tkn0.setUpdtUserId("JpaTest");
 		service.update(tkn0);
 		
-		Clients tkn1 = service.getByRowId(tkn0.getRowId());
+		ClientData tkn1 = service.getByRowId(tkn0.getRowId());
 		assertTrue("JpaTest".equals(tkn1.getUpdtUserId()));
 		// end of test update
 		
 		// test insert
-		Clients tkn2 = new Clients();
+		ClientData tkn2 = new ClientData();
 		try {
 			BeanUtils.copyProperties(tkn2, tkn1);
 		}
@@ -65,7 +65,7 @@ public class ClientsTest {
 		tkn2.setClientId(Constants.DEFAULT_CLIENTID + "_2");
 		service.insert(tkn2);
 		
-		Clients tkn3 = service.getByClientId(tkn2.getClientId());
+		ClientData tkn3 = service.getByClientId(tkn2.getClientId());
 		assertTrue(tkn3.getRowId()!=tkn1.getRowId());
 		// end of test insert
 		

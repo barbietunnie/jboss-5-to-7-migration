@@ -47,7 +47,7 @@ public class ClientVariableTest {
 		assertNotNull(var1);
 		System.out.println("ClientVariable: " + StringUtil.prettyPrint(var1));
 
-		ClientVariable var2 = service.getByPrimaryKey(var1.getClientId(), var1.getVariableName(), var1.getStartTime());
+		ClientVariable var2 = service.getByPrimaryKey(var1.getClientData().getClientId(), var1.getVariableName(), var1.getStartTime());
 		assertTrue(var1.equals(var2));
 
 		List<ClientVariable> list1 = service.getByVariableName(var1.getVariableName());
@@ -61,28 +61,28 @@ public class ClientVariableTest {
 		ClientVariable var3 = createNewInstance(var2);
 		var3.setStartTime(newTms);
 		service.insert(var3);
-		assertNotNull(service.getByPrimaryKey(var3.getClientId(), var3.getVariableName(), newTms));
+		assertNotNull(service.getByPrimaryKey(var3.getClientData().getClientId(), var3.getVariableName(), newTms));
 		// end of test insert
 		
 		service.delete(var3);
-		assertNull(service.getByPrimaryKey(var3.getClientId(), var3.getVariableName(), var3.getStartTime()));
+		assertNull(service.getByPrimaryKey(var3.getClientData().getClientId(), var3.getVariableName(), var3.getStartTime()));
 
 		// test deleteByVariableName
 		ClientVariable var4 = createNewInstance(var2);
 		var4.setVariableName(var2.getVariableName() + "_v4");
 		service.insert(var4);
 		assertTrue(1==service.deleteByVariableName(var4.getVariableName()));
-		assertNull(service.getByPrimaryKey(var4.getClientId(), var4.getVariableName(), var4.getStartTime()));
+		assertNull(service.getByPrimaryKey(var4.getClientData().getClientId(), var4.getVariableName(), var4.getStartTime()));
 
 		// test deleteByPrimaryKey
 		ClientVariable var5 = createNewInstance(var2);
 		var5.setVariableName(var2.getVariableName() + "_v5");
 		service.insert(var5);
-		assertTrue(1==service.deleteByPrimaryKey(var5.getClientId(), var5.getVariableName(), var5.getStartTime()));
-		assertNull(service.getByPrimaryKey(var5.getClientId(), var5.getVariableName(), var5.getStartTime()));
+		assertTrue(1==service.deleteByPrimaryKey(var5.getClientData().getClientId(), var5.getVariableName(), var5.getStartTime()));
+		assertNull(service.getByPrimaryKey(var5.getClientData().getClientId(), var5.getVariableName(), var5.getStartTime()));
 
 		// test getCurrentByClientId
-		List<ClientVariable> list3 = service.getCurrentByClientId(var2.getClientId());
+		List<ClientVariable> list3 = service.getCurrentByClientId(var2.getClientData().getClientId());
 		for (ClientVariable rec : list3) {
 			logger.info(StringUtil.prettyPrint(rec));
 		}
@@ -91,7 +91,7 @@ public class ClientVariableTest {
 		ClientVariable var6 = createNewInstance(var2);
 		var6.setVariableName(var2.getVariableName() + "_v6");
 		service.insert(var6);
-		assertNotNull(service.getByPrimaryKey(var6.getClientId(), var6.getVariableName(), var6.getStartTime()));
+		assertNotNull(service.getByPrimaryKey(var6.getClientData().getClientId(), var6.getVariableName(), var6.getStartTime()));
 		var6.setVariableValue("new test value");
 		service.update(var6);
 		ClientVariable var_updt = service.getByRowId(var6.getRowId());
