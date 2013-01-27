@@ -2,18 +2,20 @@ package jpa.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="IdTokens", uniqueConstraints=@UniqueConstraint(columnNames = {"clientId"}))
+@Table(name="IdTokens")
 public class IdTokens extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -632308305179136081L;
 
-	@Column(name="ClientId", unique=true, nullable=false, length=16)
-	//@OneToOne(targetEntity=Clients.class, fetch=FetchType.LAZY)
-	//@JoinColumn(name="ClientId", columnDefinition="clientId")
-	private String clientId = "";
+	@OneToOne(targetEntity=ClientData.class, fetch=FetchType.LAZY)
+	@JoinColumn(name="ClientRowId", referencedColumnName="Row_Id")
+	private ClientData clientData;
+
 	@Column(nullable=true, length=100)
 	private String description = null;
 	@Column(nullable=false, length=16)
@@ -33,12 +35,12 @@ public class IdTokens extends BaseModel implements java.io.Serializable {
 		// must have a no-argument constructor
 	}
 
-	public String getClientId() {
-		return clientId;
+	public ClientData getClientData() {
+		return clientData;
 	}
 
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
+	public void setClientData(ClientData clientData) {
+		this.clientData = clientData;
 	}
 
 	public String getDescription() {
