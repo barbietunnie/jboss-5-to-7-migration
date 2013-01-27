@@ -26,11 +26,6 @@
 	  <appender-ref ref="FILE"/>
    </logger>
 
-   <logger name="com.legacytojava">
-	  <level value="DEBUG"/>
-	  <appender-ref ref="FILE"/>
-   </logger>
-
    <logger name="jpa">
 	  <level value="DEBUG"/>
 	  <appender-ref ref="FILE"/>
