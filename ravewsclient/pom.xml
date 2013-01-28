@@ -1,0 +1,141 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.pra.rave</groupId>
+	<artifactId>ravewsclient</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Rave RWS Client</name>
+	<description>Rave web service client for monitoring tool</description>
+
+	<properties>
+		<cxf.version>2.7.0</cxf.version>
+		<spring.version>3.2.0.RELEASE</spring.version>
+		<aspectjweaver.version>1.7.1</aspectjweaver.version>
+		<java.version>1.6</java.version>
+		<slf4j.version>1.5.8</slf4j.version>
+		<junit.version>4.10</junit.version>
+		<prautil.version>0.0.1-SNAPSHOT</prautil.version>
+		<ravesaestore.version>0.0.1-SNAPSHOT</ravesaestore.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${aspectjweaver.version}</version>
+		</dependency>
+
+		<!-- Logging API, SLF4J -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>prautil</groupId>
+			<artifactId>prautil</artifactId>
+			<version>${prautil.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.pra.rave</groupId>
+			<artifactId>ravesaestore</artifactId>
+			<version>${ravesaestore.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.5.1</version>
+					<configuration>
+						<verbose>true</verbose>
+						<fork>true</fork>
+						<compilerVersion>${java.version}</compilerVersion>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                	<schemaDirectory>${basedir}/src/main/resources/META-INF/schema</schemaDirectory>
+                	<outputDirectory>${basedir}/target/generated/src/main/java</outputDirectory>
+                	<schemaFiles>ODM1-3-0.xsd</schemaFiles>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
