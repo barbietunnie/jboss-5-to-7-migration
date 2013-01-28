@@ -1,0 +1,1090 @@
+<ODM FileType="Snapshot" FileOID="c41b05bc-d60c-4a2f-aff4-64cb3cbdf245" CreationDateTime="2013-01-21T16:07:40.423-00:00" ODMVersion="1.3" xmlns:mdsol="http://www.mdsol.com/ns/odm/metadata" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.cdisc.org/ns/odm/v1.3">
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="20">
+      <SubjectData SubjectKey="28330000007">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRSER" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" Value="0"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="21">
+      <SubjectData SubjectKey="28330000010">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2012-ABP 980–LILAC–20120283000001"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="21">
+      <SubjectData SubjectKey="28330000010">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="2">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2012-ABP 980–LILAC–20120283000002"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="ADVERSE_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="21">
+      <SubjectData SubjectKey="28330000011">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2012-ABP 980–LILAC–20120283000003"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="21">
+      <SubjectData SubjectKey="28330000011">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="2">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2012-ABP 980–LILAC–20120283000004"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="ADVERSE_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="21">
+      <SubjectData SubjectKey="28330000013">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2012-ABP 980–LILAC–20120283000005"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="21">
+      <SubjectData SubjectKey="28330000013">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="2">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2012-ABP 980–LILAC–20120283000006"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="ADVERSE_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000015">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000001"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="New Subject">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000002"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000016">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000003"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000017">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000004"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283010104">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000005"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283100200">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000006"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283100010">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000007"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="ADVERSE_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283010001">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000008"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="ADVERSE_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283010001">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="2">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000009"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283010104">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="2">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000010"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283111222">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000011"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283111222">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="2">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000012"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283111333">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000013"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="ADVERSE_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000020">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000014"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000020">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="2">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000015"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000022">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000016"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000024">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000017"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000026">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000018"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="ADVERSE_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000028">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000019"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="ADVERSE_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000030">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000020"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="2830123455">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000021"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283106106">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000022"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="ADVERSE_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="23">
+      <SubjectData SubjectKey="28351234001">
+         <SiteRef LocationOID="CDC2"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC2-2013-ABP 980–LILAC–20120283000001"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="ADVERSE_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="23">
+      <SubjectData SubjectKey="28351234001">
+         <SiteRef LocationOID="CDC2"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="2">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC2-2013-ABP 980–LILAC–20120283000002"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="VINDEP"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="26">
+      <SubjectData SubjectKey="28330000036">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="AESCR" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC-2013-ABP 980–LILAC–20120283000023"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="AESCR"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="26">
+      <SubjectData SubjectKey="283011265">
+         <SiteRef LocationOID="CDC2"/>
+         <StudyEventData StudyEventOID="AESCR" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC2-2013-ABP 980–LILAC–20120283000003"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="AESCR"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="26">
+      <SubjectData SubjectKey="28328320100">
+         <SiteRef LocationOID="CDC2"/>
+         <StudyEventData StudyEventOID="AESCR" StudyEventRepeatKey="1">
+            <FormData FormOID="SRF_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="SRF_1_LOG_LINE">
+                  <ItemData ItemOID="SRF_1.SRCASNUM" Value="CDC2-2013-ABP 980–LILAC–20120283000004"/>
+                  <ItemData ItemOID="SRF_1.SRSER" Value="Y"/>
+                  <ItemData ItemOID="SRF_1.SRCTRY" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCASDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLABDTL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRNULL" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAELINK" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRDTHFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNID" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRAEFORM" Value="AESCR_1"/>
+                  <ItemData ItemOID="SRF_1.SRAEFLD" Value="AESCR"/>
+                  <ItemData ItemOID="SRF_1.SRTRNDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="SRF_1.SRTRNFL" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+</ODM>

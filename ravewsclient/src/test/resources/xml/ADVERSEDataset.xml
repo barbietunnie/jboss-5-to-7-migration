@@ -1,0 +1,716 @@
+<ODM FileType="Snapshot" FileOID="516e0889-c278-4f20-8848-79c423ec80c6" CreationDateTime="2013-01-21T16:03:41.743-00:00" ODMVersion="1.3" xmlns:mdsol="http://www.mdsol.com/ns/odm/metadata" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.cdisc.org/ns/odm/v1.3">
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="19">
+      <SubjectData SubjectKey="28330000006">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" Value="2001--"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" Value="2001--"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" Value="2001--"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" Value="2002--"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" Value="2002--"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="20">
+      <SubjectData SubjectKey="28330000007">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="21">
+      <SubjectData SubjectKey="28330000010">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" Value="ADVERSE EVENT 2"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" Value="Y"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" Value="CDC-2012-ABP 980–Lilac–20120283000002"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" Value="2011-01-02"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="21">
+      <SubjectData SubjectKey="28330000011">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" Value="ADVERSE EVENT 2"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" Value="Y"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" Value="CDC-2012-ABP 980–Lilac–20120283000004"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" Value="2011-01-01"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="21">
+      <SubjectData SubjectKey="28330000013">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" Value="ADVERSE 2"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" Value="Y"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" Value="CDC-2012-ABP 980–Lilac–20120283000006"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" Value="2011-03-01"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000016">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283100010">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" Value="Y"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" Value="CDC-2013-ABP 980–Lilac–20120283000007"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" Value="2012-01-10"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283010001">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" Value="Y"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" Value="CDC-2013-ABP 980–Lilac–20120283000008"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" Value="2012-12-10"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000318">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283111333">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" Value="N"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000026">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" Value="ADVERSE EVENT 1"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" Value="Y"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" Value="CDC-2013-ABP 980–Lilac–20120283000018"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000026">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="2">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" Value="ADVERSE 2"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" Value="N"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" Value="New"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" Value="2012-01-01"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000026">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="3">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" Value="ADVERSE 3"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" Value="New"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" Value="2012-01-01"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000026">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="4">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" Value="ADVERSE EVENT 4"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" Value="Y"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" Value="2012-01-01"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="28330000028">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" Value="ADVERSE EVENT 1"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" Value="CDC-2013-ABP 980–Lilac–20120283000019"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" Value="2012-01-01"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="22">
+      <SubjectData SubjectKey="283106106">
+         <SiteRef LocationOID="CDC"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" Value="Y"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" Value="CDC-2013-ABP 980–Lilac–20120283000022"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+   <ClinicalData StudyOID="ABP 980–Lilac–20120283(IUAT)" MetaDataVersionOID="23">
+      <SubjectData SubjectKey="28351234001">
+         <SiteRef LocationOID="CDC2"/>
+         <StudyEventData StudyEventOID="VINDEP" StudyEventRepeatKey="1">
+            <FormData FormOID="ADVERSE_1" FormRepeatKey="1">
+               <ItemGroupData ItemGroupOID="ADVERSE_1_LOG_LINE" ItemGroupRepeatKey="1">
+                  <ItemData ItemOID="ADVERSE_1.AEVT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.PRETANY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CONTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.INTMTNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AETOXGR" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAENY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.CTCAE2NY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELNY2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.RELPRNY" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACN2" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTH1" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNOTHSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.SERNY" Value="Y"/>
+                  <ItemData ItemOID="ADVERSE_1.AECASNUM" Value="CDC2-2013-ABP 980–Lilac–20120283000001"/>
+                  <ItemData ItemOID="ADVERSE_1.AESAWRDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDTH" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESLIFE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESHOSP" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSDTC" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDISAB" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESCONG" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESMIE" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESOUT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESADFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESDSFMT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEACNALL" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AESTDT" IsNull="Yes"/>
+                  <ItemData ItemOID="ADVERSE_1.AEENDT" IsNull="Yes"/>
+               </ItemGroupData>
+            </FormData>
+         </StudyEventData>
+      </SubjectData>
+   </ClinicalData>
+</ODM>
