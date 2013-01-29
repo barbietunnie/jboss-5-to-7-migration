@@ -38,11 +38,11 @@
 
    <logger name="com.pra.rave">
 	  <level value="DEBUG"/>
-	  <appender-ref ref="CONSOLE"/>
+	  <appender-ref ref="FILE"/>
    </logger>
 
    <root>
-      <level value="DEBUG"/>
+      <level value="INFO"/>
       <appender-ref ref="CONSOLE"/>
       <appender-ref ref="FILE"/>
    </root>
