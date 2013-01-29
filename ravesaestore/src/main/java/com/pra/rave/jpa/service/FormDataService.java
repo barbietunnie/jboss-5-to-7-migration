@@ -18,7 +18,7 @@ import com.pra.rave.jpa.model.FormData;
 import com.pra.rave.jpa.model.StudyPK;
 import com.pra.util.logger.LoggerHelper;
 
-@Component("FormDataService")
+@Component("formDataService")
 @Transactional(propagation=Propagation.REQUIRED)
 public class FormDataService {
 	static Logger logger = LoggerHelper.getLogger();
@@ -123,7 +123,12 @@ public class FormDataService {
 
 	public void update(FormData formData) {
 		try {
-			em.persist(formData);
+			if (em.contains(formData)) {
+				em.persist(formData);
+			}
+			else { // detached
+				em.merge(formData);
+			}
 		}
 		catch (OptimisticLockException e) {
 			logger.error("OptimisticLockException caught", e);

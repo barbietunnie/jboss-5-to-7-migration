@@ -18,7 +18,7 @@ import com.pra.rave.jpa.model.ItemData;
 import com.pra.rave.jpa.model.StudyPK;
 import com.pra.util.logger.LoggerHelper;
 
-@Component("ItemDataService")
+@Component("itemDataService")
 @Transactional(propagation=Propagation.REQUIRED)
 public class ItemDataService {
 	static Logger logger = LoggerHelper.getLogger();
@@ -136,7 +136,12 @@ public class ItemDataService {
 
 	public void update(ItemData itemData) {
 		try {
-			em.persist(itemData);
+			if (em.contains(itemData)) {
+				em.persist(itemData);
+			}
+			else { // detached
+				em.merge(itemData);
+			}
 		}
 		catch (OptimisticLockException e) {
 			logger.error("OptimisticLockException caught", e);

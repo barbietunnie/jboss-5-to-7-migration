@@ -130,7 +130,12 @@ public class SubjectService {
 
 	public void update(Subject subject) {
 		try {
-			em.persist(subject);
+			if (em.contains(subject)) {
+				em.persist(subject);
+			}
+			else { // detached
+				em.merge(subject);
+			}
 		}
 		catch (OptimisticLockException e) {
 			logger.error("OptimisticLockException caught", e);

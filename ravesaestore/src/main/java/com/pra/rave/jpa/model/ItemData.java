@@ -6,6 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="ODM6_ITEM")
@@ -22,8 +23,21 @@ public class ItemData extends BaseModel {
 	@ManyToOne(targetEntity=ItemGroup.class, fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="Item_Group_Id", referencedColumnName="Id", insertable=true, updatable=false)
 	private ItemGroup itemGroup;
+	
+	@Transient
+	private boolean remove;
 
-	public ItemData() {}
+	public ItemData() {
+		remove = true;
+	}
+
+	public boolean isRemove() {
+		return remove;
+	}
+
+	public void setRemove(boolean remove) {
+		this.remove = remove;
+	}
 
 	public String getItemOID() {
 		return itemOID;

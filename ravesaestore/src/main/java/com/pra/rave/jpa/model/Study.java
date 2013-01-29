@@ -31,6 +31,7 @@ public class Study extends BaseModel {
 	private Timestamp aescr1LoadDt;
 	@Column(name="Srf1_Load_Dt", nullable=true)
 	private Timestamp srf1LoadDt;
+	//private Timestamp subjectLoadDt;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="study", fetch=FetchType.LAZY, orphanRemoval=true)
 	private List<Subject> subjects;

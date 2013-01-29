@@ -18,7 +18,7 @@ import com.pra.rave.jpa.model.ItemGroup;
 import com.pra.rave.jpa.model.StudyPK;
 import com.pra.util.logger.LoggerHelper;
 
-@Component("ItemGroupService")
+@Component("itemGroupService")
 @Transactional(propagation=Propagation.REQUIRED)
 public class ItemGroupService {
 	static Logger logger = LoggerHelper.getLogger();
@@ -130,7 +130,12 @@ public class ItemGroupService {
 
 	public void update(ItemGroup itemGroup) {
 		try {
-			em.persist(itemGroup);
+			if (em.contains(itemGroup)) {
+				em.persist(itemGroup);
+			}
+			else { // detached
+				em.merge(itemGroup);
+			}
 		}
 		catch (OptimisticLockException e) {
 			logger.error("OptimisticLockException caught", e);
