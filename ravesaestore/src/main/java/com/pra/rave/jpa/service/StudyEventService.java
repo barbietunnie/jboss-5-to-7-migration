@@ -115,7 +115,12 @@ public class StudyEventService {
 
 	public void update(StudyEvent studyEvent) {
 		try {
-			em.persist(studyEvent);
+			if (em.contains(studyEvent)) {
+				em.persist(studyEvent);
+			}
+			else { // detached
+				em.merge(studyEvent);
+			}
 		}
 		catch (OptimisticLockException e) {
 			logger.error("OptimisticLockException caught", e);
