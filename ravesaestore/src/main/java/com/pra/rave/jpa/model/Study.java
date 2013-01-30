@@ -31,7 +31,10 @@ public class Study extends BaseModel {
 	private Timestamp aescr1LoadDt;
 	@Column(name="Srf1_Load_Dt", nullable=true)
 	private Timestamp srf1LoadDt;
-	//private Timestamp subjectLoadDt;
+	@Column(name="Subject_Load_Dt", nullable=true)
+	private Timestamp subjectLoadDt;
+	@Column(name="Ipadmin1_Load_Dt", nullable=true)
+	private Timestamp ipadmin1LoadDt;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="study", fetch=FetchType.LAZY, orphanRemoval=true)
 	private List<Subject> subjects;
@@ -84,6 +87,22 @@ public class Study extends BaseModel {
 
 	public void setSrf1LoadDt(Timestamp srf1LoadDt) {
 		this.srf1LoadDt = srf1LoadDt;
+	}
+
+	public Timestamp getSubjectLoadDt() {
+		return subjectLoadDt;
+	}
+
+	public void setSubjectLoadDt(Timestamp subjectLoadDt) {
+		this.subjectLoadDt = subjectLoadDt;
+	}
+
+	public Timestamp getIpadmin1LoadDt() {
+		return ipadmin1LoadDt;
+	}
+
+	public void setIpadmin1LoadDt(Timestamp ipadmin1LoadDt) {
+		this.ipadmin1LoadDt = ipadmin1LoadDt;
 	}
 
 	public List<Subject> getSubjects() {
