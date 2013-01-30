@@ -10,15 +10,15 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Index;
 
 @Entity
-@Table(name="Rave_Adverse_1")
-public class RaveAdverse1 extends BaseModel {
-	private static final long serialVersionUID = -1327792436469222852L;
+@Table(name="Rave_Aescr_1")
+public class RaveAescr1 extends BaseModel {
+	private static final long serialVersionUID = -2404036144496253117L;
 
 	@OneToOne(targetEntity=ItemGroup.class, optional=false, fetch=FetchType.LAZY)
 	@JoinColumn(name="Item_Group_Id", referencedColumnName="Id", insertable=true, updatable=false)
 	private ItemGroup itemGroup;
 
-	@Index(name="adverse_1_case_number")
+	@Index(name="aescr_1_case_number")
 	@Column(nullable=true, length=100)
 	private String aecasnum;
 	@Column(nullable=true, length=255)
@@ -28,17 +28,13 @@ public class RaveAdverse1 extends BaseModel {
 	@Column(nullable=true)
 	private java.sql.Date aeendt;
 	@Column(nullable=true, length=10)
-	private String contny;
-	@Column(nullable=true, length=10)
-	private String relny;
-	@Column(nullable=true, length=10)
-	private String relny2;
-	@Column(nullable=true, length=10)
 	private String relprny;
+	@Column(nullable=true, length=10)
+	private String relchemo;
 	@Column(nullable=true, length=100)
-	private String aeacn1;
+	private String aeacnct1;
 	@Column(nullable=true, length=100)
-	private String aeacn2;
+	private String aeacnct2;
 	@Column(nullable=true, length=255)
 	private String aesout;
 	@Column(nullable=true, length=10)
@@ -60,7 +56,7 @@ public class RaveAdverse1 extends BaseModel {
 	@Column(nullable=true, length=255)
 	private String aesmie;
 	
-	public RaveAdverse1() {}
+	public RaveAescr1() {}
 
 	public ItemGroup getItemGroup() {
 		return itemGroup;
@@ -102,30 +98,6 @@ public class RaveAdverse1 extends BaseModel {
 		this.aeendt = aeendt;
 	}
 
-	public String getContny() {
-		return contny;
-	}
-
-	public void setContny(String contny) {
-		this.contny = contny;
-	}
-
-	public String getRelny() {
-		return relny;
-	}
-
-	public void setRelny(String relny) {
-		this.relny = relny;
-	}
-
-	public String getRelny2() {
-		return relny2;
-	}
-
-	public void setRelny2(String relny2) {
-		this.relny2 = relny2;
-	}
-
 	public String getRelprny() {
 		return relprny;
 	}
@@ -134,20 +106,28 @@ public class RaveAdverse1 extends BaseModel {
 		this.relprny = relprny;
 	}
 
-	public String getAeacn1() {
-		return aeacn1;
+	public String getRelchemo() {
+		return relchemo;
 	}
 
-	public void setAeacn1(String aeacn1) {
-		this.aeacn1 = aeacn1;
+	public void setRelchemo(String relchemo) {
+		this.relchemo = relchemo;
 	}
 
-	public String getAeacn2() {
-		return aeacn2;
+	public String getAeacnct1() {
+		return aeacnct1;
 	}
 
-	public void setAeacn2(String aeacn2) {
-		this.aeacn2 = aeacn2;
+	public void setAeacnct1(String aeacnct1) {
+		this.aeacnct1 = aeacnct1;
+	}
+
+	public String getAeacnct2() {
+		return aeacnct2;
+	}
+
+	public void setAeacnct2(String aeacnct2) {
+		this.aeacnct2 = aeacnct2;
 	}
 
 	public String getAesout() {

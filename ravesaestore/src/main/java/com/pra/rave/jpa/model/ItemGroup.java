@@ -32,6 +32,18 @@ public class ItemGroup extends BaseModel {
 	@OneToOne(cascade=CascadeType.ALL, mappedBy="itemGroup", fetch=FetchType.LAZY, orphanRemoval=true)
 	private RaveAdverse1 raveAdverse1;
 
+	@OneToOne(cascade=CascadeType.ALL, mappedBy="itemGroup", fetch=FetchType.LAZY, orphanRemoval=true)
+	private RaveAescr1 raveAescr1;
+
+	@OneToOne(cascade=CascadeType.ALL, mappedBy="itemGroup", fetch=FetchType.LAZY, orphanRemoval=true)
+	private RaveSrf1 raveSrf1;
+
+	@OneToOne(cascade=CascadeType.ALL, mappedBy="itemGroup", fetch=FetchType.LAZY, orphanRemoval=true)
+	private RaveSubject raveSubject;
+
+	@OneToOne(cascade=CascadeType.ALL, mappedBy="itemGroup", fetch=FetchType.LAZY, orphanRemoval=true)
+	private RaveIpadmin1 raveIpadmin1;
+
 	public ItemGroup() {}
 
 	public String getItemGroupOID() {
@@ -72,6 +84,38 @@ public class ItemGroup extends BaseModel {
 
 	public void setRaveAdverse1(RaveAdverse1 raveAdverse1) {
 		this.raveAdverse1 = raveAdverse1;
+	}
+
+	public RaveAescr1 getRaveAescr1() {
+		return raveAescr1;
+	}
+
+	public void setRaveAescr1(RaveAescr1 raveAescr1) {
+		this.raveAescr1 = raveAescr1;
+	}
+
+	public RaveSrf1 getRaveSrf1() {
+		return raveSrf1;
+	}
+
+	public void setRaveSrf1(RaveSrf1 raveSrf1) {
+		this.raveSrf1 = raveSrf1;
+	}
+
+	public RaveSubject getRaveSubject() {
+		return raveSubject;
+	}
+
+	public void setRaveSubject(RaveSubject raveSubject) {
+		this.raveSubject = raveSubject;
+	}
+
+	public RaveIpadmin1 getRaveIpadmin1() {
+		return raveIpadmin1;
+	}
+
+	public void setRaveIpadmin1(RaveIpadmin1 raveIpadmin1) {
+		this.raveIpadmin1 = raveIpadmin1;
 	}
 
 }

@@ -14,60 +14,60 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.pra.rave.jpa.model.RaveAdverse1;
+import com.pra.rave.jpa.model.RaveAescr1;
 import com.pra.rave.jpa.model.StudyPK;
 import com.pra.util.logger.LoggerHelper;
 
-@Component("raveAdverse1Service")
+@Component("raveAescr1Service")
 @Transactional(propagation=Propagation.REQUIRED)
-public class RaveAdverse1Service {
+public class RaveAescr1Service {
 	static Logger logger = LoggerHelper.getLogger();
 	
 	@PersistenceContext(unitName="ravestore")
 	EntityManager em;
 	
-	public RaveAdverse1 getById(int id) throws NoResultException {
+	public RaveAescr1 getById(int id) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from RaveAdverse1 t where t.id = :id");
+			Query query = em.createQuery("select t from RaveAescr1 t where t.id = :id");
 			query.setParameter("id", id);
-			RaveAdverse1 adverse1 = (RaveAdverse1) query.getSingleResult();
-			em.lock(adverse1, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-			return adverse1;
+			RaveAescr1 aescr1 = (RaveAescr1) query.getSingleResult();
+			em.lock(aescr1, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			return aescr1;
 		}
 		finally {
 		}
 	}
 	
-	public RaveAdverse1 getByItemGroupId(int itemGroupId) throws NoResultException {
+	public RaveAescr1 getByItemGroupId(int itemGroupId) throws NoResultException {
 		try {
-			Query query = em.createQuery("select ae from ItemGroup ig, RaveAdverse1 ae " +
+			Query query = em.createQuery("select ae from ItemGroup ig, RaveAescr1 ae " +
 					"where ig=ae.itemGroup and ig.id=:itemGroupId ");
 			query.setParameter("itemGroupId", itemGroupId);
-			RaveAdverse1 adverse1 = (RaveAdverse1) query.getSingleResult();
-			return adverse1;
+			RaveAescr1 aescr1 = (RaveAescr1) query.getSingleResult();
+			return aescr1;
 		}
 		finally {
 		}
 	}
 
-	public List<RaveAdverse1> getByCaseNumber(String caseNum) throws NoResultException {
+	public List<RaveAescr1> getByCaseNumber(String caseNum) throws NoResultException {
 		try {
-			Query query = em.createQuery("select ae from RaveAdverse1 ae " +
+			Query query = em.createQuery("select ae from RaveAescr1 ae " +
 					"where ae.aecasnum=:caseNum ");
 			query.setParameter("caseNum", caseNum);
 			@SuppressWarnings("unchecked")
-			List<RaveAdverse1> list = query.getResultList();
+			List<RaveAescr1> list = query.getResultList();
 			return list;
 		}
 		finally {
 		}
 	}
 	
-	public List<RaveAdverse1> getByAncestors(StudyPK studyPK, String subjectKey,
+	public List<RaveAescr1> getByAncestors(StudyPK studyPK, String subjectKey,
 			String studyEventOid, String studyEventRepeatKey, String formOid,
 			String formRepeatKey, String itemGroupOid, String itemGroupRepeatKey) {
 		try {
-			Query query = em.createQuery("select ae from Study stdy, Subject subj, StudyEvent se, FormData fm, ItemGroup ig, RaveAdverse1 ae " +
+			Query query = em.createQuery("select ae from Study stdy, Subject subj, StudyEvent se, FormData fm, ItemGroup ig, RaveAescr1 ae " +
 					"where stdy=subj.study and stdy.studyPK.studyOID=:studyOid " +
 					"and subj=se.subject and subj.subjectKey=:subjectKey " +
 					"and se=fm.studyEvent and se.studyEventOID=:studyEventOid and se.studyEventRepeatKey=:studyEventRepeatKey " +
@@ -82,30 +82,30 @@ public class RaveAdverse1Service {
 			query.setParameter("itemGroupOid", itemGroupOid);
 			query.setParameter("itemGroupRepeatKey", itemGroupRepeatKey);
 			@SuppressWarnings("unchecked")
-			List<RaveAdverse1> list = query.getResultList();
+			List<RaveAescr1> list = query.getResultList();
 			return list;
 		}
 		finally {
 		}
 	}
 	
-	public List<RaveAdverse1> getByStudyPK(StudyPK studyPK) {
+	public List<RaveAescr1> getByStudyPK(StudyPK studyPK) {
 		try {
-			Query query = em.createQuery("select ae from Study stdy, Subject subj, StudyEvent se, FormData fm, ItemGroup ig, RaveAdverse1 ae " +
+			Query query = em.createQuery("select ae from Study stdy, Subject subj, StudyEvent se, FormData fm, ItemGroup ig, RaveAescr1 ae " +
 					"where stdy=subj.study and stdy.studyPK.studyOID=:studyOid");
 			query.setParameter("studyOid", studyPK.getStudyOID());
 			@SuppressWarnings("unchecked")
-			List<RaveAdverse1> list = query.getResultList();
+			List<RaveAescr1> list = query.getResultList();
 			return list;
 		}
 		finally {
 		}
 	}
 		
-	public void delete(RaveAdverse1 adverse1) {
-		if (adverse1 == null) return;
+	public void delete(RaveAescr1 aescr1) {
+		if (aescr1 == null) return;
 		try {
-			em.remove(adverse1);
+			em.remove(aescr1);
 		}
 		finally {
 		}
@@ -113,7 +113,7 @@ public class RaveAdverse1Service {
 
 	public int deleteById(int id) {
 		try {
-			Query query = em.createQuery("delete from RaveAdverse1 t where t.id=:id");
+			Query query = em.createQuery("delete from RaveAescr1 t where t.id=:id");
 			query.setParameter("id", id);
 			int rows = query.executeUpdate();
 			return rows;
@@ -122,21 +122,21 @@ public class RaveAdverse1Service {
 		}
 	}
 
-	public void insert(RaveAdverse1 adverse1) {
+	public void insert(RaveAescr1 aescr1) {
 		try {
-			em.persist(adverse1);
+			em.persist(aescr1);
 		}
 		finally {
 		}
 	}
 
-	public void update(RaveAdverse1 adverse1) {
+	public void update(RaveAescr1 aescr1) {
 		try {
-			if (em.contains(adverse1)) {
-				em.persist(adverse1);
+			if (em.contains(aescr1)) {
+				em.persist(aescr1);
 			}
 			else { // detached
-				em.merge(adverse1);
+				em.merge(aescr1);
 			}
 		}
 		catch (OptimisticLockException e) {
