@@ -1,5 +1,6 @@
 package com.pra.rave.jpa.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,7 +15,7 @@ import org.hibernate.annotations.Index;
 public class RaveSubject extends BaseModel {
 	private static final long serialVersionUID = -8487717684896575179L;
 
-	@OneToOne(targetEntity=ItemGroup.class, optional=false, fetch=FetchType.LAZY)
+	@OneToOne(targetEntity=ItemGroup.class, optional=false, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="Item_Group_Id", referencedColumnName="Id", insertable=true, updatable=false)
 	private ItemGroup itemGroup;
 
