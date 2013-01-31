@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import com.pra.rave.jpa.model.ItemData;
 import com.pra.rave.jpa.model.ItemGroup;
 import com.pra.rave.jpa.model.RaveAdverse1;
 import com.pra.rave.jpa.model.RaveAescr1;
+import com.pra.rave.jpa.model.RaveIpadmin1;
 import com.pra.rave.jpa.model.RaveSrf1;
 import com.pra.rave.jpa.model.RaveSubject;
 import com.pra.rave.jpa.model.Study;
@@ -61,7 +63,9 @@ public class RaveDataLoader {
 		RaveDataLoader loader = new RaveDataLoader();
 		RaveClinicalView client = new RaveClinicalView();
 		try {
-			loader.persistForm("SUBJECT", client);
+			for (FormOid oid : FormOid.values()) {
+				loader.persistForm(oid.name(), client);
+			}
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);
@@ -345,9 +349,11 @@ public class RaveDataLoader {
 									RaveAdverse1 ae1 = null;
 									try {
 										ae1 = adverse1Service.getByItemGroupId(ig.getId());
-										copyDataFromRave(itemGroup.getItemDataGroup(), ae1);
+										boolean isUpdated = copyDataFromRave(itemGroup.getItemDataGroup(), ae1);
 										if (ae1.getAecasnum()!=null && ae1.getAecasnum().length()>0) {
-											adverse1Service.update(ae1);
+											if (isUpdated) {
+												adverse1Service.update(ae1);
+											}
 										}
 										else {
 											adverse1Service.delete(ae1);
@@ -370,9 +376,11 @@ public class RaveDataLoader {
 									RaveAescr1 ae1 = null;
 									try {
 										ae1 = aescr1Service.getByItemGroupId(ig.getId());
-										copyDataFromRave(itemGroup.getItemDataGroup(), ae1);
+										boolean isUpdated = copyDataFromRave(itemGroup.getItemDataGroup(), ae1);
 										if (ae1.getAecasnum()!=null && ae1.getAecasnum().length()>0) {
-											aescr1Service.update(ae1);
+											if (isUpdated) {
+												aescr1Service.update(ae1);
+											}
 										}
 										else {
 											aescr1Service.delete(ae1);
@@ -395,9 +403,11 @@ public class RaveDataLoader {
 									RaveSrf1 ae1 = null;
 									try {
 										ae1 = srf1Service.getByItemGroupId(ig.getId());
-										copyDataFromRave(itemGroup.getItemDataGroup(), ae1);
+										boolean isUpdated = copyDataFromRave(itemGroup.getItemDataGroup(), ae1);
 										if (ae1.getSrcasnum()!=null && ae1.getSrcasnum().length()>0) {
-											srf1Service.update(ae1);
+											if (isUpdated) {
+												srf1Service.update(ae1);
+											}
 										}
 										else {
 											srf1Service.delete(ae1);
@@ -420,9 +430,11 @@ public class RaveDataLoader {
 									RaveSubject ae1 = null;
 									try {
 										ae1 = raveSubjService.getByItemGroupId(ig.getId());
-										copyDataFromRave(itemGroup.getItemDataGroup(), ae1);
+										boolean isUpdated = copyDataFromRave(itemGroup.getItemDataGroup(), ae1);
 										if (ae1.getPt_id()!=null && ae1.getPt_id().length()>0) {
-											raveSubjService.update(ae1);
+											if (isUpdated) {
+												raveSubjService.update(ae1);
+											}
 										}
 										else {
 											raveSubjService.delete(ae1);
@@ -435,6 +447,26 @@ public class RaveDataLoader {
 											ae1.setItemGroup(ig);
 											raveSubjService.insert(ae1);
 										}
+									}
+									logger.info(StringUtil.prettyPrint(ae1));
+								}
+								/*
+								 *  IPADMIN_1
+								 */
+								else if (FormOid.IPADMIN_1.getValue().equals(formData.getFormOID())) {
+									RaveIpadmin1 ae1 = null;
+									try {
+										ae1 = ipadmin1Service.getByItemGroupId(ig.getId());
+										boolean isUpdated = copyDataFromRave(itemGroup.getItemDataGroup(), ae1);
+										if (isUpdated) {
+											ipadmin1Service.update(ae1);
+										}
+									}
+									catch (NoResultException e) {
+										ae1 = new RaveIpadmin1();
+										copyDataFromRave(itemGroup.getItemDataGroup(), ae1);
+										ae1.setItemGroup(ig);
+										ipadmin1Service.insert(ae1);
 									}
 									logger.info(StringUtil.prettyPrint(ae1));
 								}
@@ -454,7 +486,9 @@ public class RaveDataLoader {
 		}
  	}
 
-	private void copyDataFromRave(List<ODMcomplexTypeDefinitionItemData> itemDataList, Object obj) {
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+	private boolean copyDataFromRave(List<ODMcomplexTypeDefinitionItemData> itemDataList, Object obj) {
 		HashMap<String, Method> methodMap = new HashMap<String, Method>();
 		List<String> methodNamelist = new ArrayList<String>();
 		Method methods[] = obj.getClass().getDeclaredMethods();
@@ -468,7 +502,7 @@ public class RaveDataLoader {
 			logger.debug("getters and setters: {}", methodNamelist);
 		}
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		boolean isUpdated = false;
 		
 		for (ODMcomplexTypeDefinitionItemData id : itemDataList) {
 			String fldName = getFieldName(id.getItemOID());
@@ -488,16 +522,21 @@ public class RaveDataLoader {
 				continue; // setter not found
 			}
 			// invoke getter to get current value
+			Object currValue = null;
 			try {
 				// get current value
-				Object value = getter.invoke(obj, (Object[])getterParmTypes);
+				currValue = getter.invoke(obj, (Object[])getterParmTypes);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Call to method ({}) returned: {}", getter.getName(), value);
+					logger.debug("Call to method ({}) returned: {}", getter.getName(), currValue);
 				}
 			}
 			catch (Exception e) {
 				logger.warn("Exception caught invoking method ({}), ignore.", getter.getName());
 			}
+			if (isEqual(currValue, id.getValue())) {
+				continue;
+			}
+			isUpdated = true;
 			// invoke setter to set new value
 			Method setter = methodMap.get("set" + fldName);
 			Class<?>[] setterParmTypes = setter.getParameterTypes();
@@ -551,6 +590,31 @@ public class RaveDataLoader {
 				logger.warn("IllegalAccessException caught invoking method ({}), ignore.", setter.getName());
 			}
 		}
+		return isUpdated;
+	}
+
+	private boolean isEqual(Object obj1, String str2) {
+		if (obj1==null) {
+			return (str2==null);
+		}
+		else {
+			if (obj1 instanceof String) {
+				return (((String)obj1).equals(str2));
+			}
+			else {
+				if (obj1 instanceof java.sql.Date) {
+					String str1 = sdf.format((java.sql.Date)obj1);
+					return (str1.equals(str2));
+				}
+				else if (obj1 instanceof java.sql.Time) {
+					// TODO
+				}
+				else if (obj1 instanceof java.sql.Timestamp) {
+					// TODO
+				}
+			}
+		}
+		return true;
 	}
 
 	private String getFieldName(String itemOid) {
@@ -575,8 +639,9 @@ public class RaveDataLoader {
 	}
 
 	private void setStudyLoadTimes(Study study, ODM odm, String formOid) {
-		XMLGregorianCalendar cal = odm.getCreationDateTime();
-		java.sql.Timestamp loadDt = new java.sql.Timestamp(cal.getMillisecond());
+		XMLGregorianCalendar cal1 = odm.getCreationDateTime();
+		Calendar cal2 = cal1.toGregorianCalendar();
+		java.sql.Timestamp loadDt = new java.sql.Timestamp(cal2.getTimeInMillis());
 		if (FormOid.ADVERSE_1.getValue().equals(formOid)) {
 			study.setAdverse1LoadDt(loadDt);
 		}
