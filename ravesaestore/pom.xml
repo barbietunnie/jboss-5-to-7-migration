@@ -17,6 +17,7 @@
 		<java.version>1.6</java.version>
 		<slf4j.version>1.5.8</slf4j.version>
 		<junit.version>4.10</junit.version>
+		<commons.lang.version>2.6</commons.lang.version>
 		<prautil.version>0.0.1-SNAPSHOT</prautil.version>
 	</properties>
 
@@ -94,6 +95,13 @@
 			<version>1.8.3</version>
 		</dependency>
 		
+		<!-- Apache Commons -->
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>${commons.lang.version}</version>
+		</dependency>
+
 		<!-- Logging API, SLF4J -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
