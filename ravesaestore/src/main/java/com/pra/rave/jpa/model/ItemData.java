@@ -1,5 +1,6 @@
 package com.pra.rave.jpa.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,7 +21,7 @@ public class ItemData extends BaseModel {
 	@Column(name="Item_Value", nullable=true)
 	private String itemValue;
 
-	@ManyToOne(targetEntity=ItemGroup.class, fetch=FetchType.LAZY, optional=false)
+	@ManyToOne(targetEntity=ItemGroup.class, fetch=FetchType.LAZY, optional=false, cascade=CascadeType.ALL)
 	@JoinColumn(name="Item_Group_Id", referencedColumnName="Id", insertable=true, updatable=false)
 	private ItemGroup itemGroup;
 	
