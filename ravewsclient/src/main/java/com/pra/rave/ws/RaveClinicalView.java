@@ -31,6 +31,7 @@ public class RaveClinicalView {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 			java.util.Date dt = sdf.parse("2013-01-20T01:01:00");
 			client.getClinicalViewByFormAsString("ADVERSE_1", new java.sql.Timestamp(dt.getTime()));
+			//client.getClinicalViewByFormAsString("SUBJECT", null);
 			//ODM odm = client.getClinicalViewByForm("SRF_1");
 			//logger.info(StringUtil.prettyPrint(odm));
 		}
@@ -44,7 +45,7 @@ public class RaveClinicalView {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		InputStream is = loader.getResourceAsStream(resourceName);
 		if (is == null) {
-			throw new RuntimeException("Resource (" + resourceName + ") missing, contact programming!");
+			throw new RuntimeException("Resource (" + resourceName + ") is missing, contact programming!");
 		}
 		Properties prop = new Properties();
 		try {
@@ -58,7 +59,7 @@ public class RaveClinicalView {
 		}
 		return prop;
 	}
-
+	
 	public ODM getClinicalViewByForm(String formOid, java.sql.Timestamp startTime) {
 		WebClient client = getClinicalView(formOid, startTime);
 		ODM odm = client.get(ODM.class);
@@ -105,7 +106,9 @@ public class RaveClinicalView {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 			client.query("start",  sdf.format(startTime));
 		}
-		String authorizationHeader = "Basic " + Base64Utility.encode("pra_rws:Sn0f@11".getBytes());
+		String username = props.getProperty("rave.username");
+		String password = props.getProperty("rave.password");
+		String authorizationHeader = "Basic " + Base64Utility.encode((username+":"+password).getBytes());
 		client.header("Authorization", authorizationHeader);
 		client.type("text/xml").accept("text/xml");
 		return client;
