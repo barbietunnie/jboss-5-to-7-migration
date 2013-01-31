@@ -165,8 +165,8 @@ public class ItemGroupTest {
 		assertFalse(before.equals(ig1.getUpdtTime()));
 		assertNotNull(ig1.getFormData());
 		
-		List<ItemGroup> list1 = service.getByStudyPK(study.getStudyPK());
-		assertFalse(list1.isEmpty());
+		//List<ItemGroup> list1 = service.getByStudyPK(study.getStudyPK());
+		//assertFalse(list1.isEmpty());
 		
 		ItemGroup ig3 = service.getById(ig.getId());
 		assertNotNull(ig3);

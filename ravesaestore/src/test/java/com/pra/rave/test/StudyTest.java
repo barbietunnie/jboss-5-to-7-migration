@@ -65,10 +65,10 @@ public class StudyTest {
 		
 		List<Study> list = service.getAll();
 		assertFalse(list.isEmpty());
-		logger.debug(StringUtil.prettyPrint(list.get(0)));
 		
 		Study study3 = service.getById(study.getId());
 		assertNotNull(study3);
+		logger.debug(StringUtil.prettyPrint(study3));
 		
 		assertTrue(1==service.deleteById(study3.getId()));
 	}

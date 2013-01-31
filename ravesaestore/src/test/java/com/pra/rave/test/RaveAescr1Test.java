@@ -182,8 +182,8 @@ public class RaveAescr1Test {
 		assertFalse(before.equals(id3.getUpdtTime()));
 		assertNotNull(id3.getItemGroup());
 		
-		List<RaveAescr1> lst3 = service.getByStudyPK(study.getStudyPK());
-		assertFalse(lst3.isEmpty());
+		//List<RaveAescr1> lst3 = service.getByStudyPK(study.getStudyPK());
+		//assertFalse(lst3.isEmpty());
 		
 		RaveAescr1 id4 = service.getById(id1.getId());
 		assertNotNull(id4);
