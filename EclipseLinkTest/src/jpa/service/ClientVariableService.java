@@ -43,7 +43,8 @@ public class ClientVariableService {
 		String sql = 
 			"select t " +
 			"from " +
-				"ClientVariable t where t.clientId=:clientId and t.variableName=:variableName";
+				"ClientVariable t, ClientData c " +
+				"where c=t.clientData and c.clientId=:clientId and t.variableName=:variableName";
 		if (startTime!=null) {
 			sql += " and t.startTime=:starTtime ";
 		}
@@ -75,7 +76,8 @@ public class ClientVariableService {
 		String sql = 
 				"select t " +
 				"from " +
-					"ClientVariable t where t.clientId=:clientId and t.variableName=:variableName " +
+					"ClientVariable t, ClientData c " +
+					" where c=t.clientData and c.clientId=:clientId and t.variableName=:variableName " +
 					" and (t.startTime<=:startTime or t.startTime is null) " +
 					" order by t.startTime desc ";
 		try {
@@ -98,8 +100,9 @@ public class ClientVariableService {
 		String sql = 
 				"select t " +
 				" from " +
-					" ClientVariable t where t.variableName=:variableName " +
-				" order by t.clientId, t.startTime asc ";
+					" ClientVariable t, ClientData c " +
+					" where c=t.clientData and t.variableName=:variableName " +
+				" order by c.clientId, t.startTime asc ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("variableName", variableName);
@@ -116,16 +119,16 @@ public class ClientVariableService {
 				"select a.* " +
 					" from ClientVariable a " +
 					" inner join ( " +
-					"  select b.clientId, b.variableName as variableName, max(b.startTime) as maxTime " +
-					"   from ClientVariable b " +
-					"   where b.statusId = ? and b.startTime<=? and b.clientId=? " +
+					"  select b.clientRowId, b.variableName as variableName, max(b.startTime) as maxTime " +
+					"   from ClientVariable b, ClientData cd " +
+					"   where b.statusId = ? and b.startTime<=? and b.clientRowId=cd.row_Id and cd.clientId=? " +
 					"   group by b.variableName " +
 					" ) as c " +
-					"  on a.variableName=c.variableName and a.startTime=c.maxTime and a.clientId=c.clientId " +
-					" order by a.rowid asc ";
+					"  on a.variableName=c.variableName and a.startTime=c.maxTime and a.clientRowId=c.clientRowId " +
+					" order by a.row_id asc ";
 		try {
 			Query query = em.createNativeQuery(sql, ClientVariable.class);
-			query.setParameter(1, StatusId.ACTIVE.getCode());
+			query.setParameter(1, StatusId.ACTIVE.getValue());
 			query.setParameter(2, new Date(System.currentTimeMillis()));
 			query.setParameter(3, clientId);
 			@SuppressWarnings("unchecked")
@@ -147,7 +150,8 @@ public class ClientVariableService {
 
 	public int deleteByPrimaryKey(String clientId, String variableName, Date startTime) {
 		String sql = 
-				"delete from ClientVariable t where t.variableName=:variableName and t.startTime=:startTime " +
+				"delete from ClientVariable t " +
+				" where t.variableName=:variableName and t.startTime=:startTime " +
 				" and t.clientId=:clientId ";
 		try {
 			Query query = em.createQuery(sql);

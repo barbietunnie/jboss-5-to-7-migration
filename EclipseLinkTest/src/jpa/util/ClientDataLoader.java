@@ -28,6 +28,9 @@ public class ClientDataLoader {
 		TransactionStatus status = txmgr.getTransaction(def);
 		try {
 			loader.loadClientData(true);
+			loader.loadJBatchData();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		finally {
 			txmgr.commit(status);
@@ -42,7 +45,7 @@ public class ClientDataLoader {
 			data.setDomainName("localhost"); // domain name
 		else
 			data.setDomainName("espheredemo.com"); // domain name
-		data.setStatusId(StatusId.ACTIVE.getCode());
+		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setIrsTaxId("0000000000");
 		data.setWebSiteUrl("http://localhost:8080/MsgUI/publicsite");
 		data.setIsSaveRawMsg(Constants.Code.YES_CODE.getValue()); // save raw stream
@@ -85,7 +88,7 @@ public class ClientDataLoader {
 		data.setClientId("JBatchCorp");
 		data.setClientName("JBatch Corp. Site");
 		data.setDomainName("jbatch.com"); // domain name
-		data.setStatusId(StatusId.ACTIVE.getCode());
+		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setIrsTaxId( "0000000000");
 		data.setWebSiteUrl("http://www.jbatch.com");
 		data.setIsSaveRawMsg(Constants.Code.YES_CODE.getValue()); // save raw stream

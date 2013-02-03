@@ -138,7 +138,7 @@ public class GlobalVariableService {
 					" order by a.variableName asc ";
 		try {
 			Query query = em.createNativeQuery(sql, GlobalVariable.class);
-			query.setParameter(1, StatusId.ACTIVE.getCode());
+			query.setParameter(1, StatusId.ACTIVE.getValue());
 			query.setParameter(2, new Date(System.currentTimeMillis()));
 			@SuppressWarnings("unchecked")
 			List<GlobalVariable> list = query.getResultList();

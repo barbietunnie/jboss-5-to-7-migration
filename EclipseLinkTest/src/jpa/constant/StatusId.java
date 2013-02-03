@@ -6,13 +6,13 @@ public enum StatusId {
 	INACTIVE("I"),
 	SUSPENDED("S"); // for email address
 
-	private final String code;
+	private final String value;
 	
-	private StatusId(String code) {
-		this.code = code;
+	private StatusId(String value) {
+		this.value = value;
 	}
 	
-	public String getCode() {
-		return code;
+	public String getValue() {
+		return value;
 	}
 }

@@ -57,7 +57,7 @@ public class ClientVariableTest {
 		assertFalse(list2.isEmpty());
 
 		// test insert
-		Date newTms = new Date(System.currentTimeMillis());
+		Date newTms = new Date(System.currentTimeMillis()+1);
 		ClientVariable var3 = createNewInstance(var2);
 		var3.setStartTime(newTms);
 		service.insert(var3);
