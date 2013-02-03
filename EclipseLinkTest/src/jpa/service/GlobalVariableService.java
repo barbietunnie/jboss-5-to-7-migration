@@ -127,10 +127,10 @@ public class GlobalVariableService {
 	public List<GlobalVariable> getCurrent() {
 		String sql = 
 				"select a.* " +
-					" from GlobalVariable a " +
+					" from Global_Variable a " +
 					" inner join ( " +
 					"  select b.variableName as variableName, max(b.startTime) as maxTime " +
-					"   from GlobalVariable b " +
+					"   from Global_Variable b " +
 					"   where b.statusId = ?1 and b.startTime<=?2 " +
 					"   group by b.variableName " +
 					" ) as c " +
@@ -212,7 +212,16 @@ public class GlobalVariableService {
 	}
 
 	public void update(GlobalVariable var) {
-		insert(var);
+		try {
+			if (em.contains(var)) {
+				insert(var);
+			}
+			else {
+				em.merge(var);
+			}
+		}
+		finally {
+		}
 	}
 
 	public void insert(GlobalVariable var) {

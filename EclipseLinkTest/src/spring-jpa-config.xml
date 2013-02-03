@@ -52,7 +52,7 @@
 	
 	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter"
     	p:databasePlatform="org.eclipse.persistence.platform.database.MySQLPlatform"
-    	p:showSql="true" p:generateDdl="false" />
+    	p:showSql="true" p:generateDdl="true" />
 
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 

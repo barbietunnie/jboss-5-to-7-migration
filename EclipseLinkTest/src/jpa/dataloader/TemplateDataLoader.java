@@ -1,4 +1,4 @@
-package jpa.util;
+package jpa.dataloader;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -19,6 +19,7 @@ import jpa.model.GlobalVariable;
 import jpa.service.ClientDataService;
 import jpa.service.ClientVariableService;
 import jpa.service.GlobalVariableService;
+import jpa.util.SpringUtil;
 
 public class TemplateDataLoader {
 	static final Logger logger = Logger.getLogger(TemplateDataLoader.class);
@@ -38,7 +39,7 @@ public class TemplateDataLoader {
 		TransactionStatus status = txmgr.getTransaction(def);
 		try {
 			loader.loadClientVariables();
-			//loader.loadGlobalVariables();
+			loader.loadGlobalVariables();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -12,13 +12,13 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="ClientVariable", uniqueConstraints=@UniqueConstraint(columnNames = {"clientRowId", "variableName", "startTime"}))
+@Table(name="client_variable", uniqueConstraints=@UniqueConstraint(columnNames = {"clientRowId", "variableName", "startTime"}))
 public class ClientVariable extends BaseVariableModel implements Serializable
 {
 	private static final long serialVersionUID = -5873779791693771806L;
 
 	@ManyToOne(cascade=CascadeType.REMOVE, fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="ClientRowId", referencedColumnName="Row_Id")
+	@JoinColumn(name="ClientRowId", referencedColumnName="Row_Id", columnDefinition="int")
 	private ClientData clientData;
 
 	@Column(name="VariableValue", columnDefinition="text")

@@ -15,7 +15,7 @@ import javax.persistence.Transient;
 import jpa.constant.Constants;
 
 @Entity
-@Table(name="ClientData")
+@Table(name="client_data")
 public class ClientData extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 8789436921442107499L;
 
@@ -23,10 +23,10 @@ public class ClientData extends BaseModel implements Serializable {
 	@Column(name="ClientId", unique=true, nullable=false, length=16)
 	private String clientId = "";
 	
-	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ClientData")
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ClientData", orphanRemoval=true)
 	private List<ClientVariable> clientVariables;
 
-	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="ClientData")
+	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="ClientData", orphanRemoval=true)
 	private IdTokens idTokens;
 	
 	@Column(length=40, nullable=false)

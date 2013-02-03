@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="GlobalVariable", uniqueConstraints=@UniqueConstraint(columnNames = {"variableName", "startTime"}))
+@Table(name="global_variable", uniqueConstraints=@UniqueConstraint(columnNames = {"variableName", "startTime"}))
 public class GlobalVariable extends BaseVariableModel implements Serializable
 {
 	private static final long serialVersionUID = 7381275253094081485L;

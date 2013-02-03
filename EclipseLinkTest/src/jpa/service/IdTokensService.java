@@ -31,7 +31,8 @@ public class IdTokensService {
 	
 	public IdTokens getByClientId(String clientId) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from IdTokens t where t.clientId = :clientId");
+			Query query = em.createQuery("select t from IdTokens t, ClientData cd " +
+					" where cd=t.clientData and cd.clientId = :clientId");
 			query.setParameter("clientId", clientId);
 			IdTokens idTokens = (IdTokens) query.getSingleResult();
 			em.lock(idTokens, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
@@ -75,8 +76,9 @@ public class IdTokensService {
 
 	public int deleteByClientId(String clientId) {
 		try {
-			Query query = em.createQuery("delete from IdTokens t where t.clientId=:clientId");
-			query.setParameter("clientId", clientId);
+			Query query = em.createNativeQuery("delete from Id_Tokens where clientRowId in " +
+					" (select row_id from client_data cd where cd.clientId=?1)");
+			query.setParameter(1, clientId);
 			int rows = query.executeUpdate();
 			return rows;
 		}
