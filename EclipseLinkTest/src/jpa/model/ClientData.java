@@ -12,8 +12,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.eclipse.persistence.annotations.Index;
-
 import jpa.constant.Constants;
 
 @Entity
@@ -21,7 +19,7 @@ import jpa.constant.Constants;
 public class ClientData extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 8789436921442107499L;
 
-	@Index
+	//@Index
 	@Column(name="ClientId", unique=true, nullable=false, length=16)
 	private String clientId = "";
 	

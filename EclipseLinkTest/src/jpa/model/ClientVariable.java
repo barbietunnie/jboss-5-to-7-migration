@@ -17,7 +17,7 @@ public class ClientVariable extends BaseVariableModel implements Serializable
 {
 	private static final long serialVersionUID = -5873779791693771806L;
 
-	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, optional=false)
+	@ManyToOne(cascade=CascadeType.REMOVE, fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="ClientRowId", referencedColumnName="Row_Id")
 	private ClientData clientData;
 
