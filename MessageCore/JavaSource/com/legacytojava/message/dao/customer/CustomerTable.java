@@ -108,7 +108,7 @@ public class CustomerTable extends CreateTableBase {
 		try {
 			stm.execute("CREATE TABLE CUSTSEQUENCE ( " +
 			"SeqId bigint NOT NULL " +
-			") TYPE=MyISAM"); // table-level locking ?
+			") ENGINE=MyISAM"); // table-level locking ?
 			System.out.println("Created CUSTSEQUENCE Table...");
 			stm.execute("INSERT INTO CUSTSEQUENCE (SeqId) VALUES(0)");
 		}

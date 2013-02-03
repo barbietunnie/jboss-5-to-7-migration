@@ -115,11 +115,11 @@ public class ClientTable extends CreateTableBase {
 					+ "Rules int NOT NULL, "
 					+ "Actions int NOT NULL, "
 					+ "Templates int NOT NULL, "
-					+ "Schedules int NOT NULL "
-					+ "PRIMARY KEY (RowId), "
-					+ ") TYPE=MyISAM");
+					+ "Schedules int NOT NULL, "
+					+ "PRIMARY KEY (RowId) "
+					+ ") ENGINE=MyISAM");
 			System.out.println("Created RELOADFLAGS Table...");
-			stm.execute("INSERT INTO RELOADFLAGS VALUES(0,0,0,0,0)");
+			stm.execute("INSERT INTO RELOADFLAGS VALUES(1,0,0,0,0,0)");
 		}
 		catch (SQLException e) {
 			System.err.println("SQL Error: " + e.getMessage());
