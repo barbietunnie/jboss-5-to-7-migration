@@ -24,7 +24,7 @@
 	<bean id="mysqlDataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="${jdbc.url}" />
+		<property name="url" value="${dataSource.url}" />
 		<property name="username" value="${dataSource.username}" />
 		<property name="password" value="${dataSource.password}" />
 	</bean>
@@ -32,7 +32,7 @@
 	<bean id="initDataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="${jdbc.url}" />
+		<property name="url" value="${dataSource.init.url}" />
 		<property name="username" value="root" />
 		<property name="password" value="mysql_root_password" />
 	</bean>

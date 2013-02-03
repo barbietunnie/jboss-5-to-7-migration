@@ -229,7 +229,7 @@ public class InboxTables extends CreateTableBase
 		try {
 			stm.execute("CREATE TABLE MSGSEQUENCE ( " +
 			"SeqId bigint NOT NULL " +
-			") TYPE=MyISAM"); // table-level locking ?
+			") ENGINE=MyISAM"); // table-level locking ?
 			System.out.println("Created MSGSEQUENCE Table...");
 			stm.execute("INSERT INTO MSGSEQUENCE (SeqId) VALUES(0)");
 		}
@@ -244,7 +244,7 @@ public class InboxTables extends CreateTableBase
 			stm.execute("CREATE TABLE MSGUNREADCOUNT ( " +
 			"InboxUnreadCount int NOT NULL, " +
 			"SentUnreadCount int NOT NULL" +
-			") TYPE=MyISAM"); // table-level locking ?
+			") ENGINE=MyISAM"); // table-level locking ?
 			System.out.println("Created MSGUNREADCOUNT Table...");
 			stm.execute("INSERT INTO MSGUNREADCOUNT (InboxUnreadCount,SentUnreadCount) VALUES(0,0)");
 		}
