@@ -25,7 +25,10 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import jpa.util.SpringUtil;
+import jpa.constant.Constants;
+import jpa.model.ClientData;
 import jpa.model.IdTokens;
+import jpa.service.ClientDataService;
 import jpa.service.IdTokensService;
 
 public class IdTokens2Test {
@@ -89,11 +92,12 @@ public class IdTokens2Test {
 	@Test
 	public void idTokensService1() {
 		IdTokensService service = (IdTokensService) SpringUtil.getAppContext().getBean("idTokensService");
+		ClientDataService cdService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");;
 
 		List<IdTokens> list = service.getAll();
 		assertFalse(list.isEmpty());
 		
-		IdTokens tkn0 = service.getByClientId("System");
+		IdTokens tkn0 = service.getByClientId(Constants.DEFAULT_CLIENTID);
 		assertNotNull(tkn0);
 		
 		// test update - it should not create a new record
@@ -105,6 +109,7 @@ public class IdTokens2Test {
 		// end of test update
 		
 		// test insert - a new record should be created
+		ClientData cd2 = cdService.getByClientId("JBatchCorp");
 		IdTokens tkn2 = new IdTokens();
 		try {
 			BeanUtils.copyProperties(tkn2, tkn1);
@@ -112,7 +117,7 @@ public class IdTokens2Test {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		tkn2.getClientData().setClientId("JBatchCorp");
+		tkn2.setClientData(cd2);
 		service.insert(tkn2);
 		
 		IdTokens tkn3 = service.getByClientId("JBatchCorp");
@@ -136,10 +141,12 @@ public class IdTokens2Test {
 	@Test(expected=javax.persistence.NoResultException.class)
 	public void idTokensService2() {
 		IdTokensService service = (IdTokensService) SpringUtil.getAppContext().getBean("idTokensService");
+		ClientDataService cdService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");;
 
-		IdTokens tkn0 = service.getByClientId("System");
+		IdTokens tkn0 = service.getByClientId(Constants.DEFAULT_CLIENTID);
 		assertNotNull(tkn0);
 		
+		ClientData cd2 = cdService.getByClientId("JBatchCorp");
 		IdTokens tkn1 = new IdTokens();
 		try {
 			BeanUtils.copyProperties(tkn1, tkn0);
@@ -147,8 +154,7 @@ public class IdTokens2Test {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
-		tkn1.getClientData().setClientId("JBatchCorp");
+		tkn1.setClientData(cd2);
 		service.insert(tkn1);
 		
 		IdTokens tkn2 = service.getByClientId(tkn1.getClientData().getClientId());

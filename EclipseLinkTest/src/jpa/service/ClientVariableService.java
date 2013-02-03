@@ -117,10 +117,10 @@ public class ClientVariableService {
 	public List<ClientVariable> getCurrentByClientId(String clientId) {
 		String sql = 
 				"select a.* " +
-					" from ClientVariable a " +
+					" from Client_Variable a " +
 					" inner join ( " +
 					"  select b.clientRowId, b.variableName as variableName, max(b.startTime) as maxTime " +
-					"   from ClientVariable b, ClientData cd " +
+					"   from Client_Variable b, Client_Data cd " +
 					"   where b.statusId = ? and b.startTime<=? and b.clientRowId=cd.row_Id and cd.clientId=? " +
 					"   group by b.variableName " +
 					" ) as c " +
@@ -180,7 +180,8 @@ public class ClientVariableService {
 
 	public int deleteByClientId(String clientId) {
 		String sql = 
-				"delete from ClientVariable t where t.clientId=:clientId ";
+				"delete from ClientVariable where clientRowId in " +
+				" (select row_id from client_data cd where cd.clientId=?1)";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("clientId", clientId);
@@ -192,7 +193,16 @@ public class ClientVariableService {
 	}
 
 	public void update(ClientVariable var) {
-		insert(var);
+		try {
+			if (em.contains(var)) {
+				insert(var);
+			}
+			else {
+				em.merge(var);
+			}
+		}
+		finally {
+		}
 	}
 
 	public void insert(ClientVariable var) {

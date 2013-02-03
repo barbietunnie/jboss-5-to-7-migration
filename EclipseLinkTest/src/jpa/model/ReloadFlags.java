@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="ReloadFlags")
+@Table(name="reload_flags")
 /*
  * XXX !!!!! Rollback will not work since this table is defined with MyISAM engine
  */

@@ -8,12 +8,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="IdTokens")
+@Table(name="id_tokens")
 public class IdTokens extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -632308305179136081L;
 
-	@OneToOne(targetEntity=ClientData.class, fetch=FetchType.LAZY)
-	@JoinColumn(name="ClientRowId", referencedColumnName="Row_Id")
+	@OneToOne(targetEntity=ClientData.class, fetch=FetchType.LAZY, optional=false)
+	@JoinColumn(name="ClientRowId", referencedColumnName="Row_Id", columnDefinition="int")
 	private ClientData clientData;
 
 	@Column(nullable=true, length=100)
@@ -23,7 +23,7 @@ public class IdTokens extends BaseModel implements java.io.Serializable {
 	@Column(nullable=false, length=4)
 	private String bodyEndToken = "";
 	@Column(length=20)
-	private String xHeaderName = null;
+	private String xheaderName = null;
 	@Column(length=16)
 	private String xhdrBeginToken = null;
 	@Column(length=4)
@@ -67,12 +67,12 @@ public class IdTokens extends BaseModel implements java.io.Serializable {
 		this.bodyEndToken = bodyEndToken;
 	}
 
-	public String getxHeaderName() {
-		return xHeaderName;
+	public String getXheaderName() {
+		return xheaderName;
 	}
 
-	public void setxHeaderName(String xHeaderName) {
-		this.xHeaderName = xHeaderName;
+	public void setXheaderName(String xheaderName) {
+		this.xheaderName = xheaderName;
 	}
 
 	public String getXhdrBeginToken() {

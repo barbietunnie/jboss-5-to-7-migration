@@ -18,7 +18,10 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import jpa.constant.Constants;
+import jpa.model.ClientData;
 import jpa.model.IdTokens;
+import jpa.service.ClientDataService;
 import jpa.service.IdTokensService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -49,13 +52,16 @@ public class IdTokens1Test {
 
 	@Autowired
 	IdTokensService service;
+	
+	@Autowired
+	ClientDataService cdService;
 
 	@Test
 	public void idTokensService1() {
 		List<IdTokens> list = service.getAll();
 		assertFalse(list.isEmpty());
 		
-		IdTokens tkn0 = service.getByClientId("System");
+		IdTokens tkn0 = service.getByClientId(Constants.DEFAULT_CLIENTID);
 		assertNotNull(tkn0);
 		
 		// test update
@@ -65,6 +71,7 @@ public class IdTokens1Test {
 		assertTrue("JpaTest".equals(tkn1.getUpdtUserId()));
 		
 		// test insert
+		ClientData cd2 = cdService.getByClientId("JBatchCorp");
 		IdTokens tkn2 = new IdTokens();
 		try {
 			BeanUtils.copyProperties(tkn2, tkn1);
@@ -72,7 +79,7 @@ public class IdTokens1Test {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		tkn2.getClientData().setClientId("JBatchCorp");
+		tkn2.setClientData(cd2);
 		service.insert(tkn2);
 		
 		IdTokens tkn3 = service.getByClientId("JBatchCorp");
