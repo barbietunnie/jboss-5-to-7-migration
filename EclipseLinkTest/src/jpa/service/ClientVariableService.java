@@ -153,7 +153,7 @@ public class ClientVariableService {
 				"delete from Client_Variable " +
 				" where variableName=?1 and startTime=?2 " +
 				" and clientRowId in " +
-				" (select row_id from client_data cd where cd.clientId=?3) ";
+				" (select row_id from client_data cd where cd.clientId=?3)";
 		try {
 			Query query = em.createNativeQuery(sql);
 			query.setParameter(1, variableName);
