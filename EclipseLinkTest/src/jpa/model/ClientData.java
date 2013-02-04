@@ -29,6 +29,12 @@ public class ClientData extends BaseModel implements Serializable {
 	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="ClientData", orphanRemoval=true)
 	private IdTokens idTokens;
 	
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="ClientData")
+	private List<CustomerData> customers;
+	
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="ClientData")
+	private List<UserData> userDatas;
+	
 	@Column(length=40, nullable=false)
 	private String clientName = "";
 	@Column(length=1, columnDefinition="char")
@@ -342,5 +348,21 @@ public class ClientData extends BaseModel implements Serializable {
 
 	public void setIsSpf(String spf) {
 		this.isSpf = spf;
+	}
+
+	public List<CustomerData> getCustomers() {
+		return customers;
+	}
+
+	public void setCustomers(List<CustomerData> customers) {
+		this.customers = customers;
+	}
+
+	public List<UserData> getUserDatas() {
+		return userDatas;
+	}
+
+	public void setUserDatas(List<UserData> userDatas) {
+		this.userDatas = userDatas;
 	}
 }

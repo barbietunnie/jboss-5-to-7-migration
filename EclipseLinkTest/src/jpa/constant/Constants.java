@@ -10,6 +10,9 @@ public class Constants {
 			"<a style='color: darkblue;' href='http://www." + VENDER_DOMAIN_NAME + "' target='_blank'>"+ VENDER_DOMAIN_NAME + "</a></div>";
 	public final static String POWERED_BY_TEXT = "Powered by " + VENDER_DOMAIN_NAME;
 
+	public final static String ADMIN_ROLE = "admin";
+	public final static String USER_ROLE = "user";
+	
 	public static enum Code {
 		YES_CODE("Y"),
 		NO_CODE("N"),
