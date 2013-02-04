@@ -2,6 +2,7 @@ package jpa.model;
 
 import java.sql.Timestamp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,7 +22,7 @@ public class UserData extends BaseModel implements java.io.Serializable {
 	@JoinColumn(name="ClientRowId", referencedColumnName="Row_Id", columnDefinition="int")
 	private ClientData clientData;
 
-	@OneToOne(fetch=FetchType.EAGER,optional=false)
+	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.MERGE}, fetch=FetchType.EAGER, mappedBy="userData")
 	private EmailAddr emailAddr;
 	
 	@Column(nullable=false, length=20)
@@ -42,8 +43,6 @@ public class UserData extends BaseModel implements java.io.Serializable {
 	private Timestamp lastVisitTime;
 	@Column(nullable=false)
 	private int hits = 0;
-	@Column(length=1, nullable=false, columnDefinition="char")
-	private String statusId = "";
 	@Column(length=5, nullable=false)
 	private String role = "";
 	
@@ -151,14 +150,6 @@ public class UserData extends BaseModel implements java.io.Serializable {
 
 	public void setHits(int hits) {
 		this.hits = hits;
-	}
-
-	public String getStatusId() {
-		return statusId;
-	}
-
-	public void setStatusId(String statusId) {
-		this.statusId = statusId;
 	}
 
 	public String getRole() {

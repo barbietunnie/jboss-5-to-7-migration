@@ -21,14 +21,19 @@ import jpa.service.ClientVariableService;
 import jpa.service.GlobalVariableService;
 import jpa.util.SpringUtil;
 
-public class TemplateDataLoader {
+public class TemplateDataLoader implements AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(TemplateDataLoader.class);
-	private static ClientVariableService cvService;
-	private static GlobalVariableService gvService;
-	private static ClientDataService clientService;
+	private ClientVariableService cvService;
+	private GlobalVariableService gvService;
+	private ClientDataService clientService;
 
 	public static void main(String[] args) {
 		TemplateDataLoader loader = new TemplateDataLoader();
+		loader.loadData();
+	}
+
+	@Override
+	public void loadData() {
 		cvService = (ClientVariableService) SpringUtil.getAppContext().getBean("clientVariableService");
 		gvService = (GlobalVariableService) SpringUtil.getAppContext().getBean("globalVariableService");
 		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
@@ -38,17 +43,17 @@ public class TemplateDataLoader {
 		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
 		TransactionStatus status = txmgr.getTransaction(def);
 		try {
-			loader.loadClientVariables();
-			loader.loadGlobalVariables();
+			loadClientVariables();
+			loadGlobalVariables();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Exception caught", e);
 		}
 		finally {
 			txmgr.commit(status);
 		}
 	}
 
-	void loadClientVariables() throws SQLException {
+	private void loadClientVariables() throws SQLException {
 		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 		ClientVariable in = new ClientVariable();
 
@@ -93,7 +98,7 @@ public class TemplateDataLoader {
 		logger.info("EntityManager persisted the record.");
 	}
 	
-	void loadGlobalVariables() throws SQLException {
+	private void loadGlobalVariables() throws SQLException {
 		Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
 
 		GlobalVariable in = new GlobalVariable();

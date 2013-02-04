@@ -2,6 +2,7 @@ package jpa.model;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,8 +25,8 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 	@JoinColumn(name="ClientRowId", referencedColumnName="Row_Id", columnDefinition="int")
 	private ClientData clientData;
 
-	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.MERGE}, fetch=FetchType.LAZY)
-	private EmailAddr emailAddr;
+	@OneToMany(cascade={CascadeType.PERSIST,CascadeType.MERGE}, fetch=FetchType.LAZY, mappedBy="customerData")
+	private List<EmailAddr> emailAddrs;
 
 	@Column(nullable=false, length=20)
 	private String customerId = "";
@@ -49,9 +50,9 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 	private String streetAddress2 = null;
 	@Column(length=32)
 	private String cityName = null;
-	@Column(length=2,columnDefinition="char")
+	@Column(length=2,columnDefinition="char(2)")
 	private String stateCode = null;
-	@Column(length=5, columnDefinition="char")
+	@Column(length=5, columnDefinition="char(5)")
 	private String zipCode5 = null;
 	@Column(length=4)
 	private String zipCode4 = null;
@@ -86,15 +87,15 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 	private String msgOptional = null;
 	@Column(length=100)
 	private String msgFooter = null;
-	@Column(length=1, columnDefinition="char")
-	private String timeZoneCode = null;
+	@Column(length=50)
+	private String timeZone = null;
 	@Column(length=255)
 	private String memoText = null;
 	@Column(nullable=true)
 	private Timestamp passwordChangeTime = null;
 	@Column(length=32)
 	private String userPassword = null;
-	@Column(length=10)
+	@Column(length=100)
 	private String securityQuestion = null;
 	@Column(length=26)
 	private String securityAnswer = null;
@@ -114,12 +115,12 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 		this.clientData = clientData;
 	}
 
-	public EmailAddr getEmailAddr() {
-		return emailAddr;
+	public List<EmailAddr> getEmailAddrs() {
+		return emailAddrs;
 	}
 
-	public void setEmailAddr(EmailAddr emailAddr) {
-		this.emailAddr = emailAddr;
+	public void setEmailAddrs(List<EmailAddr> emailAddrs) {
+		this.emailAddrs = emailAddrs;
 	}
 
 	public String getCustomerId() {
@@ -346,12 +347,12 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 		this.msgFooter = msgFooter;
 	}
 
-	public String getTimeZoneCode() {
-		return timeZoneCode;
+	public String getTimeZone() {
+		return timeZone;
 	}
 
-	public void setTimeZoneCode(String timeZoneCode) {
-		this.timeZoneCode = timeZoneCode;
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
 	}
 
 	public String getMemoText() {

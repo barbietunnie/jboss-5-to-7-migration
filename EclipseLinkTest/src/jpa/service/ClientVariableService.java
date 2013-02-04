@@ -196,7 +196,7 @@ public class ClientVariableService {
 	public void update(ClientVariable var) {
 		try {
 			if (em.contains(var)) {
-				insert(var);
+				em.persist(var);
 			}
 			else {
 				em.merge(var);

@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -17,7 +18,7 @@ import jpa.constant.Constants;
 public class EmailAddr extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -6508051650541209578L;
 
-	@Column(nullable=false, length=255)
+	@Column(nullable=false, length=255, unique=true)
 	private String emailAddr = "";
 	@Column(nullable=true)
 	private Timestamp statusChangeTime = null;
@@ -33,12 +34,14 @@ public class EmailAddr extends BaseModel implements java.io.Serializable {
 	private Timestamp lastRcptTime= null;
 	@Column(nullable=false,length=1,columnDefinition="char")
 	private String acceptHtml = Constants.Code.YES_CODE.getValue();
+	@Column(nullable=false, length=255)
+	private String emailOrigAddr = "";
 
-	@OneToOne(fetch=FetchType.LAZY, optional=true)
+	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=CustomerData.class)
 	@JoinColumn(name="CustomerDataRowId", referencedColumnName="Row_Id")
-	private CustomerData costomerData;
+	private CustomerData customerData;
 	
-	@OneToOne(fetch=FetchType.LAZY,optional=true)
+	@OneToOne(fetch=FetchType.LAZY,optional=true, targetEntity=UserData.class)
 	@JoinColumn(name="userDataRowId", referencedColumnName="Row_Id")
 	private UserData userData;
 
@@ -76,6 +79,14 @@ public class EmailAddr extends BaseModel implements java.io.Serializable {
 
 	public void setEmailAddr(String emailAddr) {
 		this.emailAddr = emailAddr;
+	}
+
+	public String getEmailOrigAddr() {
+		return emailOrigAddr;
+	}
+
+	public void setEmailOrigAddr(String emailOrigAddr) {
+		this.emailOrigAddr = emailOrigAddr;
 	}
 
 	public Timestamp getStatusChangeTime() {
@@ -134,12 +145,12 @@ public class EmailAddr extends BaseModel implements java.io.Serializable {
 		this.acceptHtml = acceptHtml;
 	}
 
-	public CustomerData getCostomerData() {
-		return costomerData;
+	public CustomerData getCustomerData() {
+		return customerData;
 	}
 
-	public void setCostomerData(CustomerData costomerData) {
-		this.costomerData = costomerData;
+	public void setCustomerData(CustomerData customerData) {
+		this.customerData = customerData;
 	}
 
 	public String getRuleName() {

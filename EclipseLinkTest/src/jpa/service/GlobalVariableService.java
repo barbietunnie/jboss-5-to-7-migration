@@ -214,7 +214,7 @@ public class GlobalVariableService {
 	public void update(GlobalVariable var) {
 		try {
 			if (em.contains(var)) {
-				insert(var);
+				em.persist(var);
 			}
 			else {
 				em.merge(var);

@@ -17,12 +17,17 @@ import jpa.util.ProductUtil;
 import jpa.util.SpringUtil;
 import jpa.util.TimestampUtil;
 
-public class ClientDataLoader {
+public class ClientDataLoader implements AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(ClientDataLoader.class);
-	private static ClientDataService service;
+	private ClientDataService service;
 
 	public static void main(String[] args) {
 		ClientDataLoader loader = new ClientDataLoader();
+		loader.loadData();
+	}
+
+	@Override
+	public void loadData() {
 		service = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setName("idtokens_service");
@@ -30,17 +35,17 @@ public class ClientDataLoader {
 		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
 		TransactionStatus status = txmgr.getTransaction(def);
 		try {
-			loader.loadClientData(true);
-			loader.loadJBatchData();
+			loadClientData(true);
+			loadJBatchData();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Exception caught", e);
 		}
 		finally {
 			txmgr.commit(status);
 		}
 	}
 
-	void loadClientData(boolean loadTestData) {
+	private void loadClientData(boolean loadTestData) {
 		ClientData data = new ClientData();
 		data.setClientId(Constants.DEFAULT_CLIENTID);
 		data.setClientName("Emailsphere Demo");
@@ -86,7 +91,7 @@ public class ClientDataLoader {
 		logger.info("EntityManager persisted the record.");
 	}
 	
-	void loadJBatchData() throws SQLException {
+	private void loadJBatchData() throws SQLException {
 		ClientData data = new ClientData();
 		data.setClientId("JBatchCorp");
 		data.setClientName("JBatch Corp. Site");
@@ -114,6 +119,7 @@ public class ClientDataLoader {
 		data.setSystemKey(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
+		logger.info("EntityManager persisted the record.");
 	}
 }
 
