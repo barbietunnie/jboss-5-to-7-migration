@@ -35,6 +35,15 @@
 	  <appender-ref ref="FILE"/>
    </logger>
 
+   <logger name="org.hibernate.ejb">
+	  <level value="INFO"/> 
+	  <appender-ref ref="FILE"/>
+   </logger>
+   <logger name="org.hibernate.engine">
+	  <level value="INFO"/> 
+	  <appender-ref ref="FILE"/>
+   </logger>
+
    <logger name="com.legacytojava">
 	  <level value="DEBUG"/>
 	  <appender-ref ref="FILE"/>
