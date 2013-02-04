@@ -21,12 +21,20 @@ public abstract class BaseModel implements java.io.Serializable {
 	@Column(name="Row_Id", updatable=false)
 	protected int rowId = 0;
 
+	@Column(name="StatusId", length=1, nullable=false, columnDefinition="char")
+	private String statusId = "";
 	@Column(name="UpdtTime", nullable=false)
 	@Version
 	protected Timestamp updtTime = null;
 	@Column(name="UpdtUserId", length=10, nullable=false)
 	protected String updtUserId = null;
 
+	public String getStatusId() {
+		return statusId;
+	}
+	public void setStatusId(String statusId) {
+		this.statusId = statusId;
+	}
 	public Timestamp getUpdtTime() {
 		return updtTime;
 	}

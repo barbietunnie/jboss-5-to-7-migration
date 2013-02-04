@@ -107,7 +107,12 @@ public class IdTokensService {
 
 	public void update(IdTokens idTokens) {
 		try {
-			em.persist(idTokens);
+			if (em.contains(idTokens)) {
+				em.persist(idTokens);
+			}
+			else {
+				em.merge(idTokens);
+			}
 		}
 		catch (OptimisticLockException e) {
 			logger.error("OptimisticLockException caught", e);

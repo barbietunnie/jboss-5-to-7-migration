@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class ClientsTest {
+public class ClientDataTest {
 
 	@BeforeClass
 	public static void ClientsPrepare() {

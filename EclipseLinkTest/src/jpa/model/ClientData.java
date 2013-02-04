@@ -41,8 +41,6 @@ public class ClientData extends BaseModel implements Serializable {
 	private String clientType = null;
 	@Column(length=100, nullable=false)
 	private String domainName = "";
-	@Column(length=1, nullable=false, columnDefinition="char")
-	private String statusId = "";
 	@Column(length=10)
 	private String irsTaxId = null;
 	@Column(length=100)
@@ -300,14 +298,6 @@ public class ClientData extends BaseModel implements Serializable {
 	}
 	public void setReturnPathLeft(String returnPathLeft) {
 		this.returnPathLeft = returnPathLeft;
-	}
-
-	public String getStatusId() {
-		return statusId;
-	}
-
-	public void setStatusId(String statusId) {
-		this.statusId = statusId;
 	}
 
 	public String getSystemKey() {

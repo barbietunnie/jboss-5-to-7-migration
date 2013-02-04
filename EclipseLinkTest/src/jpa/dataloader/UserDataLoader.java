@@ -1,14 +1,13 @@
 package jpa.dataloader;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import jpa.constant.Constants;
-import jpa.constant.EmailIDToken;
+import jpa.constant.StatusId;
 import jpa.model.ClientData;
-import jpa.model.IdTokens;
+import jpa.model.UserData;
 import jpa.service.ClientDataService;
-import jpa.service.IdTokensService;
+import jpa.service.UserDataService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
@@ -17,19 +16,19 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-public class IdTokensDataLoader implements AbstractDataLoader {
-	static final Logger logger = Logger.getLogger(IdTokensDataLoader.class);
-	private IdTokensService itService;
+public class UserDataLoader implements AbstractDataLoader {
+	static final Logger logger = Logger.getLogger(UserDataLoader.class);
+	private UserDataService service;
 	private ClientDataService clientService;
 
 	public static void main(String[] args) {
-		IdTokensDataLoader loader = new IdTokensDataLoader();
+		UserDataLoader loader = new UserDataLoader();
 		loader.loadData();
 	}
 
 	@Override
 	public void loadData() {
-		itService = (IdTokensService) SpringUtil.getAppContext().getBean("idTokensService");
+		service = (UserDataService) SpringUtil.getAppContext().getBean("userDataService");
 		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setName("loader_service");
@@ -37,8 +36,8 @@ public class IdTokensDataLoader implements AbstractDataLoader {
 		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
 		TransactionStatus status = txmgr.getTransaction(def);
 		try {
-			loadIdTokens();
-		} catch (SQLException e) {
+			loadUserData();
+		} catch (Exception e) {
 			logger.error("Exception caught", e);
 		}
 		finally {
@@ -46,23 +45,32 @@ public class IdTokensDataLoader implements AbstractDataLoader {
 		}
 	}
 
-	void loadIdTokens() throws SQLException {
+	private void loadUserData() {
 		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
-		IdTokens in = new IdTokens();
+		UserData data = new UserData();
+		data.setClientData(cd);
+		data.setUserId("admin");
+		data.setPassword("admin");
+		data.setFirstName("default");
+		data.setLastName("admin");
+		data.setCreateTime(new Timestamp(System.currentTimeMillis()));
+		data.setStatusId(StatusId.ACTIVE.getValue());
+		data.setRole(Constants.ADMIN_ROLE);
+		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
+		service.insert(data);
 
-		Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
+		data = new UserData();
+		data.setClientData(cd);
+		data.setUserId("user");
+		data.setPassword("user");
+		data.setFirstName("default");
+		data.setLastName("user");
+		data.setCreateTime(new Timestamp(System.currentTimeMillis()));
+		data.setStatusId(StatusId.ACTIVE.getValue());
+		data.setRole(Constants.USER_ROLE);
+		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
+		service.insert(data);
 
-		in.setClientData(cd);
-		in.setDescription("Default SenderId");
-		in.setBodyBeginToken(EmailIDToken.BODY_BEGIN);
-		in.setBodyEndToken(EmailIDToken.BODY_END);
-		in.setXheaderName(EmailIDToken.XHEADER_NAME);
-		in.setXhdrBeginToken(EmailIDToken.XHDR_BEGIN);
-		in.setXhdrEndToken(EmailIDToken.XHDR_END);
-		in.setMaxLength(EmailIDToken.MAXIMUM_LENGTH);
-		in.setUpdtTime(updtTime);
-		in.setUpdtUserId("SysAdmin");
-		itService.insert(in);
 		logger.info("EntityManager persisted the record.");
 	}
 	

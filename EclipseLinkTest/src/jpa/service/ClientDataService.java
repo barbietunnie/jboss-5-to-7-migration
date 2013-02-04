@@ -138,7 +138,11 @@ public class ClientDataService {
 	}
 	
 	public void update(ClientData client) {
-		insert(client);
+		try {
+			insert(client);
+		}
+		finally {
+		}
 	}
 	
 	private void validateClient(ClientData client) {

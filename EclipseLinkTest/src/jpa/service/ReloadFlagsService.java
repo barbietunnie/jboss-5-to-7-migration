@@ -50,12 +50,25 @@ public class ReloadFlagsService {
 		ReloadFlags record = new ReloadFlags();
 		record.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		record.setUpdtTime(new java.sql.Timestamp(System.currentTimeMillis()));
-		update(record);
+		insert(record);
 	}
 
-	public void update(ReloadFlags record) {
+	public void insert(ReloadFlags record) {
 		try {
 			em.persist(record);
+		}
+		finally {
+		}
+	}
+	
+	public void update(ReloadFlags record) {
+		try {
+			if (em.contains(record)) {
+				em.persist(record);
+			}
+			else {
+				em.merge(record);
+			}
 		}
 		finally {
 		}
