@@ -150,14 +150,15 @@ public class ClientVariableService {
 
 	public int deleteByPrimaryKey(String clientId, String variableName, Date startTime) {
 		String sql = 
-				"delete from ClientVariable t " +
-				" where t.variableName=:variableName and t.startTime=:startTime " +
-				" and t.clientId=:clientId ";
+				"delete from Client_Variable " +
+				" where variableName=?1 and startTime=?2 " +
+				" and clientRowId in " +
+				" (select row_id from client_data cd where cd.clientId=?3) ";
 		try {
-			Query query = em.createQuery(sql);
-			query.setParameter("variableName", variableName);
-			query.setParameter("startTime", startTime);
-			query.setParameter("clientId", clientId);
+			Query query = em.createNativeQuery(sql);
+			query.setParameter(1, variableName);
+			query.setParameter(2, startTime);
+			query.setParameter(3, clientId);
 			int rows = query.executeUpdate();
 			return rows;
 		}
@@ -184,7 +185,7 @@ public class ClientVariableService {
 				" (select row_id from client_data cd where cd.clientId=?1)";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("clientId", clientId);
+			query.setParameter(1, clientId);
 			int rows = query.executeUpdate();
 			return rows;
 		}
