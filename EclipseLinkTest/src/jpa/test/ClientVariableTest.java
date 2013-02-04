@@ -1,11 +1,20 @@
 package jpa.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.NoResultException;
+
+import jpa.constant.Constants;
+import jpa.model.ClientVariable;
+import jpa.service.ClientVariableService;
+import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
@@ -18,11 +27,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import jpa.constant.Constants;
-import jpa.model.ClientVariable;
-import jpa.service.ClientVariableService;
-import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
@@ -40,11 +44,12 @@ public class ClientVariableTest {
 
 	@Autowired
 	ClientVariableService service;
-
+	
 	@Test
 	public void clientVariableService() {
 		ClientVariable var1 = service.getByBestMatch(testClientId, testVariableName, new Date(System.currentTimeMillis()));
 		assertNotNull(var1);
+		assertNotNull(var1.getClientData());
 		System.out.println("ClientVariable: " + StringUtil.prettyPrint(var1));
 
 		ClientVariable var2 = service.getByPrimaryKey(var1.getClientData().getClientId(), var1.getVariableName(), var1.getStartTime());
