@@ -119,12 +119,12 @@ public class ClientVariableService {
 				"select a.* " +
 					" from Client_Variable a " +
 					" inner join ( " +
-					"  select b.clientRowId, b.variableName as variableName, max(b.startTime) as maxTime " +
+					"  select b.clientDataRowId, b.variableName as variableName, max(b.startTime) as maxTime " +
 					"   from Client_Variable b, Client_Data cd " +
-					"   where b.statusId = ? and b.startTime<=? and b.clientRowId=cd.row_Id and cd.clientId=? " +
+					"   where b.statusId = ? and b.startTime<=? and b.clientDataRowId=cd.row_Id and cd.clientId=? " +
 					"   group by b.variableName " +
 					" ) as c " +
-					"  on a.variableName=c.variableName and a.startTime=c.maxTime and a.clientRowId=c.clientRowId " +
+					"  on a.variableName=c.variableName and a.startTime=c.maxTime and a.clientDataRowId=c.clientDataRowId " +
 					" order by a.row_id asc ";
 		try {
 			Query query = em.createNativeQuery(sql, ClientVariable.class);
@@ -152,7 +152,7 @@ public class ClientVariableService {
 		String sql = 
 				"delete from Client_Variable " +
 				" where variableName=?1 and startTime=?2 " +
-				" and clientRowId in " +
+				" and clientDataRowId in " +
 				" (select row_id from client_data cd where cd.clientId=?3)";
 		try {
 			Query query = em.createNativeQuery(sql);
@@ -181,7 +181,7 @@ public class ClientVariableService {
 
 	public int deleteByClientId(String clientId) {
 		String sql = 
-				"delete from ClientVariable where clientRowId in " +
+				"delete from ClientVariable where clientDataRowId in " +
 				" (select row_id from client_data cd where cd.clientId=?1)";
 		try {
 			Query query = em.createQuery(sql);

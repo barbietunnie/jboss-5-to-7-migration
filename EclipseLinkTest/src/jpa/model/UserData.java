@@ -19,7 +19,7 @@ public class UserData extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 14989739185873317L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="ClientRowId", referencedColumnName="Row_Id", columnDefinition="int")
+	@JoinColumn(name="ClientDataRowId", referencedColumnName="Row_Id", columnDefinition="int", nullable=false)
 	private ClientData clientData;
 
 	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.MERGE}, fetch=FetchType.EAGER, mappedBy="userData")

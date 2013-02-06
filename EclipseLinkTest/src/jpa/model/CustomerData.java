@@ -22,7 +22,7 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -2242214285799087578L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="ClientRowId", referencedColumnName="Row_Id", columnDefinition="int")
+	@JoinColumn(name="ClientDataRowId", referencedColumnName="Row_Id", columnDefinition="int", nullable=false)
 	private ClientData clientData;
 
 	@OneToMany(cascade={CascadeType.PERSIST,CascadeType.MERGE}, fetch=FetchType.LAZY, mappedBy="customerData")

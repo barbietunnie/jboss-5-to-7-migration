@@ -21,7 +21,7 @@ public abstract class BaseModel implements java.io.Serializable {
 	@Column(name="Row_Id", updatable=false)
 	protected int rowId = 0;
 
-	@Column(name="StatusId", length=1, nullable=false, columnDefinition="char")
+	@Column(name="StatusId", length=1, nullable=false, columnDefinition="char not null")
 	private String statusId = "";
 	@Column(name="UpdtTime", nullable=false)
 	@Version

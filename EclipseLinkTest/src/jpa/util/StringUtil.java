@@ -162,6 +162,10 @@ public final class StringUtil {
 	final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 	public static String prettyPrint(Object obj) {
+		return prettyPrint(obj, 12);
+	}
+
+	public static String prettyPrint(Object obj, int levels) {
 		if (obj == null) {
 			return ("-null");
 		}
@@ -172,10 +176,10 @@ public final class StringUtil {
 		if (m.matches() && m.groupCount()>=1) {
 			pkgName = m.group(1);
 		}
-		return prettyPrint(obj, stack, 0, pkgName);
+		return prettyPrint(obj, stack, 0, pkgName, levels);
 	}
 
-	private static String prettyPrint(Object obj, Stack<Object> stack, int level, String pkgName) {
+	private static String prettyPrint(Object obj, Stack<Object> stack, int level, String pkgName, int levels) {
 		if (obj == null) {
 		   return ("-null");
 		}
@@ -191,6 +195,9 @@ public final class StringUtil {
 					return (obj.getClass().getCanonicalName() + " - (loop)...");
 				}
 			}
+		}
+		if (level >= levels) {
+			return "";
 		}
 		stack.push(obj);
 		Object [] params = {};
@@ -298,7 +305,7 @@ public final class StringUtil {
 					else if (method.getReturnType().equals(Class.forName("java.lang.Class"))) {
 						Object rtnObj = method.invoke(obj, params);
 						if (rtnObj.getClass().getName().startsWith(pkgName)) {
-							sb.append(prettyPrint(rtnObj, stack, level + 1, pkgName));
+							sb.append(prettyPrint(rtnObj, stack, level + 1, pkgName, levels));
 						}
 						else {
 							sb.append((((Class<?>) rtnObj)).getName());
@@ -312,7 +319,7 @@ public final class StringUtil {
 							for (Iterator<?> it = lst.iterator(); it.hasNext();) {
 								Object _obj = it.next();
 								if (_obj.getClass().getName().startsWith(pkgName)) {
-									sb.append(prettyPrint(_obj, stack, level + 1, pkgName));
+									sb.append(prettyPrint(_obj, stack, level + 1, pkgName, levels));
 								}
 								else {
 									if (_obj instanceof java.lang.String) {
@@ -335,7 +342,7 @@ public final class StringUtil {
 							sb.append("null");
 						}
 						else if (rtnObj.getClass().getName().startsWith(pkgName)) {
-							sb.append(prettyPrint(rtnObj, stack, level + 1, pkgName));
+							sb.append(prettyPrint(rtnObj, stack, level + 1, pkgName, levels));
 						}
 					}
 					else {
@@ -345,14 +352,14 @@ public final class StringUtil {
 							if (nm.startsWith(pkgName)) {
 								Object[] objs = (Object[])method.invoke(obj, params);
 								for (int j=0; objs!=null && j<objs.length; j++) {
-									sb.append(prettyPrint(objs[j], stack, level+1, pkgName));
+									sb.append(prettyPrint(objs[j], stack, level+1, pkgName, levels));
 								}
 							}
 						}
 						else {
 							String nm = cls.getCanonicalName();
 							if (nm.startsWith(pkgName)) {
-								sb.append(prettyPrint(method.invoke(obj, params), stack, level + 1, pkgName));
+								sb.append(prettyPrint(method.invoke(obj, params), stack, level + 1, pkgName, levels));
 							}
 						}
 					}

@@ -37,7 +37,7 @@ public abstract class BaseVariableModel implements Serializable
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	/*
 	 * XXX !!!!!!!!!! Very important !!!!!!!!!!
-	 * "name" attribute in Column annotation is required for native query
+	 * "name" attribute in Column annotation is isRequired for native query
 	 * to map query results to the JPA model class.
 	 */
 	@Column(name="Row_Id", updatable=false) 
@@ -60,19 +60,19 @@ public abstract class BaseVariableModel implements Serializable
 	 * Fix:
 	 * Add columnDefinition="char" to @Column annotation.
 	 */
-	@Column(name="VariableType", nullable=false, length=1, columnDefinition="char")
+	@Column(name="VariableType", nullable=false, length=1, columnDefinition="char not null")
 	private String variableType = "";
 	// T - text, N - numeric, D - DateField/time,
 	// A - address, X - Xheader, L - LOB(Attachment)
 	//private String statusId = Constants.ACTIVE;
 	// A - Active, I - Inactive
-	@Column(name="StatusId", length=1, nullable=false, columnDefinition="char")
+	@Column(name="StatusId", length=1, nullable=false, columnDefinition="char not null")
 	private String statusId = "";
-	@Column(name="AllowOverride", length=1, nullable=false, columnDefinition="char")
+	@Column(name="AllowOverride", length=1, nullable=false, columnDefinition="char not null")
 	private String allowOverride = Constants.Code.YES_CODE.getValue();
 	// allow override value to be supplied at runtime, Y/N/M, M=Mandatory
-	@Column(name="Required", length=1, nullable=false, columnDefinition="char")
-	private String required = Constants.Code.NO_CODE.getValue();
+	@Column(name="IsRequired", length=1, nullable=false, columnDefinition="boolean not null")
+	private boolean isRequired = false;
 	
 	public int getRowId() {
 		return rowId;
@@ -83,11 +83,11 @@ public abstract class BaseVariableModel implements Serializable
 	public void setAllowOverride(String allowOverride) {
 		this.allowOverride = allowOverride;
 	}
-	public String getRequired() {
-		return required;
+	public boolean isRequired() {
+		return isRequired;
 	}
-	public void setRequired(String required) {
-		this.required = required;
+	public void setRequired(boolean isRequired) {
+		this.isRequired = isRequired;
 	}
 	public Date getStartTime() {
 		return startTime;

@@ -146,12 +146,12 @@ public class ClientDataService {
 	}
 	
 	private void validateClient(ClientData client) {
-		if (client.isUseTestAddress()) {
+		if (client.isUseTestAddr()) {
 			if (StringUtil.isEmpty(client.getTestToAddr())) {
 				throw new IllegalStateException("Test TO Address was null");
 			}
 		}
-		if (client.isVerpAddressEnabled()) {
+		if (client.isVerpEnabled()) {
 			if (StringUtil.isEmpty(client.getVerpInboxName())) {
 				throw new IllegalStateException("VERP bounce inbox name was null");
 			}

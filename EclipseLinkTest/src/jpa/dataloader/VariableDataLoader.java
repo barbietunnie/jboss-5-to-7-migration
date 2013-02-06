@@ -21,14 +21,14 @@ import jpa.service.ClientVariableService;
 import jpa.service.GlobalVariableService;
 import jpa.util.SpringUtil;
 
-public class TemplateDataLoader implements AbstractDataLoader {
-	static final Logger logger = Logger.getLogger(TemplateDataLoader.class);
+public class VariableDataLoader implements AbstractDataLoader {
+	static final Logger logger = Logger.getLogger(VariableDataLoader.class);
 	private ClientVariableService cvService;
 	private GlobalVariableService gvService;
 	private ClientDataService clientService;
 
 	public static void main(String[] args) {
-		TemplateDataLoader loader = new TemplateDataLoader();
+		VariableDataLoader loader = new VariableDataLoader();
 		loader.loadData();
 	}
 
@@ -67,7 +67,7 @@ public class TemplateDataLoader implements AbstractDataLoader {
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
 		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
-		in.setRequired(Constants.Code.NO_CODE.getValue());
+		in.setRequired(false);
 
 		cvService.insert(in);
 
@@ -80,7 +80,7 @@ public class TemplateDataLoader implements AbstractDataLoader {
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
 		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
-		in.setRequired(Constants.Code.NO_CODE.getValue());
+		in.setRequired(false);
 
 		cvService.insert(in);
 
@@ -93,7 +93,7 @@ public class TemplateDataLoader implements AbstractDataLoader {
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
 		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
-		in.setRequired(Constants.Code.NO_CODE.getValue());
+		in.setRequired(false);
 		cvService.insert(in);
 		logger.info("EntityManager persisted the record.");
 	}
@@ -110,7 +110,7 @@ public class TemplateDataLoader implements AbstractDataLoader {
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
 		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
-		in.setRequired(Constants.Code.NO_CODE.getValue());
+		in.setRequired(false);
 		gvService.insert(in);
 
 		in = new GlobalVariable();
@@ -121,7 +121,7 @@ public class TemplateDataLoader implements AbstractDataLoader {
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
 		in.setAllowOverride( Constants.Code.YES_CODE.getValue());
-		in.setRequired(Constants.Code.NO_CODE.getValue());
+		in.setRequired(false);
 		gvService.insert(in);
 
 		in = new GlobalVariable();
@@ -132,7 +132,7 @@ public class TemplateDataLoader implements AbstractDataLoader {
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
 		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
-		in.setRequired(Constants.Code.NO_CODE.getValue());
+		in.setRequired(false);
 		gvService.insert(in);
 
 		in = new GlobalVariable();
@@ -143,7 +143,7 @@ public class TemplateDataLoader implements AbstractDataLoader {
 		in.setVariableType(VariableType.X_HEADER.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
 		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
-		in.setRequired(Constants.Code.NO_CODE.getValue());
+		in.setRequired(false);
 		gvService.insert(in);
 		
 		in = new GlobalVariable();
@@ -154,7 +154,7 @@ public class TemplateDataLoader implements AbstractDataLoader {
 		in.setVariableType(VariableType.TEXT.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
 		in.setAllowOverride(Constants.Code.NO_CODE.getValue());
-		in.setRequired(Constants.Code.NO_CODE.getValue());
+		in.setRequired(false);
 		gvService.insert(in);
 		
 		System.out.println("loadGlobalVariables() completed.\n"+in);
