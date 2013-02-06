@@ -4,8 +4,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 	<persistence-unit name="EntityPersistence">
 		<jta-data-source>java:jboss/MessageDS</jta-data-source>
-		<!-- Specify JAR(s) that contains entities we'd like to map -->
-		<!-- jar-file>MessageCore.jar</jar-file -->
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="validate" />
 			<property name="hibernate.show_sql" value="true" />
@@ -13,4 +11,14 @@
 			<property name="jboss.entity.manager.factory.jndi.name"	value="java:/EntityPersistenceFactory" />
 		</properties>
 	</persistence-unit>
+	<!-- persistence-unit name="MessageDB">
+		<jta-data-source>java:jboss/MessageDS</jta-data-source>
+		<jar-file>MessageCore.jar</jar-file>
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="validate" />
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<property name="jboss.entity.manager.factory.jndi.name"	value="java:/MessageDBFactory" />
+		</properties>
+	</persistence-unit -->
 </persistence>
