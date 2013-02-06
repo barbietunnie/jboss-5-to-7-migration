@@ -13,12 +13,16 @@
     <tx:annotation-driven transaction-manager="mysqlTransactionManager"/>
     
      <!-- Transaction Managers -->
-	<bean id="mysqlTransactionManager"
+	<bean id="mysqlTransactionManager_v0"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="mysqlDataSource"/>
 		<property name="globalRollbackOnParticipationFailure" value="true"/>
 	</bean>
-	<!-- end of Transaction Managers -->
+
+	<bean id="mysqlTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"> 
+	    <property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+    <!-- end of Transaction Managers -->
 
 	<!-- Data Sources -->
 	<bean id="mysqlDataSource"
