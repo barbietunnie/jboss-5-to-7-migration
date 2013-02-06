@@ -56,7 +56,7 @@ public class ClientDataLoader implements AbstractDataLoader {
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setIrsTaxId("0000000000");
 		data.setWebSiteUrl("http://localhost:8080/MsgUI/publicsite");
-		data.setIsSaveRawMsg(Constants.Code.YES_CODE.getValue()); // save raw stream
+		data.setSaveRawMsg(true); // save raw stream
 		if (loadTestData) {
 			data.setContactEmail("sitemaster@emailsphere.com");
 			data.setSecurityEmail("security@localhost");
@@ -73,12 +73,12 @@ public class ClientDataLoader implements AbstractDataLoader {
 			data.setSpamCntrlEmail("spam.ctrl@localhost");
 			data.setChaRspHndlrEmail("challenge@localhost");
 		}
-		data.setIsEmbedEmailId(Constants.Code.YES.getValue()); // Embed EmailId 
+		data.setEmbedEmailId(true); // Embed EmailId 
 		data.setReturnPathLeft("support"); // return-path left
-		data.setIsUseTestAddr(Constants.Code.YES.getValue()); // use testing address
+		data.setUseTestAddr(true); // use testing address
 		data.setTestFromAddr("testfrom@localhost");
 		data.setTestToAddr("testto@localhost");
-		data.setIsVerpEnabled(Constants.Code.YES.getValue()); // is VERP enabled
+		data.setVerpEnabled(true); // is VERP enabled
 		data.setVerpSubDomain(null); // VERP sub-domain
 		data.setVerpInboxName("bounce"); // VERP bounce mailbox
 		data.setVerpRemoveInbox("remove"); // VERP un-subscribe mailbox
@@ -99,19 +99,19 @@ public class ClientDataLoader implements AbstractDataLoader {
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setIrsTaxId( "0000000000");
 		data.setWebSiteUrl("http://www.jbatch.com");
-		data.setIsSaveRawMsg(Constants.Code.YES_CODE.getValue()); // save raw stream
+		data.setSaveRawMsg(true); // save raw stream
 		data.setContactEmail("sitemaster@jbatch.com");
 		data.setSecurityEmail("security@jbatch.com");
 		data.setCustcareEmail("custcare@jbatch.com");
 		data.setRmaDeptEmail("rma.dept@jbatch.com");
 		data.setSpamCntrlEmail("spam.control@jbatch.com");
 		data.setChaRspHndlrEmail("challenge@jbatch.com");
-		data.setIsEmbedEmailId(Constants.Code.YES.getValue());
+		data.setEmbedEmailId(true);
 		data.setReturnPathLeft("support"); // return-path left
-		data.setIsUseTestAddr(Constants.Code.NO.getValue()); // use testing address
+		data.setUseTestAddr(false); // use testing address
 		data.setTestFromAddr("testfrom@jbatch.com");
 		data.setTestToAddr("testto@jbatch.com");
-		data.setIsVerpEnabled(Constants.Code.NO.getValue()); // is VERP enabled
+		data.setVerpEnabled(false); // is VERP enabled
 		data.setVerpSubDomain(null); // VERP sub domain
 		data.setVerpInboxName("bounce"); // VERP bounce mailbox
 		data.setVerpRemoveInbox("remove"); // VERP un-subscribe mailbox

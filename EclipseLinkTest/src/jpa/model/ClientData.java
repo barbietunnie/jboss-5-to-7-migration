@@ -45,8 +45,8 @@ public class ClientData extends BaseModel implements Serializable {
 	private String irsTaxId = null;
 	@Column(length=100)
 	private String webSiteUrl = null;
-	@Column(length=1, nullable=false, columnDefinition="char")
-	private String isSaveRawMsg = Constants.Code.YES_CODE.getValue();
+	@Column(length=1, nullable=false, columnDefinition="boolean not null")
+	private boolean isSaveRawMsg = true;
 	@Column(length=60)
 	private String contactName = null;
 	@Column(length=18)
@@ -63,20 +63,20 @@ public class ClientData extends BaseModel implements Serializable {
 	private String spamCntrlEmail = "";
 	@Column(length=255, nullable=false)
 	private String chaRspHndlrEmail = "";
-	@Column(length=3, nullable=false)
-	private String isEmbedEmailId = "";
+	@Column(length=3, nullable=false, columnDefinition="boolean not null")
+	private boolean isEmbedEmailId = true;
 	@Column(length=50, nullable=false)
 	private String returnPathLeft = "";
-	@Column(length=3, nullable=false)
-	private String isUseTestAddr = Constants.Code.NO.getValue();
+	@Column(length=3, nullable=false, columnDefinition="boolean not null")
+	private boolean isUseTestAddr = false;
 	@Column(length=255)
 	private String testFromAddr = null; 
 	@Column(length=255)
 	private String testToAddr = null;
 	@Column(length=255)
 	private String testReplytoAddr = null;
-	@Column(length=3, nullable=false)
-	private String isVerpEnabled = Constants.Code.NO.getValue();
+	@Column(length=3, nullable=false, columnDefinition="boolean not null")
+	private boolean isVerpEnabled = false;
 	@Column(length=50)
 	private String verpSubDomain = null;
 	@Column(length=50)
@@ -87,14 +87,14 @@ public class ClientData extends BaseModel implements Serializable {
 	private String systemId = "";
 	@Column(length=30)
 	private String systemKey = null;
-	@Column(length=1, columnDefinition="char")
-	private String isDikm = null;
-	@Column(length=1, columnDefinition="char")
-	private String domainKey = null;
+	@Column(length=1, columnDefinition="Boolean")
+	private Boolean isDikm = null;
+	@Column(length=1, columnDefinition="Boolean")
+	private Boolean isDomainKey = null;
 	@Column(length=200)
 	private String keyFilePath = null;
-	@Column(length=1, columnDefinition="char")
-	private String isSpf = null;
+	@Column(length=1, columnDefinition="Boolean")
+	private Boolean isSpf = null;
 
 	@Transient
 	private String origClientId = null;
@@ -120,18 +120,6 @@ public class ClientData extends BaseModel implements Serializable {
 	}
 
 	/** define components for UI */
-	public boolean isUseTestAddress() {
-		return Constants.Code.YES.getValue().equalsIgnoreCase(isUseTestAddr);
-	}
-	
-	public boolean isVerpAddressEnabled() {
-		return Constants.Code.YES.getValue().equalsIgnoreCase(isVerpEnabled);
-	}
-	
-	public boolean isEmbedEmailId() {
-		return Constants.Code.YES.getValue().equalsIgnoreCase(isEmbedEmailId);
-	}
-	
 	public boolean isSystemClient() {
 		return Constants.DEFAULT_CLIENTID.equalsIgnoreCase(clientId);
 	}
@@ -167,18 +155,20 @@ public class ClientData extends BaseModel implements Serializable {
 	public void setIrsTaxId(String irsTaxId) {
 		this.irsTaxId = irsTaxId;
 	}
-	public String getIsSaveRawMsg() {
-		return isSaveRawMsg;
-	}
-	public void setIsSaveRawMsg(String saveRawMsg) {
-		this.isSaveRawMsg = saveRawMsg;
-	}
 	public String getWebSiteUrl() {
 		return webSiteUrl;
 	}
 	public void setWebSiteUrl(String webSiteUrl) {
 		this.webSiteUrl = webSiteUrl;
 	}
+	public boolean isSaveRawMsg() {
+		return isSaveRawMsg;
+	}
+
+	public void setSaveRawMsg(boolean isSaveRawMsg) {
+		this.isSaveRawMsg = isSaveRawMsg;
+	}
+
 	public String getContactName() {
 		return contactName;
 	}
@@ -233,17 +223,11 @@ public class ClientData extends BaseModel implements Serializable {
 	public void setSystemId(String systemId) {
 		this.systemId = systemId;
 	}
-	public String getIsEmbedEmailId() {
+	public boolean isEmbedEmailId() {
 		return isEmbedEmailId;
 	}
-	public void setIsEmbedEmailId(String embedEmailId) {
-		this.isEmbedEmailId = embedEmailId;
-	}
-	public String getIsUseTestAddr() {
-		return isUseTestAddr;
-	}
-	public void setIsUseTestAddr(String useTestAddr) {
-		this.isUseTestAddr = useTestAddr;
+	public void setEmbedEmailId(boolean isEmbedEmailId) {
+		this.isEmbedEmailId = isEmbedEmailId;
 	}
 	public String getTestFromAddr() {
 		return testFromAddr;
@@ -263,10 +247,16 @@ public class ClientData extends BaseModel implements Serializable {
 	public void setTestReplytoAddr(String testReplytoAddr) {
 		this.testReplytoAddr = testReplytoAddr;
 	}
-	public String getIsVerpEnabled() {
+	public boolean isUseTestAddr() {
+		return isUseTestAddr;
+	}
+	public void setUseTestAddr(boolean isUseTestAddr) {
+		this.isUseTestAddr = isUseTestAddr;
+	}
+	public boolean isVerpEnabled() {
 		return isVerpEnabled;
 	}
-	public void setIsVerpEnabled(String isVerpEnabled) {
+	public void setVerpEnabled(boolean isVerpEnabled) {
 		this.isVerpEnabled = isVerpEnabled;
 	}
 	public String getVerpSubDomain() {
@@ -308,22 +298,6 @@ public class ClientData extends BaseModel implements Serializable {
 		this.systemKey = systemKey;
 	}
 
-	public String getIsDikm() {
-		return isDikm;
-	}
-
-	public void setIsDikm(String dikm) {
-		this.isDikm = dikm;
-	}
-
-	public String getDomainKey() {
-		return domainKey;
-	}
-
-	public void setDomainKey(String domainKey) {
-		this.domainKey = domainKey;
-	}
-
 	public String getKeyFilePath() {
 		return keyFilePath;
 	}
@@ -332,12 +306,28 @@ public class ClientData extends BaseModel implements Serializable {
 		this.keyFilePath = keyFilePath;
 	}
 
-	public String getIsSpf() {
+	public Boolean getIsDikm() {
+		return isDikm;
+	}
+
+	public void setIsDikm(Boolean isDikm) {
+		this.isDikm = isDikm;
+	}
+
+	public Boolean getIsDomainKey() {
+		return isDomainKey;
+	}
+
+	public void setIsDomainKey(Boolean isDomainKey) {
+		this.isDomainKey = isDomainKey;
+	}
+
+	public Boolean getIsSpf() {
 		return isSpf;
 	}
 
-	public void setIsSpf(String spf) {
-		this.isSpf = spf;
+	public void setIsSpf(Boolean isSpf) {
+		this.isSpf = isSpf;
 	}
 
 	public List<CustomerData> getCustomers() {

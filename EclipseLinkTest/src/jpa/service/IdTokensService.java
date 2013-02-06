@@ -76,7 +76,7 @@ public class IdTokensService {
 
 	public int deleteByClientId(String clientId) {
 		try {
-			Query query = em.createNativeQuery("delete from Id_Tokens where clientRowId in " +
+			Query query = em.createNativeQuery("delete from Id_Tokens where clientDataRowId in " +
 					" (select row_id from client_data cd where cd.clientId=?1)");
 			query.setParameter(1, clientId);
 			int rows = query.executeUpdate();

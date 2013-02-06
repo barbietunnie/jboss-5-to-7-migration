@@ -11,8 +11,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import jpa.constant.Constants;
-
 @Entity
 @Table(name="email_addr")
 public class EmailAddr extends BaseModel implements java.io.Serializable {
@@ -32,8 +30,8 @@ public class EmailAddr extends BaseModel implements java.io.Serializable {
 	private Timestamp lastSentTime = null;
 	@Column(nullable=true)
 	private Timestamp lastRcptTime= null;
-	@Column(nullable=false,length=1,columnDefinition="char")
-	private String acceptHtml = Constants.Code.YES_CODE.getValue();
+	@Column(nullable=false,length=1,columnDefinition="boolean not null")
+	private boolean isAcceptHtml = true;
 	@Column(nullable=false, length=255)
 	private String emailOrigAddr = "";
 
@@ -42,7 +40,7 @@ public class EmailAddr extends BaseModel implements java.io.Serializable {
 	private CustomerData customerData;
 	
 	@OneToOne(fetch=FetchType.LAZY,optional=true, targetEntity=UserData.class)
-	@JoinColumn(name="userDataRowId", referencedColumnName="Row_Id")
+	@JoinColumn(name="UserDataRowId", referencedColumnName="Row_Id")
 	private UserData userData;
 
 	//TODO
@@ -137,12 +135,12 @@ public class EmailAddr extends BaseModel implements java.io.Serializable {
 		this.lastRcptTime = lastRcptTime;
 	}
 
-	public String getAcceptHtml() {
-		return acceptHtml;
+	public boolean isAcceptHtml() {
+		return isAcceptHtml;
 	}
 
-	public void setAcceptHtml(String acceptHtml) {
-		this.acceptHtml = acceptHtml;
+	public void setAcceptHtml(boolean isAcceptHtml) {
+		this.isAcceptHtml = isAcceptHtml;
 	}
 
 	public CustomerData getCustomerData() {

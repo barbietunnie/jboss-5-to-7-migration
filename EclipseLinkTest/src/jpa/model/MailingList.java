@@ -1,0 +1,167 @@
+package jpa.model;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import jpa.constant.StatusId;
+
+@Entity
+@Table(name="mailing_list")
+@SqlResultSetMappings({ // used by native queries
+	  @SqlResultSetMapping(name="MailingListWithCounts",
+		entities={
+		 @EntityResult(entityClass=MailingList.class),
+	  	},
+	  	columns={
+		 @ColumnResult(name="sentCount"),
+		 @ColumnResult(name="openCount"),
+		 @ColumnResult(name="clickCount"),
+	  	}),
+	})
+public class MailingList extends BaseModel implements java.io.Serializable {
+	private static final long serialVersionUID = -1314842144892847007L;
+
+	@Transient
+	public static final String MAPPING_MAILING_LIST_WITH_COUNTS = "MailingListWithCounts";
+
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true, mappedBy="mailingList")
+	private List<Subscription> subscriptions; // subscribers of this list
+	
+	@OneToOne(fetch=FetchType.LAZY, optional=false)
+	@JoinColumn(name="EmailAddrRowId", insertable=true, updatable=false, referencedColumnName="Row_Id", nullable=false)
+	private EmailAddr listMasterEmailAddr; // Master email address of the list
+	
+	@ManyToOne(fetch=FetchType.LAZY,optional=false)
+	@JoinColumn(name="ClientDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
+	private ClientData clientData; // client the list associated to
+	
+	@Column(nullable=false, length=20, unique=true)
+	private String listId = "";
+	@Column(nullable=true, length=50)
+	private String displayName = null;
+	@Column(nullable=false, length=100)
+	private String acctUserName = "";
+	@Column(nullable=true, length=500)
+	private String description = null;
+	@Column(nullable=false, length=1, columnDefinition="boolean not null")
+	private boolean isBuiltIn = false;
+	@Column(nullable=false)
+	private Timestamp CreateTime;
+
+	@Transient
+	private String origListId = null;
+
+	public MailingList() {
+		// must have a no-argument constructor
+	}
+
+	/** define components for UI */
+	public boolean isActive() {
+		return StatusId.ACTIVE.getValue().equalsIgnoreCase(getStatusId());
+	}
+	
+	public String getListEmailAddr() {
+		if (getClientData()!=null) {
+			return acctUserName + "@" + getClientData().getDomainName();
+		}
+		else {
+			return acctUserName + "@" + "localhost";
+		}
+	}
+	/** end of UI */
+
+	public List<Subscription> getSubscriptions() {
+		return subscriptions;
+	}
+
+	public void setSubscriptions(List<Subscription> subscriptions) {
+		this.subscriptions = subscriptions;
+	}
+
+	public EmailAddr getListMasterEmailAddr() {
+		return listMasterEmailAddr;
+	}
+
+	public void setListMasterEmailAddr(EmailAddr listMasterEmailAddr) {
+		this.listMasterEmailAddr = listMasterEmailAddr;
+	}
+
+	public ClientData getClientData() {
+		return clientData;
+	}
+
+	public void setClientData(ClientData clientData) {
+		this.clientData = clientData;
+	}
+
+	public String getListId() {
+		return listId;
+	}
+
+	public void setListId(String listId) {
+		this.listId = listId;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getAcctUserName() {
+		return acctUserName;
+	}
+
+	public void setAcctUserName(String acctUserName) {
+		this.acctUserName = acctUserName;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public boolean isBuiltIn() {
+		return isBuiltIn;
+	}
+
+	public void setBuiltIn(boolean isBuiltIn) {
+		this.isBuiltIn = isBuiltIn;
+	}
+
+	public Timestamp getCreateTime() {
+		return CreateTime;
+	}
+
+	public void setCreateTime(Timestamp createTime) {
+		CreateTime = createTime;
+	}
+
+	public String getOrigListId() {
+		return origListId;
+	}
+
+	public void setOrigListId(String origListId) {
+		this.origListId = origListId;
+	}
+}

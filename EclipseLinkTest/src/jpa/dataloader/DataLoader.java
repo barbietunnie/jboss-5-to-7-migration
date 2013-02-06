@@ -18,6 +18,6 @@ public class DataLoader {
 		new EmailAddrLoader().loadData();
 		new UserDataLoader().loadData();
 		new CustomerDataLoader().loadData();
-		new TemplateDataLoader().loadData();
+		new VariableDataLoader().loadData();
 	}
 }
