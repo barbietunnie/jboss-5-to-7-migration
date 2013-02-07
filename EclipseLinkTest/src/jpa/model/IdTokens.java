@@ -13,7 +13,7 @@ public class IdTokens extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -632308305179136081L;
 
 	@OneToOne(targetEntity=ClientData.class, fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="ClientDataRowId", referencedColumnName="Row_Id", columnDefinition="int", nullable=false)
+	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false, unique=true)
 	private ClientData clientData;
 
 	@Column(nullable=true, length=100)

@@ -19,5 +19,8 @@ public class DataLoader {
 		new UserDataLoader().loadData();
 		new CustomerDataLoader().loadData();
 		new VariableDataLoader().loadData();
+		new MailingListDataLoader().loadData();
+		new EmailVariableLoader().loadData();
+		new EmailTemplateLoader().loadData();
 	}
 }

@@ -52,16 +52,16 @@ public class MailingListTest {
 	public void prepare() {
 		String testEmailAddr1 = "jpatest1@localhost";
 		emailAddr = new EmailAddr();
-		emailAddr.setEmailAddr(testEmailAddr1);
-		emailAddr.setEmailOrigAddr(testEmailAddr1);
+		emailAddr.setAddress(testEmailAddr1);
+		emailAddr.setOrigAddress(testEmailAddr1);
 		emailAddr.setStatusId(StatusId.ACTIVE.getValue());
 		emailAddr.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		eaService.insert(emailAddr);
 		
 		String testEmailAddr2 = "jpatest2@localhost";
 		emailAddr2 = new EmailAddr();
-		emailAddr2.setEmailAddr(testEmailAddr2);
-		emailAddr2.setEmailOrigAddr(testEmailAddr2);
+		emailAddr2.setAddress(testEmailAddr2);
+		emailAddr2.setOrigAddress(testEmailAddr2);
 		emailAddr2.setStatusId(StatusId.ACTIVE.getValue());
 		emailAddr2.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		eaService.insert(emailAddr2);

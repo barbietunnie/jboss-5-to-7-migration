@@ -2,7 +2,6 @@ package jpa.model;
 
 import java.sql.Timestamp;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,13 +18,14 @@ public class UserData extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 14989739185873317L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="ClientDataRowId", referencedColumnName="Row_Id", columnDefinition="int", nullable=false)
-	private ClientData clientData;
+	@JoinColumn(name="ClientDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
+	private ClientData clientData; // sender user is associated to
 
-	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.MERGE}, fetch=FetchType.EAGER, mappedBy="userData")
-	private EmailAddr emailAddr;
+	@OneToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddr.class)
+	@JoinColumn(name="EmailAddrRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
+	private EmailAddr emailAddr; // user email address - optional
 	
-	@Column(nullable=false, length=20)
+	@Column(nullable=false, length=20, unique=true)
 	private String userId = "";
 	@Column(nullable=false, length=32)
 	private String password = "";

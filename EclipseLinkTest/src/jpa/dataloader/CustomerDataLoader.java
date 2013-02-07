@@ -1,6 +1,5 @@
 package jpa.dataloader;
 
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -53,14 +52,11 @@ public class CustomerDataLoader implements AbstractDataLoader {
 
 	private void loadCustomerData() {
 		String addr = "jsmith@test.com";
-		EmailAddr emailaddr = emailAddrService.getByEmailAddr(addr);
+		EmailAddr emailaddr = emailAddrService.getByAddress(addr);
 		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 		CustomerData data = new CustomerData();
 		data.setClientData(cd);
-		if (data.getEmailAddrs()==null) {
-			data.setEmailAddrs(new ArrayList<EmailAddr>());
-		}
-		data.getEmailAddrs().add(emailaddr);
+		data.setEmailAddr(emailaddr);
 		data.setCustomerId("test");
 		data.setSsnNumber("123-45-6789");
 		data.setTaxId(null);

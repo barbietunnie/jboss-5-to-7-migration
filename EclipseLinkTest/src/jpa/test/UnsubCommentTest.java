@@ -8,15 +8,17 @@ import javax.persistence.EntityManager;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
-import jpa.model.CustomerData;
 import jpa.model.EmailAddr;
-import jpa.service.CustomerDataService;
+import jpa.model.MailingList;
+import jpa.model.UnsubComment;
 import jpa.service.EmailAddrService;
-import jpa.util.StringUtil;
+import jpa.service.MailingListService;
+import jpa.service.UnsubCommentService;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.SqlTimestampConverter;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,58 +33,60 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class EmailAddrTest {
+public class UnsubCommentTest {
 
 	@Autowired
 	private EntityManager entityManager;
 
 	@BeforeClass
-	public static void EmailAddrPrepare() {
+	public static void UnsubCommentPrepare() {
 	}
 
 	@Autowired
-	EmailAddrService service;
+	UnsubCommentService service;
 	
 	@Autowired
-	CustomerDataService custService;
+	EmailAddrService emailService;
+	@Autowired
+	MailingListService mlistService;
 
-	private String testEmailAddr1 = "jpatest1@localhost";
-	private String testEmailAddr2 = "jpatest2@localhost";
+	private String testUnsubComment1 = "jpa test comment 1";
+	private String testUnsubComment2 = "jpa test comment 2";
+	
+	EmailAddr emailAddr = null;
+	MailingList mlist = null;
+	@Before
+	public void prepare() {
+		emailAddr = emailService.findSertAddress("jpatest1@localhost");
+		List<MailingList> list = mlistService.getAll();
+		if (!list.isEmpty()) {
+			mlist = list.get(0);
+		}
+	}
 	
 	@Test
-	public void testEmailAddrService() {
+	public void testUnsubCommentService() {
 		// test insert
-		EmailAddr rcd1 = new EmailAddr();
-		rcd1.setAddress(testEmailAddr1);
-		rcd1.setOrigAddress(testEmailAddr1);
+		UnsubComment rcd1 = new UnsubComment();
+		rcd1.setEmailAddr(emailAddr);
+		rcd1.setMailingList(mlist);
+		rcd1.setComments(testUnsubComment1);
 		rcd1.setStatusId(StatusId.ACTIVE.getValue());
 		rcd1.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(rcd1);
 		
-		List<EmailAddr> lst0 = service.getByAddressPattern("@test.com$");
+		List<UnsubComment> lst0 = service.getByAddress(emailAddr.getAddress());
 		assertFalse(lst0.isEmpty());
-		EmailAddr rcd2 = lst0.get(0);
+		UnsubComment rcd2 = lst0.get(0);
 		assertNotNull(rcd2);
-		
-		lst0 = service.getByAddressDomain("test.com");
-		assertFalse(lst0.isEmpty());
-		lst0 = service.getByAddressUser("testuser");
-		assertFalse(lst0.isEmpty());
-		
-		Object[] obj = service.getByAddressWithCounts(lst0.get(0).getAddress());
-		System.out.println(StringUtil.prettyPrint(obj[0]));
-		System.out.println(obj[1] + "," + obj[2] + "," + obj[3]);
 		
 		// test update
 		rcd2.setUpdtUserId("JpaTest");
 		service.update(rcd2);
-		EmailAddr rcd3 = service.getByRowId(rcd2.getRowId());
+		UnsubComment rcd3 = service.getByRowId(rcd2.getRowId());
 		assertTrue("JpaTest".equals(rcd2.getUpdtUserId()));
-
-		List<CustomerData> lst1 = custService.getAll();
-		assertFalse(lst1.isEmpty());
 		
-		EmailAddr rcd4 = new EmailAddr();
+		UnsubComment rcd4 = new UnsubComment();
 		try {
 			SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
 			ConvertUtils.register(converter1, java.sql.Timestamp.class);
@@ -92,29 +96,14 @@ public class EmailAddrTest {
 			e.printStackTrace();
 			fail();
 		}
-		rcd4.setAddress(testEmailAddr2);
-		rcd4.setOrigAddress(testEmailAddr2);
-		rcd4.setCustomerData(lst1.get(0));
+		rcd4.setComments(testUnsubComment2);
 		service.insert(rcd4);
 		
-		int bounceCount = rcd4.getBounceCount();
-		for (int i=0; i<Constants.BOUNCE_SUSPEND_THRESHOLD; i++) {
-			service.updateBounceCount(rcd4);
-		}
-		
-		EmailAddr rcd5 = service.getByAddress(testEmailAddr2);
-		System.out.println(StringUtil.prettyPrint(rcd5,1));
-		assertNotNull(rcd5.getCustomerData());
-		assertTrue(rcd5.getBounceCount()==(bounceCount+Constants.BOUNCE_SUSPEND_THRESHOLD));
-		assertTrue(StatusId.SUSPENDED.getValue().equals(rcd5.getStatusId()));
-		
-		EmailAddr rcd6 = service.findSertAddress("jpatest3@localhost");
-		assertNotNull(rcd6);
-		assertTrue(rcd6.getRowId()>0);
-		System.out.println(StringUtil.prettyPrint(rcd6));
+		List<UnsubComment> lst2 = service.getByAddress(rcd4.getEmailAddr().getAddress());
+		assertTrue(lst2.size()==2);
 		
 		// test delete
 		service.delete(rcd4);
-		assertTrue(1==service.deleteByAddress(rcd6.getAddress()));
+		assertTrue(1==service.deleteByAddress(rcd2.getEmailAddr().getAddress()));
 	}
 }

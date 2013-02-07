@@ -13,6 +13,9 @@ public class Constants {
 	public final static String ADMIN_ROLE = "admin";
 	public final static String USER_ROLE = "user";
 	
+	public final static int BOUNCE_SUSPEND_THRESHOLD = 5;
+		// suspend email address after 5 times of consecutive bounces
+	
 	public static enum Code {
 		YES_CODE("Y"),
 		NO_CODE("N"),

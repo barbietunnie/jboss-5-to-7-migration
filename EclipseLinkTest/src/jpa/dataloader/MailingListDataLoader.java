@@ -23,9 +23,9 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 public class MailingListDataLoader implements AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(MailingListDataLoader.class);
-	private MailingListService mlService;
+	private MailingListService mlistService;
 	private ClientDataService clientService;
-	private EmailAddrService eaService;
+	private EmailAddrService emailService;
 	private SubscriptionService subService;
 
 	public static void main(String[] args) {
@@ -35,9 +35,9 @@ public class MailingListDataLoader implements AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		mlService = (MailingListService) SpringUtil.getAppContext().getBean("mailingListService");
+		mlistService = (MailingListService) SpringUtil.getAppContext().getBean("mailingListService");
 		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
-		eaService = (EmailAddrService) SpringUtil.getAppContext().getBean("emailAddrService");
+		emailService = (EmailAddrService) SpringUtil.getAppContext().getBean("emailAddrService");
 		subService = (SubscriptionService) SpringUtil.getAppContext().getBean("subscriptionService");
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setName("loader_service");
@@ -55,16 +55,15 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		}
 	}
 
-	
 	private void loadMailingLists() throws SQLException {
-		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 
 		Timestamp createTime = new Timestamp(new java.util.Date().getTime());
 
-		EmailAddr ea1 = eaService.findSertEmailAddr("demolist1@localhost");
+		EmailAddr ea1 = emailService.findSertAddress("demolist1@localhost");
 		
 		MailingList in = new MailingList();
-		in.setClientData(cd);
+		in.setClientData(client);
 		in.setListId("SMPLLST1");
 		in.setDisplayName("Sample List 1");
 		in.setAcctUserName("demolist1");
@@ -74,12 +73,12 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		in.setCreateTime(createTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		in.setListMasterEmailAddr(ea1);
-		mlService.insert(in);
+		mlistService.insert(in);
 
-		EmailAddr ea2 = eaService.findSertEmailAddr("demolist2@localhost");
+		EmailAddr ea2 = emailService.findSertAddress("demolist2@localhost");
 
 		in = new MailingList();
-		in.setClientData(cd);
+		in.setClientData(client);
 		in.setListId("SMPLLST2");
 		in.setDisplayName("Sample List 2");
 		in.setAcctUserName("demolist2");
@@ -89,12 +88,12 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		in.setCreateTime(createTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		in.setListMasterEmailAddr(ea2);
-		mlService.insert(in);
+		mlistService.insert(in);
 
-		EmailAddr ea3 = eaService.findSertEmailAddr("noreply@localhost");
+		EmailAddr ea3 = emailService.findSertAddress("noreply@localhost");
 
 		in = new MailingList();
-		in.setClientData(cd);
+		in.setClientData(client);
 		in.setListId("SYSLIST1");
 		in.setDisplayName("NOREPLY Empty List");
 		in.setAcctUserName("noreply");
@@ -104,22 +103,46 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		in.setCreateTime(createTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		in.setListMasterEmailAddr(ea3);
-		mlService.insert(in);
+		mlistService.insert(in);
+		logger.info("EntityManager persisted the record.");
+	}
+	
+	void loadProdMailingLists() throws SQLException {
+		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+
+		Timestamp createTime = new Timestamp(new java.util.Date().getTime());
+
+		// TODO get domain name from properties file
+		EmailAddr ea1 = emailService.findSertAddress("support@localhost");
+		
+		MailingList in = new MailingList();
+		in.setClientData(cd);
+		in.setListId("ORDERLST");
+		in.setDisplayName("Sales ORDER List");
+		in.setAcctUserName("support");
+		in.setDescription("Auto-Responder, used by order processing");
+		in.setStatusId(StatusId.INACTIVE.getValue());
+		in.setBuiltIn(true);
+		in.setCreateTime(createTime);
+		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
+		in.setListMasterEmailAddr(ea1);
+		mlistService.insert(in);
+
 		logger.info("EntityManager persisted the record.");
 	}
 	
 	private void loadSubscribers() {
-		MailingList mlist1 = mlService.getByListId("SMPLLST1");
-		MailingList mlist2 = mlService.getByListId("SMPLLST2");
+		MailingList mlist1 = mlistService.getByListId("SMPLLST1");
+		MailingList mlist2 = mlistService.getByListId("SMPLLST2");
 		java.sql.Timestamp createTime = new java.sql.Timestamp(System.currentTimeMillis());
 		
-		eaService.findSertEmailAddr("jsmith@test.com");
+		emailService.findSertAddress("jsmith@test.com");
 		Subscription sub = new Subscription();
 		sub.setMailingList(mlist1);
 		sub.setSubscribed(true);
 		sub.setStatusId(StatusId.ACTIVE.getValue());
 		sub.setCreateTime(createTime);
-		sub.setEmailAddr(eaService.findSertEmailAddr("jsmith@test.com"));
+		sub.setEmailAddr(emailService.findSertAddress("jsmith@test.com"));
 		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		subService.insert(sub);
 		
@@ -128,7 +151,10 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		sub.setSubscribed(true);
 		sub.setStatusId(StatusId.ACTIVE.getValue());
 		sub.setCreateTime(createTime);
-		sub.setEmailAddr(eaService.findSertEmailAddr("test@test.com"));
+		sub.setEmailAddr(emailService.findSertAddress("test@test.com"));
+		sub.setClickCount(1);
+		sub.setOpenCount(2);
+		sub.setSentCount(3);
 		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		subService.insert(sub);
 
@@ -137,17 +163,20 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		sub.setSubscribed(true);
 		sub.setStatusId(StatusId.ACTIVE.getValue());
 		sub.setCreateTime(createTime);
-		sub.setEmailAddr(eaService.findSertEmailAddr("testuser@test.com"));
+		sub.setEmailAddr(emailService.findSertAddress("testuser@test.com"));
+		sub.setClickCount(2);
+		sub.setOpenCount(3);
+		sub.setSentCount(4);
 		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		subService.insert(sub);
 	
-		eaService.findSertEmailAddr("jsmith@test.com");
+		emailService.findSertAddress("jsmith@test.com");
 		sub = new Subscription();
 		sub.setMailingList(mlist2);
 		sub.setSubscribed(true);
 		sub.setStatusId(StatusId.ACTIVE.getValue());
 		sub.setCreateTime(createTime);
-		sub.setEmailAddr(eaService.findSertEmailAddr("jsmith@test.com"));
+		sub.setEmailAddr(emailService.findSertAddress("jsmith@test.com"));
 		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		subService.insert(sub);
 		
@@ -156,7 +185,7 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		sub.setSubscribed(true);
 		sub.setStatusId(StatusId.ACTIVE.getValue());
 		sub.setCreateTime(createTime);
-		sub.setEmailAddr(eaService.findSertEmailAddr("test@test.com"));
+		sub.setEmailAddr(emailService.findSertAddress("test@test.com"));
 		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		subService.insert(sub);
 
@@ -165,7 +194,7 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		sub.setSubscribed(true);
 		sub.setStatusId(StatusId.ACTIVE.getValue());
 		sub.setCreateTime(createTime);
-		sub.setEmailAddr(eaService.findSertEmailAddr("testuser@test.com"));
+		sub.setEmailAddr(emailService.findSertAddress("testuser@test.com"));
 		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		subService.insert(sub);
 	}

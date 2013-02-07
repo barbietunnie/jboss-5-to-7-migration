@@ -50,7 +50,7 @@ public class SubscriptionService {
 	public List<Subscription> getByAddress(String address) {
 		try {
 			Query query = em.createQuery("select t from Subscription t, EmailAddr e " +
-					" where e=t.emailAddr and e.emailAddr = :address");
+					" where e=t.emailAddr and e.address = :address");
 			query.setParameter("address", address);
 			@SuppressWarnings("unchecked")
 			List<Subscription> list = query.getResultList();
@@ -60,24 +60,24 @@ public class SubscriptionService {
 		}
 	}
 	
-	public Subscription getByPrimaryKey(int emailAddrRowId, int mailingListRowId) throws NoResultException {
-		try {
-			Query query = em.createQuery("select t from Subscription t, EmailAddr e, MailingList m " +
-					" where e=t.emailAddr and m=t.mailingList and e.rowId=:emailAddrRowId and m.rowId=:mailingListRowId");
-			query.setParameter("emailAddrRowId", emailAddrRowId);
-			query.setParameter("mailingListRowId", mailingListRowId);
-			Subscription subscription = (Subscription) query.getSingleResult();
-			em.lock(subscription, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-			return subscription;
-		}
-		finally {
-		}
-	}
+//	public Subscription getByPrimaryKey(int emailAddrRowId, int mailingListRowId) throws NoResultException {
+//		try {
+//			Query query = em.createQuery("select t from Subscription t, EmailAddr e, MailingList m " +
+//					" where e=t.emailAddr and m=t.mailingList and e.rowId=:emailAddrRowId and m.rowId=:mailingListRowId");
+//			query.setParameter("emailAddrRowId", emailAddrRowId);
+//			query.setParameter("mailingListRowId", mailingListRowId);
+//			Subscription subscription = (Subscription) query.getSingleResult();
+//			em.lock(subscription, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+//			return subscription;
+//		}
+//		finally {
+//		}
+//	}
 	
 	public Subscription getByAddressAndListId(String address, String listId) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from Subscription t, EmailAddr e, MailingList m " +
-					" where e=t.emailAddr and m=t.mailingList and e.emailAddr=:address and m.listId=:listId");
+					" where e=t.emailAddr and m=t.mailingList and e.address=:address and m.listId=:listId");
 			query.setParameter("address", address);
 			query.setParameter("listId", listId);
 			Subscription subscription = (Subscription) query.getSingleResult();
@@ -101,7 +101,7 @@ public class SubscriptionService {
 	}
 	
 	public Subscription subscribe(String address, String listId) {
-		EmailAddr emailAddr = emailAddrService.findSertEmailAddr(address);
+		EmailAddr emailAddr = emailAddrService.findSertAddress(address);
 		MailingList list = null;
 		try {
 			list = mailingListService.getByListId(listId);
@@ -111,7 +111,7 @@ public class SubscriptionService {
 		}
 		Subscription sub = null;
 		try {
-			sub = getByPrimaryKey(emailAddr.getRowId(), list.getRowId());
+			sub = getByAddressAndListId(emailAddr.getAddress(), list.getListId());
 			if (!sub.isSubscribed()) {
 				sub.setSubscribed(true);
 				sub.setStatusId(StatusId.ACTIVE.getValue());
@@ -137,7 +137,7 @@ public class SubscriptionService {
 
 	public Subscription unsubscribe(String address, String listId) {
 		// to harvest email address from the request
-		EmailAddr emailAddr = emailAddrService.findSertEmailAddr(address);
+		EmailAddr emailAddr = emailAddrService.findSertAddress(address);
 		MailingList list = null;
 		try {
 			list = mailingListService.getByListId(listId);
@@ -147,7 +147,7 @@ public class SubscriptionService {
 		}
 		Subscription sub = null;
 		try {
-			sub = getByPrimaryKey(emailAddr.getRowId(), list.getRowId());
+			sub = getByAddressAndListId(emailAddr.getAddress(), list.getListId());
 			if (sub.isSubscribed()) {
 				sub.setSubscribed(false);
 				sub.setStatusId(StatusId.INACTIVE.getValue());
@@ -162,6 +162,76 @@ public class SubscriptionService {
 			sub.setMailingList(list);
 			sub.setSubscribed(false);
 			sub.setStatusId(StatusId.INACTIVE.getValue());
+			sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			insert(sub);
+		}
+		finally {
+			em.detach(sub);
+		}
+		return sub;
+	}
+
+	public Subscription optInRequest(String address, String listId) {
+		EmailAddr emailAddr = emailAddrService.findSertAddress(address);
+		MailingList list = null;
+		try {
+			list = mailingListService.getByListId(listId);
+		}
+		catch (NoResultException e) {
+			throw new IllegalArgumentException("Mailing List (" + listId + ") not found.");
+		}
+		Subscription sub = null;
+		try {
+			sub = getByAddressAndListId(emailAddr.getAddress(), list.getListId());
+			if (!sub.isSubscribed() && !Boolean.TRUE.equals(sub.getIsOptIn())) {
+				sub.setIsOptIn(Boolean.TRUE);
+				sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
+				update(sub);
+			}
+		}
+		catch (NoResultException e) {
+			sub = new Subscription();
+			sub.setCreateTime(new java.sql.Timestamp(System.currentTimeMillis()));
+			sub.setEmailAddr(emailAddr);
+			sub.setMailingList(list);
+			sub.setSubscribed(false);
+			sub.setIsOptIn(Boolean.TRUE);
+			sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			insert(sub);
+		}
+		finally {
+			em.detach(sub);
+		}
+		return sub;
+	}
+
+	public Subscription optInConfirm(String address, String listId) {
+		EmailAddr emailAddr = emailAddrService.findSertAddress(address);
+		emailAddr.setStatusId(StatusId.ACTIVE.getValue());
+		MailingList list = null;
+		try {
+			list = mailingListService.getByListId(listId);
+		}
+		catch (NoResultException e) {
+			throw new IllegalArgumentException("Mailing List (" + listId + ") not found.");
+		}
+		Subscription sub = null;
+		try {
+			sub = getByAddressAndListId(emailAddr.getAddress(), list.getListId());
+			if (!sub.isSubscribed() && Boolean.TRUE.equals(sub.getIsOptIn())) {
+				sub.setSubscribed(true);
+				sub.setStatusId(StatusId.ACTIVE.getValue());
+				sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
+				update(sub);
+			}
+		}
+		catch (NoResultException e) {
+			sub = new Subscription();
+			sub.setCreateTime(new java.sql.Timestamp(System.currentTimeMillis()));
+			sub.setEmailAddr(emailAddr);
+			sub.setMailingList(list);
+			sub.setSubscribed(true);
+			sub.setStatusId(StatusId.ACTIVE.getValue());
 			sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
 			insert(sub);
 		}
@@ -195,7 +265,7 @@ public class SubscriptionService {
 	public int deleteByAddress(String address) {
 		try {
 			Query query = em.createNativeQuery("delete from Subscription where EmailAddrRowid in " +
-					" (select row_id from email_addr ea where ea.emailAddr=?1)");
+					" (select row_id from email_addr ea where ea.address=?1)");
 			query.setParameter(1, address);
 			int rows = query.executeUpdate();
 			return rows;
@@ -204,24 +274,24 @@ public class SubscriptionService {
 		}
 	}
 
-	public int deleteByPrimaryKey(int emailAddrRowId, int mailingListRowId) {
-		try {
-			Query query = em.createNativeQuery("delete from Subscription where " +
-					" emailAddrRowId = (select row_id from email_addr ea where ea.row_Id=?1) " +
-					" and mailingListRowid = (select row_id from mailing_list ml where ml.row_Id=?2 )");
-			query.setParameter(1, emailAddrRowId);
-			query.setParameter(2, mailingListRowId);
-			int rows = query.executeUpdate();
-			return rows;
-		}
-		finally {
-		}
-	}
+//	public int deleteByPrimaryKey(int emailAddrRowId, int mailingListRowId) {
+//		try {
+//			Query query = em.createNativeQuery("delete from Subscription where " +
+//					" emailAddrRowId = (select row_id from email_addr ea where ea.row_Id=?1) " +
+//					" and mailingListRowid = (select row_id from mailing_list ml where ml.row_Id=?2 )");
+//			query.setParameter(1, emailAddrRowId);
+//			query.setParameter(2, mailingListRowId);
+//			int rows = query.executeUpdate();
+//			return rows;
+//		}
+//		finally {
+//		}
+//	}
 
 	public int deleteByAddressAndListId(String address, String listId) {
 		try {
 			Query query = em.createNativeQuery("delete from Subscription where " +
-					" emailAddrRowId = (select row_id from email_addr ea where ea.emailAddr=?1) " +
+					" emailAddrRowId = (select row_id from email_addr ea where ea.address=?1) " +
 					" and mailingListRowid = (select row_id from mailing_list ml where ml.listId=?2 )");
 			query.setParameter(1, address);
 			query.setParameter(2, listId);
@@ -267,4 +337,5 @@ public class SubscriptionService {
 		finally {
 		}
 	}
+
 }

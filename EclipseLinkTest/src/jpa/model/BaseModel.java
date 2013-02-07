@@ -11,6 +11,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
+import jpa.constant.Constants;
+import jpa.constant.StatusId;
+
 @MappedSuperclass
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public abstract class BaseModel implements java.io.Serializable {
@@ -22,12 +25,12 @@ public abstract class BaseModel implements java.io.Serializable {
 	protected int rowId = 0;
 
 	@Column(name="StatusId", length=1, nullable=false, columnDefinition="char not null")
-	private String statusId = "";
+	private String statusId = StatusId.ACTIVE.getValue();
 	@Column(name="UpdtTime", nullable=false)
 	@Version
 	protected Timestamp updtTime = null;
 	@Column(name="UpdtUserId", length=10, nullable=false)
-	protected String updtUserId = null;
+	protected String updtUserId = Constants.DEFAULT_USER_ID;
 
 	public String getStatusId() {
 		return statusId;
