@@ -1,9 +1,17 @@
 package jpa.constant;
 
-public class MailingListType {
+public enum MailingListType {
 
 	// define mailing list types
-	public static final String TRADITIONAL = "Traditional";
-	public static final String PERSONALIZED = "Personalized";
+	TRADITIONAL("Traditional"),
+	PERSONALIZED("Personalized");
 
+	private final String value;
+	private MailingListType(String value) {
+		this.value = value;
+	}
+	
+	public String getValue() {
+		return value;
+	}
 }

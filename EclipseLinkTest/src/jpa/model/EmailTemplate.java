@@ -35,13 +35,13 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 	@Column(nullable=false, length=1, columnDefinition="boolean not null")
 	private boolean isHtml = true;
 	@Column(nullable=false, length=12)
-	private String listType = MailingListType.TRADITIONAL;
-	@Column(nullable=false, length=4)
-	private String deliveryOption = MailingListDeliveryOption.ALL_ON_LIST;
+	private String listType = MailingListType.TRADITIONAL.getValue();
+	@Column(nullable=false, length=10)
+	private String deliveryOption = MailingListDeliveryOption.ALL_ON_LIST.getValue();
 	@Column(nullable=true, length=100)
 	private String selectCriteria = null;
-	@Column(nullable=false, length=1, columnDefinition="boolean not null")
-	private boolean isEmbedEmailId = true; // use system default
+	@Column(nullable=true, length=1, columnDefinition="Boolean")
+	private Boolean isEmbedEmailId = true; // use system default
 	@Column(nullable=false, length=1, columnDefinition="boolean not null")
 	private boolean isBuiltIn = false;
 	@Lob
@@ -127,11 +127,11 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 		this.selectCriteria = selectCriteria;
 	}
 
-	public boolean isEmbedEmailId() {
+	public Boolean getIsEmbedEmailId() {
 		return isEmbedEmailId;
 	}
 
-	public void setEmbedEmailId(boolean isEmbedEmailId) {
+	public void setIsEmbedEmailId(Boolean isEmbedEmailId) {
 		this.isEmbedEmailId = isEmbedEmailId;
 	}
 

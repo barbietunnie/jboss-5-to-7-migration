@@ -43,11 +43,11 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	private List<Subscription> subscriptions; // subscribers of this list
 	
 	@OneToOne(fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="EmailAddrRowId", insertable=true, updatable=false, referencedColumnName="Row_Id", nullable=false)
+	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private EmailAddr listMasterEmailAddr; // Master email address of the list
 	
 	@ManyToOne(fetch=FetchType.LAZY,optional=false)
-	@JoinColumn(name="ClientDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
+	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private ClientData clientData; // client the list associated to
 	
 	@Column(nullable=false, length=20, unique=true)

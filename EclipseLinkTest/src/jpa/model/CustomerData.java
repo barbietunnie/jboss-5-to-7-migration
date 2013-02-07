@@ -2,15 +2,13 @@ package jpa.model;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,14 +19,15 @@ import javax.persistence.Transient;
 public class CustomerData extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -2242214285799087578L;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="ClientDataRowId", referencedColumnName="Row_Id", columnDefinition="int", nullable=false)
+	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=ClientData.class)
+	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private ClientData clientData;
 
-	@OneToMany(cascade={CascadeType.PERSIST,CascadeType.MERGE}, fetch=FetchType.LAZY, mappedBy="customerData")
-	private List<EmailAddr> emailAddrs;
+	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddr.class)
+	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	private EmailAddr emailAddr;
 
-	@Column(nullable=false, length=20)
+	@Column(nullable=false, length=20, unique=true)
 	private String customerId = "";
 	@Column(length=11)
 	private String ssnNumber = null;
@@ -115,12 +114,12 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 		this.clientData = clientData;
 	}
 
-	public List<EmailAddr> getEmailAddrs() {
-		return emailAddrs;
+	public EmailAddr getEmailAddr() {
+		return emailAddr;
 	}
 
-	public void setEmailAddrs(List<EmailAddr> emailAddrs) {
-		this.emailAddrs = emailAddrs;
+	public void setEmailAddr(EmailAddr emailAddr) {
+		this.emailAddr = emailAddr;
 	}
 
 	public String getCustomerId() {

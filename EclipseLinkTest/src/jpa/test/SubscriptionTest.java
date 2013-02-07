@@ -56,24 +56,24 @@ public class SubscriptionTest {
 	public void prepare() {
 		String testEmailAddr1 = "jpatest1@localhost";
 		emailAddr1 = new EmailAddr();
-		emailAddr1.setEmailAddr(testEmailAddr1);
-		emailAddr1.setEmailOrigAddr(testEmailAddr1);
+		emailAddr1.setAddress(testEmailAddr1);
+		emailAddr1.setOrigAddress(testEmailAddr1);
 		emailAddr1.setStatusId(StatusId.ACTIVE.getValue());
 		emailAddr1.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		eaService.insert(emailAddr1);
 		
 		String testEmailAddr2 = "jpatest2@localhost";
 		emailAddr2 = new EmailAddr();
-		emailAddr2.setEmailAddr(testEmailAddr2);
-		emailAddr2.setEmailOrigAddr(testEmailAddr2);
+		emailAddr2.setAddress(testEmailAddr2);
+		emailAddr2.setOrigAddress(testEmailAddr2);
 		emailAddr2.setStatusId(StatusId.ACTIVE.getValue());
 		emailAddr2.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		eaService.insert(emailAddr2);
 
 		String testEmailAddr3 = "jpatest3@localhost";
 		emailAddr3 = new EmailAddr();
-		emailAddr3.setEmailAddr(testEmailAddr3);
-		emailAddr3.setEmailOrigAddr(testEmailAddr3);
+		emailAddr3.setAddress(testEmailAddr3);
+		emailAddr3.setOrigAddress(testEmailAddr3);
 		emailAddr3.setStatusId(StatusId.ACTIVE.getValue());
 		emailAddr3.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		eaService.insert(emailAddr3);
@@ -83,7 +83,24 @@ public class SubscriptionTest {
 	public void SubscriptionService() {
 		List<MailingList> list = mlService.getAll();
 		assertFalse(list.isEmpty());
-		
+
+		List<Subscription> subs = service.getByListId(list.get(0).getListId());
+		if (!subs.isEmpty()) {
+			Subscription rcd7 = subs.get(0);
+			java.sql.Timestamp updtTime = new java.sql.Timestamp(System.currentTimeMillis());
+			rcd7.setOpenCount(rcd7.getOpenCount()+1);
+			rcd7.setSentCount(rcd7.getSentCount()+1);
+			rcd7.setClickCount(rcd7.getClickCount()+1);
+			rcd7.setLastClickTime(updtTime);
+			rcd7.setLastOpenTime(updtTime);
+			rcd7.setLastSentTime(updtTime);
+			service.update(rcd7);
+			String address = rcd7.getEmailAddr().getAddress();
+			String listId = rcd7.getMailingList().getListId();
+			Subscription rcd8 = service.getByAddressAndListId(address, listId);
+			System.out.println("RCD8: " + StringUtil.prettyPrint(rcd8,1));
+		}
+
 		// test insert
 		Subscription rcd1 = new Subscription();
 		rcd1.setCreateTime(new java.sql.Timestamp(System.currentTimeMillis()));
@@ -92,9 +109,7 @@ public class SubscriptionTest {
 		rcd1.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(rcd1);
 		
-		Subscription rcd2 = service.getByPrimaryKey(emailAddr1.getRowId(),list.get(0).getRowId());
-		assertNotNull(rcd2);
-		rcd2 = service.getByAddressAndListId(emailAddr1.getEmailAddr(), list.get(0).getListId());
+		Subscription rcd2 = service.getByAddressAndListId(emailAddr1.getAddress(), list.get(0).getListId());
 		assertNotNull(rcd2);
 		
 		Subscription rcd6 = new Subscription();
@@ -104,9 +119,9 @@ public class SubscriptionTest {
 		rcd6.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(rcd6);
 
-		assertFalse(service.getByAddress(emailAddr3.getEmailAddr()).isEmpty());
+		assertFalse(service.getByAddress(emailAddr3.getAddress()).isEmpty());
 		//assertTrue(1==service.deleteByPrimaryKey(emailAddr3.getRowId(), list.get(0).getRowId()));
-		assertTrue(1==service.deleteByAddress(emailAddr3.getEmailAddr()));
+		assertTrue(1==service.deleteByAddress(emailAddr3.getAddress()));
 
 		// test update
 		rcd2.setUpdtUserId("JpaTest");
@@ -130,7 +145,7 @@ public class SubscriptionTest {
 		rcd4.setEmailAddr(emailAddr2);
 		service.insert(rcd4);
 		
-		Subscription rcd5 = service.getByPrimaryKey(emailAddr2.getRowId(), list.get(0).getRowId());
+		Subscription rcd5 = service.getByAddressAndListId(emailAddr2.getAddress(), list.get(0).getListId());
 		assertTrue(rcd5.getRowId()!=rcd3.getRowId());
 		assertFalse(rcd3.getOpenCount()==rcd5.getOpenCount());
 		assertFalse(rcd3.getEmailAddr().equals(rcd5.getEmailAddr()));
@@ -146,7 +161,7 @@ public class SubscriptionTest {
 		}
 
 		System.out.println(StringUtil.prettyPrint(rcd5,1));
-		int rowsDeleted = service.deleteByAddressAndListId(emailAddr2.getEmailAddr(), list.get(0).getListId());
+		int rowsDeleted = service.deleteByAddressAndListId(emailAddr2.getAddress(), list.get(0).getListId());
 		assertTrue(1==rowsDeleted);
 
 		// test subscription

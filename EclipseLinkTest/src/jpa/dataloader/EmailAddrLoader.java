@@ -43,8 +43,8 @@ public class EmailAddrLoader implements AbstractDataLoader {
 
 	private void loadEmailAddrs() {
 		EmailAddr data = new EmailAddr();
-		data.setEmailOrigAddr("jsmith@test.com");
-		data.setEmailAddr(data.getEmailOrigAddr());
+		data.setOrigAddress("jsmith@test.com");
+		data.setAddress(data.getOrigAddress());
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setStatusChangeTime(new Timestamp(System.currentTimeMillis()));
 		data.setStatusChangeUserId("testuser 1");
@@ -53,8 +53,8 @@ public class EmailAddrLoader implements AbstractDataLoader {
 		service.insert(data);
 
 		data = new EmailAddr();
-		data.setEmailOrigAddr("test@test.com");
-		data.setEmailAddr(data.getEmailOrigAddr());
+		data.setOrigAddress("test@test.com");
+		data.setAddress(data.getOrigAddress());
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setStatusChangeTime(new Timestamp(System.currentTimeMillis()));
 		data.setStatusChangeUserId("testuser 2");
@@ -63,8 +63,8 @@ public class EmailAddrLoader implements AbstractDataLoader {
 		service.insert(data);
 
 		data = new EmailAddr();
-		data.setEmailOrigAddr("testuser@test.com");
-		data.setEmailAddr(data.getEmailOrigAddr());
+		data.setOrigAddress("testuser@test.com");
+		data.setAddress(data.getOrigAddress());
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setStatusChangeTime(new Timestamp(System.currentTimeMillis()));
 		data.setStatusChangeUserId("testuser 3");

@@ -31,6 +31,14 @@
 		<property name="password" value="${dataSource.password}" />
 	</bean>
 
+	<bean id="initDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource" lazy-init="true">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${dataSource.init.url}" />
+		<property name="username" value="root" />
+		<property name="password" value="mysql_root_password" />
+	</bean>
+
 	<!-- Spring JPA Entity Manager Factory -->
 	<bean id="entityManager" 
 	    class="org.springframework.orm.jpa.support.SharedEntityManagerBean">

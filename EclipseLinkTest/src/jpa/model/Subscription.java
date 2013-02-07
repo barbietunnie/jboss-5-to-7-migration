@@ -19,11 +19,11 @@ public class Subscription extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 5306761711116978942L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="EmailAddrRowId", insertable=true, updatable=false, referencedColumnName="Row_Id", nullable=false)
+	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private EmailAddr emailAddr; // subscriber email address
 	
-	@ManyToOne(fetch=FetchType.LAZY,optional=false)
-	@JoinColumn(name="MailingListRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
+	@ManyToOne(fetch=FetchType.LAZY, optional=false)
+	@JoinColumn(name="MailingListRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private MailingList mailingList; // mailing list isSubscribed to
 	
 	@Column(length=1,nullable=false,columnDefinition="boolean not null")
@@ -52,7 +52,7 @@ public class Subscription extends BaseModel implements java.io.Serializable {
 	/** define components for UI */
 	public String getEmailAddrShort() {
 		if (getEmailAddr()!=null) {
-			return StringUtil.cutWithDots(getEmailAddr().getEmailAddr(), 100);
+			return StringUtil.cutWithDots(getEmailAddr().getAddress(), 100);
 		}
 		else {
 			throw new IllegalStateException("Subscription instance must be loaded with data!");

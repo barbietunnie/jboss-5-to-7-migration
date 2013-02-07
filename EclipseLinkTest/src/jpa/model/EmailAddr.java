@@ -2,22 +2,46 @@ package jpa.model;
 
 import java.sql.Timestamp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
 @Table(name="email_addr")
+@SqlResultSetMappings({ // used by native queries
+	  @SqlResultSetMapping(name="EmailAddrEntiry",
+		entities={
+		 @EntityResult(entityClass=EmailAddr.class),
+	  	}),
+	  @SqlResultSetMapping(name="EmailAddrWithCounts",
+		entities={
+		 @EntityResult(entityClass=EmailAddr.class),
+	  	},
+	  	columns={
+		 @ColumnResult(name="sentCount"),
+		 @ColumnResult(name="openCount"),
+		 @ColumnResult(name="clickCount"),
+	  	}),
+	})
+
 public class EmailAddr extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -6508051650541209578L;
 
+	@Transient
+	public static final String MAPPING_EMAIL_ADDR_ENTITY = "EmailAddrEntiry";
+	@Transient
+	public static final String MAPPING_EMAIL_ADDR_WITH_COUNTS = "EmailAddrWithCounts";
+
 	@Column(nullable=false, length=255, unique=true)
-	private String emailAddr = "";
+	private String address = "";
 	@Column(nullable=true)
 	private Timestamp statusChangeTime = null;
 	@Column(nullable=true, length=20) // TODO
@@ -33,14 +57,12 @@ public class EmailAddr extends BaseModel implements java.io.Serializable {
 	@Column(nullable=false,length=1,columnDefinition="boolean not null")
 	private boolean isAcceptHtml = true;
 	@Column(nullable=false, length=255)
-	private String emailOrigAddr = "";
+	private String origAddress = "";
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=CustomerData.class)
-	@JoinColumn(name="CustomerDataRowId", referencedColumnName="Row_Id")
+	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.MERGE}, fetch=FetchType.LAZY, optional=true, mappedBy="emailAddr")
 	private CustomerData customerData;
 	
-	@OneToOne(fetch=FetchType.LAZY,optional=true, targetEntity=UserData.class)
-	@JoinColumn(name="UserDataRowId", referencedColumnName="Row_Id")
+	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.MERGE}, fetch=FetchType.LAZY,optional=true, mappedBy="emailAddr")
 	private UserData userData;
 
 	//TODO
@@ -54,37 +76,28 @@ public class EmailAddr extends BaseModel implements java.io.Serializable {
 	@Transient
 	private String middleName = null;
 
-	//TODO
-	// used when join with Subscription table to get open/click counts
+	// As the table already has a column called OrigAddress, use currAddress to avoid confusion.
 	@Transient
-	private Integer sentCount = null;
-	@Transient
-	private Integer openCount = null;
-	@Transient
-	private Integer clickCount = null;
-	
-	// As the table already has a column called OrigEmailAddr, use currEmailAddr to avoid confusion.
-	@Transient
-	private String currEmailAddr = null;
+	private String currAddress = null;
 
 	public EmailAddr() {
 		// must have a no-argument constructor
 	}
 
-	public String getEmailAddr() {
-		return emailAddr;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setEmailAddr(String emailAddr) {
-		this.emailAddr = emailAddr;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
-	public String getEmailOrigAddr() {
-		return emailOrigAddr;
+	public String getOrigAddress() {
+		return origAddress;
 	}
 
-	public void setEmailOrigAddr(String emailOrigAddr) {
-		this.emailOrigAddr = emailOrigAddr;
+	public void setOrigAddress(String origAddress) {
+		this.origAddress = origAddress;
 	}
 
 	public Timestamp getStatusChangeTime() {
@@ -183,36 +196,12 @@ public class EmailAddr extends BaseModel implements java.io.Serializable {
 		this.middleName = middleName;
 	}
 
-	public Integer getSentCount() {
-		return sentCount;
+	public String getCurrAddress() {
+		return currAddress;
 	}
 
-	public void setSentCount(Integer sentCount) {
-		this.sentCount = sentCount;
-	}
-
-	public Integer getOpenCount() {
-		return openCount;
-	}
-
-	public void setOpenCount(Integer openCount) {
-		this.openCount = openCount;
-	}
-
-	public Integer getClickCount() {
-		return clickCount;
-	}
-
-	public void setClickCount(Integer clickCount) {
-		this.clickCount = clickCount;
-	}
-
-	public String getCurrEmailAddr() {
-		return currEmailAddr;
-	}
-
-	public void setCurrEmailAddr(String currEmailAddr) {
-		this.currEmailAddr = currEmailAddr;
+	public void setCurrAddress(String currAddress) {
+		this.currAddress = currAddress;
 	}
 
 	public UserData getUserData() {
