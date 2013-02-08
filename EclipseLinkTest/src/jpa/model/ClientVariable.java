@@ -20,7 +20,7 @@ public class ClientVariable extends BaseVariableModel implements Serializable
 	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private ClientData clientData;
 
-	@Column(name="VariableValue", length=4055)
+	@Column(name="VariableValue", length=2046)
 	private String variableValue = null;
 
 	public ClientData getClientData() {

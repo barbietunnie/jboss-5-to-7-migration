@@ -12,7 +12,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
@@ -42,10 +41,6 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true, mappedBy="mailingList")
 	private List<Subscription> subscriptions; // subscribers of this list
 	
-	@OneToOne(fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private EmailAddr listMasterEmailAddr; // Master email address of the list
-	
 	@ManyToOne(fetch=FetchType.LAZY,optional=false)
 	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private ClientData clientData; // client the list associated to
@@ -55,13 +50,15 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true, length=50)
 	private String displayName = null;
 	@Column(nullable=false, length=100)
-	private String acctUserName = "";
+	private String acctUserName = ""; // list email address left part
 	@Column(nullable=true, length=500)
 	private String description = null;
 	@Column(nullable=false, length=1, columnDefinition="boolean not null")
 	private boolean isBuiltIn = false;
 	@Column(nullable=false)
-	private Timestamp CreateTime;
+	private Timestamp createTime;
+	@Column(nullable=false, length=255)
+	private String listMasterEmailAddr = "";
 
 	@Transient
 	private String origListId = null;
@@ -93,11 +90,11 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 		this.subscriptions = subscriptions;
 	}
 
-	public EmailAddr getListMasterEmailAddr() {
+	public String getListMasterEmailAddr() {
 		return listMasterEmailAddr;
 	}
 
-	public void setListMasterEmailAddr(EmailAddr listMasterEmailAddr) {
+	public void setListMasterEmailAddr(String listMasterEmailAddr) {
 		this.listMasterEmailAddr = listMasterEmailAddr;
 	}
 
@@ -150,11 +147,11 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	}
 
 	public Timestamp getCreateTime() {
-		return CreateTime;
+		return createTime;
 	}
 
 	public void setCreateTime(Timestamp createTime) {
-		CreateTime = createTime;
+		this.createTime = createTime;
 	}
 
 	public String getOrigListId() {

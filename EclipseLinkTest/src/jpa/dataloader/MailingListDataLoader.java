@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.model.ClientData;
-import jpa.model.EmailAddr;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
 import jpa.service.ClientDataService;
@@ -57,10 +56,9 @@ public class MailingListDataLoader implements AbstractDataLoader {
 
 	private void loadMailingLists() throws SQLException {
 		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		String domain = client.getDomainName();
 
 		Timestamp createTime = new Timestamp(new java.util.Date().getTime());
-
-		EmailAddr ea1 = emailService.findSertAddress("demolist1@localhost");
 		
 		MailingList in = new MailingList();
 		in.setClientData(client);
@@ -72,10 +70,8 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		in.setBuiltIn(false);
 		in.setCreateTime(createTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		in.setListMasterEmailAddr(ea1);
+		in.setListMasterEmailAddr("sitemaster@"+domain);
 		mlistService.insert(in);
-
-		EmailAddr ea2 = emailService.findSertAddress("demolist2@localhost");
 
 		in = new MailingList();
 		in.setClientData(client);
@@ -87,10 +83,8 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		in.setBuiltIn(false);
 		in.setCreateTime(createTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		in.setListMasterEmailAddr(ea2);
+		in.setListMasterEmailAddr("sitemaster@"+domain);
 		mlistService.insert(in);
-
-		EmailAddr ea3 = emailService.findSertAddress("noreply@localhost");
 
 		in = new MailingList();
 		in.setClientData(client);
@@ -102,21 +96,19 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		in.setBuiltIn(true);
 		in.setCreateTime(createTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		in.setListMasterEmailAddr(ea3);
+		in.setListMasterEmailAddr("sitemaster@" + domain);
 		mlistService.insert(in);
 		logger.info("EntityManager persisted the record.");
 	}
 	
 	void loadProdMailingLists() throws SQLException {
-		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		String domain = client.getDomainName();
 
 		Timestamp createTime = new Timestamp(new java.util.Date().getTime());
-
-		// TODO get domain name from properties file
-		EmailAddr ea1 = emailService.findSertAddress("support@localhost");
 		
 		MailingList in = new MailingList();
-		in.setClientData(cd);
+		in.setClientData(client);
 		in.setListId("ORDERLST");
 		in.setDisplayName("Sales ORDER List");
 		in.setAcctUserName("support");
@@ -125,7 +117,8 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		in.setBuiltIn(true);
 		in.setCreateTime(createTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		in.setListMasterEmailAddr(ea1);
+		// TODO get domain name from properties file
+		in.setListMasterEmailAddr("sitemaster@" + domain);
 		mlistService.insert(in);
 
 		logger.info("EntityManager persisted the record.");
@@ -136,7 +129,6 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		MailingList mlist2 = mlistService.getByListId("SMPLLST2");
 		java.sql.Timestamp createTime = new java.sql.Timestamp(System.currentTimeMillis());
 		
-		emailService.findSertAddress("jsmith@test.com");
 		Subscription sub = new Subscription();
 		sub.setMailingList(mlist1);
 		sub.setSubscribed(true);

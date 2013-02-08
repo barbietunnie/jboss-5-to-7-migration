@@ -13,7 +13,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import jpa.constant.Constants;
+import jpa.constant.CodeType;
 
 @MappedSuperclass
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
@@ -69,7 +69,7 @@ public abstract class BaseVariableModel implements Serializable
 	@Column(name="StatusId", length=1, nullable=false, columnDefinition="char not null")
 	private String statusId = "";
 	@Column(name="AllowOverride", length=1, nullable=false, columnDefinition="char not null")
-	private String allowOverride = Constants.Code.YES_CODE.getValue();
+	private String allowOverride = CodeType.YES_CODE.getValue();
 	// allow override value to be supplied at runtime, Y/N/M, M=Mandatory
 	@Column(name="IsRequired", length=1, nullable=false, columnDefinition="boolean not null")
 	private boolean isRequired = false;

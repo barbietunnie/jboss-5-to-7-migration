@@ -15,20 +15,4 @@ public class Constants {
 	
 	public final static int BOUNCE_SUSPEND_THRESHOLD = 5;
 		// suspend email address after 5 times of consecutive bounces
-	
-	public static enum Code {
-		YES_CODE("Y"),
-		NO_CODE("N"),
-		YES("Yes"),
-		NO("No");
-		
-		private final String value;
-		private Code(String value) {
-			this.value = value;
-		}
-		
-		public String getValue() {
-			return value;
-		}
-	}
 }

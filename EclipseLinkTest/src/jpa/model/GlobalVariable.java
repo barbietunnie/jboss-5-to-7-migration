@@ -13,7 +13,7 @@ public class GlobalVariable extends BaseVariableModel implements Serializable
 {
 	private static final long serialVersionUID = 7381275253094081485L;
 	
-	@Column(name="VariableValue", length=255)
+	@Column(name="VariableValue", length=510)
 	private String variableValue = null;
 
 	public String getVariableValue() {

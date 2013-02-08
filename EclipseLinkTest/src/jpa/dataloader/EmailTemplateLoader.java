@@ -408,7 +408,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"Greetings from Emailsphere.com," + LF + LF +
 				"Your credit card payment for the above transaction could not be completed." + LF +
 				"An issuing bank will often decline an attempt to charge a credit card if" + LF +
-				"the name, expiration date, or ZIP Code you entered at Emailsphere.com does" + LF +
+				"the name, expiration date, or ZIP CodeType you entered at Emailsphere.com does" + LF +
 				"not exactly match the bank's information." + LF + LF +
 				"Valid payment information must be received within 3 days, otherwise your" + LF + 
 				"order will be canceled." + LF + LF +

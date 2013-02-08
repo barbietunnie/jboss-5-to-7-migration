@@ -19,10 +19,6 @@ import jpa.constant.Constants;
 public class ClientData extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 8789436921442107499L;
 
-	//@Index
-	@Column(name="ClientId", unique=true, nullable=false, length=16)
-	private String clientId = "";
-	
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ClientData", orphanRemoval=true)
 	private List<ClientVariable> clientVariables;
 
@@ -34,6 +30,10 @@ public class ClientData extends BaseModel implements Serializable {
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="ClientData")
 	private List<UserData> userDatas;
+	
+	//@Index
+	@Column(name="ClientId", unique=true, nullable=false, length=16)
+	private String clientId = "";
 	
 	@Column(length=40, nullable=false)
 	private String clientName = "";

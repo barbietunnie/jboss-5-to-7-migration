@@ -44,7 +44,7 @@ public class EmailAddr extends BaseModel implements java.io.Serializable {
 	private String address = "";
 	@Column(nullable=true)
 	private Timestamp statusChangeTime = null;
-	@Column(nullable=true, length=20) // TODO
+	@Column(nullable=true, length=20)
  	private String statusChangeUserId = null;
 	@Column(nullable=false)
 	private int bounceCount = 0;
