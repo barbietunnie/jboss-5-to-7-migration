@@ -85,7 +85,7 @@ public class MailingListTest {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		rcd1.setListMasterEmailAddr(emailAddr);
+		rcd1.setListMasterEmailAddr("sitemaster@localhost");
 		rcd1.setListId(testListId1);
 		service.insert(rcd1);
 		
@@ -110,7 +110,7 @@ public class MailingListTest {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		rcd4.setListMasterEmailAddr(emailAddr2);
+		rcd4.setListMasterEmailAddr("sitemaster2@localhost");
 		rcd4.setListId(testListId2);
 		service.insert(rcd4);
 		
@@ -124,7 +124,8 @@ public class MailingListTest {
 		assertTrue(mlst1[1] instanceof BigDecimal);
 		assertTrue(mlst1[2] instanceof BigDecimal);
 		assertTrue(mlst1[3] instanceof BigDecimal);
-		System.out.println(StringUtil.prettyPrint(mlst1[0]));
+		System.out.println(StringUtil.prettyPrint(mlst1[0],1));
+		System.out.println(mlst1[1] + "," + mlst1[2] + "," + mlst1[3]);
 		
 		// test delete
 		service.delete(rcd3);

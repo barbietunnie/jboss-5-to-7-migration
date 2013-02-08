@@ -9,6 +9,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import jpa.constant.CodeType;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.constant.VariableType;
@@ -66,7 +67,7 @@ public class VariableDataLoader implements AbstractDataLoader {
 		in.setVariableFormat(null);
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
+		in.setAllowOverride(CodeType.YES_CODE.getValue());
 		in.setRequired(false);
 
 		cvService.insert(in);
@@ -79,7 +80,7 @@ public class VariableDataLoader implements AbstractDataLoader {
 		in.setVariableFormat("yyyy-MM-dd");
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
+		in.setAllowOverride(CodeType.YES_CODE.getValue());
 		in.setRequired(false);
 
 		cvService.insert(in);
@@ -92,7 +93,7 @@ public class VariableDataLoader implements AbstractDataLoader {
 		in.setVariableFormat("hh:mm:ss a");
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
+		in.setAllowOverride(CodeType.YES_CODE.getValue());
 		in.setRequired(false);
 		cvService.insert(in);
 		logger.info("EntityManager persisted the record.");
@@ -109,7 +110,7 @@ public class VariableDataLoader implements AbstractDataLoader {
 		in.setVariableFormat("yyyy-MM-dd HH:mm:ss");
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
+		in.setAllowOverride(CodeType.YES_CODE.getValue());
 		in.setRequired(false);
 		gvService.insert(in);
 
@@ -120,7 +121,7 @@ public class VariableDataLoader implements AbstractDataLoader {
 		in.setVariableFormat("yyyy-MM-dd");
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride( Constants.Code.YES_CODE.getValue());
+		in.setAllowOverride( CodeType.YES_CODE.getValue());
 		in.setRequired(false);
 		gvService.insert(in);
 
@@ -131,7 +132,7 @@ public class VariableDataLoader implements AbstractDataLoader {
 		in.setVariableFormat("hh:mm:ss a");
 		in.setVariableType(VariableType.DATETIME.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
+		in.setAllowOverride(CodeType.YES_CODE.getValue());
 		in.setRequired(false);
 		gvService.insert(in);
 
@@ -142,7 +143,7 @@ public class VariableDataLoader implements AbstractDataLoader {
 		in.setVariableFormat(null);
 		in.setVariableType(VariableType.X_HEADER.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(Constants.Code.YES_CODE.getValue());
+		in.setAllowOverride(CodeType.YES_CODE.getValue());
 		in.setRequired(false);
 		gvService.insert(in);
 		
@@ -153,7 +154,7 @@ public class VariableDataLoader implements AbstractDataLoader {
 		in.setVariableFormat(null);
 		in.setVariableType(VariableType.TEXT.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(Constants.Code.NO_CODE.getValue());
+		in.setAllowOverride(CodeType.NO_CODE.getValue());
 		in.setRequired(false);
 		gvService.insert(in);
 		

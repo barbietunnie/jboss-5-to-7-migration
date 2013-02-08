@@ -49,7 +49,6 @@ public class MailingListService {
 				"from Mailing_List a " +
 				" LEFT OUTER JOIN Subscription b on a.Row_Id = b.MailingListRowId " +
 				" JOIN Client_Data c on a.ClientDataRowId = c.Row_Id " +
-				" JOIN Email_Addr d on a.EmailAddrRowId = d.Row_Id" +
 				" where a.ListId = ?1 " +
 				"group by " +
 				" a.Row_Id, " +
@@ -63,7 +62,7 @@ public class MailingListService {
 				" a.UpdtUserid, " +
 				" a.UpdtTime, " +
 				" a.ClientDataRowId, " +
-				" a.EmailAddrRowId ";
+				" a.ListMasterEmailAddr ";
 		try {
 			Query query = em.createNativeQuery(sql,MailingList.MAPPING_MAILING_LIST_WITH_COUNTS);
 			query.setParameter(1, listId);

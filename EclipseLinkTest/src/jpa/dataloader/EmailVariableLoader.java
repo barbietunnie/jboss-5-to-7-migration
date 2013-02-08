@@ -52,7 +52,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setVariableQuery("SELECT CONCAT(c.FirstName, ' ', c.LastName) as ResultStr " +
 			"FROM customer_data c, email_addr e " +
 			"where e.Row_Id=c.EmailAddrRowId and e.Row_Id=?1;");
-		data.setVariableProc("jpa.external.CustomerNameResolver");
+		data.setVariableProcName("jpa.external.CustomerNameResolver");
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -68,7 +68,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setVariableQuery("SELECT c.FirstName as ResultStr " +
 				"FROM customer_data c, email_addr e " +
 				"where e.Row_Id=c.EmailAddrRowId and e.Row_Id=?1;");
-		data.setVariableProc("jpa.external.CustomerNameResolver");
+		data.setVariableProcName("jpa.external.CustomerNameResolver");
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -83,7 +83,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setVariableQuery("SELECT c.LastName as ResultStr " +
 				"FROM customer_data c, email_addr e " +
 				"where e.Row_Id=c.EmailAddrRowId and e.Row_Id=?1;");
-		data.setVariableProc("jpa.external.CustomerNameResolver");
+		data.setVariableProcName("jpa.external.CustomerNameResolver");
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -98,7 +98,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setVariableQuery("SELECT CONCAT_WS(',',c.StreetAddress2,c.StreetAddress) as ResultStr " +
 				"FROM customer_data c, email_addr e " +
 				"where e.Row_Id=c.EmailAddrRowId and e.Row_Id=?1;");
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -113,7 +113,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setVariableQuery("SELECT c.CityName as ResultStr " +
 				"FROM customer_data c, email_addr e " +
 				"where e.Row_Id=c.EmailAddrRowId and e.Row_Id=?1;");
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -128,7 +128,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setVariableQuery("SELECT CONTAC_WS(',',c.StateCode,c.ProvinceName) as ResultStr " +
 				"FROM customer_data c, email_addr e " +
 				"where e.Row_Id=c.EmailAddrRowId and e.Row_Id=?1;");
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -143,7 +143,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setVariableQuery("SELECT CONCAT_WS('-',c.ZipCode5,ZipCode4) as ResultStr " +
 				"FROM customer_data c, email_addr e " +
 				"where e.Row_Id=c.EmailAddrRowId and e.Row_Id=?1;");
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -158,7 +158,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setVariableQuery("SELECT c.Country as ResultStr " +
 				"FROM customer_data c, email_addr e " +
 				"where e.Row_Id=c.EmailAddrRowId and e.Row_Id=?1;");
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -174,7 +174,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setBuiltIn(true);
 		data.setDefaultValue("<img src='${WebSiteUrl}/msgopen.jsp?msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}' alt='' height='1' width='1'>");
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 		
@@ -187,7 +187,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setBuiltIn(true);
 		data.setDefaultValue("<img src='${WebSiteUrl}/msgclick.jsp?msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}' alt='' height='1' width='1'>");
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -200,7 +200,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setBuiltIn(true);
 		data.setDefaultValue("<img src=='${WebSiteUrl}/msgunsub.jsp?msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}' alt='' height='1' width='1'>");
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -213,7 +213,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setBuiltIn(true);
 		data.setDefaultValue("msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}");
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -228,7 +228,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 				"<a target='_blank' href='${WebSiteUrl}/MsgUnsubPage.jsp?msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}'>click here</a>.</p>"
 				+ LF);
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -242,7 +242,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setDefaultValue(LF + "To unsubscribe from this mailing list, send an e-mail to: ${MailingListAddress}" + LF +
 				"with \"unsubscribe\" (no quotation marks) in the subject." + LF);
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -255,7 +255,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setBuiltIn(true);
 		data.setDefaultValue("${WebSiteUrl}/subscribe.jsp?sbsrid=${SubscriberAddressId}");
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -268,7 +268,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setBuiltIn(true);
 		data.setDefaultValue("${WebSiteUrl}/confirmsub.jsp?sbsrid=${_EncodedSubcriberId}&listids=${_SubscribedListIds}&sbsraddr=${SubscriberAddress}");
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 		
@@ -281,7 +281,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setBuiltIn(true);
 		data.setDefaultValue("${WebSiteUrl}/unsubscribe.jsp?sbsrid=${_EncodedSubcriberId}&listids=${_SubscribedListIds}&sbsraddr=${SubscriberAddress}");
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -294,7 +294,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setBuiltIn(true);
 		data.setDefaultValue("${WebSiteUrl}/userprofile.jsp?sbsrid=${SubscriberAddressId}");
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -307,7 +307,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setBuiltIn(true);
 		data.setDefaultValue("${WebSiteUrl}/referral.jsp?msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}");
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
@@ -320,7 +320,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setBuiltIn(true);
 		data.setDefaultValue("${WebSiteUrl}/images/logo.gif");
 		data.setVariableQuery(null);
-		data.setVariableProc(null);
+		data.setVariableProcName(null);
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 

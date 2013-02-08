@@ -41,7 +41,7 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true, length=100)
 	private String selectCriteria = null;
 	@Column(nullable=true, length=1, columnDefinition="Boolean")
-	private Boolean isEmbedEmailId = true; // use system default
+	private Boolean isEmbedEmailId = null; // use system default
 	@Column(nullable=false, length=1, columnDefinition="boolean not null")
 	private boolean isBuiltIn = false;
 	@Lob

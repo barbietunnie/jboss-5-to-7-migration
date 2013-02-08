@@ -3,7 +3,8 @@ package jpa.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import jpa.constant.EmailVariableType;
 
 @Entity
 @Table(name="email_variable")
@@ -20,17 +21,12 @@ public class EmailVariable extends BaseModel implements java.io.Serializable {
 	private String columnName = null;
 	@Column(nullable=false, length=1, columnDefinition="boolean not null")
 	private boolean isBuiltIn = false;
-	@Column(nullable=true, length=255)
+	@Column(nullable=true, length=510)
 	private String defaultValue = null;
-	@Column(nullable=true, length=255)
+	@Column(nullable=true, length=510)
 	private String variableQuery = null;
 	@Column(nullable=true, length=100)
-	private String variableProc = null;
-
-	@Transient
-	public static final String SYSTEM_VARIABLE = "S";
-	@Transient
-	public static final String CUSTOMER_VARIABLE = "C";
+	private String variableProcName= null;
 
 	public EmailVariable() {
 		// must have a no-argument constructor
@@ -47,22 +43,22 @@ public class EmailVariable extends BaseModel implements java.io.Serializable {
 	}
 	
 	public String getClassNameShort() {
-		if (variableProc == null || variableProc.length() <= 20) {
-			return variableProc;
+		if (variableProcName == null || variableProcName.length() <= 20) {
+			return variableProcName;
 		}
 		else {
-			int lastDot = variableProc.lastIndexOf(".");
+			int lastDot = variableProcName.lastIndexOf(".");
 			if (lastDot > 0) {
-				return variableProc.substring(lastDot);
+				return variableProcName.substring(lastDot);
 			}
 			else {
-				return variableProc.substring(0,20);
+				return variableProcName.substring(0,20);
 			}
 		}
 	}
 	
 	public boolean getIsSystemVariable() {
-		return SYSTEM_VARIABLE.equals(variableType);
+		return EmailVariableType.System.getValue().equals(variableType);
 	}
 	/** end of UI components */
 
@@ -122,11 +118,11 @@ public class EmailVariable extends BaseModel implements java.io.Serializable {
 		this.variableQuery = variableQuery;
 	}
 
-	public String getVariableProc() {
-		return variableProc;
+	public String getVariableProcName() {
+		return variableProcName;
 	}
 
-	public void setVariableProc(String variableProc) {
-		this.variableProc = variableProc;
+	public void setVariableProcName(String variableProcName) {
+		this.variableProcName = variableProcName;
 	}
 }

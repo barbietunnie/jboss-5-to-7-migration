@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import jpa.constant.Constants;
+import jpa.constant.CodeType;
 import jpa.util.StringUtil;
 
 @Entity
@@ -60,12 +60,12 @@ public class Subscription extends BaseModel implements java.io.Serializable {
 	}
 	
 	public String getSubscribedDesc() {
-		return Constants.Code.NO_CODE.getValue().equals(isSubscribed) ? Constants.Code.NO.getValue() : Constants.Code.YES.getValue();
+		return CodeType.NO_CODE.getValue().equals(isSubscribed) ? CodeType.NO.getValue() : CodeType.YES.getValue();
 	}
 	
 	public String getAcceptHtmlDesc() {
 		boolean acceptHtml = getEmailAddr()==null?true:getEmailAddr().isAcceptHtml();
-		return (acceptHtml==false ? Constants.Code.NO.getValue() : Constants.Code.YES.getValue());
+		return (acceptHtml==false ? CodeType.NO.getValue() : CodeType.YES.getValue());
 	}
 	
 //	public String getCustomerName() {
