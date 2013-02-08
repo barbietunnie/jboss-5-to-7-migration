@@ -15,15 +15,15 @@ public enum EmailAddrType {
 	EmailAddrType(String value) {
 		this.value=value;
 	}
-	public String value() {
+	public String getValue() {
 		return value;
 	}
 	@Override public String toString() {
-		return value();
+		return getValue();
 	}
 	public EmailAddrType fromValue(String value) {
 		for (EmailAddrType v : EmailAddrType.values()) {
-			if (v.value().equalsIgnoreCase(value)) {
+			if (v.getValue().equalsIgnoreCase(value)) {
 				return v;
 			}
 		}

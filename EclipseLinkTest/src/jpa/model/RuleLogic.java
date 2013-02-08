@@ -1,0 +1,172 @@
+package jpa.model;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+
+@Entity
+@Table(name="rule_logic", uniqueConstraints=@UniqueConstraint(columnNames = {"ruleName"}))
+@SqlResultSetMappings({ // used by native queries
+	  @SqlResultSetMapping(name="RuleLogictWithCount",
+		entities={
+		 @EntityResult(entityClass=RuleLogic.class),
+	  	},
+	  	columns={
+		 @ColumnResult(name="subruleCount"),
+	  	}),
+	})
+public class RuleLogic extends BaseModel implements Serializable {
+	private static final long serialVersionUID = -2269909582844476550L;
+
+	@Transient
+	public static final String MAPPING_RULE_LOGIC_WITH_COUNT = "RuleLogictWithCount";
+
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="RuleLogic", orphanRemoval=true)
+	private List<RuleElement> ruleElements;
+	
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="RuleLogic", orphanRemoval=true)
+	private List<RuleSubruleMap> ruleSubruleMaps;
+	
+	@Column(nullable=false, length=26)
+	private String ruleName = "";
+	@Column(nullable=false)
+	private int evalSequence = -1;
+
+	@Column(length=8, nullable=false)
+	private String ruleType = "";
+	@Column(nullable=false)
+	private Timestamp startTime;
+	@Column(length=8, nullable=false)
+	private String mailType = "";
+	@Column(length=1, nullable=false, columnDefinition="char(1)")
+	private String ruleCategory = RuleBase.MAIN_RULE;
+	@Column(nullable=false, columnDefinition="boolean not null")
+	private boolean isSubRule = false;
+	@Column(nullable=false, columnDefinition="boolean not null")
+	private boolean isBuiltInRule = false;
+	@Column(length=255, nullable=true)
+	private String description = null;
+	
+	@Transient
+	private String origRuleName = null;
+	@Transient
+	private int origRuleSeq = -1;
+
+	public RuleLogic() {
+		// must have a no-argument constructor
+	}
+
+	public List<RuleElement> getRuleElements() {
+		return ruleElements;
+	}
+
+	public void setRuleElements(List<RuleElement> ruleElements) {
+		this.ruleElements = ruleElements;
+	}
+
+	public List<RuleSubruleMap> getRuleSubruleMaps() {
+		return ruleSubruleMaps;
+	}
+
+	public void setRuleSubruleMaps(List<RuleSubruleMap> ruleSubruleMaps) {
+		this.ruleSubruleMaps = ruleSubruleMaps;
+	}
+
+	public String getRuleName() {
+		return ruleName;
+	}
+
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
+	}
+
+	public int getEvalSequence() {
+		return evalSequence;
+	}
+
+	public void setEvalSequence(int evalSequence) {
+		this.evalSequence = evalSequence;
+	}
+
+	public String getRuleType() {
+		return ruleType;
+	}
+
+	public void setRuleType(String ruleType) {
+		this.ruleType = ruleType;
+	}
+
+	public Timestamp getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Timestamp startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getMailType() {
+		return mailType;
+	}
+
+	public void setMailType(String mailType) {
+		this.mailType = mailType;
+	}
+
+	public String getRuleCategory() {
+		return ruleCategory;
+	}
+
+	public void setRuleCategory(String ruleCategory) {
+		this.ruleCategory = ruleCategory;
+	}
+
+	public boolean isSubRule() {
+		return isSubRule;
+	}
+
+	public void setSubRule(boolean isSubRule) {
+		this.isSubRule = isSubRule;
+	}
+
+	public boolean isBuiltInRule() {
+		return isBuiltInRule;
+	}
+
+	public void setBuiltInRule(boolean isBuiltInRule) {
+		this.isBuiltInRule = isBuiltInRule;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setOrigRuleName(String origRuleName) {
+		this.origRuleName = origRuleName;
+	}
+
+	public int getOrigRuleSeq() {
+		return origRuleSeq;
+	}
+
+	public void setOrigRuleSeq(int origRuleSeq) {
+		this.origRuleSeq = origRuleSeq;
+	}
+
+}

@@ -22,5 +22,6 @@ public class DataLoader {
 		new MailingListDataLoader().loadData();
 		new EmailVariableLoader().loadData();
 		new EmailTemplateLoader().loadData();
+		new RuleDataLoader().loadData();
 	}
 }
