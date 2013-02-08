@@ -15,4 +15,11 @@ public class Constants {
 	
 	public final static int BOUNCE_SUSPEND_THRESHOLD = 5;
 		// suspend email address after 5 times of consecutive bounces
+
+	//
+	// define mail types for rule engine
+	//
+	public static final String SMTP_MAIL = "smtpmail";
+	public static final String WEB_MAIL = "webmail";
+	
 }
