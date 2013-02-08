@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.model.EmailAddr;
+import jpa.util.EmailAddrUtil;
 import jpa.util.StringUtil;
 
 @Component("emailAddrService")
@@ -31,7 +32,7 @@ public class EmailAddrService {
 	public EmailAddr getByAddress(String addr) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from EmailAddr t where t.address = :address");
-			query.setParameter("address", addr);
+			query.setParameter("address", EmailAddrUtil.removeDisplayName(addr));
 			EmailAddr emailAddr = (EmailAddr) query.getSingleResult();
 			em.lock(emailAddr, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return emailAddr;
@@ -67,7 +68,7 @@ public class EmailAddrService {
 				" a.UpdtTime ";
 		try {
 			Query query = em.createNativeQuery(sql, EmailAddr.MAPPING_EMAIL_ADDR_WITH_COUNTS);
-			query.setParameter(1, addr);
+			query.setParameter(1, EmailAddrUtil.removeDisplayName(addr));
 			Object[] emailAddr = (Object[]) query.getSingleResult();
 			return emailAddr;
 		}
@@ -95,7 +96,7 @@ public class EmailAddrService {
 		catch (NoResultException e) {
 			logger.debug("Email Address (" + addr + ") not found, insert...");
 			EmailAddr emailAddr = new EmailAddr();
-			emailAddr.setAddress(addr);
+			emailAddr.setAddress(EmailAddrUtil.removeDisplayName(addr));
 			emailAddr.setOrigAddress(addr);
 			emailAddr.setAcceptHtml(true);
 			emailAddr.setStatusId(StatusId.ACTIVE.getValue());
@@ -171,7 +172,7 @@ public class EmailAddrService {
 	public int deleteByAddress(String addr) {
 		try {
 			Query query = em.createQuery("delete from EmailAddr t where t.address=:address");
-			query.setParameter("address", addr);
+			query.setParameter("address", EmailAddrUtil.removeDisplayName(addr));
 			int rows = query.executeUpdate();
 			return rows;
 		}
@@ -191,6 +192,9 @@ public class EmailAddrService {
 	}
 
 	public void insert(EmailAddr emailAddr) {
+		if (EmailAddrUtil.hasDisplayName(emailAddr.getAddress())) {
+			emailAddr.setAddress(EmailAddrUtil.removeDisplayName(emailAddr.getAddress()));
+		}
 		try {
 			em.persist(emailAddr);
 		}
@@ -199,6 +203,9 @@ public class EmailAddrService {
 	}
 	
 	public void update(EmailAddr emailAddr) {
+		if (EmailAddrUtil.hasDisplayName(emailAddr.getAddress())) {
+			emailAddr.setAddress(EmailAddrUtil.removeDisplayName(emailAddr.getAddress()));
+		}
 		try {
 			if (em.contains(emailAddr)) {
 				em.persist(emailAddr);
