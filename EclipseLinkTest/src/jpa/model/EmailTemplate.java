@@ -43,7 +43,7 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true, length=1, columnDefinition="Boolean")
 	private Boolean isEmbedEmailId = null; // use system default
 	@Column(nullable=false, length=1, columnDefinition="boolean not null")
-	private boolean isBuiltIn = false;
+	private boolean isBuiltin = false;
 	@Lob
 	@Column(nullable=true, columnDefinition="BLOB")
 	private SchedulesBlob schedulesBlob = null;
@@ -135,12 +135,12 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 		this.isEmbedEmailId = isEmbedEmailId;
 	}
 
-	public boolean isBuiltIn() {
-		return isBuiltIn;
+	public boolean isBuiltin() {
+		return isBuiltin;
 	}
 
-	public void setBuiltIn(boolean isBuiltIn) {
-		this.isBuiltIn = isBuiltIn;
+	public void setBuiltin(boolean isBuiltin) {
+		this.isBuiltin = isBuiltin;
 	}
 
 	public SchedulesBlob getSchedulesBlob() {

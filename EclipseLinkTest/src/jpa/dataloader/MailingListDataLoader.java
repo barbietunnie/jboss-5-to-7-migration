@@ -67,7 +67,7 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		in.setAcctUserName("demolist1");
 		in.setDescription("Sample mailing list 1");
 		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setBuiltIn(false);
+		in.setBuiltin(false);
 		in.setCreateTime(createTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		in.setListMasterEmailAddr("sitemaster@"+domain);
@@ -80,7 +80,7 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		in.setAcctUserName("demolist2");
 		in.setDescription("Sample mailing list 2");
 		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setBuiltIn(false);
+		in.setBuiltin(false);
 		in.setCreateTime(createTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		in.setListMasterEmailAddr("sitemaster@"+domain);
@@ -93,7 +93,7 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		in.setAcctUserName("noreply");
 		in.setDescription("Auto-Responder, used by Subscription and confirmation Templates");
 		in.setStatusId(StatusId.INACTIVE.getValue());
-		in.setBuiltIn(true);
+		in.setBuiltin(true);
 		in.setCreateTime(createTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		in.setListMasterEmailAddr("sitemaster@" + domain);
@@ -114,7 +114,7 @@ public class MailingListDataLoader implements AbstractDataLoader {
 		in.setAcctUserName("support");
 		in.setDescription("Auto-Responder, used by order processing");
 		in.setStatusId(StatusId.INACTIVE.getValue());
-		in.setBuiltIn(true);
+		in.setBuiltin(true);
 		in.setCreateTime(createTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		// TODO get domain name from properties file

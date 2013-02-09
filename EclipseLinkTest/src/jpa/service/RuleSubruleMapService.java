@@ -30,7 +30,7 @@ public class RuleSubruleMapService {
 	public RuleSubruleMap getByPrimaryKey(String ruleName, String subruleName) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from RuleSubruleMap t, RuleLogic rl1, RuleLogic rl2 " +
-					"where t.ruleLogic = rl1 and t.subRuleLogic = rl2 " +
+					"where t.ruleLogic = rl1 and t.subruleLogic = rl2 " +
 					"and rl1.ruleName=:ruleName and rl2.ruleName=:subruleName ");
 			query.setParameter("ruleName", ruleName);
 			query.setParameter("subruleName", subruleName);
@@ -72,6 +72,7 @@ public class RuleSubruleMapService {
 		if (rsmap == null) return;
 		try {
 			em.remove(rsmap);
+			reloadFlagsService.updateRuleReloadFlag();
 		}
 		finally {
 		}
@@ -92,7 +93,7 @@ public class RuleSubruleMapService {
 
 	public int deleteByPrimaryKey(String ruleName, String subruleName) {
 		try {
-			Query query = em.createNativeQuery("delete from RuleSubruleMap where " +
+			Query query = em.createNativeQuery("delete from Rule_Subrule_Map where " +
 					"RuleLogicRowId = (select Row_Id from rule_logic rl1 where rl1.ruleName=?1) " +
 					"and SubruleLogicRowId = (select Row_Id from rule_logic rl2 where rl2.ruleName=?2) ");
 			query.setParameter(1, ruleName);

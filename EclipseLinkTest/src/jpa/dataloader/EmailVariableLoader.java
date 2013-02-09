@@ -47,7 +47,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("customer_data");
 		data.setColumnName("FirstName,LastName");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setDefaultValue("Valued Customer");
 		data.setVariableQuery("SELECT CONCAT(c.FirstName, ' ', c.LastName) as ResultStr " +
 			"FROM customer_data c, email_addr e " +
@@ -63,7 +63,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("customer_data");
 		data.setColumnName("FirstName");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setDefaultValue("Valued Customer");
 		data.setVariableQuery("SELECT c.FirstName as ResultStr " +
 				"FROM customer_data c, email_addr e " +
@@ -78,7 +78,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("customer_data");
 		data.setColumnName("LastName");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setDefaultValue("Valued Customer");
 		data.setVariableQuery("SELECT c.LastName as ResultStr " +
 				"FROM customer_data c, email_addr e " +
@@ -93,7 +93,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("customer_data");
 		data.setColumnName("StreetAddress");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setDefaultValue("");
 		data.setVariableQuery("SELECT CONCAT_WS(',',c.StreetAddress2,c.StreetAddress) as ResultStr " +
 				"FROM customer_data c, email_addr e " +
@@ -108,7 +108,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("customer_data");
 		data.setColumnName("CityName");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setDefaultValue("");
 		data.setVariableQuery("SELECT c.CityName as ResultStr " +
 				"FROM customer_data c, email_addr e " +
@@ -123,7 +123,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("customer_data");
 		data.setColumnName("StateCode");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setDefaultValue("");
 		data.setVariableQuery("SELECT CONTAC_WS(',',c.StateCode,c.ProvinceName) as ResultStr " +
 				"FROM customer_data c, email_addr e " +
@@ -138,7 +138,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("customer_data");
 		data.setColumnName("ZipCode");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setDefaultValue("");
 		data.setVariableQuery("SELECT CONCAT_WS('-',c.ZipCode5,ZipCode4) as ResultStr " +
 				"FROM customer_data c, email_addr e " +
@@ -153,7 +153,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("customer_data");
 		data.setColumnName("Country");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setDefaultValue("");
 		data.setVariableQuery("SELECT c.Country as ResultStr " +
 				"FROM customer_data c, email_addr e " +
@@ -171,7 +171,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue("<img src='${WebSiteUrl}/msgopen.jsp?msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}' alt='' height='1' width='1'>");
 		data.setVariableQuery(null);
 		data.setVariableProcName(null);
@@ -184,7 +184,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue("<img src='${WebSiteUrl}/msgclick.jsp?msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}' alt='' height='1' width='1'>");
 		data.setVariableQuery(null);
 		data.setVariableProcName(null);
@@ -197,7 +197,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue("<img src=='${WebSiteUrl}/msgunsub.jsp?msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}' alt='' height='1' width='1'>");
 		data.setVariableQuery(null);
 		data.setVariableProcName(null);
@@ -210,7 +210,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue("msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}");
 		data.setVariableQuery(null);
 		data.setVariableProcName(null);
@@ -223,7 +223,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue(LF + "<p>To unsubscribe from this mailing list, " + LF +
 				"<a target='_blank' href='${WebSiteUrl}/MsgUnsubPage.jsp?msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}'>click here</a>.</p>"
 				+ LF);
@@ -238,7 +238,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue(LF + "To unsubscribe from this mailing list, send an e-mail to: ${MailingListAddress}" + LF +
 				"with \"unsubscribe\" (no quotation marks) in the subject." + LF);
 		data.setVariableQuery(null);
@@ -252,7 +252,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue("${WebSiteUrl}/subscribe.jsp?sbsrid=${SubscriberAddressId}");
 		data.setVariableQuery(null);
 		data.setVariableProcName(null);
@@ -265,7 +265,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue("${WebSiteUrl}/confirmsub.jsp?sbsrid=${_EncodedSubcriberId}&listids=${_SubscribedListIds}&sbsraddr=${SubscriberAddress}");
 		data.setVariableQuery(null);
 		data.setVariableProcName(null);
@@ -278,7 +278,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue("${WebSiteUrl}/unsubscribe.jsp?sbsrid=${_EncodedSubcriberId}&listids=${_SubscribedListIds}&sbsraddr=${SubscriberAddress}");
 		data.setVariableQuery(null);
 		data.setVariableProcName(null);
@@ -291,7 +291,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue("${WebSiteUrl}/userprofile.jsp?sbsrid=${SubscriberAddressId}");
 		data.setVariableQuery(null);
 		data.setVariableProcName(null);
@@ -304,7 +304,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue("${WebSiteUrl}/referral.jsp?msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}");
 		data.setVariableQuery(null);
 		data.setVariableProcName(null);
@@ -317,7 +317,7 @@ public class EmailVariableLoader implements AbstractDataLoader {
 		data.setTableName("");
 		data.setColumnName("");
 		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setDefaultValue("${WebSiteUrl}/images/logo.gif");
 		data.setVariableQuery(null);
 		data.setVariableProcName(null);

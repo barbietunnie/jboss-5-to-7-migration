@@ -66,11 +66,11 @@ public class EmailVariableService {
 		return getAllVariablesBy(false);
 	}
 	
-	private List<EmailVariable> getAllVariablesBy(boolean isBuiltIn) {
+	private List<EmailVariable> getAllVariablesBy(boolean isBuiltin) {
 		try {
-			Query query = em.createQuery("select t from EmailVariable t where t.isBuiltIn=:isBuiltIn " +
+			Query query = em.createQuery("select t from EmailVariable t where t.isBuiltin=:isBuiltin " +
 					" order by t.rowId ");
-			query.setParameter("isBuiltIn", isBuiltIn);
+			query.setParameter("isBuiltin", isBuiltin);
 			@SuppressWarnings("unchecked")
 			List<EmailVariable> list = query.getResultList();
 			return list;
