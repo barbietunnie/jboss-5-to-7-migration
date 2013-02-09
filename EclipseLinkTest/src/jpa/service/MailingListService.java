@@ -57,7 +57,7 @@ public class MailingListService {
 				" a.AcctUserName, " +
 				" a.Description, " +
 				" a.StatusId, " +
-				" a.IsBuiltIn, " +
+				" a.IsBuiltin, " +
 				" a.CreateTime, " +
 				" a.UpdtUserid, " +
 				" a.UpdtTime, " +

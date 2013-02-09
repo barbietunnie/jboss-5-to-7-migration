@@ -42,12 +42,12 @@ public class RuleLogicService {
 		}
 	}
 
-	public List<RuleLogic> getAll(boolean builtInRules) {
+	public List<RuleLogic> getAll(boolean builtinRules) {
 		String sql = 
-				"select r from RuleLogic r where r.IsBuiltInRule=:builtInRules ";
+				"select r from RuleLogic r where r.IsBuiltinRule=:builtinRules ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("builtInRules", builtInRules);
+			query.setParameter("builtinRules", builtinRules);
 			@SuppressWarnings("unchecked")
 			List<RuleLogic> list = query.getResultList();
 			return list;
@@ -71,17 +71,17 @@ public class RuleLogicService {
 		}
 	}
 
-	public List<RuleLogic> getSubRules(boolean excludeBuiltIn) throws NoResultException {
+	public List<RuleLogic> getSubRules(boolean excludeBuiltin) throws NoResultException {
 		String sql = 
-				"select r from RuleLogic r where r.isSubRule=:isSubRule ";
-		if (excludeBuiltIn) {
-			sql += " and r.isBuiltInRule=:isBuiltInRule ";
+				"select r from RuleLogic r where r.isSubrule=:isSubrule ";
+		if (excludeBuiltin) {
+			sql += " and r.isBuiltinRule=:isBuiltinRule ";
 		}
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("isSubRule", true);
-			if (excludeBuiltIn) {
-				query.setParameter("isBuiltInRule", false);
+			query.setParameter("isSubrule", true);
+			if (excludeBuiltin) {
+				query.setParameter("isBuiltinRule", false);
 			}
 			@SuppressWarnings("unchecked")
 			List<RuleLogic> list = query.getResultList();

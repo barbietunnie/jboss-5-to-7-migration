@@ -53,8 +53,8 @@ public class RuleLogicTest {
 		obj1.setStartTime(new java.sql.Timestamp(System.currentTimeMillis()));
 		obj1.setMailType(Constants.SMTP_MAIL);
 		obj1.setRuleCategory(RuleBase.PRE_RULE);
-		obj1.setSubRule(false);
-		obj1.setBuiltInRule(false);
+		obj1.setSubrule(false);
+		obj1.setBuiltinRule(false);
 		obj1.setDescription("simply get rid of the messages from the mailbox.");
 		service.insert(obj1);
 		

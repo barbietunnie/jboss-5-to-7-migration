@@ -54,9 +54,9 @@ public class RuleLogic extends BaseModel implements Serializable {
 	@Column(length=1, nullable=false, columnDefinition="char(1)")
 	private String ruleCategory = RuleBase.MAIN_RULE;
 	@Column(nullable=false, columnDefinition="boolean not null")
-	private boolean isSubRule = false;
+	private boolean isSubrule = false;
 	@Column(nullable=false, columnDefinition="boolean not null")
-	private boolean isBuiltInRule = false;
+	private boolean isBuiltinRule = false;
 	@Column(length=255, nullable=true)
 	private String description = null;
 	
@@ -133,20 +133,20 @@ public class RuleLogic extends BaseModel implements Serializable {
 		this.ruleCategory = ruleCategory;
 	}
 
-	public boolean isSubRule() {
-		return isSubRule;
+	public boolean isSubrule() {
+		return isSubrule;
 	}
 
-	public void setSubRule(boolean isSubRule) {
-		this.isSubRule = isSubRule;
+	public void setSubrule(boolean isSubrule) {
+		this.isSubrule = isSubrule;
 	}
 
-	public boolean isBuiltInRule() {
-		return isBuiltInRule;
+	public boolean isBuiltinRule() {
+		return isBuiltinRule;
 	}
 
-	public void setBuiltInRule(boolean isBuiltInRule) {
-		this.isBuiltInRule = isBuiltInRule;
+	public void setBuiltinRule(boolean isBuiltinRule) {
+		this.isBuiltinRule = isBuiltinRule;
 	}
 
 	public String getDescription() {

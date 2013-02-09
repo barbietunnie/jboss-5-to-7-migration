@@ -54,7 +54,7 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true, length=500)
 	private String description = null;
 	@Column(nullable=false, length=1, columnDefinition="boolean not null")
-	private boolean isBuiltIn = false;
+	private boolean isBuiltin = false;
 	@Column(nullable=false)
 	private Timestamp createTime;
 	@Column(nullable=false, length=255)
@@ -138,12 +138,12 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 		this.description = description;
 	}
 
-	public boolean isBuiltIn() {
-		return isBuiltIn;
+	public boolean isBuiltin() {
+		return isBuiltin;
 	}
 
-	public void setBuiltIn(boolean isBuiltIn) {
-		this.isBuiltIn = isBuiltIn;
+	public void setBuiltin(boolean isBuiltin) {
+		this.isBuiltin = isBuiltin;
 	}
 
 	public Timestamp getCreateTime() {

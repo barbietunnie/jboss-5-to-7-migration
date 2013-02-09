@@ -20,7 +20,7 @@ public class EmailVariable extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true, length=50)
 	private String columnName = null;
 	@Column(nullable=false, length=1, columnDefinition="boolean not null")
-	private boolean isBuiltIn = false;
+	private boolean isBuiltin = false;
 	@Column(nullable=true, length=510)
 	private String defaultValue = null;
 	@Column(nullable=true, length=510)
@@ -94,12 +94,12 @@ public class EmailVariable extends BaseModel implements java.io.Serializable {
 		this.columnName = columnName;
 	}
 
-	public boolean isBuiltIn() {
-		return isBuiltIn;
+	public boolean isBuiltin() {
+		return isBuiltin;
 	}
 
-	public void setBuiltIn(boolean isBuiltIn) {
-		this.isBuiltIn = isBuiltIn;
+	public void setBuiltin(boolean isBuiltin) {
+		this.isBuiltin = isBuiltin;
 	}
 
 	public String getDefaultValue() {

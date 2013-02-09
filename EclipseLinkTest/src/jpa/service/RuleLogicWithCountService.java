@@ -46,7 +46,7 @@ public class RuleLogicWithCountService {
 					"r.StartTime, " +
 					"r.MailType, " +
 					"r.RuleCategory, " +
-					"r.IsSubRule, " +
+					"r.IsSubrule, " +
 					"r.IsBuiltinRule, " +
 					"r.Description ";
 		try {
@@ -75,7 +75,7 @@ public class RuleLogicWithCountService {
 					"r.StartTime, " +
 					"r.MailType, " +
 					"r.RuleCategory, " +
-					"r.IsSubRule, " +
+					"r.IsSubrule, " +
 					"r.IsBuiltinRule, " +
 					"r.Description ";
 		try {
@@ -102,13 +102,13 @@ public class RuleLogicWithCountService {
 		}
 	}
 	
-	public List<Object[]> getAll(boolean builtInRules) {
+	public List<Object[]> getAll(boolean builtinRules) {
 		String sql = 
 				"select r.*, " +
 					"count(s.RuleLogicRowId) as subruleCount " +
 				" from Rule_Logic r " +
 					" left outer join Rule_SubRule_Map s on r.Row_Id=s.RuleLogicRowId " +
-				" where r.IsBuiltInRule=1? " +
+				" where r.IsBuiltinRule=1? " +
 				" group by " +
 					"r.Row_Id, " +
 					"r.RuleName, " +
@@ -118,12 +118,12 @@ public class RuleLogicWithCountService {
 					"r.StartTime, " +
 					"r.MailType, " +
 					"r.RuleCategory, " +
-					"r.IsSubRule, " +
+					"r.IsSubrule, " +
 					"r.IsBuiltinRule, " +
 					"r.Description ";
 		try {
 			Query query = em.createNativeQuery(sql, RuleLogic.MAPPING_RULE_LOGIC_WITH_COUNT);
-			query.setParameter(1, builtInRules);
+			query.setParameter(1, builtinRules);
 			@SuppressWarnings("unchecked")
 			List<Object[]> list = query.getResultList();
 			return list;

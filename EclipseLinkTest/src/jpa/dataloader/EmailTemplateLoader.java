@@ -80,7 +80,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(true);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -110,7 +110,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(true);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -139,7 +139,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(false);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -170,7 +170,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(true);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setIsEmbedEmailId(false);
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -195,7 +195,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(true);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setIsEmbedEmailId(false);
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -219,7 +219,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(true);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setIsEmbedEmailId(false);
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -245,7 +245,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(true);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -268,7 +268,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(true);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -291,7 +291,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(true);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setIsEmbedEmailId(false);
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -315,7 +315,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(false);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -339,7 +339,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(true);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(true);
+		data.setBuiltin(true);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -384,7 +384,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(false);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -424,7 +424,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(false);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -443,7 +443,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		data.setHtml(false);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
 		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
-		data.setBuiltIn(false);
+		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
