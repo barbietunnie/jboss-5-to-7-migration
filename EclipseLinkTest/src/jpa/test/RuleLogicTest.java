@@ -11,7 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
-import jpa.model.RuleBase;
+import jpa.constant.RuleCategory;
+import jpa.constant.RuleType;
 import jpa.model.RuleLogic;
 import jpa.service.RuleLogicService;
 import jpa.util.StringUtil;
@@ -49,10 +50,10 @@ public class RuleLogicTest {
 		RuleLogic obj1 = new RuleLogic();
 		obj1.setRuleName("testrule1");
 		obj1.setEvalSequence(0);
-		obj1.setRuleType(RuleBase.ALL_RULE);
+		obj1.setRuleType(RuleType.ALL_RULE.getValue());
 		obj1.setStartTime(new java.sql.Timestamp(System.currentTimeMillis()));
 		obj1.setMailType(Constants.SMTP_MAIL);
-		obj1.setRuleCategory(RuleBase.PRE_RULE);
+		obj1.setRuleCategory(RuleCategory.PRE_RULE.getValue());
 		obj1.setSubrule(false);
 		obj1.setBuiltinRule(false);
 		obj1.setDescription("simply get rid of the messages from the mailbox.");

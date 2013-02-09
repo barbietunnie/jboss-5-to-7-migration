@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import jpa.constant.Constants;
-import jpa.constant.EmailIDToken;
+import jpa.constant.EmailIdToken;
 import jpa.model.ClientData;
 import jpa.model.IdTokens;
 import jpa.service.ClientDataService;
@@ -54,12 +54,12 @@ public class IdTokensDataLoader implements AbstractDataLoader {
 
 		in.setClientData(cd);
 		in.setDescription("Default SenderId");
-		in.setBodyBeginToken(EmailIDToken.BODY_BEGIN);
-		in.setBodyEndToken(EmailIDToken.BODY_END);
-		in.setXheaderName(EmailIDToken.XHEADER_NAME);
-		in.setXhdrBeginToken(EmailIDToken.XHDR_BEGIN);
-		in.setXhdrEndToken(EmailIDToken.XHDR_END);
-		in.setMaxLength(EmailIDToken.MAXIMUM_LENGTH);
+		in.setBodyBeginToken(EmailIdToken.BODY_BEGIN);
+		in.setBodyEndToken(EmailIdToken.BODY_END);
+		in.setXheaderName(EmailIdToken.XHEADER_NAME);
+		in.setXhdrBeginToken(EmailIdToken.XHDR_BEGIN);
+		in.setXhdrEndToken(EmailIdToken.XHDR_END);
+		in.setMaxLength(EmailIdToken.MAXIMUM_LENGTH);
 		in.setUpdtTime(updtTime);
 		in.setUpdtUserId("SysAdmin");
 		itService.insert(in);

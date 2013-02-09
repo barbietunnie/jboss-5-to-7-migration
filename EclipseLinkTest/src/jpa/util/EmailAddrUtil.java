@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import javax.mail.Address;
 
-import jpa.constant.EmailIDToken;
+import jpa.constant.EmailIdToken;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,7 +25,7 @@ public class EmailAddrUtil {
 			Pattern.CASE_INSENSITIVE);
 
 	final static String bounceRegex = (new StringBuilder("\\s*\\W?((\\w+)\\-("))
-			.append(EmailIDToken.XHDR_BEGIN).append("\\d+").append(EmailIDToken.XHDR_END)
+			.append(EmailIdToken.XHDR_BEGIN).append("\\d+").append(EmailIdToken.XHDR_END)
 			.append(")\\-(.+\\=.+)\\@(.+\\w))\\W?\\s*").toString();
 
 	// for ex.: bounce-10.07410251.0-jsmith=test.com@localhost

@@ -3,7 +3,7 @@ package jpa.dataloader;
 import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
-import jpa.constant.MailingListDeliveryOption;
+import jpa.constant.MailingListDeliveryType;
 import jpa.constant.MailingListType;
 import jpa.constant.StatusId;
 import jpa.model.ClientData;
@@ -79,7 +79,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"${EmailOpenCountImgTag}");
 		data.setHtml(true);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -109,7 +109,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"${EmailOpenCountImgTag}");
 		data.setHtml(true);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -138,7 +138,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 			"${FooterWithUnsubAddr}");
 		data.setHtml(false);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -169,7 +169,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"Thank you" + LF);
 		data.setHtml(true);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(true);
 		data.setIsEmbedEmailId(false);
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -194,7 +194,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"Thank you<br/>" + LF);
 		data.setHtml(true);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(true);
 		data.setIsEmbedEmailId(false);
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -218,7 +218,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"Thank you<br/>" + LF);
 		data.setHtml(true);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(true);
 		data.setIsEmbedEmailId(false);
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -244,7 +244,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"Thank you<br/>" + LF);
 		data.setHtml(true);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(true);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -267,7 +267,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"Thank you<br/>" + LF);
 		data.setHtml(true);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(true);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -290,7 +290,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"We look forward to your visit!<br/>" + LF);
 		data.setHtml(true);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(true);
 		data.setIsEmbedEmailId(false);
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -314,7 +314,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"with \"unsubscribe\" (no quotation marks) in your email subject." + LF);
 		data.setHtml(false);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(true);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -338,7 +338,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"with \"unsubscribe\" (no quotation marks) in your email subject.<br>" + LF);
 		data.setHtml(true);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(true);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -383,7 +383,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"Legacy System Solutions, LLC" + LF);
 		data.setHtml(false);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -423,7 +423,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"http://www.emailsphere.com" + LF);
 		data.setHtml(false);
 		data.setListType(MailingListType.PERSONALIZED.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());
@@ -442,7 +442,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 				"Error: ${_Error}" + LF);
 		data.setHtml(false);
 		data.setListType(MailingListType.TRADITIONAL.getValue());
-		data.setDeliveryOption(MailingListDeliveryOption.ALL_ON_LIST.getValue());
+		data.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());
 		data.setBuiltin(false);
 		data.setIsEmbedEmailId(null); // use system default
 		data.setStatusId(StatusId.ACTIVE.getValue());

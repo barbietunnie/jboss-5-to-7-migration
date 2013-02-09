@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import jpa.constant.MailingListDeliveryOption;
+import jpa.constant.MailingListDeliveryType;
 import jpa.constant.MailingListType;
 
 @Entity
@@ -37,7 +37,7 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 	@Column(nullable=false, length=12)
 	private String listType = MailingListType.TRADITIONAL.getValue();
 	@Column(nullable=false, length=10)
-	private String deliveryOption = MailingListDeliveryOption.ALL_ON_LIST.getValue();
+	private String deliveryOption = MailingListDeliveryType.ALL_ON_LIST.getValue();
 	@Column(nullable=true, length=100)
 	private String selectCriteria = null;
 	@Column(nullable=true, length=1, columnDefinition="Boolean")
