@@ -20,7 +20,7 @@ public class TimestampUtil implements java.io.Serializable {
 	protected static final Logger logger = Logger.getLogger(TimestampUtil.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	final SimpleDateFormat sdf;
+	private final SimpleDateFormat sdf = new SimpleDateFormat();
 	static final int RADIX = 36;
 	static final Random RANDOM = new Random(System.currentTimeMillis());
 
@@ -28,16 +28,16 @@ public class TimestampUtil implements java.io.Serializable {
 		String db2tm = "1582-10-23-00.48.04.702003";
 		db2tm = "0697-10-13-22.29.59.972003";
 		db2tm = getDb2Timestamp();
-		String converted = db2ToDecStr(db2tm);
+		String converted = db2ToDecimalString(db2tm);
 		// converted = "30023805873165862201";
-		String restored = decStrToDb2(converted);
+		String restored = decimalStringToDb2(converted);
 		System.out.println("Date: " + db2tm + ", converted: " + converted + ", restored: "
 				+ restored);
 	}
 
 	/** constructor, using provided date pattern */
 	public TimestampUtil(String pattern) {
-		sdf = new SimpleDateFormat(pattern);
+		sdf.applyPattern(pattern);
 	}
 
 	/** constructor, using default pattern: yyyy-MM-dd HH:mm:ss.SSS */
@@ -68,13 +68,13 @@ public class TimestampUtil implements java.io.Serializable {
 	//
 
 	/** convert a db2 time stamp to a decimal string */
-	public static String db2ToDecStr(String ts) throws NumberFormatException {
+	public static String db2ToDecimalString(String ts) throws NumberFormatException {
 		// convert a db2 time stamp to a decimal string
 		return convert(ts);
 	}
 
 	/** convert a decimal string to a db2 time stamp */
-	public static String decStrToDb2(String st) throws NumberFormatException {
+	public static String decimalStringToDb2(String st) throws NumberFormatException {
 		// convert a decimal string to a db2 time stamp
 		long tm;
 		long millis = 0;

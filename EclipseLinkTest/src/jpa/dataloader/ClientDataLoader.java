@@ -83,7 +83,7 @@ public class ClientDataLoader implements AbstractDataLoader {
 		data.setVerpInboxName("bounce"); // VERP bounce mailbox
 		data.setVerpRemoveInbox("remove"); // VERP un-subscribe mailbox
 		Calendar cal = Calendar.getInstance();
-		String systemId = TimestampUtil.db2ToDecStr(TimestampUtil.getDb2Timestamp(cal.getTime()));
+		String systemId = TimestampUtil.db2ToDecimalString(TimestampUtil.getDb2Timestamp(cal.getTime()));
 		data.setSystemId(systemId);
 		data.setSystemKey(ProductUtil.getProductKeyFromFile());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
