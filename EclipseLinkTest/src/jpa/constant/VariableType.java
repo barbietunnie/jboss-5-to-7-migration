@@ -7,6 +7,7 @@ public enum VariableType {
 	X_HEADER("X"), 
 	LOB("L"), // body template only
 	COLLECTION("C"); // a collection of <HashMap>s (for Table section)
+
 	private final String value;
 	private VariableType(String value) {
 		this.value = value;

@@ -1,6 +1,6 @@
 package jpa.constant;
 
-public enum MailingListDeliveryOption {
+public enum MailingListDeliveryType {
 
 	// define mailing list delivery options
 	ALL_ON_LIST("ALL"),
@@ -8,7 +8,7 @@ public enum MailingListDeliveryOption {
 	PROSPECTS_ONLY("PROSPECTS");
 
 	private final String value;
-	private MailingListDeliveryOption(String value) {
+	private MailingListDeliveryType(String value) {
 		this.value = value;
 	}
 	

@@ -10,8 +10,9 @@ import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
+import jpa.constant.RuleCriteria;
+import jpa.constant.RuleDataName;
 import jpa.constant.RuleNameType;
-import jpa.model.RuleBase;
 import jpa.model.RuleElement;
 import jpa.model.RuleLogic;
 import jpa.service.RuleElementService;
@@ -68,8 +69,8 @@ public class RuleElementTest {
 		}
 		obj1.setRuleLogic(logic);
 		obj1.setElementSequence(logic.getRuleElements().get(size-1).getElementSequence()+1);
-		obj1.setDataName(RuleBase.BODY);
-		obj1.setCriteria(RuleBase.CONTAINS);
+		obj1.setDataName(RuleDataName.BODY.getValue());
+		obj1.setCriteria(RuleCriteria.CONTAINS.getValue());
 		obj1.setTargetText("Mail delivery failed.");
 		service.insert(obj1);
 		

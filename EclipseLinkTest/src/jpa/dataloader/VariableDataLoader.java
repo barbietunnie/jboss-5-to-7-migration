@@ -137,7 +137,7 @@ public class VariableDataLoader implements AbstractDataLoader {
 		gvService.insert(in);
 
 		in = new GlobalVariable();
-		in.setVariableName(XHeaderName.XHEADER_CLIENT_ID);
+		in.setVariableName(XHeaderName.CLIENT_ID.getValue());
 		in.setStartTime(updtTime);
 		in.setVariableValue(Constants.DEFAULT_CLIENTID);
 		in.setVariableFormat(null);

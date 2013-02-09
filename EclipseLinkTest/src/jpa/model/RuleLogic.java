@@ -17,6 +17,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import jpa.constant.RuleCategory;
+
 @Entity
 @Table(name="rule_logic", uniqueConstraints=@UniqueConstraint(columnNames = {"ruleName"}))
 @SqlResultSetMappings({ // used by native queries
@@ -52,7 +54,7 @@ public class RuleLogic extends BaseModel implements Serializable {
 	@Column(length=8, nullable=false)
 	private String mailType = "";
 	@Column(length=1, nullable=false, columnDefinition="char(1)")
-	private String ruleCategory = RuleBase.MAIN_RULE;
+	private String ruleCategory = RuleCategory.MAIN_RULE.getValue();
 	@Column(nullable=false, columnDefinition="boolean not null")
 	private boolean isSubrule = false;
 	@Column(nullable=false, columnDefinition="boolean not null")
