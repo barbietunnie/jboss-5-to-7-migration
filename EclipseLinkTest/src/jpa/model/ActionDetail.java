@@ -12,9 +12,9 @@ import javax.persistence.Table;
 public class ActionDetail extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -7004743275045358426L;
 
-	@ManyToOne(targetEntity=MsgDataType.class, fetch=FetchType.LAZY, optional=false)
+	@ManyToOne(targetEntity=RuleDataValue.class, fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="ActionPropertyRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
-	private MsgDataType actionProperty;
+	private RuleDataValue actionProperty;
 
 	@Column(nullable=false, length=26, unique=true)
 	private String actionId = "";
@@ -29,11 +29,11 @@ public class ActionDetail extends BaseModel implements java.io.Serializable {
 		// must have a no-argument constructor
 	}
 
-	public MsgDataType getActionProperty() {
+	public RuleDataValue getActionProperty() {
 		return actionProperty;
 	}
 
-	public void setActionProperty(MsgDataType actionProperty) {
+	public void setActionProperty(RuleDataValue actionProperty) {
 		this.actionProperty = actionProperty;
 	}
 

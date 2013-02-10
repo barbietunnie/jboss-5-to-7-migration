@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.List;
 import java.util.Random;
 
 import javax.persistence.EntityManager;
@@ -14,6 +15,7 @@ import jpa.constant.RuleCriteria;
 import jpa.constant.RuleDataName;
 import jpa.constant.RuleNameType;
 import jpa.model.RuleElement;
+import jpa.model.RuleElementPK;
 import jpa.model.RuleLogic;
 import jpa.service.RuleElementService;
 import jpa.service.RuleLogicService;
@@ -67,14 +69,20 @@ public class RuleElementTest {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		obj1.setRuleLogic(logic);
-		obj1.setElementSequence(logic.getRuleElements().get(size-1).getElementSequence()+1);
+		RuleElementPK pk1 = new RuleElementPK();
+		pk1.setRuleLogic(logic);
+		pk1.setElementSequence(logic.getRuleElements().get(size-1).getRuleElementPK().getElementSequence()+1);
+		obj1.setRuleElementPK(pk1);
 		obj1.setDataName(RuleDataName.BODY.getValue());
 		obj1.setCriteria(RuleCriteria.CONTAINS.getValue());
 		obj1.setTargetText("Mail delivery failed.");
 		service.insert(obj1);
 		
-		RuleElement elem = service.getByPrimaryKey(logic.getRuleName(), obj1.getElementSequence());
+		assertFalse(service.getAll().isEmpty());
+
+		List<RuleElement> lst1 = service.getByRuleName(logic.getRuleName());
+		assertFalse(lst1.isEmpty());
+		RuleElement elem = lst1.get(0);
 		System.out.println(StringUtil.prettyPrint(elem));
 		
 		// test update
@@ -92,15 +100,18 @@ public class RuleElementTest {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		obj4.setElementSequence(obj3.getElementSequence()+2);
+		RuleElementPK pk2 = new RuleElementPK();
+		pk2.setRuleLogic(obj3.getRuleElementPK().getRuleLogic());
+		pk2.setElementSequence(obj3.getRuleElementPK().getElementSequence()+2);
+		obj4.setRuleElementPK(pk2);
 		service.insert(obj4);
 		
-		RuleElement objs4 = service.getByPrimaryKey(obj4.getRuleLogic().getRuleName(),obj4.getElementSequence());
+		RuleElement objs4 = service.getByPrimaryKey(obj4.getRuleElementPK().getRuleLogic().getRuleName(),obj4.getRuleElementPK().getElementSequence());
 		assertNotNull(objs4);
 		assertTrue(obj3.getRowId()!=objs4.getRowId());
 		service.delete(objs4);
 		try {
-			service.getByPrimaryKey(obj4.getRuleLogic().getRuleName(),obj4.getElementSequence());
+			service.getByPrimaryKey(obj4.getRuleElementPK().getRuleLogic().getRuleName(),obj4.getRuleElementPK().getElementSequence());
 			fail();
 		}
 		catch (NoResultException e) {}
@@ -111,10 +122,10 @@ public class RuleElementTest {
 			assertTrue(1==service.deleteByRowId(elem.getRowId()));
 		}
 		else if (random==1) {
-			assertTrue(1==service.deleteByPrimaryKey(obj3.getRuleLogic().getRuleName(),obj3.getElementSequence()));
+			assertTrue(1==service.deleteByPrimaryKey(obj3.getRuleElementPK().getRuleLogic().getRuleName(),obj3.getRuleElementPK().getElementSequence()));
 		}
 		else {
-			assertTrue(1<service.deleteByRuleName(obj3.getRuleLogic().getRuleName()));
+			assertTrue(1<service.deleteByRuleName(obj3.getRuleElementPK().getRuleLogic().getRuleName()));
 		}
 	}
 }

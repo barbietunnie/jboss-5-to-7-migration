@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
 import jpa.constant.EmailAddrType;
-import jpa.model.MsgDataType;
-import jpa.service.MsgDataTypeService;
+import jpa.model.RuleDataValue;
+import jpa.service.RuleDataValueService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -39,29 +39,29 @@ public class MsgDataTypeTest {
 	}
 
 	@Autowired
-	MsgDataTypeService service;
+	RuleDataValueService service;
 
 	@Test
 	public void actionPropertyService1() {
 		// test insert
-		MsgDataType var1 = new MsgDataType();
+		RuleDataValue var1 = new RuleDataValue();
 		var1.setDataType(testDataType);
 		var1.setDataValue(testDataValue);
 		var1.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(var1);
 		
-		MsgDataType var2 = service.getByPrimaryKey(testDataType, testDataValue);
+		RuleDataValue var2 = service.getByPrimaryKey(testDataType, testDataValue);
 		assertNotNull(var2);
-		logger.info("MsgDataType: " + StringUtil.prettyPrint(var2));
+		logger.info("RuleDataValue: " + StringUtil.prettyPrint(var2));
 
-		List<MsgDataType> list1 = service.getAll();
+		List<RuleDataValue> list1 = service.getAll();
 		assertFalse(list1.isEmpty());
 		
-		List<MsgDataType> list2 = service.getByDataType(testDataType);
+		List<RuleDataValue> list2 = service.getByDataType(testDataType);
 		assertFalse(list2.isEmpty());
 		
 		// test insert
-		MsgDataType var3 = createNewInstance(list2.get(0));
+		RuleDataValue var3 = createNewInstance(list2.get(0));
 		var3.setDataValue(var3.getDataValue()+"_v2");
 		service.insert(var3);
 		assertNotNull(service.getByPrimaryKey(testDataType, var3.getDataValue()));
@@ -69,7 +69,7 @@ public class MsgDataTypeTest {
 		// test update
 		var3.setUpdtUserId("jpa test");
 		service.update(var3);
-		MsgDataType var5 = service.getByPrimaryKey(testDataType, var3.getDataValue());
+		RuleDataValue var5 = service.getByPrimaryKey(testDataType, var3.getDataValue());
 		assertTrue("jpa test".equals(var5.getUpdtUserId()));
 		
 		service.delete(var3);
@@ -80,15 +80,15 @@ public class MsgDataTypeTest {
 		catch (NoResultException e) {}
 		
 		// test delete
-		MsgDataType var4 = createNewInstance(var2);
+		RuleDataValue var4 = createNewInstance(var2);
 		var4.setDataType(var2.getDataType() + "_v4");
 		var4.setDataValue(var2.getDataValue() + "_v4");
 		service.insert(var4);
 		assertTrue(1==service.deleteByDataType(var4.getDataType()));
 	}
 	
-	private MsgDataType createNewInstance(MsgDataType orig) {
-		MsgDataType dest = new MsgDataType();
+	private RuleDataValue createNewInstance(RuleDataValue orig) {
+		RuleDataValue dest = new RuleDataValue();
 		try {
 			BeanUtils.copyProperties(dest, orig);
 		}

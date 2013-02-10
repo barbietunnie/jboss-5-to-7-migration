@@ -5,8 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="msg_data_name")
-public class MsgDataName extends BaseModel implements java.io.Serializable {
+@Table(name="rule_data_type")
+public class RuleDataType extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -8077139332207748775L;
 
 	@Column(nullable=false, length=26, unique=true)
@@ -14,11 +14,11 @@ public class MsgDataName extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true, length=100)
 	private String description = null;
 
-	public MsgDataName() {
+	public RuleDataType() {
 		// must have a no-argument constructor
 	}
 	
-	public MsgDataName(String dataType) {
+	public RuleDataType(String dataType) {
 		this.dataType = dataType;
 	}
 

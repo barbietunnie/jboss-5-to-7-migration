@@ -30,8 +30,8 @@ public class RuleElementService {
 	public RuleElement getByPrimaryKey(String ruleName, int elementSequence) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from RuleElement t, RuleLogic rl " +
-					" where t.ruleLogic=rl and rl.ruleName = :ruleName " +
-					"and t.elementSequence=:elementSequence ");
+					" where t.ruleElementPK.ruleLogic=rl and rl.ruleName = :ruleName " +
+					"and t.ruleElementPK.elementSequence=:elementSequence ");
 			query.setParameter("ruleName", ruleName);
 			query.setParameter("elementSequence", elementSequence);
 			RuleElement element = (RuleElement) query.getSingleResult();
@@ -45,8 +45,8 @@ public class RuleElementService {
 	public List<RuleElement> getByRuleName(String ruleName) {
 		try {
 			Query query = em.createQuery("select t from RuleElement t, RuleLogic rl  " +
-					" where t.ruleLogic=rl and rl.ruleName = :ruleName " +
-					" order by t.elementSequence asc ");
+					" where t.ruleElementPK.ruleLogic=rl and rl.ruleName = :ruleName " +
+					" order by t.ruleElementPK.elementSequence asc ");
 			query.setParameter("ruleName", ruleName);
 			@SuppressWarnings("unchecked")
 			List<RuleElement> list = query.getResultList();
@@ -71,7 +71,8 @@ public class RuleElementService {
 	public List<RuleElement> getAll() {
 		try {
 			Query query = em.createQuery("select t from RuleElement t " +
-					"order by t.ruleLogic.ruleName asc, t.elementSequence asc");
+					"order by t.ruleElementPK.ruleLogic.ruleName asc," +
+					" t.ruleElementPK.elementSequence asc");
 			@SuppressWarnings("unchecked")
 			List<RuleElement> list = query.getResultList();
 			return list;
