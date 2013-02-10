@@ -13,70 +13,70 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import jpa.model.MsgDataName;
+import jpa.model.RuleDataValue;
 
-@Component("MsgDataNameService")
+@Component("ruleDataValueService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MsgDataNameService {
-	static Logger logger = Logger.getLogger(MsgDataNameService.class);
+public class RuleDataValueService {
+	static Logger logger = Logger.getLogger(RuleDataValueService.class);
 	
 	@Autowired
 	EntityManager em;
 
-	public MsgDataName getByPrimaryKey(String dataType, String dataValue) throws NoResultException {
+	public RuleDataValue getByPrimaryKey(String dataType, String dataValue) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from MsgDataName t where " +
+			Query query = em.createQuery("select t from RuleDataValue t where " +
 					"t.dataType = :dataType and t.dataValue=:dataValue ");
 			query.setParameter("dataType", dataType);
 			query.setParameter("dataValue", dataValue);
-			MsgDataName dataName = (MsgDataName) query.getSingleResult();
-			em.lock(dataName, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-			return dataName;
+			RuleDataValue dType = (RuleDataValue) query.getSingleResult();
+			em.lock(dType, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			return dType;
 		}
 		finally {
 		}
 	}
 	
-	public MsgDataName getByRowId(int rowId) throws NoResultException {
+	public RuleDataValue getByRowId(int rowId) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from MsgDataName t where t.rowId = :rowId");
+			Query query = em.createQuery("select t from RuleDataValue t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
-			MsgDataName dataName = (MsgDataName) query.getSingleResult();
-			em.lock(dataName, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-			return dataName;
+			RuleDataValue dataType = (RuleDataValue) query.getSingleResult();
+			em.lock(dataType, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			return dataType;
 		}
 		finally {
 		}
 	}
 	
-	public List<MsgDataName> getByDataType(String dataType) {
+	public List<RuleDataValue> getByDataType(String dataType) {
 		try {
-			Query query = em.createQuery("select t from MsgDataName t where " +
+			Query query = em.createQuery("select t from RuleDataValue t where " +
 					"t.dataType = :dataType ");
 			query.setParameter("dataType", dataType);
 			@SuppressWarnings("unchecked")
-			List<MsgDataName> list = query.getResultList();
+			List<RuleDataValue> list = query.getResultList();
 			return list;
 		}
 		finally {
 		}
 	}
 	
-	public List<MsgDataName> getAll() {
+	public List<RuleDataValue> getAll() {
 		try {
-			Query query = em.createQuery("select t from MsgDataName t");
+			Query query = em.createQuery("select t from RuleDataValue t");
 			@SuppressWarnings("unchecked")
-			List<MsgDataName> list = query.getResultList();
+			List<RuleDataValue> list = query.getResultList();
 			return list;
 		}
 		finally {
 		}
 	}
 	
-	public void delete(MsgDataName dataName) {
-		if (dataName==null) return;
+	public void delete(RuleDataValue dataType) {
+		if (dataType==null) return;
 		try {
-			em.remove(dataName);
+			em.remove(dataType);
 		}
 		finally {
 		}
@@ -84,7 +84,7 @@ public class MsgDataNameService {
 
 	public int deleteByPrimaryKey(String dataType, String dataValue) {
 		try {
-			Query query = em.createQuery("delete from MsgDataName t where " +
+			Query query = em.createQuery("delete from RuleDataValue t where " +
 					"t.dataType=:dataType and t.dataValue=:dataValue ");
 			query.setParameter("dataType", dataType);
 			query.setParameter("dataValue", dataValue);
@@ -97,7 +97,7 @@ public class MsgDataNameService {
 
 	public int deleteByDataType(String dataType) {
 		try {
-			Query query = em.createQuery("delete from MsgDataName t where t.dataType=:dataType");
+			Query query = em.createQuery("delete from RuleDataValue t where t.dataType=:dataType");
 			query.setParameter("dataType", dataType);
 			int rows = query.executeUpdate();
 			return rows;
@@ -108,7 +108,7 @@ public class MsgDataNameService {
 
 	public int deleteByRowId(int rowId) {
 		try {
-			Query query = em.createQuery("delete from MsgDataName t where t.rowId=:rowId");
+			Query query = em.createQuery("delete from RuleDataValue t where t.rowId=:rowId");
 			query.setParameter("rowId", rowId);
 			int rows = query.executeUpdate();
 			return rows;
@@ -117,21 +117,21 @@ public class MsgDataNameService {
 		}
 	}
 
-	public void insert(MsgDataName dataName) {
+	public void insert(RuleDataValue dataType) {
 		try {
-			em.persist(dataName);
+			em.persist(dataType);
 		}
 		finally {
 		}
 	}
 	
-	public void update(MsgDataName dataName) {
+	public void update(RuleDataValue dataType) {
 		try {
-			if (em.contains(dataName)) {
-				em.persist(dataName);
+			if (em.contains(dataType)) {
+				em.persist(dataType);
 			}
 			else {
-				em.merge(dataName);
+				em.merge(dataType);
 			}
 		}
 		finally {

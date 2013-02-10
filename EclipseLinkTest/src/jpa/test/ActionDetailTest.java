@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jpa.constant.Constants;
 import jpa.model.ActionDetail;
 import jpa.service.ActionDetailService;
-import jpa.service.MsgDataTypeService;
+import jpa.service.RuleDataValueService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -41,7 +41,7 @@ public class ActionDetailTest {
 	@Autowired
 	ActionDetailService service;
 	@Autowired
-	MsgDataTypeService propService;
+	RuleDataValueService propService;
 
 	@Test
 	public void actionDetailService1() {

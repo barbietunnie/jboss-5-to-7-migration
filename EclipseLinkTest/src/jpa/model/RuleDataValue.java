@@ -8,12 +8,12 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="msg_data_type", uniqueConstraints=@UniqueConstraint(columnNames = {"dataType", "dataValue"}))
+@Table(name="rule_data_value", uniqueConstraints=@UniqueConstraint(columnNames = {"dataType", "dataValue"}))
 //@SecondaryTable(name="msg_data_value")
-public class MsgDataType extends BaseModel implements java.io.Serializable {
+public class RuleDataValue extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -6383445491730691533L;
 
-	// define a MsgDataType
+	// define a RuleDataValue
 	@Transient
 	public final static String TEMPLATE_ID = "TEMPLATE_ID";
 	@Transient
@@ -26,11 +26,11 @@ public class MsgDataType extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true, length=255)
 	private String otherProps = null;
 
-	public MsgDataType() {
+	public RuleDataValue() {
 		// must have a no-argument constructor
 	}
 	
-	public MsgDataType(String dataType, String dataValue, String otherProps) {
+	public RuleDataValue(String dataType, String dataValue, String otherProps) {
 		this.dataType = dataType;
 		this.dataValue = dataValue;
 		this.otherProps = otherProps;
