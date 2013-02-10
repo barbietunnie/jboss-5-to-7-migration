@@ -1,4 +1,4 @@
-package jpa.model;
+package jpa.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
