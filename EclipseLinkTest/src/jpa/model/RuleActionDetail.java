@@ -8,13 +8,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="action_detail")
-public class ActionDetail extends BaseModel implements java.io.Serializable {
+@Table(name="rule_action_detail")
+public class RuleActionDetail extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -7004743275045358426L;
 
-	@ManyToOne(targetEntity=RuleDataValue.class, fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="ActionPropertyRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
-	private RuleDataValue actionProperty;
+	@ManyToOne(targetEntity=RuleDataType.class, fetch=FetchType.LAZY, optional=false)
+	@JoinColumn(name="RuleDataTypeRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
+	private RuleDataType ruleDataType;
 
 	@Column(nullable=false, length=26, unique=true)
 	private String actionId = "";
@@ -25,16 +25,25 @@ public class ActionDetail extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true, length=255)
 	private String className = null;
 
-	public ActionDetail() {
+	public RuleActionDetail() {
 		// must have a no-argument constructor
 	}
 
-	public RuleDataValue getActionProperty() {
-		return actionProperty;
+	public RuleActionDetail(RuleDataType ruleDataType, String actionId,
+			String descriprion, String serviceName, String classNama) {
+		this.ruleDataType = ruleDataType;
+		this.actionId = actionId;
+		this.description = descriprion;
+		this.serviceName = serviceName;
+		this.className = classNama;
+	}
+ 
+	public RuleDataType getRuleDataType() {
+		return ruleDataType;
 	}
 
-	public void setActionProperty(RuleDataValue actionProperty) {
-		this.actionProperty = actionProperty;
+	public void setRuleDataType(RuleDataType ruleDataType) {
+		this.ruleDataType = ruleDataType;
 	}
 
 	public String getActionId() {

@@ -14,6 +14,7 @@ import javax.persistence.NoResultException;
 import jpa.constant.RuleNameType;
 import jpa.model.RuleLogic;
 import jpa.model.RuleSubruleMap;
+import jpa.model.RuleSubruleMapPK;
 import jpa.service.RuleElementService;
 import jpa.service.RuleLogicService;
 import jpa.service.RuleSubruleMapService;
@@ -62,12 +63,12 @@ public class RuleSubruleMapTest {
 
 		// test insert
 		RuleSubruleMap map1 = new RuleSubruleMap();
-		map1.setRuleLogic(rlg1);
-		map1.setSubruleLogic(rlg2);
+		RuleSubruleMapPK pk1 = new RuleSubruleMapPK(rlg1, rlg2);
+		map1.setRuleSubruleMapPK(pk1);
 		map1.setSubruleSequence(0);
 		service.insert(map1);
 		
-		RuleSubruleMap map2 = service.getByPrimaryKey(rlg1.getRuleName(), rlg2.getRuleName());
+		RuleSubruleMap map2 = service.getByPrimaryKey(pk1);
 		System.out.println(StringUtil.prettyPrint(map2));
 		
 		// test update
@@ -80,12 +81,12 @@ public class RuleSubruleMapTest {
 		RuleLogic rlg3 = logicService.getByRuleName(RuleNameType.MAILBOX_FULL.getValue());
 		RuleLogic rlg4 = logicService.getByRuleName("HardBounce_Subj_Match");
 		RuleSubruleMap map4 = new RuleSubruleMap();
-		map4.setRuleLogic(rlg3);
-		map4.setSubruleLogic(rlg4);
+		RuleSubruleMapPK pk2 = new RuleSubruleMapPK(rlg3, rlg4);
+		map4.setRuleSubruleMapPK(pk2);
 		map4.setSubruleSequence(2);
 		service.insert(map4);
 		
-		RuleSubruleMap objs4 = service.getByPrimaryKey(rlg3.getRuleName(),rlg4.getRuleName());
+		RuleSubruleMap objs4 = service.getByPrimaryKey(pk2);
 		assertNotNull(objs4);
 		assertTrue(map3.getRowId()!=objs4.getRowId());
 		service.delete(objs4);
@@ -101,7 +102,7 @@ public class RuleSubruleMapTest {
 			assertTrue(1==service.deleteByRowId(map3.getRowId()));
 		}
 		else if (random==1) {
-			assertTrue(1==service.deleteByPrimaryKey(rlg1.getRuleName(),rlg2.getRuleName()));
+			assertTrue(1==service.deleteByPrimaryKey(pk1));
 		}
 		else {
 			assertTrue(1<service.deleteByRuleName(rlg1.getRuleName()));

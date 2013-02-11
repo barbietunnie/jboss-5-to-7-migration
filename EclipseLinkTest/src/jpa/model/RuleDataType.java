@@ -18,6 +18,11 @@ public class RuleDataType extends BaseModel implements java.io.Serializable {
 		// must have a no-argument constructor
 	}
 	
+	public RuleDataType(String dataType, String description) {
+		this.dataType = dataType;
+		this.description = description;
+	}
+
 	public RuleDataType(String dataType) {
 		this.dataType = dataType;
 	}

@@ -9,12 +9,8 @@ import jpa.service.EmailAddrService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-public class EmailAddrLoader implements AbstractDataLoader {
+public class EmailAddrLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(EmailAddrLoader.class);
 	private EmailAddrService service;
 
@@ -26,18 +22,14 @@ public class EmailAddrLoader implements AbstractDataLoader {
 	@Override
 	public void loadData() {
 		service = (EmailAddrService) SpringUtil.getAppContext().getBean("emailAddrService");
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setName("loader_service");
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
-		TransactionStatus status = txmgr.getTransaction(def);
+		startTransaction();
 		try {
 			loadEmailAddrs();
 		} catch (Exception e) {
 			logger.error("Exception caught", e);
 		}
 		finally {
-			txmgr.commit(status);
+			commitTransaction();
 		}
 	}
 

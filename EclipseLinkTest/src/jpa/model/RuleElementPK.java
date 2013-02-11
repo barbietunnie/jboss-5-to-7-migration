@@ -19,6 +19,13 @@ public class RuleElementPK implements Serializable {
 	@Column(name="elementSequence", nullable=false)
 	private int elementSequence = -1;
 
+	public RuleElementPK() {}
+	
+	public RuleElementPK(RuleLogic ruleLogic, int elementSequence) {
+		this.ruleLogic = ruleLogic;
+		this.elementSequence = elementSequence;
+	}
+
 	public RuleLogic getRuleLogic() {
 		return ruleLogic;
 	}

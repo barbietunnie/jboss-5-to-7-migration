@@ -3,10 +3,8 @@ package jpa.model;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -16,19 +14,19 @@ public class ClientVariable extends BaseVariableModel implements Serializable
 {
 	private static final long serialVersionUID = -5873779791693771806L;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=ClientData.class)
-	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private ClientData clientData;
+	@Embedded
+	private ClientVariablePK clientVariablePK;
 
 	@Column(name="VariableValue", length=2046)
 	private String variableValue = null;
 
-	public ClientData getClientData() {
-		return clientData;
+	public ClientVariable() {}
+	
+	public ClientVariablePK getClientVariablePK() {
+		return clientVariablePK;
 	}
-
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setClientVariablePK(ClientVariablePK clientVariablePK) {
+		this.clientVariablePK = clientVariablePK;
 	}
 	public String getVariableValue() {
 		return variableValue;

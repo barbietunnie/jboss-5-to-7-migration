@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.model.GlobalVariable;
+import jpa.model.GlobalVariablePK;
 import jpa.service.GlobalVariableService;
 import jpa.util.StringUtil;
 
@@ -41,29 +42,33 @@ public class GlobalVariableTest {
 
 	@Test
 	public void globalVariableService1() {
-		GlobalVariable var1 = service.getByBestMatch(testVariableName, new Date(System.currentTimeMillis()));
+		GlobalVariablePK pk0 = new GlobalVariablePK(testVariableName,new Date(System.currentTimeMillis()));
+		GlobalVariable var1 = service.getByBestMatch(pk0);
 		assertNotNull(var1);
 		logger.info("GlobalVariable: " + StringUtil.prettyPrint(var1));
 
-		GlobalVariable var2 = service.getByPrimaryKey(var1.getVariableName(), var1.getStartTime());
+		GlobalVariablePK pk1 = var1.getGlobalVariablePK();
+		GlobalVariable var2 = service.getByPrimaryKey(pk1);
 		assertTrue(var1.equals(var2));
 
 		List<GlobalVariable> list1 = service.getCurrent();
 		assertFalse(list1.isEmpty());
 		
-		List<GlobalVariable> list2 = service.getByVariableName(var1.getVariableName());
+		List<GlobalVariable> list2 = service.getByVariableName(pk1.getVariableName());
 		assertFalse(list2.isEmpty());
 		
 		// test insert
 		Date newTms = new Date(System.currentTimeMillis());
 		GlobalVariable var3 = createNewInstance(var2);
-		var3.setStartTime(newTms);
+		GlobalVariablePK pk2 = var2.getGlobalVariablePK();
+		GlobalVariablePK pk3 = new GlobalVariablePK(pk2.getVariableName(), newTms);
+		var3.setGlobalVariablePK(pk3);
 		service.insert(var3);
-		assertNotNull(service.getByPrimaryKey(var3.getVariableName(), newTms));
+		assertNotNull(service.getByPrimaryKey(pk3));
 		// end of test insert
 		
 		service.delete(var3);
-		assertNull(service.getByPrimaryKey(var3.getVariableName(), var3.getStartTime()));
+		assertNull(service.getByPrimaryKey(pk3));
 		
 		// test getByStatusid
 		List<GlobalVariable> list3 = service.getByStatusId(var3.getStatusId());
@@ -74,23 +79,26 @@ public class GlobalVariableTest {
 		
 		// test deleteByVariableName
 		GlobalVariable var4 = createNewInstance(var2);
-		var4.setVariableName(var2.getVariableName() + "_v4");
+		GlobalVariablePK pk4 = new GlobalVariablePK(pk2.getVariableName()+"_v4",pk2.getStartTime());
+		var4.setGlobalVariablePK(pk4);
 		service.insert(var4);
-		assertTrue(1==service.deleteByVariableName(var4.getVariableName()));
-		assertNull(service.getByPrimaryKey(var4.getVariableName(), var4.getStartTime()));
+		assertTrue(1==service.deleteByVariableName(pk4.getVariableName()));
+		assertNull(service.getByPrimaryKey(pk4));
 
 		// test deleteByPrimaryKey
 		GlobalVariable var5 = createNewInstance(var2);
-		var5.setVariableName(var2.getVariableName() + "_v5");
+		GlobalVariablePK pk5 = new GlobalVariablePK(pk2.getVariableName()+"_v5",pk2.getStartTime());
+		var5.setGlobalVariablePK(pk5);
 		service.insert(var5);
-		assertTrue(1==service.deleteByPrimaryKey(var5.getVariableName(), var5.getStartTime()));
-		assertNull(service.getByPrimaryKey(var5.getVariableName(), var5.getStartTime()));
+		assertTrue(1==service.deleteByPrimaryKey(pk5));
+		assertNull(service.getByPrimaryKey(pk5));
 		
 		// test update
 		GlobalVariable var6 = createNewInstance(var2);
-		var6.setVariableName(var2.getVariableName() + "_v6");
+		GlobalVariablePK pk6 = new GlobalVariablePK(pk2.getVariableName()+"_v6",pk2.getStartTime());
+		var6.setGlobalVariablePK(pk6);
 		service.insert(var6);
-		assertNotNull(service.getByPrimaryKey(var6.getVariableName(), var6.getStartTime()));
+		assertNotNull(service.getByPrimaryKey(pk6));
 		var6.setVariableValue("new test value");
 		service.update(var6);
 		GlobalVariable var_updt = service.getByRowId(var6.getRowId());

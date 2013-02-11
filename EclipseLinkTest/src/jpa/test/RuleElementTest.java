@@ -106,12 +106,12 @@ public class RuleElementTest {
 		obj4.setRuleElementPK(pk2);
 		service.insert(obj4);
 		
-		RuleElement objs4 = service.getByPrimaryKey(obj4.getRuleElementPK().getRuleLogic().getRuleName(),obj4.getRuleElementPK().getElementSequence());
+		RuleElement objs4 = service.getByPrimaryKey(obj4.getRuleElementPK());
 		assertNotNull(objs4);
 		assertTrue(obj3.getRowId()!=objs4.getRowId());
 		service.delete(objs4);
 		try {
-			service.getByPrimaryKey(obj4.getRuleElementPK().getRuleLogic().getRuleName(),obj4.getRuleElementPK().getElementSequence());
+			service.getByPrimaryKey(obj4.getRuleElementPK());
 			fail();
 		}
 		catch (NoResultException e) {}
@@ -122,7 +122,7 @@ public class RuleElementTest {
 			assertTrue(1==service.deleteByRowId(elem.getRowId()));
 		}
 		else if (random==1) {
-			assertTrue(1==service.deleteByPrimaryKey(obj3.getRuleElementPK().getRuleLogic().getRuleName(),obj3.getRuleElementPK().getElementSequence()));
+			assertTrue(1==service.deleteByPrimaryKey(obj3.getRuleElementPK()));
 		}
 		else {
 			assertTrue(1<service.deleteByRuleName(obj3.getRuleElementPK().getRuleLogic().getRuleName()));

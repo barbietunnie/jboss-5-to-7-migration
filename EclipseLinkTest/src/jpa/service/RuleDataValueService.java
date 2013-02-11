@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.model.RuleDataValue;
+import jpa.model.RuleDataValuePK;
 
 @Component("ruleDataValueService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -23,12 +24,16 @@ public class RuleDataValueService {
 	@Autowired
 	EntityManager em;
 
-	public RuleDataValue getByPrimaryKey(String dataType, String dataValue) throws NoResultException {
+	public RuleDataValue getByPrimaryKey(RuleDataValuePK pk) throws NoResultException {
+		if (pk.getRuleDataType()==null) {
+			throw new IllegalArgumentException("A RuleDataType instance must be provided in Primary Key object.");
+		}
 		try {
 			Query query = em.createQuery("select t from RuleDataValue t where " +
-					"t.dataType = :dataType and t.dataValue=:dataValue ");
-			query.setParameter("dataType", dataType);
-			query.setParameter("dataValue", dataValue);
+					"t.ruleDataValuePK.ruleDataType.dataType = :dataType " +
+					"and t.ruleDataValuePK.dataValue=:dataValue ");
+			query.setParameter("dataType", pk.getRuleDataType().getDataType());
+			query.setParameter("dataValue", pk.getDataValue());
 			RuleDataValue dType = (RuleDataValue) query.getSingleResult();
 			em.lock(dType, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return dType;
@@ -52,7 +57,7 @@ public class RuleDataValueService {
 	public List<RuleDataValue> getByDataType(String dataType) {
 		try {
 			Query query = em.createQuery("select t from RuleDataValue t where " +
-					"t.dataType = :dataType ");
+					"t.ruleDataValuePK.ruleDataType.dataType = :dataType ");
 			query.setParameter("dataType", dataType);
 			@SuppressWarnings("unchecked")
 			List<RuleDataValue> list = query.getResultList();
@@ -82,12 +87,16 @@ public class RuleDataValueService {
 		}
 	}
 
-	public int deleteByPrimaryKey(String dataType, String dataValue) {
+	public int deleteByPrimaryKey(RuleDataValuePK pk) {
+		if (pk.getRuleDataType()==null) {
+			throw new IllegalArgumentException("A RuleDataType instance must be provided in Primary Key object.");
+		}
 		try {
 			Query query = em.createQuery("delete from RuleDataValue t where " +
-					"t.dataType=:dataType and t.dataValue=:dataValue ");
-			query.setParameter("dataType", dataType);
-			query.setParameter("dataValue", dataValue);
+					"t.ruleDataValuePK.ruleDataType.dataType=:dataType " +
+					"and t.ruleDataValuePK.dataValue=:dataValue ");
+			query.setParameter("dataType", pk.getRuleDataType().getDataType());
+			query.setParameter("dataValue", pk.getDataValue());
 			int rows = query.executeUpdate();
 			return rows;
 		}
@@ -97,7 +106,8 @@ public class RuleDataValueService {
 
 	public int deleteByDataType(String dataType) {
 		try {
-			Query query = em.createQuery("delete from RuleDataValue t where t.dataType=:dataType");
+			Query query = em.createQuery("delete from RuleDataValue t where " +
+					"t.ruleDataValuePK.ruleDataType.dataType=:dataType");
 			query.setParameter("dataType", dataType);
 			int rows = query.executeUpdate();
 			return rows;

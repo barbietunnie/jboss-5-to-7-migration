@@ -3,6 +3,7 @@ package jpa.model;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -16,22 +17,13 @@ import javax.persistence.UniqueConstraint;
 public class RuleAction extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 6097614369008930898L;
 
-	@ManyToOne(targetEntity=RuleLogic.class, fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="RuleLogicRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private RuleLogic ruleLogic;
+	@Embedded
+	private RuleActionPK ruleActionPK;
+	
+	@ManyToOne(targetEntity=RuleActionDetail.class, fetch=FetchType.EAGER, optional=false)
+	@JoinColumn(name="RuleActionDetailRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
+	private RuleActionDetail ruleActionDetail;
 
-	@ManyToOne(targetEntity=ActionDetail.class, fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="ActionDetailRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private ActionDetail actionDetail;
-
-	@ManyToOne(targetEntity=ClientData.class, fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="ClientDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
-	private ClientData clientData;
-
-	@Column(nullable=false)
-	private int actionSequence = 0;
-	@Column(nullable=false)
-	private Timestamp startTime;
 	@Column(nullable=true, length=4054)
 	private String fieldValues = null;
 
@@ -39,44 +31,32 @@ public class RuleAction extends BaseModel implements java.io.Serializable {
 		// must have a no-argument constructor
 	}
 
-	public RuleLogic getRuleLogic() {
-		return ruleLogic;
+	public RuleAction(RuleLogic ruleLogic, int actionSequence,
+			Timestamp startTime, ClientData clientData,
+			RuleActionDetail ruleActionDetail, String fieldValues) {
+		ruleActionPK = new RuleActionPK();
+		ruleActionPK.setRuleLogic(ruleLogic);
+		ruleActionPK.setActionSequence(actionSequence);
+		ruleActionPK.setStartTime(startTime);
+		ruleActionPK.setClientData(clientData);
+		this.ruleActionDetail = ruleActionDetail;
+		this.fieldValues = fieldValues;
 	}
 
-	public void setRuleLogic(RuleLogic ruleLogic) {
-		this.ruleLogic = ruleLogic;
+	public RuleActionPK getRuleActionPK() {
+		return ruleActionPK;
 	}
 
-	public ActionDetail getActionDetail() {
-		return actionDetail;
+	public void setRuleActionPK(RuleActionPK ruleActionPK) {
+		this.ruleActionPK = ruleActionPK;
 	}
 
-	public void setActionDetail(ActionDetail actionDetail) {
-		this.actionDetail = actionDetail;
+	public RuleActionDetail getRuleActionDetail() {
+		return ruleActionDetail;
 	}
 
-	public ClientData getClientData() {
-		return clientData;
-	}
-
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
-	}
-
-	public int getActionSequence() {
-		return actionSequence;
-	}
-
-	public void setActionSequence(int actionSequence) {
-		this.actionSequence = actionSequence;
-	}
-
-	public Timestamp getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(Timestamp startTime) {
-		this.startTime = startTime;
+	public void setRuleActionDetail(RuleActionDetail ruleActionDetail) {
+		this.ruleActionDetail = ruleActionDetail;
 	}
 
 	public String getFieldValues() {

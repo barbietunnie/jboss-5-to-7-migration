@@ -20,7 +20,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
+import jpa.model.ClientData;
 import jpa.model.ClientVariable;
+import jpa.model.ClientVariablePK;
 import jpa.service.ClientVariableService;
 import jpa.util.StringUtil;
 
@@ -43,14 +45,18 @@ public class ClientVariableTest {
 
 	@Test
 	public void clientVariableService() {
-		ClientVariable var1 = service.getByBestMatch(testClientId, testVariableName, new Date(System.currentTimeMillis()));
+		ClientData cd0 = new ClientData();
+		cd0.setClientId(testClientId);
+		ClientVariablePK pk0 = new ClientVariablePK(cd0, testVariableName, new Date(System.currentTimeMillis()));
+		ClientVariable var1 = service.getByBestMatch(pk0);
 		assertNotNull(var1);
 		System.out.println("ClientVariable: " + StringUtil.prettyPrint(var1));
 
-		ClientVariable var2 = service.getByPrimaryKey(var1.getClientData().getClientId(), var1.getVariableName(), var1.getStartTime());
+		ClientVariablePK pk1 = var1.getClientVariablePK();
+		ClientVariable var2 = service.getByPrimaryKey(pk1);
 		assertTrue(var1.equals(var2));
 
-		List<ClientVariable> list1 = service.getByVariableName(var1.getVariableName());
+		List<ClientVariable> list1 = service.getByVariableName(pk1.getVariableName());
 		assertFalse(list1.isEmpty());
 		
 		List<ClientVariable> list2 = service.getCurrentByClientId(testClientId);
@@ -59,39 +65,44 @@ public class ClientVariableTest {
 		// test insert
 		Date newTms = new Date(System.currentTimeMillis()+1);
 		ClientVariable var3 = createNewInstance(var2);
-		var3.setStartTime(newTms);
+		ClientVariablePK pk2 = var2.getClientVariablePK();
+		ClientVariablePK pk3 = new ClientVariablePK(pk2.getClientData(), pk2.getVariableName(), newTms);
+		var3.setClientVariablePK(pk3);
 		service.insert(var3);
-		assertNotNull(service.getByPrimaryKey(var3.getClientData().getClientId(), var3.getVariableName(), newTms));
+		assertNotNull(service.getByPrimaryKey(pk3));
 		// end of test insert
 		
 		service.delete(var3);
-		assertNull(service.getByPrimaryKey(var3.getClientData().getClientId(), var3.getVariableName(), var3.getStartTime()));
+		assertNull(service.getByPrimaryKey(pk3));
 
 		// test deleteByVariableName
 		ClientVariable var4 = createNewInstance(var2);
-		var4.setVariableName(var2.getVariableName() + "_v4");
+		ClientVariablePK pk4 = new ClientVariablePK(pk2.getClientData(), pk2.getVariableName()+"_v4", pk2.getStartTime());
+		var4.setClientVariablePK(pk4);
 		service.insert(var4);
-		assertTrue(1==service.deleteByVariableName(var4.getVariableName()));
-		assertNull(service.getByPrimaryKey(var4.getClientData().getClientId(), var4.getVariableName(), var4.getStartTime()));
+		assertTrue(1==service.deleteByVariableName(pk4.getVariableName()));
+		assertNull(service.getByPrimaryKey(pk4));
 
 		// test deleteByPrimaryKey
 		ClientVariable var5 = createNewInstance(var2);
-		var5.setVariableName(var2.getVariableName() + "_v5");
+		ClientVariablePK pk5 = new ClientVariablePK(pk2.getClientData(), pk2.getVariableName()+"_v5", pk2.getStartTime());
+		var5.setClientVariablePK(pk5);
 		service.insert(var5);
-		assertTrue(1==service.deleteByPrimaryKey(var5.getClientData().getClientId(), var5.getVariableName(), var5.getStartTime()));
-		assertNull(service.getByPrimaryKey(var5.getClientData().getClientId(), var5.getVariableName(), var5.getStartTime()));
+		assertTrue(1==service.deleteByPrimaryKey(pk5));
+		assertNull(service.getByPrimaryKey(pk5));
 
 		// test getCurrentByClientId
-		List<ClientVariable> list3 = service.getCurrentByClientId(var2.getClientData().getClientId());
+		List<ClientVariable> list3 = service.getCurrentByClientId(pk2.getClientData().getClientId());
 		for (ClientVariable rec : list3) {
 			logger.info(StringUtil.prettyPrint(rec));
 		}
 
 		// test update
 		ClientVariable var6 = createNewInstance(var2);
-		var6.setVariableName(var2.getVariableName() + "_v6");
+		ClientVariablePK pk6 = new ClientVariablePK(pk2.getClientData(), pk2.getVariableName()+"_v6", pk2.getStartTime());
+		var6.setClientVariablePK(pk6);
 		service.insert(var6);
-		assertNotNull(service.getByPrimaryKey(var6.getClientData().getClientId(), var6.getVariableName(), var6.getStartTime()));
+		assertNotNull(service.getByPrimaryKey(pk6));
 		var6.setVariableValue("new test value");
 		service.update(var6);
 		ClientVariable var_updt = service.getByRowId(var6.getRowId());

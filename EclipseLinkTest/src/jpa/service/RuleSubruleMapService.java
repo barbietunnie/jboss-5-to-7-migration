@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.model.RuleSubruleMap;
+import jpa.model.RuleSubruleMapPK;
 
 @Component("ruleSubruleMapService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -27,13 +28,19 @@ public class RuleSubruleMapService {
 	@Autowired
 	private ReloadFlagsService reloadFlagsService;
 
-	public RuleSubruleMap getByPrimaryKey(String ruleName, String subruleName) throws NoResultException {
+	public RuleSubruleMap getByPrimaryKey(RuleSubruleMapPK pk) throws NoResultException {
+		if (pk.getRuleLogic()==null) {
+			throw new IllegalArgumentException("A RuleLogic instance must be provided in Primary Key object.");
+		}
+		if (pk.getSubruleLogic()==null) {
+			throw new IllegalArgumentException("A SubruleLogic instance must be provided in Primary Key object.");
+		}
 		try {
 			Query query = em.createQuery("select t from RuleSubruleMap t, RuleLogic rl1, RuleLogic rl2 " +
-					"where t.ruleLogic = rl1 and t.subruleLogic = rl2 " +
+					"where t.ruleSubruleMapPK.ruleLogic = rl1 and t.ruleSubruleMapPK.subruleLogic = rl2 " +
 					"and rl1.ruleName=:ruleName and rl2.ruleName=:subruleName ");
-			query.setParameter("ruleName", ruleName);
-			query.setParameter("subruleName", subruleName);
+			query.setParameter("ruleName", pk.getRuleLogic().getRuleName());
+			query.setParameter("subruleName", pk.getSubruleLogic().getRuleName());
 			RuleSubruleMap rsmap = (RuleSubruleMap) query.getSingleResult();
 			em.lock(rsmap, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return rsmap;
@@ -45,7 +52,7 @@ public class RuleSubruleMapService {
 	public List<RuleSubruleMap> getByRuleName(String ruleName) {
 		try {
 			Query query = em.createQuery("select t from RuleSubruleMap t, RuleLogic rl " +
-					" where t.ruleLogic=rl and rl.ruleName = :ruleName " +
+					" where t.ruleSubruleMapPK.ruleLogic=rl and rl.ruleName = :ruleName " +
 					" order by t.subruleSequence asc");
 			query.setParameter("ruleName", ruleName);
 			@SuppressWarnings("unchecked")
@@ -91,13 +98,19 @@ public class RuleSubruleMapService {
 		}
 	}
 
-	public int deleteByPrimaryKey(String ruleName, String subruleName) {
+	public int deleteByPrimaryKey(RuleSubruleMapPK pk) {
+		if (pk.getRuleLogic()==null) {
+			throw new IllegalArgumentException("A RuleLogic instance must be provided in Primary Key object.");
+		}
+		if (pk.getSubruleLogic()==null) {
+			throw new IllegalArgumentException("A SubruleLogic instance must be provided in Primary Key object.");
+		}
 		try {
 			Query query = em.createNativeQuery("delete from Rule_Subrule_Map where " +
 					"RuleLogicRowId = (select Row_Id from rule_logic rl1 where rl1.ruleName=?1) " +
 					"and SubruleLogicRowId = (select Row_Id from rule_logic rl2 where rl2.ruleName=?2) ");
-			query.setParameter(1, ruleName);
-			query.setParameter(2, subruleName);
+			query.setParameter(1, pk.getRuleLogic().getRuleName());
+			query.setParameter(2, pk.getSubruleLogic().getRuleName());
 			reloadFlagsService.updateRuleReloadFlag();
 			int rows = query.executeUpdate();
 			return rows;

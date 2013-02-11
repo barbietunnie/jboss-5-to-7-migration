@@ -1,15 +1,14 @@
 package jpa.model;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="rule_data_value", uniqueConstraints=@UniqueConstraint(columnNames = {"dataType", "dataValue"}))
-//@SecondaryTable(name="msg_data_value")
+@Table(name="rule_data_value", uniqueConstraints=@UniqueConstraint(columnNames = {"RuleDataTypeRowId", "dataValue"}))
 public class RuleDataValue extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -6383445491730691533L;
 
@@ -19,10 +18,9 @@ public class RuleDataValue extends BaseModel implements java.io.Serializable {
 	@Transient
 	public final static String EMAIL_ADDRESS = "EMAIL_ADDRESS";
 
-	@Column(nullable=false, length=26)
-	private String dataType = "";
-	@Column(nullable=false, length=100)
-	private String dataValue = "";
+	@Embedded
+	private RuleDataValuePK ruleDataValuePK;
+	
 	@Column(nullable=true, length=255)
 	private String otherProps = null;
 
@@ -30,26 +28,17 @@ public class RuleDataValue extends BaseModel implements java.io.Serializable {
 		// must have a no-argument constructor
 	}
 	
-	public RuleDataValue(String dataType, String dataValue, String otherProps) {
-		this.dataType = dataType;
-		this.dataValue = dataValue;
+	public RuleDataValue(RuleDataValuePK ruleDataValuePK, String otherProps) {
+		this.ruleDataValuePK = ruleDataValuePK;
 		this.otherProps = otherProps;
 	}
 
-	public String getDataType() {
-		return dataType;
+	public RuleDataValuePK getRuleDataValuePK() {
+		return ruleDataValuePK;
 	}
 
-	public void setDataType(String dataType) {
-		this.dataType = dataType;
-	}
-
-	public String getDataValue() {
-		return dataValue;
-	}
-
-	public void setDataValue(String dataValue) {
-		this.dataValue = dataValue;
+	public void setRuleDataValuePK(RuleDataValuePK ruleDataValuePK) {
+		this.ruleDataValuePK = ruleDataValuePK;
 	}
 
 	public String getOtherProps() {

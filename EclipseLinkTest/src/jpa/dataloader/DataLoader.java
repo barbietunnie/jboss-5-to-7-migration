@@ -23,5 +23,6 @@ public class DataLoader {
 		new EmailVariableLoader().loadData();
 		new EmailTemplateLoader().loadData();
 		new RuleDataLoader().loadData();
+		new RuleActionLoader().loadData();
 	}
 }

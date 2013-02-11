@@ -14,12 +14,8 @@ import jpa.service.EmailAddrService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-public class CustomerDataLoader implements AbstractDataLoader {
+public class CustomerDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(CustomerDataLoader.class);
 	private CustomerDataService service;
 	private EmailAddrService emailAddrService;
@@ -35,18 +31,14 @@ public class CustomerDataLoader implements AbstractDataLoader {
 		service = (CustomerDataService) SpringUtil.getAppContext().getBean("customerDataService");
 		emailAddrService = (EmailAddrService) SpringUtil.getAppContext().getBean("emailAddrService");
 		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setName("idtokens_service");
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
-		TransactionStatus status = txmgr.getTransaction(def);
+		startTransaction();
 		try {
 			loadCustomerData();
 		} catch (Exception e) {
 			logger.error("Exception caught", e);
 		}
 		finally {
-			txmgr.commit(status);
+			commitTransaction();
 		}
 	}
 

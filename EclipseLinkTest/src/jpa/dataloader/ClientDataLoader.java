@@ -4,10 +4,6 @@ import java.sql.SQLException;
 import java.util.Calendar;
 
 import org.apache.log4j.Logger;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
@@ -17,7 +13,7 @@ import jpa.util.ProductUtil;
 import jpa.util.SpringUtil;
 import jpa.util.TimestampUtil;
 
-public class ClientDataLoader implements AbstractDataLoader {
+public class ClientDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(ClientDataLoader.class);
 	private ClientDataService service;
 
@@ -29,11 +25,7 @@ public class ClientDataLoader implements AbstractDataLoader {
 	@Override
 	public void loadData() {
 		service = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setName("idtokens_service");
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
-		TransactionStatus status = txmgr.getTransaction(def);
+		startTransaction();
 		try {
 			loadClientData(true);
 			loadJBatchData();
@@ -41,7 +33,7 @@ public class ClientDataLoader implements AbstractDataLoader {
 			logger.error("Exception caught", e);
 		}
 		finally {
-			txmgr.commit(status);
+			commitTransaction();
 		}
 	}
 
