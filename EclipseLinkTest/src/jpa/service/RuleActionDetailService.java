@@ -13,22 +13,22 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import jpa.model.ActionDetail;
+import jpa.model.RuleActionDetail;
 
-@Component("actionDetailService")
+@Component("ruleActionDetailService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class ActionDetailService {
-	static Logger logger = Logger.getLogger(ActionDetailService.class);
+public class RuleActionDetailService {
+	static Logger logger = Logger.getLogger(RuleActionDetailService.class);
 	
 	@Autowired
 	EntityManager em;
 
-	public ActionDetail getByActionId(String actionId) throws NoResultException {
+	public RuleActionDetail getByActionId(String actionId) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from ActionDetail t where " +
+			Query query = em.createQuery("select t from RuleActionDetail t where " +
 					"t.actionId = :actionId ");
 			query.setParameter("actionId", actionId);
-			ActionDetail detail = (ActionDetail) query.getSingleResult();
+			RuleActionDetail detail = (RuleActionDetail) query.getSingleResult();
 			em.lock(detail, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return detail;
 		}
@@ -36,11 +36,11 @@ public class ActionDetailService {
 		}
 	}
 	
-	public ActionDetail getByRowId(int rowId) throws NoResultException {
+	public RuleActionDetail getByRowId(int rowId) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from ActionDetail t where t.rowId = :rowId");
+			Query query = em.createQuery("select t from RuleActionDetail t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
-			ActionDetail detail = (ActionDetail) query.getSingleResult();
+			RuleActionDetail detail = (RuleActionDetail) query.getSingleResult();
 			em.lock(detail, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return detail;
 		}
@@ -48,18 +48,18 @@ public class ActionDetailService {
 		}
 	}
 	
-	public List<ActionDetail> getAll() {
+	public List<RuleActionDetail> getAll() {
 		try {
-			Query query = em.createQuery("select t from ActionDetail t");
+			Query query = em.createQuery("select t from RuleActionDetail t");
 			@SuppressWarnings("unchecked")
-			List<ActionDetail> list = query.getResultList();
+			List<RuleActionDetail> list = query.getResultList();
 			return list;
 		}
 		finally {
 		}
 	}
 	
-	public void delete(ActionDetail detail) {
+	public void delete(RuleActionDetail detail) {
 		if (detail==null) return;
 		try {
 			em.remove(detail);
@@ -70,7 +70,7 @@ public class ActionDetailService {
 
 	public int deleteByActionId(String actionId) {
 		try {
-			Query query = em.createQuery("delete from ActionDetail t where " +
+			Query query = em.createQuery("delete from RuleActionDetail t where " +
 					"t.actionId=:actionId ");
 			query.setParameter("actionId", actionId);
 			int rows = query.executeUpdate();
@@ -82,7 +82,7 @@ public class ActionDetailService {
 
 	public int deleteByRowId(int rowId) {
 		try {
-			Query query = em.createQuery("delete from ActionDetail t where t.rowId=:rowId");
+			Query query = em.createQuery("delete from RuleActionDetail t where t.rowId=:rowId");
 			query.setParameter("rowId", rowId);
 			int rows = query.executeUpdate();
 			return rows;
@@ -91,7 +91,7 @@ public class ActionDetailService {
 		}
 	}
 
-	public void insert(ActionDetail detail) {
+	public void insert(RuleActionDetail detail) {
 		try {
 			em.persist(detail);
 		}
@@ -99,7 +99,7 @@ public class ActionDetailService {
 		}
 	}
 	
-	public void update(ActionDetail detail) {
+	public void update(RuleActionDetail detail) {
 		try {
 			if (em.contains(detail)) {
 				em.persist(detail);

@@ -16,12 +16,8 @@ import jpa.service.MailingListService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-public class EmailTemplateLoader implements AbstractDataLoader {
+public class EmailTemplateLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(EmailTemplateLoader.class);
 	private EmailTemplateService service;
 	private ClientDataService clientService;
@@ -37,11 +33,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 		service = (EmailTemplateService) SpringUtil.getAppContext().getBean("emailTemplateService");
 		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
 		mlistService = (MailingListService) SpringUtil.getAppContext().getBean("mailingListService");
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setName("loader_service");
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
-		TransactionStatus status = txmgr.getTransaction(def);
+		startTransaction();
 		try {
 			loadSampleEmailTemplates();
 			loadSystemEmailTemplates();
@@ -49,7 +41,7 @@ public class EmailTemplateLoader implements AbstractDataLoader {
 			logger.error("Exception caught", e);
 		}
 		finally {
-			txmgr.commit(status);
+			commitTransaction();
 		}
 	}
 

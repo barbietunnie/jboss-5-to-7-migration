@@ -44,7 +44,7 @@ public class RuleLogicService {
 
 	public List<RuleLogic> getAll(boolean builtinRules) {
 		String sql = 
-				"select r from RuleLogic r where r.IsBuiltinRule=:builtinRules ";
+				"select r from RuleLogic r where r.isBuiltinRule=:builtinRules ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("builtinRules", builtinRules);

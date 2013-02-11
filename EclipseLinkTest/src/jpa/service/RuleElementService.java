@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.model.RuleElement;
+import jpa.model.RuleElementPK;
 
 @Component("ruleElementService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -27,13 +28,16 @@ public class RuleElementService {
 	@Autowired
 	private ReloadFlagsService reloadFlagsService;
 
-	public RuleElement getByPrimaryKey(String ruleName, int elementSequence) throws NoResultException {
+	public RuleElement getByPrimaryKey(RuleElementPK pk) throws NoResultException {
+		if (pk.getRuleLogic() == null) {
+			throw new IllegalArgumentException("A RuleLogic instance must be provided in Primary Key object.");
+		}
 		try {
 			Query query = em.createQuery("select t from RuleElement t, RuleLogic rl " +
 					" where t.ruleElementPK.ruleLogic=rl and rl.ruleName = :ruleName " +
 					"and t.ruleElementPK.elementSequence=:elementSequence ");
-			query.setParameter("ruleName", ruleName);
-			query.setParameter("elementSequence", elementSequence);
+			query.setParameter("ruleName", pk.getRuleLogic().getRuleName());
+			query.setParameter("elementSequence", pk.getElementSequence());
 			RuleElement element = (RuleElement) query.getSingleResult();
 			em.lock(element, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return element;
@@ -104,13 +108,16 @@ public class RuleElementService {
 		}
 	}
 
-	public int deleteByPrimaryKey(String ruleName, int elementSequence) {
+	public int deleteByPrimaryKey(RuleElementPK pk) {
+		if (pk.getRuleLogic() == null) {
+			throw new IllegalArgumentException("A RuleLogic instance must be provided in Primary Key object.");
+		}
 		try {
 			Query query = em.createNativeQuery("delete from Rule_Element where RuleLogicRowid = " +
 					"(select Row_id from rule_logic rl where rl.ruleName=?1) " +
 					"and elementSequence=?2 ");
-			query.setParameter(1, ruleName);
-			query.setParameter(2, elementSequence);
+			query.setParameter(1, pk.getRuleLogic().getRuleName());
+			query.setParameter(2, pk.getElementSequence());
 			reloadFlagsService.updateRuleReloadFlag();
 			int rows = query.executeUpdate();
 			return rows;

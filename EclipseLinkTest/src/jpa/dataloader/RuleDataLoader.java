@@ -12,20 +12,18 @@ import jpa.constant.RuleType;
 import jpa.constant.StatusId;
 import jpa.constant.XHeaderName;
 import jpa.model.RuleElement;
+import jpa.model.RuleElementPK;
 import jpa.model.RuleLogic;
 import jpa.model.RuleSubruleMap;
+import jpa.model.RuleSubruleMapPK;
 import jpa.service.RuleElementService;
 import jpa.service.RuleLogicService;
 import jpa.service.RuleSubruleMapService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-public class RuleDataLoader implements AbstractDataLoader {
+public class RuleDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(RuleDataLoader.class);
 	private RuleLogicService service;
 	private RuleElementService elementService;
@@ -41,11 +39,7 @@ public class RuleDataLoader implements AbstractDataLoader {
 		service = (RuleLogicService) SpringUtil.getAppContext().getBean("ruleLogicService");
 		elementService = (RuleElementService) SpringUtil.getAppContext().getBean("ruleElementService");
 		mapService = (RuleSubruleMapService) SpringUtil.getAppContext().getBean("ruleSubruleMapService");
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setName("idtokens_service");
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
-		TransactionStatus status = txmgr.getTransaction(def);
+		startTransaction();
 		try {
 			loadBuiltInRules();
 			loadCustomRules();
@@ -56,7 +50,7 @@ public class RuleDataLoader implements AbstractDataLoader {
 			logger.error("Exception caught", e);
 		}
 		finally {
-			txmgr.commit(status);
+			commitTransaction();
 		}
 	}
 
@@ -515,10 +509,11 @@ public class RuleDataLoader implements AbstractDataLoader {
 	
 	private void loadRuleElements() {
 		RuleLogic obj = service.getByRuleName("Unattended_Mailbox");
+		RuleElementPK pk = null;
 		
 		RuleElement data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.MAILBOX_USER.getValue());
 		data.setCriteria(RuleCriteria.EQUALS.getValue());
 		data.setCaseSensitive(false);
@@ -526,8 +521,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.RETURN_PATH.getValue());
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
 		data.setCaseSensitive(false);
@@ -537,8 +532,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName(RuleNameType.HARD_BOUNCE.getValue());
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.FROM_ADDR.getValue());
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
 		data.setCaseSensitive(false);
@@ -549,8 +544,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.FROM_ADDR.getValue());
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
 		data.setCaseSensitive(false);
@@ -563,8 +558,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName(RuleNameType.MAILBOX_FULL.getValue());
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.FROM_ADDR.getValue());
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
 		data.setCaseSensitive(false);
@@ -578,8 +573,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName(RuleNameType.SPAM_BLOCK.getValue());
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
 		data.setCaseSensitive(false);
@@ -593,8 +588,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.BODY.getValue());
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
 		data.setCaseSensitive(false);
@@ -605,8 +600,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(2);
+		pk = new RuleElementPK(obj,2);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.FROM_ADDR.getValue());
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
 		data.setCaseSensitive(false);
@@ -617,8 +612,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(3);
+		pk = new RuleElementPK(obj,3);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.X_HEADER.getValue());
 		data.setHeaderName(XHeaderName.RETURN_PATH.getValue());
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -630,8 +625,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(4);
+		pk = new RuleElementPK(obj,4);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.X_HEADER.getValue());
 		data.setHeaderName("Precedence");
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -645,8 +640,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName(RuleNameType.CHALLENGE_RESPONSE.getValue());
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.X_HEADER.getValue());
 		data.setHeaderName(XHeaderName.RETURN_PATH.getValue());
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -659,8 +654,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -676,8 +671,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(2);
+		pk = new RuleElementPK(obj,2);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.FROM_ADDR.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -691,8 +686,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName(RuleNameType.AUTO_REPLY.getValue());
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -706,8 +701,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.FROM_ADDR.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -719,8 +714,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(2);
+		pk = new RuleElementPK(obj,2);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.BODY.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -738,8 +733,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName(RuleNameType.VIRUS_BLOCK.getValue());
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -769,8 +764,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -801,8 +796,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(2);
+		pk = new RuleElementPK(obj,2);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.FROM_ADDR.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -816,8 +811,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName(RuleNameType.MAIL_BLOCK.getValue());
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -829,8 +824,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.BODY.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -844,8 +839,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName(RuleNameType.BROADCAST.getValue());
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.RULE_NAME.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.EQUALS.getValue());
@@ -859,8 +854,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName(RuleNameType.UNSUBSCRIBE.getValue());
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.TO_ADDR.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -873,8 +868,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.EQUALS.getValue());
@@ -889,8 +884,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName(RuleNameType.SUBSCRIBE.getValue());
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.TO_ADDR.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -903,8 +898,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -919,8 +914,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName(RuleNameType.RMA_REQUEST.getValue());
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.RULE_NAME.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.EQUALS.getValue());
@@ -935,8 +930,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("OutOfOffice_AutoReply");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -949,8 +944,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.BODY.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -965,8 +960,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("Contact_Us");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.MAILBOX_USER.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.EQUALS.getValue());
@@ -979,8 +974,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.STARTS_WITH.getValue());
@@ -995,8 +990,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("Executable_Attachment");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.VALUED.getValue());
@@ -1009,8 +1004,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.FILE_NAME.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -1025,8 +1020,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("XHeader_SpamScore");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.X_HEADER.getValue());
 		data.setHeaderName("X_Spam_Score");
 		data.setCriteria(RuleCriteria.GREATER_THAN.getValue());
@@ -1041,8 +1036,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("HardBouce_WatchedMailbox");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.RULE_NAME.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.EQUALS.getValue());
@@ -1055,8 +1050,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.TO_ADDR.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.STARTS_WITH.getValue());
@@ -1071,8 +1066,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("HardBounce_NoFinalRcpt");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.RULE_NAME.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.EQUALS.getValue());
@@ -1085,8 +1080,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(EmailAddrType.FINAL_RCPT_ADDR.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.NOT_VALUED.getValue());
@@ -1099,8 +1094,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(2);
+		pk = new RuleElementPK(obj,2);
+		data.setRuleElementPK(pk);
 		data.setDataName(EmailAddrType.ORIG_RCPT_ADDR.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.NOT_VALUED.getValue());
@@ -1115,8 +1110,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("HardBounce_Subj_Match");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.SUBJECT.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -1137,8 +1132,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("HardBounce_Body_Match");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.BODY.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -1156,8 +1151,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("MailboxFull_Body_Match");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.BODY.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -1170,8 +1165,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.BODY.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -1186,8 +1181,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("SpamBlock_Body_Match");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.MSG_REF_ID.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.NOT_VALUED.getValue());
@@ -1202,8 +1197,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("ChalResp_Body_Match");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.BODY.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -1222,8 +1217,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj = service.getByRuleName("VirusBlock_Body_Match");
 
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(0);
+		pk = new RuleElementPK(obj,0);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.BODY.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -1249,8 +1244,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		elementService.insert(data);
 		
 		data = new RuleElement();
-		data.setRuleLogic((RuleLogic)obj);
-		data.setElementSequence(1);
+		pk = new RuleElementPK(obj,1);
+		data.setRuleElementPK(pk);
 		data.setDataName(RuleDataName.BODY.getValue());
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.REG_EX.getValue());
@@ -1277,10 +1272,11 @@ public class RuleDataLoader implements AbstractDataLoader {
 	private void loadRuleSubruleMaps() {
 		RuleLogic obj1 = service.getByRuleName(RuleNameType.HARD_BOUNCE.getValue());
 		RuleLogic obj2 = service.getByRuleName("HardBounce_Subj_Match");
+		RuleSubruleMapPK pk1;
 		
 		RuleSubruleMap data = new RuleSubruleMap();
-		data.setRuleLogic((RuleLogic)obj1);
-		data.setSubruleLogic((RuleLogic)obj2);
+		pk1 = new RuleSubruleMapPK(obj1,obj2);
+		data.setRuleSubruleMapPK(pk1);
 		data.setSubruleSequence(0);
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -1289,8 +1285,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj2 = service.getByRuleName("HardBounce_Body_Match");
 		
 		data = new RuleSubruleMap();
-		data.setRuleLogic((RuleLogic)obj1);
-		data.setSubruleLogic((RuleLogic)obj2);
+		pk1 = new RuleSubruleMapPK(obj1,obj2);
+		data.setRuleSubruleMapPK(pk1);
 		data.setSubruleSequence(1);
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -1300,8 +1296,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj2 = service.getByRuleName("MailboxFull_Body_Match");
 			
 		data = new RuleSubruleMap();
-		data.setRuleLogic((RuleLogic)obj1);
-		data.setSubruleLogic((RuleLogic)obj2);
+		pk1 = new RuleSubruleMapPK(obj1,obj2);
+		data.setRuleSubruleMapPK(pk1);
 		data.setSubruleSequence(0);
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -1311,8 +1307,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj2 = service.getByRuleName("SpamBlock_Body_Match");
 			
 		data = new RuleSubruleMap();
-		data.setRuleLogic((RuleLogic)obj1);
-		data.setSubruleLogic((RuleLogic)obj2);
+		pk1 = new RuleSubruleMapPK(obj1,obj2);
+		data.setRuleSubruleMapPK(pk1);
 		data.setSubruleSequence(0);
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -1322,8 +1318,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj2 = service.getByRuleName("ChalResp_Body_Match");
 			
 		data = new RuleSubruleMap();
-		data.setRuleLogic((RuleLogic)obj1);
-		data.setSubruleLogic((RuleLogic)obj2);
+		pk1 = new RuleSubruleMapPK(obj1,obj2);
+		data.setRuleSubruleMapPK(pk1);
 		data.setSubruleSequence(0);
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -1333,8 +1329,8 @@ public class RuleDataLoader implements AbstractDataLoader {
 		obj2 = service.getByRuleName("VirusBlock_Body_Match");
 			
 		data = new RuleSubruleMap();
-		data.setRuleLogic((RuleLogic)obj1);
-		data.setSubruleLogic((RuleLogic)obj2);
+		pk1 = new RuleSubruleMapPK(obj1,obj2);
+		data.setRuleSubruleMapPK(pk1);
 		data.setSubruleSequence(0);
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);

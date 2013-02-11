@@ -23,12 +23,11 @@ public class RuleDataTypeService {
 	@Autowired
 	EntityManager em;
 
-	public RuleDataType getByPrimaryKey(String dataType, String dataValue) throws NoResultException {
+	public RuleDataType getByDataType(String dataType) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from RuleDataType t where " +
-					"t.dataType = :dataType and t.dataValue=:dataValue ");
+					"t.dataType = :dataType ");
 			query.setParameter("dataType", dataType);
-			query.setParameter("dataValue", dataValue);
 			RuleDataType dataName = (RuleDataType) query.getSingleResult();
 			em.lock(dataName, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return dataName;
@@ -49,19 +48,6 @@ public class RuleDataTypeService {
 		}
 	}
 	
-	public List<RuleDataType> getByDataType(String dataType) {
-		try {
-			Query query = em.createQuery("select t from RuleDataType t where " +
-					"t.dataType = :dataType ");
-			query.setParameter("dataType", dataType);
-			@SuppressWarnings("unchecked")
-			List<RuleDataType> list = query.getResultList();
-			return list;
-		}
-		finally {
-		}
-	}
-	
 	public List<RuleDataType> getAll() {
 		try {
 			Query query = em.createQuery("select t from RuleDataType t");
@@ -77,19 +63,6 @@ public class RuleDataTypeService {
 		if (dataName==null) return;
 		try {
 			em.remove(dataName);
-		}
-		finally {
-		}
-	}
-
-	public int deleteByPrimaryKey(String dataType, String dataValue) {
-		try {
-			Query query = em.createQuery("delete from RuleDataType t where " +
-					"t.dataType=:dataType and t.dataValue=:dataValue ");
-			query.setParameter("dataType", dataType);
-			query.setParameter("dataValue", dataValue);
-			int rows = query.executeUpdate();
-			return rows;
 		}
 		finally {
 		}

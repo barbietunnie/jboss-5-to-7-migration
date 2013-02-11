@@ -12,12 +12,8 @@ import jpa.service.IdTokensService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-public class IdTokensDataLoader implements AbstractDataLoader {
+public class IdTokensDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(IdTokensDataLoader.class);
 	private IdTokensService itService;
 	private ClientDataService clientService;
@@ -31,18 +27,14 @@ public class IdTokensDataLoader implements AbstractDataLoader {
 	public void loadData() {
 		itService = (IdTokensService) SpringUtil.getAppContext().getBean("idTokensService");
 		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setName("loader_service");
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
-		TransactionStatus status = txmgr.getTransaction(def);
+		startTransaction();
 		try {
 			loadIdTokens();
 		} catch (SQLException e) {
 			logger.error("Exception caught", e);
 		}
 		finally {
-			txmgr.commit(status);
+			commitTransaction();
 		}
 	}
 

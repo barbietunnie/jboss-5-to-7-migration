@@ -19,76 +19,83 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
-import jpa.constant.EmailAddrType;
-import jpa.model.RuleDataValue;
-import jpa.service.RuleDataValueService;
+import jpa.model.RuleActionDetail;
+import jpa.model.RuleDataType;
+import jpa.service.RuleActionDetailService;
+import jpa.service.RuleDataTypeService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class MsgDataTypeTest {
-	static Logger logger = Logger.getLogger(MsgDataTypeTest.class);
+public class RuleActionDetailTest {
+	static Logger logger = Logger.getLogger(RuleActionDetailTest.class);
 	
-	final String testDataType = "emailCarbonCopyAddress";
-	final String testDataValue = EmailAddrType.TO_ADDR.getValue();
+	final String testActionId = "testAction";
+	final String testServiceName = "testService";
 	
 	@BeforeClass
-	public static void ActionPropertyPrepare() {
+	public static void ActionDetailPrepare() {
 	}
 
 	@Autowired
-	RuleDataValueService service;
+	RuleActionDetailService service;
+	@Autowired
+	RuleDataTypeService typeService;
 
 	@Test
-	public void actionPropertyService1() {
+	public void actionDetailService1() {
+		RuleDataType typ1 = null;
+		List<RuleDataType> lst1 = typeService.getAll();
+		if (!lst1.isEmpty()) {
+			typ1 = lst1.get(0);
+		}
+		
 		// test insert
-		RuleDataValue var1 = new RuleDataValue();
-		var1.setDataType(testDataType);
-		var1.setDataValue(testDataValue);
+		RuleActionDetail var1 = new RuleActionDetail();
+		var1.setActionId(testActionId);
+		var1.setServiceName(testServiceName);
+		var1.setRuleDataType(typ1);
 		var1.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(var1);
 		
-		RuleDataValue var2 = service.getByPrimaryKey(testDataType, testDataValue);
+		RuleActionDetail var2 = service.getByActionId(testActionId);
 		assertNotNull(var2);
-		logger.info("RuleDataValue: " + StringUtil.prettyPrint(var2));
+		logger.info("RuleActionDetail: " + StringUtil.prettyPrint(var2));
 
-		List<RuleDataValue> list1 = service.getAll();
+		List<RuleActionDetail> list1 = service.getAll();
 		assertFalse(list1.isEmpty());
 		
-		List<RuleDataValue> list2 = service.getByDataType(testDataType);
-		assertFalse(list2.isEmpty());
-		
 		// test insert
-		RuleDataValue var3 = createNewInstance(list2.get(0));
-		var3.setDataValue(var3.getDataValue()+"_v2");
+		RuleActionDetail var3 = createNewInstance(list1.get(0));
+		var3.setActionId(var3.getActionId()+"_v2");
+		var3.setRuleDataType(typ1);
 		service.insert(var3);
-		assertNotNull(service.getByPrimaryKey(testDataType, var3.getDataValue()));
+		assertNotNull(service.getByActionId(var3.getActionId()));
 		// end of test insert
 		// test update
 		var3.setUpdtUserId("jpa test");
 		service.update(var3);
-		RuleDataValue var5 = service.getByPrimaryKey(testDataType, var3.getDataValue());
+		RuleActionDetail var5 = service.getByActionId(var3.getActionId());
 		assertTrue("jpa test".equals(var5.getUpdtUserId()));
 		
 		service.delete(var3);
 		try {
-			service.getByPrimaryKey(testDataType, var3.getDataValue());
+			service.getByRowId(var5.getRowId());
 			fail();
 		}
 		catch (NoResultException e) {}
 		
 		// test delete
-		RuleDataValue var4 = createNewInstance(var2);
-		var4.setDataType(var2.getDataType() + "_v4");
-		var4.setDataValue(var2.getDataValue() + "_v4");
+		RuleActionDetail var4 = createNewInstance(var2);
+		var4.setActionId(var2.getActionId() + "_v4");
 		service.insert(var4);
-		assertTrue(1==service.deleteByDataType(var4.getDataType()));
+		assertTrue(1==service.deleteByActionId(var4.getActionId()));
 	}
 	
-	private RuleDataValue createNewInstance(RuleDataValue orig) {
-		RuleDataValue dest = new RuleDataValue();
+	private RuleActionDetail createNewInstance(RuleActionDetail orig) {
+		RuleActionDetail dest = new RuleActionDetail();
 		try {
 			BeanUtils.copyProperties(dest, orig);
 		}

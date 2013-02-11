@@ -11,12 +11,8 @@ import jpa.service.UserDataService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-public class UserDataLoader implements AbstractDataLoader {
+public class UserDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(UserDataLoader.class);
 	private UserDataService service;
 	private ClientDataService clientService;
@@ -30,18 +26,14 @@ public class UserDataLoader implements AbstractDataLoader {
 	public void loadData() {
 		service = (UserDataService) SpringUtil.getAppContext().getBean("userDataService");
 		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
-		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-		def.setName("loader_service");
-		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
-		TransactionStatus status = txmgr.getTransaction(def);
+		startTransaction();
 		try {
 			loadUserData();
 		} catch (Exception e) {
 			logger.error("Exception caught", e);
 		}
 		finally {
-			txmgr.commit(status);
+			commitTransaction();
 		}
 	}
 

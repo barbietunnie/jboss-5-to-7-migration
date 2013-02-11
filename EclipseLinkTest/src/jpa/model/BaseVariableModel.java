@@ -1,7 +1,6 @@
 package jpa.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -10,8 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import jpa.constant.CodeType;
 
@@ -42,11 +39,6 @@ public abstract class BaseVariableModel implements Serializable
 	 */
 	@Column(name="Row_Id", updatable=false) 
 	protected int rowId = 0;
-	@Column(name="VariableName", nullable=false, length=26)
-	private String variableName = "";
-	@Column(name="StartTime", nullable=false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date startTime = new Date(System.currentTimeMillis());
 	@Column(name="VariableFormat", length=50)
 	private String variableFormat= null;
 	/*
@@ -89,23 +81,11 @@ public abstract class BaseVariableModel implements Serializable
 	public void setRequired(boolean isRequired) {
 		this.isRequired = isRequired;
 	}
-	public Date getStartTime() {
-		return startTime;
-	}
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
 	public String getVariableFormat() {
 		return variableFormat;
 	}
 	public void setVariableFormat(String variableFormat) {
 		this.variableFormat = variableFormat;
-	}
-	public String getVariableName() {
-		return variableName;
-	}
-	public void setVariableName(String variableName) {
-		this.variableName = variableName;
 	}
 	public String getVariableType() {
 		return variableType;

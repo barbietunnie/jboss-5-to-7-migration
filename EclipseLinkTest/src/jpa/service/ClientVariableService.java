@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.StatusId;
 import jpa.model.ClientVariable;
+import jpa.model.ClientVariablePK;
 
 @Component("clientVariableService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -39,24 +40,27 @@ public class ClientVariableService {
 		}
 	}
 
-	public ClientVariable getByPrimaryKey(String clientId, String variableName, Date startTime) {
+	public ClientVariable getByPrimaryKey(ClientVariablePK pk) {
+		if (pk.getClientData()==null) {
+			throw new IllegalArgumentException("A ClientData instance must be provided in Primary Key object.");
+		}
 		String sql = 
 			"select t " +
 			"from " +
 				"ClientVariable t, ClientData c " +
-				"where c=t.clientData and c.clientId=:clientId and t.variableName=:variableName";
-		if (startTime!=null) {
-			sql += " and t.startTime=:starTtime ";
+				"where c=t.clientVariablePK.clientData and c.clientId=:clientId and t.clientVariablePK.variableName=:variableName";
+		if (pk.getStartTime()!=null) {
+			sql += " and t.clientVariablePK.startTime=:starTtime ";
 		}
 		else {
-			sql += " and t.startTime is null ";
+			sql += " and t.clientVariablePK.startTime is null ";
 		}
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("clientId", clientId);
-			query.setParameter("variableName", variableName);
-			if (startTime != null) {
-				query.setParameter("starTtime", startTime);
+			query.setParameter("clientId", pk.getClientData().getClientId());
+			query.setParameter("variableName", pk.getVariableName());
+			if (pk.getStartTime() != null) {
+				query.setParameter("starTtime", pk.getStartTime());
 			}
 			@SuppressWarnings("unchecked")
 			List<ClientVariable> list = query.setMaxResults(1).getResultList();
@@ -69,22 +73,25 @@ public class ClientVariableService {
 		}
 	}
 
-	public ClientVariable getByBestMatch(String clientId, String variableName, Date startTime) {
-		if (startTime!=null) {
-			startTime = new Date(System.currentTimeMillis());
+	public ClientVariable getByBestMatch(ClientVariablePK pk) {
+		if (pk.getClientData()==null) {
+			throw new IllegalArgumentException("A ClientData instance must be provided in Primary Key object.");
+		}
+		if (pk.getStartTime()==null) {
+			pk.setStartTime(new Date(System.currentTimeMillis()));
 		}
 		String sql = 
 				"select t " +
 				"from " +
 					"ClientVariable t, ClientData c " +
-					" where c=t.clientData and c.clientId=:clientId and t.variableName=:variableName " +
-					" and (t.startTime<=:startTime or t.startTime is null) " +
-					" order by t.startTime desc ";
+					" where c=t.clientVariablePK.clientData and c.clientId=:clientId and t.clientVariablePK.variableName=:variableName " +
+					" and (t.clientVariablePK.startTime<=:startTime or t.clientVariablePK.startTime is null) " +
+					" order by t.clientVariablePK.startTime desc ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("variableName", variableName);
-			query.setParameter("startTime", startTime);
-			query.setParameter("clientId", clientId);
+			query.setParameter("variableName", pk.getVariableName());
+			query.setParameter("startTime", pk.getStartTime());
+			query.setParameter("clientId", pk.getClientData().getClientId());
 			@SuppressWarnings("unchecked")
 			List<ClientVariable> list = query.setMaxResults(1).getResultList();
 			if (!list.isEmpty()) {
@@ -101,8 +108,8 @@ public class ClientVariableService {
 				"select t " +
 				" from " +
 					" ClientVariable t, ClientData c " +
-					" where c=t.clientData and t.variableName=:variableName " +
-				" order by c.clientId, t.startTime asc ";
+					" where c=t.clientVariablePK.clientData and t.clientVariablePK.variableName=:variableName " +
+				" order by c.clientId, t.clientVariablePK.startTime asc ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("variableName", variableName);
@@ -148,7 +155,10 @@ public class ClientVariableService {
 		}
 	}
 
-	public int deleteByPrimaryKey(String clientId, String variableName, Date startTime) {
+	public int deleteByPrimaryKey(ClientVariablePK pk) {
+		if (pk.getClientData()==null) {
+			throw new IllegalArgumentException("A ClientData instance must be provided in Primary Key object.");
+		}
 		String sql = 
 				"delete from Client_Variable " +
 				" where variableName=?1 and startTime=?2 " +
@@ -156,9 +166,9 @@ public class ClientVariableService {
 				" (select row_id from client_data cd where cd.clientId=?3)";
 		try {
 			Query query = em.createNativeQuery(sql);
-			query.setParameter(1, variableName);
-			query.setParameter(2, startTime);
-			query.setParameter(3, clientId);
+			query.setParameter(1, pk.getVariableName());
+			query.setParameter(2, pk.getStartTime());
+			query.setParameter(3, pk.getClientData().getClientId());
 			int rows = query.executeUpdate();
 			return rows;
 		}
@@ -168,7 +178,7 @@ public class ClientVariableService {
 
 	public int deleteByVariableName(String variableName) {
 		String sql = 
-				"delete from ClientVariable t where t.variableName=:variableName ";
+				"delete from ClientVariable t where t.clientVariablePK.variableName=:variableName ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("variableName", variableName);
@@ -181,10 +191,10 @@ public class ClientVariableService {
 
 	public int deleteByClientId(String clientId) {
 		String sql = 
-				"delete from ClientVariable where clientDataRowId in " +
+				"delete from Client_Variable where clientDataRowId in " +
 				" (select row_id from client_data cd where cd.clientId=?1)";
 		try {
-			Query query = em.createQuery(sql);
+			Query query = em.createNativeQuery(sql);
 			query.setParameter(1, clientId);
 			int rows = query.executeUpdate();
 			return rows;

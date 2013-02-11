@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.StatusId;
 import jpa.model.GlobalVariable;
+import jpa.model.GlobalVariablePK;
 
 @Component("globalVariableService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -47,22 +48,22 @@ public class GlobalVariableService {
 	 * @param startTime
 	 * @return record found or null
 	 */
-	public GlobalVariable getByPrimaryKey(String variableName, Date startTime) {
+	public GlobalVariable getByPrimaryKey(GlobalVariablePK pk) {
 		String sql = 
 			"select t " +
 			"from " +
-				"GlobalVariable t where t.variableName=:variableName";
-		if (startTime!=null) {
-			sql += " and t.startTime=:startTime ";
+				"GlobalVariable t where t.globalVariablePK.variableName=:variableName";
+		if (pk.getStartTime()!=null) {
+			sql += " and t.globalVariablePK.startTime=:startTime ";
 		}
 		else {
-			sql += " and t.startTime is null ";
+			sql += " and t.globalVariablePK.startTime is null ";
 		}
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("variableName", variableName);
-			if (startTime != null) {
-				query.setParameter("startTime", startTime);
+			query.setParameter("variableName", pk.getVariableName());
+			if (pk.getStartTime() != null) {
+				query.setParameter("startTime", pk.getStartTime());
 			}
 			@SuppressWarnings("unchecked")
 			List<GlobalVariable> list = query.setMaxResults(1).getResultList();
@@ -82,20 +83,20 @@ public class GlobalVariableService {
 	 * @param startTime
 	 * @return the record best matched or null if not found
 	 */
-	public GlobalVariable getByBestMatch(String variableName, Date startTime) {
-		if (startTime!=null) {
-			startTime = new Date(System.currentTimeMillis());
+	public GlobalVariable getByBestMatch(GlobalVariablePK pk) {
+		if (pk.getStartTime()==null) {
+			pk.setStartTime(new Date(System.currentTimeMillis()));
 		}
 		String sql = 
 				"select t " +
 				"from " +
-					"GlobalVariable t where t.variableName=:variableName " +
-					" and (t.startTime<=:startTime or t.startTime is null) " +
-					" order by t.startTime desc ";
+					"GlobalVariable t where t.globalVariablePK.variableName=:variableName " +
+					" and (t.globalVariablePK.startTime<=:startTime or t.globalVariablePK.startTime is null) " +
+					" order by t.globalVariablePK.startTime desc ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("variableName", variableName);
-			query.setParameter("startTime", startTime);
+			query.setParameter("variableName", pk.getVariableName());
+			query.setParameter("startTime", pk.getStartTime());
 			@SuppressWarnings("unchecked")
 			List<GlobalVariable> list = query.setMaxResults(1).getResultList();
 			if (!list.isEmpty()) {
@@ -111,8 +112,8 @@ public class GlobalVariableService {
 		String sql = 
 				"select t " +
 				" from " +
-					" GlobalVariable t where t.variableName=:variableName " +
-				" order by t.startTime asc ";
+					" GlobalVariable t where t.globalVariablePK.variableName=:variableName " +
+				" order by t.globalVariablePK.startTime asc ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("variableName", variableName);
@@ -152,8 +153,8 @@ public class GlobalVariableService {
 		String sql = 
 				"select t " +
 					" from GlobalVariable t " +
-					" where t.statusId = :statusId and t.startTime<=:startTime" +
-					" order by t.variableName asc, t.startTime desc ";
+					" where t.statusId = :statusId and t.globalVariablePK.startTime<=:startTime" +
+					" order by t.globalVariablePK.variableName asc, t.globalVariablePK.startTime desc ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("statusId", statusId);
@@ -164,9 +165,9 @@ public class GlobalVariableService {
 			String varName = null;
 			for (Iterator<GlobalVariable> it=list.iterator(); it.hasNext(); ) {
 				GlobalVariable var = it.next();
-				if (!var.getVariableName().equals(varName)) {
+				if (!var.getGlobalVariablePK().getVariableName().equals(varName)) {
 					list2.add(var);
-					varName = var.getVariableName();
+					varName = var.getGlobalVariablePK().getVariableName();
 				}
 			}
 			return list2;
@@ -184,13 +185,14 @@ public class GlobalVariableService {
 		}
 	}
 
-	public int deleteByPrimaryKey(String variableName, Date startTime) {
+	public int deleteByPrimaryKey(GlobalVariablePK pk) {
 		String sql = 
-				"delete from GlobalVariable t where t.variableName=:variableName and t.startTime=:startTime ";
+				"delete from GlobalVariable t where t.globalVariablePK.variableName=:variableName " +
+				" and t.globalVariablePK.startTime=:startTime ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("variableName", variableName);
-			query.setParameter("startTime", startTime);
+			query.setParameter("variableName", pk.getVariableName());
+			query.setParameter("startTime", pk.getStartTime());
 			int rows = query.executeUpdate();
 			return rows;
 		}
@@ -200,7 +202,7 @@ public class GlobalVariableService {
 
 	public int deleteByVariableName(String variableName) {
 		String sql = 
-				"delete from GlobalVariable t where t.variableName=:variableName ";
+				"delete from GlobalVariable t where t.globalVariablePK.variableName=:variableName ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("variableName", variableName);
