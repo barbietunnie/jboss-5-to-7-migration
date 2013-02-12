@@ -4,19 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name="rule_data_value", uniqueConstraints=@UniqueConstraint(columnNames = {"RuleDataTypeRowId", "dataValue"}))
 public class RuleDataValue extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -6383445491730691533L;
-
-	// define a RuleDataValue
-	@Transient
-	public final static String TEMPLATE_ID = "TEMPLATE_ID";
-	@Transient
-	public final static String EMAIL_ADDRESS = "EMAIL_ADDRESS";
 
 	@Embedded
 	private RuleDataValuePK ruleDataValuePK;

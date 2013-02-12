@@ -86,7 +86,7 @@ public class RuleActionTest {
 		}
 	}
 	@Test
-	public void actionDetailService1() {
+	public void ruleActionService() {
 		List<RuleLogic> lst1 = logicService.getAll(true);
 		assertFalse(lst1.isEmpty());
 		RuleLogic rlg1 = lst1.get(0);
@@ -138,7 +138,7 @@ public class RuleActionTest {
 		// test delete
 		RuleAction var5 = createNewInstance(var2);
 		if (lst1.size()>1) {
-			rlg1 = lst1.get(1);
+			rlg1 = lst1.get(lst1.size()-1);
 		}
 		RuleActionPK pk5 = var5.getRuleActionPK();
 		pk5.setRuleLogic(rlg1);
