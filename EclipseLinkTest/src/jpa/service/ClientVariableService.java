@@ -84,7 +84,8 @@ public class ClientVariableService {
 				"select t " +
 				"from " +
 					"ClientVariable t, ClientData c " +
-					" where c=t.clientVariablePK.clientData and c.clientId=:clientId and t.clientVariablePK.variableName=:variableName " +
+					" where c=t.clientVariablePK.clientData and c.clientId=:clientId " +
+					" and t.clientVariablePK.variableName=:variableName " +
 					" and (t.clientVariablePK.startTime<=:startTime or t.clientVariablePK.startTime is null) " +
 					" order by t.clientVariablePK.startTime desc ";
 		try {
@@ -126,10 +127,10 @@ public class ClientVariableService {
 				"select a.* " +
 					" from Client_Variable a " +
 					" inner join ( " +
-					"  select b.clientDataRowId, b.variableName as variableName, max(b.startTime) as maxTime " +
+					"  select b.clientDataRowId as clientDataRowId, b.variableName as variableName, max(b.startTime) as maxTime " +
 					"   from Client_Variable b, Client_Data cd " +
-					"   where b.statusId = ? and b.startTime<=? and b.clientDataRowId=cd.row_Id and cd.clientId=? " +
-					"   group by b.variableName " +
+					"   where b.statusId = ?1 and b.startTime<=?2 and b.clientDataRowId=cd.row_Id and cd.clientId=?3 " +
+					"   group by b.clientDataRowId, b.variableName " +
 					" ) as c " +
 					"  on a.variableName=c.variableName and a.startTime=c.maxTime and a.clientDataRowId=c.clientDataRowId " +
 					" order by a.row_id asc ";

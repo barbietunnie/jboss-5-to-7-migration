@@ -2,12 +2,16 @@ package jpa.test;
 
 import static org.junit.Assert.*;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.NoResultException;
+import javax.sql.DataSource;
 
 import jpa.model.UserData;
 import jpa.service.UserDataService;
+import jpa.util.SpringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -37,6 +41,23 @@ public class UserDataTest {
 
 	@Test
 	public void userDataService() {
+		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("mysqlDataSource");
+		Connection con = null;
+		try {
+			con = ds.getConnection();
+			System.err.println("AutoCommit?" + con.getAutoCommit());
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if (con!=null) {
+				try {
+					con.close();
+				} catch (SQLException e) {}
+			}
+		}
+		
 		List<UserData> list = service.getAll();
 		assertFalse(list.isEmpty());
 		

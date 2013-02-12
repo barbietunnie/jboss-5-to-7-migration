@@ -25,7 +25,7 @@
 	<!-- Data Sources -->
 	<bean id="mysqlDataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="driverClassName" value="${dataSource.driverClassName}" />
 		<property name="url" value="${dataSource.url}" />
 		<property name="username" value="${dataSource.username}" />
 		<property name="password" value="${dataSource.password}" />
@@ -33,7 +33,7 @@
 
 	<bean id="initDataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource" lazy-init="true">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="driverClassName" value="${dataSource.driverClassName}" />
 		<property name="url" value="${dataSource.init.url}" />
 		<property name="username" value="root" />
 		<property name="password" value="mysql_root_password" />
@@ -59,7 +59,7 @@
 	<bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect" />
 	
 	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter"
-    	p:databasePlatform="org.eclipse.persistence.platform.database.MySQLPlatform"
+    	p:databasePlatform="${eclipselink.database.platform}"
     	p:showSql="true" p:generateDdl="true" />
 
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
