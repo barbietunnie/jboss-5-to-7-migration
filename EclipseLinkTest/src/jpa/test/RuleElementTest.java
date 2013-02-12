@@ -13,7 +13,7 @@ import javax.persistence.NoResultException;
 
 import jpa.constant.RuleCriteria;
 import jpa.constant.RuleDataName;
-import jpa.constant.RuleNameType;
+import jpa.constant.RuleNameEnum;
 import jpa.model.RuleElement;
 import jpa.model.RuleElementPK;
 import jpa.model.RuleLogic;
@@ -54,7 +54,7 @@ public class RuleElementTest {
 	
 	@Test
 	public void ruleElementService1() {
-		RuleLogic logic = logicService.getByRuleName(RuleNameType.HARD_BOUNCE.getValue());
+		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
 		assertNotNull(logic.getRuleElements());
 		assertFalse(logic.getRuleElements().isEmpty());
 

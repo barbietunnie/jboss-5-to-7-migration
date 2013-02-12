@@ -5,8 +5,11 @@ import java.sql.Timestamp;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.model.ClientData;
+import jpa.model.SessionUpload;
+import jpa.model.SessionUploadPK;
 import jpa.model.UserData;
 import jpa.service.ClientDataService;
+import jpa.service.SessionUploadService;
 import jpa.service.UserDataService;
 import jpa.util.SpringUtil;
 
@@ -16,6 +19,7 @@ public class UserDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(UserDataLoader.class);
 	private UserDataService service;
 	private ClientDataService clientService;
+	private SessionUploadService uploadService;
 
 	public static void main(String[] args) {
 		UserDataLoader loader = new UserDataLoader();
@@ -26,9 +30,11 @@ public class UserDataLoader extends AbstractDataLoader {
 	public void loadData() {
 		service = (UserDataService) SpringUtil.getAppContext().getBean("userDataService");
 		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		uploadService = (SessionUploadService) SpringUtil.getAppContext().getBean("sessionUploadService");
 		startTransaction();
 		try {
 			loadUserData();
+			loadSessionUploads();
 		} catch (Exception e) {
 			logger.error("Exception caught", e);
 		}
@@ -66,5 +72,26 @@ public class UserDataLoader extends AbstractDataLoader {
 		logger.info("EntityManager persisted the record.");
 	}
 	
+	private void loadSessionUploads() {
+		UserData usr = service.getByUserId("user");
+
+		SessionUploadPK pk1 = new SessionUploadPK("test_session_id",0);
+		SessionUpload data = new SessionUpload();
+		data.setSessionUploadPK(pk1);
+		data.setFileName("test1.txt");
+		data.setContentType("text/plain");
+		data.setUserData(usr);
+		data.setSessionValue("test upload text 1".getBytes());
+		uploadService.insert(data);
+
+		pk1 = new SessionUploadPK("test_session_id",1);
+		data = new SessionUpload();
+		data.setSessionUploadPK(pk1);
+		data.setFileName("test2.txt");
+		data.setContentType("text/plain");
+		data.setUserData(usr);
+		data.setSessionValue("test upload text 2".getBytes());
+		uploadService.insert(data);
+	}
 }
 

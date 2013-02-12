@@ -1,6 +1,9 @@
 package jpa.constant;
 
-public enum RuleActionType {
+/*
+ * define rule actions
+ */
+public enum RuleActionEnum {
 	ACTIVATE("activete email address","activateService",null,RuleDataTypeEnum.EMAIL_ADDRESS),
 	BOUNCE_UP("increase bounce count","bounceService",null,RuleDataTypeEnum.EMAIL_ADDRESS),
 	CLOSE("close the message","closeService",null,null),
@@ -16,14 +19,15 @@ public enum RuleActionType {
 	UNSUBSCRIBE("remove from the mailing list","unsubscribeService",null,RuleDataTypeEnum.EMAIL_ADDRESS),
 	SUBSCRIBE("subscribe to the mailing list","subscribeService",null,RuleDataTypeEnum.EMAIL_ADDRESS),
 	ASSIGN_RULENAME("set a rule mame and re-queue","assignRuleNameService",null,RuleDataTypeEnum.RULE_NAME),
-	OPEN("open the message","openService",null,null);
+	OPEN("open the message","openService",null,null),
+	BROADCAST("broadcast to mailing list","broadcastService",null,RuleDataTypeEnum.MAILING_LIST);
 
 	private String description;
 	private String serviceName;
 	private String className;
 	private RuleDataTypeEnum dataType;
 
-	private RuleActionType(String description, String serviceName,
+	private RuleActionEnum(String description, String serviceName,
 			String className, RuleDataTypeEnum dataType) {
 		this.description = description;
 		this.serviceName = serviceName;

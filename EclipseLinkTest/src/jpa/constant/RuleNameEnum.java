@@ -3,7 +3,7 @@ package jpa.constant;
 //
 // define SMTP Built-in Rule Types
 //
-public enum RuleNameType {
+public enum RuleNameEnum {
 	/*
 	 * From MessageParser, when no rules were matched
 	 */
@@ -33,7 +33,7 @@ public enum RuleNameType {
 	SEND_MAIL("Send Mail"); // internal only
 	
 	private final String value;
-	private RuleNameType(String value) {
+	private RuleNameEnum(String value) {
 		this.value = value;
 	}
 	

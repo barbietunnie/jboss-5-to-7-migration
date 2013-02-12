@@ -52,8 +52,6 @@ public class ClientData extends BaseModel implements Serializable {
 	@Column(length=18)
 	private String contactPhone = null;
 	@Column(length=255, nullable=false)
-	private String contactEmail = "";
-	@Column(length=255, nullable=false)
 	private String securityEmail = "";
 	@Column(length=255, nullable=false)
 	private String custcareEmail = "";
@@ -61,6 +59,8 @@ public class ClientData extends BaseModel implements Serializable {
 	private String rmaDeptEmail = "";
 	@Column(length=255, nullable=false)
 	private String spamCntrlEmail = "";
+	@Column(length=255, nullable=false)
+	private String virusCntrlEmail = "";
 	@Column(length=255, nullable=false)
 	private String chaRspHndlrEmail = "";
 	@Column(length=3, nullable=false, columnDefinition="boolean not null")
@@ -181,12 +181,6 @@ public class ClientData extends BaseModel implements Serializable {
 	public void setContactPhone(String contactPhone) {
 		this.contactPhone = contactPhone;
 	}
-	public String getContactEmail() {
-		return contactEmail;
-	}
-	public void setContactEmail(String contactEmail) {
-		this.contactEmail = contactEmail;
-	}
 	public String getSecurityEmail() {
 		return securityEmail;
 	}
@@ -210,6 +204,12 @@ public class ClientData extends BaseModel implements Serializable {
 	}
 	public void setSpamCntrlEmail(String spamCntrlEmail) {
 		this.spamCntrlEmail = spamCntrlEmail;
+	}
+	public String getVirusCntrlEmail() {
+		return virusCntrlEmail;
+	}
+	public void setVirusCntrlEmail(String virusCntrlEmail) {
+		this.virusCntrlEmail = virusCntrlEmail;
 	}
 	public String getChaRspHndlrEmail() {
 		return chaRspHndlrEmail;
