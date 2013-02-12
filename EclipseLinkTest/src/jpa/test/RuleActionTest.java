@@ -150,9 +150,9 @@ public class RuleActionTest {
 			assertTrue(1==service.deleteByRowId(var5.getRowId()));
 		}
 		else if (random==1) {
-			assertTrue(1==service.deleteByRuleName(pk5.getRuleLogic().getRuleName()));
+			assertTrue(1<=service.deleteByRuleName(pk5.getRuleLogic().getRuleName()));
 		}
-		else {	
+		else {
 			assertTrue(1==service.deleteByPrimaryKey(pk5));
 		}
 	}

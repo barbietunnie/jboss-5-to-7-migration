@@ -39,7 +39,7 @@ public abstract class BaseVariableModel implements Serializable
 	 */
 	@Column(name="Row_Id", updatable=false) 
 	protected int rowId = 0;
-	@Column(name="VariableFormat", length=50)
+	@Column(name="VariableFormat", length=50, nullable=true)
 	private String variableFormat= null;
 	/*
 	 * XXX received following error when deployed to JBoss 5.1:

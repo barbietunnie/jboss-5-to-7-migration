@@ -45,7 +45,7 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 	@Column(nullable=false, length=1, columnDefinition="boolean not null")
 	private boolean isBuiltin = false;
 	@Lob
-	@Column(nullable=true, columnDefinition="BLOB")
+	@Column(nullable=true) //, columnDefinition="BLOB")
 	private SchedulesBlob schedulesBlob = null;
 	
 	@Transient

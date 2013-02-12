@@ -17,7 +17,7 @@ public class ClientVariable extends BaseVariableModel implements Serializable
 	@Embedded
 	private ClientVariablePK clientVariablePK;
 
-	@Column(name="VariableValue", length=2046)
+	@Column(name="VariableValue", length=2046, nullable=true)
 	private String variableValue = null;
 
 	public ClientVariable() {}

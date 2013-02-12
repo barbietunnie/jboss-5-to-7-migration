@@ -78,7 +78,7 @@ public class SessionUploadTest {
 		assertNotNull(tkn4);
 		assertFalse(tkn2.getFileName().equals(tkn4.getFileName()));
 
-		assertTrue(0==service.deleteExpired(1));
+		assertTrue(0<=service.deleteExpired(1));
 
 		// test update
 		tkn2.setUpdtUserId("JpaTest");
