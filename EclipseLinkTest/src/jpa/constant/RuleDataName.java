@@ -1,6 +1,6 @@
 package jpa.constant;
 
-/** define data type constants for Internet mail */
+/** define rule search field name for Internet mail */
 public enum RuleDataName {
 	FROM_ADDR(EmailAddrType.FROM_ADDR.getValue()),
 	TO_ADDR(EmailAddrType.TO_ADDR.getValue()),
@@ -23,10 +23,6 @@ public enum RuleDataName {
 	// define data type constants for Internet email attachments
 	MIME_TYPE("MimeType"),
 	FILE_NAME("FileName");
-
-//	public static final String[] DATATYPES = 
-//		{ FROM_ADDR, TO_ADDR, REPLYTO_ADDR, CC_ADDR, BCC_ADDR,
-//			SUBJECT, BODY, MSG_REF_ID, RULE_NAME, MAILBOX_USER, MAILBOX_HOST };
 
 	private String value;
 	private RuleDataName(String value) {

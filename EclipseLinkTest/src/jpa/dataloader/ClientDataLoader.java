@@ -50,7 +50,7 @@ public class ClientDataLoader extends AbstractDataLoader {
 		data.setWebSiteUrl("http://localhost:8080/MsgUI/publicsite");
 		data.setSaveRawMsg(true); // save raw stream
 		if (loadTestData) {
-			data.setContactEmail("sitemaster@emailsphere.com");
+			data.setVirusCntrlEmail("sitemaster@emailsphere.com");
 			data.setSecurityEmail("security@localhost");
 			data.setCustcareEmail("custcare@localhost");
 			data.setRmaDeptEmail("rma.dept@localhost");
@@ -58,7 +58,7 @@ public class ClientDataLoader extends AbstractDataLoader {
 			data.setChaRspHndlrEmail("challenge@localhost");
 		}
 		else { // release data
-			data.setContactEmail("sitemaster@localhost");
+			data.setVirusCntrlEmail("sitemaster@localhost");
 			data.setSecurityEmail("security@localhost");
 			data.setCustcareEmail("custcare@localhost");
 			data.setRmaDeptEmail("rma.dept@localhost");
@@ -92,7 +92,7 @@ public class ClientDataLoader extends AbstractDataLoader {
 		data.setIrsTaxId( "0000000000");
 		data.setWebSiteUrl("http://www.jbatch.com");
 		data.setSaveRawMsg(true); // save raw stream
-		data.setContactEmail("sitemaster@jbatch.com");
+		data.setVirusCntrlEmail("sitemaster@jbatch.com");
 		data.setSecurityEmail("security@jbatch.com");
 		data.setCustcareEmail("custcare@jbatch.com");
 		data.setRmaDeptEmail("rma.dept@jbatch.com");

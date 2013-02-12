@@ -2,13 +2,13 @@ package jpa.constant;
 
 public enum TableColumnName {
 
-	// address names associated to client table columns
-	CUSTOMER_CARE_ADDR("Customer_Care"), // ContactEmail
-	SECURITY_DEPT_ADDR("Security_Dept"),
-	RMA_DEPT_ADDR("RMA_Dept"),
-	SPAM_CONTROL_ADDR("SPAM_Control"),
-	VIRUS_CONTROL_ADDR("Virus_Control"),
-	CHALLENGE_HANDLER_ADDR("Challenge_Handler");
+	// address names associated to client_data table columns
+	CUSTOMER_CARE_ADDR("custcareEmail"),
+	SECURITY_DEPT_ADDR("securityEmail"),
+	RMA_DEPT_ADDR("rmaDeptEmail"),
+	SPAM_CONTROL_ADDR("spamCntrlEmail"),
+	VIRUS_CONTROL_ADDR("virusCntrlEmail"),
+	CHALLENGE_HANDLER_ADDR("chaRspHndlrEmail");
 
 	private final String value;
 	private TableColumnName(String value) {
