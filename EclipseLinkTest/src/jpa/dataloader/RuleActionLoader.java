@@ -149,197 +149,197 @@ public class RuleActionLoader extends AbstractDataLoader {
 	
 	void loadRuleActions() {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
-		RuleAction act = null;
+		RuleAction action = null;
 		// for build-in rules
 		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
-		RuleActionDetail dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		RuleActionDetail actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.SUSPEND.name());
-		act = new RuleAction(logic,2,now,null,dtl,"$"+EmailAddrType.FINAL_RCPT_ADDR.getValue()+","+"$"+EmailAddrType.ORIG_RCPT_ADDR.getValue());
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SUSPEND.name());
+		action = new RuleAction(logic,2,now,null,actdtl,"$"+EmailAddrType.FINAL_RCPT_ADDR.getValue()+","+"$"+EmailAddrType.ORIG_RCPT_ADDR.getValue());
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.MARK_DLVR_ERR.name());
-		act = new RuleAction(logic,3,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.MARK_DLVR_ERR.name());
+		action = new RuleAction(logic,3,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
-		act = new RuleAction(logic,4,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
+		action = new RuleAction(logic,4,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.SOFT_BOUNCE.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.BOUNCE_UP.name());
-		act = new RuleAction(logic,2,now,null,dtl,"$"+EmailAddrType.FINAL_RCPT_ADDR.getValue()+","+"$"+EmailAddrType.ORIG_RCPT_ADDR.getValue());
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.BOUNCE_UP.name());
+		action = new RuleAction(logic,2,now,null,actdtl,"$"+EmailAddrType.FINAL_RCPT_ADDR.getValue()+","+"$"+EmailAddrType.ORIG_RCPT_ADDR.getValue());
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
-		act = new RuleAction(logic,3,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
+		action = new RuleAction(logic,3,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.MAILBOX_FULL.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.BOUNCE_UP.name());
-		act = new RuleAction(logic,2,now,null,dtl,"$"+EmailAddrType.FINAL_RCPT_ADDR.getValue()+","+"$"+EmailAddrType.ORIG_RCPT_ADDR.getValue());
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.BOUNCE_UP.name());
+		action = new RuleAction(logic,2,now,null,actdtl,"$"+EmailAddrType.FINAL_RCPT_ADDR.getValue()+","+"$"+EmailAddrType.ORIG_RCPT_ADDR.getValue());
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
-		act = new RuleAction(logic,3,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
+		action = new RuleAction(logic,3,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.SIZE_TOO_LARGE.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.TO_CSR.name());
-		act = new RuleAction(logic,2,now,null,dtl,"$CUSTOMER_CARE_INPUT");
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.TO_CSR.name());
+		action = new RuleAction(logic,2,now,null,actdtl,"$CUSTOMER_CARE_INPUT");
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.MAIL_BLOCK.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.FORWARD.name());
-		act = new RuleAction(logic,2,now,null,dtl,"$" + TableColumnName.SPAM_CONTROL_ADDR);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.FORWARD.name());
+		action = new RuleAction(logic,2,now,null,actdtl,"$" + TableColumnName.SPAM_CONTROL_ADDR);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.SPAM_BLOCK.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.FORWARD.name());
-		act = new RuleAction(logic,2,now,null,dtl,"$"+TableColumnName.SPAM_CONTROL_ADDR);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.FORWARD.name());
+		action = new RuleAction(logic,2,now,null,actdtl,"$"+TableColumnName.SPAM_CONTROL_ADDR);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.VIRUS_BLOCK.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.FORWARD.name());
-		act = new RuleAction(logic,2,now,null,dtl,"$"+TableColumnName.VIRUS_CONTROL_ADDR);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.FORWARD.name());
+		action = new RuleAction(logic,2,now,null,actdtl,"$"+TableColumnName.VIRUS_CONTROL_ADDR);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.CHALLENGE_RESPONSE.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.FORWARD.name());
-		act = new RuleAction(logic,1,now,null,dtl,"$"+TableColumnName.CHALLENGE_HANDLER_ADDR);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.FORWARD.name());
+		action = new RuleAction(logic,1,now,null,actdtl,"$"+TableColumnName.CHALLENGE_HANDLER_ADDR);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.AUTO_REPLY.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
-		act = new RuleAction(logic,2,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
+		action = new RuleAction(logic,2,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.CC_USER.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.DROP.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.DROP.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.MDN_RECEIPT.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.ACTIVATE.name());
-		act = new RuleAction(logic,1,now,null,dtl,"$"+EmailAddrType.FINAL_RCPT_ADDR.getValue()+","+"$"+EmailAddrType.ORIG_RCPT_ADDR.getValue());
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.ACTIVATE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,"$"+EmailAddrType.FINAL_RCPT_ADDR.getValue()+","+"$"+EmailAddrType.ORIG_RCPT_ADDR.getValue());
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.DROP.name());
-		act = new RuleAction(logic,2,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.DROP.name());
+		action = new RuleAction(logic,2,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.CSR_REPLY.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.CSR_REPLY.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.CSR_REPLY.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.SEND_MAIL.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SENDMAIL.name());
-		act = new RuleAction(logic,1,now,null,dtl,"$"+EmailAddrType.TO_ADDR.getValue());
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SENDMAIL.name());
+		action = new RuleAction(logic,1,now,null,actdtl,"$"+EmailAddrType.TO_ADDR.getValue());
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.RMA_REQUEST.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.ACTIVATE.name());
-		act = new RuleAction(logic,2,now,null,dtl,"$"+EmailAddrType.FROM_ADDR.getValue());
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.ACTIVATE.name());
+		action = new RuleAction(logic,2,now,null,actdtl,"$"+EmailAddrType.FROM_ADDR.getValue());
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.TO_CSR.name());
-		act = new RuleAction(logic,3,now,null,dtl,"$RMA_REQUEST_INPUT");
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.TO_CSR.name());
+		action = new RuleAction(logic,3,now,null,actdtl,"$RMA_REQUEST_INPUT");
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.UNSUBSCRIBE.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.UNSUBSCRIBE.name());
-		act = new RuleAction(logic,2,now,null,dtl,"$"+EmailAddrType.FROM_ADDR.getValue());
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.UNSUBSCRIBE.name());
+		action = new RuleAction(logic,2,now,null,actdtl,"$"+EmailAddrType.FROM_ADDR.getValue());
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
-		act = new RuleAction(logic,3,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
+		action = new RuleAction(logic,3,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.SUBSCRIBE.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.SUBSCRIBE.name());
-		act = new RuleAction(logic,2,now,null,dtl,"$"+EmailAddrType.FROM_ADDR.getValue());
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SUBSCRIBE.name());
+		action = new RuleAction(logic,2,now,null,actdtl,"$"+EmailAddrType.FROM_ADDR.getValue());
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.ACTIVATE.name());
-		act = new RuleAction(logic,3,now,null,dtl,"$"+EmailAddrType.FROM_ADDR.getValue());
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.ACTIVATE.name());
+		action = new RuleAction(logic,3,now,null,actdtl,"$"+EmailAddrType.FROM_ADDR.getValue());
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.AUTO_REPLY.name());
-		act = new RuleAction(logic,4,now,null,dtl,"SubscribeByEmailReply");
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.AUTO_REPLY.name());
+		action = new RuleAction(logic,4,now,null,actdtl,"SubscribeByEmailReply");
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
-		act = new RuleAction(logic,5,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
+		action = new RuleAction(logic,5,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.BROADCAST.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.BROADCAST.name());
-		act = new RuleAction(logic,2,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.BROADCAST.name());
+		action = new RuleAction(logic,2,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
-		act = new RuleAction(logic,3,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
+		action = new RuleAction(logic,3,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameEnum.GENERIC.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.ACTIVATE.name());
-		act = new RuleAction(logic,2,now,null,dtl,"$"+EmailAddrType.FROM_ADDR.getValue());
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.ACTIVATE.name());
+		action = new RuleAction(logic,2,now,null,actdtl,"$"+EmailAddrType.FROM_ADDR.getValue());
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.TO_CSR.name());
-		act = new RuleAction(logic,3,now,null,dtl,"$CUSTOMER_CARE_INPUT");
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.TO_CSR.name());
+		action = new RuleAction(logic,3,now,null,actdtl,"$CUSTOMER_CARE_INPUT");
+		actionService.insert(action);
 		
 		try {
 			ClientData client = clientService.getByClientId("JBatchCorp");
@@ -358,55 +358,55 @@ public class RuleActionLoader extends AbstractDataLoader {
 		
 		// for custom rules
 		logic = logicService.getByRuleName(RuleNameOther.UNATTENDED_MAILBOX.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.DROP.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.DROP.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameOther.OUF_OF_OFFICE_AUTO_REPLY.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
-		act = new RuleAction(logic,2,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
+		action = new RuleAction(logic,2,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameOther.CONTACT_US.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameOther.XHEADER_SPAM_SCORE.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
-		act = new RuleAction(logic,2,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.CLOSE.name());
+		action = new RuleAction(logic,2,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameOther.EXECUTABLE_ATTACHMENT.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.DROP.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.DROP.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameOther.HARD_BOUNCE_WATCHED_MAILBOX.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.OPEN.name());
-		act = new RuleAction(logic,2,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.OPEN.name());
+		action = new RuleAction(logic,2,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logic = logicService.getByRuleName(RuleNameOther.HARD_BPUNCE_NO_FINAL_RCPT.getValue());
-		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
+		action = new RuleAction(logic,1,now,null,actdtl,null);
+		actionService.insert(action);
 
-		dtl = detailService.getByActionId(RuleActionEnum.OPEN.name());
-		act = new RuleAction(logic,2,now,null,dtl,null);
-		actionService.insert(act);
+		actdtl = detailService.getByActionId(RuleActionEnum.OPEN.name());
+		action = new RuleAction(logic,2,now,null,actdtl,null);
+		actionService.insert(action);
 
 		logger.info("EntityManager persisted the record.");
 	}
