@@ -2,10 +2,10 @@ package jpa.constant;
 
 /** define rule type constants */
 public enum RuleType {
-	SIMPLE_RULE("Simple"),
-	ALL_RULE("All"),
-	ANY_RULE("Any"),
-	NONE_RULE("None");
+	SIMPLE("Simple"),
+	ALL("All"),
+	ANY("Any"),
+	NONE("None");
 	
 	private String value;
 	private RuleType(String value) {
