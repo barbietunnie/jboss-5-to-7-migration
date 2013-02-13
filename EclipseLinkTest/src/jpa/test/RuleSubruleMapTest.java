@@ -11,7 +11,7 @@ import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
-import jpa.constant.RuleNameBuiltin;
+import jpa.data.preload.RuleNameEnum;
 import jpa.model.RuleLogic;
 import jpa.model.RuleSubruleMap;
 import jpa.model.RuleSubruleMapPK;
@@ -52,13 +52,13 @@ public class RuleSubruleMapTest {
 	
 	@Test
 	public void ruleSubruleMapService1() {
-		List<RuleSubruleMap> lst1 = service.getByRuleName(RuleNameBuiltin.HARD_BOUNCE.getValue());
+		List<RuleSubruleMap> lst1 = service.getByRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
 		assertFalse(lst1.isEmpty());
 		
-		List<RuleSubruleMap> lst2 = service.getByRuleName(RuleNameBuiltin.MAILBOX_FULL.getValue());
+		List<RuleSubruleMap> lst2 = service.getByRuleName(RuleNameEnum.MAILBOX_FULL.getValue());
 		assertFalse(lst2.isEmpty());
 
-		RuleLogic rlg1 = logicService.getByRuleName(RuleNameBuiltin.HARD_BOUNCE.getValue());
+		RuleLogic rlg1 = logicService.getByRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
 		RuleLogic rlg2 = logicService.getByRuleName("MailboxFull_Body_Match");
 
 		// test insert
@@ -78,7 +78,7 @@ public class RuleSubruleMapTest {
 		assertTrue("JpaTest".equals(map3.getUpdtUserId()));
 		
 		// test insert
-		RuleLogic rlg3 = logicService.getByRuleName(RuleNameBuiltin.MAILBOX_FULL.getValue());
+		RuleLogic rlg3 = logicService.getByRuleName(RuleNameEnum.MAILBOX_FULL.getValue());
 		RuleLogic rlg4 = logicService.getByRuleName("HardBounce_Subj_Match");
 		RuleSubruleMap map4 = new RuleSubruleMap();
 		RuleSubruleMapPK pk2 = new RuleSubruleMapPK(rlg3, rlg4);

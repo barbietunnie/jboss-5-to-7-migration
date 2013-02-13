@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
+import jpa.data.preload.SubscriberEnum.Subscriber;
 import jpa.model.EmailAddr;
 import jpa.service.EmailAddrService;
 import jpa.util.SpringUtil;
@@ -34,36 +35,19 @@ public class EmailAddrLoader extends AbstractDataLoader {
 	}
 
 	private void loadEmailAddrs() {
-		EmailAddr data = new EmailAddr();
-		data.setOrigAddress("jsmith@test.com");
-		data.setAddress(data.getOrigAddress());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStatusChangeTime(new Timestamp(System.currentTimeMillis()));
-		data.setStatusChangeUserId("testuser 1");
-		data.setBounceCount(0);
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new EmailAddr();
-		data.setOrigAddress("test@test.com");
-		data.setAddress(data.getOrigAddress());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStatusChangeTime(new Timestamp(System.currentTimeMillis()));
-		data.setStatusChangeUserId("testuser 2");
-		data.setBounceCount(0);
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new EmailAddr();
-		data.setOrigAddress("testuser@test.com");
-		data.setAddress(data.getOrigAddress());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStatusChangeTime(new Timestamp(System.currentTimeMillis()));
-		data.setStatusChangeUserId("testuser 3");
-		data.setBounceCount(0);
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
+		int count = 0;
+		for (Subscriber sub : Subscriber.values()) {
+			EmailAddr data = new EmailAddr();
+			data.setOrigAddress(sub.getAddress());
+			data.setAddress(data.getOrigAddress());
+			data.setStatusId(StatusId.ACTIVE.getValue());
+			data.setStatusChangeTime(new Timestamp(System.currentTimeMillis()));
+			data.setStatusChangeUserId("testuser" + (++count));
+			data.setBounceCount(0);
+			data.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			service.insert(data);
+		}
+		
 		logger.info("EntityManager persisted the record.");
 	}
 	

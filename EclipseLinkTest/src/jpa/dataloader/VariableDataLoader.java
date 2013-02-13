@@ -10,6 +10,8 @@ import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.constant.VariableType;
 import jpa.constant.XHeaderName;
+import jpa.data.preload.ClientVariableEnum;
+import jpa.data.preload.GlobalVariableEnum;
 import jpa.model.ClientData;
 import jpa.model.ClientVariable;
 import jpa.model.ClientVariablePK;
@@ -50,104 +52,48 @@ public class VariableDataLoader extends AbstractDataLoader {
 
 	private void loadClientVariables() throws SQLException {
 		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
-		ClientVariable in = new ClientVariable();
 
 		Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
-		ClientVariablePK pk1;
-
-		pk1 = new ClientVariablePK(cd, "CurrentDateTime", updtTime);
-		in.setClientVariablePK(pk1);
-		in.setVariableValue(null);
-		in.setVariableFormat(null);
-		in.setVariableType(VariableType.DATETIME.getValue());
-		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(CodeType.YES_CODE.getValue());
-		in.setRequired(false);
-
-		cvService.insert(in);
-
-		in = new ClientVariable();
-		pk1 = new ClientVariablePK(cd, "CurrentDate", updtTime);
-		in.setClientVariablePK(pk1);
-		in.setVariableValue(null);
-		in.setVariableFormat("yyyy-MM-dd");
-		in.setVariableType(VariableType.DATETIME.getValue());
-		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(CodeType.YES_CODE.getValue());
-		in.setRequired(false);
-
-		cvService.insert(in);
-
-		in = new ClientVariable();
-		pk1 = new ClientVariablePK(cd, "CurrentTime", updtTime);
-		in.setClientVariablePK(pk1);
-		in.setVariableValue(null);
-		in.setVariableFormat("hh:mm:ss a");
-		in.setVariableType(VariableType.DATETIME.getValue());
-		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(CodeType.YES_CODE.getValue());
-		in.setRequired(false);
-		cvService.insert(in);
+		for (ClientVariableEnum variable : ClientVariableEnum.values()) {
+			ClientVariable in = new ClientVariable();
+			ClientVariablePK pk1 = new ClientVariablePK(cd, variable.name(), updtTime);
+			in.setClientVariablePK(pk1);
+			in.setVariableValue(variable.getDefaultValue());
+			in.setVariableFormat(variable.getVariableFormat());
+			in.setVariableType(variable.getVariableType().getValue());
+			in.setStatusId(StatusId.ACTIVE.getValue());
+			in.setAllowOverride(variable.getAllowOverride().getValue());
+			in.setRequired(false);
+			cvService.insert(in);
+		}
+		
 		logger.info("EntityManager persisted the record.");
 	}
 	
 	private void loadGlobalVariables() throws SQLException {
 		Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
 
+		for (GlobalVariableEnum variable : GlobalVariableEnum.values()) {
+			GlobalVariable in = new GlobalVariable();
+			GlobalVariablePK pk1 = new GlobalVariablePK(variable.name(), updtTime);
+			in.setGlobalVariablePK(pk1);
+			in.setVariableValue(variable.getDefaultValue());
+			in.setVariableFormat(variable.getVariableFormat());
+			in.setVariableType(variable.getVariableType().getValue());
+			in.setStatusId(StatusId.ACTIVE.getValue());
+			in.setAllowOverride(variable.getAllowOverride().getValue());
+			in.setRequired(false);
+			gvService.insert(in);
+		}
+
 		GlobalVariable in = new GlobalVariable();
-		GlobalVariablePK pk1;
-
-		pk1 = new GlobalVariablePK("CurrentDateTime", updtTime);
-		in.setGlobalVariablePK(pk1);
-		in.setVariableValue(null);
-		in.setVariableFormat("yyyy-MM-dd HH:mm:ss");
-		in.setVariableType(VariableType.DATETIME.getValue());
-		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(CodeType.YES_CODE.getValue());
-		in.setRequired(false);
-		gvService.insert(in);
-
-		in = new GlobalVariable();
-		pk1 = new GlobalVariablePK("CurrentDate", updtTime);
-		in.setGlobalVariablePK(pk1);
-		in.setVariableValue(null);
-		in.setVariableFormat("yyyy-MM-dd");
-		in.setVariableType(VariableType.DATETIME.getValue());
-		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride( CodeType.YES_CODE.getValue());
-		in.setRequired(false);
-		gvService.insert(in);
-
-		in = new GlobalVariable();
-		pk1 = new GlobalVariablePK("CurrentTime", updtTime);
-		in.setGlobalVariablePK(pk1);
-		in.setVariableValue(null);
-		in.setVariableFormat("hh:mm:ss a");
-		in.setVariableType(VariableType.DATETIME.getValue());
-		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(CodeType.YES_CODE.getValue());
-		in.setRequired(false);
-		gvService.insert(in);
-
-		in = new GlobalVariable();
-		pk1 = new GlobalVariablePK(XHeaderName.CLIENT_ID.getValue(), updtTime);
+		GlobalVariablePK pk1 = new GlobalVariablePK(XHeaderName.CLIENT_ID.getValue(), updtTime);
 		in.setGlobalVariablePK(pk1);
 		in.setVariableValue(Constants.DEFAULT_CLIENTID);
 		in.setVariableFormat(null);
 		in.setVariableType(VariableType.X_HEADER.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());
 		in.setAllowOverride(CodeType.YES_CODE.getValue());
-		in.setRequired(false);
-		gvService.insert(in);
-		
-		in = new GlobalVariable();
-		pk1 = new GlobalVariablePK("PoweredBySignature", updtTime);
-		in.setGlobalVariablePK(pk1);
-		in.setVariableValue(Constants.POWERED_BY_HTML_TAG);
-		in.setVariableFormat(null);
-		in.setVariableType(VariableType.TEXT.getValue());
-		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setAllowOverride(CodeType.NO_CODE.getValue());
 		in.setRequired(false);
 		gvService.insert(in);
 		
