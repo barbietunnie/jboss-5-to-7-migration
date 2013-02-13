@@ -7,9 +7,9 @@ import jpa.constant.EmailAddrType;
 import jpa.constant.RuleCategory;
 import jpa.constant.RuleCriteria;
 import jpa.constant.RuleDataName;
-import jpa.constant.RuleNameOther;
-import jpa.constant.RuleNameEnum;
-import jpa.constant.RuleType;
+import jpa.constant.RuleNameCustom;
+import jpa.constant.RuleNameBuiltin;
+import jpa.constant.RuleNameSubrule;
 import jpa.constant.StatusId;
 import jpa.constant.XHeaderName;
 import jpa.model.RuleElement;
@@ -43,8 +43,8 @@ public class RuleDataLoader extends AbstractDataLoader {
 		startTransaction();
 		try {
 			loadBuiltInRules();
-			loadCustomRules();
-			loadSubRules();
+			loadCustomAndSubRules();
+			//loadSubRules();
 			loadRuleElements();
 			loadRuleSubruleMaps();
 		} catch (Exception e) {
@@ -57,459 +57,82 @@ public class RuleDataLoader extends AbstractDataLoader {
 
 	private void loadBuiltInRules() {
 		Timestamp startTime = new Timestamp(System.currentTimeMillis());
-		RuleLogic data = new RuleLogic();
-		data.setRuleName(RuleNameOther.UNATTENDED_MAILBOX.getValue());
-		data.setEvalSequence(0);
-		data.setRuleType(RuleType.ALL_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.PRE_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(false);
-		data.setDescription("simply get rid of the messages from the mailbox.");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
 		// built-in rules
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
-		data.setEvalSequence(101);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("from RFC Scan Routine, or from postmaster with sub-rules");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.SOFT_BOUNCE.getValue());
-		data.setEvalSequence(102);
-		data.setRuleType(RuleType.SIMPLE_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("Soft bounce, from RFC scan routine");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.MAILBOX_FULL.getValue());
-		data.setEvalSequence(102);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("Mailbox full from postmaster with sub-rules");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.SIZE_TOO_LARGE.getValue());
-		data.setEvalSequence(104);
-		data.setRuleType(RuleType.SIMPLE_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("Message size too large");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.MAIL_BLOCK.getValue());
-		data.setEvalSequence(105);
-		data.setRuleType(RuleType.ALL_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("Bounced from Bulk Email Filter");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.SPAM_BLOCK.getValue());
-		data.setEvalSequence(106);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("Bounced from Spam blocker");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.VIRUS_BLOCK.getValue());
-		data.setEvalSequence(107);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("Bounced from Virus blocker");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-		
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.CHALLENGE_RESPONSE.getValue());
-		data.setEvalSequence(108);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("Bounced from Challenge Response");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-		
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.AUTO_REPLY.getValue());
-		data.setEvalSequence(109);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("Auto reply from email client software");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.CC_USER.getValue());
-		data.setEvalSequence(110);
-		data.setRuleType(RuleType.SIMPLE_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("from scan routine, message received as recipient of CC or BCC");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.MDN_RECEIPT.getValue());
-		data.setEvalSequence(111);
-		data.setRuleType(RuleType.SIMPLE_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("from RFC scan, Message Delivery Notification, a positive receipt");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.GENERIC.getValue());
-		data.setEvalSequence(112);
-		data.setRuleType(RuleType.SIMPLE_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("Non bounce or system could not recognize it");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.UNSUBSCRIBE.getValue());
-		data.setEvalSequence(113);
-		data.setRuleType(RuleType.ALL_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("remove from a mailing list");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-		
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.SUBSCRIBE.getValue());
-		data.setEvalSequence(114);
-		data.setRuleType(RuleType.ALL_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("subscribe to a mailing list");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-		
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.RMA_REQUEST.getValue());
-		data.setEvalSequence(115);
-		data.setRuleType(RuleType.SIMPLE_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("RMA request, internal only");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.CSR_REPLY.getValue());
-		data.setEvalSequence(116);
-		data.setRuleType(RuleType.SIMPLE_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("called from internal program");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.BROADCAST.getValue());
-		data.setEvalSequence(117);
-		data.setRuleType(RuleType.SIMPLE_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("called from internal program");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameEnum.SEND_MAIL.getValue());
-		data.setEvalSequence(118);
-		data.setRuleType(RuleType.SIMPLE_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(true);
-		data.setDescription("called from internal program");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
+		int ruleSeq = 100;
+		for (RuleNameBuiltin ruleName : RuleNameBuiltin.values()) {
+			RuleLogic data = new RuleLogic();
+			data.setRuleName(ruleName.getValue());
+			data.setEvalSequence(++ruleSeq);
+			data.setRuleType(ruleName.getRuleType().getValue());
+			data.setStatusId(StatusId.ACTIVE.getValue());
+			data.setStartTime(startTime);
+			data.setMailType(Constants.SMTP_MAIL);
+			data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
+			data.setSubrule(false);
+			data.setBuiltinRule(true);
+			data.setDescription(ruleName.getDescription());
+			data.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			service.insert(data);
+		}
 		// end of built-in rules
 
 		logger.info("EntityManager persisted the record.");
 	}
 	
-	private void loadCustomRules() {
+	private void loadCustomAndSubRules() {
 		Timestamp startTime = new Timestamp(System.currentTimeMillis());
 		// Custom Rules
-		RuleLogic data = new RuleLogic();
-		data.setRuleName(RuleNameOther.EXECUTABLE_ATTACHMENT.getValue());
-		data.setEvalSequence(200);
-		data.setRuleType(RuleType.ALL_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.PRE_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(false);
-		data.setDescription("Emails with executable attachment file(s)");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameOther.CONTACT_US.getValue());
-		data.setEvalSequence(201);
-		data.setRuleType(RuleType.ALL_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.PRE_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(false);
-		data.setDescription("Contact Us Form submitted from web site");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
+		int ruleSeq = 200;
+		for (RuleNameCustom ruleName : RuleNameCustom.values()) {
+			RuleLogic data = new RuleLogic();
+			data.setRuleName(ruleName.getValue());
+			if (RuleNameCustom.UNATTENDED_MAILBOX.equals(ruleName)) {
+				data.setEvalSequence(0);
+			}
+			else {
+				data.setEvalSequence(++ruleSeq);
+			}
+			data.setRuleType(ruleName.getRuleType().getValue());
+			data.setStatusId(StatusId.ACTIVE.getValue());
+			data.setStartTime(startTime);
+			data.setMailType(Constants.SMTP_MAIL);
+			data.setRuleCategory(ruleName.getRuleCategory().getValue());
+			data.setSubrule(false);
+			data.setBuiltinRule(false);
+			data.setDescription(ruleName.getDescription());
+			data.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			service.insert(data);
+		}
 		
-		data = new RuleLogic();
-		data.setRuleName(RuleNameOther.OUF_OF_OFFICE_AUTO_REPLY.getValue());
-		data.setEvalSequence(205);
-		data.setRuleType(RuleType.ALL_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.PRE_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(false);
-		data.setDescription("ouf of the office auto reply");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-		
-		data = new RuleLogic();
-		data.setRuleName(RuleNameOther.XHEADER_SPAM_SCORE.getValue());
-		data.setEvalSequence(210);
-		data.setRuleType(RuleType.SIMPLE_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.PRE_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(false);
-		data.setDescription("Examine x-headers for SPAM score.");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-		
-		data = new RuleLogic();
-		data.setRuleName(RuleNameOther.HARD_BOUNCE_WATCHED_MAILBOX.getValue());
-		data.setEvalSequence(215);
-		data.setRuleType(RuleType.ALL_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.POST_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(false);
-		data.setDescription("post rule for hard bounced emails.");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-		
-		data = new RuleLogic();
-		data.setRuleName(RuleNameOther.HARD_BPUNCE_NO_FINAL_RCPT.getValue());
-		data.setEvalSequence(216);
-		data.setRuleType(RuleType.ALL_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.POST_RULE.getValue());
-		data.setSubrule(false);
-		data.setBuiltinRule(false);
-		data.setDescription("post rule for hard bounces without final recipient.");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
+		// Built-in Sub Rules
+		ruleSeq = 225;
+		for (RuleNameSubrule ruleName : RuleNameSubrule.values()) {
+			RuleLogic data = new RuleLogic();
+			data.setRuleName(ruleName.getValue());
+			if (RuleNameCustom.UNATTENDED_MAILBOX.equals(ruleName)) {
+				data.setEvalSequence(0);
+			}
+			else {
+				data.setEvalSequence(++ruleSeq);
+			}
+			data.setRuleType(ruleName.getRuleType().getValue());
+			data.setStatusId(StatusId.ACTIVE.getValue());
+			data.setStartTime(startTime);
+			data.setMailType(Constants.SMTP_MAIL);
+			data.setRuleCategory(ruleName.getRuleCategory().getValue());
+			data.setSubrule(true);
+			data.setBuiltinRule(true);
+			data.setDescription(ruleName.getDescription());
+			data.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			service.insert(data);
+		}
 		
 		logger.info("EntityManager persisted the record.");
 	}
 
-	private void loadSubRules() {
-		Timestamp startTime = new Timestamp(System.currentTimeMillis());
-		// SubRules
-		RuleLogic data = new RuleLogic();
-		data.setRuleName(RuleNameOther.HardBounce_Subj_Match.getValue());
-		data.setEvalSequence(218);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(true);
-		data.setBuiltinRule(true);
-		data.setDescription("Sub rule for hard bounces from postmaster");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameOther.HardBounce_Body_Match.getValue());
-		data.setEvalSequence(219);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(true);
-		data.setBuiltinRule(true);
-		data.setDescription("Sub rule for hard bounces from postmaster");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameOther.MailboxFull_Body_Match.getValue());
-		data.setEvalSequence(220);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(true);
-		data.setBuiltinRule(true);
-		data.setDescription("Sub rule for mailbox full");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameOther.SpamBlock_Body_Match.getValue());
-		data.setEvalSequence(221);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(true);
-		data.setBuiltinRule(true);
-		data.setDescription("Sub rule for spam block");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameOther.VirusBlock_Body_Match.getValue());
-		data.setEvalSequence(222);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(true);
-		data.setBuiltinRule(true);
-		data.setDescription("Sub rule for virus block");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		data = new RuleLogic();
-		data.setRuleName(RuleNameOther.ChalResp_Body_Match.getValue());
-		data.setEvalSequence(223);
-		data.setRuleType(RuleType.ANY_RULE.getValue());
-		data.setStatusId(StatusId.ACTIVE.getValue());
-		data.setStartTime(startTime);
-		data.setMailType(Constants.SMTP_MAIL);
-		data.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
-		data.setSubrule(true);
-		data.setBuiltinRule(true);
-		data.setDescription("Sub rule for challenge response");
-		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		service.insert(data);
-
-		logger.info("EntityManager persisted the record.");
-	}
 	
 	private void loadRuleElements() {
-		RuleLogic obj = service.getByRuleName(RuleNameOther.UNATTENDED_MAILBOX.getValue());
+		RuleLogic obj = service.getByRuleName(RuleNameCustom.UNATTENDED_MAILBOX.getValue());
 		RuleElementPK pk = null;
 		
 		RuleElement data = new RuleElement();
@@ -530,7 +153,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setTargetText("^<?.+@.+>?$"); // make sure the return path is not blank or <>
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
+		obj = service.getByRuleName(RuleNameBuiltin.HARD_BOUNCE.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -556,7 +179,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(",");
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameEnum.MAILBOX_FULL.getValue());
+		obj = service.getByRuleName(RuleNameBuiltin.MAILBOX_FULL.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -571,7 +194,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(",");
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameEnum.SPAM_BLOCK.getValue());
+		obj = service.getByRuleName(RuleNameBuiltin.SPAM_BLOCK.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -638,7 +261,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameEnum.CHALLENGE_RESPONSE.getValue());
+		obj = service.getByRuleName(RuleNameBuiltin.CHALLENGE_RESPONSE.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -684,7 +307,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameEnum.AUTO_REPLY.getValue());
+		obj = service.getByRuleName(RuleNameBuiltin.AUTO_REPLY.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -731,7 +354,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameEnum.VIRUS_BLOCK.getValue());
+		obj = service.getByRuleName(RuleNameBuiltin.VIRUS_BLOCK.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -809,7 +432,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameEnum.MAIL_BLOCK.getValue());
+		obj = service.getByRuleName(RuleNameBuiltin.MAIL_BLOCK.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -837,7 +460,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameEnum.BROADCAST.getValue());
+		obj = service.getByRuleName(RuleNameBuiltin.BROADCAST.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -846,13 +469,13 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.EQUALS.getValue());
 		data.setCaseSensitive(true);
-		data.setTargetText(RuleNameEnum.BROADCAST.getValue());
+		data.setTargetText(RuleNameBuiltin.BROADCAST.getValue());
 		data.setExclusions(null);
 		data.setExclListProcName(null);
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameEnum.UNSUBSCRIBE.getValue());
+		obj = service.getByRuleName(RuleNameBuiltin.UNSUBSCRIBE.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -882,7 +505,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameEnum.SUBSCRIBE.getValue());
+		obj = service.getByRuleName(RuleNameBuiltin.SUBSCRIBE.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -912,7 +535,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameEnum.RMA_REQUEST.getValue());
+		obj = service.getByRuleName(RuleNameBuiltin.RMA_REQUEST.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -921,14 +544,14 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.EQUALS.getValue());
 		data.setCaseSensitive(true);
-		data.setTargetText(RuleNameEnum.RMA_REQUEST.getValue());
+		data.setTargetText(RuleNameBuiltin.RMA_REQUEST.getValue());
 		data.setTargetProcName(null);
 		data.setExclusions(null);
 		data.setExclListProcName(null);
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.OUF_OF_OFFICE_AUTO_REPLY.getValue());
+		obj = service.getByRuleName(RuleNameCustom.OUF_OF_OFFICE_AUTO_REPLY.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -958,7 +581,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.CONTACT_US.getValue());
+		obj = service.getByRuleName(RuleNameCustom.CONTACT_US.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -988,7 +611,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.EXECUTABLE_ATTACHMENT.getValue());
+		obj = service.getByRuleName(RuleNameCustom.EXECUTABLE_ATTACHMENT.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -1018,7 +641,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.XHEADER_SPAM_SCORE.getValue());
+		obj = service.getByRuleName(RuleNameCustom.XHEADER_SPAM_SCORE.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -1034,7 +657,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.HARD_BOUNCE_WATCHED_MAILBOX.getValue());
+		obj = service.getByRuleName(RuleNameCustom.HARD_BOUNCE_WATCHED_MAILBOX.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -1043,7 +666,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.EQUALS.getValue());
 		data.setCaseSensitive(true);
-		data.setTargetText(RuleNameEnum.HARD_BOUNCE.getValue());
+		data.setTargetText(RuleNameBuiltin.HARD_BOUNCE.getValue());
 		data.setTargetProcName(null);
 		data.setExclusions(null);
 		data.setExclListProcName(null);
@@ -1064,7 +687,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.HARD_BPUNCE_NO_FINAL_RCPT.getValue());
+		obj = service.getByRuleName(RuleNameCustom.HARD_BPUNCE_NO_FINAL_RCPT.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -1073,7 +696,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setHeaderName(null);
 		data.setCriteria(RuleCriteria.EQUALS.getValue());
 		data.setCaseSensitive(true);
-		data.setTargetText(RuleNameEnum.HARD_BOUNCE.getValue());
+		data.setTargetText(RuleNameBuiltin.HARD_BOUNCE.getValue());
 		data.setTargetProcName(null);
 		data.setExclusions(null);
 		data.setExclListProcName(null);
@@ -1108,7 +731,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.HardBounce_Subj_Match.getValue());
+		obj = service.getByRuleName(RuleNameSubrule.HardBounce_Subj_Match.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -1130,7 +753,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.HardBounce_Body_Match.getValue());
+		obj = service.getByRuleName(RuleNameSubrule.HardBounce_Body_Match.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -1149,7 +772,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.MailboxFull_Body_Match.getValue());
+		obj = service.getByRuleName(RuleNameSubrule.MailboxFull_Body_Match.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -1179,7 +802,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.SpamBlock_Body_Match.getValue());
+		obj = service.getByRuleName(RuleNameSubrule.SpamBlock_Body_Match.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -1195,7 +818,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.ChalResp_Body_Match.getValue());
+		obj = service.getByRuleName(RuleNameSubrule.ChalResp_Body_Match.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -1215,7 +838,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setDelimiter(null);
 		elementService.insert(data);
 		
-		obj = service.getByRuleName(RuleNameOther.VirusBlock_Body_Match.getValue());
+		obj = service.getByRuleName(RuleNameSubrule.VirusBlock_Body_Match.getValue());
 
 		data = new RuleElement();
 		pk = new RuleElementPK(obj,0);
@@ -1271,8 +894,8 @@ public class RuleDataLoader extends AbstractDataLoader {
 	}
 	
 	private void loadRuleSubruleMaps() {
-		RuleLogic obj1 = service.getByRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
-		RuleLogic obj2 = service.getByRuleName(RuleNameOther.HardBounce_Subj_Match.getValue());
+		RuleLogic obj1 = service.getByRuleName(RuleNameBuiltin.HARD_BOUNCE.getValue());
+		RuleLogic obj2 = service.getByRuleName(RuleNameSubrule.HardBounce_Subj_Match.getValue());
 		RuleSubruleMapPK pk1;
 		
 		RuleSubruleMap data = new RuleSubruleMap();
@@ -1283,7 +906,7 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		mapService.insert(data);
 		
-		obj2 = service.getByRuleName(RuleNameOther.HardBounce_Body_Match.getValue());
+		obj2 = service.getByRuleName(RuleNameSubrule.HardBounce_Body_Match.getValue());
 		
 		data = new RuleSubruleMap();
 		pk1 = new RuleSubruleMapPK(obj1,obj2);
@@ -1293,8 +916,8 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		mapService.insert(data);
 		
-		obj1 = service.getByRuleName(RuleNameEnum.MAILBOX_FULL.getValue());
-		obj2 = service.getByRuleName(RuleNameOther.MailboxFull_Body_Match.getValue());
+		obj1 = service.getByRuleName(RuleNameBuiltin.MAILBOX_FULL.getValue());
+		obj2 = service.getByRuleName(RuleNameSubrule.MailboxFull_Body_Match.getValue());
 			
 		data = new RuleSubruleMap();
 		pk1 = new RuleSubruleMapPK(obj1,obj2);
@@ -1304,8 +927,8 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		mapService.insert(data);
 			
-		obj1 = service.getByRuleName(RuleNameEnum.SPAM_BLOCK.getValue());
-		obj2 = service.getByRuleName(RuleNameOther.SpamBlock_Body_Match.getValue());
+		obj1 = service.getByRuleName(RuleNameBuiltin.SPAM_BLOCK.getValue());
+		obj2 = service.getByRuleName(RuleNameSubrule.SpamBlock_Body_Match.getValue());
 			
 		data = new RuleSubruleMap();
 		pk1 = new RuleSubruleMapPK(obj1,obj2);
@@ -1315,8 +938,8 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		mapService.insert(data);
 			
-		obj1 = service.getByRuleName(RuleNameEnum.CHALLENGE_RESPONSE.getValue());
-		obj2 = service.getByRuleName(RuleNameOther.ChalResp_Body_Match.getValue());
+		obj1 = service.getByRuleName(RuleNameBuiltin.CHALLENGE_RESPONSE.getValue());
+		obj2 = service.getByRuleName(RuleNameSubrule.ChalResp_Body_Match.getValue());
 			
 		data = new RuleSubruleMap();
 		pk1 = new RuleSubruleMapPK(obj1,obj2);
@@ -1326,8 +949,8 @@ public class RuleDataLoader extends AbstractDataLoader {
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		mapService.insert(data);
 			
-		obj1 = service.getByRuleName(RuleNameEnum.VIRUS_BLOCK.getValue());
-		obj2 = service.getByRuleName(RuleNameOther.VirusBlock_Body_Match.getValue());
+		obj1 = service.getByRuleName(RuleNameBuiltin.VIRUS_BLOCK.getValue());
+		obj2 = service.getByRuleName(RuleNameSubrule.VirusBlock_Body_Match.getValue());
 			
 		data = new RuleSubruleMap();
 		pk1 = new RuleSubruleMapPK(obj1,obj2);

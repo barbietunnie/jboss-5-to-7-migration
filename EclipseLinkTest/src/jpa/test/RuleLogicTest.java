@@ -45,12 +45,12 @@ public class RuleLogicTest {
 	RuleLogicService service;
 	
 	@Test
-	public void idTokensService1() {
+	public void ruleLogicService1() {
 		// test insert
 		RuleLogic obj1 = new RuleLogic();
 		obj1.setRuleName("testrule1");
 		obj1.setEvalSequence(0);
-		obj1.setRuleType(RuleType.ALL_RULE.getValue());
+		obj1.setRuleType(RuleType.ALL.getValue());
 		obj1.setStartTime(new java.sql.Timestamp(System.currentTimeMillis()));
 		obj1.setMailType(Constants.SMTP_MAIL);
 		obj1.setRuleCategory(RuleCategory.PRE_RULE.getValue());

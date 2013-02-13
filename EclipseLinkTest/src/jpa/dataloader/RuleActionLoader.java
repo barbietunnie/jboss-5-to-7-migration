@@ -8,8 +8,8 @@ import javax.persistence.NoResultException;
 import jpa.constant.EmailAddrType;
 import jpa.constant.RuleActionEnum;
 import jpa.constant.RuleDataTypeEnum;
-import jpa.constant.RuleNameOther;
-import jpa.constant.RuleNameEnum;
+import jpa.constant.RuleNameCustom;
+import jpa.constant.RuleNameBuiltin;
 import jpa.constant.TableColumnName;
 import jpa.model.ClientData;
 import jpa.model.RuleAction;
@@ -119,8 +119,8 @@ public class RuleActionLoader extends AbstractDataLoader {
 		// insert rule names
 		tp = new RuleDataType(RuleDataTypeEnum.RULE_NAME.name(), RuleDataTypeEnum.RULE_NAME.getDescription());
 		typeService.insert(tp);
-		for (RuleNameEnum name : RuleNameEnum.values()) {
-			if (RuleNameEnum.GENERIC.equals(name)) {
+		for (RuleNameBuiltin name : RuleNameBuiltin.values()) {
+			if (RuleNameBuiltin.GENERIC.equals(name)) {
 				continue; // skip GENERIC
 			}
 			String ruleName = name.getValue();
@@ -151,7 +151,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		RuleAction action = null;
 		// for build-in rules
-		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
+		RuleLogic logic = logicService.getByRuleName(RuleNameBuiltin.HARD_BOUNCE.getValue());
 		RuleActionDetail actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -168,7 +168,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,4,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.SOFT_BOUNCE.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.SOFT_BOUNCE.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -181,7 +181,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,3,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.MAILBOX_FULL.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.MAILBOX_FULL.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -194,7 +194,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,3,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.SIZE_TOO_LARGE.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.SIZE_TOO_LARGE.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -203,7 +203,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,2,now,null,actdtl,"$CUSTOMER_CARE_INPUT");
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.MAIL_BLOCK.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.MAIL_BLOCK.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -212,7 +212,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,2,now,null,actdtl,"$" + TableColumnName.SPAM_CONTROL_ADDR);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.SPAM_BLOCK.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.SPAM_BLOCK.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -221,7 +221,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,2,now,null,actdtl,"$"+TableColumnName.SPAM_CONTROL_ADDR);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.VIRUS_BLOCK.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.VIRUS_BLOCK.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -230,12 +230,12 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,2,now,null,actdtl,"$"+TableColumnName.VIRUS_CONTROL_ADDR);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.CHALLENGE_RESPONSE.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.CHALLENGE_RESPONSE.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.FORWARD.name());
 		action = new RuleAction(logic,1,now,null,actdtl,"$"+TableColumnName.CHALLENGE_HANDLER_ADDR);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.AUTO_REPLY.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.AUTO_REPLY.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -244,12 +244,12 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,2,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.CC_USER.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.CC_USER.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.DROP.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.MDN_RECEIPT.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.MDN_RECEIPT.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.ACTIVATE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,"$"+EmailAddrType.FINAL_RCPT_ADDR.getValue()+","+"$"+EmailAddrType.ORIG_RCPT_ADDR.getValue());
 		actionService.insert(action);
@@ -258,17 +258,17 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,2,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.CSR_REPLY.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.CSR_REPLY.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.CSR_REPLY.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.SEND_MAIL.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.SEND_MAIL.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SENDMAIL.name());
 		action = new RuleAction(logic,1,now,null,actdtl,"$"+EmailAddrType.TO_ADDR.getValue());
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.RMA_REQUEST.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.RMA_REQUEST.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -281,7 +281,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,3,now,null,actdtl,"$RMA_REQUEST_INPUT");
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.UNSUBSCRIBE.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.UNSUBSCRIBE.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -294,7 +294,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,3,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.SUBSCRIBE.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.SUBSCRIBE.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -315,7 +315,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,5,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.BROADCAST.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.BROADCAST.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -328,7 +328,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,3,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameEnum.GENERIC.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.GENERIC.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -347,7 +347,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		}
 		catch (NoResultException e) {}
 		/*
-		logic = logicService.getByRuleName(RuleNameEnum.GENERIC.getValue());
+		logic = logicService.getByRuleName(RuleNameBuiltin.GENERIC.getValue());
 		dtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		act = new RuleAction(logic,1,now,client,dtl,null);
 		actionService.insert(act);
@@ -357,12 +357,12 @@ public class RuleActionLoader extends AbstractDataLoader {
 		 */
 		
 		// for custom rules
-		logic = logicService.getByRuleName(RuleNameOther.UNATTENDED_MAILBOX.getValue());
+		logic = logicService.getByRuleName(RuleNameCustom.UNATTENDED_MAILBOX.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.DROP.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameOther.OUF_OF_OFFICE_AUTO_REPLY.getValue());
+		logic = logicService.getByRuleName(RuleNameCustom.OUF_OF_OFFICE_AUTO_REPLY.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -371,12 +371,12 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,2,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameOther.CONTACT_US.getValue());
+		logic = logicService.getByRuleName(RuleNameCustom.CONTACT_US.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameOther.XHEADER_SPAM_SCORE.getValue());
+		logic = logicService.getByRuleName(RuleNameCustom.XHEADER_SPAM_SCORE.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -385,12 +385,12 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,2,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameOther.EXECUTABLE_ATTACHMENT.getValue());
+		logic = logicService.getByRuleName(RuleNameCustom.EXECUTABLE_ATTACHMENT.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.DROP.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameOther.HARD_BOUNCE_WATCHED_MAILBOX.getValue());
+		logic = logicService.getByRuleName(RuleNameCustom.HARD_BOUNCE_WATCHED_MAILBOX.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
@@ -399,7 +399,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		action = new RuleAction(logic,2,now,null,actdtl,null);
 		actionService.insert(action);
 
-		logic = logicService.getByRuleName(RuleNameOther.HARD_BPUNCE_NO_FINAL_RCPT.getValue());
+		logic = logicService.getByRuleName(RuleNameCustom.HARD_BPUNCE_NO_FINAL_RCPT.getValue());
 		actdtl = detailService.getByActionId(RuleActionEnum.SAVE.name());
 		action = new RuleAction(logic,1,now,null,actdtl,null);
 		actionService.insert(action);
