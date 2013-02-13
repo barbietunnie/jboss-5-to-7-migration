@@ -1,7 +1,8 @@
-package jpa.constant;
+package jpa.data.preload;
 
 public enum RuleDataTypeEnum {
 	EMAIL_ADDRESS("Email Address"),
+	EMAIL_PROPERTY("Email Property"),
 	TEMPLATE_ID("Template Id"),
 	QUEUE_NAME("Queue Name"),
 	RULE_NAME("Rule Name"),

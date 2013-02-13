@@ -5,6 +5,9 @@ import java.sql.Timestamp;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
+import jpa.data.preload.MailingListEnum;
+import jpa.data.preload.SubscriberEnum;
+import jpa.data.preload.SubscriberEnum.Subscriber;
 import jpa.model.ClientData;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
@@ -51,45 +54,22 @@ public class MailingListDataLoader extends AbstractDataLoader {
 		String domain = client.getDomainName();
 
 		Timestamp createTime = new Timestamp(new java.util.Date().getTime());
+		for (MailingListEnum mlist : MailingListEnum.values()) {
+			if (mlist.isProd()) continue;
+			MailingList in = new MailingList();
+			in.setClientData(client);
+			in.setListId(mlist.name());
+			in.setDisplayName(mlist.getDisplayName());
+			in.setAcctUserName(mlist.getAcctName());
+			in.setDescription(mlist.getDescription());
+			in.setStatusId(mlist.getStatusId().getValue());
+			in.setBuiltin(mlist.isBuiltin());
+			in.setCreateTime(createTime);
+			in.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			in.setListMasterEmailAddr("sitemaster@"+domain);
+			mlistService.insert(in);
+		}
 		
-		MailingList in = new MailingList();
-		in.setClientData(client);
-		in.setListId("SMPLLST1");
-		in.setDisplayName("Sample List 1");
-		in.setAcctUserName("demolist1");
-		in.setDescription("Sample mailing list 1");
-		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setBuiltin(false);
-		in.setCreateTime(createTime);
-		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		in.setListMasterEmailAddr("sitemaster@"+domain);
-		mlistService.insert(in);
-
-		in = new MailingList();
-		in.setClientData(client);
-		in.setListId("SMPLLST2");
-		in.setDisplayName("Sample List 2");
-		in.setAcctUserName("demolist2");
-		in.setDescription("Sample mailing list 2");
-		in.setStatusId(StatusId.ACTIVE.getValue());
-		in.setBuiltin(false);
-		in.setCreateTime(createTime);
-		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		in.setListMasterEmailAddr("sitemaster@"+domain);
-		mlistService.insert(in);
-
-		in = new MailingList();
-		in.setClientData(client);
-		in.setListId("SYSLIST1");
-		in.setDisplayName("NOREPLY Empty List");
-		in.setAcctUserName("noreply");
-		in.setDescription("Auto-Responder, used by Subscription and confirmation Templates");
-		in.setStatusId(StatusId.INACTIVE.getValue());
-		in.setBuiltin(true);
-		in.setCreateTime(createTime);
-		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		in.setListMasterEmailAddr("sitemaster@" + domain);
-		mlistService.insert(in);
 		logger.info("EntityManager persisted the record.");
 	}
 	
@@ -99,88 +79,47 @@ public class MailingListDataLoader extends AbstractDataLoader {
 
 		Timestamp createTime = new Timestamp(new java.util.Date().getTime());
 		
-		MailingList in = new MailingList();
-		in.setClientData(client);
-		in.setListId("ORDERLST");
-		in.setDisplayName("Sales ORDER List");
-		in.setAcctUserName("support");
-		in.setDescription("Auto-Responder, used by order processing");
-		in.setStatusId(StatusId.INACTIVE.getValue());
-		in.setBuiltin(true);
-		in.setCreateTime(createTime);
-		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		// TODO get domain name from properties file
-		in.setListMasterEmailAddr("sitemaster@" + domain);
-		mlistService.insert(in);
+		for (MailingListEnum mlist : MailingListEnum.values()) {
+			if (!mlist.isProd()) continue;
+			MailingList in = new MailingList();
+			in.setClientData(client);
+			in.setListId(mlist.name());
+			in.setDisplayName(mlist.getDisplayName());
+			in.setAcctUserName(mlist.getAcctName());
+			in.setDescription(mlist.getDescription());
+			in.setStatusId(mlist.getStatusId().getValue());
+			in.setBuiltin(mlist.isBuiltin());
+			in.setCreateTime(createTime);
+			in.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			// TODO get domain name from properties file
+			in.setListMasterEmailAddr("sitemaster@"+domain);
+			mlistService.insert(in);
+		}
 
 		logger.info("EntityManager persisted the record.");
 	}
 	
 	private void loadSubscribers() {
-		MailingList mlist1 = mlistService.getByListId("SMPLLST1");
-		MailingList mlist2 = mlistService.getByListId("SMPLLST2");
 		java.sql.Timestamp createTime = new java.sql.Timestamp(System.currentTimeMillis());
 		
-		Subscription sub = new Subscription();
-		sub.setMailingList(mlist1);
-		sub.setSubscribed(true);
-		sub.setStatusId(StatusId.ACTIVE.getValue());
-		sub.setCreateTime(createTime);
-		sub.setEmailAddr(emailService.findSertAddress("jsmith@test.com"));
-		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		subService.insert(sub);
-		
-		sub = new Subscription();
-		sub.setMailingList(mlist1);
-		sub.setSubscribed(true);
-		sub.setStatusId(StatusId.ACTIVE.getValue());
-		sub.setCreateTime(createTime);
-		sub.setEmailAddr(emailService.findSertAddress("test@test.com"));
-		sub.setClickCount(1);
-		sub.setOpenCount(2);
-		sub.setSentCount(3);
-		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		subService.insert(sub);
-
-		sub = new Subscription();
-		sub.setMailingList(mlist1);
-		sub.setSubscribed(true);
-		sub.setStatusId(StatusId.ACTIVE.getValue());
-		sub.setCreateTime(createTime);
-		sub.setEmailAddr(emailService.findSertAddress("testuser@test.com"));
-		sub.setClickCount(2);
-		sub.setOpenCount(3);
-		sub.setSentCount(4);
-		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		subService.insert(sub);
-	
-		emailService.findSertAddress("jsmith@test.com");
-		sub = new Subscription();
-		sub.setMailingList(mlist2);
-		sub.setSubscribed(true);
-		sub.setStatusId(StatusId.ACTIVE.getValue());
-		sub.setCreateTime(createTime);
-		sub.setEmailAddr(emailService.findSertAddress("jsmith@test.com"));
-		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		subService.insert(sub);
-		
-		sub = new Subscription();
-		sub.setMailingList(mlist2);
-		sub.setSubscribed(true);
-		sub.setStatusId(StatusId.ACTIVE.getValue());
-		sub.setCreateTime(createTime);
-		sub.setEmailAddr(emailService.findSertAddress("test@test.com"));
-		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		subService.insert(sub);
-
-		sub = new Subscription();
-		sub.setMailingList(mlist2);
-		sub.setSubscribed(true);
-		sub.setStatusId(StatusId.ACTIVE.getValue());
-		sub.setCreateTime(createTime);
-		sub.setEmailAddr(emailService.findSertAddress("testuser@test.com"));
-		sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		subService.insert(sub);
+		for (SubscriberEnum sublst : SubscriberEnum.values()) {
+			MailingList mlist = mlistService.getByListId(sublst.getMailingList().name());
+			for (Subscriber subscriber : sublst.getSubscribers()) {
+				Subscription sub = new Subscription();
+				sub.setMailingList(mlist);
+				sub.setSubscribed(sublst.isSubscribed());
+				sub.setStatusId(StatusId.ACTIVE.getValue());
+				sub.setCreateTime(createTime);
+				sub.setEmailAddr(emailService.findSertAddress(subscriber.getAddress()));
+				if (Subscriber.Subscriber2.equals(subscriber)) {
+					sub.setClickCount(1);
+					sub.setOpenCount(2);
+					sub.setSentCount(3);
+				}
+				sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
+				subService.insert(sub);
+			}
+		}
 	}
 }
 

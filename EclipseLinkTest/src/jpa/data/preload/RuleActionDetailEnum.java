@@ -1,9 +1,9 @@
-package jpa.constant;
+package jpa.data.preload;
 
 /*
  * define rule actions
  */
-public enum RuleActionEnum {
+public enum RuleActionDetailEnum {
 	ACTIVATE("activete email address","activateService",null,RuleDataTypeEnum.EMAIL_ADDRESS),
 	BOUNCE_UP("increase bounce count","bounceService",null,RuleDataTypeEnum.EMAIL_ADDRESS),
 	CLOSE("close the message","closeService",null,null),
@@ -27,7 +27,7 @@ public enum RuleActionEnum {
 	private String className;
 	private RuleDataTypeEnum dataType;
 
-	private RuleActionEnum(String description, String serviceName,
+	private RuleActionDetailEnum(String description, String serviceName,
 			String className, RuleDataTypeEnum dataType) {
 		this.description = description;
 		this.serviceName = serviceName;

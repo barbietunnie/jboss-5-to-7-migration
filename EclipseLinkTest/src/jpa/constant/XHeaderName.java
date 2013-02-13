@@ -19,7 +19,9 @@ public enum XHeaderName {
 	CUSTOMER_ID("X-Customer_Id"),
 	PRIORITY("X-Priority"),
 	MAILER("X-Mailer"),
-	RETURN_PATH("Return-Path");
+	RETURN_PATH("Return-Path"),
+	PRECEDENCE("Precedence"),
+	SPAM_SCORE("X_Spam_Score");
 
 	private final String value;
 	private XHeaderName(String value) {

@@ -44,7 +44,7 @@ public class CustomerDataLoader extends AbstractDataLoader {
 
 	private void loadCustomerData() {
 		String addr = "jsmith@test.com";
-		EmailAddr emailaddr = emailAddrService.getByAddress(addr);
+		EmailAddr emailaddr = emailAddrService.findSertAddress(addr);
 		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 		CustomerData data = new CustomerData();
 		data.setClientData(cd);
