@@ -26,6 +26,39 @@
 	  <appender-ref ref="FILE"/>
    </logger>
 
+   <logger name="org.hibernate.internal">
+	  <level value="INFO"/> 
+	  <appender-ref ref="CONSOLE"/>
+   </logger>
+   <logger name="org.hibernate.engine.internal">
+	  <level value="INFO"/> 
+	  <appender-ref ref="CONSOLE"/>
+   </logger>
+   <logger name="org.hibernate.id">
+	  <level value="INFO"/> 
+	  <appender-ref ref="CONSOLE"/>
+   </logger>
+   <logger name="org.hibernate.type">
+	  <level value="INFO"/> 
+	  <appender-ref ref="CONSOLE"/>
+   </logger>
+   <logger name="org.hibernate.ejb">
+	  <level value="INFO"/> 
+	  <appender-ref ref="CONSOLE"/>
+   </logger>
+   <logger name="org.hibernate.cfg">
+	  <level value="INFO"/> 
+	  <appender-ref ref="CONSOLE"/>
+   </logger>
+   <logger name="org.hibernate.persister">
+	  <level value="INFO"/> 
+	  <appender-ref ref="CONSOLE"/>
+   </logger>
+   <logger name="org.hibernate.loader">
+	  <level value="INFO"/> 
+	  <appender-ref ref="CONSOLE"/>
+   </logger>
+
    <logger name="jpa">
 	  <level value="DEBUG"/>
 	  <appender-ref ref="FILE"/>

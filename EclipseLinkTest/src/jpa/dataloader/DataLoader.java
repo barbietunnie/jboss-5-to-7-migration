@@ -1,5 +1,7 @@
 package jpa.dataloader;
 
+import jpa.util.SpringUtil;
+
 public class DataLoader {
 
 	public static void main(String[] args) {
@@ -10,6 +12,11 @@ public class DataLoader {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public DataLoader() {
+		// to trigger JPA to generate DDL (create tables, etc.)
+		SpringUtil.getAppContext().refresh();
 	}
 	
 	void loadAllTables() {

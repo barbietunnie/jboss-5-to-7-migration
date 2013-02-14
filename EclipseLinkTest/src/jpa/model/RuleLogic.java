@@ -36,10 +36,10 @@ public class RuleLogic extends BaseModel implements Serializable {
 	@Transient
 	public static final String MAPPING_RULE_LOGIC_WITH_COUNT = "RuleLogictWithCount";
 
-	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="RuleLogic", orphanRemoval=true)
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ruleElementPK.ruleLogic", orphanRemoval=true)
 	private List<RuleElement> ruleElements;
 	
-	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="RuleLogic", orphanRemoval=true)
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ruleSubruleMapPK.ruleLogic", orphanRemoval=true)
 	private List<RuleSubruleMap> ruleSubruleMaps;
 	
 	@Column(nullable=false, length=26)

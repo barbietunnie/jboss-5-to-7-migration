@@ -40,7 +40,7 @@ public class MailingListService {
 	/*
 	 * return an array with 4 elements:
 	 * 1) MailingList
-	 * 2) through 4) BigDecimal
+	 * 2) through 4) BigDecimal (MySQL) or BigInteger (PostgreSQL)
 	 */
 	public Object[] getByListIdWithCounts(String listId) throws NoResultException {
 		String sql = "select a.*, " +
