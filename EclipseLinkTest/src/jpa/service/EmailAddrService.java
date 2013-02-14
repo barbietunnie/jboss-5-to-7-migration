@@ -156,7 +156,7 @@ public class EmailAddrService {
 		String prodName = null;
 		try {
 			prodName = ds.getConnection().getMetaData().getDatabaseProductName();
-			logger.info("Database product name: " + prodName);
+			logger.info("Database product name: " + prodName); // returned "MySQL" for MySQL database
 		}
 		catch (SQLException e) {}
 		String sql = "select t.* from Email_Addr t where address REGEXP '" + addressPattern + "' ";
