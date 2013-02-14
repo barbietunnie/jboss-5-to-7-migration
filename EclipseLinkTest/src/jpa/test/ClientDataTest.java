@@ -1,13 +1,20 @@
 package jpa.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
 import jpa.model.ClientData;
+import jpa.model.ClientVariable;
+import jpa.model.CustomerData;
+import jpa.model.UserData;
 import jpa.service.ClientDataService;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -35,7 +42,7 @@ public class ClientDataTest {
 	ClientDataService service;
 
 	@Test
-	public void ClientsService() {
+	public void clientDataService() {
 		List<ClientData> list = service.getAll();
 		assertFalse(list.isEmpty());
 		
@@ -63,6 +70,9 @@ public class ClientDataTest {
 			throw new RuntimeException(e);
 		}
 		tkn2.setClientId(Constants.DEFAULT_CLIENTID + "_2");
+		tkn2.setClientVariables(new ArrayList<ClientVariable>());
+		tkn2.setCustomers(new ArrayList<CustomerData>());
+		tkn2.setUserDatas(new ArrayList<UserData>());
 		service.insert(tkn2);
 		
 		ClientData tkn3 = service.getByClientId(tkn2.getClientId());

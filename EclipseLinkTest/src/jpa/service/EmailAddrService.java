@@ -1,5 +1,6 @@
 package jpa.service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -7,6 +8,7 @@ import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.Query;
+import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.model.EmailAddr;
 import jpa.util.EmailAddrUtil;
+import jpa.util.SpringUtil;
 import jpa.util.StringUtil;
 
 @Component("emailAddrService")
@@ -149,7 +152,17 @@ public class EmailAddrService {
 	 * 2) find by email user name - '^myname@' or 'noreply@'
 	 */
 	public List<EmailAddr> getByAddressPattern(String addressPattern) {
+		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("mysqlDataSource");
+		String prodName = null;
+		try {
+			prodName = ds.getConnection().getMetaData().getDatabaseProductName();
+			logger.info("Database product name: " + prodName);
+		}
+		catch (SQLException e) {}
 		String sql = "select t.* from Email_Addr t where address REGEXP '" + addressPattern + "' ";
+		if ("PostgreSQL".equalsIgnoreCase(prodName)) {
+			sql = "select t.* from Email_Addr t where address ~ '" + addressPattern + "' ";
+		}
 		try {
 			Query query = em.createNativeQuery(sql, EmailAddr.MAPPING_EMAIL_ADDR_ENTITY);
 			@SuppressWarnings("unchecked")

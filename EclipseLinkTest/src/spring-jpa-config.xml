@@ -23,12 +23,38 @@
 			p:entityManagerFactory-ref="entityManagerFactory" />
 
 	<!-- Data Sources -->
-	<bean id="mysqlDataSource"
+	<bean id="mysqlDataSource_v0"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${dataSource.driverClassName}" />
 		<property name="url" value="${dataSource.url}" />
 		<property name="username" value="${dataSource.username}" />
 		<property name="password" value="${dataSource.password}" />
+	</bean>
+
+	<bean id="mysqlDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<!-- Connection Settings -->
+		<property name="driverClassName" value="${dataSource.driverClassName}" />
+		<property name="defaultAutoCommit" value="${dataSource.defaultAutoCommit}" />
+		<property name="url" value="${dataSource.url}" />
+		<property name="username" value="${dataSource.username}" />
+		<property name="password" value="${dataSource.password}" />
+
+		<!-- pool properties -->
+		<property name="initialSize" value="${dataSource.initialSize}" />
+		<property name="maxActive" value="${dataSource.maxActive}" />
+		<property name="maxIdle" value="${dataSource.maxIdle}" />
+		<property name="minIdle" value="${dataSource.minIdle}" />
+		<property name="maxWait" value="${dataSource.maxWait}" />
+		<property name="validationQuery" value="${dataSource.validationQuery}" />
+		<property name="testOnBorrow" value="${dataSource.testOnBorrow}" />
+		<property name="testOnReturn" value="${dataSource.testOnReturn}" />
+		<property name="testWhileIdle" value="${dataSource.testWhileIdle}" />
+		<property name="minEvictableIdleTimeMillis" value="${dataSource.minEvictableIdleTimeMillis}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${dataSource.timeBetweenEvictionRunsMillis}" />
+		<property name="numTestsPerEvictionRun" value="${dataSource.numTestsPerEvictionRun}" />
+		<property name="removeAbandoned" value="${dataSource.removeAbandoned}" />
+		<property name="removeAbandonedTimeout" value="${dataSource.removeAbandonedTimeout}" />
+		<property name="logAbandoned" value="${dataSource.logAbandoned}" />
 	</bean>
 
 	<bean id="initDataSource"
@@ -38,6 +64,7 @@
 		<property name="username" value="root" />
 		<property name="password" value="mysql_root_password" />
 	</bean>
+	<!-- End of Data Sources -->
 
 	<!-- Spring JPA Entity Manager Factory -->
 	<bean id="entityManager" 
@@ -56,10 +83,10 @@
 	    </property>
 	</bean>
 
-	<bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect" />
+	<bean id="jpaDialect" class="${spring.jpa.vender.dialect}" />
 	
-	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter"
-    	p:databasePlatform="${eclipselink.database.platform}"
+	<bean id="jpaVendorAdapter" class="${spring.jpa.vender.adapter}"
+    	p:databasePlatform="${jpa.database.platform}"
     	p:showSql="true" p:generateDdl="true" />
 
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />

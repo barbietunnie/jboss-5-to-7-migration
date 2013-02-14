@@ -19,16 +19,16 @@ import jpa.constant.Constants;
 public class ClientData extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 8789436921442107499L;
 
-	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ClientData", orphanRemoval=true)
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="clientVariablePK.clientData", orphanRemoval=true)
 	private List<ClientVariable> clientVariables;
 
-	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="ClientData", orphanRemoval=true)
+	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="clientData", orphanRemoval=true)
 	private IdTokens idTokens;
 	
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="ClientData")
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="clientData")
 	private List<CustomerData> customers;
 	
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="ClientData")
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="clientData")
 	private List<UserData> userDatas;
 	
 	//@Index

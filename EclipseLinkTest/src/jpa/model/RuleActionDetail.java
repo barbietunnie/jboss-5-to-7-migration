@@ -12,7 +12,7 @@ import javax.persistence.Table;
 public class RuleActionDetail extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -7004743275045358426L;
 
-	@ManyToOne(targetEntity=RuleDataType.class, fetch=FetchType.LAZY, optional=false)
+	@ManyToOne(targetEntity=RuleDataType.class, fetch=FetchType.LAZY, optional=true)
 	@JoinColumn(name="RuleDataTypeRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
 	private RuleDataType ruleDataType;
 

@@ -32,7 +32,7 @@ public class RuleElement extends BaseModel implements Serializable {
 	private String exclusions = null;
 	@Column(length=100, nullable=true)
 	private String exclListProcName = null;
-	@Column(length=5, nullable=false, columnDefinition="char(5)")
+	@Column(length=5, nullable=true, columnDefinition="char(5)")
 	private String delimiter = null;
 
 	public RuleElement() {

@@ -3,14 +3,18 @@ package jpa.test;
 import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
+import jpa.data.preload.MailingListEnum;
 import jpa.model.EmailAddr;
 import jpa.model.MailingList;
+import jpa.model.Subscription;
 import jpa.service.EmailAddrService;
 import jpa.service.MailingListService;
 import jpa.util.StringUtil;
@@ -87,6 +91,10 @@ public class MailingListTest {
 		}
 		rcd1.setListMasterEmailAddr("sitemaster@localhost");
 		rcd1.setListId(testListId1);
+		List<Subscription> subs = new ArrayList<Subscription>();
+		// added next line to prevent this Hibernate error: 
+		//	"Found shared references to a collection"
+		rcd1.setSubscriptions(subs);
 		service.insert(rcd1);
 		
 		MailingList rcd2 = service.getByListId(testListId1);
@@ -112,6 +120,7 @@ public class MailingListTest {
 		}
 		rcd4.setListMasterEmailAddr("sitemaster2@localhost");
 		rcd4.setListId(testListId2);
+		rcd4.setSubscriptions(new ArrayList<Subscription>());
 		service.insert(rcd4);
 		
 		MailingList rcd5 = service.getByListId(testListId2);
@@ -119,13 +128,13 @@ public class MailingListTest {
 		assertFalse(rcd3.getListMasterEmailAddr().equals(rcd5.getListMasterEmailAddr()));
 		// end of test insert
 		
-		Object[] mlst1 = service.getByListIdWithCounts("SMPLLST1");
+		Object[] mlst1 = service.getByListIdWithCounts(MailingListEnum.SMPLLST1.name());
 		assertTrue(mlst1[0] instanceof MailingList);
-		assertTrue(mlst1[1] instanceof BigDecimal);
-		assertTrue(mlst1[2] instanceof BigDecimal);
-		assertTrue(mlst1[3] instanceof BigDecimal);
+		assertTrue(mlst1[1] instanceof Number);
+		assertTrue(mlst1[2] instanceof Number);
+		assertTrue(mlst1[3] instanceof BigDecimal || mlst1[3] instanceof BigInteger);
 		System.out.println(StringUtil.prettyPrint(mlst1[0],1));
-		System.out.println(mlst1[1] + "," + mlst1[2] + "," + mlst1[3]);
+		System.out.println("Mailing List Counts: " + mlst1[1] + "," + mlst1[2] + "," + mlst1[3]);
 		
 		// test delete
 		service.delete(rcd3);

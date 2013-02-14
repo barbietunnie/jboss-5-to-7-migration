@@ -104,6 +104,6 @@ public class UnsubCommentTest {
 		
 		// test delete
 		service.delete(rcd4);
-		assertTrue(1==service.deleteByAddress(rcd2.getEmailAddr().getAddress()));
+		assertTrue(1<=service.deleteByAddress(rcd2.getEmailAddr().getAddress()));
 	}
 }

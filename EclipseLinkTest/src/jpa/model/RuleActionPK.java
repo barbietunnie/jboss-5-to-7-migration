@@ -22,7 +22,7 @@ public class RuleActionPK implements Serializable {
 	@Column(nullable=false)
 	private Timestamp startTime;
 
-	@ManyToOne(targetEntity=ClientData.class, fetch=FetchType.LAZY, optional=false)
+	@ManyToOne(targetEntity=ClientData.class, fetch=FetchType.LAZY, optional=true)
 	@JoinColumn(name="ClientDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
 	private ClientData clientData;
 

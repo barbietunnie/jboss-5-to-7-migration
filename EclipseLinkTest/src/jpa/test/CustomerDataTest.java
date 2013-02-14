@@ -12,6 +12,7 @@ import jpa.model.ClientData;
 import jpa.model.CustomerData;
 import jpa.service.ClientDataService;
 import jpa.service.CustomerDataService;
+import jpa.service.EmailAddrService;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -45,9 +46,11 @@ public class CustomerDataTest {
 	
 	@Autowired
 	ClientDataService cdService;
+	@Autowired
+	EmailAddrService emailService;
 
 	@Test
-	public void idTokensService1() {
+	public void customerDataService() {
 		List<CustomerData> list = service.getAll();
 		assertFalse(list.isEmpty());
 		
@@ -78,6 +81,7 @@ public class CustomerDataTest {
 		}
 		rcd2.setClientData(cd2);
 		rcd2.setCustomerId(rcd1.getCustomerId()+"_2");
+		rcd2.setEmailAddr(emailService.findSertAddress(rcd2.getCustomerId()+"@localhost"));
 		service.insert(rcd2);
 		
 		CustomerData rcd3 = service.getByCustomerId(rcd1.getCustomerId()+"_2");
