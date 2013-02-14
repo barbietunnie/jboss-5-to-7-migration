@@ -9,64 +9,69 @@ public enum RuleElementEnum {
 	/*
 	 * for Builtin rules
 	 */
-	HARD_BOUNCE_0(RuleNameEnum.HARD_BOUNCE,0,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
+	HARD_BOUNCE_1(RuleNameEnum.HARD_BOUNCE,1,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
 			"^(?:postmaster|mailmaster|mailadmin|administrator)\\S*\\@", null,
 			"postmaster@legacytojava.com,postmaster@" + Constants.VENDER_DOMAIN_NAME,"excludingPostmastersService",","),
-	HARD_BOUNCE_1(RuleNameEnum.HARD_BOUNCE,1,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
+	HARD_BOUNCE_2(RuleNameEnum.HARD_BOUNCE,2,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
 			"^(?:mailer-(?:daemon|deamon)|smtp.gateway|majordomo)\\S*\\@", null,
 			"mailer-daemon@legacytojave.com,mailer-daemon@" + Constants.VENDER_DOMAIN_NAME,null,","),
-	MAILBOX_FULL_0(RuleNameEnum.MAILBOX_FULL,0,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
+
+	MAILBOX_FULL_1(RuleNameEnum.MAILBOX_FULL,1,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
 			"^(?:postmaster|mailmaster|mailadmin|administrator" +
 					"|mailer-(?:daemon|deamon)|smtp.gateway|majordomo)\\S*\\@", null,
 			"postmaster@legacytojava.com,postmaster@" + Constants.VENDER_DOMAIN_NAME,null,","),
-	SPAM_BLOCK_0(RuleNameEnum.SPAM_BLOCK,0,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
+
+	SPAM_BLOCK_1(RuleNameEnum.SPAM_BLOCK,1,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
 			"^Spam rapport \\/ Spam report \\S+ -\\s+\\(\\S+\\)$" +
 					"|^GWAVA Sender Notification .(?:RBL block|Spam|Content filter).$" +
 					"|^\\[MailServer Notification\\]" +
 					"|^MailMarshal has detected possible spam in your message", null,
 			null,null,null),
-	SPAM_BLOCK_1(RuleNameEnum.SPAM_BLOCK,1,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
+	SPAM_BLOCK_2(RuleNameEnum.SPAM_BLOCK,2,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
 			"EarthLink\\b.*(?:spamBlocker|spamArrest)", null,
 			null,null,null),
-	SPAM_BLOCK_2(RuleNameEnum.SPAM_BLOCK,2,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
+	SPAM_BLOCK_3(RuleNameEnum.SPAM_BLOCK,3,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
 			"(?:^surfcontrol|.*You_Got_Spammed)\\S*\\@", null,
 			null,null,null),
-	SPAM_BLOCK_3(RuleNameEnum.SPAM_BLOCK,3,RuleDataName.X_HEADER, XHeaderName.RETURN_PATH, RuleCriteria.REG_EX,false,
+	SPAM_BLOCK_4(RuleNameEnum.SPAM_BLOCK,4,RuleDataName.X_HEADER, XHeaderName.RETURN_PATH, RuleCriteria.REG_EX,false,
 			"^(?:pleaseforward|quotaagent)\\S*\\@", null,
 			null,null,null),
-	SPAM_BLOCK_4(RuleNameEnum.SPAM_BLOCK,4,RuleDataName.X_HEADER, XHeaderName.PRECEDENCE, RuleCriteria.REG_EX,false,
+	SPAM_BLOCK_5(RuleNameEnum.SPAM_BLOCK,5,RuleDataName.X_HEADER, XHeaderName.PRECEDENCE, RuleCriteria.REG_EX,false,
 			"^(?:spam)$", null,
 			null,null,null),
-	CHALLENGE_RESPONSE_0(RuleNameEnum.CHALLENGE_RESPONSE,0,RuleDataName.X_HEADER, XHeaderName.RETURN_PATH, RuleCriteria.REG_EX,false,
+
+	CHALLENGE_RESPONSE_1(RuleNameEnum.CHALLENGE_RESPONSE,1,RuleDataName.X_HEADER, XHeaderName.RETURN_PATH, RuleCriteria.REG_EX,false,
 			"(?:spamblocker-challenge|spamhippo|devnull-quarantine)\\@" +
 					"|\\@(?:spamstomp\\.com|ipermitmail\\.com)", null,
 			null,null,null),
-	CHALLENGE_RESPONSE_1(RuleNameEnum.CHALLENGE_RESPONSE,1,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
+	CHALLENGE_RESPONSE_2(RuleNameEnum.CHALLENGE_RESPONSE,2,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
 			"^(?:Your email requires verification verify:" +
 					"|Please Verify Your Email Address" +
 					"|Unverified email to " +
 					"|Your mail to .* requires confirmation)" +
 					"|\\[Qurb .\\d+\\]$", null,
 			null,null,null),
-	CHALLENGE_RESPONSE_2(RuleNameEnum.CHALLENGE_RESPONSE,2,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
+	CHALLENGE_RESPONSE_3(RuleNameEnum.CHALLENGE_RESPONSE,3,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
 			"confirm-\\S+\\@spamguard\\.vanquish\\.com", null,
 			null,null,null),
-	AUTO_REPLY_0(RuleNameEnum.AUTO_REPLY,0,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
+
+	AUTO_REPLY_1(RuleNameEnum.AUTO_REPLY,1,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
 			"(?:Exception.*(?:Out\\b.*of\\b.*Office|Autoreply:)|\\(Auto Response\\))" +
 				 	"|^(?:Automatically Generated Response from|Auto-Respond E-?Mail from" +
 				 	"|AutoResponse - Email Returned|automated response|Yahoo! Auto Response)", null,
 			null,null,null),
-	AUTO_REPLY_1(RuleNameEnum.AUTO_REPLY,1,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
+	AUTO_REPLY_2(RuleNameEnum.AUTO_REPLY,2,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
 			"^(?:automated-response|autoresponder|autoresponse-\\S+)\\S*\\@", null,
 			null,null,null),
-	AUTO_REPLY_2(RuleNameEnum.AUTO_REPLY,2,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
+	AUTO_REPLY_3(RuleNameEnum.AUTO_REPLY,3,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
 			"^This messages was created automatically by mail delivery software" +
 					"|(?:\\bThis is an autoresponder. I'll never see your message\\b" +
 					"|(?:\\bI(?:.m|\\s+am|\\s+will\\s+be|.ll\\s+be)\\s+(?:(?:out\\s+of|away\\s+from)\\s+the\\s+office|on\\s+vacation)\\s+(?:from|to|until|after)\\b)" +
 					"|\\bI\\s+am\\s+currently\\s+out\\s+of\\s+the\\s+office\\b" +
 					"|\\bI ?.m\\s+away\\s+until\\s+.{10,20}\\s+and\\s+am\\s+unable\\s+to\\s+read\\s+your\\s+message\\b)", null,
 			null,null,null),
-	VIRUS_BLOCK_0(RuleNameEnum.VIRUS_BLOCK,0,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
+
+	VIRUS_BLOCK_1(RuleNameEnum.VIRUS_BLOCK,1,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
 			"^(?:Disallowed attachment type found" +
 					"|Norton Anti.?Virus failed to scan an attachment in a message you sent" +
 					"|Norton Anti.?Virus detected and quarantined" +
@@ -87,7 +92,7 @@ public enum RuleElementEnum {
 					"|Scan.?Mail Message: ?.{0,30} virus found " +
 					"|McAfee GroupShield Alert)", null,
 			null,null,null),
-	VIRUS_BLOCK_1(RuleNameEnum.VIRUS_BLOCK,1,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
+	VIRUS_BLOCK_2(RuleNameEnum.VIRUS_BLOCK,2,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
 			"^(?:Undeliverable mail, invalid characters in header" +
 					"|Delivery (?:warning|error) report id=" +
 					"|The MIME information you requested" +
@@ -109,81 +114,92 @@ public enum RuleElementEnum {
 					"|EMAIL REJECTED" +
 					"|Virusmelding)$", null,
 			null,null,null),
-	MAIL_BLOCK_0(RuleNameEnum.MAIL_BLOCK,0,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
+
+	MAIL_BLOCK_1(RuleNameEnum.MAIL_BLOCK,1,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
 			"Message\\b.*blocked\\b.*bulk email filter", null,
 			null,null,null),
-	MAIL_BLOCK_1(RuleNameEnum.MAIL_BLOCK,1,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
+	MAIL_BLOCK_2(RuleNameEnum.MAIL_BLOCK,2,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
 			"blocked by\\b.*Spam Firewall", null,
 			null,null,null),
-	BROADCAST_0(RuleNameEnum.BROADCAST,0,RuleDataName.RULE_NAME, null, RuleCriteria.EQUALS,true,
+
+	BROADCAST_1(RuleNameEnum.BROADCAST,1,RuleDataName.RULE_NAME, null, RuleCriteria.EQUALS,true,
 			RuleNameEnum.BROADCAST.getValue(), null,
 			null,null,null),
-	UNSUBSCRIBE_0(RuleNameEnum.UNSUBSCRIBE,0,RuleDataName.TO_ADDR, null, RuleCriteria.REG_EX,false,
+
+	UNSUBSCRIBE_1(RuleNameEnum.UNSUBSCRIBE,1,RuleDataName.TO_ADDR, null, RuleCriteria.REG_EX,false,
 			"^mailinglist@.*|^jwang@localhost$", "mailingListRegExService",
 			null,null,null),
-	UNSUBSCRIBE_1(RuleNameEnum.UNSUBSCRIBE,1,RuleDataName.SUBJECT, null, RuleCriteria.EQUALS,false,
+	UNSUBSCRIBE_2(RuleNameEnum.UNSUBSCRIBE,2,RuleDataName.SUBJECT, null, RuleCriteria.EQUALS,false,
 			"unsubscribe", null,
 			null,null,null),
-	SUBSCRIBE_0(RuleNameEnum.SUBSCRIBE,0,RuleDataName.TO_ADDR, null, RuleCriteria.REG_EX,false,
+
+	SUBSCRIBE_1(RuleNameEnum.SUBSCRIBE,1,RuleDataName.TO_ADDR, null, RuleCriteria.REG_EX,false,
 			"^mailinglist@.*|^jwang@localhost$", "mailingListRegExService",
 			null,null,null),
-	SUBSCRIBE_1(RuleNameEnum.SUBSCRIBE,1,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
+	SUBSCRIBE_2(RuleNameEnum.SUBSCRIBE,2,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
 			"\\s*subscribe\\s*", null,
 			null,null,null),
-	RMA_REQUEST_0(RuleNameEnum.RMA_REQUEST,0,RuleDataName.RULE_NAME, null, RuleCriteria.EQUALS,true,
+
+	RMA_REQUEST_1(RuleNameEnum.RMA_REQUEST,1,RuleDataName.RULE_NAME, null, RuleCriteria.EQUALS,true,
 			RuleNameEnum.RMA_REQUEST.getValue(), null,
 			null,null,null),
 	
 	/*
 	 * for Custom rules
 	 */
-	UNATTENDED_MAILBOX_0(RuleNameEnum.UNATTENDED_MAILBOX,0,RuleDataName.MAILBOX_USER, null, RuleCriteria.EQUALS,false,
+	UNATTENDED_MAILBOX_1(RuleNameEnum.UNATTENDED_MAILBOX,1,RuleDataName.MAILBOX_USER, null, RuleCriteria.EQUALS,false,
 			"noreply", null,
 			null, null, null),
-	UNATTENDED_MAILBOX_1(RuleNameEnum.UNATTENDED_MAILBOX,1,RuleDataName.RETURN_PATH, null, RuleCriteria.REG_EX,false,
+	UNATTENDED_MAILBOX_2(RuleNameEnum.UNATTENDED_MAILBOX,2,RuleDataName.RETURN_PATH, null, RuleCriteria.REG_EX,false,
 			"^<?.+@.+>?$", null, // make sure the return path is not blank or <>
 			null, null, null),
-	OUF_OF_OFFICE_AUTO_REPLY_0(RuleNameEnum.OUF_OF_OFFICE_AUTO_REPLY,0,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
+
+	OUF_OF_OFFICE_AUTO_REPLY_1(RuleNameEnum.OUF_OF_OFFICE_AUTO_REPLY,1,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
 			"(?:out\\s+of\\s+.*office|\\(away from the office\\)$)", null,
 			null, null, null),
-	OUF_OF_OFFICE_AUTO_REPLY_1(RuleNameEnum.OUF_OF_OFFICE_AUTO_REPLY,1,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
+	OUF_OF_OFFICE_AUTO_REPLY_2(RuleNameEnum.OUF_OF_OFFICE_AUTO_REPLY,2,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
 			"^.{0,100}\\bwill\\b.{0,50}return|^.{4,100}\\breturning\\b|^.{2,100}\\bvacation\\b", null,
 			null, null, null),
-	CONTACT_US_0(RuleNameEnum.CONTACT_US,0,RuleDataName.MAILBOX_USER, null, RuleCriteria.EQUALS,false,
+
+	CONTACT_US_1(RuleNameEnum.CONTACT_US,1,RuleDataName.MAILBOX_USER, null, RuleCriteria.EQUALS,false,
 			"support", null,
 			null, null, null),
-	CONTACT_US_1(RuleNameEnum.CONTACT_US,1,RuleDataName.SUBJECT, null, RuleCriteria.STARTS_WITH,false,
+	CONTACT_US_2(RuleNameEnum.CONTACT_US,2,RuleDataName.SUBJECT, null, RuleCriteria.STARTS_WITH,false,
 			"Inquiry About:", null,
 			null, null, null),
-	EXECUTABLE_ATTACHMENT_0(RuleNameEnum.EXECUTABLE_ATTACHMENT,0,RuleDataName.SUBJECT, null, RuleCriteria.VALUED,false,
+
+	EXECUTABLE_ATTACHMENT_1(RuleNameEnum.EXECUTABLE_ATTACHMENT,1,RuleDataName.SUBJECT, null, RuleCriteria.VALUED,false,
 			"dummy", null,
 			null, null, null),
-	EXECUTABLE_ATTACHMENT_1(RuleNameEnum.EXECUTABLE_ATTACHMENT,1,RuleDataName.FILE_NAME, null, RuleCriteria.REG_EX,false,
+	EXECUTABLE_ATTACHMENT_2(RuleNameEnum.EXECUTABLE_ATTACHMENT,2,RuleDataName.FILE_NAME, null, RuleCriteria.REG_EX,false,
 			".*\\.(?:exe|bat|cmd|com|msi|ocx)", null,
 			null, null, null),
-	XHEADER_SPAM_SCORE_0(RuleNameEnum.XHEADER_SPAM_SCORE,0,RuleDataName.X_HEADER, XHeaderName.SPAM_SCORE, RuleCriteria.GREATER_THAN,false,
+
+	XHEADER_SPAM_SCORE_1(RuleNameEnum.XHEADER_SPAM_SCORE,1,RuleDataName.X_HEADER, XHeaderName.SPAM_SCORE, RuleCriteria.GREATER_THAN,false,
 			"100", null,
 			null, null, null),
-	HARD_BOUNCE_WATCHED_MAILBOX_0(RuleNameEnum.HARD_BOUNCE_WATCHED_MAILBOX,0,RuleDataName.RULE_NAME, null, RuleCriteria.EQUALS,true,
+
+	HARD_BOUNCE_WATCHED_MAILBOX_1(RuleNameEnum.HARD_BOUNCE_WATCHED_MAILBOX,1,RuleDataName.RULE_NAME, null, RuleCriteria.EQUALS,true,
 			RuleNameEnum.HARD_BOUNCE.getValue(), null,
 			null, null, null),
-	HARD_BOUNCE_WATCHED_MAILBOX_1(RuleNameEnum.HARD_BOUNCE_WATCHED_MAILBOX,1,RuleDataName.TO_ADDR, null, RuleCriteria.STARTS_WITH,false,
+	HARD_BOUNCE_WATCHED_MAILBOX_2(RuleNameEnum.HARD_BOUNCE_WATCHED_MAILBOX,2,RuleDataName.TO_ADDR, null, RuleCriteria.STARTS_WITH,false,
 			"watched_maibox@", null,
 			null, null, null),
-	HARD_BOUNCE_NO_FINAL_RCPT_0(RuleNameEnum.HARD_BOUNCE_NO_FINAL_RCPT,0,RuleDataName.RULE_NAME, null, RuleCriteria.EQUALS,true,
+
+	HARD_BOUNCE_NO_FINAL_RCPT_1(RuleNameEnum.HARD_BOUNCE_NO_FINAL_RCPT,1,RuleDataName.RULE_NAME, null, RuleCriteria.EQUALS,true,
 			RuleNameEnum.HARD_BOUNCE.getValue(), null,
 			null, null, null),
-	HARD_BOUNCE_NO_FINAL_RCPT_1(RuleNameEnum.HARD_BOUNCE_NO_FINAL_RCPT,1,RuleDataName.FINAL_RCPT_ADDR, null, RuleCriteria.NOT_VALUED,false,
+	HARD_BOUNCE_NO_FINAL_RCPT_2(RuleNameEnum.HARD_BOUNCE_NO_FINAL_RCPT,2,RuleDataName.FINAL_RCPT_ADDR, null, RuleCriteria.NOT_VALUED,false,
 			"", null,
 			null, null, null),
-	HARD_BOUNCE_NO_FINAL_RCPT_2(RuleNameEnum.HARD_BOUNCE_NO_FINAL_RCPT,2,RuleDataName.ORIG_RCPT_ADDR, null, RuleCriteria.NOT_VALUED,false,
+	HARD_BOUNCE_NO_FINAL_RCPT_3(RuleNameEnum.HARD_BOUNCE_NO_FINAL_RCPT,3,RuleDataName.ORIG_RCPT_ADDR, null, RuleCriteria.NOT_VALUED,false,
 			"", null,
 			null, null, null),
 
 	/*
 	 * for Sub rules
 	 */
-	HardBounce_Subj_Match_0(RuleNameEnum.HardBounce_Subj_Match,0,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
+	HardBounce_Subj_Match_1(RuleNameEnum.HardBounce_Subj_Match,1,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
 			"^(?:Returned mail:\\s(?:User unknown|Data format error)" +
 					"|Undeliverable: |Undeliver(?:able|ed) Mail\\b|Undeliverable Message" +
 					"|Returned mail.{0,5}(?:Error During Delivery|see transcript for details)" +
@@ -192,29 +208,29 @@ public enum RuleElementEnum {
 					"|Returned mail:.*(?:failed|failure|error)|\\(Failure\\)|failure notice" +
 					"|not.*delivered)", null,
 			null, null, null),
-	HardBounce_Body_Match_0(RuleNameEnum.HardBounce_Body_Match,0,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
+	HardBounce_Body_Match_1(RuleNameEnum.HardBounce_Body_Match,1,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
 			"(?:\\bYou(?:.ve| have) reached a non.?working address\\.\\s+Please check\\b" +
 					"|eTrust Secure Content Manager SMTPMAIL could not deliver the e-?mail" +
 					"|\\bPlease do not resend your original message\\." +
 					"|\\s[45]\\.\\d{1,3}\\.\\d{1,3}\\s)", null,
 			null, null, null),
-	MailboxFull_Body_Match_0(RuleNameEnum.MailboxFull_Body_Match,0,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
+	MailboxFull_Body_Match_1(RuleNameEnum.MailboxFull_Body_Match,1,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
 			"(?:mailbox|inbox|account).{1,50}(?:exceed|is|was).{1,40}(?:storage|full|limit|size|quota)", null,
 			null, null, null),
-	MailboxFull_Body_Match_1(RuleNameEnum.MailboxFull_Body_Match,1,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
+	MailboxFull_Body_Match_2(RuleNameEnum.MailboxFull_Body_Match,2,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
 			"(?:storage|full|limit|size|quota)", null,
 			null, null, null),
-	SpamBlock_Body_Match_0(RuleNameEnum.SpamBlock_Body_Match,0,RuleDataName.MSG_REF_ID, null, RuleCriteria.NOT_VALUED,false,
+	SpamBlock_Body_Match_1(RuleNameEnum.SpamBlock_Body_Match,1,RuleDataName.MSG_REF_ID, null, RuleCriteria.NOT_VALUED,false,
 			"dummy", null,
 			null, null, null),
-	ChalResp_Body_Match_0(RuleNameEnum.ChalResp_Body_Match,0,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
+	ChalResp_Body_Match_1(RuleNameEnum.ChalResp_Body_Match,1,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
 			"(?:Your mail .* requires your confirmation" +
 					"|Your message .* anti-spam system.* iPermitMail" +
 					"|apologize .* automatic reply.* control spam.* approved senders" +
 					"|Vanquish to avoid spam.* automated message" +
 					"|automated message.* apologize .* approved senders)", null,
 			null, null, null),
-	VirusBlock_Body_Match_0(RuleNameEnum.VirusBlock_Body_Match,0,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
+	VirusBlock_Body_Match_1(RuleNameEnum.VirusBlock_Body_Match,1,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
 			"(?:a potentially executable attachment " +
 					"|\\bhas stripped one or more attachments from the following message\\b" +
 					"|message contains file attachments that are not permitted" +
@@ -230,7 +246,7 @@ public enum RuleElementEnum {
 					"|\\bThe attachment was quarantined\\b" +
 					"|\\bGROUP securiQ.Wall\\b)", null,
 			null, null, null),
-	VirusBlock_Body_Match_1(RuleNameEnum.VirusBlock_Body_Match,1,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
+	VirusBlock_Body_Match_2(RuleNameEnum.VirusBlock_Body_Match,2,RuleDataName.BODY, null, RuleCriteria.REG_EX,false,
 			"(?:Reason: Rejected by filter" +
 					"|antivirus system report" +
 					"|the antivirus module has" +
