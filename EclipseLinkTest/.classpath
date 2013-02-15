@@ -40,5 +40,9 @@
 	<classpathentry kind="lib" path="lib/hibernate/javassist-3.17.1-GA.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/jboss-logging-3.1.0.GA.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/jboss-transaction-api_1.1_spec-1.0.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
+	<classpathentry kind="lib" path="lib/aopalliance.jar"/>
+	<classpathentry kind="lib" path="lib/aspectj/aspectjrt-1.6.11.jar"/>
+	<classpathentry kind="lib" path="lib/aspectj/aspectjweaver-1.6.11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

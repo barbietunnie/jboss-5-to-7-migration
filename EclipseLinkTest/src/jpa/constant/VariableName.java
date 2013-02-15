@@ -22,7 +22,7 @@ public enum VariableName {
 	CLIENT_ID("ClientId"),
 	CUSTOMER_ID("CustId"),
 	TO_PLAIN_TEXT("ToPlainText"), // "yes" or "no"
-	// field names for numeric fields (Long)
+	// field names for numeric fields (Integer)
 	MSG_ID("MsgId"),
 	MSG_REF_ID("MsgRefId"),
 	// email property names

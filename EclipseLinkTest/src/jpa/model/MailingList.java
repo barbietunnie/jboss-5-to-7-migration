@@ -41,7 +41,7 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true, mappedBy="mailingList")
 	private List<Subscription> subscriptions; // subscribers of this list
 	
-	@ManyToOne(fetch=FetchType.LAZY,optional=false)
+	@ManyToOne(fetch=FetchType.EAGER, optional=false, targetEntity=ClientData.class)
 	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private ClientData clientData; // client the list associated to
 	

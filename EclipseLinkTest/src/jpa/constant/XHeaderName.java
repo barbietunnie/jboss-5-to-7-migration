@@ -1,5 +1,7 @@
 package jpa.constant;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum XHeaderName {
 	//
 	// define X-Header names, used to communicate between MailSender and its
@@ -29,5 +31,17 @@ public enum XHeaderName {
 	}
 	public String getValue() {
 		return value;
+	}
+	
+	public static XHeaderName getByValue(String value) {
+		if (StringUtils.isBlank(value)) {
+			return null;
+		}
+		for (XHeaderName hdr : XHeaderName.values()) {
+			if (hdr.getValue().equals(value)) {
+				return hdr;
+			}
+		}
+		throw new IllegalArgumentException("No enum const value jpa.constant.XHeaderName." + value);
 	}
 }

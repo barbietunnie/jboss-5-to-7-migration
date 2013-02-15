@@ -76,7 +76,7 @@ public class MailingListTest {
 
 	@Test
 	public void testMailingListService() {
-		List<MailingList> list = service.getAll();
+		List<MailingList> list = service.getAll(true);
 		assertFalse(list.isEmpty());
 		
 		// test insert
