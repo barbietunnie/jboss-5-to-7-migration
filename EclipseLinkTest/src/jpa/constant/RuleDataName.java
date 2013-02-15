@@ -12,6 +12,7 @@ public enum RuleDataName {
 	
 	SUBJECT(RuleDataTypeEnum.EMAIL_PROPERTY, VariableName.SUBJECT.getValue()),
 	BODY(RuleDataTypeEnum.EMAIL_PROPERTY, VariableName.BODY.getValue()),
+	MSG_ID(RuleDataTypeEnum.EMAIL_PROPERTY, VariableName.MSG_ID.getValue()),
 	MSG_REF_ID(RuleDataTypeEnum.EMAIL_PROPERTY, VariableName.MSG_REF_ID.getValue()),
 	RULE_NAME(RuleDataTypeEnum.EMAIL_PROPERTY, VariableName.RULE_NAME.getValue()),
 	X_HEADER(RuleDataTypeEnum.EMAIL_PROPERTY, VariableName.XHEADER_DATA_NAME.getValue()),

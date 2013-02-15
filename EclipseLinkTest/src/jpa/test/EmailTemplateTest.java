@@ -52,8 +52,10 @@ public class EmailTemplateTest {
 	@Test
 	public void emailTemplateService() {
 		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
-		List<MailingList> mlist = mlistService.getAll();
+		List<MailingList> mlist = mlistService.getAll(false);
 		assertFalse(mlist.isEmpty());
+		assertNotNull(mlist.get(0).getListEmailAddr());
+		assertNotNull(mlist.get(0).getClientData());
 		// test insert
 		EmailTemplate var1 = new EmailTemplate();
 		var1.setClientData(client);

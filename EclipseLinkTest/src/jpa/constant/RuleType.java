@@ -15,5 +15,14 @@ public enum RuleType {
 	public String getValue() {
 		return value;
 	}
-}
+	
+	public static RuleType getByValue(String value) {
+		for (RuleType type : RuleType.values()) {
+			if (type.getValue().equals(value)) {
+				return type;
+			}
+		}
+		throw new IllegalArgumentException("No enum const value jpa.constant.RuleType." + value);
+	}
+} 
 

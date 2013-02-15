@@ -79,6 +79,20 @@ public class EmailVariableService {
 		}
 	}
 	
+	public String getByQuery(String queryStr, int addrId) {
+		try {
+			Query query = em.createNativeQuery(queryStr);
+			query.setParameter(1, addrId);
+			String result = (String) query.getSingleResult();
+			return result;
+		}
+		catch (NoResultException e) {
+			return null;
+		}
+		finally {
+		}
+	}
+	
 	public void delete(EmailVariable variable) {
 		if (variable==null) return;
 		try {

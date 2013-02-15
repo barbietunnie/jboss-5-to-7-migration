@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
@@ -22,7 +23,8 @@ import jpa.model.RuleLogic;
 public class RuleLogicService {
 	static Logger logger = Logger.getLogger(RuleLogicService.class);
 	
-	@Autowired
+	@PersistenceContext(unitName="MessageDB")
+	//@Autowired
 	EntityManager em;
 	
 	@Autowired

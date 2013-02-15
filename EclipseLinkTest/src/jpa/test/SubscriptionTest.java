@@ -81,7 +81,7 @@ public class SubscriptionTest {
 	
 	@Test
 	public void SubscriptionService() {
-		List<MailingList> list = mlService.getAll();
+		List<MailingList> list = mlService.getAll(false);
 		assertFalse(list.isEmpty());
 
 		List<Subscription> subs = service.getByListId(list.get(0).getListId());

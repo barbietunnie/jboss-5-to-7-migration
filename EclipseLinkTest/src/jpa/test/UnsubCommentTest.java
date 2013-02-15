@@ -58,7 +58,7 @@ public class UnsubCommentTest {
 	@Before
 	public void prepare() {
 		emailAddr = emailService.findSertAddress("jpatest1@localhost");
-		List<MailingList> list = mlistService.getAll();
+		List<MailingList> list = mlistService.getAll(false);
 		if (!list.isEmpty()) {
 			mlist = list.get(0);
 		}

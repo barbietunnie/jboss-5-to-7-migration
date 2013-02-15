@@ -11,7 +11,7 @@ public enum RuleElementEnum {
 	 */
 	HARD_BOUNCE_1(RuleNameEnum.HARD_BOUNCE,1,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
 			"^(?:postmaster|mailmaster|mailadmin|administrator)\\S*\\@", null,
-			"postmaster@legacytojava.com,postmaster@" + Constants.VENDER_DOMAIN_NAME,"excludingPostmastersService",","),
+			"postmaster@legacytojava.com,postmaster@" + Constants.VENDER_DOMAIN_NAME,"postmastersTargetText",","),
 	HARD_BOUNCE_2(RuleNameEnum.HARD_BOUNCE,2,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
 			"^(?:mailer-(?:daemon|deamon)|smtp.gateway|majordomo)\\S*\\@", null,
 			"mailer-daemon@legacytojave.com,mailer-daemon@" + Constants.VENDER_DOMAIN_NAME,null,","),
@@ -127,14 +127,14 @@ public enum RuleElementEnum {
 			null,null,null),
 
 	UNSUBSCRIBE_1(RuleNameEnum.UNSUBSCRIBE,1,RuleDataName.TO_ADDR, null, RuleCriteria.REG_EX,false,
-			"^mailinglist@.*|^jwang@localhost$", "mailingListRegExService",
+			"^mailinglist@.*|^jwang@localhost$", "mailingListTargetText",
 			null,null,null),
 	UNSUBSCRIBE_2(RuleNameEnum.UNSUBSCRIBE,2,RuleDataName.SUBJECT, null, RuleCriteria.EQUALS,false,
 			"unsubscribe", null,
 			null,null,null),
 
 	SUBSCRIBE_1(RuleNameEnum.SUBSCRIBE,1,RuleDataName.TO_ADDR, null, RuleCriteria.REG_EX,false,
-			"^mailinglist@.*|^jwang@localhost$", "mailingListRegExService",
+			"^mailinglist@.*|^jwang@localhost$", "mailingListTargetText",
 			null,null,null),
 	SUBSCRIBE_2(RuleNameEnum.SUBSCRIBE,2,RuleDataName.SUBJECT, null, RuleCriteria.REG_EX,false,
 			"\\s*subscribe\\s*", null,

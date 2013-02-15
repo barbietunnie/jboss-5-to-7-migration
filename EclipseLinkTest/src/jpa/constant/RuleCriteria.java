@@ -20,5 +20,14 @@ public enum RuleCriteria {
 	public String getValue() {
 		return value;
 	}
+
+	public static RuleCriteria getByValue(String value) {
+		for (RuleCriteria type : RuleCriteria.values()) {
+			if (type.getValue().equals(value)) {
+				return type;
+			}
+		}
+		throw new IllegalArgumentException("No enum const value jpa.constant.RuleCriteria." + value);
+	}
 }
 

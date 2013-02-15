@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import jpa.constant.StatusId;
 import jpa.model.MailingList;
 
 @Component("mailingListService")
@@ -85,9 +86,16 @@ public class MailingListService {
 		}
 	}
 	
-	public List<MailingList> getAll() {
+	public List<MailingList> getAll(boolean onlyActive) {
+		String sql = "select t from MailingList t ";
+		if (onlyActive) {
+			sql += " where t.statusId=:statusId ";
+		}
 		try {
-			Query query = em.createQuery("select t from MailingList t");
+			Query query = em.createQuery(sql);
+			if (onlyActive) {
+				query.setParameter("statusId", StatusId.ACTIVE.getValue());
+			}
 			@SuppressWarnings("unchecked")
 			List<MailingList> list = query.getResultList();
 			return list;

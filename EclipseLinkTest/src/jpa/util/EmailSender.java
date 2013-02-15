@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.Message.RecipientType;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -359,6 +361,39 @@ public class EmailSender {
 		Transport.send(msg);
 
 		logger.info("Email notification sent to: " + recipientAddrs);
+	}
+
+	public static void send(String from, String to, String subject, String body)
+			throws MessagingException, EmailSenderException {
+		if (StringUtil.isEmpty(to)) {
+			throw new MessagingException("Input TO address is blank.");
+		}
+		if (StringUtil.isEmpty(subject)) {
+			throw new MessagingException("Input Subject is blank.");
+		}
+		getEmailProperties();
+		// Get a Session object
+		Session session = getMailSession();
+		// construct a MimeMessage
+		Message msg = new MimeMessage(session);
+		Address[] addrs = InternetAddress.parse(from, false);
+		if (addrs != null && addrs.length > 0) {
+			msg.setFrom(addrs[0]);
+		}
+		else {
+			msg.setFrom();
+		}
+		msg.setRecipients(RecipientType.TO, InternetAddress.parse(to, false));
+		msg.setSubject(subject);
+		msg.setText(body);
+		msg.setSentDate(new Date());
+		// could also use Session.getTransport() and Transport.connect()
+		// send the thing off
+		Transport.send(msg);
+		if (isDebugEnabled) {
+			logger.debug("Mail from " + from + " - " + subject
+					+ " was sent to: " + to);
+		}
 	}
 
 	private static String appendDomain(String addrs, String emailDomain) {
