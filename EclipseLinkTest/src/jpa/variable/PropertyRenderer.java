@@ -2,8 +2,6 @@ package jpa.variable;
 
 import java.text.ParseException;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -61,7 +59,6 @@ public final class PropertyRenderer implements java.io.Serializable {
 		if (variables == null) {
 			throw new IllegalArgumentException("A Map for variables must be provided");
 		}
-		templateText = convertUrlBraces(templateText);
 		int currPos = 0;
 		StringBuffer sb = new StringBuffer();
 		VarProperties varProp;
@@ -116,23 +113,6 @@ public final class PropertyRenderer implements java.io.Serializable {
 			}
 		}
 		return null;
-	}
-
-	/*
-	 * Curly braces are encoded in URL as "%7B" and "%7D". This method convert
-	 * them back to "{" and "}".
-	 */
-	private String convertUrlBraces(String text) {
-		//Sample input: "Web Beacon<img src='http://localhost/es/wsmopen.php?msgid=$%7BBroadcastMsgId%7D&amp;listid=$%7BListId%7D' width='1' height='1' alt=''>"
-		String regex = "\\$\\%7B(.{1," + VARIABLE_NAME_LENGTH + "}?)\\%7D";
-		Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-		Matcher m = p.matcher(text);
-		StringBuffer sb = new StringBuffer();
-		while (m.find()) {
-			m.appendReplacement(sb, "\\$\\{" + m.group(1)+"\\}");
-		}
-		m.appendTail(sb);
-		return sb.toString();
 	}
 
 	private static class VarProperties {
