@@ -7,7 +7,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import com.legacytojava.jbatch.JbMain;
+import com.legacytojava.jbatch.ProductUtil;
 import com.legacytojava.jbatch.SpringUtil;
 import com.legacytojava.jbatch.common.ProductKey;
 import com.legacytojava.jbatch.common.TimestampUtil;
@@ -72,7 +72,7 @@ public final class ClientUtil {
 	 */
 	public static boolean isProductKeyValid() {
 		String key = getClientDao().getSystemKey();
-		return (ProductKey.validateKey(key) | JbMain.isProductKeyValid());
+		return (ProductKey.validateKey(key) | ProductUtil.isProductKeyValid());
 	}
 
 	public static ClientVo getDefaultClientVo() {
