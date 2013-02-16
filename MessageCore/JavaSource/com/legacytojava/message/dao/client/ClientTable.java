@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 
-import com.legacytojava.jbatch.JbMain;
+import com.legacytojava.jbatch.ProductUtil;
 import com.legacytojava.jbatch.SpringUtil;
 import com.legacytojava.jbatch.common.ProductKey;
 import com.legacytojava.jbatch.common.TimestampUtil;
@@ -229,7 +229,7 @@ public class ClientTable extends CreateTableBase {
 		//cal.add(Calendar.DAY_OF_YEAR, -31);
 		String systemId = TimestampUtil.db2ToDecStr(TimestampUtil.getDb2Timestamp(cal.getTime()));
 		ps.setString(25, systemId);
-		ps.setString(26, JbMain.getProductKeyFromFile());
+		ps.setString(26, ProductUtil.getProductKeyFromFile());
 		ps.setTimestamp(27, new Timestamp(new java.util.Date().getTime()));
 		ps.setString(28, Constants.DEFAULT_USER_ID);
 		ps.execute();
@@ -300,8 +300,8 @@ public class ClientTable extends CreateTableBase {
 		vo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
 		vo.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		int rowsInserted = dao.update(vo);
-		if (ProductKey.validateKey(JbMain.getProductKeyFromFile())) {
-			dao.updateSystemKey(JbMain.getProductKeyFromFile());
+		if (ProductKey.validateKey(ProductUtil.getProductKeyFromFile())) {
+			dao.updateSystemKey(ProductUtil.getProductKeyFromFile());
 		}
 		System.out.println("ClientTable: Default client updated.");
 		return rowsInserted;
