@@ -21,15 +21,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.support.AbstractApplicationContext;
 
-import com.legacytojava.jbatch.common.ProductKey;
 import com.legacytojava.message.bo.mailreader.MailReaderBoImpl;
 import com.legacytojava.message.dao.mailbox.MailBoxDao;
 import com.legacytojava.message.dao.timer.TimerServerDao;
@@ -174,51 +171,6 @@ public final class JbMain implements Runnable, JbMainMBean {
 		return SpringUtil.getAppContext();
 	}
 
-	private static Boolean isKeyValid = null;
-	
-	public static boolean isProductKeyValid() {
-		if (isKeyValid == null) {
-			boolean isValid = ProductKey.validateKey(getProductKeyFromFile());
-			isKeyValid = Boolean.valueOf(isValid);
-		}
-		return isKeyValid;
-	}
-	
-	public static String getProductKeyFromFile() {
-		// ThreadContextClassLoader works with both command line JVM and JBoss
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		URL url = loader.getResource("productkey.txt");
-		if (url == null) {
-			logger.warn("productkey.txt file not found.");
-			return null;
-		}
-		BufferedReader br = null;
-		try {
-			InputStream is = url.openStream();
-			br = new BufferedReader(new InputStreamReader(is));
-			String line = null;
-			Pattern pattern = Pattern.compile("\\b((.{5})(-.{5}){4})\\b");
-			while ((line=br.readLine()) != null) {
-				Matcher matcher = pattern.matcher(line);
-				if (matcher.find() && matcher.groupCount() >= 1) {
-					return matcher.group(1);
-				}
-			}
-		}
-		catch (IOException e) {
-			logger.error("IOException caught", e);
-		}
-		finally {
-			if (br != null) {
-				try {
-					br.close();
-				}
-				catch (IOException e) {}
-			} 
-		}
-		return null;
-	}
-	
 	/**
 	 * @return a EventAlert instance
 	 */
