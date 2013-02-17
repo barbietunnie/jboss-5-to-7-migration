@@ -17,6 +17,10 @@
 		 </jee:environment>
 	</jee:jndi-lookup>
 
+	<jee:jndi-lookup id="MessageDB" jndi-name="java:jboss/EntityPersistenceFactory" 
+		lookup-on-startup="false" expected-type="javax.persistence.EntityManagerFactory"
+		environment-ref="properties" resource-ref="false"/>
+
     <jee:jndi-lookup id="jmsConnectionFactory" jndi-name="java:/JmsXA" environment-ref="properties" resource-ref="false"/>
 
     <jee:jndi-lookup id="mailReaderOutput" jndi-name="java:/queue/mailReaderOutput" environment-ref="properties" resource-ref="false"/>
