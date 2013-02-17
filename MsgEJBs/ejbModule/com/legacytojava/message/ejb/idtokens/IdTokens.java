@@ -14,11 +14,13 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.persistence.NoResultException;
 
 import org.jboss.logging.Logger;
 
 import com.legacytojava.jbatch.SpringUtil;
 import com.legacytojava.message.dao.idtokens.IdTokensDao;
+import com.legacytojava.message.jpa.service.IdTokensService;
 import com.legacytojava.message.vo.IdTokensVo;
 
 /**
@@ -38,12 +40,14 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal {
 	@Resource
 	SessionContext context;
 	private IdTokensDao idTokensDao;
+	private IdTokensService tokenService;
 	private static Map<String, IdTokensVo> idTokensCache = new HashMap<String, IdTokensVo>();
     /**
      * Default constructor. 
      */
     public IdTokens() {
     	idTokensDao = (IdTokensDao)SpringUtil.getAppContext().getBean("idTokensDao");
+    	tokenService = (IdTokensService) SpringUtil.getAppContext().getBean("idTokensService");
     }
 
 	public IdTokensVo findByClientId(String senderId) {
@@ -52,6 +56,15 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal {
 			idTokensCache.put(senderId, idTokensVo);
 		}
 		return (IdTokensVo)idTokensCache.get(senderId);
+	}
+
+	public com.legacytojava.message.jpa.model.IdTokens getByClientId(String senderId) {
+		try {
+			return tokenService.getByClientId(senderId);
+		}
+		catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	public List<IdTokensVo> findAll() {
