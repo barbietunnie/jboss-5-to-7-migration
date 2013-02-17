@@ -4,10 +4,12 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 	<persistence-unit name="EntityPersistence">
 		<jta-data-source>java:jboss/MessageDS</jta-data-source>
+		<jar-file>lib/MessageCore.jar</jar-file>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="validate" />
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<property name="jboss.entity.manager.jndi.name" value="java:jboss/EntityPersistenceManager"/>
 			<property name="jboss.entity.manager.factory.jndi.name"	value="java:jboss/EntityPersistenceFactory" />
 		</properties>
 	</persistence-unit>
@@ -18,7 +20,7 @@
 			<property name="hibernate.hbm2ddl.auto" value="validate" />
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-			<property name="jboss.entity.manager.factory.jndi.name"	value="java:/MessageDBFactory" />
+			<property name="jboss.entity.manager.factory.jndi.name"	value="java:jboss/MessageDBFactory" />
 		</properties>
 	</persistence-unit -->
 </persistence>
