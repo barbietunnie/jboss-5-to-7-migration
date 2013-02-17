@@ -7,7 +7,7 @@ import com.legacytojava.jbatch.pool.ObjectPool;
 import com.legacytojava.jbatch.smtp.SmtpConnection;
 import com.legacytojava.message.bo.mailsender.SmtpWrapperUtil;
 
-public class TestJBatch extends TestCase
+public class JBatchTest extends TestCase
 {
 	static int init_count = 0;
 	JbMain theMonitor = null;
@@ -17,7 +17,7 @@ public class TestJBatch extends TestCase
 	 * Constructor for TemplateTest.
 	 * @param arg0
 	 */
-	public TestJBatch(String arg0) throws Exception
+	public JBatchTest(String arg0) throws Exception
 	{
 	  super(arg0);
 	  

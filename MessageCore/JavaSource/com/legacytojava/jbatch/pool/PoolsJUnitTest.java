@@ -12,7 +12,7 @@ import com.legacytojava.jbatch.JbMain;
 import com.legacytojava.jbatch.smtp.SmtpConnection;
 import com.legacytojava.message.bo.mailsender.SmtpWrapperUtil;
 
-public class PoolsJUnit extends TestCase {
+public class PoolsJUnitTest extends TestCase {
 	static int init_count = 0;
 
 	final static String LF = System.getProperty("line.separator", "\n");
@@ -22,7 +22,7 @@ public class PoolsJUnit extends TestCase {
 	 * 
 	 * @param arg0
 	 */
-	public PoolsJUnit(String arg0) throws Exception {
+	public PoolsJUnitTest(String arg0) throws Exception {
 		super(arg0);
 		JbMain.getInstance(); // to tell the system this is a JBatch run
 	}

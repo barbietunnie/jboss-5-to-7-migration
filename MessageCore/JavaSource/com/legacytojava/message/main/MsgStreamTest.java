@@ -7,7 +7,7 @@ import com.legacytojava.message.bo.test.BoTestBase;
 import com.legacytojava.message.dao.inbox.MsgStreamDao;
 import com.legacytojava.message.vo.outbox.MsgStreamVo;
 
-public class MsgStreamReader extends BoTestBase {
+public class MsgStreamTest extends BoTestBase {
 
 	public void testActivate() throws Exception {
 		MsgStreamDao msgStreamDao = (MsgStreamDao) factory.getBean("msgStreamDao");

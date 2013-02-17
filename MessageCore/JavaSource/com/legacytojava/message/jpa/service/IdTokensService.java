@@ -29,7 +29,7 @@ public class IdTokensService {
 			Query query = em.createQuery("select t from IdTokens t where t.clientId = :clientId");
 			query.setParameter("clientId", clientId);
 			IdTokens idTokens = (IdTokens) query.getSingleResult();
-			em.lock(idTokens, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(idTokens, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return idTokens;
 		}
 		finally {
