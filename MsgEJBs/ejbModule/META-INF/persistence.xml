@@ -8,7 +8,7 @@
 			<property name="hibernate.hbm2ddl.auto" value="validate" />
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-			<property name="jboss.entity.manager.factory.jndi.name"	value="java:/EntityPersistenceFactory" />
+			<property name="jboss.entity.manager.factory.jndi.name"	value="java:jboss/EntityPersistenceFactory" />
 		</properties>
 	</persistence-unit>
 	<!-- persistence-unit name="MessageDB">
