@@ -45,20 +45,20 @@ EmailDomain=espheredemo.com
 #
 # Default recipients for unhandled error.
 #
-RecipientId.DEV=TSD_MII_TEST
-RecipientId.TEST=TSD_MII_TEST
-RecipientId.UAT=TSD_MII_TEST
-RecipientId.PROD=TSD_MII_TEAM
+RecipientId.DEV=developers
+RecipientId.TEST=quality.control
+RecipientId.UAT=user.acceptance
+RecipientId.PROD=prod.support
 #
-RecipientIdForFatalError.DEV=TSD_MII_TEST
-RecipientIdForFatalError.TEST=TSD_InterfaceBA_TEST
-RecipientIdForFatalError.UAT=TSD_InterfaceBA_TEST
-RecipientIdForFatalError.PROD=TSD_InterfaceBA
+RecipientIdForFatalError.DEV=developers
+RecipientIdForFatalError.TEST=developers,quality.control
+RecipientIdForFatalError.UAT=developers
+RecipientIdForFatalError.PROD=developers,prod.support
 #
-RecipientIdForDevelopers.DEV=TSD_MII_TEST
-RecipientIdForDevelopers.TEST=TSD_MII_TEST
-RecipientIdForDevelopers.UAT=TSD_MII_TEST
-RecipientIdForDevelopers.PROD=TSD_MII_TEAM
+RecipientIdForDevelopers.DEV=developers
+RecipientIdForDevelopers.TEST=developers
+RecipientIdForDevelopers.UAT=developers
+RecipientIdForDevelopers.PROD=developers
 #
 # disable email notification: yes/no
 disable=no
