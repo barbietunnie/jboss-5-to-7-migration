@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-public class MyProperties extends Properties {
+public class VarProperties extends Properties {
 	private static final long serialVersionUID = 4115280968301218916L;
 
-	public MyProperties() {
+	public VarProperties() {
 		super();
 	}
 	
@@ -22,7 +22,7 @@ public class MyProperties extends Properties {
 			return renderedText;
 		}
 		catch (Exception e) {
-			return super.getProperty(key);
+			return template;
 		}
 	}
 
@@ -35,7 +35,7 @@ public class MyProperties extends Properties {
 
 	private static String fileName = "META-INF/eclipselink.dev.properties";
 	public static void main(String[] args) {
-		MyProperties props = loadMyProperties(fileName);
+		VarProperties props = loadMyProperties(fileName);
 		props.list(System.out);
 		System.out.println("=================================");
 		System.out.println(props.getProperty("dataSource.url"));
@@ -44,13 +44,13 @@ public class MyProperties extends Properties {
 		System.out.println(props.getProperty("not.found", "property not found"));
 	}
 	
-	public static MyProperties loadMyProperties(String fileName) {
+	public static VarProperties loadMyProperties(String fileName) {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		URL url = loader.getResource(fileName);
 		if (url == null) {
 			throw new RuntimeException("Could not find " + fileName + " file.");
 		}
-		MyProperties props = new MyProperties();
+		VarProperties props = new VarProperties();
 		try {
 			InputStream is = url.openStream();
 			props.load(is);

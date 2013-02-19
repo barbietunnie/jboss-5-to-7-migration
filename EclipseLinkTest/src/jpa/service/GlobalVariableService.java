@@ -48,7 +48,7 @@ public class GlobalVariableService {
 	 * @param startTime
 	 * @return record found or null
 	 */
-	public GlobalVariable getByPrimaryKey(GlobalVariablePK pk) {
+	public GlobalVariable getByPrimaryKey(GlobalVariablePK pk) throws NoResultException {
 		String sql = 
 			"select t " +
 			"from " +
@@ -65,13 +65,8 @@ public class GlobalVariableService {
 			if (pk.getStartTime() != null) {
 				query.setParameter("startTime", pk.getStartTime());
 			}
-			@SuppressWarnings("unchecked")
-			List<GlobalVariable> list = query.setMaxResults(1).getResultList();
-			if (!list.isEmpty()) {
-				GlobalVariable record = list.get(0);
-				return record;
-			}
-			return null;
+			GlobalVariable var = (GlobalVariable) query.getSingleResult();
+			return var;
 		}
 		finally {
 		}

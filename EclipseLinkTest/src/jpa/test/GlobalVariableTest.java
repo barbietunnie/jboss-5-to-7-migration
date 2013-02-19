@@ -68,7 +68,11 @@ public class GlobalVariableTest {
 		// end of test insert
 		
 		service.delete(var3);
-		assertNull(service.getByPrimaryKey(pk3));
+		try {
+			service.getByPrimaryKey(pk3);
+			fail();
+		}
+		catch (NoResultException e) {}
 		
 		// test getByStatusid
 		List<GlobalVariable> list3 = service.getByStatusId(var3.getStatusId());
@@ -83,7 +87,11 @@ public class GlobalVariableTest {
 		var4.setGlobalVariablePK(pk4);
 		service.insert(var4);
 		assertTrue(1==service.deleteByVariableName(pk4.getVariableName()));
-		assertNull(service.getByPrimaryKey(pk4));
+		try {
+			service.getByPrimaryKey(pk4);
+			fail();
+		}
+		catch (NoResultException e) {}
 
 		// test deleteByPrimaryKey
 		GlobalVariable var5 = createNewInstance(var2);
@@ -91,8 +99,12 @@ public class GlobalVariableTest {
 		var5.setGlobalVariablePK(pk5);
 		service.insert(var5);
 		assertTrue(1==service.deleteByPrimaryKey(pk5));
-		assertNull(service.getByPrimaryKey(pk5));
-		
+		try {
+			service.getByPrimaryKey(pk5);
+			fail();
+		}
+		catch (NoResultException e) {}
+
 		// test update
 		GlobalVariable var6 = createNewInstance(var2);
 		GlobalVariablePK pk6 = new GlobalVariablePK(pk2.getVariableName()+"_v6",pk2.getStartTime());

@@ -59,8 +59,8 @@ public class UserDataLoader extends AbstractDataLoader {
 
 		data = new UserData();
 		data.setClientData(cd);
-		data.setUserId("user");
-		data.setPassword("user");
+		data.setUserId(getProperty("user.id.1"));
+		data.setPassword(getProperty("user.password.1"));
 		data.setFirstName("default");
 		data.setLastName("user");
 		data.setCreateTime(new Timestamp(System.currentTimeMillis()));
@@ -73,7 +73,7 @@ public class UserDataLoader extends AbstractDataLoader {
 	}
 	
 	private void loadSessionUploads() {
-		UserData usr = service.getByUserId("user");
+		UserData usr = service.getByUserId(getProperty("user.id.1"));
 
 		SessionUploadPK pk1 = new SessionUploadPK("test_session_id",0);
 		SessionUpload data = new SessionUpload();

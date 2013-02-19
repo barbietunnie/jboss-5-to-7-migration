@@ -73,7 +73,11 @@ public class ClientVariableTest {
 		// end of test insert
 		
 		service.delete(var3);
-		assertNull(service.getByPrimaryKey(pk3));
+		try {
+			service.getByPrimaryKey(pk3);
+			fail();
+		}
+		catch (NoResultException e) {}
 
 		// test deleteByVariableName
 		ClientVariable var4 = createNewInstance(var2);
@@ -81,7 +85,11 @@ public class ClientVariableTest {
 		var4.setClientVariablePK(pk4);
 		service.insert(var4);
 		assertTrue(1==service.deleteByVariableName(pk4.getVariableName()));
-		assertNull(service.getByPrimaryKey(pk4));
+		try {
+			service.getByPrimaryKey(pk4);
+			fail();
+		}
+		catch (NoResultException e) {}
 
 		// test deleteByPrimaryKey
 		ClientVariable var5 = createNewInstance(var2);
@@ -89,7 +97,11 @@ public class ClientVariableTest {
 		var5.setClientVariablePK(pk5);
 		service.insert(var5);
 		assertTrue(1==service.deleteByPrimaryKey(pk5));
-		assertNull(service.getByPrimaryKey(pk5));
+		try {
+			service.getByPrimaryKey(pk5);
+			fail();
+		}
+		catch (NoResultException e) {}
 
 		// test getCurrentByClientId
 		List<ClientVariable> list3 = service.getCurrentByClientId(pk2.getClientData().getClientId());

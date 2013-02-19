@@ -5,6 +5,7 @@ import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 
+import jpa.constant.ClientType;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.model.ClientData;
@@ -40,36 +41,26 @@ public class ClientDataLoader extends AbstractDataLoader {
 	private void loadClientData(boolean loadTestData) {
 		ClientData data = new ClientData();
 		data.setClientId(Constants.DEFAULT_CLIENTID);
-		data.setClientName("Emailsphere Demo");
-		if (loadTestData)
-			data.setDomainName("localhost"); // domain name
-		else
-			data.setDomainName("espheredemo.com"); // domain name
+		data.setClientName(getProperty("client.name"));
+		data.setDomainName(getProperty("client.domain")); // domain name
+		data.setClientType(ClientType.System.getValue());
+		data.setContactName(getProperty("client.contact.name"));
+		data.setContactPhone(getProperty("client.contact.phone"));
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setIrsTaxId("0000000000");
-		data.setWebSiteUrl("http://localhost:8080/MsgUI/publicsite");
+		data.setWebSiteUrl(getProperty("client.website.url"));
 		data.setSaveRawMsg(true); // save raw stream
-		if (loadTestData) {
-			data.setVirusCntrlEmail("sitemaster@emailsphere.com");
-			data.setSecurityEmail("security@localhost");
-			data.setCustcareEmail("custcare@localhost");
-			data.setRmaDeptEmail("rma.dept@localhost");
-			data.setSpamCntrlEmail("spam.ctrl@localhost");
-			data.setChaRspHndlrEmail("challenge@localhost");
-		}
-		else { // release data
-			data.setVirusCntrlEmail("sitemaster@localhost");
-			data.setSecurityEmail("security@localhost");
-			data.setCustcareEmail("custcare@localhost");
-			data.setRmaDeptEmail("rma.dept@localhost");
-			data.setSpamCntrlEmail("spam.ctrl@localhost");
-			data.setChaRspHndlrEmail("challenge@localhost");
-		}
+		data.setVirusCntrlEmail(getProperty("client.contact.email"));
+		data.setSecurityEmail(getProperty("client.security.email"));
+		data.setCustcareEmail(getProperty("client.customer.care.email"));
+		data.setRmaDeptEmail(getProperty("client.rma.dept.email"));
+		data.setSpamCntrlEmail(getProperty("client.spam.control.email"));
+		data.setChaRspHndlrEmail(getProperty("client.challenge.email"));
 		data.setEmbedEmailId(true); // Embed EmailId 
 		data.setReturnPathLeft("support"); // return-path left
 		data.setUseTestAddr(true); // use testing address
-		data.setTestFromAddr("testfrom@localhost");
-		data.setTestToAddr("testto@localhost");
+		data.setTestFromAddr(getProperty("client.test.from.address"));
+		data.setTestToAddr(getProperty("client.test.to.address"));
 		data.setVerpEnabled(true); // is VERP enabled
 		data.setVerpSubDomain(null); // VERP sub-domain
 		data.setVerpInboxName("bounce"); // VERP bounce mailbox
@@ -88,6 +79,7 @@ public class ClientDataLoader extends AbstractDataLoader {
 		data.setClientId("JBatchCorp");
 		data.setClientName("JBatch Corp. Site");
 		data.setDomainName("jbatch.com"); // domain name
+		data.setClientType(ClientType.Custom.getValue());
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setIrsTaxId( "0000000000");
 		data.setWebSiteUrl("http://www.jbatch.com");

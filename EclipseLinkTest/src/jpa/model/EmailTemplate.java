@@ -30,7 +30,7 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true, length=255)
 	private String subject = null;
 	@Lob
-	@Column(nullable=true, length=65534)
+	@Column(nullable=true, length=65530)
 	private String bodyText = null;
 	@Column(nullable=false, length=1, columnDefinition="boolean not null")
 	private boolean isHtml = true;
