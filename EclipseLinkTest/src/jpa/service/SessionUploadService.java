@@ -50,7 +50,7 @@ public class SessionUploadService {
 		}
 	}
 	
-	public SessionUpload getByPrimaryKey(SessionUploadPK pk) {
+	public SessionUpload getByPrimaryKey(SessionUploadPK pk) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from SessionUpload t where " +
 					"t.sessionUploadPK.sessionId=:sessionId and t.sessionUploadPK.sessionSequence=:sessionSequence ");

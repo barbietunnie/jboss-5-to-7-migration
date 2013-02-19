@@ -1,6 +1,6 @@
 package jpa.service;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -14,83 +14,84 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.StatusId;
-import jpa.model.ClientVariable;
-import jpa.model.ClientVariablePK;
+import jpa.model.TemplateData;
+import jpa.model.TemplateDataPK;
 
-@Component("clientVariableService")
+@Component("templateDataService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class ClientVariableService {
-	static Logger logger = Logger.getLogger(ClientVariableService.class);
+public class TemplateDataService {
+	static Logger logger = Logger.getLogger(TemplateDataService.class);
 	
 	@Autowired
 	EntityManager em;
 
-	public ClientVariable getByRowId(int rowId) throws NoResultException {
+	public TemplateData getByRowId(int rowId) throws NoResultException {
 		String sql = 
 			"select t " +
 			"from " +
-				"ClientVariable t where t.rowId=:rowId";
+				"TemplateData t where t.rowId=:rowId";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("rowId", rowId);
-			ClientVariable record = (ClientVariable) query.getSingleResult();
+			TemplateData record = (TemplateData) query.getSingleResult();
 			return record;
 		}
 		finally {
 		}
 	}
 
-	public ClientVariable getByPrimaryKey(ClientVariablePK pk) throws NoResultException {
+	public TemplateData getByPrimaryKey(TemplateDataPK pk) throws NoResultException {
 		if (pk.getClientData()==null) {
 			throw new IllegalArgumentException("A ClientData instance must be provided in Primary Key object.");
 		}
 		String sql = 
 			"select t " +
 			"from " +
-				"ClientVariable t, ClientData c " +
-				"where c=t.clientVariablePK.clientData and c.clientId=:clientId and t.clientVariablePK.variableName=:variableName";
+				"TemplateData t, ClientData c " +
+				"where c=t.templateDataPK.clientData and c.clientId=:clientId " +
+				"and t.templateDataPK.templateId=:templateId ";
 		if (pk.getStartTime()!=null) {
-			sql += " and t.clientVariablePK.startTime=:starTtime ";
+			sql += " and t.templateDataPK.startTime=:starTtime ";
 		}
 		else {
-			sql += " and t.clientVariablePK.startTime is null ";
+			sql += " and t.templateDataPK.startTime is null ";
 		}
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("clientId", pk.getClientData().getClientId());
-			query.setParameter("variableName", pk.getVariableName());
+			query.setParameter("templateId", pk.getTemplateId());
 			if (pk.getStartTime() != null) {
 				query.setParameter("starTtime", pk.getStartTime());
 			}
-			ClientVariable client = (ClientVariable) query.getSingleResult();
-			return client;
+			TemplateData template = (TemplateData) query.getSingleResult();
+			return template;
 		}
 		finally {
 		}
 	}
 
-	public ClientVariable getByBestMatch(ClientVariablePK pk) {
+	public TemplateData getByBestMatch(TemplateDataPK pk) {
 		if (pk.getClientData()==null) {
 			throw new IllegalArgumentException("A ClientData instance must be provided in Primary Key object.");
 		}
 		if (pk.getStartTime()==null) {
-			pk.setStartTime(new Date(System.currentTimeMillis()));
+			pk.setStartTime(new Timestamp(System.currentTimeMillis()));
 		}
 		String sql = 
 				"select t " +
 				"from " +
-					"ClientVariable t, ClientData c " +
-					" where c=t.clientVariablePK.clientData and c.clientId=:clientId " +
-					" and t.clientVariablePK.variableName=:variableName " +
-					" and (t.clientVariablePK.startTime<=:startTime or t.clientVariablePK.startTime is null) " +
-					" order by t.clientVariablePK.startTime desc ";
+					"TemplateData t, ClientData c " +
+					" where c=t.templateDataPK.clientData and c.clientId=:clientId " +
+					" and t.templateDataPK.templateId=:templateId " +
+					" and (t.templateDataPK.startTime<=:startTime or t.templateDataPK.startTime is null) " +
+					" order by t.templateDataPK.startTime desc ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("variableName", pk.getVariableName());
+			query.setParameter("templateId", pk.getTemplateId());
 			query.setParameter("startTime", pk.getStartTime());
 			query.setParameter("clientId", pk.getClientData().getClientId());
 			@SuppressWarnings("unchecked")
-			List<ClientVariable> list = query.setMaxResults(1).getResultList();
+			List<TemplateData> list = query.setMaxResults(1).getResultList();
 			if (!list.isEmpty()) {
 				return list.get(0);
 			}
@@ -100,70 +101,70 @@ public class ClientVariableService {
 		}
 	}
 
-	public List<ClientVariable> getByVariableName(String variableName) {
+	public List<TemplateData> getByTemplateId(String templateId) {
 		String sql = 
 				"select t " +
 				" from " +
-					" ClientVariable t, ClientData c " +
-					" where c=t.clientVariablePK.clientData and t.clientVariablePK.variableName=:variableName " +
-				" order by c.clientId, t.clientVariablePK.startTime asc ";
+					" TemplateData t, ClientData c " +
+					" where c=t.templateDataPK.clientData and t.templateDataPK.templateId=:templateId " +
+				" order by c.clientId, t.templateDataPK.startTime asc ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("variableName", variableName);
+			query.setParameter("templateId", templateId);
 			@SuppressWarnings("unchecked")
-			List<ClientVariable> list = query.getResultList();
+			List<TemplateData> list = query.getResultList();
 			return list;
 		}
 		finally {
 		}
 	}
 
-	public List<ClientVariable> getCurrentByClientId(String clientId) {
+	public List<TemplateData> getCurrentByClientId(String clientId) {
 		String sql = 
 				"select a.* " +
-					" from Client_Variable a " +
+					" from template_data a " +
 					" inner join ( " +
-					"  select b.clientDataRowId as clientDataRowId, b.variableName as variableName, max(b.startTime) as maxTime " +
-					"   from Client_Variable b, Client_Data cd " +
+					"  select b.clientDataRowId as clientDataRowId, b.templateId as templateId, max(b.startTime) as maxTime " +
+					"   from template_data b, Client_Data cd " +
 					"   where b.statusId = ?1 and b.startTime<=?2 and b.clientDataRowId=cd.row_Id and cd.clientId=?3 " +
-					"   group by b.clientDataRowId, b.variableName " +
+					"   group by b.clientDataRowId, b.templateId " +
 					" ) as c " +
-					"  on a.variableName=c.variableName and a.startTime=c.maxTime and a.clientDataRowId=c.clientDataRowId " +
+					"  on a.templateId=c.templateId and a.startTime=c.maxTime and a.clientDataRowId=c.clientDataRowId " +
 					" order by a.row_id asc ";
 		try {
-			Query query = em.createNativeQuery(sql, ClientVariable.class);
+			Query query = em.createNativeQuery(sql, TemplateData.class);
 			query.setParameter(1, StatusId.ACTIVE.getValue());
-			query.setParameter(2, new Date(System.currentTimeMillis()));
+			query.setParameter(2, new Timestamp(System.currentTimeMillis()));
 			query.setParameter(3, clientId);
 			@SuppressWarnings("unchecked")
-			List<ClientVariable> list = query.getResultList();
+			List<TemplateData> list = query.getResultList();
 			return list;
 		}
 		finally {
 		}
 	}
 
-	public void delete(ClientVariable var) {
-		if (var == null) return;
+	public void delete(TemplateData template) {
+		if (template == null) return;
 		try {
-			em.remove(var);
+			em.remove(template);
 		}
 		finally {
 		}
 	}
 
-	public int deleteByPrimaryKey(ClientVariablePK pk) {
+	public int deleteByPrimaryKey(TemplateDataPK pk) {
 		if (pk.getClientData()==null) {
 			throw new IllegalArgumentException("A ClientData instance must be provided in Primary Key object.");
 		}
 		String sql = 
-				"delete from Client_Variable " +
-				" where variableName=?1 and startTime=?2 " +
+				"delete from Template_Data " +
+				" where templateId=?1 and startTime=?2 " +
 				" and clientDataRowId in " +
 				" (select row_id from client_data cd where cd.clientId=?3)";
 		try {
 			Query query = em.createNativeQuery(sql);
-			query.setParameter(1, pk.getVariableName());
+			query.setParameter(1, pk.getTemplateId());
 			query.setParameter(2, pk.getStartTime());
 			query.setParameter(3, pk.getClientData().getClientId());
 			int rows = query.executeUpdate();
@@ -173,12 +174,12 @@ public class ClientVariableService {
 		}
 	}
 
-	public int deleteByVariableName(String variableName) {
+	public int deleteByTemplateId(String templateId) {
 		String sql = 
-				"delete from ClientVariable t where t.clientVariablePK.variableName=:variableName ";
+				"delete from TemplateData t where t.templateDataPK.templateId=:templateId ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("variableName", variableName);
+			query.setParameter("templateId", templateId);
 			int rows = query.executeUpdate();
 			return rows;
 		}
@@ -188,7 +189,7 @@ public class ClientVariableService {
 
 	public int deleteByClientId(String clientId) {
 		String sql = 
-				"delete from Client_Variable where clientDataRowId in " +
+				"delete from template_data where clientDataRowId in " +
 				" (select row_id from client_data cd where cd.clientId=?1)";
 		try {
 			Query query = em.createNativeQuery(sql);
@@ -200,22 +201,22 @@ public class ClientVariableService {
 		}
 	}
 
-	public void update(ClientVariable var) {
+	public void update(TemplateData template) {
 		try {
-			if (em.contains(var)) {
-				em.persist(var);
+			if (em.contains(template)) {
+				em.persist(template);
 			}
 			else {
-				em.merge(var);
+				em.merge(template);
 			}
 		}
 		finally {
 		}
 	}
 
-	public void insert(ClientVariable var) {
+	public void insert(TemplateData template) {
 		try {
-			em.persist(var);
+			em.persist(template);
 			em.flush();
 		}
 		finally {

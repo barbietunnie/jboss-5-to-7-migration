@@ -11,6 +11,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 
 import jpa.constant.CodeType;
+import jpa.constant.StatusId;
 
 @MappedSuperclass
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
@@ -59,7 +60,7 @@ public abstract class BaseVariableModel implements Serializable
 	//private String statusId = Constants.ACTIVE;
 	// A - Active, I - Inactive
 	@Column(name="StatusId", length=1, nullable=false, columnDefinition="char not null")
-	private String statusId = "";
+	private String statusId = StatusId.ACTIVE.getValue();
 	@Column(name="AllowOverride", length=1, nullable=false, columnDefinition="char not null")
 	private String allowOverride = CodeType.YES_CODE.getValue();
 	// allow override value to be supplied at runtime, Y/N/M, M=Mandatory

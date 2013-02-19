@@ -43,13 +43,13 @@ public class CustomerDataLoader extends AbstractDataLoader {
 	}
 
 	private void loadCustomerData() {
-		String addr = "jsmith@test.com";
+		String addr = getProperty("customer.email.1");
 		EmailAddr emailaddr = emailAddrService.findSertAddress(addr);
 		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 		CustomerData data = new CustomerData();
 		data.setClientData(cd);
 		data.setEmailAddr(emailaddr);
-		data.setCustomerId("test");
+		data.setCustomerId(getProperty("customer.id.1"));
 		data.setSsnNumber("123-45-6789");
 		data.setTaxId(null);
 		data.setProfession("Software Consultant");
