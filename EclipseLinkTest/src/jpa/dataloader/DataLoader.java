@@ -32,5 +32,6 @@ public class DataLoader {
 		new RuleDataLoader().loadData();
 		new RuleActionLoader().loadData();
 		new TemplateDataLoader().loadData();
+		new MessageInboxLoader().loadData();
 	}
 }
