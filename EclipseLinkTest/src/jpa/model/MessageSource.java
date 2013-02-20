@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import jpa.constant.CodeType;
 
@@ -36,7 +37,8 @@ public class MessageSource extends BaseModel implements Serializable
 
 	@JoinTable(name="source_to_variable",
 			joinColumns = {@JoinColumn(name="MessageSoureRowId",referencedColumnName="Row_Id", columnDefinition="int")},
-			inverseJoinColumns = {@JoinColumn(name = "TemplateVariableRowId", referencedColumnName = "Row_Id", columnDefinition="int")}
+			inverseJoinColumns = {@JoinColumn(name = "TemplateVariableRowId", referencedColumnName = "Row_Id", columnDefinition="int")},
+			uniqueConstraints={@UniqueConstraint(columnNames={"MessageSoureRowId", "TemplateVariableRowId"})}
 			)
 	@ManyToMany(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
 	private List<TemplateVariable> templateVariableList;
