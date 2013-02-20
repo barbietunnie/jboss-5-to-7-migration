@@ -16,6 +16,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.legacytojava.message.dao.client.ClientDao;
+import com.legacytojava.message.vo.ClientVo;
 import com.legacytojava.message.vo.IdTokensVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,7 +27,9 @@ import com.legacytojava.message.vo.IdTokensVo;
 public class IdTokensTest {
 	@Resource
 	private IdTokensDao idTokensDao;
-	final String testClientId = "JBatchCorp";
+	@Resource
+	private ClientDao clientDao;
+	private String testClientId = "JBatchCorp";
 	
 	@BeforeClass
 	public static void IdTokensPrepare() {
@@ -71,8 +75,15 @@ public class IdTokensTest {
 		return rows;
 	}
 	private IdTokensVo insert() {
+		if (clientDao.getByClientId(testClientId)==null) {
+			List<ClientVo> list = clientDao.getAll();
+			testClientId = list.get(0).getClientId();
+		}
 		List<IdTokensVo> list = idTokensDao.getAll();
 		for (IdTokensVo vo : list) {
+			if (testClientId.equals(vo.getClientId())) {
+				delete(vo);
+			}
 			vo.setClientId(testClientId);
 			idTokensDao.insert(vo);
 			System.out.println("IdTokensDao: insert "+vo);
