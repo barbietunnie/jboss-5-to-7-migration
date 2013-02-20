@@ -3,6 +3,7 @@ package jpa.test;
 import static org.junit.Assert.*;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -24,10 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 import jpa.constant.Constants;
 import jpa.constant.VariableType;
 import jpa.model.ClientData;
+import jpa.model.ClientVariable;
+import jpa.model.CustomerData;
 import jpa.model.TemplateData;
 import jpa.model.TemplateDataPK;
 import jpa.model.TemplateVariable;
 import jpa.model.TemplateVariablePK;
+import jpa.model.UserData;
 import jpa.service.ClientDataService;
 import jpa.service.TemplateDataService;
 import jpa.service.TemplateVariableService;
@@ -42,6 +46,7 @@ public class TemplateVariableTest {
 	
 	final String testTemplateId = "jpa test template id";
 	final String testClientId = Constants.DEFAULT_CLIENTID;
+	final String testVariableId = "jpa test variable id";
 	final String testVariableName = "jpa test variable name";
 	
 	@BeforeClass
@@ -56,10 +61,25 @@ public class TemplateVariableTest {
 	ClientDataService clientService;
 	
 	private TemplateData tmp0;
+	private ClientData cd0;
 	
 	@Before
 	public void prepare() {
-		ClientData cd0 = clientService.getByClientId(testClientId);
+		ClientData client = clientService.getByClientId(testClientId);
+		
+		cd0 = new ClientData();
+		try {
+			BeanUtils.copyProperties(cd0, client);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		cd0.setClientId(Constants.DEFAULT_CLIENTID + "_v2");
+		cd0.setClientVariables(new ArrayList<ClientVariable>());
+		cd0.setCustomers(new ArrayList<CustomerData>());
+		cd0.setUserDatas(new ArrayList<UserData>());
+		clientService.insert(cd0);
+
 		TemplateDataPK pk0 = new TemplateDataPK(cd0, testTemplateId, new Timestamp(System.currentTimeMillis()));
 		tmp0 = new TemplateData();
 		tmp0.setTemplateDataPK(pk0);
@@ -76,8 +96,9 @@ public class TemplateVariableTest {
 
 	@Test
 	public void templateDataService() {
-		ClientData cd0 = clientService.getByClientId(testClientId);
-		TemplateVariablePK pk0 = new TemplateVariablePK(tmp0, cd0, testVariableName, new Timestamp(System.currentTimeMillis()));
+		Timestamp tms = new Timestamp(System.currentTimeMillis());
+		
+		TemplateVariablePK pk0 = new TemplateVariablePK(cd0, testVariableId, testVariableName, tms);
 		TemplateVariable rcd1 = new TemplateVariable();
 		rcd1.setTemplateVariablePK(pk0);
 		rcd1.setVariableType(VariableType.TEXT.getValue());
@@ -92,10 +113,10 @@ public class TemplateVariableTest {
 		TemplateVariable var2 = service.getByPrimaryKey(pk1);
 		assertTrue(var1.equals(var2));
 
-		List<TemplateVariable> list1 = service.getByTemplateId(pk1.getTemplateData().getTemplateDataPK().getTemplateId());
+		List<TemplateVariable> list1 = service.getByVariableId(pk1.getVariableId());
 		assertFalse(list1.isEmpty());
 		
-		list1 = service.getCurrentByTemplateId(pk1.getTemplateData().getTemplateDataPK().getTemplateId());
+		list1 = service.getCurrentByVariableId(pk1.getVariableId());
 		assertFalse(list1.isEmpty());
 		
 		List<TemplateVariable> list2 = service.getCurrentByClientId(testClientId);
@@ -108,7 +129,7 @@ public class TemplateVariableTest {
 		Timestamp newTms = new Timestamp(System.currentTimeMillis()+1000);
 		TemplateVariable var3 = createNewInstance(var2);
 		TemplateVariablePK pk2 = var2.getTemplateVariablePK();
-		TemplateVariablePK pk3 = new TemplateVariablePK(pk2.getTemplateData(), pk2.getClientData(), pk2.getVariableName(), newTms);
+		TemplateVariablePK pk3 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName(), newTms);
 		var3.setTemplateVariablePK(pk3);
 		service.insert(var3);
 		assertNotNull(service.getByPrimaryKey(pk3));
@@ -123,7 +144,7 @@ public class TemplateVariableTest {
 
 		// test deleteByVariableName
 		TemplateVariable var4 = createNewInstance(var2);
-		TemplateVariablePK pk4 = new TemplateVariablePK(pk2.getTemplateData(), pk2.getClientData(), pk2.getVariableName()+"_v4", pk2.getStartTime());
+		TemplateVariablePK pk4 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName()+"_v4", pk2.getStartTime());
 		var4.setTemplateVariablePK(pk4);
 		service.insert(var4);
 		assertTrue(1==service.deleteByVariableName(pk4.getVariableName()));
@@ -135,7 +156,7 @@ public class TemplateVariableTest {
 
 		// test deleteByPrimaryKey
 		TemplateVariable var5 = createNewInstance(var2);
-		TemplateVariablePK pk5 = new TemplateVariablePK(pk2.getTemplateData(), pk2.getClientData(), pk2.getVariableName()+"_v5", pk2.getStartTime());
+		TemplateVariablePK pk5 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName()+"_v5", pk2.getStartTime());
 		var5.setTemplateVariablePK(pk5);
 		service.insert(var5);
 		assertTrue(1==service.deleteByPrimaryKey(pk5));
@@ -145,12 +166,12 @@ public class TemplateVariableTest {
 		}
 		catch (NoResultException e) {}
 
-		// test deleteTemplateId
+		// test deleteVariableId
 		TemplateVariable var6 = createNewInstance(var2);
-		TemplateVariablePK pk6 = new TemplateVariablePK(pk2.getTemplateData(), pk2.getClientData(), pk2.getVariableName()+"_v6", pk2.getStartTime());
+		TemplateVariablePK pk6 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName()+"_v6", pk2.getStartTime());
 		var6.setTemplateVariablePK(pk6);
 		service.insert(var6);
-		int rowsDeleted = service.deleteByTemplateId(pk6.getTemplateData().getTemplateDataPK().getTemplateId());
+		int rowsDeleted = service.deleteByVariableId(pk6.getVariableId());
 		assertTrue(1<=rowsDeleted);
 		try {
 			service.getByPrimaryKey(pk6);
@@ -160,7 +181,7 @@ public class TemplateVariableTest {
 		
 		// test deleteClientId
 		TemplateVariable var7 = createNewInstance(var2);
-		TemplateVariablePK pk7 = new TemplateVariablePK(pk2.getTemplateData(), pk2.getClientData(), pk2.getVariableName()+"_v7", pk2.getStartTime());
+		TemplateVariablePK pk7 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName()+"_v7", pk2.getStartTime());
 		var7.setTemplateVariablePK(pk7);
 		service.insert(var7);
 		rowsDeleted = service.deleteByClientId(pk7.getClientData().getClientId());
@@ -173,7 +194,7 @@ public class TemplateVariableTest {
 		
 		// test update
 		TemplateVariable var9 = createNewInstance(var2);
-		TemplateVariablePK pk9 = new TemplateVariablePK(pk2.getTemplateData(), pk2.getClientData(), pk2.getVariableName()+"_v6", pk2.getStartTime());
+		TemplateVariablePK pk9 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName()+"_v6", pk2.getStartTime());
 		var9.setTemplateVariablePK(pk9);
 		service.insert(var9);
 		assertNotNull(service.getByPrimaryKey(pk9));

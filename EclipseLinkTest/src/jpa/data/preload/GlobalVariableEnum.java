@@ -8,7 +8,8 @@ public enum GlobalVariableEnum {
 	CurrentDateTime(null,"yyyy-MM-dd HH:mm:ss",VariableType.DATETIME,CodeType.YES_CODE),
 	CurrentDate(null,"yyyy-MM-dd",VariableType.DATETIME,CodeType.YES_CODE),
 	CurrentTime(null,"hh:mm:ss a",VariableType.DATETIME,CodeType.YES_CODE),
-	PoweredBySignature(Constants.POWERED_BY_HTML_TAG,null,VariableType.TEXT,CodeType.NO_CODE);
+	PoweredBySignature(Constants.POWERED_BY_HTML_TAG,null,VariableType.TEXT,CodeType.NO_CODE),
+	To(null,null,VariableType.ADDRESS,CodeType.MANDATORY_CODE);
 	
 	private String value;
 	private String format;

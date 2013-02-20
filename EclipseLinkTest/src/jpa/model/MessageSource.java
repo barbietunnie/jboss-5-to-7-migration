@@ -1,11 +1,16 @@
 package jpa.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -29,10 +34,13 @@ public class MessageSource extends BaseModel implements Serializable
 	@JoinColumn(name="TemplateDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private TemplateData templateData;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=TemplateVariable.class)
-	@JoinColumn(name="TemplateVariableRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private TemplateVariable templateVariable;
-
+	@JoinTable(name="source_to_variable",
+			joinColumns = {@JoinColumn(name="MessageSoureRowId",referencedColumnName="Row_Id", columnDefinition="int")},
+			inverseJoinColumns = {@JoinColumn(name = "TemplateVariableRowId", referencedColumnName = "Row_Id", columnDefinition="int")}
+			)
+	@ManyToMany(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+	private List<TemplateVariable> templateVariableList;
+	
 	@Column(nullable=false, length=26, unique=true)
 	private String msgSourceId = "";
 	@Column(nullable=true, length=100)
@@ -82,12 +90,15 @@ public class MessageSource extends BaseModel implements Serializable
 		this.templateData = templateData;
 	}
 
-	public TemplateVariable getTemplateVariable() {
-		return templateVariable;
+	public List<TemplateVariable> getTemplateVariableList() {
+		if (templateVariableList==null) {
+			templateVariableList = new ArrayList<TemplateVariable>();
+		}
+		return templateVariableList;
 	}
 
-	public void setTemplateVariable(TemplateVariable templateVariable) {
-		this.templateVariable = templateVariable;
+	public void setTemplateVariableList(List<TemplateVariable> templateVariableList) {
+		this.templateVariableList = templateVariableList;
 	}
 
 	public String getMsgSourceId() {

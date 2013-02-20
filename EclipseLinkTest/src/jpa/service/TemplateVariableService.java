@@ -41,19 +41,15 @@ public class TemplateVariableService {
 	}
 
 	public TemplateVariable getByPrimaryKey(TemplateVariablePK pk) throws NoResultException {
-		if (pk.getTemplateData()==null) {
-			throw new IllegalArgumentException("A TemplateData instance must be provided in Primary Key object.");
-		}
 		if (pk.getClientData()==null) {
 			throw new IllegalArgumentException("A ClientData instance must be provided in Primary Key object.");
 		}
 		String sql = 
 			"select t " +
 			"from " +
-				"TemplateVariable t, TemplateData td, ClientData c " +
+				"TemplateVariable t, ClientData c " +
 				"where c=t.templateVariablePK.clientData and c.clientId=:clientId " +
-				"and td=t.templateVariablePK.templateData " +
-				"and td.templateDataPK.templateId=:templateId " +
+				"and t.templateVariablePK.variableId=:variableId " +
 				"and t.templateVariablePK.variableName=:variableName ";
 		if (pk.getStartTime()!=null) {
 			sql += " and t.templateVariablePK.startTime=:starTtime ";
@@ -64,7 +60,7 @@ public class TemplateVariableService {
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("clientId", pk.getClientData().getClientId());
-			query.setParameter("templateId", pk.getTemplateData().getTemplateDataPK().getTemplateId());
+			query.setParameter("variableId", pk.getVariableId());
 			query.setParameter("variableName", pk.getVariableName());
 			if (pk.getStartTime() != null) {
 				query.setParameter("starTtime", pk.getStartTime());
@@ -77,9 +73,6 @@ public class TemplateVariableService {
 	}
 
 	public TemplateVariable getByBestMatch(TemplateVariablePK pk) {
-		if (pk.getTemplateData()==null) {
-			throw new IllegalArgumentException("A TemplateData instance must be provided in Primary Key object.");
-		}
 		if (pk.getClientData()==null) {
 			throw new IllegalArgumentException("A ClientData instance must be provided in Primary Key object.");
 		}
@@ -89,16 +82,15 @@ public class TemplateVariableService {
 		String sql = 
 				"select t " +
 				"from " +
-					"TemplateVariable t, TemplateData td, ClientData c " +
+					"TemplateVariable t,ClientData c " +
 					" where c=t.templateVariablePK.clientData and c.clientId=:clientId " +
-					" and td=t.templateVariablePK.templateData " +
-					" and td.templateDataPK.templateId=:templateId " +
+					" and t.templateVariablePK.variableId=:variableId " +
 					" and t.templateVariablePK.variableName=:variableName " +
 					" and (t.templateVariablePK.startTime<=:startTime or t.templateVariablePK.startTime is null) " +
 					" order by t.templateVariablePK.startTime desc ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("templateId", pk.getTemplateData().getTemplateDataPK().getTemplateId());
+			query.setParameter("variableId", pk.getVariableId());
 			query.setParameter("startTime", pk.getStartTime());
 			query.setParameter("clientId", pk.getClientData().getClientId());
 			query.setParameter("variableName", pk.getVariableName());
@@ -113,18 +105,17 @@ public class TemplateVariableService {
 		}
 	}
 
-	public List<TemplateVariable> getByTemplateId(String templateId) {
+	public List<TemplateVariable> getByVariableId(String variableId) {
 		String sql = 
 				"select t " +
 				" from " +
-					" TemplateVariable t, TemplateData td, ClientData c " +
+					" TemplateVariable t, ClientData c " +
 					" where c=t.templateVariablePK.clientData " +
-					" and td=t.templateVariablePK.templateData " +
-					" and td.templateDataPK.templateId=:templateId " +
+					" and t.templateVariablePK.variableId=:variableId " +
 				" order by c.clientId, t.templateVariablePK.startTime asc ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("templateId", templateId);
+			query.setParameter("variableId", variableId);
 			@SuppressWarnings("unchecked")
 			List<TemplateVariable> list = query.getResultList();
 			return list;
@@ -133,23 +124,23 @@ public class TemplateVariableService {
 		}
 	}
 
-	public List<TemplateVariable> getCurrentByTemplateId(String templateId) {
+	public List<TemplateVariable> getCurrentByVariableId(String variableId) {
 		String sql = 
 				"select a.* " +
 					" from template_variable a " +
 					" inner join ( " +
-					"  select b.templateDataRowId as templateDataRowId, b.variableName as variableName, max(b.startTime) as maxTime " +
-					"   from template_variable b, Template_Data td " +
-					"   where b.statusId = ?1 and b.startTime<=?2 and b.templateDataRowId=td.row_Id and td.templateId=?3 " +
-					"   group by b.templateDataRowId, b.variableName " +
+					"  select b.variableId as variableId, b.variableName as variableName, max(b.startTime) as maxTime " +
+					"   from template_variable b " +
+					"   where b.statusId = ?1 and b.startTime<=?2 and b.variableId=?3 " +
+					"   group by b.variableId, b.variableName " +
 					" ) as c " +
-					"  on a.variableName=c.variableName and a.startTime=c.maxTime and a.templateDataRowId=c.templateDataRowId " +
+					"  on a.variableName=c.variableName and a.startTime=c.maxTime and a.variableId=c.variableId " +
 					" order by a.row_id asc ";
 		try {
 			Query query = em.createNativeQuery(sql, TemplateVariable.class);
 			query.setParameter(1, StatusId.ACTIVE.getValue());
 			query.setParameter(2, new Timestamp(System.currentTimeMillis()));
-			query.setParameter(3, templateId);
+			query.setParameter(3, variableId);
 			@SuppressWarnings("unchecked")
 			List<TemplateVariable> list = query.getResultList();
 			return list;
@@ -163,12 +154,12 @@ public class TemplateVariableService {
 				"select a.* " +
 					" from template_variable a " +
 					" inner join ( " +
-					"  select b.clientDataRowId as clientDataRowId, b.variableName as variableName, max(b.startTime) as maxTime " +
+					"  select b.clientDataRowId as clientDataRowId, b.variableId as variableId, b.variableName as variableName, max(b.startTime) as maxTime " +
 					"   from template_variable b, Client_Data cd " +
 					"   where b.statusId = ?1 and b.startTime<=?2 and b.clientDataRowId=cd.row_Id and cd.clientId=?3 " +
-					"   group by b.clientDataRowId, b.variableName " +
+					"   group by b.clientDataRowId, b.variableId, b.variableName " +
 					" ) as c " +
-					"  on a.variableName=c.variableName and a.startTime=c.maxTime and a.clientDataRowId=c.clientDataRowId " +
+					"  on a.variableId=c.variableId and a.variableName=c.variableName and a.startTime=c.maxTime and a.clientDataRowId=c.clientDataRowId " +
 					" order by a.row_id asc ";
 		try {
 			Query query = em.createNativeQuery(sql, TemplateVariable.class);
@@ -193,25 +184,20 @@ public class TemplateVariableService {
 	}
 
 	public int deleteByPrimaryKey(TemplateVariablePK pk) {
-		if (pk.getTemplateData()==null) {
-			throw new IllegalArgumentException("A TemplateData instance must be provided in Primary Key object.");
-		}
 		if (pk.getClientData()==null) {
 			throw new IllegalArgumentException("A ClientData instance must be provided in Primary Key object.");
 		}
 		String sql = 
 				"delete from Template_Variable " +
-				" where variableName=?1 and startTime=?2 " +
+				" where variableId=?1 and variableName=?2 and startTime=?3 " +
 				" and clientDataRowId in " +
-				" (select row_id from client_data cd where cd.clientId=?3) " +
-				" and templateDataRowId in " +
-				" (select row_id from template_data td where td.templateId=?4) ";
+				" (select row_id from client_data cd where cd.clientId=?4) ";
 		try {
 			Query query = em.createNativeQuery(sql);
-			query.setParameter(1, pk.getVariableName());
-			query.setParameter(2, pk.getStartTime());
-			query.setParameter(3, pk.getClientData().getClientId());
-			query.setParameter(4, pk.getTemplateData().getTemplateDataPK().getTemplateId());
+			query.setParameter(1, pk.getVariableId());
+			query.setParameter(2, pk.getVariableName());
+			query.setParameter(3, pk.getStartTime());
+			query.setParameter(4, pk.getClientData().getClientId());
 			int rows = query.executeUpdate();
 			return rows;
 		}
@@ -219,13 +205,12 @@ public class TemplateVariableService {
 		}
 	}
 
-	public int deleteByTemplateId(String templateId) {
+	public int deleteByVariableId(String variableId) {
 		String sql = 
-				"delete from Template_Variable where templateDataRowId in " +
-				" (select row_id from template_data td where td.templateId=?1)";
+				"delete from TemplateVariable t where t.templateVariablePK.variableId=:variableId ";
 		try {
-			Query query = em.createNativeQuery(sql);
-			query.setParameter(1, templateId);
+			Query query = em.createQuery(sql);
+			query.setParameter("variableId", variableId);
 			int rows = query.executeUpdate();
 			return rows;
 		}
