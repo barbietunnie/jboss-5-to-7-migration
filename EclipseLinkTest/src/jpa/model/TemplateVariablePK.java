@@ -13,14 +13,12 @@ import javax.persistence.ManyToOne;
 public class TemplateVariablePK implements Serializable {
 	private static final long serialVersionUID = 7193883507541681000L;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=TemplateData.class)
-	@JoinColumn(name="TemplateDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private TemplateData templateData;
-
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=ClientData.class)
 	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private ClientData clientData;
 	
+	@Column(name="VariableId", nullable=false, length=26)
+	private String variableId = "";
 	@Column(name="VariableName", nullable=false, length=26)
 	protected String variableName = "";
 	@Column(name="StartTime", nullable=false)
@@ -28,19 +26,11 @@ public class TemplateVariablePK implements Serializable {
 
 	public TemplateVariablePK() {}
 	
-	public TemplateVariablePK(TemplateData templateData, ClientData clientData, String variableName, Timestamp startTime) {
-		this.templateData = templateData;
+	public TemplateVariablePK(ClientData clientData, String variableId, String variableName, Timestamp startTime) {
 		this.clientData = clientData;
+		this.variableId = variableId;
 		this.variableName = variableName;
 		this.startTime = startTime;
-	}
-
-	public TemplateData getTemplateData() {
-		return templateData;
-	}
-
-	public void setTemplateData(TemplateData templateData) {
-		this.templateData = templateData;
 	}
 
 	public ClientData getClientData() {
@@ -50,6 +40,14 @@ public class TemplateVariablePK implements Serializable {
 	public void setClientData(ClientData clientData) {
 		this.clientData = clientData;
 	}
+	public String getVariableId() {
+		return variableId;
+	}
+
+	public void setVariableId(String variableId) {
+		this.variableId = variableId;
+	}
+
 	public String getVariableName() {
 		return variableName;
 	}

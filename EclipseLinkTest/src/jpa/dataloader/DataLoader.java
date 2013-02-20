@@ -31,5 +31,6 @@ public class DataLoader {
 		new EmailTemplateLoader().loadData();
 		new RuleDataLoader().loadData();
 		new RuleActionLoader().loadData();
+		new TemplateDataLoader().loadData();
 	}
 }

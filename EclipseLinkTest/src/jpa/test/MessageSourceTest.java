@@ -64,10 +64,11 @@ public class MessageSourceTest {
 	
 	@Before
 	public void prepare() {
+		Timestamp tms = new Timestamp(System.currentTimeMillis());
 		String testTemplateId = "jpa test template id";
 		String testClientId = Constants.DEFAULT_CLIENTID;
 		ClientData cd0 = clientService.getByClientId(testClientId);
-		TemplateDataPK tpk0 = new TemplateDataPK(cd0, testTemplateId, new Timestamp(System.currentTimeMillis()));
+		TemplateDataPK tpk0 = new TemplateDataPK(cd0, testTemplateId, tms);
 		tmp1 = new TemplateData();
 		tmp1.setTemplateDataPK(tpk0);
 		tmp1.setContentType("text/plain");
@@ -75,8 +76,9 @@ public class MessageSourceTest {
 		tmp1.setSubjectTemplate("jpa test subject");
 		templateService.insert(tmp1);
 
+		String testVariableId = "jpa test variable id";
 		String testVariableName = "jpa test variable name";
-		TemplateVariablePK vpk0 = new TemplateVariablePK(tmp1, cd0, testVariableName, new Timestamp(System.currentTimeMillis()));
+		TemplateVariablePK vpk0 = new TemplateVariablePK(cd0, testVariableId, testVariableName, tms);
 		var1 = new TemplateVariable();
 		var1.setTemplateVariablePK(vpk0);
 		var1.setVariableType(VariableType.TEXT.getValue());
@@ -92,7 +94,7 @@ public class MessageSourceTest {
 		MessageSource src1 = new MessageSource();
 		src1.setMsgSourceId(testMsgSourceId);
 		src1.setTemplateData(tmp1);
-		src1.setTemplateVariable(var1);
+		src1.getTemplateVariableList().add(var1);
 		src1.setFromAddress(adr1);
 		service.insert(src1);
 		
@@ -101,6 +103,7 @@ public class MessageSourceTest {
 		
 		MessageSource tkn0 = service.getByMsgSourceId(testMsgSourceId);
 		assertNotNull(tkn0);
+		assertFalse(tkn0.getTemplateVariableList().isEmpty());
 		System.out.println(StringUtil.prettyPrint(tkn0,2));
 		
 		List<MessageSource> lst2 = service.getByFromAddress(adr1.getAddress());
@@ -123,6 +126,8 @@ public class MessageSourceTest {
 			throw new RuntimeException(e);
 		}
 		tkn2.setMsgSourceId(tkn1.getMsgSourceId()+"_v2");
+		// to prevent "found shared references to a collection" error from Hibernate
+		tkn2.setTemplateVariableList(null);
 		service.insert(tkn2);
 		
 		MessageSource tkn3 = service.getByMsgSourceId(tkn2.getMsgSourceId());

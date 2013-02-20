@@ -3,6 +3,7 @@ package jpa.test;
 import static org.junit.Assert.*;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -21,8 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
 import jpa.model.ClientData;
+import jpa.model.ClientVariable;
+import jpa.model.CustomerData;
 import jpa.model.TemplateData;
 import jpa.model.TemplateDataPK;
+import jpa.model.UserData;
 import jpa.service.ClientDataService;
 import jpa.service.TemplateDataService;
 import jpa.util.StringUtil;
@@ -48,7 +52,21 @@ public class TemplateDataTest {
 
 	@Test
 	public void templateDataService() {
-		ClientData cd0 = clientService.getByClientId(testClientId);
+		ClientData client = clientService.getByClientId(testClientId);
+		
+		ClientData cd0 = new ClientData();
+		try {
+			BeanUtils.copyProperties(cd0, client);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		cd0.setClientId(Constants.DEFAULT_CLIENTID + "_v2");
+		cd0.setClientVariables(new ArrayList<ClientVariable>());
+		cd0.setCustomers(new ArrayList<CustomerData>());
+		cd0.setUserDatas(new ArrayList<UserData>());
+		clientService.insert(cd0);
+		
 		TemplateDataPK pk0 = new TemplateDataPK(cd0, testTemplateId, new Timestamp(System.currentTimeMillis()));
 		TemplateData rcd1 = new TemplateData();
 		rcd1.setTemplateDataPK(pk0);
