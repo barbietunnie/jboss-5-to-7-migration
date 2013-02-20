@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.legacytojava.message.constant.MailingListDeliveryOption;
 import com.legacytojava.message.dao.emailaddr.EmailAddrDao;
+import com.legacytojava.message.dao.inbox.MsgInboxDao;
 import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
 import com.legacytojava.message.vo.outbox.DeliveryStatusVo;
 
@@ -31,6 +32,8 @@ public class DeliveryStatusTest {
 	private DeliveryStatusDao deliveryStatusDao;
 	@Resource
 	private EmailAddrDao emailAddrDao;
+	@Resource
+	private MsgInboxDao msgInboxDao;
 	private static long testMsgId = 3L;
 	private String testEmailAddr = "demolist1@localhost";
 
@@ -42,6 +45,9 @@ public class DeliveryStatusTest {
 	@Rollback(true)
 	public void testDeliveryStatus() {
 		try {
+			if (msgInboxDao.getByPrimaryKey(testMsgId)==null) {
+				testMsgId = msgInboxDao.getLastRecord().getMsgId();
+			}
 			List<DeliveryStatusVo> list = selectByMsgId(testMsgId);
 			if (list.size()==0) {
 				insert(testMsgId);
