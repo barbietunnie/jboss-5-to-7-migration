@@ -7,7 +7,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import jpa.model.MessageAddress;
-import jpa.model.MessageAddressPK;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,19 +37,18 @@ public class MessageAddressService {
 		}
 	}
 
-	public MessageAddress getByPrimaryKey(MessageAddressPK pk) throws NoResultException {
-		if (pk.getMessageInbox()==null) {
-			throw new IllegalArgumentException("A MessageInbox instance must be provided in Primary Key object.");
-		}
+	public MessageAddress getByPrimaryKey(int msgId, String addrType, String address) throws NoResultException {
 		String sql = 
 				"select t " +
-				"from MessageAddress t, MessageInbox mi where " +
-					" mi=t.messageAddressPK.messageInbox and mi.rowId=:rowId " +
-					" and t.addressSequence=:sequence ";
+				"from MessageAddress t, MessageInbox mi, EmailAddr ea where " +
+					" mi=t.messageInbox and mi.rowId=:msgId " +
+					" and ea=t.addressValue and ea.address=:address" +
+					" and t.addressType=:addrType ";
 			try {
 				Query query = em.createQuery(sql);
-				query.setParameter("rowId", pk.getMessageInbox().getRowId());
-				query.setParameter("sequence", pk.getAddressSequence());
+				query.setParameter("msgId", msgId);
+				query.setParameter("addrType", addrType);
+				query.setParameter("address", address);
 				MessageAddress record = (MessageAddress) query.getSingleResult();
 				return record;
 			}
@@ -58,14 +56,14 @@ public class MessageAddressService {
 			}
 	}
 
-	public List<MessageAddress> getByMsgInboxId(int rowId) {
+	public List<MessageAddress> getByMsgInboxId(int msgId) {
 		String sql = 
 				"select t " +
 				"from MessageAddress t, MessageInbox mi " +
-				" where mi=t.messageAddressPK.messageInbox and mi.rowId=:rowId ";
+				" where mi=t.messageInbox and mi.rowId=:msgId ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("rowId", rowId);
+			query.setParameter("msgId", msgId);
 			@SuppressWarnings("unchecked")
 			List<MessageAddress> list = query.getResultList();
 			return list;
@@ -88,40 +86,39 @@ public class MessageAddressService {
 				"delete from MessageAddress t " +
 				" where t.rowId=:rowId ";
 		try {
-			Query query = em.createNativeQuery(sql);
-			query.setParameter("rowId", rowId);
-			int rows = query.executeUpdate();
-			return rows;
-		}
-		finally {
-		}
-	}
-
-	public int deleteByPrimaryKey(MessageAddressPK pk) {
-		if (pk.getMessageInbox()==null) {
-			throw new IllegalArgumentException("A MessageInbox instance must be provided in Primary Key object.");
-		}
-		String sql = 
-				"delete from Message_Address where " +
-				" MessageInboxRowId = ?1 and addressSequence=?2 ";
-		try {
-			Query query = em.createNativeQuery(sql);
-			query.setParameter(1, pk.getMessageInbox().getRowId());
-			query.setParameter(2, pk.getAddressSequence());
-			int rows = query.executeUpdate();
-			return rows;
-		}
-		finally {
-		}
-	}
-
-	public int deleteByMsgInboxId(int rowId) {
-		String sql = 
-				"delete from MessageAddress t " +
-				" where t.messageAddressPK.messageInbox.rowId=:rowId ";
-		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("rowId", rowId);
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
+
+	public int deleteByPrimaryKey(int msgId, String addrType, String addrValue) {
+		String sql = 
+				"delete from Message_Address where " +
+				" MessageInboxRowId = ?1 and addressType=?2 and EmailAddrRowId = " +
+				" (select row_id from email_addr ea where ea.address=?3) ";
+		try {
+			Query query = em.createNativeQuery(sql);
+			query.setParameter(1, msgId);
+			query.setParameter(2, addrType);
+			query.setParameter(3, addrValue);
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
+
+	public int deleteByMsgInboxId(int msgId) {
+		String sql = 
+				"delete from MessageAddress t " +
+				" where t.messageInbox.rowId=:msgId ";
+		try {
+			Query query = em.createQuery(sql);
+			query.setParameter("msgId", msgId);
 			int rows = query.executeUpdate();
 			return rows;
 		}

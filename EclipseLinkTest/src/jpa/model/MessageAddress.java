@@ -3,35 +3,40 @@ package jpa.model;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import jpa.constant.EmailAddrType;
 
 @Entity
-@Table(name="message_address", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId", "addressSequence"}))
+@Table(name="message_address", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId", "addressType", "EmailAddrRowId"}))
 public class MessageAddress extends BaseModel implements Serializable
 {
 	private static final long serialVersionUID = 4120242394404262528L;
 
-	@Embedded
-	private MessageAddressPK messageAddressPK;
+	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
+	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	private MessageInbox messageInbox;
+
+	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddr.class)
+	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	private EmailAddr addressValue;
 
 	@Column(length=12, nullable=false)
 	private String addressType = EmailAddrType.FROM_ADDR.getValue();
-	@Column(length=255, nullable=true)
-	private String addressValue = null;
 
 	public MessageAddress() {}
 
-	public MessageAddressPK getMessageAddressPK() {
-		return messageAddressPK;
+	public MessageInbox getMessageInbox() {
+		return messageInbox;
 	}
 
-	public void setMessageAddressPK(MessageAddressPK messageAddressPK) {
-		this.messageAddressPK = messageAddressPK;
+	public void setMessageInbox(MessageInbox messageInbox) {
+		this.messageInbox = messageInbox;
 	}
 
 	public String getAddressType() {
@@ -42,11 +47,11 @@ public class MessageAddress extends BaseModel implements Serializable
 		this.addressType = addressType;
 	}
 
-	public String getAddressValue() {
+	public EmailAddr getAddressValue() {
 		return addressValue;
 	}
 
-	public void setAddressValue(String addressValue) {
+	public void setAddressValue(EmailAddr addressValue) {
 		this.addressValue = addressValue;
 	}
 }

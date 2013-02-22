@@ -3,22 +3,19 @@ package jpa.model;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="message_action_log", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId"}))
+@Table(name="message_action_log", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId", "leadMsgId"}))
 public class MessageActionLog extends BaseModel implements Serializable
 {
 	private static final long serialVersionUID = 60873582256305774L;
 
-	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
-	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private MessageInbox messageInbox;
+	@Embedded
+	private MessageActionLogPK messageActionLogPK;
 
 	@Column(length=50, nullable=false)
 	private String actionService = "";
@@ -27,12 +24,12 @@ public class MessageActionLog extends BaseModel implements Serializable
 
 	public MessageActionLog() {}
 
-	public MessageInbox getMessageInbox() {
-		return messageInbox;
+	public MessageActionLogPK getMessageActionLogPK() {
+		return messageActionLogPK;
 	}
 
-	public void setMessageInbox(MessageInbox messageInbox) {
-		this.messageInbox = messageInbox;
+	public void setMessageActionLogPK(MessageActionLogPK messageActionLogPK) {
+		this.messageActionLogPK = messageActionLogPK;
 	}
 
 	public String getActionService() {

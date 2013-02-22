@@ -71,7 +71,7 @@ public class MessageInbox extends BaseModel implements Serializable {
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageHeaderPK.messageInbox", orphanRemoval=true)
 	private List<MessageHeader> messageHeaderList;
 
-	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageAddressPK.messageInbox", orphanRemoval=true)
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageInbox", orphanRemoval=true)
 	private List<MessageAddress> messageAddressList;
 
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageRfcFieldPK.messageInbox", orphanRemoval=true)

@@ -57,6 +57,36 @@ public class MessageInboxService {
 		}
 	}
 
+	public MessageInbox getPrevoiusRecord(MessageInbox inbox) throws NoResultException {
+		String sql = 
+			"select t " +
+			"from " +
+				"MessageInbox t where t.rowId<:rowId order by t.rowId desc limit 1 ";
+		try {
+			Query query = em.createQuery(sql);
+			query.setParameter("rowId", inbox.getRowId());
+			MessageInbox record = (MessageInbox) query.setMaxResults(1).getSingleResult();
+			return record;
+		}
+		finally {
+		}
+	}
+
+	public MessageInbox getNextRecord(MessageInbox inbox) throws NoResultException {
+		String sql = 
+			"select t " +
+			"from " +
+				"MessageInbox t where t.rowId>:rowId order by t.rowId asc limit 1 ";
+		try {
+			Query query = em.createQuery(sql);
+			query.setParameter("rowId", inbox.getRowId());
+			MessageInbox record = (MessageInbox) query.setMaxResults(1).getSingleResult();
+			return record;
+		}
+		finally {
+		}
+	}
+
 	public List<MessageInbox> getByLeadMsgId(int leadMsgId) throws NoResultException {
 		String sql = 
 			"select t " +
