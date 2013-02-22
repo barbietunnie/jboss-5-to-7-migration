@@ -9,17 +9,17 @@ import javax.persistence.NoResultException;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
-import jpa.constant.EmailAddrType;
 import jpa.constant.MsgDirectionCode;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
 import jpa.model.EmailAddr;
-import jpa.model.MessageAddress;
+import jpa.model.MessageActionLog;
+import jpa.model.MessageActionLogPK;
 import jpa.model.MessageInbox;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddrService;
-import jpa.service.MessageAddressService;
+import jpa.service.MessageActionLogService;
 import jpa.service.MessageInboxService;
 import jpa.service.RuleLogicService;
 import jpa.util.StringUtil;
@@ -39,14 +39,14 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageAddressTest {
+public class MessageActionLogTest {
 
 	@BeforeClass
-	public static void MessageAddressPrepare() {
+	public static void MessageActionLogPrepare() {
 	}
 
 	@Autowired
-	MessageAddressService service;
+	MessageActionLogService service;
 	@Autowired
 	MessageInboxService inboxService;
 	@Autowired
@@ -96,53 +96,60 @@ public class MessageAddressTest {
 		inboxService.insert(inbox1);
 	}
 	
-	private MessageAddress adr1;
-	private MessageAddress adr2;
+	private MessageActionLog log1;
+	private MessageActionLog log2;
 
 	@Test
 	public void messageAddressService() {
-		insertAddr1AndAddr2();
-		MessageAddress adr11 = service.getByRowId(adr1.getRowId());
+		insertActionLogs();
+		MessageActionLog log11 = service.getByRowId(log1.getRowId());
 		
-		System.out.println(StringUtil.prettyPrint(adr11,2));
+		System.out.println(StringUtil.prettyPrint(log11,3));
 		
-		MessageAddress adr12 = service.getByPrimaryKey(inbox1.getRowId(), EmailAddrType.FROM_ADDR.getValue(), from.getAddress());
-		assertTrue(adr11.equals(adr12));
+		MessageActionLog log12 = service.getByPrimaryKey(log11.getMessageActionLogPK());
+		assertTrue(log11.equals(log12));
 		
 		// test update
-		adr2.setUpdtUserId("jpa test");
-		service.update(adr2);
-		MessageAddress adr22 = service.getByRowId(adr2.getRowId());
+		log2.setUpdtUserId("jpa test");
+		service.update(log2);
+		MessageActionLog adr22 = service.getByRowId(log2.getRowId());
 		assertTrue("jpa test".equals(adr22.getUpdtUserId()));
 		
+		assertTrue(1==service.getByLeadMsgId(inbox1.getRowId()).size());
+		
 		// test delete
-		service.delete(adr11);
+		service.delete(log11);
 		try {
-			service.getByRowId(adr11.getRowId());
+			service.getByRowId(log11.getRowId());
 			fail();
 		}
 		catch (NoResultException e) {}
 		
-		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
+		assertTrue(1==service.deleteByRowId(log2.getRowId()));
+		assertTrue(0==service.deleteByLeadMsgId(log2.getMessageActionLogPK().getLeadMsgId()));
 		
-		insertAddr1AndAddr2();
-		assertTrue(1==service.deleteByPrimaryKey(inbox1.getRowId(), EmailAddrType.FROM_ADDR.getValue(), from.getAddress()));
+		insertActionLogs();
+		assertTrue(1==service.deleteByPrimaryKey(log1.getMessageActionLogPK()));
 		assertTrue(1==service.deleteByMsgInboxId(inbox1.getRowId()));
 	}
 	
-	private void insertAddr1AndAddr2() {
+	private void insertActionLogs() {
 		// test insert
-		adr1 = new MessageAddress();
-		adr1.setMessageInbox(inbox1);
-		adr1.setAddressType(EmailAddrType.FROM_ADDR.getValue());
-		adr1.setAddressValue(from);
-		service.insert(adr1);
+		log1 = new MessageActionLog();
+		MessageActionLogPK pk1 = new MessageActionLogPK(inbox1, inbox1.getLeadMessage().getRowId());
+		log1.setMessageActionLogPK(pk1);
+		log1.setActionService(RuleNameEnum.SEND_MAIL.name());
+		log1.setParameters("sent");
+		service.insert(log1);
+
+		log2 = new MessageActionLog();
+		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
+		MessageActionLogPK pk2 = new MessageActionLogPK(inbox1,inbox2.getRowId());
+		log2.setMessageActionLogPK(pk2);
+		log2.setActionService(RuleNameEnum.CSR_REPLY.name());
+		log2.setParameters("rowid=122");
+		service.insert(log2);
 		
-		adr2 = new MessageAddress();
-		adr2.setMessageInbox(inbox1);
-		adr2.setAddressType(EmailAddrType.TO_ADDR.getValue());
-		adr2.setAddressValue(to);
-		service.insert(adr2);
-		assertTrue(service.getByMsgInboxId(inbox1.getRowId()).size()==2);		
+		assertTrue(2==service.getByMsgInboxId(inbox1.getRowId()).size());
 	}
 }

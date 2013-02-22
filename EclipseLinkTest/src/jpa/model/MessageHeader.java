@@ -12,7 +12,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name="message_header", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId", "headerSequence"}))
 public class MessageHeader extends BaseModel implements Serializable
 {
-	private static final long serialVersionUID = 3741976547999638916L;
+	private static final long serialVersionUID = -6910801978360656523L;
 
 	@Embedded
 	private MessageHeaderPK messageHeaderPK;
@@ -23,4 +23,28 @@ public class MessageHeader extends BaseModel implements Serializable
 	private String headerValue = null;
 
 	public MessageHeader() {}
+
+	public MessageHeaderPK getMessageHeaderPK() {
+		return messageHeaderPK;
+	}
+
+	public void setMessageHeaderPK(MessageHeaderPK messageHeaderPK) {
+		this.messageHeaderPK = messageHeaderPK;
+	}
+
+	public String getHeaderName() {
+		return headerName;
+	}
+
+	public void setHeaderName(String headerName) {
+		this.headerName = headerName;
+	}
+
+	public String getHeaderValue() {
+		return headerValue;
+	}
+
+	public void setHeaderValue(String headerValue) {
+		this.headerValue = headerValue;
+	}
 }

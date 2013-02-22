@@ -2,9 +2,13 @@ package jpa.test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.Timestamp;
 import java.util.List;
+
+import javax.persistence.NoResultException;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
@@ -104,6 +108,20 @@ public class MessageInboxTest {
 		assertFalse(lst5.isEmpty());
 		
 		MessageInbox msg2  =service.getLastRecord();
-		System.out.println(StringUtil.prettyPrint(msg2,2));
+		System.out.println(StringUtil.prettyPrint(msg2,1));
+		
+		try {
+			service.getNextRecord(msg2);
+			fail();
+		}
+		catch (NoResultException e) {}
+		
+		MessageInbox msg3  =service.getPrevoiusRecord(msg2);
+		System.out.println(StringUtil.prettyPrint(msg3,1));
+		
+		assertFalse(msg1.equals(msg3));
+
+		MessageInbox msg4  =service.getNextRecord(msg3);
+		assertTrue(msg2.equals(msg4));
 	}
 }

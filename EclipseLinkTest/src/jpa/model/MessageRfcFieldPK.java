@@ -16,7 +16,7 @@ public class MessageRfcFieldPK implements Serializable {
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private MessageInbox messageInbox;
 
-	@Column(length=30, nullable=false)
+	@Column(length=50, nullable=false)
 	private String rfcType = "";
 
 	public MessageRfcFieldPK() {}

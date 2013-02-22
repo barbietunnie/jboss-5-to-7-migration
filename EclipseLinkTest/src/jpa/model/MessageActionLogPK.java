@@ -9,21 +9,21 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Embeddable
-public class MessageAddressPK implements Serializable {
-	private static final long serialVersionUID = -3160308177705771531L;
+public class MessageActionLogPK implements Serializable {
+	private static final long serialVersionUID = 2827238892173739680L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private MessageInbox messageInbox;
 
-	@Column(name="AddressSequence", nullable=false)
-	private int addressSequence = -1;
+	@Column(name="LeadMsgId", nullable=false)
+	private int leadMsgId = -1;
 
-	public MessageAddressPK() {}
+	public MessageActionLogPK() {}
 	
-	public MessageAddressPK(MessageInbox messageInbox, int addressSequence) {
+	public MessageActionLogPK(MessageInbox messageInbox, int logSequence) {
 		this.messageInbox = messageInbox;
-		this.addressSequence = addressSequence;
+		this.leadMsgId = logSequence;
 	}
 
 	public MessageInbox getMessageInbox() {
@@ -34,12 +34,12 @@ public class MessageAddressPK implements Serializable {
 		this.messageInbox = messageInbox;
 	}
 
-	public int getAddressSequence() {
-		return addressSequence;
+	public int getLeadMsgId() {
+		return leadMsgId;
 	}
 
-	public void setAddressSequence(int addressSequence) {
-		this.addressSequence = addressSequence;
+	public void setLeadMsgId(int leadMsgId) {
+		this.leadMsgId = leadMsgId;
 	}
 
 }

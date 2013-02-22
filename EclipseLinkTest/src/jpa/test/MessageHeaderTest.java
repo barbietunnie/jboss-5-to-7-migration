@@ -9,17 +9,18 @@ import javax.persistence.NoResultException;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
-import jpa.constant.EmailAddrType;
 import jpa.constant.MsgDirectionCode;
+import jpa.constant.XHeaderName;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
 import jpa.model.EmailAddr;
-import jpa.model.MessageAddress;
+import jpa.model.MessageHeader;
+import jpa.model.MessageHeaderPK;
 import jpa.model.MessageInbox;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddrService;
-import jpa.service.MessageAddressService;
+import jpa.service.MessageHeaderService;
 import jpa.service.MessageInboxService;
 import jpa.service.RuleLogicService;
 import jpa.util.StringUtil;
@@ -39,14 +40,14 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageAddressTest {
+public class MessageHeaderTest {
 
 	@BeforeClass
-	public static void MessageAddressPrepare() {
+	public static void MessageHeaderPrepare() {
 	}
 
 	@Autowired
-	MessageAddressService service;
+	MessageHeaderService service;
 	@Autowired
 	MessageInboxService inboxService;
 	@Autowired
@@ -96,53 +97,65 @@ public class MessageAddressTest {
 		inboxService.insert(inbox1);
 	}
 	
-	private MessageAddress adr1;
-	private MessageAddress adr2;
+	private MessageHeader hdr1;
+	private MessageHeader hdr2;
+	private MessageHeader hdr3;
 
 	@Test
-	public void messageAddressService() {
-		insertAddr1AndAddr2();
-		MessageAddress adr11 = service.getByRowId(adr1.getRowId());
+	public void messageHeaderService() {
+		insertMessageHeaders();
+		MessageHeader hdr11 = service.getByRowId(hdr1.getRowId());
 		
-		System.out.println(StringUtil.prettyPrint(adr11,2));
+		System.out.println(StringUtil.prettyPrint(hdr11,2));
 		
-		MessageAddress adr12 = service.getByPrimaryKey(inbox1.getRowId(), EmailAddrType.FROM_ADDR.getValue(), from.getAddress());
-		assertTrue(adr11.equals(adr12));
+		MessageHeader hdr12 = service.getByPrimaryKey(hdr11.getMessageHeaderPK());
+		assertTrue(hdr11.equals(hdr12));
 		
 		// test update
-		adr2.setUpdtUserId("jpa test");
-		service.update(adr2);
-		MessageAddress adr22 = service.getByRowId(adr2.getRowId());
-		assertTrue("jpa test".equals(adr22.getUpdtUserId()));
+		hdr2.setUpdtUserId("jpa test");
+		service.update(hdr2);
+		MessageHeader hdr22 = service.getByRowId(hdr2.getRowId());
+		assertTrue("jpa test".equals(hdr22.getUpdtUserId()));
 		
 		// test delete
-		service.delete(adr11);
+		service.delete(hdr11);
 		try {
-			service.getByRowId(adr11.getRowId());
+			service.getByRowId(hdr11.getRowId());
 			fail();
 		}
 		catch (NoResultException e) {}
 		
-		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
-		
-		insertAddr1AndAddr2();
-		assertTrue(1==service.deleteByPrimaryKey(inbox1.getRowId(), EmailAddrType.FROM_ADDR.getValue(), from.getAddress()));
+		assertTrue(1==service.deleteByRowId(hdr2.getRowId()));
 		assertTrue(1==service.deleteByMsgInboxId(inbox1.getRowId()));
+		
+		insertMessageHeaders();
+		assertTrue(1==service.deleteByPrimaryKey(hdr1.getMessageHeaderPK()));
+		assertTrue(2==service.deleteByMsgInboxId(inbox1.getRowId()));
 	}
 	
-	private void insertAddr1AndAddr2() {
+	private void insertMessageHeaders() {
 		// test insert
-		adr1 = new MessageAddress();
-		adr1.setMessageInbox(inbox1);
-		adr1.setAddressType(EmailAddrType.FROM_ADDR.getValue());
-		adr1.setAddressValue(from);
-		service.insert(adr1);
+		hdr1 = new MessageHeader();
+		MessageHeaderPK pk1 = new MessageHeaderPK(inbox1,1);
+		hdr1.setMessageHeaderPK(pk1);
+		hdr1.setHeaderName(XHeaderName.MAILER.getValue());
+		hdr1.setHeaderValue("Mailserder");
+		service.insert(hdr1);
 		
-		adr2 = new MessageAddress();
-		adr2.setMessageInbox(inbox1);
-		adr2.setAddressType(EmailAddrType.TO_ADDR.getValue());
-		adr2.setAddressValue(to);
-		service.insert(adr2);
-		assertTrue(service.getByMsgInboxId(inbox1.getRowId()).size()==2);		
+		hdr2 = new MessageHeader();
+		MessageHeaderPK pk2 = new MessageHeaderPK(inbox1,2);
+		hdr2.setMessageHeaderPK(pk2);
+		hdr2.setHeaderName(XHeaderName.RETURN_PATH.getValue());
+		hdr2.setHeaderValue("demolist1@localhost");
+		service.insert(hdr2);
+		
+		hdr3 = new MessageHeader();
+		MessageHeaderPK pk3 = new MessageHeaderPK(inbox1,3);
+		hdr3.setMessageHeaderPK(pk3);
+		hdr3.setHeaderName(XHeaderName.CLIENT_ID.getValue());
+		hdr3.setHeaderValue(Constants.DEFAULT_CLIENTID);
+		service.insert(hdr3);
+		
+		assertTrue(service.getByMsgInboxId(inbox1.getRowId()).size()==3);		
 	}
 }
