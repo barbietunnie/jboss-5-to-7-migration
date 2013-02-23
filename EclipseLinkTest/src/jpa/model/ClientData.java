@@ -12,6 +12,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.eclipse.persistence.annotations.CascadeOnDelete;
+
 import jpa.constant.Constants;
 
 @Entity
@@ -20,15 +22,19 @@ public class ClientData extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 8789436921442107499L;
 
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="clientVariablePK.clientData", orphanRemoval=true)
+	@CascadeOnDelete
 	private List<ClientVariable> clientVariables;
 
 	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="clientData", orphanRemoval=true)
+	@CascadeOnDelete
 	private IdTokens idTokens;
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="clientData")
+	@CascadeOnDelete
 	private List<CustomerData> customers;
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="clientData")
+	@CascadeOnDelete
 	private List<UserData> userDatas;
 	
 	//@Index
