@@ -1,6 +1,13 @@
 package com.legacytojava.message.dao.inbox;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
@@ -8,10 +15,7 @@ import javax.mail.MessagingException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
 import org.junit.runner.RunWith;
-import org.junit.runner.notification.Failure;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -20,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.legacytojava.message.bean.MessageBean;
 import com.legacytojava.message.bean.MessageBeanUtil;
-import com.legacytojava.message.bo.inbox.RuleEngineTest;
+import com.legacytojava.message.vo.inbox.MsgInboxVo;
 import com.legacytojava.message.vo.outbox.MsgStreamVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,23 +35,62 @@ public class MsgStreamTest {
 	final static String LF = System.getProperty("line.separator","\n");
 	@Resource
 	private MsgStreamDao msgStreamDao;
+	@Resource
+	private MsgInboxDao msgInboxDao;
 
 	@BeforeClass
 	public static void MsgStreamPrepare() {
 	}
 	@Before
-	public void checkMsgStream() {
+	public void checkMsgStream() throws IOException {
+		long testMsgId = 2L;
+		if (msgStreamDao.getLastRecord()==null) {
+			MsgInboxVo msgInboxVo = selectByMsgId(testMsgId);
+			MsgStreamVo msgStreamVo = new MsgStreamVo();
+			msgStreamVo.setMsgId(msgInboxVo.getMsgId());
+			msgStreamVo.setFromAddrId(msgInboxVo.getFromAddrId());
+			msgStreamVo.setAddTime(msgInboxVo.getUpdtTime());
+			msgStreamVo.setMsgStream(getBouncedMail(1));
+			insert(msgStreamVo);
+		}
 		/*
 		 * This did not work, the MsgStream record was inserted, but the
 		 * testMsgStream.selectLastRecord() still returns a null.
 		 */
-		if (msgStreamDao.getLastRecord()==null) {
-			Result result = JUnitCore.runClasses(RuleEngineTest.class);
-			for (Failure failure : result.getFailures()) {
-				System.err.println(failure.toString());
+//		if (msgStreamDao.getLastRecord()==null) {
+//			Result result = JUnitCore.runClasses(RuleEngineTest.class);
+//			for (Failure failure : result.getFailures()) {
+//				System.err.println(failure.toString());
+//			}
+//		}
+	}
+	private MsgInboxVo selectByMsgId(long msgId) {
+		MsgInboxVo msgInboxVo = (MsgInboxVo)msgInboxDao.getByPrimaryKey(msgId);
+		System.out.println("MsgInboxDao - selectByPrimaryKey: "+LF+msgInboxVo);
+		return msgInboxVo;
+	}
+
+	byte[] getBouncedMail(int fileNbr) throws IOException {
+		InputStream is = getClass().getResourceAsStream(
+				"/com/legacytojava/message/bo/inbox/bouncedmails/BouncedMail_" + fileNbr + ".txt");
+		BufferedInputStream bis = new BufferedInputStream(is);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] bytes = new byte[512];
+		int len = 0;
+		try { 
+			while ((len = bis.read(bytes, 0, bytes.length)) > 0) {
+				baos.write(bytes, 0, len);
 			}
+			byte[] mailStream = baos.toByteArray();
+			baos.close();
+			bis.close();
+			return mailStream;
+		}
+		catch (IOException e) {
+			throw e;
 		}
 	}
+
 	@Test
 	@Rollback(true)
 	public void testMsgStream() throws MessagingException {
