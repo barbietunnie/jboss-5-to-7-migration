@@ -58,8 +58,6 @@ public class MessageInboxService {
 	}
 
 	public MessageInbox getPrevoiusRecord(MessageInbox inbox) throws NoResultException {
-		em.getEntityManagerFactory().getMetamodel().getManagedTypes();
-		em.getEntityManagerFactory().getProperties();
 		String sql = 
 			"select t " +
 			"from " +
@@ -170,12 +168,12 @@ public class MessageInboxService {
 				" from " +
 					" MessageInbox t " +
 				" where t.receivedTime>=:date " +
-				" order by t.receivedTime desc limit 100";
+				" order by t.receivedTime desc " ; //limit 100";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("date", date);
 			@SuppressWarnings("unchecked")
-			List<MessageInbox> list = query.getResultList();
+			List<MessageInbox> list = query.setMaxResults(100).getResultList();
 			return list;
 		}
 		finally {
