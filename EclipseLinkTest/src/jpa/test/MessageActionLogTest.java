@@ -100,7 +100,7 @@ public class MessageActionLogTest {
 	private MessageActionLog log2;
 
 	@Test
-	public void messageAddressService() {
+	public void messageActionLogService() {
 		insertActionLogs();
 		MessageActionLog log11 = service.getByRowId(log1.getRowId());
 		
