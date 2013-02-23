@@ -2,7 +2,6 @@ package jpa.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -16,14 +15,15 @@ public class MessageActionLogPK implements Serializable {
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private MessageInbox messageInbox;
 
-	@Column(name="LeadMsgId", nullable=false)
-	private int leadMsgId = -1;
+	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
+	@JoinColumn(name="LeadMessageRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	private MessageInbox leadMessage;
 
 	public MessageActionLogPK() {}
 	
-	public MessageActionLogPK(MessageInbox messageInbox, int logSequence) {
+	public MessageActionLogPK(MessageInbox messageInbox, MessageInbox leadMessage) {
 		this.messageInbox = messageInbox;
-		this.leadMsgId = logSequence;
+		this.leadMessage = leadMessage;
 	}
 
 	public MessageInbox getMessageInbox() {
@@ -34,12 +34,12 @@ public class MessageActionLogPK implements Serializable {
 		this.messageInbox = messageInbox;
 	}
 
-	public int getLeadMsgId() {
-		return leadMsgId;
+	public MessageInbox getLeadMessage() {
+		return leadMessage;
 	}
 
-	public void setLeadMsgId(int leadMsgId) {
-		this.leadMsgId = leadMsgId;
+	public void setLeadMessage(MessageInbox leadMessage) {
+		this.leadMessage = leadMessage;
 	}
 
 }
