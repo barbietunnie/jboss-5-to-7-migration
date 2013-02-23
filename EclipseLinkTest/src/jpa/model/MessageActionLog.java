@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="message_action_log", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId", "leadMsgId"}))
+@Table(name="message_action_log", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId", "LeadMessageRowId"}))
 public class MessageActionLog extends BaseModel implements Serializable
 {
 	private static final long serialVersionUID = 60873582256305774L;

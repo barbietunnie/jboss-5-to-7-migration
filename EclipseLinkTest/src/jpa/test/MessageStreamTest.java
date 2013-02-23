@@ -3,6 +3,10 @@ package jpa.test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 
 import javax.persistence.NoResultException;
@@ -13,13 +17,12 @@ import jpa.constant.MsgDirectionCode;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
 import jpa.model.EmailAddr;
-import jpa.model.MessageActionLog;
-import jpa.model.MessageActionLogPK;
+import jpa.model.MessageStream;
 import jpa.model.MessageInbox;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddrService;
-import jpa.service.MessageActionLogService;
+import jpa.service.MessageStreamService;
 import jpa.service.MessageInboxService;
 import jpa.service.RuleLogicService;
 import jpa.util.StringUtil;
@@ -39,14 +42,14 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageActionLogTest {
+public class MessageStreamTest {
 
 	@BeforeClass
-	public static void MessageActionLogPrepare() {
+	public static void MessageStreamPrepare() {
 	}
 
 	@Autowired
-	MessageActionLogService service;
+	MessageStreamService service;
 	@Autowired
 	MessageInboxService inboxService;
 	@Autowired
@@ -96,60 +99,76 @@ public class MessageActionLogTest {
 		inboxService.insert(inbox1);
 	}
 	
-	private MessageActionLog log1;
-	private MessageActionLog log2;
+	private MessageStream adr1;
+	private MessageStream adr2;
 
 	@Test
-	public void messageAddressService() {
-		insertActionLogs();
-		MessageActionLog log11 = service.getByRowId(log1.getRowId());
+	public void messageAddressService() throws IOException {
+		insertMsgStreams();
+		MessageStream adr11 = service.getByRowId(adr1.getRowId());
 		
-		System.out.println(StringUtil.prettyPrint(log11,3));
+		System.out.println(StringUtil.prettyPrint(adr11,2));
 		
-		MessageActionLog log12 = service.getByPrimaryKey(log11.getMessageActionLogPK());
-		assertTrue(log11.equals(log12));
+		MessageStream adr12 = service.getByMsgInboxId(inbox1.getRowId());
+		assertTrue(adr11.equals(adr12));
 		
 		// test update
-		log2.setUpdtUserId("jpa test");
-		service.update(log2);
-		MessageActionLog adr22 = service.getByRowId(log2.getRowId());
+		adr2.setUpdtUserId("jpa test");
+		service.update(adr2);
+		MessageStream adr22 = service.getByRowId(adr2.getRowId());
 		assertTrue("jpa test".equals(adr22.getUpdtUserId()));
 		
-		assertTrue(1==service.getByLeadMsgId(inbox1.getRowId()).size());
-		
 		// test delete
-		service.delete(log11);
+		service.delete(adr11);
 		try {
-			service.getByRowId(log11.getRowId());
+			service.getByRowId(adr11.getRowId());
 			fail();
 		}
 		catch (NoResultException e) {}
 		
-		assertTrue(1==service.deleteByRowId(log2.getRowId()));
-		assertTrue(0==service.deleteByLeadMsgId(log2.getMessageActionLogPK().getLeadMessage().getRowId()));
+		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
 		
-		insertActionLogs();
-		assertTrue(1==service.deleteByPrimaryKey(log1.getMessageActionLogPK()));
+		insertMsgStreams();
+		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
 		assertTrue(1==service.deleteByMsgInboxId(inbox1.getRowId()));
 	}
 	
-	private void insertActionLogs() {
+	private void insertMsgStreams() throws IOException {
 		// test insert
-		log1 = new MessageActionLog();
-		MessageActionLogPK pk1 = new MessageActionLogPK(inbox1, inbox1.getLeadMessage());
-		log1.setMessageActionLogPK(pk1);
-		log1.setActionService(RuleNameEnum.SEND_MAIL.name());
-		log1.setParameters("sent");
-		service.insert(log1);
-
-		log2 = new MessageActionLog();
-		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
-		MessageActionLogPK pk2 = new MessageActionLogPK(inbox1,inbox2);
-		log2.setMessageActionLogPK(pk2);
-		log2.setActionService(RuleNameEnum.CSR_REPLY.name());
-		log2.setParameters("rowid=122");
-		service.insert(log2);
+		adr1 = new MessageStream();
+		adr1.setMessageInbox(inbox1);
+		adr1.setMsgSubject("test jpa subject");
+		adr1.setFromAddress(from);
+		adr1.setToAddress(to);
+		adr1.setMsgStream(getBouncedMail());
+		service.insert(adr1);
 		
-		assertTrue(2==service.getByMsgInboxId(inbox1.getRowId()).size());
+		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
+		adr2 = new MessageStream();
+		adr2.setMessageInbox(inbox2);
+		adr2.setMsgSubject("jpa test");
+		adr2.setFromAddress(from);
+		adr2.setMsgStream(getBouncedMail());
+		service.insert(adr2);
+	}
+
+	private byte[] getBouncedMail() throws IOException {
+		InputStream is = getClass().getResourceAsStream("data/BouncedMail_1.txt");
+		BufferedInputStream bis = new BufferedInputStream(is);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] bytes = new byte[512];
+		int len = 0;
+		try { 
+			while ((len = bis.read(bytes, 0, bytes.length)) > 0) {
+				baos.write(bytes, 0, len);
+			}
+			byte[] mailStream = baos.toByteArray();
+			baos.close();
+			bis.close();
+			return mailStream;
+		}
+		catch (IOException e) {
+			throw e;
+		}
 	}
 }
