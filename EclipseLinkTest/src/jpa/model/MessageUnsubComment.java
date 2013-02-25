@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -21,13 +20,11 @@ public class MessageUnsubComment extends BaseModel implements Serializable
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private MessageInbox messageInbox;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=MailingList.class)
-	@JoinColumn(name="MailingListRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private MailingList mailingList;
+	@Column(name="MailingListRowId", nullable=true)
+	private int mailingListRowId;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddr.class)
-	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private EmailAddr emailAddress;
+	@Column(name="EmailAddrRowId", nullable=false)
+	private int emailAddrRowId;
 
 	@Column(length=1000, nullable=false)
 	private String comments = "";
@@ -42,20 +39,20 @@ public class MessageUnsubComment extends BaseModel implements Serializable
 		this.messageInbox = messageInbox;
 	}
 
-	public MailingList getMailingList() {
-		return mailingList;
+	public int getMailingListRowId() {
+		return mailingListRowId;
 	}
 
-	public void setMailingList(MailingList mailingList) {
-		this.mailingList = mailingList;
+	public void setMailingListRowId(int mailingListRowId) {
+		this.mailingListRowId = mailingListRowId;
 	}
 
-	public EmailAddr getEmailAddress() {
-		return emailAddress;
+	public int getEmailAddrRowId() {
+		return emailAddrRowId;
 	}
 
-	public void setEmailAddress(EmailAddr emailAddress) {
-		this.emailAddress = emailAddress;
+	public void setEmailAddrRowId(int emailAddrRowId) {
+		this.emailAddrRowId = emailAddrRowId;
 	}
 
 	public String getComments() {

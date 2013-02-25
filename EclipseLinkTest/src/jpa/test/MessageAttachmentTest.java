@@ -78,15 +78,15 @@ public class MessageAttachmentTest {
 		inbox1.setReceivedTime(updtTime);
 		
 		from = addrService.findSertAddress("test@test.com");
-		inbox1.setFromAddress(from);
-		inbox1.setReplytoAddress(null);
+		inbox1.setFromAddrRowId(from.getRowId());
+		inbox1.setReplytoAddrRowId(null);
 
 		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 		String to_addr = client.getReturnPathLeft() + "@" + client.getDomainName();
 		to = addrService.findSertAddress(to_addr);
-		inbox1.setToAddress(to);
-		inbox1.setClientData(client);
-		inbox1.setCustomerData(null);
+		inbox1.setToAddrRowId(to.getRowId());
+		inbox1.setClientDataRowId(client.getRowId());
+		inbox1.setCustomerDataRowId(null);
 		inbox1.setPurgeDate(null);
 		inbox1.setUpdtTime(updtTime);
 		inbox1.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -94,7 +94,7 @@ public class MessageAttachmentTest {
 		inbox1.setLockId(null);
 		
 		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.name());
-		inbox1.setRuleLogic(logic);
+		inbox1.setRuleLogicRowId(logic.getRowId());
 		inbox1.setMsgContentType("multipart/mixed");
 		inbox1.setBodyContentType("text/plain");
 		inbox1.setMsgBody("Test Message Body");

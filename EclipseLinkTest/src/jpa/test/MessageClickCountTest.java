@@ -3,24 +3,27 @@ package jpa.test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
+import jpa.constant.MailingListDeliveryType;
 import jpa.constant.MsgDirectionCode;
-import jpa.constant.XHeaderName;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
 import jpa.model.EmailAddr;
-import jpa.model.MessageHeader;
-import jpa.model.MessageHeaderPK;
+import jpa.model.MailingList;
+import jpa.model.MessageClickCount;
 import jpa.model.MessageInbox;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddrService;
-import jpa.service.MessageHeaderService;
+import jpa.service.MailingListService;
+import jpa.service.MessageClickCountService;
 import jpa.service.MessageInboxService;
 import jpa.service.RuleLogicService;
 import jpa.util.StringUtil;
@@ -40,14 +43,14 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageHeaderTest {
+public class MessageClickCountTest {
 
 	@BeforeClass
-	public static void MessageHeaderPrepare() {
+	public static void MessageClickCountPrepare() {
 	}
 
 	@Autowired
-	MessageHeaderService service;
+	MessageClickCountService service;
 	@Autowired
 	MessageInboxService inboxService;
 	@Autowired
@@ -56,10 +59,13 @@ public class MessageHeaderTest {
 	ClientDataService clientService;
 	@Autowired
 	RuleLogicService logicService;
+	@Autowired
+	MailingListService listService;
 
 	private MessageInbox inbox1;
 	private EmailAddr from;
 	private EmailAddr to;
+	private MailingList mlist;
 
 	@Before
 	public void prepare() {
@@ -95,67 +101,68 @@ public class MessageHeaderTest {
 		inbox1.setBodyContentType("text/plain");
 		inbox1.setMsgBody("Test Message Body");
 		inboxService.insert(inbox1);
+		
+		List<MailingList> mlists=listService.getAll(true);
+		mlist=mlists.get(0);
 	}
 	
-	private MessageHeader hdr1;
-	private MessageHeader hdr2;
-	private MessageHeader hdr3;
+	private MessageClickCount adr1;
+	private MessageClickCount adr2;
 
 	@Test
-	public void messageHeaderService() {
-		insertMessageHeaders();
-		MessageHeader hdr11 = service.getByRowId(hdr1.getRowId());
+	public void messageClickCountService() throws IOException {
+		insertMsgClickCounts();
+		MessageClickCount adr11 = service.getByRowId(adr1.getRowId());
 		
-		System.out.println(StringUtil.prettyPrint(hdr11,2));
+		System.out.println(StringUtil.prettyPrint(adr11,2));
 		
-		MessageHeader hdr12 = service.getByPrimaryKey(hdr11.getMessageHeaderPK());
-		assertTrue(hdr11.equals(hdr12));
+		MessageClickCount adr12 = service.getByMsgInboxId(inbox1.getRowId());
+		assertTrue(adr11.equals(adr12));
 		
 		// test update
-		hdr2.setUpdtUserId("jpa test");
-		service.update(hdr2);
-		MessageHeader hdr22 = service.getByRowId(hdr2.getRowId());
-		assertTrue("jpa test".equals(hdr22.getUpdtUserId()));
+		adr2.setUpdtUserId("jpa test");
+		service.update(adr2);
+		MessageClickCount adr22 = service.getByRowId(adr2.getRowId());
+		assertTrue("jpa test".equals(adr22.getUpdtUserId()));
 		
 		// test delete
-		service.delete(hdr11);
+		service.delete(adr11);
 		try {
-			service.getByRowId(hdr11.getRowId());
+			service.getByRowId(adr11.getRowId());
 			fail();
 		}
 		catch (NoResultException e) {}
 		
-		assertTrue(1==service.deleteByRowId(hdr2.getRowId()));
-		assertTrue(1==service.deleteByMsgInboxId(inbox1.getRowId()));
+		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
 		
-		insertMessageHeaders();
-		assertTrue(1==service.deleteByPrimaryKey(hdr1.getMessageHeaderPK()));
-		assertTrue(2==service.deleteByMsgInboxId(inbox1.getRowId()));
+		insertMsgClickCounts();
+		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
+		assertTrue(1==service.deleteByMsgInboxId(inbox1.getRowId()));
 	}
 	
-	private void insertMessageHeaders() {
+	private void insertMsgClickCounts() throws IOException {
+		Timestamp clickTime = new Timestamp(System.currentTimeMillis());
 		// test insert
-		hdr1 = new MessageHeader();
-		MessageHeaderPK pk1 = new MessageHeaderPK(inbox1,1);
-		hdr1.setMessageHeaderPK(pk1);
-		hdr1.setHeaderName(XHeaderName.MAILER.getValue());
-		hdr1.setHeaderValue("Mailserder");
-		service.insert(hdr1);
+		adr1 = new MessageClickCount();
+		adr1.setMessageInbox(inbox1);
+		adr1.setClickCount(3);
+		adr1.setOpenCount(2);
+		adr1.setComplaintCount(0);
+		adr1.setLastClickTime(clickTime);
+		adr1.setLastOpenTime(clickTime);
+		adr1.setDeliveryType(MailingListDeliveryType.ALL_ON_LIST.getValue());
+		adr1.setMailingListRowId(mlist.getRowId());
+		service.insert(adr1);
 		
-		hdr2 = new MessageHeader();
-		MessageHeaderPK pk2 = new MessageHeaderPK(inbox1,2);
-		hdr2.setMessageHeaderPK(pk2);
-		hdr2.setHeaderName(XHeaderName.RETURN_PATH.getValue());
-		hdr2.setHeaderValue("demolist1@localhost");
-		service.insert(hdr2);
-		
-		hdr3 = new MessageHeader();
-		MessageHeaderPK pk3 = new MessageHeaderPK(inbox1,3);
-		hdr3.setMessageHeaderPK(pk3);
-		hdr3.setHeaderName(XHeaderName.CLIENT_ID.getValue());
-		hdr3.setHeaderValue(Constants.DEFAULT_CLIENTID);
-		service.insert(hdr3);
-		
-		assertTrue(service.getByMsgInboxId(inbox1.getRowId()).size()==3);		
+		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
+		adr2 = new MessageClickCount();
+		adr2.setMessageInbox(inbox2);
+		adr2.setClickCount(1);
+		adr2.setOpenCount(0);
+		adr2.setComplaintCount(0);
+		adr2.setLastClickTime(clickTime);
+		adr2.setDeliveryType(MailingListDeliveryType.ALL_ON_LIST.getValue());
+		adr2.setMailingListRowId(mlist.getRowId());
+		service.insert(adr2);
 	}
 }

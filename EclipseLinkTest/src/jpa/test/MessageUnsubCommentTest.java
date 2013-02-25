@@ -3,24 +3,26 @@ package jpa.test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
 import jpa.constant.MsgDirectionCode;
-import jpa.constant.XHeaderName;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
 import jpa.model.EmailAddr;
-import jpa.model.MessageHeader;
-import jpa.model.MessageHeaderPK;
+import jpa.model.MailingList;
+import jpa.model.MessageUnsubComment;
 import jpa.model.MessageInbox;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddrService;
-import jpa.service.MessageHeaderService;
+import jpa.service.MailingListService;
+import jpa.service.MessageUnsubCommentService;
 import jpa.service.MessageInboxService;
 import jpa.service.RuleLogicService;
 import jpa.util.StringUtil;
@@ -40,14 +42,14 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageHeaderTest {
+public class MessageUnsubCommentTest {
 
 	@BeforeClass
-	public static void MessageHeaderPrepare() {
+	public static void MessageUnsubCommentPrepare() {
 	}
 
 	@Autowired
-	MessageHeaderService service;
+	MessageUnsubCommentService service;
 	@Autowired
 	MessageInboxService inboxService;
 	@Autowired
@@ -56,10 +58,13 @@ public class MessageHeaderTest {
 	ClientDataService clientService;
 	@Autowired
 	RuleLogicService logicService;
+	@Autowired
+	MailingListService listService;
 
 	private MessageInbox inbox1;
 	private EmailAddr from;
 	private EmailAddr to;
+	private MailingList mlist;
 
 	@Before
 	public void prepare() {
@@ -95,67 +100,62 @@ public class MessageHeaderTest {
 		inbox1.setBodyContentType("text/plain");
 		inbox1.setMsgBody("Test Message Body");
 		inboxService.insert(inbox1);
+		
+		List<MailingList> mlists=listService.getAll(true);
+		mlist=mlists.get(0);
 	}
 	
-	private MessageHeader hdr1;
-	private MessageHeader hdr2;
-	private MessageHeader hdr3;
+	private MessageUnsubComment adr1;
+	private MessageUnsubComment adr2;
 
 	@Test
-	public void messageHeaderService() {
-		insertMessageHeaders();
-		MessageHeader hdr11 = service.getByRowId(hdr1.getRowId());
+	public void messageUnsubCommentService() throws IOException {
+		insertUnsubComments();
+		MessageUnsubComment adr11 = service.getByRowId(adr1.getRowId());
 		
-		System.out.println(StringUtil.prettyPrint(hdr11,2));
+		System.out.println(StringUtil.prettyPrint(adr11,2));
 		
-		MessageHeader hdr12 = service.getByPrimaryKey(hdr11.getMessageHeaderPK());
-		assertTrue(hdr11.equals(hdr12));
+		MessageUnsubComment adr12 = service.getByMsgInboxId(inbox1.getRowId());
+		assertTrue(adr11.equals(adr12));
+		
+		assertTrue(2==service.getByFromAddress(from.getAddress()).size());
 		
 		// test update
-		hdr2.setUpdtUserId("jpa test");
-		service.update(hdr2);
-		MessageHeader hdr22 = service.getByRowId(hdr2.getRowId());
-		assertTrue("jpa test".equals(hdr22.getUpdtUserId()));
+		adr2.setUpdtUserId("jpa test");
+		service.update(adr2);
+		MessageUnsubComment adr22 = service.getByRowId(adr2.getRowId());
+		assertTrue("jpa test".equals(adr22.getUpdtUserId()));
 		
 		// test delete
-		service.delete(hdr11);
+		service.delete(adr11);
 		try {
-			service.getByRowId(hdr11.getRowId());
+			service.getByRowId(adr11.getRowId());
 			fail();
 		}
 		catch (NoResultException e) {}
 		
-		assertTrue(1==service.deleteByRowId(hdr2.getRowId()));
-		assertTrue(1==service.deleteByMsgInboxId(inbox1.getRowId()));
+		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
 		
-		insertMessageHeaders();
-		assertTrue(1==service.deleteByPrimaryKey(hdr1.getMessageHeaderPK()));
-		assertTrue(2==service.deleteByMsgInboxId(inbox1.getRowId()));
+		insertUnsubComments();
+		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
+		assertTrue(1==service.deleteByMsgInboxId(inbox1.getRowId()));
 	}
 	
-	private void insertMessageHeaders() {
+	private void insertUnsubComments() throws IOException {
 		// test insert
-		hdr1 = new MessageHeader();
-		MessageHeaderPK pk1 = new MessageHeaderPK(inbox1,1);
-		hdr1.setMessageHeaderPK(pk1);
-		hdr1.setHeaderName(XHeaderName.MAILER.getValue());
-		hdr1.setHeaderValue("Mailserder");
-		service.insert(hdr1);
+		adr1 = new MessageUnsubComment();
+		adr1.setMessageInbox(inbox1);
+		adr1.setComments("jpa test unsub comment 1");
+		adr1.setEmailAddrRowId(from.getRowId());
+		adr1.setMailingListRowId(mlist.getRowId());
+		service.insert(adr1);
 		
-		hdr2 = new MessageHeader();
-		MessageHeaderPK pk2 = new MessageHeaderPK(inbox1,2);
-		hdr2.setMessageHeaderPK(pk2);
-		hdr2.setHeaderName(XHeaderName.RETURN_PATH.getValue());
-		hdr2.setHeaderValue("demolist1@localhost");
-		service.insert(hdr2);
-		
-		hdr3 = new MessageHeader();
-		MessageHeaderPK pk3 = new MessageHeaderPK(inbox1,3);
-		hdr3.setMessageHeaderPK(pk3);
-		hdr3.setHeaderName(XHeaderName.CLIENT_ID.getValue());
-		hdr3.setHeaderValue(Constants.DEFAULT_CLIENTID);
-		service.insert(hdr3);
-		
-		assertTrue(service.getByMsgInboxId(inbox1.getRowId()).size()==3);		
+		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
+		adr2 = new MessageUnsubComment();
+		adr2.setMessageInbox(inbox2);
+		adr2.setComments("jpa test unsub comment 2");
+		adr2.setEmailAddrRowId(from.getRowId());
+		adr2.setMailingListRowId(mlist.getRowId());
+		service.insert(adr2);
 	}
 }

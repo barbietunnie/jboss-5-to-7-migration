@@ -42,7 +42,7 @@ public class MessageAddressService {
 				"select t " +
 				"from MessageAddress t, MessageInbox mi, EmailAddr ea where " +
 					" mi=t.messageInbox and mi.rowId=:msgId " +
-					" and ea=t.addressValue and ea.address=:address" +
+					" and ea.rowId=t.emailAddrRowId and ea.address=:address " +
 					" and t.addressType=:addrType ";
 			try {
 				Query query = em.createQuery(sql);

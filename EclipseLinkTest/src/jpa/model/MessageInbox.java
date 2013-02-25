@@ -9,10 +9,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
@@ -20,6 +19,8 @@ import javax.persistence.Transient;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.MsgDirectionCode;
+
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 @Entity
 @Table(name="message_inbox")
@@ -36,49 +37,74 @@ public class MessageInbox extends BaseModel implements Serializable {
 	@Transient
 	public static final String MAPPING_MESSAGE_INBOX = "MessageInboxNative";
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=MessageInbox.class)
-	@JoinColumn(name="ReferringMsgRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private MessageInbox referringMessage;
+	/*
+	 * Define following fields as individual columns instead of Relationships
+	 * to simplify the implementation of cascade delete.
+	 */
+	@org.eclipse.persistence.annotations.Index
+	@org.hibernate.annotations.Index(name="ReferringMsgIndex")
+	@Column(name="ReferringMsgRowId", nullable=true, columnDefinition="Integer")
+	private Integer referringMessageRowId;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=MessageInbox.class)
-	@JoinColumn(name="LeadMsgRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private MessageInbox leadMessage;
+	@org.eclipse.persistence.annotations.Index
+	@org.hibernate.annotations.Index(name="LeadMsgIndex")
+	@Column(name="LeadMsgRowId", nullable=true, columnDefinition="Integer")
+	private Integer leadMessageRowId;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddr.class)
-	@JoinColumn(name="FromAddressRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private EmailAddr fromAddress;
+	@org.eclipse.persistence.annotations.Index
+	@org.hibernate.annotations.Index(name="FromAddressIndex")
+	@Column(name="FromAddressRowId", nullable=true, columnDefinition="Integer")
+	private Integer fromAddrRowId;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddr.class)
-	@JoinColumn(name="ReplytoAddressRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private EmailAddr replytoAddress;
+	@Column(name="ReplytoAddressRowId", nullable=true, columnDefinition="Integer")
+	private Integer replytoAddrRowId;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddr.class)
-	@JoinColumn(name="ToAddressRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private EmailAddr toAddress;
+	@org.eclipse.persistence.annotations.Index
+	@org.hibernate.annotations.Index(name="ToAddressIndex")
+	@Column(name="ToAddressRowId", nullable=true, columnDefinition="Integer")
+	private Integer toAddrRowId;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=ClientData.class)
-	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private ClientData clientData;
+	@Column(name="ClientDataRowId", nullable=true, columnDefinition="Integer")
+	private Integer clientDataRowId;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=CustomerData.class)
-	@JoinColumn(name="CustomerDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private CustomerData customerData;
+	@Column(name="CustomerDataRowId", nullable=true, columnDefinition="Integer")
+	private Integer customerDataRowId;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=RuleLogic.class)
-	@JoinColumn(name="RuleLogicRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private RuleLogic ruleLogic;
+	@Column(name="RuleLogicRowId", nullable=false)
+	private int ruleLogicRowId;
+	/* end of simplify */
 	
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageHeaderPK.messageInbox", orphanRemoval=true)
+	@CascadeOnDelete
 	private List<MessageHeader> messageHeaderList;
 
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageInbox", orphanRemoval=true)
+	@CascadeOnDelete
 	private List<MessageAddress> messageAddressList;
 
+	@OneToOne(cascade={CascadeType.ALL},fetch=FetchType.LAZY,mappedBy="messageInbox", orphanRemoval=true, optional=true)
+	@CascadeOnDelete
+	private MessageStream messageStream;
+
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageRfcFieldPK.messageInbox", orphanRemoval=true)
+	@CascadeOnDelete
 	private List<MessageRfcField> messageRfcFieldList;
 
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageAttachmentPK.messageInbox", orphanRemoval=true)
+	@CascadeOnDelete
 	private List<MessageAttachment> messageAttachmentList;
+
+	@OneToOne(cascade={CascadeType.ALL},fetch=FetchType.LAZY,mappedBy="messageInbox", orphanRemoval=true, optional=true)
+	@CascadeOnDelete
+	private MessageUnsubComment messageUnsubComment;
+
+	@OneToOne(cascade={CascadeType.ALL},fetch=FetchType.LAZY,mappedBy="messageInbox", orphanRemoval=true, optional=true)
+	@CascadeOnDelete
+	private MessageClickCount messageClickCount;
+
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageActionLogPK.messageInbox", orphanRemoval=true)
+	@CascadeOnDelete
+	private List<MessageActionLog> messageActionLogList;
 
 	@Column(nullable=false, length=1, columnDefinition="char")
 	private String carrierCode = CarrierCode.SMTPMAIL.getValue();
@@ -135,68 +161,68 @@ public class MessageInbox extends BaseModel implements Serializable {
 		// must have a no-argument constructor
 	}
 
-	public MessageInbox getReferringMessage() {
-		return referringMessage;
+	public Integer getReferringMessageRowId() {
+		return referringMessageRowId;
 	}
 
-	public void setReferringMessage(MessageInbox referringMessage) {
-		this.referringMessage = referringMessage;
+	public void setReferringMessageRowId(Integer referringMessageRowId) {
+		this.referringMessageRowId = referringMessageRowId;
 	}
 
-	public MessageInbox getLeadMessage() {
-		return leadMessage;
+	public Integer getLeadMessageRowId() {
+		return leadMessageRowId;
 	}
 
-	public void setLeadMessage(MessageInbox leadMessage) {
-		this.leadMessage = leadMessage;
+	public void setLeadMessageRowId(Integer leadMessageRowId) {
+		this.leadMessageRowId = leadMessageRowId;
 	}
 
-	public EmailAddr getFromAddress() {
-		return fromAddress;
+	public Integer getFromAddrRowId() {
+		return fromAddrRowId;
 	}
 
-	public void setFromAddress(EmailAddr fromAddress) {
-		this.fromAddress = fromAddress;
+	public void setFromAddrRowId(Integer fromAddrRowId) {
+		this.fromAddrRowId = fromAddrRowId;
 	}
 
-	public EmailAddr getReplytoAddress() {
-		return replytoAddress;
+	public Integer getReplytoAddrRowId() {
+		return replytoAddrRowId;
 	}
 
-	public void setReplytoAddress(EmailAddr replytoAddress) {
-		this.replytoAddress = replytoAddress;
+	public void setReplytoAddrRowId(Integer replytoAddrRowId) {
+		this.replytoAddrRowId = replytoAddrRowId;
 	}
 
-	public EmailAddr getToAddress() {
-		return toAddress;
+	public Integer getToAddrRowId() {
+		return toAddrRowId;
 	}
 
-	public void setToAddress(EmailAddr toAddress) {
-		this.toAddress = toAddress;
+	public void setToAddrRowId(Integer toAddrRowId) {
+		this.toAddrRowId = toAddrRowId;
 	}
 
-	public ClientData getClientData() {
-		return clientData;
+	public Integer getClientDataRowId() {
+		return clientDataRowId;
 	}
 
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setClientDataRowId(Integer clientDataRowId) {
+		this.clientDataRowId = clientDataRowId;
 	}
 
-	public CustomerData getCustomerData() {
-		return customerData;
+	public Integer getCustomerDataRowId() {
+		return customerDataRowId;
 	}
 
-	public void setCustomerData(CustomerData customerData) {
-		this.customerData = customerData;
+	public void setCustomerDataRowId(Integer customerDataRowId) {
+		this.customerDataRowId = customerDataRowId;
 	}
 
-	public RuleLogic getRuleLogic() {
-		return ruleLogic;
+	public int getRuleLogicRowId() {
+		return ruleLogicRowId;
 	}
 
-	public void setRuleLogic(RuleLogic ruleLogic) {
-		this.ruleLogic = ruleLogic;
+	public void setRuleLogicRowId(int ruleLogicRowId) {
+		this.ruleLogicRowId = ruleLogicRowId;
 	}
 
 	public List<MessageHeader> getMessageHeaderList() {
@@ -215,6 +241,14 @@ public class MessageInbox extends BaseModel implements Serializable {
 		this.messageAddressList = messageAddressList;
 	}
 
+	public MessageStream getMessageStream() {
+		return messageStream;
+	}
+
+	public void setMessageStream(MessageStream messageStream) {
+		this.messageStream = messageStream;
+	}
+
 	public List<MessageRfcField> getMessageRfcFieldList() {
 		return messageRfcFieldList;
 	}
@@ -230,6 +264,30 @@ public class MessageInbox extends BaseModel implements Serializable {
 	public void setMessageAttachmentList(
 			List<MessageAttachment> messageAttachmentList) {
 		this.messageAttachmentList = messageAttachmentList;
+	}
+
+	public MessageUnsubComment getMessageUnsubComment() {
+		return messageUnsubComment;
+	}
+
+	public void setMessageUnsubComment(MessageUnsubComment messageUnsubComment) {
+		this.messageUnsubComment = messageUnsubComment;
+	}
+
+	public MessageClickCount getMessageClickCount() {
+		return messageClickCount;
+	}
+
+	public void setMessageClickCount(MessageClickCount messageClickCount) {
+		this.messageClickCount = messageClickCount;
+	}
+
+	public List<MessageActionLog> getMessageActionLogList() {
+		return messageActionLogList;
+	}
+
+	public void setMessageActionLogList(List<MessageActionLog> messageActionLogList) {
+		this.messageActionLogList = messageActionLogList;
 	}
 
 	public String getCarrierCode() {

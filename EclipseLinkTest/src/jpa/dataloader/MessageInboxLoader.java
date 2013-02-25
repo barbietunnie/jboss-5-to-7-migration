@@ -87,14 +87,14 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		data1.setReceivedTime(updtTime);
 		
 		EmailAddr from = emailAddrService.findSertAddress("jsmith@test.com");
-		data1.setFromAddress(from);
-		data1.setReplytoAddress(null);
+		data1.setFromAddrRowId(from.getRowId());
+		data1.setReplytoAddrRowId(null);
 
 		String to_addr = client.getReturnPathLeft() + "@" + client.getDomainName();
 		EmailAddr to = emailAddrService.findSertAddress(to_addr);
-		data1.setToAddress(to);
-		data1.setClientData(client);
-		data1.setCustomerData(null);
+		data1.setToAddrRowId(to.getRowId());
+		data1.setClientDataRowId(client.getRowId());
+		data1.setCustomerDataRowId(null);
 		data1.setPurgeDate(null);
 		data1.setUpdtTime(updtTime);
 		data1.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -102,7 +102,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		data1.setLockId(null);
 		
 		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.name());
-		data1.setRuleLogic(logic);
+		data1.setRuleLogicRowId(logic.getRowId());
 		data1.setMsgContentType("multipart/mixed");
 		data1.setBodyContentType("text/plain");
 		data1.setMsgBody("Test Message Body");
@@ -117,12 +117,12 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		data2.setReceivedTime(updtTime);
 		
 		from = emailAddrService.findSertAddress("demolist1@localhost");
-		data2.setFromAddress(from);
-		data2.setReplytoAddress(null);
+		data2.setFromAddrRowId(from.getRowId());
+		data2.setReplytoAddrRowId(null);
 
-		data2.setToAddress(from);
-		data2.setClientData(client);
-		data2.setCustomerData(null);
+		data2.setToAddrRowId(from.getRowId());
+		data2.setClientDataRowId(client.getRowId());
+		data2.setCustomerDataRowId(null);
 		data2.setPurgeDate(null);
 		data2.setUpdtTime(updtTime);
 		data2.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -130,7 +130,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		data2.setLockId(null);
 		
 		logic = logicService.getByRuleName(RuleNameEnum.BROADCAST.name());
-		data2.setRuleLogic(logic);
+		data2.setRuleLogicRowId(logic.getRowId());
 		data2.setMsgContentType("text/plain");
 		data2.setBodyContentType("text/plain");
 		data2.setMsgBody("Test Broadcast Message Body");
@@ -161,13 +161,13 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		MessageAddress adr1 = new MessageAddress();
 		adr1.setMessageInbox(inbox);
 		adr1.setAddressType(EmailAddrType.FROM_ADDR.getValue());
-		adr1.setAddressValue(inbox.getFromAddress());
+		adr1.setEmailAddrRowId(inbox.getFromAddrRowId());
 		msgAddrService.insert(adr1);
 		
 		MessageAddress adr2 = new MessageAddress();
 		adr2.setMessageInbox(inbox);
 		adr2.setAddressType(EmailAddrType.TO_ADDR.getValue());
-		adr2.setAddressValue(inbox.getToAddress());
+		adr2.setEmailAddrRowId(inbox.getToAddrRowId());
 		msgAddrService.insert(adr2);
 	}
 	
@@ -250,7 +250,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		rfc1.setMessageRfcFieldPK(pk1);
 		rfc1.setRfcStatus(null);
 		EmailAddr finalRcpt = emailAddrService.findSertAddress("jackwnn@synnex.com.au");
-		rfc1.setFinalRecipient(finalRcpt);
+		rfc1.setFinalRcptAddrRowId(finalRcpt.getRowId());
 		rfc1.setOriginalMsgSubject("May 74% OFF");
 		rfc1.setMessageId("<1252103166.01356550221562.JavaMail.wangjack@WANGJACKDEV>");
 		rfc1.setDsnText("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">" + LF +
@@ -324,7 +324,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		rfc2.setMessageRfcFieldPK(pk2);
 		rfc2.setRfcStatus("5.1.1");
 		rfc2.setRfcAction("failed");
-		rfc2.setFinalRecipient(finalRcpt);
+		rfc2.setFinalRcptAddrRowId(finalRcpt.getRowId());
 		rfc1.setOriginalMsgSubject("May 74% OFF");
 		rfc2.setMessageId("<1631635827.01357742709854.JavaMail.wangjack@WANGJACKDEV>");
 		rfc2.setDsnText(rfc1.getDsnText());
@@ -335,7 +335,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		MessageRfcFieldPK pk3 = new MessageRfcFieldPK(inbox,"text/html; charset=us-ascii");
 		rfc3.setMessageRfcFieldPK(pk3);
 		EmailAddr finalRcpt2 = emailAddrService.findSertAddress("test@test.com");
-		rfc3.setFinalRecipient(finalRcpt2);
+		rfc3.setFinalRcptAddrRowId(finalRcpt2.getRowId());
 		rfc3.setOriginalRecipient("jsmith@test.com");
 		rfcService.insert(rfc3);
 	}

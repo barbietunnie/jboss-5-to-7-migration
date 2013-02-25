@@ -92,7 +92,7 @@ public class MessageInboxService {
 			"select t " +
 			"from " +
 				"MessageInbox t, MessageInbox t2 " +
-				"where t2=t.leadMessage and t2.rowId=:rowId order by t.rowId ";
+				"where t2.rowId=t.leadMessageRowId and t2.rowId=:rowId order by t.rowId ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("rowId", leadMsgId);
@@ -109,7 +109,7 @@ public class MessageInboxService {
 			"select t " +
 			"from " +
 				"MessageInbox t, MessageInbox t2 " +
-				"where t2=t.referredMessage and t2.rowId=:rowId order by t.rowId ";
+				"where t2.rowId=t.referredMessageRowId and t2.rowId=:rowId order by t.rowId ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("rowId", referredMsgId);
@@ -126,7 +126,7 @@ public class MessageInboxService {
 			"select t " +
 			"from " +
 				"MessageInbox t, EmailAddr ea " +
-				"where ea=t.fromAddress and ea.address=:address order by t.rowId ";
+				"where ea.rowId=t.fromAddrRowId and ea.address=:address order by t.rowId ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("address", address);
@@ -143,7 +143,7 @@ public class MessageInboxService {
 			"select t " +
 			"from " +
 				"MessageInbox t, EmailAddr ea " +
-				"where ea=t.toAddress and ea.address=:address order by t.rowId ";
+				"where ea.rowId=t.toAddrRowId and ea.address=:address order by t.rowId ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("address", address);
@@ -220,8 +220,8 @@ public class MessageInboxService {
 		try {
 			em.persist(msgInbox);
 			em.flush(); // to populate the @Id field
-			if (msgInbox.getLeadMessage()==null) {
-				msgInbox.setLeadMessage(msgInbox);
+			if (msgInbox.getLeadMessageRowId()==null) {
+				msgInbox.setLeadMessageRowId(msgInbox.getRowId());
 			}
 			em.flush();
 		}

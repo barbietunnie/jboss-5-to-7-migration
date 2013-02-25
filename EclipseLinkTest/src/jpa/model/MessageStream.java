@@ -8,12 +8,14 @@ import javax.persistence.EntityResult;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+
+import org.eclipse.persistence.annotations.Index;
 
 @Entity
 @Table(name="message_stream", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId"}))
@@ -30,17 +32,16 @@ public class MessageStream extends BaseModel implements Serializable
 	@Transient
 	public static final String MAPPING_MESSAGE_STREAM = "MessageStreamNative";
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
+	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private MessageInbox messageInbox;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddr.class)
-	@JoinColumn(name="FromAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private EmailAddr fromAddress;
+	@Index
+	@Column(name="FromAddrRowId", nullable=true)
+	private int fromAddrRowId;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddr.class)
-	@JoinColumn(name="TpAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private EmailAddr toAddress;
+	@Column(name="ToAddrRowId", nullable=true)
+	private int toAddrRowId;
 
 	@Column(length=255, nullable=true)
 	private String msgSubject = null;
@@ -58,20 +59,20 @@ public class MessageStream extends BaseModel implements Serializable
 		this.messageInbox = messageInbox;
 	}
 
-	public EmailAddr getFromAddress() {
-		return fromAddress;
+	public int getFromAddrRowId() {
+		return fromAddrRowId;
 	}
 
-	public void setFromAddress(EmailAddr fromAddress) {
-		this.fromAddress = fromAddress;
+	public void setFromAddrRowId(int fromAddrRowId) {
+		this.fromAddrRowId = fromAddrRowId;
 	}
 
-	public EmailAddr getToAddress() {
-		return toAddress;
+	public int getToAddrRowId() {
+		return toAddrRowId;
 	}
 
-	public void setToAddress(EmailAddr toAddress) {
-		this.toAddress = toAddress;
+	public void setToAddrRowId(int toAddrRowId) {
+		this.toAddrRowId = toAddrRowId;
 	}
 
 	public String getMsgSubject() {

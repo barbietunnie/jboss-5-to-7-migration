@@ -13,7 +13,7 @@ import javax.persistence.UniqueConstraint;
 import jpa.constant.EmailAddrType;
 
 @Entity
-@Table(name="message_address", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId", "addressType", "EmailAddrRowId"}))
+@Table(name="message_address", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId", "addressType", "emailAddrRowId"}))
 public class MessageAddress extends BaseModel implements Serializable
 {
 	private static final long serialVersionUID = 4120242394404262528L;
@@ -22,12 +22,11 @@ public class MessageAddress extends BaseModel implements Serializable
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private MessageInbox messageInbox;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddr.class)
-	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private EmailAddr addressValue;
-
 	@Column(length=12, nullable=false)
 	private String addressType = EmailAddrType.FROM_ADDR.getValue();
+
+	@Column(name="EmailAddrRowId", nullable=false)
+	private int emailAddrRowId;
 
 	public MessageAddress() {}
 
@@ -47,11 +46,11 @@ public class MessageAddress extends BaseModel implements Serializable
 		this.addressType = addressType;
 	}
 
-	public EmailAddr getAddressValue() {
-		return addressValue;
+	public int getEmailAddrRowId() {
+		return emailAddrRowId;
 	}
 
-	public void setAddressValue(EmailAddr addressValue) {
-		this.addressValue = addressValue;
+	public void setEmailAddrRowId(int emailAddrRowId) {
+		this.emailAddrRowId = emailAddrRowId;
 	}
 }

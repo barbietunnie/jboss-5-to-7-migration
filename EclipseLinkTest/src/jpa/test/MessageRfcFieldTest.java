@@ -73,15 +73,15 @@ public class MessageRfcFieldTest {
 		inbox1.setReceivedTime(updtTime);
 		
 		from = addrService.findSertAddress("test@test.com");
-		inbox1.setFromAddress(from);
-		inbox1.setReplytoAddress(null);
+		inbox1.setFromAddrRowId(from.getRowId());
+		inbox1.setReplytoAddrRowId(null);
 
 		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 		String to_addr = client.getReturnPathLeft() + "@" + client.getDomainName();
 		to = addrService.findSertAddress(to_addr);
-		inbox1.setToAddress(to);
-		inbox1.setClientData(client);
-		inbox1.setCustomerData(null);
+		inbox1.setToAddrRowId(to.getRowId());
+		inbox1.setClientDataRowId(client.getRowId());
+		inbox1.setCustomerDataRowId(null);
 		inbox1.setPurgeDate(null);
 		inbox1.setUpdtTime(updtTime);
 		inbox1.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -89,7 +89,7 @@ public class MessageRfcFieldTest {
 		inbox1.setLockId(null);
 		
 		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.name());
-		inbox1.setRuleLogic(logic);
+		inbox1.setRuleLogicRowId(logic.getRowId());
 		inbox1.setMsgContentType("multipart/mixed");
 		inbox1.setBodyContentType("text/plain");
 		inbox1.setMsgBody("Test Message Body");
@@ -140,7 +140,7 @@ public class MessageRfcFieldTest {
 		hdr1.setMessageRfcFieldPK(pk1);
 		hdr1.setRfcStatus(null);
 		EmailAddr finalRcpt = addrService.findSertAddress("jackwnn@synnex.com.au");
-		hdr1.setFinalRecipient(finalRcpt);
+		hdr1.setFinalRcptAddrRowId(finalRcpt.getRowId());
 		hdr1.setOriginalMsgSubject("May 74% OFF");
 		hdr1.setMessageId("<1252103166.01356550221562.JavaMail.wangjack@WANGJACKDEV>");
 		hdr1.setDsnText("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">" + LF +
@@ -214,7 +214,7 @@ public class MessageRfcFieldTest {
 		hdr2.setMessageRfcFieldPK(pk2);
 		hdr2.setRfcStatus("5.1.1");
 		hdr2.setRfcAction("failed");
-		hdr2.setFinalRecipient(finalRcpt);
+		hdr2.setFinalRcptAddrRowId(finalRcpt.getRowId());
 		hdr1.setOriginalMsgSubject("May 74% OFF");
 		hdr2.setMessageId("<1631635827.01357742709854.JavaMail.wangjack@WANGJACKDEV>");
 		hdr2.setDsnText(hdr1.getDsnText());
@@ -225,7 +225,7 @@ public class MessageRfcFieldTest {
 		MessageRfcFieldPK pk3 = new MessageRfcFieldPK(inbox1,"text/html; charset=us-ascii");
 		hdr3.setMessageRfcFieldPK(pk3);
 		EmailAddr finalRcpt2 = addrService.findSertAddress("test@test.com");
-		hdr3.setFinalRecipient(finalRcpt2);
+		hdr3.setFinalRcptAddrRowId(finalRcpt2.getRowId());
 		hdr3.setOriginalRecipient("jsmith@test.com");
 		service.insert(hdr3);
 		
