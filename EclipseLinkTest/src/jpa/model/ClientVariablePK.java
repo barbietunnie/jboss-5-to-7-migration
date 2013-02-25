@@ -11,12 +11,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Embeddable
 public class ClientVariablePK implements Serializable {
 	private static final long serialVersionUID = 1422523897905980641L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=ClientData.class)
 	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@OnDelete( action = OnDeleteAction.CASCADE )
 	private ClientData clientData;
 	
 	@Column(name="VariableName", nullable=false, length=26)

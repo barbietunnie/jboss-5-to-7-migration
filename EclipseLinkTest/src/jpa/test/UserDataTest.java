@@ -45,7 +45,7 @@ public class UserDataTest {
 		Connection con = null;
 		try {
 			con = ds.getConnection();
-			System.err.println("AutoCommit?" + con.getAutoCommit());
+			//System.err.println("AutoCommit?" + con.getAutoCommit());
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
