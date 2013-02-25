@@ -44,13 +44,13 @@ public class MessageActionLogService {
 		}
 		String sql = 
 				"select t " +
-				"from MessageActionLog t, MessageInbox mi, MessageInbox lm where " +
+				"from MessageActionLog t, MessageInbox mi where " +
 					" mi=t.messageActionLogPK.messageInbox and mi.rowId=:msgId " +
-					" and lm=t.messageActionLogPK.leadMessage and lm.rowId=:leadMsgId ";
+					" and t.messageActionLogPK.leadMessageRowId=:leadMsgId ";
 			try {
 				Query query = em.createQuery(sql);
 				query.setParameter("msgId", pk.getMessageInbox().getRowId());
-				query.setParameter("leadMsgId", pk.getLeadMessage().getRowId());
+				query.setParameter("leadMsgId", pk.getLeadMessageRowId());
 				MessageActionLog record = (MessageActionLog) query.getSingleResult();
 				return record;
 			}
@@ -77,8 +77,8 @@ public class MessageActionLogService {
 	public List<MessageActionLog> getByLeadMsgId(int msgId) throws NoResultException {
 		String sql = 
 				"select t " +
-				"from MessageActionLog t, MessageInbox mi where " +
-					" mi=t.messageActionLogPK.leadMessage and mi.rowId=:msgId ";
+				"from MessageActionLog t where " +
+					" t.messageActionLogPK.leadMessageRowId=:msgId ";
 			try {
 				Query query = em.createQuery(sql);
 				query.setParameter("msgId", msgId);
@@ -123,7 +123,7 @@ public class MessageActionLogService {
 		try {
 			Query query = em.createNativeQuery(sql);
 			query.setParameter(1, pk.getMessageInbox().getRowId());
-			query.setParameter(2, pk.getLeadMessage().getRowId());
+			query.setParameter(2, pk.getLeadMessageRowId());
 			int rows = query.executeUpdate();
 			return rows;
 		}
@@ -148,7 +148,7 @@ public class MessageActionLogService {
 	public int deleteByLeadMsgId(int msgId) {
 		String sql = 
 				"delete from MessageActionLog t " +
-				" where t.messageActionLogPK.leadMessage.rowId=:msgId ";
+				" where t.messageActionLogPK.leadMessageRowId=:msgId ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("msgId", msgId);

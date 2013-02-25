@@ -17,6 +17,8 @@ import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.eclipse.persistence.annotations.CascadeOnDelete;
+
 import jpa.constant.StatusId;
 
 @Entity
@@ -39,6 +41,7 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	public static final String MAPPING_MAILING_LIST_WITH_COUNTS = "MailingListWithCounts";
 
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true, mappedBy="mailingList")
+	@CascadeOnDelete
 	private List<Subscription> subscriptions; // subscribers of this list
 	
 	@ManyToOne(fetch=FetchType.EAGER, optional=false, targetEntity=ClientData.class)

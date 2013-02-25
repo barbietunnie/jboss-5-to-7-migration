@@ -15,7 +15,6 @@ import javax.persistence.Transient;
 import jpa.constant.Constants;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
-import org.hibernate.annotations.Cascade;
 
 @Entity
 @Table(name="client_data")
@@ -32,7 +31,6 @@ public class ClientData extends BaseModel implements Serializable {
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="clientData")
 	@CascadeOnDelete
-	@Cascade(value={org.hibernate.annotations.CascadeType.ALL})
 	private List<CustomerData> customers;
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="clientData")

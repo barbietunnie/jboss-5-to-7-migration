@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -24,9 +23,8 @@ public class MessageClickCount extends BaseModel implements Serializable
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private MessageInbox messageInbox;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MailingList.class)
-	@JoinColumn(name="MailingListRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private MailingList mailingList;
+	@Column(name="MailingListRowId", nullable=false)
+	private int mailingListRowId;
 
 	@Column(length=10, nullable=false)
 	private String deliveryType = MailingListDeliveryType.ALL_ON_LIST.getValue();
@@ -61,12 +59,12 @@ public class MessageClickCount extends BaseModel implements Serializable
 		this.messageInbox = messageInbox;
 	}
 
-	public MailingList getMailingList() {
-		return mailingList;
+	public int getMailingListRowId() {
+		return mailingListRowId;
 	}
 
-	public void setMailingList(MailingList mailingList) {
-		this.mailingList = mailingList;
+	public void setMailingListRowId(int mailingListRowId) {
+		this.mailingListRowId = mailingListRowId;
 	}
 
 	public String getDeliveryType() {

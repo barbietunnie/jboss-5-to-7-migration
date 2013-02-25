@@ -5,10 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -21,9 +18,8 @@ public class MessageRfcField extends BaseModel implements Serializable
 	@Embedded
 	private MessageRfcFieldPK messageRfcFieldPK;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddr.class)
-	@JoinColumn(name="FinalRcptAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private EmailAddr finalRecipient;
+	@Column(name="FinalRcptAddrRowId", nullable=true, columnDefinition="Integer")
+	private Integer finalRcptAddrRowId;
 
 	@Column(length=30, nullable=true)
 	private String rfcStatus = null;
@@ -55,12 +51,12 @@ public class MessageRfcField extends BaseModel implements Serializable
 		this.messageRfcFieldPK = messageRfcFieldPK;
 	}
 
-	public EmailAddr getFinalRecipient() {
-		return finalRecipient;
+	public Integer getFinalRcptAddrRowId() {
+		return finalRcptAddrRowId;
 	}
 
-	public void setFinalRecipient(EmailAddr finalRecipient) {
-		this.finalRecipient = finalRecipient;
+	public void setFinalRcptAddrRowId(Integer finalRcptAddrRowId) {
+		this.finalRcptAddrRowId = finalRcptAddrRowId;
 	}
 
 	public String getRfcStatus() {

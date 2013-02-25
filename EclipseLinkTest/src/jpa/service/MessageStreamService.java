@@ -39,7 +39,7 @@ public class MessageStreamService {
 		String sql = 
 			"select t " +
 			"from MessageStream t, EmailAddr ea where " +
-			" ea=t.fromAddress and ea.getAddress=:address";
+			" ea.rowId=t.fromAddrRowId and ea.address=:address";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("address", address);

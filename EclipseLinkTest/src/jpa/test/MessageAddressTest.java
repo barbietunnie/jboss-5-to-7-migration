@@ -73,15 +73,15 @@ public class MessageAddressTest {
 		inbox1.setReceivedTime(updtTime);
 		
 		from = addrService.findSertAddress("test@test.com");
-		inbox1.setFromAddress(from);
-		inbox1.setReplytoAddress(null);
+		inbox1.setFromAddrRowId(from.getRowId());
+		inbox1.setReplytoAddrRowId(null);
 
 		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 		String to_addr = client.getReturnPathLeft() + "@" + client.getDomainName();
 		to = addrService.findSertAddress(to_addr);
-		inbox1.setToAddress(to);
-		inbox1.setClientData(client);
-		inbox1.setCustomerData(null);
+		inbox1.setToAddrRowId(to.getRowId());
+		inbox1.setClientDataRowId(client.getRowId());
+		inbox1.setCustomerDataRowId(null);
 		inbox1.setPurgeDate(null);
 		inbox1.setUpdtTime(updtTime);
 		inbox1.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -89,7 +89,7 @@ public class MessageAddressTest {
 		inbox1.setLockId(null);
 		
 		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.name());
-		inbox1.setRuleLogic(logic);
+		inbox1.setRuleLogicRowId(logic.getRowId());
 		inbox1.setMsgContentType("multipart/mixed");
 		inbox1.setBodyContentType("text/plain");
 		inbox1.setMsgBody("Test Message Body");
@@ -135,13 +135,13 @@ public class MessageAddressTest {
 		adr1 = new MessageAddress();
 		adr1.setMessageInbox(inbox1);
 		adr1.setAddressType(EmailAddrType.FROM_ADDR.getValue());
-		adr1.setAddressValue(from);
+		adr1.setEmailAddrRowId(from.getRowId());
 		service.insert(adr1);
 		
 		adr2 = new MessageAddress();
 		adr2.setMessageInbox(inbox1);
 		adr2.setAddressType(EmailAddrType.TO_ADDR.getValue());
-		adr2.setAddressValue(to);
+		adr2.setEmailAddrRowId(to.getRowId());
 		service.insert(adr2);
 		assertTrue(service.getByMsgInboxId(inbox1.getRowId()).size()==2);		
 	}

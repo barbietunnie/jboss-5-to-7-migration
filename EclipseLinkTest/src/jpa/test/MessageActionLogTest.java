@@ -73,15 +73,15 @@ public class MessageActionLogTest {
 		inbox1.setReceivedTime(updtTime);
 		
 		from = addrService.findSertAddress("test@test.com");
-		inbox1.setFromAddress(from);
-		inbox1.setReplytoAddress(null);
+		inbox1.setFromAddrRowId(from.getRowId());
+		inbox1.setReplytoAddrRowId(null);
 
 		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 		String to_addr = client.getReturnPathLeft() + "@" + client.getDomainName();
 		to = addrService.findSertAddress(to_addr);
-		inbox1.setToAddress(to);
-		inbox1.setClientData(client);
-		inbox1.setCustomerData(null);
+		inbox1.setToAddrRowId(to.getRowId());
+		inbox1.setClientDataRowId(client.getRowId());
+		inbox1.setCustomerDataRowId(null);
 		inbox1.setPurgeDate(null);
 		inbox1.setUpdtTime(updtTime);
 		inbox1.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -89,7 +89,7 @@ public class MessageActionLogTest {
 		inbox1.setLockId(null);
 		
 		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.name());
-		inbox1.setRuleLogic(logic);
+		inbox1.setRuleLogicRowId(logic.getRowId());
 		inbox1.setMsgContentType("multipart/mixed");
 		inbox1.setBodyContentType("text/plain");
 		inbox1.setMsgBody("Test Message Body");
@@ -126,7 +126,7 @@ public class MessageActionLogTest {
 		catch (NoResultException e) {}
 		
 		assertTrue(1==service.deleteByRowId(log2.getRowId()));
-		assertTrue(0==service.deleteByLeadMsgId(log2.getMessageActionLogPK().getLeadMessage().getRowId()));
+		assertTrue(0==service.deleteByLeadMsgId(log2.getMessageActionLogPK().getLeadMessageRowId()));
 		
 		insertActionLogs();
 		assertTrue(1==service.deleteByPrimaryKey(log1.getMessageActionLogPK()));
@@ -136,7 +136,7 @@ public class MessageActionLogTest {
 	private void insertActionLogs() {
 		// test insert
 		log1 = new MessageActionLog();
-		MessageActionLogPK pk1 = new MessageActionLogPK(inbox1, inbox1.getLeadMessage());
+		MessageActionLogPK pk1 = new MessageActionLogPK(inbox1, inbox1.getLeadMessageRowId());
 		log1.setMessageActionLogPK(pk1);
 		log1.setActionService(RuleNameEnum.SEND_MAIL.name());
 		log1.setParameters("sent");
@@ -144,7 +144,7 @@ public class MessageActionLogTest {
 
 		log2 = new MessageActionLog();
 		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
-		MessageActionLogPK pk2 = new MessageActionLogPK(inbox1,inbox2);
+		MessageActionLogPK pk2 = new MessageActionLogPK(inbox1,inbox2.getRowId());
 		log2.setMessageActionLogPK(pk2);
 		log2.setActionService(RuleNameEnum.CSR_REPLY.name());
 		log2.setParameters("rowid=122");
