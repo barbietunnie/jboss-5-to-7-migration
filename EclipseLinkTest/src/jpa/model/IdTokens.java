@@ -7,6 +7,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Entity
 @Table(name="id_tokens")
 public class IdTokens extends BaseModel implements java.io.Serializable {
@@ -14,6 +17,7 @@ public class IdTokens extends BaseModel implements java.io.Serializable {
 
 	@OneToOne(targetEntity=ClientData.class, fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false, unique=true)
+	@OnDelete( action = OnDeleteAction.CASCADE )
 	private ClientData clientData;
 
 	@Column(nullable=true, length=100)

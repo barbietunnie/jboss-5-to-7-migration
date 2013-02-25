@@ -10,6 +10,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jpa.constant.Constants;
 
 @Entity
@@ -19,6 +22,7 @@ public class UserData extends BaseModel implements java.io.Serializable {
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="ClientDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
+	@OnDelete( action = OnDeleteAction.CASCADE )
 	private ClientData clientData; // sender user is associated to
 
 	@OneToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddr.class)
