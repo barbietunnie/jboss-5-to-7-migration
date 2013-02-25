@@ -14,9 +14,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 @Entity
 @Table(name="customer_data")
 public class CustomerData extends BaseModel implements java.io.Serializable {
@@ -24,7 +21,6 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=ClientData.class)
 	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	@OnDelete( action = OnDeleteAction.CASCADE )
 	private ClientData clientData;
 
 	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddr.class)
