@@ -11,7 +11,7 @@ public enum RuleElementEnum {
 	 */
 	HARD_BOUNCE_1(RuleNameEnum.HARD_BOUNCE,1,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
 			"^(?:postmaster|mailmaster|mailadmin|administrator)\\S*\\@", null,
-			"postmaster@legacytojava.com,postmaster@" + Constants.VENDER_DOMAIN_NAME,"postmastersTargetText",","),
+			"postmaster@legacytojava.com,postmaster@" + Constants.VENDER_DOMAIN_NAME,"postmasterTargetText",","),
 	HARD_BOUNCE_2(RuleNameEnum.HARD_BOUNCE,2,RuleDataName.FROM_ADDR, null, RuleCriteria.REG_EX,false,
 			"^(?:mailer-(?:daemon|deamon)|smtp.gateway|majordomo)\\S*\\@", null,
 			"mailer-daemon@legacytojave.com,mailer-daemon@" + Constants.VENDER_DOMAIN_NAME,null,","),

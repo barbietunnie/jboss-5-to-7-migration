@@ -1,5 +1,6 @@
 package jpa.test;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -129,6 +130,7 @@ public class MessageStreamTest {
 		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
 		
 		insertMsgStreams();
+		assertNotNull(service.getLastRecord());
 		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
 		assertTrue(1==service.deleteByMsgInboxId(inbox1.getRowId()));
 	}
@@ -144,12 +146,17 @@ public class MessageStreamTest {
 		service.insert(adr1);
 		
 		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
-		adr2 = new MessageStream();
-		adr2.setMessageInbox(inbox2);
-		adr2.setMsgSubject("jpa test");
-		adr2.setFromAddrRowId(from.getRowId());
-		adr2.setMsgStream(getBouncedMail());
-		service.insert(adr2);
+		try {
+			adr2 = service.getByMsgInboxId(inbox2.getRowId());
+		}
+		catch (NoResultException e) {
+			adr2 = new MessageStream();
+			adr2.setMessageInbox(inbox2);
+			adr2.setMsgSubject("jpa test");
+			adr2.setFromAddrRowId(from.getRowId());
+			adr2.setMsgStream(getBouncedMail());
+			service.insert(adr2);
+		}
 	}
 
 	private byte[] getBouncedMail() throws IOException {

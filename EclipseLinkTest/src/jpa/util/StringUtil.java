@@ -315,6 +315,15 @@ public final class StringUtil {
 							}
 						}
 					}
+					else if (method.getReturnType()==byte[].class) {
+						Object rtnObj = method.invoke(obj, params);
+						if (rtnObj!=null) {
+							sb.append(new String((byte[])rtnObj));
+						}
+						else {
+							sb.append("null");
+						}
+					}
 					else if (method.getName().indexOf("Bean") > 0) {
 						// don't try to call the getMapOfBean method - this is
 						// used only for printing
@@ -350,7 +359,7 @@ public final class StringUtil {
 					//sb.append(LF + " ");
 				}
 				catch (Exception e) {
-					//e.printStackTrace();
+					e.printStackTrace();
 					System.err.println("error getting values in toString, method name: " + methodName + ", " + e.getMessage());
 				}
 			}

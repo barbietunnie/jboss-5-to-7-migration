@@ -602,7 +602,7 @@ public final class MessageBeanUtil {
 			return result;
 		}
 		catch (Exception e) {
-			logger.error("invokeMethod() - Exception caught", e);
+			logger.error("invokeMethod() - Exception caught: " + e.getMessage());
 		}
 		return null;
 	}
