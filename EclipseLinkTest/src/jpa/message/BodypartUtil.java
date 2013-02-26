@@ -17,7 +17,7 @@ public final class BodypartUtil implements Serializable {
 	static final Logger logger = Logger.getLogger(BodypartUtil.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	static Logger rfcLogger = Logger.getLogger("com.legacytojava.report.rfc");
+	static Logger rfcLogger = Logger.getLogger("jpa.message.report.rfc");
 	static boolean isRfcReportEnabled = rfcLogger.isInfoEnabled();
 
 	final static String LF = System.getProperty("line.separator", "\n");

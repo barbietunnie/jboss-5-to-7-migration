@@ -25,6 +25,7 @@ import jpa.model.MessageHeaderPK;
 import jpa.model.MessageInbox;
 import jpa.model.MessageRfcField;
 import jpa.model.MessageRfcFieldPK;
+import jpa.model.MessageStream;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddrService;
@@ -33,6 +34,7 @@ import jpa.service.MessageAttachmentService;
 import jpa.service.MessageHeaderService;
 import jpa.service.MessageInboxService;
 import jpa.service.MessageRfcFieldService;
+import jpa.service.MessageStreamService;
 import jpa.service.RuleLogicService;
 import jpa.util.SpringUtil;
 
@@ -48,6 +50,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 	private MessageHeaderService headerService;
 	private MessageAttachmentService attchmntService;
 	private MessageRfcFieldService rfcService;
+	private MessageStreamService streamService;
 
 	public static void main(String[] args) {
 		MessageInboxLoader loader = new MessageInboxLoader();
@@ -64,6 +67,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		headerService = (MessageHeaderService) SpringUtil.getAppContext().getBean("messageHeaderService");
 		attchmntService = (MessageAttachmentService) SpringUtil.getAppContext().getBean("messageAttachmentService");
 		rfcService = (MessageRfcFieldService) SpringUtil.getAppContext().getBean("messageRfcFieldService");
+		streamService = (MessageStreamService) SpringUtil.getAppContext().getBean("messageStreamService");
 		startTransaction();
 		try {
 			loadMessageInbox();
@@ -75,7 +79,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		}
 	}
 
-	private void loadMessageInbox() {
+	private void loadMessageInbox() throws IOException {
 		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 
@@ -153,6 +157,10 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		loadMessageRfcField(data1);
 		loadMessageRfcField(data2);
 
+		// load message Streams
+		loadMessageStream(data1);
+		loadMessageStream(data2);
+
 		logger.info("EntityManager persisted the record.");
 	}
 	
@@ -221,6 +229,17 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		atc3.setAttachmentType("application/octet-stream; name=\"jndi.bin\"");
 		atc3.setAttachmentValue(loadFromFile("jndi.bin"));
 		attchmntService.insert(atc3);
+	}
+
+	private void loadMessageStream(MessageInbox inbox) throws IOException {
+		// test insert
+		MessageStream strm1 = new MessageStream();
+		strm1.setMessageInbox(inbox);
+		strm1.setMsgSubject(inbox.getMsgSubject());
+		strm1.setFromAddrRowId(inbox.getFromAddrRowId());
+		strm1.setToAddrRowId(inbox.getToAddrRowId());
+		strm1.setMsgStream(loadFromFile("BouncedMail_1.txt"));
+		streamService.insert(strm1);
 	}
 
 	private byte[] loadFromFile(String fileName) {

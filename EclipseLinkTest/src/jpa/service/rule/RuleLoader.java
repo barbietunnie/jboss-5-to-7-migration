@@ -363,6 +363,9 @@ public final class RuleLoader implements java.io.Serializable {
 	}
 	
 	private Map<String, Pattern> getPatterns() {
+		if (patternMaps == null) {
+			throw new IllegalStateException("Rules have not been loaded, please execute loadRules() first.");
+		}
 		return patternMaps[currIndex2];
 	}
 	

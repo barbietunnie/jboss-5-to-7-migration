@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
@@ -27,6 +28,34 @@ public class MessageAttachment extends BaseModel implements Serializable
 	private byte[] attachmentValue = null;
 
 	public MessageAttachment() {}
+
+	/** Define UI Components */
+	@Transient
+	private int attachmentSize = 0;
+	
+	public int getAttachmentSize() {
+		if (attachmentValue == null) {
+			return attachmentSize;
+		}
+		else {
+			return attachmentValue.length;
+		}
+	}
+	
+	public String getSizeAsString() {
+		int len = getAttachmentSize();
+		if (len < 1024) {
+			return 1024 + "";
+		}
+		else {
+			return (int) Math.ceil((double)len / 1024.0) + "K";
+		}
+	}
+
+	public void setAttachmentSize(int size) {
+		attachmentSize = size;
+	}
+	/** End of UI Components */
 
 	public MessageAttachmentPK getMessageAttachmentPK() {
 		return messageAttachmentPK;
