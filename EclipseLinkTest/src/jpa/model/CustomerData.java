@@ -76,7 +76,7 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true)
 	@Temporal(TemporalType.DATE)
 	private Date endDate = null;
-	@Column(length=18)
+	@Column(length=26)
 	private String mobileCarrier = null;
 	@Column(length=100)
 	private String msgHeader = null;
