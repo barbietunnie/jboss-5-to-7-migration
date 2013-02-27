@@ -113,6 +113,7 @@ public class EmailAddrTable extends CreateTableBase {
 					+ "StatusId char(1) NOT NULL DEFAULT '" + StatusIdCode.ACTIVE + "', " 
 						// A - active, I - Inactive
 					+ "IsBuiltIn char(1) NOT NULL DEFAULT '" + Constants.NO_CODE + "', "
+					+ "IsSendText char(1), "
 					+ "CreateTime datetime NOT NULL, "
 					+ "ListMasterEmailAddr varchar(255), "
 					+ "PRIMARY KEY (RowId), "

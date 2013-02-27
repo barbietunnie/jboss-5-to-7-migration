@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 
 import com.legacytojava.jbatch.SpringUtil;
 import com.legacytojava.message.constant.Constants;
+import com.legacytojava.message.constant.MobileCarrier;
 import com.legacytojava.message.constant.StatusIdCode;
 import com.legacytojava.message.dao.emailaddr.EmailAddrDao;
 import com.legacytojava.message.main.CreateTableBase;
@@ -71,7 +72,7 @@ public class CustomerTable extends CreateTableBase {
 					+ "BirthDate Date, "
 					+ "StartDate Date NOT NULL, "
 					+ "EndDate Date, "
-					+ "FaxNumber varchar(18), " // 25
+					+ "MobileCarrier varchar(26), " // 25
 					+ "MsgHeader varchar(100), "
 					+ "MsgDetail varchar(255), "
 					+ "MsgOptional varchar(100), "
@@ -150,7 +151,7 @@ public class CustomerTable extends CreateTableBase {
 							+ "BirthDate, "
 							+ "StartDate, "
 							+ "EndDate, "
-							+ "FaxNumber, " // 25
+							+ "MobileCarrier, " // 25
 							+ "MsgHeader, "
 							+ "MsgDetail, "
 							+ "MsgOptional, "
@@ -200,7 +201,7 @@ public class CustomerTable extends CreateTableBase {
 			ps.setDate(23, new java.sql.Date(cal.getTimeInMillis()));
 			cal = new GregorianCalendar(2009, 05, 10);
 			ps.setDate(24, new java.sql.Date(cal.getTimeInMillis()));
-			ps.setString(25, null);
+			ps.setString(25, MobileCarrier.TMobile.getValue());
 			ps.setString(26, "Joe's Message Header");
 			ps.setString(27, "Dear Joe,");
 			ps.setString(28, null);

@@ -29,10 +29,20 @@ public class RegExTest {
 					System.out.println(i + " - " + m.group(i));
 				}
 			}
+			System.out.println(test.parseMessageHeader("Reporting-MTA: dns;MELMX.synnex.com.au"));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	String parseMessageHeader(String line) {
+		Pattern ptn = Pattern.compile("^([\\w-]{1,50}): (.{1,100})$");
+		Matcher m = ptn.matcher(line);
+		if (m.find() && m.groupCount()>1) {
+			return (m.group(1) + ":" + m.group(2));
+		}
+		return null;
 	}
 	
 	java.util.Date extractDate(String text) {

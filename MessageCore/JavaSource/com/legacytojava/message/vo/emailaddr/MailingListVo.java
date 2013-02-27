@@ -16,6 +16,7 @@ public class MailingListVo extends BaseVo implements Serializable {
 	private String description = null;
 	private String clientId = "";
 	private String isBuiltIn = Constants.NO_CODE;
+	private String isSendText = null;
 	private Timestamp CreateTime = null;
 	private String listMasterEmailAddr = null;
 	private String origListId = null;
@@ -80,6 +81,14 @@ public class MailingListVo extends BaseVo implements Serializable {
 	public void setIsBuiltIn(String isBuiltIn) {
 		this.isBuiltIn = isBuiltIn;
 	}
+	public String getIsSendText() {
+		return isSendText;
+	}
+
+	public void setIsSendText(String isSendText) {
+		this.isSendText = isSendText;
+	}
+
 	public Timestamp getCreateTime() {
 		return CreateTime;
 	}

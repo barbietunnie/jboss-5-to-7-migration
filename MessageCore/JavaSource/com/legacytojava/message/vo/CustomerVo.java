@@ -33,7 +33,7 @@ public class CustomerVo extends BaseVo implements Serializable {
 	private Date birthDate = null;
 	private Date startDate = new Date(new java.util.Date().getTime());
 	private Date endDate = null;
-	private String faxNumber = null;
+	private String mobileCarrier = null;
 	private String msgHeader = null;
 	private String msgDetail = null;
 	private String msgOptional = null;
@@ -135,11 +135,11 @@ public class CustomerVo extends BaseVo implements Serializable {
 	public void setEveningPhone(String eveningPhone) {
 		this.eveningPhone = eveningPhone;
 	}
-	public String getFaxNumber() {
-		return faxNumber;
+	public String getMobileCarrier() {
+		return mobileCarrier;
 	}
-	public void setFaxNumber(String faxNumber) {
-		this.faxNumber = faxNumber;
+	public void setMobileCarrier(String mobileCarrier) {
+		this.mobileCarrier = mobileCarrier;
 	}
 	public String getFirstName() {
 		return firstName;

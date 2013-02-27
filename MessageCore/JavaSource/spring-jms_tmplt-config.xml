@@ -229,6 +229,7 @@
 		<property name="mailingListDao" ref="mailingListDao"/>
 		<property name="subscriptionDao" ref="subscriptionDao"/>
 		<property name="msgClickCountsDao" ref="msgClickCountsDao"/>
+		<property name="customerDao" ref="customerDao"/>
 	</bean>
 	<bean id="closeBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.CloseBoImpl">
