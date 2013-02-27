@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -265,14 +266,30 @@ public final class MessageBeanUtil {
 	 * @throws MessagingException
 	 * @throws FileNotFoundException
 	 */
-	public static Message createMimeMessage(String filePath) throws MessagingException,
-			FileNotFoundException {
+	public static Message createMimeMessage(String filePath)
+			throws MessagingException, FileNotFoundException {
 		javax.mail.Session session = Session.getDefaultInstance(System.getProperties());
 		session.setDebug(true);
-		FileInputStream fis = new FileInputStream(filePath);
-		Message msg = new MimeMessage(session, new BufferedInputStream(fis));
-		msg.saveChanges();
-		session.setDebug(debugSession);
+		InputStream fis = null;
+		Message msg = null;
+		try {
+			fis = new FileInputStream(filePath);
+		}
+		catch (FileNotFoundException e) {
+			ClassLoader loader = Thread.currentThread().getContextClassLoader();
+			fis = loader.getResourceAsStream(filePath);
+			if (fis == null) {
+				throw new FileNotFoundException("File (" + filePath + ") not found.");
+			}
+		}
+		finally {
+			msg = new MimeMessage(session, new BufferedInputStream(fis));
+			msg.saveChanges();
+			try {
+				fis.close();
+			} catch (IOException e) {}
+			session.setDebug(debugSession);
+		}
 		return msg;
 	}
 	
