@@ -29,8 +29,17 @@ public class BounceAddressFinderTest {
 	static final String LF = System.getProperty("line.separator", "\n");
 
 	@Test
-	public void findBounceAddr() {
-		InputStream is = getClass().getResourceAsStream("data/bounceBodySamples2.txt");
+	public void findBounceAddr1() {
+		findBounceAddress("data/bounceBodySamples.txt");
+	}
+	
+	@Test
+	public void findBounceAddr2() {
+		findBounceAddress("data/bounceBodySamples2.txt");
+	}
+
+	private void findBounceAddress(String filePath) {
+		InputStream is = getClass().getResourceAsStream(filePath);
 		if (is == null) {
 			logger.warn("InputStream not found.");
 			return;
