@@ -20,6 +20,8 @@ import com.legacytojava.message.constant.Constants;
 import com.legacytojava.message.dao.customer.CustomerDao;
 import com.legacytojava.message.exception.DataValidationException;
 import com.legacytojava.message.util.EmailAddrUtil;
+import com.legacytojava.message.util.PhoneNumberUtil;
+import com.legacytojava.message.util.SsnNumberUtil;
 import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.CustomerVo;
 import com.legacytojava.message.vo.PagingCustomerVo;
@@ -409,7 +411,7 @@ public class CustomersListBean {
 		String ssn = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validateSsnNumber() - SSN: " + ssn);
-		if (!StringUtil.isEmpty(ssn) && !StringUtil.isValidSSN(ssn)) {
+		if (!StringUtil.isEmpty(ssn) && !SsnNumberUtil.isValidSSN(ssn)) {
 	        FacesMessage message = com.legacytojava.msgui.util.Messages.getMessage(
 					"com.legacytojava.msgui.messages", "invalidSsnNumber", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
@@ -432,7 +434,7 @@ public class CustomersListBean {
 		String phone = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validatePhoneNumber() - Phone Number: " + phone);
-		if (!StringUtil.isEmpty(phone) && !StringUtil.isValidPhoneNumber(phone)) {
+		if (!StringUtil.isEmpty(phone) && !PhoneNumberUtil.isValidPhoneNumber(phone)) {
 	        FacesMessage message = com.legacytojava.msgui.util.Messages.getMessage(
 					"com.legacytojava.msgui.messages", "invalidPhoneNumber", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
