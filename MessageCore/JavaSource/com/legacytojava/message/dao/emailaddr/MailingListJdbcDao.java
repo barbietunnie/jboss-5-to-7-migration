@@ -48,6 +48,7 @@ public class MailingListJdbcDao implements MailingListDao {
 			mailingListVo.setClientId(rs.getString("ClientId"));
 			mailingListVo.setStatusId(rs.getString("StatusId"));
 			mailingListVo.setIsBuiltIn(rs.getString("IsBuiltIn"));
+			mailingListVo.setIsSendText(rs.getString("IsSendText"));
 			mailingListVo.setCreateTime(rs.getTimestamp("CreateTime"));
 			mailingListVo.setListMasterEmailAddr(rs.getString("ListMasterEmailAddr"));
 			
@@ -83,6 +84,7 @@ public class MailingListJdbcDao implements MailingListDao {
 				" a.ClientId, " +
 				" a.StatusId, " +
 				" a.IsBuiltIn, " +
+				" a.IsSendText, " +
 				" a.CreateTime, " +
 				" a.ListMasterEmailAddr, " +
 				" '' as Subscribed, " +
@@ -102,6 +104,7 @@ public class MailingListJdbcDao implements MailingListDao {
 				" a.ClientId, " +
 				" a.StatusId, " +
 				" a.IsBuiltIn, " +
+				" a.IsSendText, " +
 				" a.CreateTime, " +
 				" a.ListMasterEmailAddr ";
 		Object[] parms = new Object[] {listId};
@@ -134,6 +137,7 @@ public class MailingListJdbcDao implements MailingListDao {
 			" a.ClientId, " +
 			" a.StatusId, " +
 			" a.IsBuiltIn, " +
+			" a.IsSendText, " +
 			" a.CreateTime," +
 			" a.ListMasterEmailAddr, " +
 			" '' as Subscribed, " +
@@ -157,6 +161,7 @@ public class MailingListJdbcDao implements MailingListDao {
 			" a.ClientId, " +
 			" a.StatusId, " +
 			" a.IsBuiltIn, " +
+			" a.IsSendText, " +
 			" a.CreateTime, " +
 			" a.ListMasterEmailAddr " ;
 		Object[] parms = new Object[] {acctUserName};
@@ -178,6 +183,7 @@ public class MailingListJdbcDao implements MailingListDao {
 			" a.ClientId, " +
 			" a.StatusId, " +
 			" a.IsBuiltIn, " +
+			" a.IsSendText, " +
 			" a.CreateTime," +
 			" a.ListMasterEmailAddr, " +
 			" '' as Subscribed, " +
@@ -200,6 +206,7 @@ public class MailingListJdbcDao implements MailingListDao {
 		" a.ClientId, " +
 		" a.StatusId, " +
 		" a.IsBuiltIn, " +
+		" a.IsSendText, " +
 		" a.CreateTime, " +
 		" a.ListMasterEmailAddr " ;
 		sql += " order by a.RowId ";
@@ -221,6 +228,7 @@ public class MailingListJdbcDao implements MailingListDao {
 			" a.ClientId, " +
 			" a.StatusId, " +
 			" a.IsBuiltIn, " +
+			" a.IsSendText, " +
 			" a.CreateTime," +
 			" a.ListMasterEmailAddr, " +
 			" '' as Subscribed, " +
@@ -243,6 +251,7 @@ public class MailingListJdbcDao implements MailingListDao {
 		" a.ClientId, " +
 		" a.StatusId, " +
 		" a.IsBuiltIn, " +
+		" a.IsSendText, " +
 		" a.CreateTime, " +
 		" a.ListMasterEmailAddr " ;
 		sql += " order by a.RowId limit 5";
@@ -285,6 +294,7 @@ public class MailingListJdbcDao implements MailingListDao {
 		keys.add(mailingListVo.getClientId());
 		keys.add(mailingListVo.getStatusId());
 		keys.add(mailingListVo.getIsBuiltIn());
+		keys.add(mailingListVo.getIsSendText());
 		keys.add(mailingListVo.getListMasterEmailAddr());
 		keys.add(mailingListVo.getRowId());
 		String sql = "update MailingList set " +
@@ -295,6 +305,7 @@ public class MailingListJdbcDao implements MailingListDao {
 			"ClientId=?," +
 			"StatusId=?," +
 			"IsBuiltIn=?, " +
+			"IsSendText=?, " +
 			"ListMasterEmailAddr=?" +
 			" where RowId=?";
 		
@@ -329,6 +340,7 @@ public class MailingListJdbcDao implements MailingListDao {
 				mailingListVo.getClientId(),
 				mailingListVo.getStatusId(),
 				mailingListVo.getIsBuiltIn(),
+				mailingListVo.getIsSendText(),
 				mailingListVo.getCreateTime(),
 				mailingListVo.getListMasterEmailAddr()
 			};
@@ -341,10 +353,11 @@ public class MailingListJdbcDao implements MailingListDao {
 			"ClientId," +
 			"StatusId," +
 			"IsBuiltIn," +
+			"IsSendText," +
 			"CreateTime, " +
 			"ListMasterEmailAddr " +
 			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ? "+
+				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ? "+
 				")";
 		
 		int rowsInserted = getJdbcTemplate().update(sql, parms);

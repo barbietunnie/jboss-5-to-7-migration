@@ -526,31 +526,6 @@ public final class StringUtil {
         return string.substring(start, end);
     }
 
-    private static final String ssnRegex = "^(?!000)(?:[0-6]\\d{2}|7(?:[0-6]\\d|7[0-2]))([ -]?)(?!00)\\d{2}\\1(?!0000)\\d{4}$";
-    private final static Pattern ssnPattern = Pattern.compile(ssnRegex);
-    
-    /*
-     * Valid SSN: 	078-05-1120 | 078 05 1120 | 078051120
-     * Invalid SSN: 987-65-4320 | 000-00-0000 | (555) 555-5555
-     */
-    public static boolean isValidSSN(String ssn) {
-    	if (ssn == null) return false;
-    	Matcher matcher = ssnPattern.matcher(ssn);
-    	return matcher.matches();
-    }
-    
-    private static final String phoneRegex = "^(?:1[ -]?)?(?:\\(\\d{3}\\)|\\d{3})[ -]?(?:\\d{3}|[a-z]{3})[ -]?(?:\\d{4}|[a-z]{4})$";
-    private final static Pattern phonePattern = Pattern.compile(phoneRegex, Pattern.CASE_INSENSITIVE);
-    
-    /*
-     * Matches: 2405525009 | (240)552-5009 | 1(240) 552-5009 | 240 JOE-CELL
-     */
-    public static boolean isValidPhoneNumber(String phone) {
-    	if (phone == null) return false;
-    	Matcher matcher = phonePattern.matcher(phone);
-    	return matcher.matches();
-    }
-
 	public static void main(String[] args) {
 		System.out.println(removeStringFirst("<pre>12345abcdefklqhdkh</pre>", "<pre>"));
 	}
