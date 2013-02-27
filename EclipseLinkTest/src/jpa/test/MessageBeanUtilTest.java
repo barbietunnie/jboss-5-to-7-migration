@@ -1,6 +1,7 @@
 package jpa.test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,11 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import jpa.constant.RuleDataName;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
+import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
@@ -42,6 +45,15 @@ public class MessageBeanUtilTest {
 		MessageBean msgBean = testReadFromFile(filePath);
 		assertNotNull(msgBean);
 		
+		Message msg1 = MessageBeanUtil.createMimeMessage("jpa/test/" + filePath);
+		Message msg2 = MessageBeanUtil.createMimeMessage(msgBean);
+		assertTrue(msg1.getSubject().equals(msg2.getSubject()));
+		assertTrue(msg1.getFrom()[0].equals(msg2.getFrom()[0]));
+		assertTrue("jackwng@gmail.com".equals(msg1.getAllRecipients()[0].toString()));
+		assertTrue("support.hotline@jbatch.com".equals(msg2.getAllRecipients()[0].toString()));
+		assertTrue(msg1.getContentType().startsWith("multipart/report;"));
+		assertTrue(msg2.getContentType().startsWith("multipart/report;"));
+		
 		List<String> methodNameList = MessageBeanUtil.getMessageBeanMethodNames();
 		StringBuffer sb = new StringBuffer();
 		sb.append("========= MessageBean method name list ==========" + LF);
@@ -55,7 +67,6 @@ public class MessageBeanUtilTest {
 			MessageBeanUtil.invokeMethod(msgBean, name.getValue());
 			// TODO
 		}
-
 	}
 
 	private MessageBean testReadFromFile(String filePath) throws MessagingException, IOException {
