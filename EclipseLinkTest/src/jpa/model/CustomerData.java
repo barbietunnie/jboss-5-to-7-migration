@@ -77,7 +77,7 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date endDate = null;
 	@Column(length=18)
-	private String faxNumber = null;
+	private String mobileCarrier = null;
 	@Column(length=100)
 	private String msgHeader = null;
 	@Column(length=255)
@@ -306,12 +306,12 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 		this.endDate = endDate;
 	}
 
-	public String getFaxNumber() {
-		return faxNumber;
+	public String getMobileCarrier() {
+		return mobileCarrier;
 	}
 
-	public void setFaxNumber(String faxNumber) {
-		this.faxNumber = faxNumber;
+	public void setMobileCarrier(String mobileCarrier) {
+		this.mobileCarrier = mobileCarrier;
 	}
 
 	public String getMsgHeader() {

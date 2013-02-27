@@ -15,7 +15,6 @@ import javax.mail.MessagingException;
 import jpa.constant.RuleDataName;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
-import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
@@ -64,8 +63,23 @@ public class MessageBeanUtilTest {
 		logger.info(sb.toString());
 
 		for (RuleDataName name : RuleDataName.values()) {
-			MessageBeanUtil.invokeMethod(msgBean, name.getValue());
-			// TODO
+			Object obj = MessageBeanUtil.invokeMethod(msgBean, name.getValue());
+			//System.out.println("Name: " + name.getValue());
+			//if (obj!=null) {
+			//	System.out.println("class: " + obj.getClass().getName() + ", value: " + obj);
+			//}
+			if ("From".equals(name.getValue())) {
+				assertTrue("postmaster@synnex.com.au".equals(obj));
+			}
+			else if ("To".equals(name.getValue())) {
+				assertTrue("support.hotline@jbatch.com".equals(obj));
+			}
+			else if ("Subject".equals(name.getValue())) {
+				assertTrue("Delivery Status Notification (Failure)".equals(obj));
+			}
+			else if ("MimeType".equals(name.getValue())) {
+				assertTrue("multipart/report".equals(obj));
+			}
 		}
 	}
 
