@@ -11,12 +11,12 @@ import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
 
-public class EmailAddrLoader extends AbstractDataLoader {
-	static final Logger logger = Logger.getLogger(EmailAddrLoader.class);
+public class EmailAddressLoader extends AbstractDataLoader {
+	static final Logger logger = Logger.getLogger(EmailAddressLoader.class);
 	private EmailAddressService service;
 
 	public static void main(String[] args) {
-		EmailAddrLoader loader = new EmailAddrLoader();
+		EmailAddressLoader loader = new EmailAddressLoader();
 		loader.loadData();
 	}
 
@@ -25,7 +25,7 @@ public class EmailAddrLoader extends AbstractDataLoader {
 		service = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
 		startTransaction();
 		try {
-			loadEmailAddrs();
+			loadEmailAddress();
 		} catch (Exception e) {
 			logger.error("Exception caught", e);
 		}
@@ -34,7 +34,7 @@ public class EmailAddrLoader extends AbstractDataLoader {
 		}
 	}
 
-	private void loadEmailAddrs() {
+	private void loadEmailAddress() {
 		int count = 0;
 		for (Subscriber sub : Subscriber.values()) {
 			EmailAddress data = new EmailAddress();
