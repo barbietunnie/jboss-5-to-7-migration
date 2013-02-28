@@ -1,6 +1,6 @@
 package jpa.constant;
 
-public enum MobileCarrier {
+public enum MobileCarrierEnum {
 	TMobile("T-Mobile USA", "tmomail.net", ""),
 	Verizon("Verizon Wireless", "vtext.com", "vzwpix.com"),
 	ATT("AT&T Mobility", "txt.att.net", "mms.att.net"),
@@ -17,7 +17,7 @@ public enum MobileCarrier {
 	private String value;
 	private String text;
 	private String mmedia;
-	MobileCarrier(String value, String text, String mmedia) {
+	MobileCarrierEnum(String value, String text, String mmedia) {
 		this.value=value;
 		this.text=text;
 		this.mmedia=mmedia;
@@ -32,4 +32,12 @@ public enum MobileCarrier {
 		return mmedia;
 	}
 
+	public static MobileCarrierEnum getByValue(String value) throws IllegalArgumentException {
+		for (MobileCarrierEnum c : MobileCarrierEnum.values()) {
+			if (c.getValue().equalsIgnoreCase(value)) {
+				return c;
+			}
+		}
+		throw new IllegalArgumentException("");
+	}
 }
