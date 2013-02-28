@@ -12,12 +12,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import jpa.data.preload.RuleNameEnum;
-import jpa.model.RuleLogic;
-import jpa.model.RuleSubruleMap;
-import jpa.model.RuleSubruleMapPK;
-import jpa.service.RuleElementService;
-import jpa.service.RuleLogicService;
-import jpa.service.RuleSubruleMapService;
+import jpa.model.rule.RuleLogic;
+import jpa.model.rule.RuleSubruleMap;
+import jpa.model.rule.RuleSubruleMapPK;
+import jpa.service.rule.RuleElementService;
+import jpa.service.rule.RuleLogicService;
+import jpa.service.rule.RuleSubruleMapService;
 import jpa.util.StringUtil;
 
 import org.junit.BeforeClass;

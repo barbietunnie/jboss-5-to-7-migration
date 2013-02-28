@@ -16,9 +16,9 @@ import jpa.message.BodypartUtil;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
 import jpa.message.MessageNode;
-import jpa.model.MessageStream;
-import jpa.service.MessageStreamService;
+import jpa.model.message.MessageStream;
 import jpa.service.message.MessageParser;
+import jpa.service.message.MessageStreamService;
 import jpa.util.EmailAddrUtil;
 import jpa.util.StringUtil;
 

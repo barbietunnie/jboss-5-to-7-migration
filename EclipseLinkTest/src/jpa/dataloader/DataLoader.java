@@ -34,5 +34,6 @@ public class DataLoader {
 		new TemplateDataLoader().loadData();
 		new MessageInboxLoader().loadData();
 		new MobileCarrierLoader().loadData();
+		new MessageRenderedLoader().loadData();
 	}
 }

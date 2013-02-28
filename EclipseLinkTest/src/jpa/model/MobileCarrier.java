@@ -17,6 +17,8 @@ public class MobileCarrier extends BaseModel implements java.io.Serializable {
 	private String textAddress = "";
 	@Column(nullable=true, length=100)
 	private String multiMediaAddress = null;
+	@Column(nullable=true, length=10)
+	private String countryCode = null;
 
 	public MobileCarrier() {
 		// must have a no-argument constructor
@@ -52,5 +54,13 @@ public class MobileCarrier extends BaseModel implements java.io.Serializable {
 
 	public void setMultiMediaAddress(String multiMediaAddress) {
 		this.multiMediaAddress = multiMediaAddress;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 }

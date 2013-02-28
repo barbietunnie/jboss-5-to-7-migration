@@ -3,10 +3,6 @@ package jpa.test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 
 import javax.mail.Part;
@@ -18,16 +14,17 @@ import jpa.constant.MsgDirectionCode;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
 import jpa.model.EmailAddress;
-import jpa.model.MessageAttachment;
-import jpa.model.MessageAttachmentPK;
-import jpa.model.MessageInbox;
-import jpa.model.RuleLogic;
+import jpa.model.message.MessageAttachment;
+import jpa.model.message.MessageAttachmentPK;
+import jpa.model.message.MessageInbox;
+import jpa.model.rule.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddressService;
-import jpa.service.MessageAttachmentService;
-import jpa.service.MessageInboxService;
-import jpa.service.RuleLogicService;
+import jpa.service.message.MessageAttachmentService;
+import jpa.service.message.MessageInboxService;
+import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
+import jpa.util.TestUtil;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -154,7 +151,7 @@ public class MessageAttachmentTest {
 		atc2.setAttachmentDisp(Part.INLINE);
 		atc2.setAttachmentName("one.gif");
 		atc2.setAttachmentType("image/gif; name=one.gif");
-		atc2.setAttachmentValue(loadFromFile("one.gif"));
+		atc2.setAttachmentValue(TestUtil.loadFromFile("one.gif"));
 		service.insert(atc2);
 		
 		atc3 = new MessageAttachment();
@@ -163,30 +160,9 @@ public class MessageAttachmentTest {
 		atc3.setAttachmentDisp(Part.ATTACHMENT);
 		atc3.setAttachmentName("jndi.bin");
 		atc3.setAttachmentType("application/octet-stream; name=\"jndi.bin\"");
-		atc3.setAttachmentValue(loadFromFile("jndi.bin"));
+		atc3.setAttachmentValue(TestUtil.loadFromFile("jndi.bin"));
 		service.insert(atc3);
 		
 		assertTrue(service.getByMsgInboxId(inbox1.getRowId()).size()==3);		
-	}
-	
-	private byte[] loadFromFile(String fileName) {
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		InputStream is = loader.getResourceAsStream("jpa/test/data/" + fileName);
-		if (is == null) {
-			throw new RuntimeException("File (" + fileName + ") not found!");
-		}
-		BufferedInputStream bis = new BufferedInputStream(is);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buffer = new byte[1024];
-		int len = 0;
-		try {
-			while ((len=bis.read(buffer))>0) {
-				baos.write(buffer, 0, len);
-			}
-			return baos.toByteArray();
-		}
-		catch (IOException e) {
-			throw new RuntimeException("IOException caught: " + e.getMessage());
-		}
 	}
 }

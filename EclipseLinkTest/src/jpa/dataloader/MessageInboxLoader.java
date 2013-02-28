@@ -1,9 +1,6 @@
 package jpa.dataloader;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 
 import javax.mail.Part;
@@ -17,25 +14,25 @@ import jpa.constant.XHeaderName;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
 import jpa.model.EmailAddress;
-import jpa.model.MessageAddress;
-import jpa.model.MessageAttachment;
-import jpa.model.MessageAttachmentPK;
-import jpa.model.MessageHeader;
-import jpa.model.MessageHeaderPK;
-import jpa.model.MessageInbox;
-import jpa.model.MessageRfcField;
-import jpa.model.MessageRfcFieldPK;
-import jpa.model.MessageStream;
-import jpa.model.RuleLogic;
+import jpa.model.message.MessageAddress;
+import jpa.model.message.MessageAttachment;
+import jpa.model.message.MessageAttachmentPK;
+import jpa.model.message.MessageHeader;
+import jpa.model.message.MessageHeaderPK;
+import jpa.model.message.MessageInbox;
+import jpa.model.message.MessageRfcField;
+import jpa.model.message.MessageRfcFieldPK;
+import jpa.model.message.MessageStream;
+import jpa.model.rule.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddressService;
-import jpa.service.MessageAddressService;
-import jpa.service.MessageAttachmentService;
-import jpa.service.MessageHeaderService;
-import jpa.service.MessageInboxService;
-import jpa.service.MessageRfcFieldService;
-import jpa.service.MessageStreamService;
-import jpa.service.RuleLogicService;
+import jpa.service.message.MessageAddressService;
+import jpa.service.message.MessageAttachmentService;
+import jpa.service.message.MessageHeaderService;
+import jpa.service.message.MessageInboxService;
+import jpa.service.message.MessageRfcFieldService;
+import jpa.service.message.MessageStreamService;
+import jpa.service.rule.RuleLogicService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
@@ -240,27 +237,6 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		strm1.setToAddrRowId(inbox.getToAddrRowId());
 		strm1.setMsgStream(loadFromFile("BouncedMail_1.txt"));
 		streamService.insert(strm1);
-	}
-
-	private byte[] loadFromFile(String fileName) {
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		InputStream is = loader.getResourceAsStream("jpa/test/data/" + fileName);
-		if (is == null) {
-			throw new RuntimeException("File (" + fileName + ") not found!");
-		}
-		BufferedInputStream bis = new BufferedInputStream(is);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buffer = new byte[1024];
-		int len = 0;
-		try {
-			while ((len=bis.read(buffer))>0) {
-				baos.write(buffer, 0, len);
-			}
-			return baos.toByteArray();
-		}
-		catch (IOException e) {
-			throw new RuntimeException("IOException caught: " + e.getMessage());
-		}
 	}
 	
 	private void loadMessageRfcField(MessageInbox inbox) {

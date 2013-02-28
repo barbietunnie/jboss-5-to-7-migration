@@ -38,11 +38,11 @@ public final class RendererTest {
 			+ "Recursive Variable Jack Wang End\n"
 			+ "$EndTemplate\n";
 		
-		Map<String, RenderVariable> map = createVariableMap(currDate, dateTimeFormat1);
+		Map<String, RenderVariableVo> map = createVariableMap(currDate, dateTimeFormat1);
 		
 		Renderer renderer = Renderer.getInstance();
 		try {
-			Map<String, ErrorVariable> errors = new HashMap<String, ErrorVariable>();
+			Map<String, ErrorVariableVo> errors = new HashMap<String, ErrorVariableVo>();
 			String renderedText = renderer.render(template, map, errors);
 			logger.info("\n++++++++++ Template Text++++++++++\n" + template);
 			logger.info("\n++++++++++ Rendered Text++++++++++\n" + renderedText);
@@ -53,7 +53,7 @@ public final class RendererTest {
 				Set<String> set = errors.keySet();
 				for (Iterator<String> it=set.iterator(); it.hasNext();) {
 					String key = (String) it.next();
-					ErrorVariable req = (ErrorVariable) errors.get(key);
+					ErrorVariableVo req = (ErrorVariableVo) errors.get(key);
 					logger.info(req.toString());
 				}
 			}
@@ -66,7 +66,7 @@ public final class RendererTest {
 
 	@Test
 	public void testBadTemplate() throws Exception {
-		Map<String, RenderVariable> map = createVariableMap(new java.util.Date(), "yyyy-MM-dd");
+		Map<String, RenderVariableVo> map = createVariableMap(new java.util.Date(), "yyyy-MM-dd");
 		Renderer renderer = Renderer.getInstance();
 		int exceptionCaught = 0;
 		
@@ -75,7 +75,7 @@ public final class RendererTest {
 			+ "$EndTemplate\n";
 		
 		try {
-			renderer.render(template1, map, new HashMap<String, ErrorVariable>());
+			renderer.render(template1, map, new HashMap<String, ErrorVariableVo>());
 		}
 		catch (Exception e) {
 			assertTrue(e.getMessage().indexOf("${numeric1,") > 0);
@@ -87,7 +87,7 @@ public final class RendererTest {
 			+ "$EndTemplate\n";
 		
 		try {
-			renderer.render(template2, map, new HashMap<String, ErrorVariable>());
+			renderer.render(template2, map, new HashMap<String, ErrorVariableVo>());
 		}
 		catch (Exception e) {
 			assertTrue(e.getMessage().indexOf("${numeric2,") > 0);
@@ -99,7 +99,7 @@ public final class RendererTest {
 			+ "$EndTemplate\n";
 		
 		try {
-			renderer.render(template3, map, new HashMap<String, ErrorVariable>());
+			renderer.render(template3, map, new HashMap<String, ErrorVariableVo>());
 		}
 		catch (Exception e) {
 			assertTrue(e.getMessage().indexOf("${numeric3") > 0);
@@ -109,84 +109,84 @@ public final class RendererTest {
 		assertTrue(exceptionCaught == 3);
 	}
 
-	private Map<String, RenderVariable> createVariableMap(java.util.Date currDate, String dateTimeFormat1) {
-		Map<String, RenderVariable> map = new HashMap<String, RenderVariable>();
+	private Map<String, RenderVariableVo> createVariableMap(java.util.Date currDate, String dateTimeFormat1) {
+		Map<String, RenderVariableVo> map = new HashMap<String, RenderVariableVo>();
 		
-		RenderVariable currentDate = new RenderVariable(
+		RenderVariableVo currentDate = new RenderVariableVo(
 				"CurrentDate", 
 				currDate, 
-				RenderVariable.DATETIME,
+				RenderVariableVo.DATETIME,
 				dateTimeFormat1
 			);
 		map.put(currentDate.getVariableName(), currentDate);
 		
-		RenderVariable req1 = new RenderVariable(
+		RenderVariableVo req1 = new RenderVariableVo(
 				"name1", 
 				"Jack Wang"
 			);
-		RenderVariable req2 = new RenderVariable(
+		RenderVariableVo req2 = new RenderVariableVo(
 				"name2", 
 				"John Lin"
 			);
-		RenderVariable req3 = new RenderVariable(
+		RenderVariableVo req3 = new RenderVariableVo(
 				"name3", 
 				"Ramana"
 			);
-		RenderVariable req4 = new RenderVariable(
+		RenderVariableVo req4 = new RenderVariableVo(
 				"name4.recurrsive", 
 				"Recursive Variable ${name1} End", 
-				RenderVariable.TEXT
+				RenderVariableVo.TEXT
 			);
-		RenderVariable req5 = new RenderVariable(
+		RenderVariableVo req5 = new RenderVariableVo(
 				"name5", 
 				"Roger Banner", 
-				RenderVariable.TEXT
+				RenderVariableVo.TEXT
 			);
 		
-		RenderVariable req6_1 = new RenderVariable(
+		RenderVariableVo req6_1 = new RenderVariableVo(
 				"numeric1", 
 				"12345.678", // use default format
-				RenderVariable.NUMERIC
+				RenderVariableVo.NUMERIC
 			);
 		
-		RenderVariable req6_2 = new RenderVariable(
+		RenderVariableVo req6_2 = new RenderVariableVo(
 				"numeric2", 
 				"-12345.678",
-				RenderVariable.NUMERIC,
+				RenderVariableVo.NUMERIC,
 				"000,000,000.0#;(-000,000,000.0#)"
 			);
 		
-		RenderVariable req6_3 = new RenderVariable(
+		RenderVariableVo req6_3 = new RenderVariableVo(
 				"numeric3", 
 				new BigDecimal(-99999.99),
-				RenderVariable.NUMERIC,
+				RenderVariableVo.NUMERIC,
 				"$###,###,##0.00;-$###,###,##0.00"
 			);
 		
-		RenderVariable req7_1 = new RenderVariable(
+		RenderVariableVo req7_1 = new RenderVariableVo(
 				"datetime1", 
 				"2007-10-01 15:23:12", // use default format
-				RenderVariable.DATETIME
+				RenderVariableVo.DATETIME
 			);
 		
-		RenderVariable req7_2 = new RenderVariable(
+		RenderVariableVo req7_2 = new RenderVariableVo(
 				"datetime2", 
 				"12/01/2007", 
-				RenderVariable.DATETIME,
+				RenderVariableVo.DATETIME,
 				"MM/dd/yyyy" // custom format
 			);
 		
-		RenderVariable req7_3 = new RenderVariable(
+		RenderVariableVo req7_3 = new RenderVariableVo(
 				"datetime3", 
 				null,
-				RenderVariable.DATETIME,
+				RenderVariableVo.DATETIME,
 				"yyyy-MM-dd:hh.mm.ss a" // custom format
 			);
 		
-		RenderVariable req7_4 = new RenderVariable(
+		RenderVariableVo req7_4 = new RenderVariableVo(
 				"datetime4", 
 				new java.util.Date(), // current date time
-				RenderVariable.DATETIME,
+				RenderVariableVo.DATETIME,
 				"yyyy-MM-dd HH.mm" // custom format
 			);
 		
@@ -203,10 +203,10 @@ public final class RendererTest {
 		map.put(req7_3.getVariableName(), req7_3);
 		map.put(req7_4.getVariableName(), req7_4);
 		
-		req7_4 = new RenderVariable(
+		req7_4 = new RenderVariableVo(
 				"datetime4", 
 				"2009-07-29 13.04",
-				RenderVariable.DATETIME,
+				RenderVariableVo.DATETIME,
 				"yyyy-MM-dd HH.mm" // custom format
 			);
 		map.put(req7_4.getVariableName(), req7_4);

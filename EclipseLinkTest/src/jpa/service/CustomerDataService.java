@@ -26,6 +26,9 @@ public class CustomerDataService {
 	
 	@Autowired
 	EntityManager em;
+	
+	@Autowired
+	EmailAddressService emailService;
 
 	public CustomerData getByCustomerId(String customerId) throws NoResultException {
 		try {
@@ -129,6 +132,14 @@ public class CustomerDataService {
 				//throw new DataValidationException("Invalid Mobile carrier passed in: " + customer.getMobileCarrier());
 				// TODO could be a new carrier not yet entered in system, notify programming
 				// TODO define a mobile carrier table to store the information.
+			}
+		}
+		if (customer.getEmailAddr()==null) {
+			if (StringUtils.isNotBlank(customer.getEmailAddress())) {
+				customer.setEmailAddr(emailService.findSertAddress(customer.getEmailAddress()));
+			}
+			else {
+				throw new IllegalArgumentException("An EmailAddress instance must be provided in the entity.");
 			}
 		}
 	}

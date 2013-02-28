@@ -72,7 +72,7 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 	private Date birthDate = null;
 	@Column(nullable=false)
 	@Temporal(TemporalType.DATE)
-	private Date startDate = new Date(System.currentTimeMillis());
+	private Date startDate;
 	@Column(nullable=true)
 	@Temporal(TemporalType.DATE)
 	private Date endDate = null;
@@ -101,9 +101,12 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 
 	@Transient
 	private String origCustId = null;
+	@Transient
+	private String emailAddress = null;
 
 	public CustomerData() {
 		// must have a no-argument constructor
+		startDate = new Date(System.currentTimeMillis());
 	}
 
 	public ClientData getClientData() {
@@ -400,6 +403,14 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 
 	public void setOrigCustId(String origCustId) {
 		this.origCustId = origCustId;
+	}
+
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
 	}
 
 }
