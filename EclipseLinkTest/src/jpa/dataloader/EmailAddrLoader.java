@@ -5,15 +5,15 @@ import java.sql.Timestamp;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.data.preload.SubscriberEnum.Subscriber;
-import jpa.model.EmailAddr;
-import jpa.service.EmailAddrService;
+import jpa.model.EmailAddress;
+import jpa.service.EmailAddressService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
 
 public class EmailAddrLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(EmailAddrLoader.class);
-	private EmailAddrService service;
+	private EmailAddressService service;
 
 	public static void main(String[] args) {
 		EmailAddrLoader loader = new EmailAddrLoader();
@@ -22,7 +22,7 @@ public class EmailAddrLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (EmailAddrService) SpringUtil.getAppContext().getBean("emailAddrService");
+		service = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
 		startTransaction();
 		try {
 			loadEmailAddrs();
@@ -37,7 +37,7 @@ public class EmailAddrLoader extends AbstractDataLoader {
 	private void loadEmailAddrs() {
 		int count = 0;
 		for (Subscriber sub : Subscriber.values()) {
-			EmailAddr data = new EmailAddr();
+			EmailAddress data = new EmailAddress();
 			data.setOrigAddress(sub.getAddress());
 			data.setAddress(data.getOrigAddress());
 			data.setStatusId(StatusId.ACTIVE.getValue());

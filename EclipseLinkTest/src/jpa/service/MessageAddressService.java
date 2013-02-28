@@ -40,7 +40,7 @@ public class MessageAddressService {
 	public MessageAddress getByPrimaryKey(int msgId, String addrType, String address) throws NoResultException {
 		String sql = 
 				"select t " +
-				"from MessageAddress t, MessageInbox mi, EmailAddr ea where " +
+				"from MessageAddress t, MessageInbox mi, EmailAddress ea where " +
 					" mi=t.messageInbox and mi.rowId=:msgId " +
 					" and ea.rowId=t.emailAddrRowId and ea.address=:address " +
 					" and t.addressType=:addrType ";
@@ -99,7 +99,7 @@ public class MessageAddressService {
 		String sql = 
 				"delete from Message_Address where " +
 				" MessageInboxRowId = ?1 and addressType=?2 and EmailAddrRowId = " +
-				" (select row_id from email_addr ea where ea.address=?3) ";
+				" (select row_id from email_address ea where ea.address=?3) ";
 		try {
 			Query query = em.createNativeQuery(sql);
 			query.setParameter(1, msgId);

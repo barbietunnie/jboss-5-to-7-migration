@@ -125,7 +125,7 @@ public class MessageInboxService {
 		String sql = 
 			"select t " +
 			"from " +
-				"MessageInbox t, EmailAddr ea " +
+				"MessageInbox t, EmailAddress ea " +
 				"where ea.rowId=t.fromAddrRowId and ea.address=:address order by t.rowId ";
 		try {
 			Query query = em.createQuery(sql);
@@ -142,7 +142,7 @@ public class MessageInboxService {
 		String sql = 
 			"select t " +
 			"from " +
-				"MessageInbox t, EmailAddr ea " +
+				"MessageInbox t, EmailAddress ea " +
 				"where ea.rowId=t.toAddrRowId and ea.address=:address order by t.rowId ";
 		try {
 			Query query = em.createQuery(sql);

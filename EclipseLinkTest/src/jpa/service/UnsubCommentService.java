@@ -25,7 +25,7 @@ public class UnsubCommentService {
 
 	public List<UnsubComment> getByAddress(String address) {
 		try {
-			Query query = em.createQuery("select t from UnsubComment t, EmailAddr e " +
+			Query query = em.createQuery("select t from UnsubComment t, EmailAddress e " +
 					"where e=t.emailAddr and e.address=:address ");
 			query.setParameter("address", address);
 			@SuppressWarnings("unchecked")
@@ -73,7 +73,7 @@ public class UnsubCommentService {
 	public int deleteByAddress(String address) {
 		try {
 			Query query = em.createNativeQuery("delete from Unsub_Comment where emailAddrRowId in " +
-					"(select Row_id from email_addr e where e.address = ?1) ");
+					"(select Row_id from email_address e where e.address = ?1) ");
 			query.setParameter(1, address);
 			int rows = query.executeUpdate();
 			return rows;

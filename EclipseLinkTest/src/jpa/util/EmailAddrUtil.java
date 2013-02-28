@@ -328,8 +328,8 @@ public class EmailAddrUtil {
 		addr = "DirectStarTV <fqusoogd.undlwfeteot@chaffingphotosensitive.com>";
 		System.out.println(addr+" --> "+EmailAddrUtil.removeDisplayName(addr));
 		
-		System.out.println("EmailAddr: " + EmailAddrUtil.isRemoteEmailAddress("A!#$%&'*+/=?.^_`{|}~-BC@localhost.us"));
-		System.out.println("EmailAddr: " + EmailAddrUtil.isRemoteOrLocalEmailAddress("A!#$%&'*+/=?.^_`{|}~-BC"));
+		System.out.println("EmailAddress: " + EmailAddrUtil.isRemoteEmailAddress("A!#$%&'*+/=?.^_`{|}~-BC@localhost.us"));
+		System.out.println("EmailAddress: " + EmailAddrUtil.isRemoteOrLocalEmailAddress("A!#$%&'*+/=?.^_`{|}~-BC"));
 		System.out.println(EmailAddrUtil.getOrigAddrFromVERP("bounce-10.07410251.0-jsmith=test.com@localhost"));
 		System.out.println(EmailAddrUtil.getOrigAddrFromVERP("remove-testlist-jsmith=test.com@localhost"));
 	}

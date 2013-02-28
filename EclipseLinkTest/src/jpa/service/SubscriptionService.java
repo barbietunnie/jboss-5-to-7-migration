@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
 
@@ -29,7 +29,7 @@ public class SubscriptionService {
 	EntityManager em;
 	
 	@Autowired
-	EmailAddrService emailAddrService;
+	EmailAddressService emailAddrService;
 	
 	@Autowired
 	MailingListService mailingListService;
@@ -49,7 +49,7 @@ public class SubscriptionService {
 	
 	public List<Subscription> getByAddress(String address) {
 		try {
-			Query query = em.createQuery("select t from Subscription t, EmailAddr e " +
+			Query query = em.createQuery("select t from Subscription t, EmailAddress e " +
 					" where e=t.emailAddr and e.address = :address");
 			query.setParameter("address", address);
 			@SuppressWarnings("unchecked")
@@ -62,7 +62,7 @@ public class SubscriptionService {
 	
 //	public Subscription getByPrimaryKey(int emailAddrRowId, int mailingListRowId) throws NoResultException {
 //		try {
-//			Query query = em.createQuery("select t from Subscription t, EmailAddr e, MailingList m " +
+//			Query query = em.createQuery("select t from Subscription t, EmailAddress e, MailingList m " +
 //					" where e=t.emailAddr and m=t.mailingList and e.rowId=:emailAddrRowId and m.rowId=:mailingListRowId");
 //			query.setParameter("emailAddrRowId", emailAddrRowId);
 //			query.setParameter("mailingListRowId", mailingListRowId);
@@ -76,7 +76,7 @@ public class SubscriptionService {
 	
 	public Subscription getByAddressAndListId(String address, String listId) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from Subscription t, EmailAddr e, MailingList m " +
+			Query query = em.createQuery("select t from Subscription t, EmailAddress e, MailingList m " +
 					" where e=t.emailAddr and m=t.mailingList and e.address=:address and m.listId=:listId");
 			query.setParameter("address", address);
 			query.setParameter("listId", listId);
@@ -101,7 +101,7 @@ public class SubscriptionService {
 	}
 	
 	public Subscription subscribe(String address, String listId) {
-		EmailAddr emailAddr = emailAddrService.findSertAddress(address);
+		EmailAddress emailAddr = emailAddrService.findSertAddress(address);
 		MailingList list = null;
 		try {
 			list = mailingListService.getByListId(listId);
@@ -137,7 +137,7 @@ public class SubscriptionService {
 
 	public Subscription unsubscribe(String address, String listId) {
 		// to harvest email address from the request
-		EmailAddr emailAddr = emailAddrService.findSertAddress(address);
+		EmailAddress emailAddr = emailAddrService.findSertAddress(address);
 		MailingList list = null;
 		try {
 			list = mailingListService.getByListId(listId);
@@ -172,7 +172,7 @@ public class SubscriptionService {
 	}
 
 	public Subscription optInRequest(String address, String listId) {
-		EmailAddr emailAddr = emailAddrService.findSertAddress(address);
+		EmailAddress emailAddr = emailAddrService.findSertAddress(address);
 		MailingList list = null;
 		try {
 			list = mailingListService.getByListId(listId);
@@ -206,7 +206,7 @@ public class SubscriptionService {
 	}
 
 	public Subscription optInConfirm(String address, String listId) {
-		EmailAddr emailAddr = emailAddrService.findSertAddress(address);
+		EmailAddress emailAddr = emailAddrService.findSertAddress(address);
 		emailAddr.setStatusId(StatusId.ACTIVE.getValue());
 		MailingList list = null;
 		try {
@@ -265,7 +265,7 @@ public class SubscriptionService {
 	public int deleteByAddress(String address) {
 		try {
 			Query query = em.createNativeQuery("delete from Subscription where EmailAddrRowid in " +
-					" (select row_id from email_addr ea where ea.address=?1)");
+					" (select row_id from email_address ea where ea.address=?1)");
 			query.setParameter(1, address);
 			int rows = query.executeUpdate();
 			return rows;
@@ -277,7 +277,7 @@ public class SubscriptionService {
 //	public int deleteByPrimaryKey(int emailAddrRowId, int mailingListRowId) {
 //		try {
 //			Query query = em.createNativeQuery("delete from Subscription where " +
-//					" emailAddrRowId = (select row_id from email_addr ea where ea.row_Id=?1) " +
+//					" emailAddrRowId = (select row_id from email_address ea where ea.row_Id=?1) " +
 //					" and mailingListRowid = (select row_id from mailing_list ml where ml.row_Id=?2 )");
 //			query.setParameter(1, emailAddrRowId);
 //			query.setParameter(2, mailingListRowId);
@@ -291,7 +291,7 @@ public class SubscriptionService {
 	public int deleteByAddressAndListId(String address, String listId) {
 		try {
 			Query query = em.createNativeQuery("delete from Subscription where " +
-					" emailAddrRowId = (select row_id from email_addr ea where ea.address=?1) " +
+					" emailAddrRowId = (select row_id from email_address ea where ea.address=?1) " +
 					" and mailingListRowid = (select row_id from mailing_list ml where ml.listId=?2 )");
 			query.setParameter(1, address);
 			query.setParameter(2, listId);

@@ -3,8 +3,8 @@ package jpa.service.external;
 import java.util.List;
 
 import jpa.exception.DataValidationException;
-import jpa.model.EmailAddr;
-import jpa.service.EmailAddrService;
+import jpa.model.EmailAddress;
+import jpa.service.EmailAddressService;
 import jpa.util.EmailAddrUtil;
 import jpa.util.SpringUtil;
 
@@ -27,10 +27,10 @@ public class PostmasterTargetText implements RuleTargetProc {
 			logger.debug("Entering process() method...");
 		}
 		StringBuffer sb = new StringBuffer();
-		EmailAddrService dao = (EmailAddrService) SpringUtil.getAppContext().getBean("emailAddrService");
-		List<EmailAddr> list = dao.getByAddressUser("(postmaster|mailmaster|mailadmin|administrator|mailer-(daemon|deamon)|smtp.gateway|majordomo)");
+		EmailAddressService dao = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
+		List<EmailAddress> list = dao.getByAddressUser("(postmaster|mailmaster|mailadmin|administrator|mailer-(daemon|deamon)|smtp.gateway|majordomo)");
 		for (int i = 0; i < list.size(); i++) {
-			EmailAddr item = list.get(i);
+			EmailAddress item = list.get(i);
 			// no display name allowed for list address, just for safety
 			String address = EmailAddrUtil.removeDisplayName(item.getAddress(), true);
 			if (i > 0) {

@@ -15,15 +15,15 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name="email_addr")
+@Table(name="email_address")
 @SqlResultSetMappings({ // used by native queries
-	  @SqlResultSetMapping(name="EmailAddrEntiry",
+	  @SqlResultSetMapping(name="EmailAddressEntiry",
 		entities={
-		 @EntityResult(entityClass=EmailAddr.class),
+		 @EntityResult(entityClass=EmailAddress.class),
 	  	}),
-	  @SqlResultSetMapping(name="EmailAddrWithCounts",
+	  @SqlResultSetMapping(name="EmailAddressWithCounts",
 		entities={
-		 @EntityResult(entityClass=EmailAddr.class),
+		 @EntityResult(entityClass=EmailAddress.class),
 	  	},
 	  	columns={
 		 @ColumnResult(name="sentCount"),
@@ -32,13 +32,13 @@ import javax.persistence.Transient;
 	  	}),
 	})
 
-public class EmailAddr extends BaseModel implements java.io.Serializable {
+public class EmailAddress extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -6508051650541209578L;
 
 	@Transient
-	public static final String MAPPING_EMAIL_ADDR_ENTITY = "EmailAddrEntiry";
+	public static final String MAPPING_EMAIL_ADDR_ENTITY = "EmailAddressEntiry";
 	@Transient
-	public static final String MAPPING_EMAIL_ADDR_WITH_COUNTS = "EmailAddrWithCounts";
+	public static final String MAPPING_EMAIL_ADDR_WITH_COUNTS = "EmailAddressWithCounts";
 
 	@Column(nullable=false, length=255, unique=true)
 	private String address = "";
@@ -80,7 +80,7 @@ public class EmailAddr extends BaseModel implements java.io.Serializable {
 	@Transient
 	private String currAddress = null;
 
-	public EmailAddr() {
+	public EmailAddress() {
 		// must have a no-argument constructor
 	}
 

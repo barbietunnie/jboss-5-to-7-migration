@@ -37,7 +37,7 @@ import jpa.constant.XHeaderName;
 import jpa.exception.DataValidationException;
 import jpa.model.ClientData;
 import jpa.model.CustomerData;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MessageAddress;
 import jpa.model.MessageAttachment;
 import jpa.model.MessageHeader;
@@ -45,7 +45,7 @@ import jpa.model.MessageInbox;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.CustomerDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.RuleLogicService;
 import jpa.util.EmailAddrUtil;
 import jpa.util.EmailSender;
@@ -345,7 +345,7 @@ public final class MessageBeanBuilder {
 				// Email address extracted from "Received" header is the real email
 				// address. But when VERP is enabled, since the Email Id is embedded
 				// in the VERP address, every email received will have its own VERP
-				// address. This will cause a disaster to EmailAddr table since all
+				// address. This will cause a disaster to EmailAddress table since all
 				// TO addresses are saved to that table.
 				String dest = received_to[0] == null ? null : received_to[0].toString();
 				if (!StringUtil.isEmpty(dest) && EmailAddrUtil.isVERPAddress(dest)) {
@@ -1165,7 +1165,7 @@ public final class MessageBeanBuilder {
 		// set addresses
 		List<MessageAddress> addrsVo = msgVo.getMessageAddressList();
 		if (addrsVo != null) {
-			EmailAddrService emailService = (EmailAddrService) SpringUtil.getAppContext().getBean("emailAddrService");
+			EmailAddressService emailService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
 			String fromAddr = null;
 			String toAddr = null;
 			String replyToAddr = null;
@@ -1173,7 +1173,7 @@ public final class MessageBeanBuilder {
 			String bccAddr = null;
 			for (int i = 0; i < addrsVo.size(); i++) {
 				MessageAddress addrVo = addrsVo.get(i);
-				EmailAddr addr = emailService.getByRowId(addrVo.getEmailAddrRowId());
+				EmailAddress addr = emailService.getByRowId(addrVo.getEmailAddrRowId());
 				if (EmailAddrType.FROM_ADDR.getValue().equalsIgnoreCase(addrVo.getAddressType())) {
 					if (fromAddr == null) {
 						fromAddr = addr.getAddress();

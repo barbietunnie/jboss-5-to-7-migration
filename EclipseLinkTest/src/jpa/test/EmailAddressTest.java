@@ -9,9 +9,9 @@ import javax.persistence.EntityManager;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.model.CustomerData;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.service.CustomerDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class EmailAddrTest {
+public class EmailAddressTest {
 
 	@Autowired
 	private EntityManager entityManager;
@@ -41,7 +41,7 @@ public class EmailAddrTest {
 	}
 
 	@Autowired
-	EmailAddrService service;
+	EmailAddressService service;
 	
 	@Autowired
 	CustomerDataService custService;
@@ -50,18 +50,18 @@ public class EmailAddrTest {
 	private String testEmailAddr2 = "jpatest2@localhost";
 	
 	@Test
-	public void testEmailAddrService() {
+	public void testEmailAddressService() {
 		// test insert
-		EmailAddr rcd1 = new EmailAddr();
+		EmailAddress rcd1 = new EmailAddress();
 		rcd1.setAddress(testEmailAddr1);
 		rcd1.setOrigAddress(testEmailAddr1);
 		rcd1.setStatusId(StatusId.ACTIVE.getValue());
 		rcd1.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(rcd1);
 		
-		List<EmailAddr> lst0 = service.getByAddressPattern("@test.com$");
+		List<EmailAddress> lst0 = service.getByAddressPattern("@test.com$");
 		assertFalse(lst0.isEmpty());
-		EmailAddr rcd2 = lst0.get(0);
+		EmailAddress rcd2 = lst0.get(0);
 		assertNotNull(rcd2);
 		
 		lst0 = service.getByAddressDomain("test.com");
@@ -76,13 +76,13 @@ public class EmailAddrTest {
 		// test update
 		rcd2.setUpdtUserId("JpaTest");
 		service.update(rcd2);
-		EmailAddr rcd3 = service.getByRowId(rcd2.getRowId());
+		EmailAddress rcd3 = service.getByRowId(rcd2.getRowId());
 		assertTrue("JpaTest".equals(rcd2.getUpdtUserId()));
 
 		List<CustomerData> lst1 = custService.getAll();
 		assertFalse(lst1.isEmpty());
 		
-		EmailAddr rcd4 = new EmailAddr();
+		EmailAddress rcd4 = new EmailAddress();
 		try {
 			SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
 			ConvertUtils.register(converter1, java.sql.Timestamp.class);
@@ -102,13 +102,13 @@ public class EmailAddrTest {
 			service.updateBounceCount(rcd4);
 		}
 		
-		EmailAddr rcd5 = service.getByAddress(testEmailAddr2);
+		EmailAddress rcd5 = service.getByAddress(testEmailAddr2);
 		System.out.println(StringUtil.prettyPrint(rcd5,1));
 		assertNotNull(rcd5.getCustomerData());
 		assertTrue(rcd5.getBounceCount()==(bounceCount+Constants.BOUNCE_SUSPEND_THRESHOLD));
 		assertTrue(StatusId.SUSPENDED.getValue().equals(rcd5.getStatusId()));
 		
-		EmailAddr rcd6 = service.findSertAddress("jpatest3@localhost");
+		EmailAddress rcd6 = service.findSertAddress("jpatest3@localhost");
 		assertNotNull(rcd6);
 		assertTrue(rcd6.getRowId()>0);
 		System.out.println(StringUtil.prettyPrint(rcd6));

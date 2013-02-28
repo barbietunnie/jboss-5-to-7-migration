@@ -55,7 +55,7 @@ public class MessageUnsubCommentService {
 	public List<MessageUnsubComment> getByFromAddress(String address) throws NoResultException {
 		String sql = 
 				"select t " +
-				"from MessageUnsubComment t, EmailAddr ea " +
+				"from MessageUnsubComment t, EmailAddress ea " +
 				" where ea.rowId=t.emailAddrRowId and ea.address=:address ";
 		try {
 			Query query = em.createQuery(sql);

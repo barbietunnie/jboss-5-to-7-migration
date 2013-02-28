@@ -8,10 +8,10 @@ import jpa.constant.MobileCarrierEnum;
 import jpa.constant.StatusId;
 import jpa.model.ClientData;
 import jpa.model.CustomerData;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.service.ClientDataService;
 import jpa.service.CustomerDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 public class CustomerDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(CustomerDataLoader.class);
 	private CustomerDataService service;
-	private EmailAddrService emailAddrService;
+	private EmailAddressService emailAddrService;
 	private ClientDataService clientService;
 
 	public static void main(String[] args) {
@@ -30,7 +30,7 @@ public class CustomerDataLoader extends AbstractDataLoader {
 	@Override
 	public void loadData() {
 		service = (CustomerDataService) SpringUtil.getAppContext().getBean("customerDataService");
-		emailAddrService = (EmailAddrService) SpringUtil.getAppContext().getBean("emailAddrService");
+		emailAddrService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
 		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
 		startTransaction();
 		try {
@@ -45,7 +45,7 @@ public class CustomerDataLoader extends AbstractDataLoader {
 
 	private void loadCustomerData() {
 		String addr = getProperty("customer.email.1");
-		EmailAddr emailaddr = emailAddrService.findSertAddress(addr);
+		EmailAddress emailaddr = emailAddrService.findSertAddress(addr);
 		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 		CustomerData data = new CustomerData();
 		data.setClientData(cd);

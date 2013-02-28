@@ -12,10 +12,10 @@ import javax.persistence.NoResultException;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.data.preload.MailingListEnum;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MailingListService;
 import jpa.util.StringUtil;
 
@@ -47,15 +47,15 @@ public class MailingListTest {
 	MailingListService service;
 	
 	@Autowired
-	EmailAddrService eaService;
+	EmailAddressService eaService;
 
-	private EmailAddr emailAddr = null;
-	private EmailAddr emailAddr2 = null;
+	private EmailAddress emailAddr = null;
+	private EmailAddress emailAddr2 = null;
 	
 	@Before
 	public void prepare() {
 		String testEmailAddr1 = "jpatest1@localhost";
-		emailAddr = new EmailAddr();
+		emailAddr = new EmailAddress();
 		emailAddr.setAddress(testEmailAddr1);
 		emailAddr.setOrigAddress(testEmailAddr1);
 		emailAddr.setStatusId(StatusId.ACTIVE.getValue());
@@ -63,7 +63,7 @@ public class MailingListTest {
 		eaService.insert(emailAddr);
 		
 		String testEmailAddr2 = "jpatest2@localhost";
-		emailAddr2 = new EmailAddr();
+		emailAddr2 = new EmailAddress();
 		emailAddr2.setAddress(testEmailAddr2);
 		emailAddr2.setOrigAddress(testEmailAddr2);
 		emailAddr2.setStatusId(StatusId.ACTIVE.getValue());

@@ -49,7 +49,7 @@ public class MessageSourceService {
 	
 	public List<MessageSource> getByFromAddress(String address) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from MessageSource t, EmailAddr ea " +
+			Query query = em.createQuery("select t from MessageSource t, EmailAddress ea " +
 					" where ea=t.fromAddress and ea.address = :address ");
 			query.setParameter("address", address);
 			@SuppressWarnings("unchecked")

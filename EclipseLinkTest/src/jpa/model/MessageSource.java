@@ -23,13 +23,13 @@ public class MessageSource extends BaseModel implements Serializable
 {
 	private static final long serialVersionUID = 1038996333144767265L;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddr.class)
+	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddress.class)
 	@JoinColumn(name="FromAddressRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private EmailAddr fromAddress;
+	private EmailAddress fromAddress;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddr.class)
+	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddress.class)
 	@JoinColumn(name="ReplyToAddressRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
-	private EmailAddr replyToAddress;
+	private EmailAddress replyToAddress;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=TemplateData.class)
 	@JoinColumn(name="TemplateDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
@@ -68,19 +68,19 @@ public class MessageSource extends BaseModel implements Serializable
 
 	public MessageSource() {}
 
-	public EmailAddr getFromAddress() {
+	public EmailAddress getFromAddress() {
 		return fromAddress;
 	}
 
-	public void setFromAddress(EmailAddr fromAddress) {
+	public void setFromAddress(EmailAddress fromAddress) {
 		this.fromAddress = fromAddress;
 	}
 
-	public EmailAddr getReplyToAddress() {
+	public EmailAddress getReplyToAddress() {
 		return replyToAddress;
 	}
 
-	public void setReplyToAddress(EmailAddr replyToAddress) {
+	public void setReplyToAddress(EmailAddress replyToAddress) {
 		this.replyToAddress = replyToAddress;
 	}
 

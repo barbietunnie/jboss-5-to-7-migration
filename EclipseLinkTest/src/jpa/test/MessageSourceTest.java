@@ -13,14 +13,14 @@ import javax.persistence.NoResultException;
 import jpa.constant.Constants;
 import jpa.constant.VariableType;
 import jpa.model.ClientData;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MessageSource;
 import jpa.model.TemplateData;
 import jpa.model.TemplateDataPK;
 import jpa.model.TemplateVariable;
 import jpa.model.TemplateVariablePK;
 import jpa.service.ClientDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MessageSourceService;
 import jpa.service.TemplateDataService;
 import jpa.service.TemplateVariableService;
@@ -51,7 +51,7 @@ public class MessageSourceTest {
 	@Autowired
 	MessageSourceService service;
 	@Autowired
-	EmailAddrService addrService;
+	EmailAddressService addrService;
 	@Autowired
 	TemplateDataService templateService;
 	@Autowired
@@ -90,7 +90,7 @@ public class MessageSourceTest {
 	
 	@Test
 	public void messageSourceService() {
-		EmailAddr adr1 = addrService.findSertAddress("jsmith@test.com");
+		EmailAddress adr1 = addrService.findSertAddress("jsmith@test.com");
 		MessageSource src1 = new MessageSource();
 		src1.setMsgSourceId(testMsgSourceId);
 		src1.setTemplateData(tmp1);

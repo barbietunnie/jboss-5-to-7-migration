@@ -38,7 +38,7 @@ public class MessageStreamService {
 	public MessageStream getByFromAddress(String address) throws NoResultException {
 		String sql = 
 			"select t " +
-			"from MessageStream t, EmailAddr ea where " +
+			"from MessageStream t, EmailAddress ea where " +
 			" ea.rowId=t.fromAddrRowId and ea.address=:address";
 		try {
 			Query query = em.createQuery(sql);

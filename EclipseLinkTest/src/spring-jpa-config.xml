@@ -106,7 +106,7 @@
 	
 	<aop:config>
 		<aop:pointcut id="emailAddrOperation"
-			expression="execution(* jpa.service.EmailAddrService.*(..))"/>
+			expression="execution(* jpa.service.EmailAddressService.*(..))"/>
 		<aop:advisor advice-ref="dsTxAdviceEmailAddr" pointcut-ref="emailAddrOperation"/>
 	</aop:config>
 	

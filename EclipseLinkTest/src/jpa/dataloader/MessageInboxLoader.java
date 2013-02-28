@@ -16,7 +16,7 @@ import jpa.constant.MsgStatusCode;
 import jpa.constant.XHeaderName;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MessageAddress;
 import jpa.model.MessageAttachment;
 import jpa.model.MessageAttachmentPK;
@@ -28,7 +28,7 @@ import jpa.model.MessageRfcFieldPK;
 import jpa.model.MessageStream;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MessageAddressService;
 import jpa.service.MessageAttachmentService;
 import jpa.service.MessageHeaderService;
@@ -45,7 +45,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 	private MessageInboxService service;
 	private MessageAddressService msgAddrService;
 	private ClientDataService clientService;
-	private EmailAddrService emailAddrService;
+	private EmailAddressService emailAddrService;
 	private RuleLogicService logicService;
 	private MessageHeaderService headerService;
 	private MessageAttachmentService attchmntService;
@@ -61,7 +61,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 	public void loadData() {
 		service = (MessageInboxService) SpringUtil.getAppContext().getBean("messageInboxService");
 		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
-		emailAddrService = (EmailAddrService) SpringUtil.getAppContext().getBean("emailAddrService");
+		emailAddrService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
 		logicService = (RuleLogicService) SpringUtil.getAppContext().getBean("ruleLogicService");
 		msgAddrService = (MessageAddressService) SpringUtil.getAppContext().getBean("messageAddressService");
 		headerService = (MessageHeaderService) SpringUtil.getAppContext().getBean("messageHeaderService");
@@ -90,12 +90,12 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		data1.setMsgPriority("2 (Normal)");
 		data1.setReceivedTime(updtTime);
 		
-		EmailAddr from = emailAddrService.findSertAddress("jsmith@test.com");
+		EmailAddress from = emailAddrService.findSertAddress("jsmith@test.com");
 		data1.setFromAddrRowId(from.getRowId());
 		data1.setReplytoAddrRowId(null);
 
 		String to_addr = client.getReturnPathLeft() + "@" + client.getDomainName();
-		EmailAddr to = emailAddrService.findSertAddress(to_addr);
+		EmailAddress to = emailAddrService.findSertAddress(to_addr);
 		data1.setToAddrRowId(to.getRowId());
 		data1.setClientDataRowId(client.getRowId());
 		data1.setCustomerDataRowId(null);
@@ -268,7 +268,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		MessageRfcFieldPK pk1 = new MessageRfcFieldPK(inbox,"message/rfc822");
 		rfc1.setMessageRfcFieldPK(pk1);
 		rfc1.setRfcStatus(null);
-		EmailAddr finalRcpt = emailAddrService.findSertAddress("jackwnn@synnex.com.au");
+		EmailAddress finalRcpt = emailAddrService.findSertAddress("jackwnn@synnex.com.au");
 		rfc1.setFinalRcptAddrRowId(finalRcpt.getRowId());
 		rfc1.setOriginalMsgSubject("May 74% OFF");
 		rfc1.setMessageId("<1252103166.01356550221562.JavaMail.wangjack@WANGJACKDEV>");
@@ -353,7 +353,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		MessageRfcField rfc3 = new MessageRfcField();
 		MessageRfcFieldPK pk3 = new MessageRfcFieldPK(inbox,"text/html; charset=us-ascii");
 		rfc3.setMessageRfcFieldPK(pk3);
-		EmailAddr finalRcpt2 = emailAddrService.findSertAddress("test@test.com");
+		EmailAddress finalRcpt2 = emailAddrService.findSertAddress("test@test.com");
 		rfc3.setFinalRcptAddrRowId(finalRcpt2.getRowId());
 		rfc3.setOriginalRecipient("jsmith@test.com");
 		rfcService.insert(rfc3);

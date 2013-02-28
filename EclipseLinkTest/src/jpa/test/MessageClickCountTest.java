@@ -15,13 +15,13 @@ import jpa.constant.MailingListDeliveryType;
 import jpa.constant.MsgDirectionCode;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.MessageClickCount;
 import jpa.model.MessageInbox;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MailingListService;
 import jpa.service.MessageClickCountService;
 import jpa.service.MessageInboxService;
@@ -54,7 +54,7 @@ public class MessageClickCountTest {
 	@Autowired
 	MessageInboxService inboxService;
 	@Autowired
-	EmailAddrService addrService;
+	EmailAddressService addrService;
 	@Autowired
 	ClientDataService clientService;
 	@Autowired
@@ -63,8 +63,8 @@ public class MessageClickCountTest {
 	MailingListService listService;
 
 	private MessageInbox inbox1;
-	private EmailAddr from;
-	private EmailAddr to;
+	private EmailAddress from;
+	private EmailAddress to;
 	private MailingList mlist;
 
 	@Before

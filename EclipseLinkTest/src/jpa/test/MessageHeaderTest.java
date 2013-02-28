@@ -13,13 +13,13 @@ import jpa.constant.MsgDirectionCode;
 import jpa.constant.XHeaderName;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MessageHeader;
 import jpa.model.MessageHeaderPK;
 import jpa.model.MessageInbox;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MessageHeaderService;
 import jpa.service.MessageInboxService;
 import jpa.service.RuleLogicService;
@@ -51,15 +51,15 @@ public class MessageHeaderTest {
 	@Autowired
 	MessageInboxService inboxService;
 	@Autowired
-	EmailAddrService addrService;
+	EmailAddressService addrService;
 	@Autowired
 	ClientDataService clientService;
 	@Autowired
 	RuleLogicService logicService;
 
 	private MessageInbox inbox1;
-	private EmailAddr from;
-	private EmailAddr to;
+	private EmailAddress from;
+	private EmailAddress to;
 
 	@Before
 	public void prepare() {
