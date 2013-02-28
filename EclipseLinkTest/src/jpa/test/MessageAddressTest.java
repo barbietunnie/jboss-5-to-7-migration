@@ -13,12 +13,12 @@ import jpa.constant.EmailAddrType;
 import jpa.constant.MsgDirectionCode;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MessageAddress;
 import jpa.model.MessageInbox;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MessageAddressService;
 import jpa.service.MessageInboxService;
 import jpa.service.RuleLogicService;
@@ -50,15 +50,15 @@ public class MessageAddressTest {
 	@Autowired
 	MessageInboxService inboxService;
 	@Autowired
-	EmailAddrService addrService;
+	EmailAddressService addrService;
 	@Autowired
 	ClientDataService clientService;
 	@Autowired
 	RuleLogicService logicService;
 
 	private MessageInbox inbox1;
-	private EmailAddr from;
-	private EmailAddr to;
+	private EmailAddress from;
+	private EmailAddress to;
 
 	@Before
 	public void prepare() {

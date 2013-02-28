@@ -20,7 +20,7 @@ public class Subscription extends BaseModel implements java.io.Serializable {
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private EmailAddr emailAddr; // subscriber email address
+	private EmailAddress emailAddr; // subscriber email address
 	
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="MailingListRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
@@ -80,11 +80,11 @@ public class Subscription extends BaseModel implements java.io.Serializable {
 //	}
 	/** end of UI */
 
-	public EmailAddr getEmailAddr() {
+	public EmailAddress getEmailAddr() {
 		return emailAddr;
 	}
 
-	public void setEmailAddr(EmailAddr emailAddr) {
+	public void setEmailAddr(EmailAddress emailAddr) {
 		this.emailAddr = emailAddr;
 	}
 

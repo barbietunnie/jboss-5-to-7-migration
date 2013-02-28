@@ -26,11 +26,11 @@ import jpa.message.MsgHeader;
 import jpa.message.util.EmailIdParser;
 import jpa.model.ClientData;
 import jpa.model.CustomerData;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MessageInbox;
 import jpa.service.ClientDataService;
 import jpa.service.CustomerDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MessageInboxService;
 import jpa.service.rule.RuleBase;
 import jpa.service.rule.RuleLoader;
@@ -63,7 +63,7 @@ public final class MessageParser {
 	@Autowired
 	private RuleLoader ruleLoader;
 	@Autowired
-	private EmailAddrService emailAddrDao;
+	private EmailAddressService emailAddrDao;
 	@Autowired
 	private MessageInboxService msgInboxDao;
 	@Autowired
@@ -366,7 +366,7 @@ public final class MessageParser {
 			try {
 				MessageInbox origVo = msgInboxDao.getByPrimaryKey(msgBean.getMsgRefId());
 				try {
-					EmailAddr addrVo = emailAddrDao.getByRowId(origVo.getToAddrRowId());
+					EmailAddress addrVo = emailAddrDao.getByRowId(origVo.getToAddrRowId());
 					if (RuleNameEnum.SEND_MAIL.getValue().equals(addrVo.getRuleName())) {
 						// only if the original message is an "sent" message
 						if (StringUtil.isEmpty(msgBean.getFinalRcpt())
@@ -377,7 +377,7 @@ public final class MessageParser {
 					}
 				}
 				catch (NoResultException e) {
-					logger.warn("parse() - EmailAddr record not found by MsgRefId: "
+					logger.warn("parse() - EmailAddress record not found by MsgRefId: "
 							+ msgBean.getMsgRefId());
 				}
 				// find original client id

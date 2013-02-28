@@ -12,7 +12,7 @@ import jpa.model.ClientData;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
 import jpa.service.ClientDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MailingListService;
 import jpa.service.SubscriptionService;
 import jpa.util.SpringUtil;
@@ -23,7 +23,7 @@ public class MailingListDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(MailingListDataLoader.class);
 	private MailingListService mlistService;
 	private ClientDataService clientService;
-	private EmailAddrService emailService;
+	private EmailAddressService emailService;
 	private SubscriptionService subService;
 
 	public static void main(String[] args) {
@@ -35,7 +35,7 @@ public class MailingListDataLoader extends AbstractDataLoader {
 	public void loadData() {
 		mlistService = (MailingListService) SpringUtil.getAppContext().getBean("mailingListService");
 		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
-		emailService = (EmailAddrService) SpringUtil.getAppContext().getBean("emailAddrService");
+		emailService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
 		subService = (SubscriptionService) SpringUtil.getAppContext().getBean("subscriptionService");
 		startTransaction();
 		try {

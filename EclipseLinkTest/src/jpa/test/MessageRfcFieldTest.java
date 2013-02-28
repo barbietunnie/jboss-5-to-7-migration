@@ -12,13 +12,13 @@ import jpa.constant.Constants;
 import jpa.constant.MsgDirectionCode;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MessageRfcField;
 import jpa.model.MessageRfcFieldPK;
 import jpa.model.MessageInbox;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MessageRfcFieldService;
 import jpa.service.MessageInboxService;
 import jpa.service.RuleLogicService;
@@ -50,15 +50,15 @@ public class MessageRfcFieldTest {
 	@Autowired
 	MessageInboxService inboxService;
 	@Autowired
-	EmailAddrService addrService;
+	EmailAddressService addrService;
 	@Autowired
 	ClientDataService clientService;
 	@Autowired
 	RuleLogicService logicService;
 
 	private MessageInbox inbox1;
-	private EmailAddr from;
-	private EmailAddr to;
+	private EmailAddress from;
+	private EmailAddress to;
 
 	@Before
 	public void prepare() {
@@ -139,7 +139,7 @@ public class MessageRfcFieldTest {
 		MessageRfcFieldPK pk1 = new MessageRfcFieldPK(inbox1,"message/rfc822");
 		hdr1.setMessageRfcFieldPK(pk1);
 		hdr1.setRfcStatus(null);
-		EmailAddr finalRcpt = addrService.findSertAddress("jackwnn@synnex.com.au");
+		EmailAddress finalRcpt = addrService.findSertAddress("jackwnn@synnex.com.au");
 		hdr1.setFinalRcptAddrRowId(finalRcpt.getRowId());
 		hdr1.setOriginalMsgSubject("May 74% OFF");
 		hdr1.setMessageId("<1252103166.01356550221562.JavaMail.wangjack@WANGJACKDEV>");
@@ -224,7 +224,7 @@ public class MessageRfcFieldTest {
 		hdr3 = new MessageRfcField();
 		MessageRfcFieldPK pk3 = new MessageRfcFieldPK(inbox1,"text/html; charset=us-ascii");
 		hdr3.setMessageRfcFieldPK(pk3);
-		EmailAddr finalRcpt2 = addrService.findSertAddress("test@test.com");
+		EmailAddress finalRcpt2 = addrService.findSertAddress("test@test.com");
 		hdr3.setFinalRcptAddrRowId(finalRcpt2.getRowId());
 		hdr3.setOriginalRecipient("jsmith@test.com");
 		service.insert(hdr3);

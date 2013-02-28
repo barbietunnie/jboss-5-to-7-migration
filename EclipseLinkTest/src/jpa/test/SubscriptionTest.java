@@ -8,10 +8,10 @@ import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MailingListService;
 import jpa.service.SubscriptionService;
 import jpa.util.StringUtil;
@@ -44,18 +44,18 @@ public class SubscriptionTest {
 	SubscriptionService service;
 	
 	@Autowired
-	EmailAddrService eaService;
+	EmailAddressService eaService;
 	@Autowired
 	MailingListService mlService;
 
-	private EmailAddr emailAddr1 = null;
-	private EmailAddr emailAddr2 = null;
-	private EmailAddr emailAddr3 = null;
+	private EmailAddress emailAddr1 = null;
+	private EmailAddress emailAddr2 = null;
+	private EmailAddress emailAddr3 = null;
 	
 	@Before
 	public void prepare() {
 		String testEmailAddr1 = "jpatest1@localhost";
-		emailAddr1 = new EmailAddr();
+		emailAddr1 = new EmailAddress();
 		emailAddr1.setAddress(testEmailAddr1);
 		emailAddr1.setOrigAddress(testEmailAddr1);
 		emailAddr1.setStatusId(StatusId.ACTIVE.getValue());
@@ -63,7 +63,7 @@ public class SubscriptionTest {
 		eaService.insert(emailAddr1);
 		
 		String testEmailAddr2 = "jpatest2@localhost";
-		emailAddr2 = new EmailAddr();
+		emailAddr2 = new EmailAddress();
 		emailAddr2.setAddress(testEmailAddr2);
 		emailAddr2.setOrigAddress(testEmailAddr2);
 		emailAddr2.setStatusId(StatusId.ACTIVE.getValue());
@@ -71,7 +71,7 @@ public class SubscriptionTest {
 		eaService.insert(emailAddr2);
 
 		String testEmailAddr3 = "jpatest3@localhost";
-		emailAddr3 = new EmailAddr();
+		emailAddr3 = new EmailAddress();
 		emailAddr3.setAddress(testEmailAddr3);
 		emailAddr3.setOrigAddress(testEmailAddr3);
 		emailAddr3.setStatusId(StatusId.ACTIVE.getValue());

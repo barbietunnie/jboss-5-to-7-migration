@@ -8,10 +8,10 @@ import javax.persistence.EntityManager;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.UnsubComment;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MailingListService;
 import jpa.service.UnsubCommentService;
 
@@ -46,14 +46,14 @@ public class UnsubCommentTest {
 	UnsubCommentService service;
 	
 	@Autowired
-	EmailAddrService emailService;
+	EmailAddressService emailService;
 	@Autowired
 	MailingListService mlistService;
 
 	private String testUnsubComment1 = "jpa test comment 1";
 	private String testUnsubComment2 = "jpa test comment 2";
 	
-	EmailAddr emailAddr = null;
+	EmailAddress emailAddr = null;
 	MailingList mlist = null;
 	@Before
 	public void prepare() {

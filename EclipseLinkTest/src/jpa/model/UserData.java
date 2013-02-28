@@ -25,9 +25,9 @@ public class UserData extends BaseModel implements java.io.Serializable {
 	@OnDelete( action = OnDeleteAction.CASCADE )
 	private ClientData clientData; // sender user is associated to
 
-	@OneToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddr.class)
+	@OneToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddress.class)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
-	private EmailAddr emailAddr; // user email address - optional
+	private EmailAddress emailAddr; // user email address - optional
 	
 	@Column(nullable=false, length=20, unique=true)
 	private String userId = "";
@@ -76,11 +76,11 @@ public class UserData extends BaseModel implements java.io.Serializable {
 		this.clientData = clientData;
 	}
 
-	public EmailAddr getEmailAddr() {
+	public EmailAddress getEmailAddr() {
 		return emailAddr;
 	}
 
-	public void setEmailAddr(EmailAddr emailAddr) {
+	public void setEmailAddr(EmailAddress emailAddr) {
 		this.emailAddr = emailAddr;
 	}
 

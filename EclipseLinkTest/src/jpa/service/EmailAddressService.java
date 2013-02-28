@@ -19,24 +19,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.util.EmailAddrUtil;
 import jpa.util.SpringUtil;
 import jpa.util.StringUtil;
 
-@Component("emailAddrService")
+@Component("emailAddressService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class EmailAddrService {
-	static Logger logger = Logger.getLogger(EmailAddrService.class);
+public class EmailAddressService {
+	static Logger logger = Logger.getLogger(EmailAddressService.class);
 	
 	@Autowired
 	EntityManager em;
 
-	public EmailAddr getByAddress(String addr) throws NoResultException {
+	public EmailAddress getByAddress(String addr) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from EmailAddr t where t.address = :address");
+			Query query = em.createQuery("select t from EmailAddress t where t.address = :address");
 			query.setParameter("address", EmailAddrUtil.removeDisplayName(addr));
-			EmailAddr emailAddr = (EmailAddr) query.getSingleResult();
+			EmailAddress emailAddr = (EmailAddress) query.getSingleResult();
 			em.lock(emailAddr, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return emailAddr;
 		}
@@ -46,14 +46,14 @@ public class EmailAddrService {
 	
 	/*
 	 * return an array with 4 elements:
-	 * 1) EmailAddr
+	 * 1) EmailAddress
 	 * 2) through 4) BigDecimal
 	 */
 	public Object[] getByAddressWithCounts(String addr) throws NoResultException {
 		String sql = "select a.*, " +
 				" sum(b.SentCount) as sentCount, sum(b.OpenCount) as openCount," +
 				" sum(b.ClickCount) as clickCount " +
-				"from Email_Addr a " +
+				"from Email_Address a " +
 				" LEFT OUTER JOIN Subscription b on a.Row_Id = b.EmailAddrRowId " +
 				" where a.address = ?1 " +
 				"group by " +
@@ -70,7 +70,7 @@ public class EmailAddrService {
 				" a.UpdtUserid, " +
 				" a.UpdtTime ";
 		try {
-			Query query = em.createNativeQuery(sql, EmailAddr.MAPPING_EMAIL_ADDR_WITH_COUNTS);
+			Query query = em.createNativeQuery(sql, EmailAddress.MAPPING_EMAIL_ADDR_WITH_COUNTS);
 			query.setParameter(1, EmailAddrUtil.removeDisplayName(addr));
 			Object[] emailAddr = (Object[]) query.getSingleResult();
 			return emailAddr;
@@ -79,13 +79,13 @@ public class EmailAddrService {
 		}
 	}
 	
-	public EmailAddr findSertAddress(String addr) {
+	public EmailAddress findSertAddress(String addr) {
 		return findSertAddress(addr, 0);
 	}
 
-	private EmailAddr findSertAddress(String addr, int retries) {
+	private EmailAddress findSertAddress(String addr, int retries) {
 		try {
-			EmailAddr emailAddr = null;
+			EmailAddress emailAddr = null;
 			try {
 				emailAddr = getByAddress(addr);
 			}
@@ -98,7 +98,7 @@ public class EmailAddrService {
 		}
 		catch (NoResultException e) {
 			logger.debug("Email Address (" + addr + ") not found, insert...");
-			EmailAddr emailAddr = new EmailAddr();
+			EmailAddress emailAddr = new EmailAddress();
 			emailAddr.setAddress(EmailAddrUtil.removeDisplayName(addr));
 			emailAddr.setOrigAddress(addr);
 			emailAddr.setAcceptHtml(true);
@@ -126,11 +126,11 @@ public class EmailAddrService {
 		finally {}
 	}
 
-	public EmailAddr getByRowId(int rowId) throws NoResultException {
+	public EmailAddress getByRowId(int rowId) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from EmailAddr t where t.rowId = :rowId");
+			Query query = em.createQuery("select t from EmailAddress t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
-			EmailAddr emailAddr = (EmailAddr) query.getSingleResult();
+			EmailAddress emailAddr = (EmailAddress) query.getSingleResult();
 			em.lock(emailAddr, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return emailAddr;
 		}
@@ -138,11 +138,11 @@ public class EmailAddrService {
 		}
 	}
 
-	public List<EmailAddr> getByAddressDomain(String domain) {
+	public List<EmailAddress> getByAddressDomain(String domain) {
 		return getByAddressPattern(domain + "$");
 	}
 	
-	public List<EmailAddr> getByAddressUser(String user) {
+	public List<EmailAddress> getByAddressUser(String user) {
 		return getByAddressPattern("^" + user);
 	}
 	
@@ -151,7 +151,7 @@ public class EmailAddrService {
 	 * 1) find by domain name - '@test.com$' or '@yahoo.com'
 	 * 2) find by email user name - '^myname@' or 'noreply@'
 	 */
-	public List<EmailAddr> getByAddressPattern(String addressPattern) {
+	public List<EmailAddress> getByAddressPattern(String addressPattern) {
 		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("mysqlDataSource");
 		String prodName = null;
 		try {
@@ -159,21 +159,21 @@ public class EmailAddrService {
 			logger.info("Database product name: " + prodName); // returned "MySQL" for MySQL database
 		}
 		catch (SQLException e) {}
-		String sql = "select t.* from Email_Addr t where address REGEXP '" + addressPattern + "' ";
+		String sql = "select t.* from Email_Address t where address REGEXP '" + addressPattern + "' ";
 		if ("PostgreSQL".equalsIgnoreCase(prodName)) {
-			sql = "select t.* from Email_Addr t where address ~ '" + addressPattern + "' ";
+			sql = "select t.* from Email_Address t where address ~ '" + addressPattern + "' ";
 		}
 		try {
-			Query query = em.createNativeQuery(sql, EmailAddr.MAPPING_EMAIL_ADDR_ENTITY);
+			Query query = em.createNativeQuery(sql, EmailAddress.MAPPING_EMAIL_ADDR_ENTITY);
 			@SuppressWarnings("unchecked")
-			List<EmailAddr> list = query.getResultList();
+			List<EmailAddress> list = query.getResultList();
 			return list;
 		}
 		finally {
 		}
 	}
 
-	public void delete(EmailAddr emailAddr) {
+	public void delete(EmailAddress emailAddr) {
 		if (emailAddr==null) return;
 		try {
 			em.remove(emailAddr);
@@ -184,7 +184,7 @@ public class EmailAddrService {
 
 	public int deleteByAddress(String addr) {
 		try {
-			Query query = em.createQuery("delete from EmailAddr t where t.address=:address");
+			Query query = em.createQuery("delete from EmailAddress t where t.address=:address");
 			query.setParameter("address", EmailAddrUtil.removeDisplayName(addr));
 			int rows = query.executeUpdate();
 			return rows;
@@ -195,7 +195,7 @@ public class EmailAddrService {
 
 	public int deleteByRowId(int rowId) {
 		try {
-			Query query = em.createQuery("delete from EmailAddr t where t.rowId=:rowId");
+			Query query = em.createQuery("delete from EmailAddress t where t.rowId=:rowId");
 			query.setParameter("rowId", rowId);
 			int rows = query.executeUpdate();
 			return rows;
@@ -204,7 +204,7 @@ public class EmailAddrService {
 		}
 	}
 
-	public void insert(EmailAddr emailAddr) {
+	public void insert(EmailAddress emailAddr) {
 		if (EmailAddrUtil.hasDisplayName(emailAddr.getAddress())) {
 			emailAddr.setAddress(EmailAddrUtil.removeDisplayName(emailAddr.getAddress()));
 		}
@@ -215,7 +215,7 @@ public class EmailAddrService {
 		}
 	}
 	
-	public void update(EmailAddr emailAddr) {
+	public void update(EmailAddress emailAddr) {
 		if (EmailAddrUtil.hasDisplayName(emailAddr.getAddress())) {
 			emailAddr.setAddress(EmailAddrUtil.removeDisplayName(emailAddr.getAddress()));
 		}
@@ -231,7 +231,7 @@ public class EmailAddrService {
 		}
 	}
 	
-	public void updateBounceCount(EmailAddr emailAddr) {
+	public void updateBounceCount(EmailAddress emailAddr) {
 		emailAddr.setBounceCount(emailAddr.getBounceCount()+1);
 		if (emailAddr.getBounceCount() >= Constants.BOUNCE_SUSPEND_THRESHOLD) {
 			if (!StatusId.SUSPENDED.getValue().equals(emailAddr.getStatusId())) {

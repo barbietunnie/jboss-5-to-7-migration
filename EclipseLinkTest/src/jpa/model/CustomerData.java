@@ -23,9 +23,9 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private ClientData clientData;
 
-	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddr.class)
+	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddress.class)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private EmailAddr emailAddr;
+	private EmailAddress emailAddr;
 
 	@Column(nullable=false, length=20, unique=true)
 	private String customerId = "";
@@ -114,11 +114,11 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 		this.clientData = clientData;
 	}
 
-	public EmailAddr getEmailAddr() {
+	public EmailAddress getEmailAddr() {
 		return emailAddr;
 	}
 
-	public void setEmailAddr(EmailAddr emailAddr) {
+	public void setEmailAddr(EmailAddress emailAddr) {
 		this.emailAddr = emailAddr;
 	}
 

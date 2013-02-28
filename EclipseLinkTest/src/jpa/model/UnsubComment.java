@@ -12,9 +12,9 @@ import javax.persistence.Table;
 public class UnsubComment extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 6944693180570837420L;
 
-	@ManyToOne(targetEntity=EmailAddr.class, fetch=FetchType.LAZY, optional=false)
+	@ManyToOne(targetEntity=EmailAddress.class, fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private EmailAddr emailAddr;
+	private EmailAddress emailAddr;
 
 	@ManyToOne(targetEntity=MailingList.class, fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="MailingListRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
@@ -27,11 +27,11 @@ public class UnsubComment extends BaseModel implements java.io.Serializable {
 		// must have a no-argument constructor
 	}
 
-	public EmailAddr getEmailAddr() {
+	public EmailAddress getEmailAddr() {
 		return emailAddr;
 	}
 
-	public void setEmailAddr(EmailAddr emailAddr) {
+	public void setEmailAddr(EmailAddress emailAddr) {
 		this.emailAddr = emailAddr;
 	}
 

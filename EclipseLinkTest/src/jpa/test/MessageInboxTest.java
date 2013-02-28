@@ -15,11 +15,11 @@ import jpa.constant.Constants;
 import jpa.constant.MsgDirectionCode;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
-import jpa.model.EmailAddr;
+import jpa.model.EmailAddress;
 import jpa.model.MessageInbox;
 import jpa.model.RuleLogic;
 import jpa.service.ClientDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 import jpa.service.MessageInboxService;
 import jpa.service.RuleLogicService;
 import jpa.util.StringUtil;
@@ -47,7 +47,7 @@ public class MessageInboxTest {
 	@Autowired
 	MessageInboxService service;
 	@Autowired
-	EmailAddrService addrService;
+	EmailAddressService addrService;
 	@Autowired
 	ClientDataService clientService;
 	@Autowired
@@ -65,13 +65,13 @@ public class MessageInboxTest {
 		in.setMsgPriority("2 (Normal)");
 		in.setReceivedTime(updtTime);
 		
-		EmailAddr from = addrService.findSertAddress("test@test.com");
+		EmailAddress from = addrService.findSertAddress("test@test.com");
 		in.setFromAddrRowId(from.getRowId());
 		in.setReplytoAddrRowId(null);
 
 		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
 		String to_addr = client.getReturnPathLeft() + "@" + client.getDomainName();
-		EmailAddr to = addrService.findSertAddress(to_addr);
+		EmailAddress to = addrService.findSertAddress(to_addr);
 		in.setToAddrRowId(to.getRowId());
 		in.setClientDataRowId(client.getRowId());
 		in.setCustomerDataRowId(null);

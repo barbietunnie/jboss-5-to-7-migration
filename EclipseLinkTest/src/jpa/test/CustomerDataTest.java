@@ -12,7 +12,7 @@ import jpa.model.ClientData;
 import jpa.model.CustomerData;
 import jpa.service.ClientDataService;
 import jpa.service.CustomerDataService;
-import jpa.service.EmailAddrService;
+import jpa.service.EmailAddressService;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -47,7 +47,7 @@ public class CustomerDataTest {
 	@Autowired
 	ClientDataService cdService;
 	@Autowired
-	EmailAddrService emailService;
+	EmailAddressService emailService;
 
 	@Test
 	public void customerDataService() {
