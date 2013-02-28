@@ -4,7 +4,7 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import jpa.constant.Constants;
-import jpa.constant.MobileCarrier;
+import jpa.constant.MobileCarrierEnum;
 import jpa.constant.StatusId;
 import jpa.model.ClientData;
 import jpa.model.CustomerData;
@@ -65,7 +65,7 @@ public class CustomerDataLoader extends AbstractDataLoader {
 		data.setDayPhone("614-234-5678");
 		data.setEveningPhone("614-789-6543");
 		data.setMobilePhone("614-JOE-CELL");
-		data.setMobileCarrier(MobileCarrier.TMobile.getValue());
+		data.setMobileCarrier(MobileCarrierEnum.TMobile.getValue());
 		data.setBirthDate(new java.sql.Date(new GregorianCalendar(1980,01,01).getTimeInMillis()));
 		data.setStartDate(new java.sql.Date(new GregorianCalendar(2004,05,10).getTimeInMillis()));
 		data.setEndDate(new java.sql.Date(new GregorianCalendar(2016,05,10).getTimeInMillis()));

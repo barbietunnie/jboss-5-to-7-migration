@@ -7,13 +7,17 @@ import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import jpa.constant.MobileCarrierEnum;
+import jpa.exception.DataValidationException;
 import jpa.model.CustomerData;
+import jpa.util.PhoneNumberUtil;
 
 @Component("customerDataService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -90,14 +94,17 @@ public class CustomerDataService {
 	}
 
 	public void insert(CustomerData customer) {
+		verifyCustomerData(customer);
 		try {
 			em.persist(customer);
+			em.flush();
 		}
 		finally {
 		}
 	}
 	
 	public void update(CustomerData customer) {
+		verifyCustomerData(customer);
 		try {
 			if (em.contains(customer)) {
 				em.persist(customer);
@@ -107,6 +114,22 @@ public class CustomerDataService {
 			}
 		}
 		finally {
+		}
+	}
+	
+	private void verifyCustomerData(CustomerData customer) throws DataValidationException {
+		if (StringUtils.isNotBlank(customer.getMobilePhone())) {
+			if (!PhoneNumberUtil.isValidPhoneNumber(customer.getMobilePhone())) {
+				throw new DataValidationException("Invalid Mobile phone number passed in: " + customer.getMobilePhone());
+			}
+			try {
+				MobileCarrierEnum.getByValue(customer.getMobileCarrier());
+			}
+			catch (IllegalArgumentException e) {
+				//throw new DataValidationException("Invalid Mobile carrier passed in: " + customer.getMobileCarrier());
+				// TODO could be a new carrier not yet entered in system, notify programming
+				// TODO define a mobile carrier table to store the information.
+			}
 		}
 	}
 	
