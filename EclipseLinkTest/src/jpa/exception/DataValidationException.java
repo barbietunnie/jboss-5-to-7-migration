@@ -1,6 +1,6 @@
 package jpa.exception;
 
-public class DataValidationException extends RuntimeException {
+public class DataValidationException extends IllegalArgumentException {
 	
 	private static final long serialVersionUID = -1180425695282794441L;
 

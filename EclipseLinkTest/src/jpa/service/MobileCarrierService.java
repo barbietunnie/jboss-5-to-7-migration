@@ -71,7 +71,7 @@ public class MobileCarrierService {
 
 	public int deleteByCarrierId(String carrierId) {
 		try {
-			Query query = em.createQuery("delete t from MobileCarrier T where " +
+			Query query = em.createQuery("delete from MobileCarrier t where " +
 					" t.carrierId=:carrierId");
 			query.setParameter("carrierId", carrierId);
 			int rows = query.executeUpdate();

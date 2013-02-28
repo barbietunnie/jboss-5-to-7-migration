@@ -33,5 +33,6 @@ public class DataLoader {
 		new RuleActionLoader().loadData();
 		new TemplateDataLoader().loadData();
 		new MessageInboxLoader().loadData();
+		new MobileCarrierLoader().loadData();
 	}
 }
