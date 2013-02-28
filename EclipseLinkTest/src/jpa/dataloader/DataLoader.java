@@ -22,7 +22,7 @@ public class DataLoader {
 	void loadAllTables() {
 		new ClientDataLoader().loadData();
 		new IdTokensDataLoader().loadData();
-		new EmailAddrLoader().loadData();
+		new EmailAddressLoader().loadData();
 		new UserDataLoader().loadData();
 		new CustomerDataLoader().loadData();
 		new VariableDataLoader().loadData();
