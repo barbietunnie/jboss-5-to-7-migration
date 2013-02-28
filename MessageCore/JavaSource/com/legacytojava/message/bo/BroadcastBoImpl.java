@@ -154,11 +154,14 @@ public class BroadcastBoImpl extends TaskBaseAdaptor {
 					try {
 						MobileCarrier mc = MobileCarrier.getByValue(custVo.getMobileCarrier());
 						String phone = PhoneNumberUtil.convertTo10DigitNumber(custVo.getMobilePhone());
+						if (StringUtils.isNotBlank(mc.getCountry())) {
+							phone = mc.getCountry() + phone;
+						}
 						toAddress = phone+"@"+mc.getText();
 						to = InternetAddress.parse(toAddress);
 					}
 					catch (IllegalArgumentException e) {
-						logger.error("Mobile carrier (" + custVo.getMobileCarrier() + ") is not defined in system!");
+						logger.error("Mobile carrier (" + custVo.getMobileCarrier() + ") not found in enum MobileCarrier!");
 						// TODO notify programming
 					}
 				}
