@@ -23,9 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import jpa.constant.Constants;
 import jpa.constant.EmailAddrType;
 import jpa.constant.StatusId;
-import jpa.model.RuleDataType;
-import jpa.service.RuleDataTypeService;
-import jpa.service.RuleDataValueService;
+import jpa.model.rule.RuleDataType;
+import jpa.service.rule.RuleDataTypeService;
+import jpa.service.rule.RuleDataValueService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)

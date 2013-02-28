@@ -2,6 +2,7 @@ package jpa.dataloader;
 
 import jpa.util.EnvUtil;
 import jpa.util.SpringUtil;
+import jpa.util.TestUtil;
 import jpa.variable.VarProperties;
 
 public abstract class AbstractDataLoader {
@@ -25,5 +26,10 @@ public abstract class AbstractDataLoader {
 			props = VarProperties.loadMyProperties(propsFile);
 		}
 		return props.getProperty(name);
+	}
+
+
+	protected byte[] loadFromFile(String fileName) {
+		return TestUtil.loadFromFile(fileName);
 	}
 }

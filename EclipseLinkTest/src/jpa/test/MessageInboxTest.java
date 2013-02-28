@@ -16,12 +16,12 @@ import jpa.constant.MsgDirectionCode;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
 import jpa.model.EmailAddress;
-import jpa.model.MessageInbox;
-import jpa.model.RuleLogic;
+import jpa.model.message.MessageInbox;
+import jpa.model.rule.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddressService;
-import jpa.service.MessageInboxService;
-import jpa.service.RuleLogicService;
+import jpa.service.message.MessageInboxService;
+import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
 
 import org.junit.BeforeClass;
@@ -108,7 +108,9 @@ public class MessageInboxTest {
 		assertFalse(lst5.isEmpty());
 		
 		MessageInbox msg2  =service.getLastRecord();
-		System.out.println(StringUtil.prettyPrint(msg2,1));
+		System.out.println(StringUtil.prettyPrint(msg2,2));
+		MessageInbox msg22  =service.getAllDataByPrimaryKey(msg2.getRowId());
+		System.out.println(StringUtil.prettyPrint(msg22,2));
 		
 		try {
 			service.getNextRecord(msg2);

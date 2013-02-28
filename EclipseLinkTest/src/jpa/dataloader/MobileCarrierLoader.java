@@ -37,6 +37,7 @@ public class MobileCarrierLoader extends AbstractDataLoader {
 			data.setCarrierName(mc.getValue());
 			data.setTextAddress(mc.getText());
 			data.setMultiMediaAddress(mc.getMmedia());
+			data.setCountryCode(mc.getCountry());
 			service.insert(data);
 		}
 		logger.info("EntityManager persisted the record.");

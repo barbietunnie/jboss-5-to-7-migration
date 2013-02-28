@@ -2,9 +2,8 @@ package jpa.service.rule;
 
 import java.util.List;
 
-import jpa.model.RuleElement;
-import jpa.model.RuleLogic;
-import jpa.service.RuleLogicService;
+import jpa.model.rule.RuleElement;
+import jpa.model.rule.RuleLogic;
 import jpa.service.external.RuleTargetProc;
 import jpa.service.task.TaskBaseBo;
 import jpa.util.SpringUtil;

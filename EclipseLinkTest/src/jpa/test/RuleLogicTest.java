@@ -13,8 +13,8 @@ import javax.persistence.NoResultException;
 import jpa.constant.Constants;
 import jpa.constant.RuleCategory;
 import jpa.constant.RuleType;
-import jpa.model.RuleLogic;
-import jpa.service.RuleLogicService;
+import jpa.model.rule.RuleLogic;
+import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;

@@ -24,11 +24,11 @@ import jpa.constant.Constants;
 import jpa.model.ClientData;
 import jpa.model.ClientVariable;
 import jpa.model.CustomerData;
-import jpa.model.TemplateData;
-import jpa.model.TemplateDataPK;
 import jpa.model.UserData;
+import jpa.model.message.TemplateData;
+import jpa.model.message.TemplateDataPK;
 import jpa.service.ClientDataService;
-import jpa.service.TemplateDataService;
+import jpa.service.message.TemplateDataService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)

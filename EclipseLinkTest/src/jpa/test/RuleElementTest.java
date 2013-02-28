@@ -14,11 +14,11 @@ import javax.persistence.NoResultException;
 import jpa.constant.RuleCriteria;
 import jpa.constant.RuleDataName;
 import jpa.data.preload.RuleNameEnum;
-import jpa.model.RuleElement;
-import jpa.model.RuleElementPK;
-import jpa.model.RuleLogic;
-import jpa.service.RuleElementService;
-import jpa.service.RuleLogicService;
+import jpa.model.rule.RuleElement;
+import jpa.model.rule.RuleElementPK;
+import jpa.model.rule.RuleLogic;
+import jpa.service.rule.RuleElementService;
+import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;

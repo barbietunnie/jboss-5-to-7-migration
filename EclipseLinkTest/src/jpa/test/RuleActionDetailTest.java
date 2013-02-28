@@ -19,10 +19,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
-import jpa.model.RuleActionDetail;
-import jpa.model.RuleDataType;
-import jpa.service.RuleActionDetailService;
-import jpa.service.RuleDataTypeService;
+import jpa.model.rule.RuleActionDetail;
+import jpa.model.rule.RuleDataType;
+import jpa.service.rule.RuleActionDetailService;
+import jpa.service.rule.RuleDataTypeService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)

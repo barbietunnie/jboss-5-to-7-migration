@@ -23,16 +23,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
 import jpa.model.ClientData;
-import jpa.model.RuleAction;
-import jpa.model.RuleActionDetail;
-import jpa.model.RuleActionPK;
-import jpa.model.RuleDataType;
-import jpa.model.RuleLogic;
+import jpa.model.rule.RuleAction;
+import jpa.model.rule.RuleActionDetail;
+import jpa.model.rule.RuleActionPK;
+import jpa.model.rule.RuleDataType;
+import jpa.model.rule.RuleLogic;
 import jpa.service.ClientDataService;
-import jpa.service.RuleActionDetailService;
-import jpa.service.RuleActionService;
-import jpa.service.RuleDataTypeService;
-import jpa.service.RuleLogicService;
+import jpa.service.rule.RuleActionDetailService;
+import jpa.service.rule.RuleActionService;
+import jpa.service.rule.RuleDataTypeService;
+import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)

@@ -1,26 +1,28 @@
 package jpa.constant;
 
 public enum MobileCarrierEnum {
-	TMobile("T-Mobile USA", "tmomail.net", ""),
-	Verizon("Verizon Wireless", "vtext.com", "vzwpix.com"),
-	ATT("AT&T Mobility", "txt.att.net", "mms.att.net"),
-	Sprint("Sprint Nextel", "messaging.sprintpcs.com", ""),
-	TracFone("TracFone Wireless", "", ""),
-	MetroPCS("MetroPCS", "mymetropcs.com", ""),
-	USCellular("U.S. Cellular", "email.uscc.net", ""),
-	Leap("Leap Wireless", "", ""),
-	Alltel("Alltel", "message.alltel.com", ""),
-	Boost("Boost Mobile","myboostmobile.com",""),
-	Nextel("Nextel", "messaging.nextel.com", ""),
-	Virgin("Virgin Mobile USA", "vmobl.com", "");
+	TMobile("T-Mobile USA", "tmomail.net", null, "1"),
+	Verizon("Verizon Wireless", "vtext.com", "vzwpix.com", null),
+	ATT("AT&T Mobility", "txt.att.net", "mms.att.net", null),
+	Sprint("Sprint Nextel", "messaging.sprintpcs.com", "pm.sprint.com", null),
+	Nextel("Nextel Direct", "page.nextel.com", "messaging.nextel.com", null),
+	TracFone("TracFone Wireless", "mmst5.tracfone.com", null, null),
+	MetroPCS("MetroPCS", "mymetropcs.com", null, null),
+	USCellular("U.S. Cellular", "email.uscc.net", "mms.uscc.net", null),
+	Cricket("Leap Wireless", "sms.mycricket.com", "mms.mycricket.com", null),
+	Alltel("Alltel, Verizon", "text.wireless.alltel.com", "mms.alltel.net", null),
+	Boost("Boost Mobile","sms.myboostmobile.com",null, null),
+	Virgin("Virgin Mobile USA", "vmobl.com", "vmpix.com", null);
 	
-	private String value;
-	private String text;
-	private String mmedia;
-	MobileCarrierEnum(String value, String text, String mmedia) {
+	private String value; // carrier name
+	private String text; // email address for text
+	private String mmedia; // picture and video
+	private String country; // country code
+	MobileCarrierEnum(String value, String text, String mmedia, String country) {
 		this.value=value;
 		this.text=text;
 		this.mmedia=mmedia;
+		this.country=country;
 	}
 	public String getValue() {
 		return value;
@@ -32,12 +34,20 @@ public enum MobileCarrierEnum {
 		return mmedia;
 	}
 
+	public String getCountry() {
+		return country;
+	}
 	public static MobileCarrierEnum getByValue(String value) throws IllegalArgumentException {
-		for (MobileCarrierEnum c : MobileCarrierEnum.values()) {
-			if (c.getValue().equalsIgnoreCase(value)) {
-				return c;
+		for (MobileCarrierEnum mc : MobileCarrierEnum.values()) {
+			if (mc.getValue().equalsIgnoreCase(value)) {
+				return mc;
 			}
 		}
-		throw new IllegalArgumentException("");
+		throw new IllegalArgumentException("No enum const found by value (" + value + ")");
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(MobileCarrierEnum.valueOf("TMobile"));
+		System.out.println(MobileCarrierEnum.getByValue("Boost Mobile"));
 	}
 }

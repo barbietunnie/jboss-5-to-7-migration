@@ -45,18 +45,18 @@ public final class Renderer implements java.io.Serializable {
 	/**
 	 * Render a template.
 	 * @param templateText
-	 * @param variables - a map contains variable name and String or RenderVariable pairs.
+	 * @param variables - a map contains variable name and String or RenderVariableVo pairs.
 	 * @param errors - an empty map
 	 * @return rendered text.
 	 * @throws TemplateException
 	 * @throws ParseException
 	 */
-	public String render(String templateText, Map<String, RenderVariable> variables, Map<String, ErrorVariable> errors) throws TemplateException,
+	public String render(String templateText, Map<String, RenderVariableVo> variables, Map<String, ErrorVariableVo> errors) throws TemplateException,
 			ParseException {
 		return renderTemplate(templateText, variables, errors, 0);
 	}
 
-	private String renderTemplate(String templateText, Map<String, RenderVariable> variables, Map<String, ErrorVariable> errors, int loopCount)
+	private String renderTemplate(String templateText, Map<String, RenderVariableVo> variables, Map<String, ErrorVariableVo> errors, int loopCount)
 			throws TemplateException, ParseException {
 		
 		if (templateText == null) {
@@ -83,18 +83,18 @@ public final class Renderer implements java.io.Serializable {
 			if (variables.get(varProp.name) != null) { // main section
 				Object value = variables.get(varProp.name);
 				if (value instanceof String) {
-					value = new RenderVariable(varProp.name, (String) value);
+					value = new RenderVariableVo(varProp.name, (String) value);
 				}
-				else if (!(value instanceof RenderVariable)) {
-					ErrorVariable err = new ErrorVariable(varProp.name, "Position: " + varProp.bgnPos
+				else if (!(value instanceof RenderVariableVo)) {
+					ErrorVariableVo err = new ErrorVariableVo(varProp.name, "Position: " + varProp.bgnPos
 							+ ", rendered as: " + value, "Invalue variable value type: "
 							+ value.getClass().getName());
 					errors.put(err.getVariableName(), err);
 					sb.append(value);
 					continue;
 				}
-				RenderVariable r = (RenderVariable) value;
-				if (RenderVariable.TEXT.equals(r.getVariableType())) {
+				RenderVariableVo r = (RenderVariableVo) value;
+				if (RenderVariableVo.TEXT.equals(r.getVariableType())) {
 					if (r.getVariableValue() != null) {
 						if (getNextVariableName((String) r.getVariableValue(), 0) != null) {
 							// recursive variable
@@ -107,7 +107,7 @@ public final class Renderer implements java.io.Serializable {
 						}
 					}
 				}
-				else if (RenderVariable.NUMERIC.equals(r.getVariableType())) {
+				else if (RenderVariableVo.NUMERIC.equals(r.getVariableType())) {
 					if (r.getVariableValue() != null) {
 						DecimalFormat formatter = new DecimalFormat();
 						if (r.getVariableFormat() != null) {
@@ -129,9 +129,9 @@ public final class Renderer implements java.io.Serializable {
 						}
 					}
 				}
-				else if (RenderVariable.DATETIME.equals(r.getVariableType())) {
+				else if (RenderVariableVo.DATETIME.equals(r.getVariableType())) {
 					if (r.getVariableValue() != null) {
-						SimpleDateFormat fmt = new SimpleDateFormat(RenderVariable.DEFAULT_DATETIME_FORMAT);
+						SimpleDateFormat fmt = new SimpleDateFormat(RenderVariableVo.DEFAULT_DATETIME_FORMAT);
 						if (r.getVariableFormat() != null) {
 							fmt.applyPattern(r.getVariableFormat());
 						}
@@ -152,7 +152,7 @@ public final class Renderer implements java.io.Serializable {
 				}
 			}
 			else { // variable name not on render variables list
-				ErrorVariable err = new ErrorVariable(varProp.name, "Position: " + varProp.bgnPos
+				ErrorVariableVo err = new ErrorVariableVo(varProp.name, "Position: " + varProp.bgnPos
 						+ ", not rendered", "Variable name not on Render Variables list.");
 				errors.put(err.getVariableName(), err);
 				sb.append(OpenDelimiter + varProp.name + CloseDelimiter);

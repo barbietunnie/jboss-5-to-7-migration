@@ -15,8 +15,7 @@ import jpa.message.BodypartBean;
 import jpa.message.MessageBean;
 import jpa.message.MessageNode;
 import jpa.message.MsgHeader;
-import jpa.model.RuleLogic;
-import jpa.service.RuleLogicService;
+import jpa.model.rule.RuleLogic;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
