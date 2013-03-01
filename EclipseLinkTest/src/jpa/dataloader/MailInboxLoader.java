@@ -29,7 +29,7 @@ public class MailInboxLoader extends AbstractDataLoader {
 	@Override
 	public void loadData() {
 		service = (MailInboxService) SpringUtil.getAppContext().getBean("mailInboxService");
-		emailService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressxService");
+		emailService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
 		startTransaction();
 		try {
 			loadMailInboxs();
