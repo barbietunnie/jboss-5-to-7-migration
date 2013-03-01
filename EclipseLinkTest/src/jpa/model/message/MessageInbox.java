@@ -2,6 +2,7 @@ package jpa.model.message;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -264,6 +265,9 @@ public class MessageInbox extends BaseModel implements Serializable {
 	}
 
 	public List<MessageHeader> getMessageHeaderList() {
+		if (messageHeaderList==null) {
+			messageHeaderList = new ArrayList<MessageHeader>();
+		}
 		return messageHeaderList;
 	}
 
@@ -272,6 +276,9 @@ public class MessageInbox extends BaseModel implements Serializable {
 	}
 
 	public List<MessageAddress> getMessageAddressList() {
+		if (messageAddressList == null) {
+			messageAddressList = new ArrayList<MessageAddress>();
+		}
 		return messageAddressList;
 	}
 
@@ -288,6 +295,9 @@ public class MessageInbox extends BaseModel implements Serializable {
 	}
 
 	public List<MessageRfcField> getMessageRfcFieldList() {
+		if (messageRfcFieldList==null) {
+			messageRfcFieldList = new ArrayList<MessageRfcField>();
+		}
 		return messageRfcFieldList;
 	}
 
@@ -296,6 +306,9 @@ public class MessageInbox extends BaseModel implements Serializable {
 	}
 
 	public List<MessageAttachment> getMessageAttachmentList() {
+		if (messageAttachmentList==null) {
+			messageAttachmentList = new ArrayList<MessageAttachment>();
+		}
 		return messageAttachmentList;
 	}
 
@@ -321,6 +334,9 @@ public class MessageInbox extends BaseModel implements Serializable {
 	}
 
 	public List<MessageActionLog> getMessageActionLogList() {
+		if (messageActionLogList==null) {
+			messageActionLogList = new ArrayList<MessageActionLog>();
+		}
 		return messageActionLogList;
 	}
 
@@ -329,6 +345,9 @@ public class MessageInbox extends BaseModel implements Serializable {
 	}
 
 	public List<MessageDeliveryStatus> getMessageDeliveryStatusList() {
+		if (messageDeliveryStatusList==null) {
+			messageDeliveryStatusList = new ArrayList<MessageDeliveryStatus>();
+		}
 		return messageDeliveryStatusList;
 	}
 

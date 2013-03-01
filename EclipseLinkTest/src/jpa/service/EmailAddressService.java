@@ -231,6 +231,28 @@ public class EmailAddressService {
 		}
 	}
 	
+	public void updateLastRcptTime(int rowId) {
+		try {
+			EmailAddress ea = getByRowId(rowId);
+			ea.setLastRcptTime(new java.sql.Timestamp(System.currentTimeMillis()));
+			update(ea);
+		}
+		catch (NoResultException e) {}
+		finally {
+		}
+	}
+
+	public void updateLastSentTime(int rowId) {
+		try {
+			EmailAddress ea = getByRowId(rowId);
+			ea.setLastSentTime(new java.sql.Timestamp(System.currentTimeMillis()));
+			update(ea);
+		}
+		catch (NoResultException e) {}
+		finally {
+		}
+	}
+
 	public void updateBounceCount(EmailAddress emailAddr) {
 		emailAddr.setBounceCount(emailAddr.getBounceCount()+1);
 		if (emailAddr.getBounceCount() >= Constants.BOUNCE_SUSPEND_THRESHOLD) {

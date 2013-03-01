@@ -17,7 +17,7 @@ public class MessageActionLogPK implements Serializable {
 	private MessageInbox messageInbox;
 
 	@Column(name="LeadMessageRowId", nullable=false)
-	private int leadMessageRowId;
+	private int leadMessageRowId = -1;
 
 	public MessageActionLogPK() {}
 	

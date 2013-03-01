@@ -130,5 +130,18 @@ public class MessageInboxTest {
 		catch (NoResultException e) {
 			assertTrue("MessageInbox table is empty", true);
 		}
+		
+		// test delete
+		assertTrue(1==service.deleteByRowId(msg2.getRowId()));
+		try {
+			service.getByRowId(msg2.getRowId());
+			fail();
+		}
+		catch (NoResultException e) {}
+		
+		// test duplicate message
+		assertFalse(service.isMessageIdDuplicate("jpatest-smtp-message-id"));
+		assertTrue(service.isMessageIdDuplicate("jpatest-smtp-message-id"));
+		service.purgeMessageIdDuplicate(1);
 	}
 }
