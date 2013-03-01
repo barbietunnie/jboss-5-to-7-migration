@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import jpa.constant.StatusId;
 import jpa.model.MailInbox;
 import jpa.model.MailInboxPK;
 
@@ -47,9 +48,16 @@ public class MailInboxService {
 		}
 	}
 	
-	public List<MailInbox> getAll() {
+	public List<MailInbox> getAll(boolean onlyActive) {
+		String sql = "select t from MailInbox t";
+		if (onlyActive) {
+			sql += " where t.statusId=:statusId ";
+		}
 		try {
-			Query query = em.createQuery("select t from MailInbox t");
+			Query query = em.createQuery(sql);
+			if (onlyActive) {
+				query.setParameter("statusId", StatusId.ACTIVE.getValue());
+			}
 			@SuppressWarnings("unchecked")
 			List<MailInbox> list = query.getResultList();
 			return list;
