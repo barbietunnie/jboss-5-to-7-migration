@@ -1,0 +1,47 @@
+<html>
+<head><title>Java Agent Container - 1</title></head>
+<body bgcolor="#FFFFFF">
+<center>
+  <p><font size="+3">Java Agent Container</font></p>
+  <table border="2" cellspacing="5" cellpadding="2">
+    <tr> 
+      <td valign="top" width="50"><img src="./images/one.gif"></td>
+      <td width="708"> Java Agent Container is an abstract layer that separates 
+        common tasks from applications, thus saves programmers from low level 
+        programming such as threading logic, low level JMS logic, socket logic, 
+        configuration logic, and etc.</td>
+    </tr>
+    <tr> 
+      <td valign="top" height="71" width="50"><img src="images/two.gif" width="50" height="45"></td>
+      <td height="71" width="708">It is xml file driven, all resources are defined 
+        by config.xml. Applications are plug-in classes that are defined in the 
+        config.xml. Resources are loaded at start up time, and are visible to 
+        applications. Requests are accepted by the Container and passed to the 
+        application processors. Application programmers need only to focus on 
+        the business logic.</td>
+    </tr>
+    <tr> 
+      <td valign="top" height="51" width="50"><img src="./images/three.gif"></td>
+      <td height="51" width="708">It uses thread pooling to reduce response time 
+        since the worker thread is already created, started, and running. It is 
+        only waiting for the signal to <b><i>go</i></b>!</td>
+    </tr>
+    <tr> 
+      <td valign="top" width="50"><img src="./images/four.gif"></td>
+      <td width="708">Four general types of applications can be developed and 
+        deployed under the Container: 1) Queue driven applications, 2) Socket 
+        driven applications, 3) pop3/imap driven applications, 4) Applications 
+        that have no driving source</td>
+    </tr>
+    <tr> 
+      <td valign="top" width="50"><img src="./images/five.gif"></td>
+      <td width="708"> It can be used together with other existing frameworks 
+        like spapi, mq wrapper, gapi, qapi, etc.<br>
+        This page represents an test implementation of the Container. Two servers 
+        are running under the Container, one is Queue server that serves queue 
+        messages, another is a simple HTTP server that displays this page and 
+        Agent's runtime <a href="status">status</a>.</td>
+    </tr>
+  </table>
+</center></body>
+</html>

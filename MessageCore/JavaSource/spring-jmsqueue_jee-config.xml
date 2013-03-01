@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<import resource="classpath:spring-jms_tmplt-config.xml"/>
+	
+	<jee:jndi-lookup id="mysqlDataSource" jndi-name="java:jboss/MessageDS" resource-ref="false">
+		 <jee:environment>
+		 	java.naming.factory.initial=org.jboss.as.naming.InitialContextFactory
+		 </jee:environment>
+	</jee:jndi-lookup>
+
+	<jee:jndi-lookup id="MessageDB" jndi-name="java:jboss/EntityPersistenceFactory" 
+		lookup-on-startup="false" expected-type="javax.persistence.EntityManagerFactory"
+		environment-ref="properties" resource-ref="false"/>
+
+    <jee:jndi-lookup id="jmsConnectionFactory" jndi-name="java:/JmsXA" environment-ref="properties" resource-ref="false"/>
+
+    <jee:jndi-lookup id="mailReaderOutput" jndi-name="java:/queue/mailReaderOutput" environment-ref="properties" resource-ref="false"/>
+    <jee:jndi-lookup id="ruleEngineOutput" jndi-name="java:/queue/ruleEngineOutput" environment-ref="properties" resource-ref="false"/>
+    <jee:jndi-lookup id="mailSenderInput" jndi-name="java:/queue/mailSenderInput" environment-ref="properties" resource-ref="false"/>
+    <jee:jndi-lookup id="mailSenderOutput" jndi-name="java:/queue/mailSenderOutput" environment-ref="properties" resource-ref="false"/>
+    <jee:jndi-lookup id="customerCareInput" jndi-name="java:/queue/customerCareInput" environment-ref="properties" resource-ref="false"/>
+    <jee:jndi-lookup id="rmaRequestInput" jndi-name="java:/queue/rmaRequestInput" environment-ref="properties" resource-ref="false"/>
+    <jee:jndi-lookup id="unHandledOutput" jndi-name="java:/queue/unHandledOutput" environment-ref="properties" resource-ref="false"/>
+    <jee:jndi-lookup id="destination" jndi-name="java:/queue/mailSenderInput" environment-ref="properties" resource-ref="false"/>
+
+	<util:properties id="properties" >
+		<prop key="java.naming.factory.initial">org.jboss.as.naming.InitialContextFactory</prop>
+	</util:properties>
+	
+</beans>

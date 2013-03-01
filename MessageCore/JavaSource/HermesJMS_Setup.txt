@@ -1,0 +1,56 @@
+
+HermesJMS: 
+	Embedded HornetQ installations within JBoss AS 7.1 Final
+	
+
+PREMISES
+When I start I can see the AS7 I can see in the log the RemoteConnectionFactory JNDI, this cannot
+be seen in the console:9990 because of mentioned bugs in the earlier comments.
+
+12:47:16,653 INFO  [org.jboss.as.messaging] (pool-4-thread-2) JBAS011601: Bound messaging object to jndi name java:jboss/exported/jms/RemoteConnectionFactory
+
+Then I have setup a JMS Queue with the following configuration:
+<jms-queue name="sample">
+<entry name="jms/queue/sample"/>
+<entry name="java:jboss/exported/jms/queue/sample"/>
+</jms-queue>
+ 
+In summary from a REMOTE PERSPECTIVE: the RemoteConnectionFactory is on 
+java:jboss/exported/jms/RemoteConnectionFactory, the Queue is on java:jboss/exported/jms/queue/sample
+ 
+1) CONFIGURING HermesJMS
+Create a classpath group for HornetQ in HermesJMS
+Only one JAR is needed, is the jboss-client.jar inside the directory bin\client of the JBoss AS 7 directory.
+
+2) Configure a HornetQ session in HermesJMS:
+Class: hermes.JNDIContextFactory
+Loader: HornetQ - the one defined in step #1
+Properties:
+binding=jms/RemoteConnectionFactory
+initialContextFactory=org.jboss.naming.remote.client.InitialContextFactory
+providerURL=remote://localhost:4447
+securityPrincipal=MYUSERNAME
+securityCredentials=MYPASSWORD
+urlPkgPrefixes=org.jboss.naming.remote.client.
+
+3) In the Destionations of the HornetQ session which you are defining as part of step #2, Add a new 
+Desitionation
+Name: jms/queue/sample
+Domain: QUEUE
+
+Now in HermesJMS in the left tree structure you have your Sessions -> Your Session -> Queue which you 
+can double-click to connect to =)
+
+Nice and Happily!
+
+You want to notice that for the binding you set the RemoteConnectionFactory without the 
+java:jboss/exported prefix, and the same goes for the Queue defined, where from 
+java:jboss/exported/jms/queue/sample I stripped away the java:jboss/exported prefix
+
+Also notice that you can define the username/password either via the 
+(securityPrincipal,securityCredentials) properties as above, or either use the "Connection" settings 
+fields (User, Password) at the bottom of the Session Preference page of step#2
+
+Tested with:
+HermesJMS v1.14
+JBoss AS 7.1.1 Final.
