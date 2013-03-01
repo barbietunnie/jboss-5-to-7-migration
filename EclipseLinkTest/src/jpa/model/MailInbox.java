@@ -39,9 +39,13 @@ public class MailInbox extends BaseModel implements java.io.Serializable {
 	@Column(nullable=false, columnDefinition="boolean")
 	private boolean isUseSsl = false;
 	@Column(nullable=true, columnDefinition="Integer")
+	private int numberOfThreads;
+	@Column(nullable=true, columnDefinition="Integer")
 	private Integer maximumRetries = null;
 	@Column(nullable=true, columnDefinition="Integer")
 	private Integer minimumWait = null;
+	@Column(nullable=true, columnDefinition="Integer")
+	private int messageCount;
 	@Column(nullable=true, columnDefinition="Boolean")
 	private Boolean isToPlainText = null;
 	@Column(nullable=true, length=500)
@@ -151,6 +155,14 @@ public class MailInbox extends BaseModel implements java.io.Serializable {
 		this.isUseSsl = isUseSsl;
 	}
 
+	public int getNumberOfThreads() {
+		return numberOfThreads;
+	}
+
+	public void setNumberOfThreads(int numberOfThreads) {
+		this.numberOfThreads = numberOfThreads;
+	}
+
 	public Integer getMaximumRetries() {
 		return maximumRetries;
 	}
@@ -165,6 +177,14 @@ public class MailInbox extends BaseModel implements java.io.Serializable {
 
 	public void setMinimumWait(Integer minimumWait) {
 		this.minimumWait = minimumWait;
+	}
+
+	public int getMessageCount() {
+		return messageCount;
+	}
+
+	public void setMessageCount(int messageCount) {
+		this.messageCount = messageCount;
 	}
 
 	public Boolean getIsToPlainText() {

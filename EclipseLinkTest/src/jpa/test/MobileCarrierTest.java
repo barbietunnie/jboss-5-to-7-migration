@@ -38,7 +38,7 @@ public class MobileCarrierTest {
 	MobileCarrierService service;
 
 	@Test
-	public void userDataService() {
+	public void mobileCarrierService() {
 		MobileCarrier mc1 = null;
 		// test insert
 		try {
