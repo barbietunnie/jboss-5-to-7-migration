@@ -357,7 +357,7 @@ public class MailboxTable extends CreateTableBase
 		ps.execute();
 		
 		ps.setString(1, "jackwng");
-		ps.setString(2, "jackwng01");
+		ps.setString(2, "jackwng");
 		ps.setString(3, "pop.gmail.com");
 		ps.setInt(4, 995);
 		ps.setString(5, MailProtocol.POP3);
@@ -383,7 +383,7 @@ public class MailboxTable extends CreateTableBase
 		ps.execute();
 		
 		ps.setString(1, "jwang");
-		ps.setString(2, "jackwng01");
+		ps.setString(2, "jwang");
 		ps.setString(3, "pop-server.nc.rr.com");
 		ps.setInt(4, -1);
 		ps.setString(5, MailProtocol.POP3);
@@ -399,7 +399,7 @@ public class MailboxTable extends CreateTableBase
 		ps.execute();
 		
 		ps.setString(1, "df153");
-		ps.setString(2, "jackwng01");
+		ps.setString(2, "df153");
 		ps.setString(3, "imap.aim.com");
 		ps.setInt(4, -1);
 		ps.setString(5, MailProtocol.IMAP);
