@@ -1,12 +1,16 @@
 package jpa.service.message;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
+import jpa.model.message.MessageIdDuplicate;
 import jpa.model.message.MessageInbox;
 import jpa.service.ClientDataService;
 import jpa.service.CustomerDataService;
@@ -254,6 +258,67 @@ public class MessageInboxService {
 		}
 	}
 
+	/**
+	 * check if the message received is a duplicate.
+	 * @param smtpMessageId to check.
+	 * @return true if the smtpMessageId exists.
+	 */
+	public boolean isMessageIdDuplicate(String smtpMessageId) {
+		MessageIdDuplicate mdup = new MessageIdDuplicate();
+		mdup.setMessageId(smtpMessageId);
+		mdup.setAddTime(new java.sql.Timestamp(System.currentTimeMillis()));
+		try {
+			em.persist(mdup);
+			em.flush();
+			return false;
+		}
+		catch (EntityExistsException e) { // thrown from Hibernate
+			return true;
+		}
+		catch (PersistenceException e) { // thrown from EclipseLink
+			return true;
+		}
+		finally {
+		}
+	}
+
+	public boolean isMessageIdExist(String smtpMessageId) {
+		String sql = "select t from MessageIdDuplicate t where t.messageId=:messageId ";
+		try {
+			Query query = em.createQuery(sql);
+			query.setParameter("messageId", smtpMessageId);
+			query.getSingleResult();
+			return true;
+		}
+		catch (NoResultException e) {
+			return false;
+		}
+		finally {
+		}
+	}
+
+	public synchronized int purgeMessageIdDuplicate(int hours) {
+		logger.info("purge records older than " + hours + " hours...");
+		// prepare for delete of aged records
+		String sql =
+			"delete from  MessageIdDuplicate t "
+			+ " where t.addTime < :addTime ";
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.HOUR, -hours);
+		Timestamp go_back=new Timestamp(calendar.getTimeInMillis());
+
+		try {
+			Query query = em.createQuery(sql);
+			query.setParameter("addTime", go_back);
+			int rows = query.executeUpdate();
+			logger.info("number of records purged: "+rows);
+			return rows;
+		}
+		finally {
+		}
+	}
+
 	public void delete(MessageInbox msgInbox) {
 		if (msgInbox == null) return;
 		try {
@@ -268,7 +333,7 @@ public class MessageInboxService {
 				"delete from MessageInbox t " +
 				" where t.rowId=:rowId ";
 		try {
-			Query query = em.createNativeQuery(sql);
+			Query query = em.createQuery(sql);
 			query.setParameter("rowId", rowId);
 			int rows = query.executeUpdate();
 			return rows;
