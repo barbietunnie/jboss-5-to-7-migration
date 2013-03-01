@@ -28,13 +28,7 @@ public enum MailInboxEnum {
 	jwang("jwang","jwang","localhost",-1,MailProtocol.POP3, "local pop3 Server",StatusId.INACTIVE,
 			true,4,false,2,5,8,-1,false,"legacytojava.com,jbatch.com",true,true,true,24),
 	twang("twang","twang","localhost",-1,MailProtocol.POP3, "local pop3 Server",StatusId.INACTIVE,
-			true,4,false,2,5,8,-1,false,"legacytojava.com,jbatch.com",true,true,true,24),
-	jackwng("jackwng","jackwng01","pop.gmail.com",995,MailProtocol.POP3, "GMail Secure Server",StatusId.INACTIVE,
-			false,4,true,2,5,8,-1,false,"legacytojava.com,emailsphere.com",true,true,true,24),
-	jwang_rr("jwang","jackwng01","pop-server.nc.rr.com",-1,MailProtocol.POP3, "Road Runner Server",StatusId.INACTIVE,
-			false,4,false,2,5,6,-1,false,"legacytojava.com,emailsphere.com",true,true,true,24),
-	df153("df153","jackwng01","imap.aim.com",-1,MailProtocol.IMAP, "AIM Mail Server",StatusId.INACTIVE,
-			false,10,false,2,5,10,-1,false,"legacytojava.com,emailsphere.com",true,true,true,24);
+			true,4,false,2,5,8,-1,false,"legacytojava.com,jbatch.com",true,true,true,24);
 
 	private String userId;
 	private String userPswd;
