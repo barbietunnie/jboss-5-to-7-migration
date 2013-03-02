@@ -1,4 +1,4 @@
-package jpa.test;
+package jpa.test.message;
 
 import static org.junit.Assert.*;
 
@@ -30,16 +30,17 @@ public class BounceAddressFinderTest {
 
 	@Test
 	public void findBounceAddr1() {
-		findBounceAddress("data/bounceBodySamples.txt");
+		findBounceAddress("jpa/test/data/bounceBodySamples.txt");
 	}
 	
 	@Test
 	public void findBounceAddr2() {
-		findBounceAddress("data/bounceBodySamples2.txt");
+		findBounceAddress("jpa/test/data/bounceBodySamples2.txt");
 	}
 
 	private void findBounceAddress(String filePath) {
-		InputStream is = getClass().getResourceAsStream(filePath);
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		InputStream is = loader.getResourceAsStream(filePath);
 		if (is == null) {
 			logger.warn("InputStream not found.");
 			return;

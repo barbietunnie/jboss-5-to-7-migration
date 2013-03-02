@@ -1,13 +1,10 @@
-package jpa.test;
+package jpa.test.message;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 
 import javax.persistence.NoResultException;
@@ -27,6 +24,7 @@ import jpa.service.message.MessageInboxService;
 import jpa.service.message.MessageStreamService;
 import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
+import jpa.util.TestUtil;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -142,7 +140,7 @@ public class MessageStreamTest {
 		adr1.setMsgSubject("test jpa subject");
 		adr1.setFromAddrRowId(from.getRowId());
 		adr1.setToAddrRowId(to.getRowId());
-		adr1.setMsgStream(getBouncedMail());
+		adr1.setMsgStream(TestUtil.loadFromFile("BouncedMail_1.txt"));;
 		service.insert(adr1);
 		
 		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
@@ -154,28 +152,8 @@ public class MessageStreamTest {
 			adr2.setMessageInbox(inbox2);
 			adr2.setMsgSubject("jpa test");
 			adr2.setFromAddrRowId(from.getRowId());
-			adr2.setMsgStream(getBouncedMail());
+			adr2.setMsgStream(TestUtil.loadFromFile("BouncedMail_1.txt"));
 			service.insert(adr2);
-		}
-	}
-
-	private byte[] getBouncedMail() throws IOException {
-		InputStream is = getClass().getResourceAsStream("data/BouncedMail_1.txt");
-		BufferedInputStream bis = new BufferedInputStream(is);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] bytes = new byte[512];
-		int len = 0;
-		try { 
-			while ((len = bis.read(bytes, 0, bytes.length)) > 0) {
-				baos.write(bytes, 0, len);
-			}
-			byte[] mailStream = baos.toByteArray();
-			baos.close();
-			bis.close();
-			return mailStream;
-		}
-		catch (IOException e) {
-			throw e;
 		}
 	}
 }

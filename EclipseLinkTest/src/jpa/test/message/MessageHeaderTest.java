@@ -1,30 +1,29 @@
-package jpa.test;
+package jpa.test.message;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.sql.Timestamp;
 
-import javax.mail.Part;
 import javax.persistence.NoResultException;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
 import jpa.constant.MsgDirectionCode;
+import jpa.constant.XHeaderName;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
 import jpa.model.EmailAddress;
-import jpa.model.message.MessageAttachment;
-import jpa.model.message.MessageAttachmentPK;
+import jpa.model.message.MessageHeader;
+import jpa.model.message.MessageHeaderPK;
 import jpa.model.message.MessageInbox;
 import jpa.model.rule.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddressService;
-import jpa.service.message.MessageAttachmentService;
+import jpa.service.message.MessageHeaderService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
-import jpa.util.TestUtil;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,14 +40,14 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageAttachmentTest {
+public class MessageHeaderTest {
 
 	@BeforeClass
-	public static void MessageAttachmentPrepare() {
+	public static void MessageHeaderPrepare() {
 	}
 
 	@Autowired
-	MessageAttachmentService service;
+	MessageHeaderService service;
 	@Autowired
 	MessageInboxService inboxService;
 	@Autowired
@@ -98,70 +97,64 @@ public class MessageAttachmentTest {
 		inboxService.insert(inbox1);
 	}
 	
-	private MessageAttachment atc1;
-	private MessageAttachment atc2;
-	private MessageAttachment atc3;
+	private MessageHeader hdr1;
+	private MessageHeader hdr2;
+	private MessageHeader hdr3;
 
 	@Test
-	public void messageAttachmentService() {
-		insertMessageAttachments();
-		MessageAttachment atc11 = service.getByRowId(atc1.getRowId());
+	public void messageHeaderService() {
+		insertMessageHeaders();
+		MessageHeader hdr11 = service.getByRowId(hdr1.getRowId());
 		
-		System.out.println(StringUtil.prettyPrint(atc11,3));
+		System.out.println(StringUtil.prettyPrint(hdr11,2));
 		
-		MessageAttachment atc12 = service.getByPrimaryKey(atc11.getMessageAttachmentPK());
-		assertTrue(atc11.equals(atc12));
+		MessageHeader hdr12 = service.getByPrimaryKey(hdr11.getMessageHeaderPK());
+		assertTrue(hdr11.equals(hdr12));
 		
 		// test update
-		atc2.setUpdtUserId("jpa test");
-		service.update(atc2);
-		MessageAttachment hdr22 = service.getByRowId(atc2.getRowId());
+		hdr2.setUpdtUserId("jpa test");
+		service.update(hdr2);
+		MessageHeader hdr22 = service.getByRowId(hdr2.getRowId());
 		assertTrue("jpa test".equals(hdr22.getUpdtUserId()));
 		
 		// test delete
-		service.delete(atc11);
+		service.delete(hdr11);
 		try {
-			service.getByRowId(atc11.getRowId());
+			service.getByRowId(hdr11.getRowId());
 			fail();
 		}
 		catch (NoResultException e) {}
 		
-		assertTrue(1==service.deleteByRowId(atc2.getRowId()));
+		assertTrue(1==service.deleteByRowId(hdr2.getRowId()));
 		assertTrue(1==service.deleteByMsgInboxId(inbox1.getRowId()));
 		
-		insertMessageAttachments();
-		assertTrue(1==service.deleteByPrimaryKey(atc1.getMessageAttachmentPK()));
+		insertMessageHeaders();
+		assertTrue(1==service.deleteByPrimaryKey(hdr1.getMessageHeaderPK()));
 		assertTrue(2==service.deleteByMsgInboxId(inbox1.getRowId()));
 	}
 	
-	private void insertMessageAttachments() {
+	private void insertMessageHeaders() {
 		// test insert
-		atc1 = new MessageAttachment();
-		MessageAttachmentPK pk1 = new MessageAttachmentPK(inbox1,1,1);
-		atc1.setMessageAttachmentPK(pk1);
-		atc1.setAttachmentDisp(Part.ATTACHMENT);
-		atc1.setAttachmentName("test.txt");
-		atc1.setAttachmentType("text/plain; name=\"test.txt\"");
-		atc1.setAttachmentValue("Test blob content goes here.".getBytes());
-		service.insert(atc1);
+		hdr1 = new MessageHeader();
+		MessageHeaderPK pk1 = new MessageHeaderPK(inbox1,1);
+		hdr1.setMessageHeaderPK(pk1);
+		hdr1.setHeaderName(XHeaderName.MAILER.getValue());
+		hdr1.setHeaderValue("Mailserder");
+		service.insert(hdr1);
 		
-		atc2 = new MessageAttachment();
-		MessageAttachmentPK pk2 = new MessageAttachmentPK(inbox1,1,2);
-		atc2.setMessageAttachmentPK(pk2);
-		atc2.setAttachmentDisp(Part.INLINE);
-		atc2.setAttachmentName("one.gif");
-		atc2.setAttachmentType("image/gif; name=one.gif");
-		atc2.setAttachmentValue(TestUtil.loadFromFile("one.gif"));
-		service.insert(atc2);
+		hdr2 = new MessageHeader();
+		MessageHeaderPK pk2 = new MessageHeaderPK(inbox1,2);
+		hdr2.setMessageHeaderPK(pk2);
+		hdr2.setHeaderName(XHeaderName.RETURN_PATH.getValue());
+		hdr2.setHeaderValue("demolist1@localhost");
+		service.insert(hdr2);
 		
-		atc3 = new MessageAttachment();
-		MessageAttachmentPK pk3 = new MessageAttachmentPK(inbox1,1,3);
-		atc3.setMessageAttachmentPK(pk3);
-		atc3.setAttachmentDisp(Part.ATTACHMENT);
-		atc3.setAttachmentName("jndi.bin");
-		atc3.setAttachmentType("application/octet-stream; name=\"jndi.bin\"");
-		atc3.setAttachmentValue(TestUtil.loadFromFile("jndi.bin"));
-		service.insert(atc3);
+		hdr3 = new MessageHeader();
+		MessageHeaderPK pk3 = new MessageHeaderPK(inbox1,3);
+		hdr3.setMessageHeaderPK(pk3);
+		hdr3.setHeaderName(XHeaderName.CLIENT_ID.getValue());
+		hdr3.setHeaderValue(Constants.DEFAULT_CLIENTID);
+		service.insert(hdr3);
 		
 		assertTrue(service.getByMsgInboxId(inbox1.getRowId()).size()==3);		
 	}
