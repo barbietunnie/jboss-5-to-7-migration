@@ -44,7 +44,7 @@ public class MessageInboxBoTest {
 	MessageInboxBo msgInboxBo;
 	
 	@Test
-	public void testMessageBean() throws MessagingException, IOException {
+	public void testMessageInboxBo() throws MessagingException, IOException {
 		MessageBean msgBean1 = testReadFromDatabase(1);
 		assertNotNull(msgBean1);
 		// parse the message bean to set rule name

@@ -3,6 +3,7 @@ package jpa.service;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -29,7 +30,7 @@ public class ClientDataService {
 			Query query = em.createQuery("select t from ClientData t where t.clientId = :clientId");
 			query.setParameter("clientId", clientId);
 			ClientData client = (ClientData) query.getSingleResult();
-			//em.lock(client, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			em.lock(client, LockModeType.OPTIMISTIC);
 			return client;
 		}
 		finally {
@@ -41,7 +42,7 @@ public class ClientDataService {
 			Query query = em.createQuery("select t from ClientData t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			ClientData client = (ClientData) query.getSingleResult();
-			//em.lock(client, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			em.lock(client, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return client;
 		}
 		finally {
