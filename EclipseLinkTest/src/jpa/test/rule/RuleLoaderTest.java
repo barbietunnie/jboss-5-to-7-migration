@@ -1,4 +1,4 @@
-package jpa.test;
+package jpa.test.rule;
 
 import javax.annotation.Resource;
 

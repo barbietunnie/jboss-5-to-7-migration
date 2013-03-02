@@ -1,9 +1,11 @@
-package jpa.test;
+package jpa.test.message;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 
@@ -13,14 +15,15 @@ import jpa.constant.MsgDirectionCode;
 import jpa.data.preload.RuleNameEnum;
 import jpa.model.ClientData;
 import jpa.model.EmailAddress;
-import jpa.model.message.MessageActionLog;
-import jpa.model.message.MessageActionLogPK;
+import jpa.model.MailingList;
 import jpa.model.message.MessageInbox;
+import jpa.model.message.MessageUnsubComment;
 import jpa.model.rule.RuleLogic;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddressService;
-import jpa.service.message.MessageActionLogService;
+import jpa.service.MailingListService;
 import jpa.service.message.MessageInboxService;
+import jpa.service.message.MessageUnsubCommentService;
 import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
 
@@ -39,14 +42,14 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageActionLogTest {
+public class MessageUnsubCommentTest {
 
 	@BeforeClass
-	public static void MessageActionLogPrepare() {
+	public static void MessageUnsubCommentPrepare() {
 	}
 
 	@Autowired
-	MessageActionLogService service;
+	MessageUnsubCommentService service;
 	@Autowired
 	MessageInboxService inboxService;
 	@Autowired
@@ -55,10 +58,13 @@ public class MessageActionLogTest {
 	ClientDataService clientService;
 	@Autowired
 	RuleLogicService logicService;
+	@Autowired
+	MailingListService listService;
 
 	private MessageInbox inbox1;
 	private EmailAddress from;
 	private EmailAddress to;
+	private MailingList mlist;
 
 	@Before
 	public void prepare() {
@@ -94,62 +100,62 @@ public class MessageActionLogTest {
 		inbox1.setBodyContentType("text/plain");
 		inbox1.setMsgBody("Test Message Body");
 		inboxService.insert(inbox1);
+		
+		List<MailingList> mlists=listService.getAll(true);
+		mlist=mlists.get(0);
 	}
 	
-	private MessageActionLog log1;
-	private MessageActionLog log2;
+	private MessageUnsubComment adr1;
+	private MessageUnsubComment adr2;
 
 	@Test
-	public void messageActionLogService() {
-		insertActionLogs();
-		MessageActionLog log11 = service.getByRowId(log1.getRowId());
+	public void messageUnsubCommentService() throws IOException {
+		insertUnsubComments();
+		MessageUnsubComment adr11 = service.getByRowId(adr1.getRowId());
 		
-		System.out.println(StringUtil.prettyPrint(log11,3));
+		System.out.println(StringUtil.prettyPrint(adr11,2));
 		
-		MessageActionLog log12 = service.getByPrimaryKey(log11.getMessageActionLogPK());
-		assertTrue(log11.equals(log12));
+		MessageUnsubComment adr12 = service.getByMsgInboxId(inbox1.getRowId());
+		assertTrue(adr11.equals(adr12));
+		
+		assertTrue(2==service.getByFromAddress(from.getAddress()).size());
 		
 		// test update
-		log2.setUpdtUserId("jpa test");
-		service.update(log2);
-		MessageActionLog adr22 = service.getByRowId(log2.getRowId());
+		adr2.setUpdtUserId("jpa test");
+		service.update(adr2);
+		MessageUnsubComment adr22 = service.getByRowId(adr2.getRowId());
 		assertTrue("jpa test".equals(adr22.getUpdtUserId()));
 		
-		assertTrue(1==service.getByLeadMsgId(inbox1.getRowId()).size());
-		
 		// test delete
-		service.delete(log11);
+		service.delete(adr11);
 		try {
-			service.getByRowId(log11.getRowId());
+			service.getByRowId(adr11.getRowId());
 			fail();
 		}
 		catch (NoResultException e) {}
 		
-		assertTrue(1==service.deleteByRowId(log2.getRowId()));
-		assertTrue(0==service.deleteByLeadMsgId(log2.getMessageActionLogPK().getLeadMessageRowId()));
+		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
 		
-		insertActionLogs();
-		assertTrue(1==service.deleteByPrimaryKey(log1.getMessageActionLogPK()));
+		insertUnsubComments();
+		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
 		assertTrue(1==service.deleteByMsgInboxId(inbox1.getRowId()));
 	}
 	
-	private void insertActionLogs() {
+	private void insertUnsubComments() throws IOException {
 		// test insert
-		log1 = new MessageActionLog();
-		MessageActionLogPK pk1 = new MessageActionLogPK(inbox1, inbox1.getLeadMessageRowId());
-		log1.setMessageActionLogPK(pk1);
-		log1.setActionService(RuleNameEnum.SEND_MAIL.name());
-		log1.setParameters("sent");
-		service.insert(log1);
-
-		log2 = new MessageActionLog();
-		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
-		MessageActionLogPK pk2 = new MessageActionLogPK(inbox1,inbox2.getRowId());
-		log2.setMessageActionLogPK(pk2);
-		log2.setActionService(RuleNameEnum.CSR_REPLY.name());
-		log2.setParameters("rowid=122");
-		service.insert(log2);
+		adr1 = new MessageUnsubComment();
+		adr1.setMessageInbox(inbox1);
+		adr1.setComments("jpa test unsub comment 1");
+		adr1.setEmailAddrRowId(from.getRowId());
+		adr1.setMailingListRowId(mlist.getRowId());
+		service.insert(adr1);
 		
-		assertTrue(2==service.getByMsgInboxId(inbox1.getRowId()).size());
+		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
+		adr2 = new MessageUnsubComment();
+		adr2.setMessageInbox(inbox2);
+		adr2.setComments("jpa test unsub comment 2");
+		adr2.setEmailAddrRowId(from.getRowId());
+		adr2.setMailingListRowId(mlist.getRowId());
+		service.insert(adr2);
 	}
 }

@@ -1,14 +1,11 @@
-package jpa.test;
+package jpa.test.message;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -18,6 +15,7 @@ import jpa.message.BodypartUtil;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
 import jpa.util.StringUtil;
+import jpa.util.TestUtil;
 
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
@@ -43,8 +41,8 @@ public class BodyPartUtilTest {
 
 	@Test
 	public void testBodyPartUtil() throws MessagingException, IOException {
-		String filePath = "data/BouncedMail_1.txt";
-		MessageBean msgBean = testReadFromFile(filePath);
+		String fileName = "BouncedMail_1.txt";
+		MessageBean msgBean = testReadFromFile(fileName);
 		assertNotNull(msgBean);
 
 		BodypartBean bodyBean1 = BodypartUtil.retrieveDlvrStatus(msgBean, 0);
@@ -70,29 +68,9 @@ public class BodyPartUtilTest {
 		assertTrue(msgBean.equals(bodyBeans2.get(0)));
 	}
 
-	private MessageBean testReadFromFile(String filePath) throws MessagingException, IOException {
-		byte[] mailStream = readFromFile(filePath);
+	private MessageBean testReadFromFile(String fileName) throws MessagingException, IOException {
+		byte[] mailStream = TestUtil.loadFromFile(fileName);
 		MessageBean msgBean = MessageBeanUtil.createBeanFromStream(mailStream);
 		return msgBean;
-	}
-	
-	private byte[] readFromFile(String filePath) throws IOException {
-		InputStream is = getClass().getResourceAsStream(filePath);
-		BufferedInputStream bis = new BufferedInputStream(is);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] bytes = new byte[512];
-		int len = 0;
-		try { 
-			while ((len = bis.read(bytes, 0, bytes.length)) > 0) {
-				baos.write(bytes, 0, len);
-			}
-			byte[] mailStream = baos.toByteArray();
-			baos.close();
-			bis.close();
-			return mailStream;
-		}
-		catch (IOException e) {
-			throw e;
-		}
-	}
+	}	
 }
