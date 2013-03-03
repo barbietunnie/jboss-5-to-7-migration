@@ -3,6 +3,8 @@ package jpa.variable;
 import java.text.ParseException;
 import java.util.Map;
 
+import jpa.exception.TemplateException;
+
 import org.apache.log4j.Logger;
 
 /**
