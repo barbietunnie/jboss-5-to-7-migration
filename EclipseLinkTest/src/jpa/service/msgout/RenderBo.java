@@ -442,7 +442,7 @@ public class RenderBo {
 		
 		vreq = new RenderVariableVo(
 			EmailAddrType.FROM_ADDR.getValue(),
-			msgSourceVo.getFromAddress(),
+			msgSourceVo.getFromAddress().getAddress(),
 			null,
 			VariableType.ADDRESS, 
 			CodeType.YES_CODE.getValue(),
@@ -452,7 +452,7 @@ public class RenderBo {
 		if (msgSourceVo.getReplyToAddress()!=null) {
 			vreq = new RenderVariableVo(
 				EmailAddrType.REPLYTO_ADDR.getValue(),
-				msgSourceVo.getReplyToAddress(),
+				msgSourceVo.getReplyToAddress().getAddress(),
 				null,
 				VariableType.ADDRESS, 
 				CodeType.YES_CODE.getValue(),
@@ -529,7 +529,7 @@ public class RenderBo {
 				req.getGlobalVariablePK().getVariableName(),
 				req.getVariableValue(), 
 				req.getVariableFormat(), 
-				VariableType.valueOf(req.getVariableType()), 
+				VariableType.getByValue(req.getVariableType()), 
 				req.getAllowOverride(), 
 				req.isRequired()
 				);
@@ -546,7 +546,7 @@ public class RenderBo {
 				req.getClientVariablePK().getVariableName(),
 				req.getVariableValue(), 
 				req.getVariableFormat(), 
-				VariableType.valueOf(req.getVariableType()), 
+				VariableType.getByValue(req.getVariableType()), 
 				req.getAllowOverride(), 
 				req.isRequired()
 				);
@@ -564,7 +564,7 @@ public class RenderBo {
 				req.getTemplateVariablePK().getVariableName(),
 				req.getVariableValue(), 
 				req.getVariableFormat(), 
-				VariableType.valueOf(req.getVariableType()), 
+				VariableType.getByValue(req.getVariableType()), 
 				req.getAllowOverride(), 
 				req.isRequired()
 				);

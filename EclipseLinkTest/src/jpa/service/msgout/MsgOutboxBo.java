@@ -92,16 +92,33 @@ public class MsgOutboxBo {
 	
 	public static void main(String[] args) {
 		MsgOutboxBo msgOutboxBo = (MsgOutboxBo) SpringUtil.getAppContext().getBean("msgOutboxBo");
-		int renderId = 2;
+		int renderId = 1;
+		SpringUtil.startTransaction();
 		try {
 			MessageBean bean = msgOutboxBo.getMessageByPK(renderId);
 			System.out.println("MessageBean retrieved:\n" + bean);
+			
+			msgOutboxBo.getAndSave(renderId);
+
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		finally {
+			SpringUtil.commitTransaction();
+		}
 	}
 	
+	
+	void getAndSave(int renderId) throws AddressException, ParseException, TemplateException {
+		RenderRequest renderRequest = getRenderRequestByPK(renderId);
+		if (renderRequest == null) { // should never happen
+			throw new DataValidationException("RenderRequest is null for RenderId: " + renderId);
+		}
+		RenderResponse rsp = renderBo.getRenderedEmail(renderRequest);
+		saveRenderData(rsp);
+	}
+
 	/**
 	 * save Message Source Id's and RenderVariables into MsgRendered tables
 	 * 
@@ -386,7 +403,7 @@ public class MsgOutboxBo {
 						varVo.getRenderVariablePK().getVariableName(),
 						varVo.getVariableValue(),
 						varVo.getVariableFormat(),
-						VariableType.valueOf(varVo.getVariableType()), 
+						VariableType.getByValue(varVo.getVariableType()), 
 						CodeType.YES_CODE.getValue(), // allow override
 						Boolean.FALSE // required
 						);
@@ -416,7 +433,7 @@ public class MsgOutboxBo {
 //						varVo.getRenderVariablePK().getVariableName(),
 //						value,
 //						varVo.getVariableFormat(),
-//						VariableType.valueOf(varVo.getVariableType()), 
+//						VariableType.getByValue(varVo.getVariableType()), 
 //						CodeType.YES_CODE.getValue(), // allow override
 //						Boolean.FALSE // required
 //						);

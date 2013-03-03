@@ -21,7 +21,7 @@ public class RenderVariableVo implements Serializable {
 	final static String LF = System.getProperty("line.separator", "\n");
 
 	private final String variableName;
-	private final Object variableValue;
+	private Object variableValue;
 	// Data Type: T - Text, N - Numeric, D - Date time.
 	private final VariableType variableType;
 	// Data Format, used by Numeric and Date time data types.
@@ -118,8 +118,11 @@ public class RenderVariableVo implements Serializable {
 							+ variableValue.getClass().getName() + ", for " + variableName);
 				}
 				if (variableValue instanceof String) {
+					if ("System".equalsIgnoreCase((String)variableValue)) {
+						this.variableValue = fmt.format(new Date());
+					}
 					try {
-						fmt.parse((String) variableValue);
+						fmt.parse((String) this.variableValue);
 					}
 					catch (ParseException e) {
 						throw new IllegalArgumentException("Invalid DateTime Value: " + variableValue
@@ -145,7 +148,7 @@ public class RenderVariableVo implements Serializable {
 				}
 			}
 		}
-		else if (VariableType.TEXT.equals(variableType)) {
+		else if (VariableType.TEXT.equals(variableType) || VariableType.X_HEADER.equals(variableType)) {
 			if (variableValue != null) {
 				if (!(variableValue instanceof String)) {
 					throw new IllegalArgumentException("Invalid Value Type: "
