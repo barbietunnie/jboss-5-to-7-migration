@@ -15,4 +15,13 @@ public enum MailServerType {
 	public String getValue() {
 		return value;
 	}
-}
+	
+	public static MailServerType getByValue(String value) {
+		for (MailServerType t : MailServerType.values()) {
+			if (t.getValue().equalsIgnoreCase(value)) {
+				return t;
+			}
+		}
+		return MailServerType.SMTP; // default to SMTP
+	}
+ }

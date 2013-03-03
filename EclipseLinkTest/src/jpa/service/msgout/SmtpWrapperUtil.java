@@ -105,7 +105,7 @@ public class SmtpWrapperUtil {
 	
 	public static SmtpServerService getSmtpServerService() {
 		if (smtpServerDao == null) {
-			smtpServerDao = (SmtpServerService) SpringUtil.getAppContext().getBean("smtpServerDService");
+			smtpServerDao = (SmtpServerService) SpringUtil.getAppContext().getBean("smtpServerService");
 		}
 		return smtpServerDao;
 	}

@@ -89,7 +89,7 @@ public class MailProcessor {
 		msgBean.setIsReceived(true);
 		
 		// mailbox carrierCode
-		msgBean.setCarrierCode(CarrierCode.valueOf(mailBoxVo.getCarrierCode()));
+		msgBean.setCarrierCode(CarrierCode.getByValue(mailBoxVo.getCarrierCode()));
 		// internal mail only flag
 		msgBean.setInternalOnly(mailBoxVo.getIsInternalOnly());
 		// mailbox SSL flag

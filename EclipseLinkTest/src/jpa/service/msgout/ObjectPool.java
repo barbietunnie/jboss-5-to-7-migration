@@ -125,7 +125,7 @@ public class ObjectPool implements java.io.Serializable {
 	public ObjectPool(SmtpServer vo, int _dist) {
 		this.poolItemName = vo.getServerName();
 		name = poolItemName;
-		type = MailServerType.valueOf(vo.getServerType());
+		type = MailServerType.getByValue(vo.getServerType());
 		distribution = _dist;
 		maxConns = vo.getNumberOfThreads();
 

@@ -89,7 +89,7 @@ public final class SmtpConnection implements java.io.Serializable {
 			protocol = MailServerType.SMTPS;
 		}
 		else {
-			if (vo.getIsUseAuth()) {
+			if (vo.getIsUseAuth()!=null && vo.getIsUseAuth()) {
 				sys_props.put("mail.smtp.auth", "true");
 			}
 			protocol = MailServerType.SMTP;
