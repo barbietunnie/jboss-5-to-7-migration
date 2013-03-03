@@ -34,16 +34,16 @@ import jpa.model.message.MessageInbox;
 import jpa.model.message.MessageStream;
 import jpa.service.ClientDataService;
 import jpa.service.EmailAddressService;
-import jpa.service.mailbox.MessageInboxBo;
 import jpa.service.message.MessageDeliveryStatusService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.message.MessageParser;
 import jpa.service.message.MessageStreamService;
+import jpa.service.msgin.MessageInboxBo;
 import jpa.util.EmailAddrUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * process queue messages handed over by QueueListener.
@@ -57,16 +57,22 @@ public abstract class MailSenderBase {
 	protected boolean debugSession = false;
 	protected ClientData clientVo = null;
 
-	protected MessageInboxBo msgInboxBo = null;
-	protected MessageInboxService msgInboxDao = null;
-	protected MsgOutboxBo msgOutboxBo = null;
-	protected MessageDeliveryStatusService deliveryStatusDao = null;
-	protected EmailAddressService emailAddrDao = null;
-	protected MessageStreamService msgStreamDao = null;
-	protected ClientDataService clientService = null;
-	
-	private AbstractApplicationContext factory;
-	private MessageParser parser = null;
+	@Autowired
+	protected MessageInboxBo msgInboxBo;
+	@Autowired
+	protected MessageInboxService msgInboxDao;
+	@Autowired
+	protected MsgOutboxBo msgOutboxBo;
+	@Autowired
+	protected MessageDeliveryStatusService deliveryStatusDao;
+	@Autowired
+	protected EmailAddressService emailAddrDao;
+	@Autowired
+	protected MessageStreamService msgStreamDao;
+	@Autowired
+	protected ClientDataService clientService;
+	@Autowired
+	private MessageParser parser;
 
 	//private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	protected static final String LF = System.getProperty("line.separator", "\n");
@@ -76,19 +82,6 @@ public abstract class MailSenderBase {
 			logger.debug("Entering constructor...");
 	}
 	
-	protected abstract AbstractApplicationContext loadFactory();
-
-	protected void loadBosAndDaos() {
-		factory = loadFactory();
-		msgInboxBo = (MessageInboxBo) factory.getBean("messageInboxBo");
-		msgOutboxBo = (MsgOutboxBo) factory.getBean("msgOutboxBo");
-		msgInboxDao = (MessageInboxService) factory.getBean("messageInboxService");
-		deliveryStatusDao = (MessageDeliveryStatusService) factory.getBean("messageDeliveryStatusService");
-		emailAddrDao = (EmailAddressService) factory.getBean("emailAddressService");
-		msgStreamDao =  (MessageStreamService) factory.getBean("messageStreamService");
-		clientService =  (ClientDataService) factory.getBean("clientDataService");
-	}
-
 	/**
 	 * send a message off and update delivery status and message tables.
 	 * 
@@ -116,7 +109,7 @@ public abstract class MailSenderBase {
 			clientVo = clientService.getByClientId(msgBean.getClientId());
 		}
 		catch (NoResultException e) {
-			throw new DataValidationException("ClientId (" + msgBean.getClientId() + ")not found.");
+			throw new DataValidationException("ClientId (" + msgBean.getClientId() + ") not found.");
 		}
 		msgBean.setIsReceived(false); // out going message
 		if (msgBean.getEmBedEmailId() == null) { // not provided by calling program
@@ -135,7 +128,7 @@ public abstract class MailSenderBase {
 			}
 			String recipient = EmailAddrUtil.removeDisplayName(addrs[0].toString());
 			if (StringUtils.isBlank(clientVo.getVerpInboxName())) {
-				throw new DataValidationException("VERP inbox name is blank in Client table.");
+				throw new DataValidationException("VERP inbox name is blank in ClientData table.");
 			}
 			String left = clientVo.getVerpInboxName() + "-" + emailId + "-"
 					+ recipient.replaceAll("@", "=");
@@ -147,7 +140,7 @@ public abstract class MailSenderBase {
 			// set List-Unsubscribe VERP header
 			if (StringUtils.isNotBlank(msgBean.getMailingListId())) {
 				if (StringUtils.isBlank(clientVo.getVerpRemoveInbox())) {
-					throw new DataValidationException("VERP remove inbox is blank in Client table.");
+					throw new DataValidationException("VERP remove inbox is blank in ClientData table.");
 				}
 				left = clientVo.getVerpRemoveInbox() + "-" + msgBean.getMailingListId() + "-"
 						+ recipient.replaceAll("@", "=");
@@ -170,7 +163,7 @@ public abstract class MailSenderBase {
 		}
 		catch (SendFailedException sfex) {
 			// failed to send the message to certain recipients
-			logger.error("SendFailedException caught: " + sfex);
+			logger.error("SendFailedException caught: ", sfex);
 			updtDlvrStatAndLoopback(msgBean, sfex, errors);
 			if (errors.containsKey("validSent"))
 				sendDeliveryReport(msgBean);
@@ -248,7 +241,7 @@ public abstract class MailSenderBase {
 		}
 		msgBean.setUseSecureServer(isSecure);
 		
-		//String[] ruleName = mimeMsg.getHeader(XHEADER_RULE_NAME);
+		//String[] ruleName = mimeMsg.getHeader(RULE_NAME);
 		//if (ruleName != null && ruleName.length > 0) {
 		//	msgBean.setRuleName(ruleName[0]);
 		//}
@@ -525,7 +518,7 @@ public abstract class MailSenderBase {
 			logger.error("updateMsgStatus() - MsgInbox record not found for MsgId: " + msgId);
 			return 0;
 		}
-		Timestamp ts = new Timestamp(new java.util.Date().getTime());
+		Timestamp ts = new Timestamp(System.currentTimeMillis());
 		msgInboxVo.setStatusId(MsgStatusCode.DELIVERED.getValue());
 		msgInboxVo.setDeliveryTime(ts);
 		msgInboxVo.setUpdtTime(ts);
@@ -572,7 +565,7 @@ public abstract class MailSenderBase {
 					+ loopBackBean + LF + "---->");
 		}
 		// use MessageProcessorBo to invoke rule engine
-		getMessageParser().parse(loopBackBean);
+		parser.parse(loopBackBean);
 		// use TaskScheduler to schedule tasks
 //		TaskScheduler scheduler = new TaskScheduler(factory); TODO
 //		scheduler.scheduleTasks(loopBackBean);
@@ -608,10 +601,4 @@ public abstract class MailSenderBase {
 	public abstract void sendMail(Message msg, Map<String, Address[]> errors)
 			throws MessagingException, SmtpException, InterruptedException;
 
-	public MessageParser getMessageParser() {
-		if (parser== null) {
-			parser = (MessageParser) factory.getBean("messageParser");
-		}
-		return parser;
-	}
 }

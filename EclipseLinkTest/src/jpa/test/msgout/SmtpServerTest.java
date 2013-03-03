@@ -1,4 +1,4 @@
-package jpa.test;
+package jpa.test.msgout;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -9,13 +9,11 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 
-import jpa.data.preload.MailInboxEnum;
-import jpa.model.MailInbox;
-import jpa.model.MailInboxPK;
-import jpa.service.mailbox.MailInboxService;
+import jpa.constant.MailServerType;
+import jpa.data.preload.SmtpServerEnum;
+import jpa.model.SmtpServer;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,94 +28,89 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class MailInboxTest {
+public class SmtpServerTest {
 
 	@BeforeClass
-	public static void MailInboxPrepare() {
+	public static void SmtpServerPrepare() {
 	}
 
 	@Autowired
-	MailInboxService service;
+	jpa.service.msgout.SmtpServerService service;
 
 	@Test
 	public void mailInboxService() {
-		MailInbox mc1 = null;
+		SmtpServer mc1 = null;
 		// test insert
-		MailInboxEnum mc = MailInboxEnum.jwang;
-		MailInboxPK pk1 = new MailInboxPK(mc.getUserId(),mc.getHostName());
+		SmtpServerEnum mc = SmtpServerEnum.SUPPORT;
 		try {
-			mc1 = service.getByPrimaryKey(pk1);
+			mc1 = service.getByServerName(mc.getServerName());
 		}
 		catch (NoResultException e) {
-			mc1 = new MailInbox();
-			mc1.setMailInboxPK(pk1);
-			mc1.setUserPswd(mc.getUserPswd());
-			mc1.setPortNumber(mc.getPort());
-			mc1.setProtocol(mc.getProtocol().getValue());
+			mc1 = new SmtpServer();
+			mc1.setSmtpHostName(mc.getSmtpHost());
+			mc1.setSmtpPortNumber(mc.getSmtpPort());
+			mc1.setServerName(mc.getServerName());
 			mc1.setDescription(mc.getDescription());
-			mc1.setStatusId(mc.getStatus().getValue());
-			mc1.setIsInternalOnly(mc.getIsInternalOnly());
-			mc1.setReadPerPass(mc.getReadPerPass());
 			mc1.setUseSsl(mc.isUseSsl());
+			mc1.setUserId(mc.getUserId());
+			mc1.setUserPswd(mc.getUserPswd());
+			mc1.setPersistence(mc.isPersistence());
+			mc1.setStatusId(mc.getStatus().getValue());
+			mc1.setServerType(mc.getServerType().getValue());
 			mc1.setNumberOfThreads(mc.getNumberOfThreads());
 			mc1.setMaximumRetries(mc.getMaximumRetries());
+			mc1.setRetryFrequence(mc.getRetryFreq());
 			mc1.setMinimumWait(mc.getMinimumWait());
+			mc1.setAlertAfter(mc.getAlertAfter());
+			mc1.setAlertLevel(mc.getAlertLevel());
 			mc1.setMessageCount(mc.getMessageCount());
-			mc1.setIsToPlainText(mc.getIsToPlainText());
-			if (StringUtils.isBlank(mc1.getToAddressDomain())) {
-				mc1.setToAddressDomain(mc1.getMailInboxPK().getHostName());
-			}
-			mc1.setToAddressDomain(mc.getToAddressDomain());
-			mc1.setIsCheckDuplicate(mc.getIsCheckDuplicate());
-			mc1.setIsAlertDuplicate(mc.getIsAlertDuplicate());
-			mc1.setIsLogDuplicate(mc.getIsLogDuplicate());
-			mc1.setPurgeDupsAfter(mc.getPurgeDupsAfter());
 			service.insert(mc1);
 		}
 		
-		List<MailInbox> list = service.getAll(true);
+		List<SmtpServer> list = service.getAll(true, null);
 		assertFalse(list.isEmpty());
 		
-		MailInbox tkn0 = service.getByPrimaryKey(list.get(0).getMailInboxPK());
+		SmtpServer tkn0 = service.getByServerName(list.get(0).getServerName());
 		assertNotNull(tkn0);
 		
 		tkn0 = service.getByRowId(list.get(0).getRowId());
 		assertNotNull(tkn0);
 		
+		assertTrue(1<=service.getByServerType(MailServerType.SMTP, true).size());
+		
 		// test update
 		tkn0.setUpdtUserId("JpaTest");
 		service.update(tkn0);
 		
-		MailInbox tkn1 = service.getByRowId(tkn0.getRowId());
+		SmtpServer tkn1 = service.getByRowId(tkn0.getRowId());
 		assertTrue("JpaTest".equals(tkn1.getUpdtUserId()));
 		// end of test update
 		
 		// test insert
-		MailInbox tkn2 = new MailInbox();
+		SmtpServer tkn2 = new SmtpServer();
 		try {
 			BeanUtils.copyProperties(tkn2, tkn1);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		MailInboxPK pk2 = new MailInboxPK(tkn2.getMailInboxPK().getUserId()+"_v2",tkn2.getMailInboxPK().getHostName());
-		tkn2.setMailInboxPK(pk2);
+		tkn2.setServerName(tkn1.getServerName()+"_v2");
 		service.insert(tkn2);
 		
-		MailInbox tkn3 = service.getByPrimaryKey(tkn2.getMailInboxPK());
+		SmtpServer tkn3 = service.getByServerName(tkn2.getServerName());
 		assertTrue(tkn3.getRowId()!=tkn1.getRowId());
 		// end of test insert
 		
 		// test select with NoResultException
 		service.delete(tkn3);
 		try {
-			service.getByPrimaryKey(tkn2.getMailInboxPK());
+			service.getByServerName(tkn2.getServerName());
 			fail();
 		}
 		catch (NoResultException e) {
 		}
 		
-		assertTrue(1==service.deleteByPrimaryKey(tkn1.getMailInboxPK()));
+		assertTrue(1==service.deleteByServerName(tkn1.getServerName()));
 		assertTrue(0==service.deleteByRowId(tkn3.getRowId()));
 	}
 }

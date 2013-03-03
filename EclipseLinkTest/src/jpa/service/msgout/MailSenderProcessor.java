@@ -13,13 +13,17 @@ import jpa.message.MessageContext;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * process queue messages handed over by QueueListener
  * 
  * @author Administrator
  */
+@Component("mailSenderProcessor")
+@Transactional(propagation=Propagation.REQUIRED)
 public class MailSenderProcessor extends MailSenderBase {
 	static final Logger logger = Logger.getLogger(MailSenderProcessor.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
@@ -30,11 +34,7 @@ public class MailSenderProcessor extends MailSenderBase {
 	 * must use constructor without any parameters
 	 */
 	public MailSenderProcessor() {
-		logger.info("Entering constructor...");
-	}
-
-	protected AbstractApplicationContext loadFactory() {
-		return SpringUtil.getAppContext();
+		super();
 	}
 
 	/**
@@ -58,10 +58,6 @@ public class MailSenderProcessor extends MailSenderBase {
 		if (req.getMessages()==null || req.getMessages().length==0) {
 			logger.error("Request received was not a JMS Message.");
 			throw new IllegalArgumentException("Request was not a JMS Message as expected.");
-		}
-
-		if (msgInboxBo == null) { // first time 
-			loadBosAndDaos();
 		}
 		
 		// define transaction properties

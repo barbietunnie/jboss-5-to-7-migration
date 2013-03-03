@@ -1,4 +1,4 @@
-package jpa.test.message;
+package jpa.test.msgin;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -10,9 +10,9 @@ import javax.persistence.NoResultException;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
 import jpa.model.message.MessageStream;
-import jpa.service.mailbox.MessageInboxBo;
 import jpa.service.message.MessageParser;
 import jpa.service.message.MessageStreamService;
+import jpa.service.msgin.MessageInboxBo;
 import jpa.util.TestUtil;
 
 import org.apache.log4j.Logger;
