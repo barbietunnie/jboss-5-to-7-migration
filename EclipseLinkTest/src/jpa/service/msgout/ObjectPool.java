@@ -46,7 +46,7 @@ public class ObjectPool implements java.io.Serializable {
 	 * @param max_conns -
 	 *            the maximum number of connections allowed
 	 */
-	public ObjectPool(String pool_item, int max_conns) {
+	public ObjectPool(SmtpConnection pool_item, int max_conns) {
 		this(pool_item, max_conns, "pool-" + getNextNumber(), MailServerType.SMTP, 100);
 	}
 
@@ -64,12 +64,12 @@ public class ObjectPool implements java.io.Serializable {
 	 * @param _dist -
 	 *            the distribution ratio, used by NamedPool class
 	 */
-	public ObjectPool(String pool_item_name,
+	public ObjectPool(SmtpConnection pool_item,
 			int max_conns,
 			String _name,
 			MailServerType _type,
 			int _dist) {
-		this.poolItemName = pool_item_name;
+		this.poolItemName = pool_item.getSmtpServer().getServerName();
 		if (_name==null) {
 			name = "pool-"+getNextNumber();
 		}
@@ -93,15 +93,15 @@ public class ObjectPool implements java.io.Serializable {
 		freeConns = new Vector<Object>();
 		inUse = new Hashtable<Object, java.util.Date>();
 
+		smtpConnVo = pool_item.getSmtpServer();
 		// Put our pool of Connections in the Vector
 		for (int i = 0; i < initialItems; i++) {
-			Object obj = SpringUtil.getAppContext().getBean(poolItemName);
+			Object obj = new SmtpConnection(smtpConnVo);
 			// Class cls = obj.getClass();
 			freeConns.addElement(obj);
 		}
 
 		freeItemsLastCycle = initialItems;
-		smtpConnVo = null;
 	}
 
 	/**

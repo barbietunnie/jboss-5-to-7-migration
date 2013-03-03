@@ -15,4 +15,13 @@ public enum VariableType {
 	public String getValue() {
 		return value;
 	}
+	
+	public static VariableType getByValue(String value) {
+		for (VariableType t : VariableType.values()) {
+			if (t.getValue().equalsIgnoreCase(value)) {
+				return t;
+			}
+		}
+		throw new IllegalArgumentException("No enum value (" + value + ") found in class jpa.constant.VariableType");
+	}
 }
