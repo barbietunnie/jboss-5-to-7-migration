@@ -26,7 +26,6 @@ public class MailSenderBo extends MailSenderBase {
 	public MailSenderBo() {
 		if (isDebugEnabled)
 			logger.debug("Entering constructor...");
-		loadBosAndDaos();
 	}
 
 	protected AbstractApplicationContext loadFactory() {

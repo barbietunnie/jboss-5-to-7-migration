@@ -22,6 +22,7 @@ import jpa.constant.Constants;
 import jpa.constant.VariableType;
 import jpa.data.preload.RuleNameEnum;
 import jpa.exception.DataValidationException;
+import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
 import jpa.model.ClientData;
 import jpa.model.CustomerData;
@@ -45,7 +46,6 @@ import jpa.service.message.RenderAttachmentService;
 import jpa.service.message.RenderVariableService;
 import jpa.util.SpringUtil;
 import jpa.variable.RenderVariableVo;
-import jpa.variable.TemplateException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -155,7 +155,7 @@ public class MsgOutboxBo {
 		msgBean.setRuleName(RuleNameEnum.SEND_MAIL.getValue());
 		
 		if (msgBean.getCarrierCode() == null) {
-			msgBean.setCarrierCode(CarrierCode.valueOf(rsp.getMessageSource().getCarrierCode()));
+			msgBean.setCarrierCode(CarrierCode.getByValue(rsp.getMessageSource().getCarrierCode()));
 		}
 		if (msgBean.getFrom() == null && rsp.getMessageSource().getFromAddress() != null) {
 			EmailAddress addrVo = rsp.getMessageSource().getFromAddress();

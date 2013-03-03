@@ -1074,8 +1074,7 @@ public final class MessageBeanBuilder {
 		MessageBean msgBean = new MessageBean();
 		msgBean.setMsgId(Integer.valueOf(msgVo.getRowId()));
 		msgBean.setMsgRefId(msgVo.getReferringMessageRowId());
-		CarrierCode.valueOf(msgVo.getCarrierCode());
-		msgBean.setCarrierCode(CarrierCode.valueOf(msgVo.getCarrierCode()));
+		msgBean.setCarrierCode(CarrierCode.getByValue(msgVo.getCarrierCode()));
 		msgBean.setSubject(msgVo.getMsgSubject());
 		msgBean.setPriority(new String[] {msgVo.getMsgPriority()});
 		msgBean.setSendDate(msgVo.getReceivedTime());

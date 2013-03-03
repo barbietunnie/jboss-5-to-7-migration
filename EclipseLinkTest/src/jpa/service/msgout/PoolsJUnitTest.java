@@ -1,28 +1,23 @@
 package jpa.service.msgout;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import jpa.constant.MailServerType;
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class PoolsJUnitTest extends TestCase {
+import jpa.constant.MailServerType;
+
+public class PoolsJUnitTest {
 	static int init_count = 0;
 
 	final static String LF = System.getProperty("line.separator", "\n");
 
-	/**
-	 * Constructor for TemplateTest.
-	 * 
-	 * @param arg0
-	 */
-	public PoolsJUnitTest(String arg0) throws Exception {
-		super(arg0);
-	}
-
+	@Test
 	public void testDistribution() throws Exception {
 		System.out.println(LF + "********** Starting testDistribution **********");
 
@@ -56,6 +51,7 @@ public class PoolsJUnitTest extends TestCase {
 		pools.close();
 	}
 
+	@Test
 	public void testSmtpConnection() throws Exception {
 		System.out.println(LF + "********** Starting testSmtpConnection **********");
 		{
@@ -103,6 +99,7 @@ public class PoolsJUnitTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testAllSmtpPools() throws Exception {
 		System.out.println(LF + "********** Starting testAllSmtpPools **********");
 		NamedPools pools = SmtpWrapperUtil.getSmtpNamedPools();
@@ -118,6 +115,7 @@ public class PoolsJUnitTest extends TestCase {
 		SmtpWrapperUtil.clearSmtpNamedPools();
 	}
 
+	@Test
 	public void testPostSmtpPools() throws Exception {
 		System.out.println(LF + "********** Starting testPostSmtpPools **********");
 		ArrayList<ObjectPool> poolItems = new ArrayList<ObjectPool>();
@@ -135,6 +133,7 @@ public class PoolsJUnitTest extends TestCase {
 		pools.close();
 	}
 
+	@Test
 	public void testExchSmtpPools() throws Exception {
 		System.out.println(LF + "********** Starting testExchSmtpPools **********");
 		ArrayList<ObjectPool> poolItems = new ArrayList<ObjectPool>();

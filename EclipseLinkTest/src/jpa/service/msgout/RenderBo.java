@@ -23,6 +23,7 @@ import jpa.constant.VariableName;
 import jpa.constant.VariableType;
 import jpa.constant.XHeaderName;
 import jpa.exception.DataValidationException;
+import jpa.exception.TemplateException;
 import jpa.message.BodypartBean;
 import jpa.message.MessageBean;
 import jpa.message.MsgHeader;
@@ -40,7 +41,6 @@ import jpa.service.message.TemplateVariableService;
 import jpa.variable.ErrorVariableVo;
 import jpa.variable.RenderVariableVo;
 import jpa.variable.Renderer;
-import jpa.variable.TemplateException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -309,7 +309,7 @@ public class RenderBo {
 				else if (VariableName.RULE_NAME.equals(r.getVariableName()))
 					mBean.setRuleName((String)r.getVariableValue());
 				else if (VariableName.CARRIER_CODE.equals(r.getVariableName()))
-					mBean.setCarrierCode(CarrierCode.valueOf((String)r.getVariableValue()));
+					mBean.setCarrierCode(CarrierCode.getByValue((String)r.getVariableValue()));
 				else if (VariableName.MAILBOX_HOST.equals(r.getVariableName()))
 					mBean.setMailboxHost((String)r.getVariableValue());
 				else if (VariableName.MAILBOX_HOST.equals(r.getVariableName()))
@@ -364,7 +364,7 @@ public class RenderBo {
 		}
 		// make sure CarrierCode is populated
 		if (mBean.getCarrierCode() == null) {
-			mBean.setCarrierCode(CarrierCode.valueOf(rsp.msgSourceVo.getCarrierCode()));
+			mBean.setCarrierCode(CarrierCode.getByValue(rsp.msgSourceVo.getCarrierCode()));
 		}
 
 		if (src.isExcludingIdToken()) {

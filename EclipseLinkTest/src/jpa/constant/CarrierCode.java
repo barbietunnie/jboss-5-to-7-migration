@@ -15,4 +15,13 @@ public enum CarrierCode {
 	public String getValue() {
 		return value;
 	}
+	
+	public static CarrierCode getByValue(String value) {
+		for (CarrierCode cc : CarrierCode.values()) {
+			if (cc.getValue().equalsIgnoreCase(value)) {
+				return cc;
+			}
+		}
+		return CarrierCode.SMTPMAIL; // default to SMTPMAIL
+	}
 }
