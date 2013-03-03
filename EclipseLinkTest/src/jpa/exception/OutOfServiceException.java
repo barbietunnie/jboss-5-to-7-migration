@@ -1,6 +1,6 @@
 package jpa.exception;
 
-public class OutOfServiceException extends Exception {
+public class OutOfServiceException extends IllegalStateException {
 	
 	private static final long serialVersionUID = 2022445049012992320L;
 
