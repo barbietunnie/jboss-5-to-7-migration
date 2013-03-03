@@ -1,4 +1,4 @@
-package jpa.service.mailbox;
+package jpa.service.msgin;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -55,7 +55,7 @@ public class MailProcessor {
 	 */
 	public void process(MessageContext req) throws MessagingException, IOException {
 		logger.info("Entering process() method...");
-		if (req != null) {
+		if (req != null && req.getMessages()!=null && req.getMailInbox()!=null) {
 			Message[] msgs = req.getMessages();
 			mailBoxVo = req.getMailInbox();
 			// Just dump out the new messages and set the delete flags
@@ -74,11 +74,12 @@ public class MailProcessor {
 	}
 
 	/**
-	 * process message part
+	 * process message part and build MessageBean from message part.
 	 * 
 	 * @param p - part
 	 * @throws MessagingException 
 	 * @throws IOException if any error
+	 * @return a MessageBean instance
 	 */
 	MessageBean processPart(Part p) throws IOException, MessagingException {
 		long start_tms = System.currentTimeMillis();

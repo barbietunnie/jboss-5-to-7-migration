@@ -1,4 +1,4 @@
-package jpa.service.mailbox;
+package jpa.service.msgin;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;

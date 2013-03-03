@@ -1,4 +1,4 @@
-package jpa.service.mailbox;
+package jpa.service.msgin;
 
 import java.util.List;
 
