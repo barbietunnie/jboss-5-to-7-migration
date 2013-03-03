@@ -36,5 +36,6 @@ public class DataLoader {
 		new MobileCarrierLoader().loadData();
 		new MessageRenderedLoader().loadData();
 		new MailInboxLoader().loadData();
+		new SmtpServerLoader().loadData();
 	}
 }
