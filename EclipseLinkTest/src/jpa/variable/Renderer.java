@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jpa.constant.VariableType;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -94,7 +96,7 @@ public final class Renderer implements java.io.Serializable {
 					continue;
 				}
 				RenderVariableVo r = (RenderVariableVo) value;
-				if (RenderVariableVo.TEXT.equals(r.getVariableType())) {
+				if (VariableType.TEXT.equals(r.getVariableType())) {
 					if (r.getVariableValue() != null) {
 						if (getNextVariableName((String) r.getVariableValue(), 0) != null) {
 							// recursive variable
@@ -107,7 +109,7 @@ public final class Renderer implements java.io.Serializable {
 						}
 					}
 				}
-				else if (RenderVariableVo.NUMERIC.equals(r.getVariableType())) {
+				else if (VariableType.NUMERIC.equals(r.getVariableType())) {
 					if (r.getVariableValue() != null) {
 						DecimalFormat formatter = new DecimalFormat();
 						if (r.getVariableFormat() != null) {
@@ -129,7 +131,7 @@ public final class Renderer implements java.io.Serializable {
 						}
 					}
 				}
-				else if (RenderVariableVo.DATETIME.equals(r.getVariableType())) {
+				else if (VariableType.DATETIME.equals(r.getVariableType())) {
 					if (r.getVariableValue() != null) {
 						SimpleDateFormat fmt = new SimpleDateFormat(RenderVariableVo.DEFAULT_DATETIME_FORMAT);
 						if (r.getVariableFormat() != null) {

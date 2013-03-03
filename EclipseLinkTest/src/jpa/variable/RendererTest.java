@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import jpa.constant.VariableType;
+
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
@@ -115,7 +117,7 @@ public final class RendererTest {
 		RenderVariableVo currentDate = new RenderVariableVo(
 				"CurrentDate", 
 				currDate, 
-				RenderVariableVo.DATETIME,
+				VariableType.DATETIME,
 				dateTimeFormat1
 			);
 		map.put(currentDate.getVariableName(), currentDate);
@@ -135,58 +137,58 @@ public final class RendererTest {
 		RenderVariableVo req4 = new RenderVariableVo(
 				"name4.recurrsive", 
 				"Recursive Variable ${name1} End", 
-				RenderVariableVo.TEXT
+				VariableType.TEXT
 			);
 		RenderVariableVo req5 = new RenderVariableVo(
 				"name5", 
 				"Roger Banner", 
-				RenderVariableVo.TEXT
+				VariableType.TEXT
 			);
 		
 		RenderVariableVo req6_1 = new RenderVariableVo(
 				"numeric1", 
 				"12345.678", // use default format
-				RenderVariableVo.NUMERIC
+				VariableType.NUMERIC
 			);
 		
 		RenderVariableVo req6_2 = new RenderVariableVo(
 				"numeric2", 
 				"-12345.678",
-				RenderVariableVo.NUMERIC,
+				VariableType.NUMERIC,
 				"000,000,000.0#;(-000,000,000.0#)"
 			);
 		
 		RenderVariableVo req6_3 = new RenderVariableVo(
 				"numeric3", 
 				new BigDecimal(-99999.99),
-				RenderVariableVo.NUMERIC,
+				VariableType.NUMERIC,
 				"$###,###,##0.00;-$###,###,##0.00"
 			);
 		
 		RenderVariableVo req7_1 = new RenderVariableVo(
 				"datetime1", 
 				"2007-10-01 15:23:12", // use default format
-				RenderVariableVo.DATETIME
+				VariableType.DATETIME
 			);
 		
 		RenderVariableVo req7_2 = new RenderVariableVo(
 				"datetime2", 
 				"12/01/2007", 
-				RenderVariableVo.DATETIME,
+				VariableType.DATETIME,
 				"MM/dd/yyyy" // custom format
 			);
 		
 		RenderVariableVo req7_3 = new RenderVariableVo(
 				"datetime3", 
 				null,
-				RenderVariableVo.DATETIME,
+				VariableType.DATETIME,
 				"yyyy-MM-dd:hh.mm.ss a" // custom format
 			);
 		
 		RenderVariableVo req7_4 = new RenderVariableVo(
 				"datetime4", 
 				new java.util.Date(), // current date time
-				RenderVariableVo.DATETIME,
+				VariableType.DATETIME,
 				"yyyy-MM-dd HH.mm" // custom format
 			);
 		
@@ -206,7 +208,7 @@ public final class RendererTest {
 		req7_4 = new RenderVariableVo(
 				"datetime4", 
 				"2009-07-29 13.04",
-				RenderVariableVo.DATETIME,
+				VariableType.DATETIME,
 				"yyyy-MM-dd HH.mm" // custom format
 			);
 		map.put(req7_4.getVariableName(), req7_4);

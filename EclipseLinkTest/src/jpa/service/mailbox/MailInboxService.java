@@ -1,4 +1,4 @@
-package jpa.service;
+package jpa.service.mailbox;
 
 import java.util.List;
 
