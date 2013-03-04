@@ -50,7 +50,7 @@ public class MessageRenderedService {
 		return getByRowId(rowId);
 	}
 
-	public MessageRendered getAllByByPrimaryKey(int rowId) throws NoResultException {
+	public MessageRendered getAllDataByPrimaryKey(int rowId) throws NoResultException {
 		MessageRendered mr = getByRowId(rowId);
 		try {
 			mr.setMessageSource(sourceService.getByRowId(mr.getMessageSourceRowId()));
@@ -76,6 +76,21 @@ public class MessageRenderedService {
 		return mr;
 	}
 	
+	public MessageRendered getFirstRecord() throws NoResultException {
+		String sql = 
+				"select t.* " +
+				"from " +
+					"Message_Rendered t " +
+				" where t.Row_Id = (select min(t2.Row_Id) from Message_Rendered t2) ";
+		try {
+			Query query = em.createNativeQuery(sql, MessageRendered.MAPPING_MESSAGE_RENDERED);
+			MessageRendered record = (MessageRendered) query.getSingleResult();
+			return record;
+		}
+		finally {
+		}
+	}
+
 	public MessageRendered getLastRecord() throws NoResultException {
 		String sql = 
 				"select t.* " +

@@ -3,12 +3,12 @@ package jpa.dataloader;
 import jpa.util.EnvUtil;
 import jpa.util.SpringUtil;
 import jpa.util.TestUtil;
-import jpa.variable.VarProperties;
+import jpa.variable.VarReplProperties;
 
 public abstract class AbstractDataLoader {
 	public static final String LF = System.getProperty("line.separator", "\n");
 
-	protected VarProperties props;
+	protected VarReplProperties props;
 	
 	public abstract void loadData();
 
@@ -23,7 +23,7 @@ public abstract class AbstractDataLoader {
 	protected String getProperty(String name) {
 		if (props == null) {
 			String propsFile = "META-INF/dataloader." + EnvUtil.getEnv() + ".properties";
-			props = VarProperties.loadMyProperties(propsFile);
+			props = VarReplProperties.loadMyProperties(propsFile);
 		}
 		return props.getProperty(name);
 	}

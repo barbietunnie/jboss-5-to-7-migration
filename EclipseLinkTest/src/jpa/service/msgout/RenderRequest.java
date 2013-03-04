@@ -24,6 +24,22 @@ public class RenderRequest implements Serializable {
 		this.variableOverrides = variableOverrides;
 	}
 
+	public String getMsgSourceId() {
+		return msgSourceId;
+	}
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public Timestamp getStartTime() {
+		return startTime;
+	}
+
+	public Map<String, RenderVariableVo> getVariableOverrides() {
+		return variableOverrides;
+	}
+
 	public String toString() {
 		String LF = System.getProperty("line.separator", "\n");
 		StringBuffer sb = new StringBuffer();

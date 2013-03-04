@@ -78,7 +78,7 @@ public class MessageRenderedTest {
 		
 		MessageRendered msg2  =service.getLastRecord();
 		System.out.println(StringUtil.prettyPrint(msg2,2));
-		MessageRendered msg22  =service.getAllByByPrimaryKey(msg2.getRowId());
+		MessageRendered msg22  =service.getAllDataByPrimaryKey(msg2.getRowId());
 		System.out.println(StringUtil.prettyPrint(msg22,2));
 		
 		try {

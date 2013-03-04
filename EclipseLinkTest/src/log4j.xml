@@ -58,6 +58,10 @@
 	  <level value="INFO"/> 
 	  <appender-ref ref="CONSOLE"/>
    </logger>
+   <logger name="org.hibernate">
+	  <level value="INFO"/> 
+	  <appender-ref ref="CONSOLE"/>
+   </logger>
 
    <logger name="jpa">
 	  <level value="DEBUG"/>
