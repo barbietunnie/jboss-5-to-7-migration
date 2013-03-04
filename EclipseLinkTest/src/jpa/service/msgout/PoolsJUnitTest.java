@@ -134,7 +134,7 @@ public class PoolsJUnitTest {
 	@Test
 	public void testPostSmtpPools() throws Exception {
 		System.out.println(LF + "********** Starting testPostSmtpPools **********");
-		ArrayList<ObjectPool> poolItems = new ArrayList<ObjectPool>();
+		List<ObjectPool> poolItems = new ArrayList<ObjectPool>();
 		poolItems.add(new ObjectPool(smtpConnection, 2, "postfix1", MailServerType.SMTP, 50));
 		poolItems.add(new ObjectPool(smtpConnection, 2, "smtpsvr1", MailServerType.SMTP, 50));
 		NamedPools pools = new NamedPools(poolItems);
@@ -152,7 +152,7 @@ public class PoolsJUnitTest {
 	@Test
 	public void testExchSmtpPools() throws Exception {
 		System.out.println(LF + "********** Starting testExchSmtpPools **********");
-		ArrayList<ObjectPool> poolItems = new ArrayList<ObjectPool>();
+		List<ObjectPool> poolItems = new ArrayList<ObjectPool>();
 		poolItems.add(new ObjectPool(smtpConnection, 2, "postexch", MailServerType.SMTP, 50));
 		poolItems.add(new ObjectPool(smtpConnection, 2, "exchsvr1", MailServerType.SMTP, 50));
 		NamedPools pools = new NamedPools(poolItems);

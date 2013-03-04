@@ -1,6 +1,7 @@
 package jpa.service.msgout;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -92,31 +93,27 @@ public class MsgOutboxBo {
 	
 	public static void main(String[] args) {
 		MsgOutboxBo msgOutboxBo = (MsgOutboxBo) SpringUtil.getAppContext().getBean("msgOutboxBo");
-		int renderId = 1;
+		RenderBo renderBo = (RenderBo) SpringUtil.getAppContext().getBean("renderBo");
+		MessageRenderedService rndrDao = (MessageRenderedService) SpringUtil.getAppContext().getBean("messageRenderedService");
 		SpringUtil.startTransaction();
 		try {
-			MessageBean bean = msgOutboxBo.getMessageByPK(renderId);
+			MessageRendered mr = rndrDao.getFirstRecord();
+			MessageBean bean = msgOutboxBo.getMessageByPK(mr.getRowId());
 			System.out.println("MessageBean retrieved:\n" + bean);
 			
-			msgOutboxBo.getAndSave(renderId);
-
+			RenderRequest renderRequest = msgOutboxBo.getRenderRequestByPK(mr.getRowId());
+			if (renderRequest == null) { // should never happen
+				throw new DataValidationException("RenderRequest is null for RenderId: " + mr.getRowId());
+			}
+			RenderResponse rsp = renderBo.getRenderedEmail(renderRequest);
+			msgOutboxBo.saveRenderData(rsp);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		finally {
-			SpringUtil.commitTransaction();
+			SpringUtil.rollbackTransaction();
 		}
-	}
-	
-	
-	void getAndSave(int renderId) throws AddressException, ParseException, TemplateException {
-		RenderRequest renderRequest = getRenderRequestByPK(renderId);
-		if (renderRequest == null) { // should never happen
-			throw new DataValidationException("RenderRequest is null for RenderId: " + renderId);
-		}
-		RenderResponse rsp = renderBo.getRenderedEmail(renderRequest);
-		saveRenderData(rsp);
 	}
 
 	/**
@@ -292,8 +289,8 @@ public class MsgOutboxBo {
 						}
 					}
 					else if (VariableType.NUMERIC.equals(req.getVariableType())) {
-						if (req.getVariableValue() instanceof Long) {
-							renderVar.setVariableValue(((Long)req.getVariableValue()).toString());
+						if (req.getVariableValue() instanceof BigDecimal) {
+							renderVar.setVariableValue(((BigDecimal)req.getVariableValue()).toString());
 						}
 						else if (req.getVariableValue() instanceof String) {
 							renderVar.setVariableValue((String)req.getVariableValue());
@@ -367,7 +364,6 @@ public class MsgOutboxBo {
 	 * @throws DataValidationException 
 	 */
 	public RenderRequest getRenderRequestByPK(int renderId) throws DataValidationException {
-		// get the messageOB
 		MessageRendered msgRenderedVo = null;
 		try {
 			msgRenderedVo = msgRenderedDao.getByPrimaryKey(renderId);

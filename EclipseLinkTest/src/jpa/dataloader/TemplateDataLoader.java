@@ -63,8 +63,9 @@ public class TemplateDataLoader extends AbstractDataLoader {
 
 		data.setTemplateDataPK(tpk);
 		data.setContentType("text/plain");
-		data.setBodyTemplate("Dear customer, here is a list of great deals on gardening tools provided to you by mydot.com.");
-		data.setSubjectTemplate("Weekend Deals at MyBesyDeals.com");
+		data.setBodyTemplate("Dear customer, here is a list of great deals on gardening tools provided to you by mydot.com.\n" +
+				"Available by ${CurrentDate}. Sponsor (${ClientId}).");
+		data.setSubjectTemplate("Weekend Deals at MyBestDeals.com - ${CurrentDate}");
 		templateService.insert(data);
 
 		TemplateData tmp2 = templateService.getByPrimaryKey(tpk);

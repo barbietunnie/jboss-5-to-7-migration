@@ -48,14 +48,14 @@ public final class Renderer implements java.io.Serializable {
 	/**
 	 * Render a template.
 	 * @param templateText
-	 * @param variables - a map contains variable name and String or RenderVariableVo pairs.
+	 * @param variables - a map contains variable name and RenderVariableVo pairs.
 	 * @param errors - an empty map
 	 * @return rendered text.
 	 * @throws TemplateException
 	 * @throws ParseException
 	 */
-	public String render(String templateText, Map<String, RenderVariableVo> variables, Map<String, ErrorVariableVo> errors) throws TemplateException,
-			ParseException {
+	public String render(String templateText, Map<String, RenderVariableVo> variables, Map<String, ErrorVariableVo> errors)
+			throws TemplateException, ParseException {
 		return renderTemplate(templateText, variables, errors, 0);
 	}
 
@@ -155,8 +155,10 @@ public final class Renderer implements java.io.Serializable {
 				}
 			}
 			else { // variable name not on render variables list
-				ErrorVariableVo err = new ErrorVariableVo(varProp.name, "Position: " + varProp.bgnPos
-						+ ", not rendered", "Variable name not on Render Variables list.");
+				ErrorVariableVo err = new ErrorVariableVo(
+						varProp.name,
+						"Position: " + varProp.bgnPos + ", not rendered",
+						"Variable name not on Render Variables list.");
 				errors.put(err.getVariableName(), err);
 				sb.append(OpenDelimiter + varProp.name + CloseDelimiter);
 			}

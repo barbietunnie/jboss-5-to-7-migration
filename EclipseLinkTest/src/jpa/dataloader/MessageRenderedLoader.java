@@ -90,6 +90,7 @@ public class MessageRenderedLoader extends AbstractDataLoader {
 		rv2.setRenderVariablePK(rvpk2);
 		rv2.setVariableType(VariableType.DATETIME.getValue());
 		rv2.setVariableFormat("yyyy-MM-dd");
+		rv2.setVariableValue(null);
 		variableService.insert(rv2);
 
 		RenderAttachment ra1 = new RenderAttachment();

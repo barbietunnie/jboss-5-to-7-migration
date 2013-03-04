@@ -14,6 +14,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import jpa.constant.VariableType;
+import jpa.data.preload.GlobalVariableEnum;
 
 public class RenderVariableVo implements Serializable {
 	private static final long serialVersionUID = -1784984311808865823L;
@@ -112,17 +113,21 @@ public class RenderVariableVo implements Serializable {
 			if (variableFormat != null) {
 				fmt.applyPattern(variableFormat); // validate the format
 			}
+			if (variableValue == null) {
+				if (GlobalVariableEnum.CurrentDateTime.name().equals(variableName)
+						|| GlobalVariableEnum.CurrentDate.name().equals(variableName)
+						|| GlobalVariableEnum.CurrentTime.name().equals(variableName)) {
+					this.variableValue = variableValue = new Date();
+				}
+			}
 			if (variableValue != null) {
 				if (!(variableValue instanceof Date) && !(variableValue instanceof String)) {
 					throw new IllegalArgumentException("Invalid Value Type: "
 							+ variableValue.getClass().getName() + ", for " + variableName);
 				}
 				if (variableValue instanceof String) {
-					if ("System".equalsIgnoreCase((String)variableValue)) {
-						this.variableValue = fmt.format(new Date());
-					}
 					try {
-						fmt.parse((String) this.variableValue);
+						fmt.parse((String) variableValue);
 					}
 					catch (ParseException e) {
 						throw new IllegalArgumentException("Invalid DateTime Value: " + variableValue
