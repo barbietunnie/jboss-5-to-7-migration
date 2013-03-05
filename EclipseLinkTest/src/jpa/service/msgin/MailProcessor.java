@@ -16,10 +16,12 @@ import jpa.message.MessageBeanBuilder;
 import jpa.message.MessageContext;
 import jpa.model.MailInbox;
 import jpa.service.message.MessageInboxService;
+import jpa.service.message.MessageParser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
  * process email's handed over by MailReader class.
  */
 @Component("mailProcessor")
+@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class MailProcessor {
 	static final Logger logger = Logger.getLogger(MailProcessor.class);
@@ -44,8 +47,12 @@ public class MailProcessor {
 	private MessageInboxService inboxService;
 	@Autowired
 	private MessageInboxBo messageInboxBo;
+	@Autowired
+	MessageParser msgParser;
 	
 	private MailInbox mailBoxVo;
+	
+	public MailProcessor() {}
 
 	/**
 	 * process request
@@ -171,6 +178,7 @@ public class MailProcessor {
 				}
 			}
 			else { // persist to database
+				msgBean.setRuleName(msgParser.parse(msgBean));
 				int msgId = messageInboxBo.saveMessage(msgBean);
 				logger.info("MessageBean saved to database, MessageInbox RowId: " + msgId);
 			}

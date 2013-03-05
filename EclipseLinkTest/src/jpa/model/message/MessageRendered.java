@@ -2,6 +2,7 @@ package jpa.model.message;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -76,6 +77,9 @@ public class MessageRendered extends BaseModel implements Serializable {
 	}
 
 	public List<RenderVariable> getRenderVariableList() {
+		if (renderVariableList == null) {
+			renderVariableList = new ArrayList<RenderVariable>();
+		}
 		return renderVariableList;
 	}
 
@@ -84,6 +88,9 @@ public class MessageRendered extends BaseModel implements Serializable {
 	}
 
 	public List<RenderAttachment> getRenderAttachmentList() {
+		if (renderAttachmentList==null) {
+			renderAttachmentList = new ArrayList<RenderAttachment>();
+		}
 		return renderAttachmentList;
 	}
 

@@ -205,9 +205,10 @@ public class MessageInboxBo {
 			msgVo.setDeliveryTime(null); // delivery time
 			msgVo.setStatusId(MsgStatusCode.PENDING.getValue());
 			if (msgBean.getRenderId() != null) {
+				msgVo.setRenderId(msgBean.getRenderId());
 				try {
-					msgRenderedDao.getByPrimaryKey(msgBean.getRenderId()); 
-					msgVo.setRenderId(msgBean.getRenderId());
+					msgRenderedDao.getByPrimaryKey(msgBean.getRenderId());
+					msgVo.setMessageRenderedRowId(msgBean.getRenderId());
 				}
 				catch (NoResultException e) {}
 			}
@@ -316,7 +317,6 @@ public class MessageInboxBo {
 			msgClickCountsVo.setSentCount(0);
 			msgClickCountsVo.setClickCount(0);
 			msgVo.setMessageClickCount(msgClickCountsVo);
-			//msgClickCountsDao.insert(msgClickCountsVo);
 		}
 		
 		// save message headers
@@ -330,7 +330,6 @@ public class MessageInboxBo {
 				msgHeadersVo.setHeaderName(StringUtils.left(header.getName(),100));
 				msgHeadersVo.setHeaderValue(header.getValue());
 				msgVo.getMessageHeaderList().add(msgHeadersVo);
-				//msgHeadersDao.insert(msgHeadersVo);
 			}
 		}
 
@@ -347,7 +346,6 @@ public class MessageInboxBo {
 				attchVo.setAttachmentDisp(StringUtils.left(aNode.getDisposition(),100));
 				attchVo.setAttachmentValue(aNode.getValue());
 				msgVo.getMessageAttachmentList().add(attchVo);
-				//attachmentsDao.insert(attchVo);
 			}
 		}
 		
@@ -371,7 +369,6 @@ public class MessageInboxBo {
 			rfcFieldsVo.setDsnRfc822(msgBean.getDiagnosticCode()); // TODO: revisit
 			rfcFieldsVo.setDeliveryStatus(msgBean.getDsnDlvrStat());
 			msgVo.getMessageRfcFieldList().add(rfcFieldsVo);
-			//rfcFieldsDao.insert(rfcFieldsVo);
 		}
 		
 		if (msgBean.getRfc822() != null) {
@@ -393,7 +390,6 @@ public class MessageInboxBo {
 			rfcFieldsVo.setDsnRfc822(msgBean.getDsnRfc822());
 			//rfcFieldsVo.setDeliveryStatus(msgBean.getDsnDlvrStat());
 			msgVo.getMessageRfcFieldList().add(rfcFieldsVo);
-			//rfcFieldsDao.insert(rfcFieldsVo);
 		}
 		
 		// we could have found a final recipient without delivery reports
@@ -410,7 +406,6 @@ public class MessageInboxBo {
 				}
 				rfcFieldsVo.setOriginalMsgSubject(StringUtils.left(msgBean.getOrigRcpt(),255));
 				msgVo.getMessageRfcFieldList().add(rfcFieldsVo);
-				//rfcFieldsDao.insert(rfcFieldsVo);
 			}
 		}
 		
@@ -434,7 +429,6 @@ public class MessageInboxBo {
 			msgStreamVo.setMsgStream((byte[]) msgBean.getHashMap().get(
 					MessageBeanBuilder.MSG_RAW_STREAM));
 			msgVo.setMessageStream(msgStreamVo);
-			//msgStreamDao.insert(msgStreamVo);
 		}
 		msgInboxDao.update(msgVo);
 		

@@ -33,6 +33,7 @@ import jpa.model.ClientVariable;
 import jpa.model.GlobalVariable;
 import jpa.model.message.MessageRendered;
 import jpa.model.message.MessageSource;
+import jpa.model.message.RenderVariable;
 import jpa.model.message.TemplateData;
 import jpa.model.message.TemplateVariable;
 import jpa.service.ClientVariableService;
@@ -612,4 +613,21 @@ public class RenderBo {
 		}
 		return ht;
 	}
+
+	public static Map<String, RenderVariableVo> renderVariablesToMap(Collection<RenderVariable> c) {
+		Map<String, RenderVariableVo> ht = new HashMap<String, RenderVariableVo>();
+		for (RenderVariable req : c) {
+			RenderVariableVo r = new RenderVariableVo(
+				req.getRenderVariablePK().getVariableName(),
+				req.getVariableValue(), 
+				req.getVariableFormat(), 
+				VariableType.getByValue(req.getVariableType()), 
+				CodeType.YES_CODE.getValue(), 
+				false
+				);
+			ht.put(req.getRenderVariablePK().getVariableName(), r);
+		}
+		return ht;
+	}
+	
 }

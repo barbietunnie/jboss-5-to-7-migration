@@ -625,7 +625,7 @@ public class BodypartBean implements Serializable {
 			if (getMimeType().indexOf("text") >= 0 || getMimeType().indexOf("message") >= 0)
 				sb.append(new String(value) + LF);
 			else
-				sb.append("Data contains nonprintable content." + LF);
+				sb.append("### Data contains nonprintable content. ###" + LF);
 		}
 
 		Iterator<?> it = getIterator();
