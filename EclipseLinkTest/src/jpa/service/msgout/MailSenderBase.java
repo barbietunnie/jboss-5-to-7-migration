@@ -165,8 +165,9 @@ public abstract class MailSenderBase {
 			// failed to send the message to certain recipients
 			logger.error("SendFailedException caught: ", sfex);
 			updtDlvrStatAndLoopback(msgBean, sfex, errors);
-			if (errors.containsKey("validSent"))
+			if (errors.containsKey("validSent")) {
 				sendDeliveryReport(msgBean);
+			}
 		}
 		// save message raw stream to database
 		if (msgBean.getSaveMsgStream()) {
@@ -277,21 +278,20 @@ public abstract class MailSenderBase {
 	 * 
 	 * @param m -
 	 *            a javax.mail.Message object
-	 * @param overrideTestAddr -
+	 * @param isOverrideTestAddr -
 	 *            if true, do not convert original addresses.
 	 * @throws MessagingException
 	 */
-	protected void rebuildAddresses(javax.mail.Message m, boolean overrideTestAddr)
+	protected void rebuildAddresses(javax.mail.Message m, boolean isOverrideTestAddr)
 			throws MessagingException {
 		if (isDebugEnabled) {
 			logger.debug("Entering rebuildAddresses method...");
 		}
 		// set TO address to Test Address if it's a test run
-		if (clientVo.isUseTestAddr() && !overrideTestAddr) {
+		if (clientVo.isUseTestAddr() && !isOverrideTestAddr) {
 			if (isDebugEnabled) {
 				logger.debug("rebuildAddresses() - Replace original TO: "
-						+ EmailAddrUtil.emailAddrToString(m
-								.getRecipients(javax.mail.Message.RecipientType.TO))
+						+ EmailAddrUtil.emailAddrToString(m.getRecipients(javax.mail.Message.RecipientType.TO))
 						+ ", with testing address: " + clientVo.getTestToAddr());
 			}
 			boolean toAddrIsLocal = false;
@@ -311,8 +311,7 @@ public abstract class MailSenderBase {
 			}
 			if (!toAddrIsLocal) { // DO NOT override if TO address is local
 				if (displayName == null) {
-					m.setRecipients(RecipientType.TO, InternetAddress.parse(clientVo
-							.getTestToAddr()));
+					m.setRecipients(RecipientType.TO, InternetAddress.parse(clientVo.getTestToAddr()));
 				}
 				else {
 					m.setRecipients(RecipientType.TO, InternetAddress.parse("\""
@@ -327,7 +326,7 @@ public abstract class MailSenderBase {
 			throw new AddressException("TO address is blank!");
 		}
 		// Set From address to Test Address if it's a test run and not provided
-		if (clientVo.isUseTestAddr() && !overrideTestAddr
+		if (clientVo.isUseTestAddr() && !isOverrideTestAddr
 				&& (m.getFrom() == null || m.getFrom().length == 0)) {
 			if (isDebugEnabled) {
 				logger.debug("rebuildAddresses() - Original From is missing, use testing address: "
@@ -346,7 +345,7 @@ public abstract class MailSenderBase {
 			throw new AddressException("FROM address is blank!");
 		}
 		// set ReplyTo address to Test Address if it's a test run and not provided
-		if (clientVo.isUseTestAddr() && !overrideTestAddr
+		if (clientVo.isUseTestAddr() && !isOverrideTestAddr
 				&& (m.getReplyTo() == null || m.getReplyTo().length == 0)) {
 			if (StringUtils.isNotBlank(clientVo.getTestReplytoAddr())) {
 				if (EmailAddrUtil.hasDisplayName(clientVo.getTestReplytoAddr())) {
@@ -564,7 +563,7 @@ public abstract class MailSenderBase {
 			logger.debug("loopbackMail() - The loopback MessageBean:" + LF + "<----" + LF
 					+ loopBackBean + LF + "---->");
 		}
-		// use MessageProcessorBo to invoke rule engine
+		// use MessageParser to invoke rule engine
 		parser.parse(loopBackBean);
 		// use TaskScheduler to schedule tasks
 //		TaskScheduler scheduler = new TaskScheduler(factory); TODO
