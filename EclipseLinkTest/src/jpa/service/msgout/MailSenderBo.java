@@ -1,44 +1,129 @@
 package jpa.service.msgout;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import javax.mail.Address;
 import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 
+import jpa.exception.DataValidationException;
+import jpa.message.MessageContext;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * process queue messages handed over by QueueListener.
+ * process queue messages handed over by QueueListener
  * 
  * @author Administrator
  */
+@Component("mailSenderBo")
+@Transactional(propagation=Propagation.REQUIRED)
 public class MailSenderBo extends MailSenderBase {
 	static final Logger logger = Logger.getLogger(MailSenderBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 	/**
-	 * constructor
+	 * must use constructor without any parameters
 	 */
 	public MailSenderBo() {
-		if (isDebugEnabled)
-			logger.debug("Entering constructor...");
+		super();
 	}
 
-	protected AbstractApplicationContext loadFactory() {
-		return SpringUtil.getAppContext();
-	}
-	
 	/**
-	 * send the email off via SMTP server.
+	 * process request. Either a ObjectMessage contains a MessageBean or a
+	 * BytesMessage contains a SMTP raw stream.
+	 * 
+	 * @param req -
+	 *            a JMS message
+	 * @throws IOException 
+	 * @throws JMSException 
+	 * @throws InterruptedException 
+	 * @throws SmtpException 
+	 * @throws MessagingException 
+	 */
+	public void process(MessageContext req) throws IOException, MessagingException,
+			InterruptedException, SmtpException {
+		if (req == null) {
+			logger.error("a null request was received.");
+			return;
+		}
+		if (req.getMessages()==null || req.getMessages().length==0) {
+			throw new IllegalArgumentException("Request did not contain java mail message(s).");
+		}
+		
+		// define transaction properties
+		SpringUtil.startTransaction();
+
+		// defined here to be used in catch blocks
+		try {
+			if (req.getMessageBean()!=null) {
+				process(req.getMessageBean());
+			}
+			else if (req.getMessageStream()!=null) {
+				// SMTP raw stream
+				process(req.getMessageStream());
+			}
+			else {
+				logger.error("message was not a message type as expected");
+			}
+			SpringUtil.commitTransaction();
+		}
+		catch (InterruptedException e) {
+			logger.error("MailSenderBo thread was interrupted. Process exiting...");
+			SpringUtil.rollbackTransaction(); // message will be re-delivered
+		}
+		catch (DataValidationException dex) {
+			// failed to send the message
+			logger.error("DataValidationException caught", dex);
+			SpringUtil.commitTransaction();
+		}
+		catch (AddressException ae) {
+			logger.error("AddressException caught", ae);
+			SpringUtil.commitTransaction();
+		}
+		catch (MessagingException mex) {
+			// failed to send the message
+			logger.error("MessagingException caught", mex);
+			SpringUtil.commitTransaction();
+		}
+		catch (NullPointerException en) {
+			logger.error("NullPointerException caught", en);
+			SpringUtil.commitTransaction();		}
+		catch (IndexOutOfBoundsException eb) {
+			// AddressException from InternetAddress.parse() caused this
+			// Exception to be thrown
+			// write the original message to error queue
+			logger.error("IndexOutOfBoundsException caught", eb);
+			SpringUtil.commitTransaction();		}
+		catch (NumberFormatException ef) {
+			logger.error("NumberFormatException caught", ef);
+			// TODO send error notification
+			SpringUtil.commitTransaction();
+		}
+		catch (SmtpException se) {
+			logger.error("SmtpException caught", se);
+			// SMTP error, roll back and exit
+			SpringUtil.rollbackTransaction();
+			throw se;
+		}
+	}
+
+	/**
+	 * Send the email off. <p>
+	 * SMTP server properties are retrieved from database. 
 	 * 
 	 * @param msg -
-	 *            a JavaMail message object
+	 *            message
 	 * @param isSecure -
-	 *            true to send via secure SMTP server
+	 *            send via secure SMTP server when true
 	 * @param errors -
 	 *            contains delivery errors if any
 	 * @throws InterruptedException
@@ -49,7 +134,7 @@ public class MailSenderBo extends MailSenderBase {
 			throws MessagingException, IOException, SmtpException, InterruptedException {
 		NamedPools smtp = SmtpWrapperUtil.getSmtpNamedPools();
 		NamedPools secu = SmtpWrapperUtil.getSecuNamedPools();
-		/* Send the Message */
+		/* Send Message */
 		SmtpConnection smtp_conn = null;
 		if (isSecure && !secu.isEmpty() || smtp.isEmpty()) {
 			try {
@@ -76,10 +161,11 @@ public class MailSenderBo extends MailSenderBase {
 	}
 
 	/**
-	 * send the email off via unsecured SMTP server.
+	 * Send the email off via unsecured SMTP server. <p>
+	 * SMTP server properties are retrieved from database. 
 	 * 
 	 * @param msg -
-	 *            a JavaMail message object
+	 *            message
 	 * @throws InterruptedException 
 	 * @throws SmtpException 
 	 * @throws MessagingException 
@@ -88,7 +174,6 @@ public class MailSenderBo extends MailSenderBase {
 			throws MessagingException, SmtpException, InterruptedException {
 		NamedPools smtp = SmtpWrapperUtil.getSmtpNamedPools();
 		if (smtp.isEmpty()) {
-			// for secure server only shop
 			smtp = SmtpWrapperUtil.getSecuNamedPools();
 		}
 		SmtpConnection smtp_conn = null;
