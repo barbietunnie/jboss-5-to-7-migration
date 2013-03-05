@@ -116,6 +116,7 @@ public abstract class MailSenderBase {
 			// use system default
 			msgBean.setEmBedEmailId(Boolean.valueOf(clientVo.isEmbedEmailId()));
 		}
+		// save the message to the database
 		msgInboxBo.saveMessage(msgBean);
 		// check if VERP is enabled
 		if (clientVo.isVerpEnabled()) {
@@ -152,6 +153,13 @@ public abstract class MailSenderBase {
 		}
 		// build a MimeMessage from the MessageBean
 		javax.mail.Message mimeMsg = MessageBeanUtil.createMimeMessage(msgBean);
+		// retrieve SMTP Message-Id
+		if (mimeMsg.getHeader("Message-Id")!=null) {
+			String[] smtpMsgId = mimeMsg.getHeader("Message-Id");
+			if (smtpMsgId.length>0) {
+				msgBean.setSmtpMessageId(smtpMsgId[0]);
+			}
+		}
 		// override mimeMessage.TO with test address if this is a test run
 		rebuildAddresses(mimeMsg, msgBean.getOverrideTestAddr());
 		// send the message off
@@ -159,7 +167,7 @@ public abstract class MailSenderBase {
 		try {
 			sendMail(mimeMsg, msgBean.isUseSecureServer(), errors);
 			/* Update message delivery status */
-			updateMsgStatus(msgBean.getMsgId());
+			updateMsgStatus(msgBean);
 		}
 		catch (SendFailedException sfex) {
 			// failed to send the message to certain recipients
@@ -195,8 +203,8 @@ public abstract class MailSenderBase {
 		 * In order to save the message to database, a MessageBean is required
 		 * by saveMessage method. So first we convert the JavaMail message to a
 		 * MessageBean and save it. Second we convert the MessageBean back to
-		 * JavaMail message again and send it off (as an Email_Id may have been
-		 * added to the message body and X-header).
+		 * JavaMail message and send it off (as an Email_Id may have been added
+		 * to the message body and X-header).
 		 */
 		// convert the JavaMail message to a MessageBean
 		MessageBean msgBean = MessageBeanBuilder.processPart(mimeMsg, null);
@@ -373,8 +381,11 @@ public abstract class MailSenderBase {
 			IOException {
 		if (isDebugEnabled)
 			logger.debug("saveMsgStream() - msgId: " + msgId);
-		MessageInbox msgInboxVo = msgInboxDao.getByPrimaryKey(msgId);
-		if (msgInboxVo == null) {
+		MessageInbox msgInboxVo = null;
+		try {
+			msgInboxVo = msgInboxDao.getByPrimaryKey(msgId);
+		}
+		catch (NoResultException e) {
 			logger.error("saveMsgStream() - MsgInbox record not found by MsgId: " + msgId);
 			return;
 		}
@@ -427,8 +438,10 @@ public abstract class MailSenderBase {
 	protected void validUnsent(MessageBean msgBean, SendFailedException exp, Address[] validUnsent)
 			throws MessagingException, IOException {
 		
-		MessageInbox msgInboxVo = msgInboxDao.getByPrimaryKey(msgBean.getMsgId());
-		if (msgInboxVo == null) {
+		try {
+			msgInboxDao.getByPrimaryKey(msgBean.getMsgId());
+		}
+		catch (NoResultException e) {
 			logger.error("validUnsent() - MsgInbox record not found for MsgId: "
 					+ msgBean.getMsgId());
 			return;
@@ -455,8 +468,10 @@ public abstract class MailSenderBase {
 	protected void invalid(MessageBean msgBean, SendFailedException exp, Address[] invalid)
 			throws MessagingException, IOException {
 		
-		MessageInbox msgInboxVo = msgInboxDao.getByPrimaryKey(msgBean.getMsgId());
-		if (msgInboxVo == null) {
+		try {
+			msgInboxDao.getByPrimaryKey(msgBean.getMsgId());
+		}
+		catch (NoResultException e) {
 			logger.error("invalid() - MsgInbox record not found for MsgId: " + msgBean.getMsgId());
 			return;
 		}
@@ -490,10 +505,10 @@ public abstract class MailSenderBase {
 		int rspCount = 0;
 		if (CarrierCode.SMTPMAIL.equals(m.getCarrierCode())) {
 			if (m.isInternalOnly()) {
-				rspCount = updateMsgStatus(m.getMsgId());
+				rspCount = updateMsgStatus(m);
 			}
 			else {
-				rspCount = updateMsgStatus(m.getMsgId());
+				rspCount = updateMsgStatus(m);
 			}
 		}
 		else {
@@ -510,11 +525,14 @@ public abstract class MailSenderBase {
 	 * @return number records updated
 	 * @throws MessagingException 
 	 */
-	protected int updateMsgStatus(int msgId) throws MessagingException {
+	protected int updateMsgStatus(MessageBean msgBean) throws MessagingException {
 		// update MsgInbox status (to delivered)
-		MessageInbox msgInboxVo = msgInboxDao.getByPrimaryKey(msgId);
-		if (msgInboxVo == null) {
-			logger.error("updateMsgStatus() - MsgInbox record not found for MsgId: " + msgId);
+		MessageInbox msgInboxVo = null;
+		try {
+			msgInboxVo = msgInboxDao.getByPrimaryKey(msgBean.getMsgId());
+		}
+		catch (NoResultException e) {
+			logger.error("updateMsgStatus() - MsgInbox record not found for MsgId: " + msgBean.getMsgId());
 			return 0;
 		}
 		Timestamp ts = new Timestamp(System.currentTimeMillis());
@@ -522,6 +540,9 @@ public abstract class MailSenderBase {
 		msgInboxVo.setDeliveryTime(ts);
 		msgInboxVo.setUpdtTime(ts);
 		msgInboxVo.setUpdtUserId(Constants.DEFAULT_USER_ID);
+		if (StringUtils.isNotBlank(msgBean.getSmtpMessageId())) {
+			msgInboxVo.setSmtpMessageId(msgBean.getSmtpMessageId());
+		}
 		msgInboxDao.update(msgInboxVo);
 		return 1;
 	}

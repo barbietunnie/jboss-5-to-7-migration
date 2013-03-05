@@ -159,18 +159,18 @@ public final class MessageBeanBuilder {
 		}
 		Calendar rightNow = Calendar.getInstance();
 		if (receivedTime != null) {
-//			Calendar receivedTimePlusHours = Calendar.getInstance();
-//			receivedTimePlusHours.setTime(receivedTime);
-//			receivedTimePlusHours.add(Calendar.HOUR, 25);
-//			// The Received Date from SPAM E-mails are usually way off.
-//			// Allow system down time up to 25 hours.
-//			if (rightNow.getTimeInMillis() > receivedTimePlusHours.getTimeInMillis()) {
-//				msgBean.setSendDate(rightNow.getTime());
-//			}
-//			else {
-//				msgBean.setSendDate(receivedTime);
-//			}
-			msgBean.setSendDate(receivedTime);
+			Calendar receivedTimePlusHours = Calendar.getInstance();
+			receivedTimePlusHours.setTime(receivedTime);
+			receivedTimePlusHours.add(Calendar.HOUR, 48);
+			// The Received Date from SPAM E-mails are usually way off.
+			// Allow system down time up to 48 hours.
+			if (rightNow.getTimeInMillis() > receivedTimePlusHours.getTimeInMillis()) {
+				msgBean.setSendDate(rightNow.getTime());
+			}
+			else {
+				msgBean.setSendDate(receivedTime);
+			}
+			//msgBean.setSendDate(receivedTime);
 		}
 
 		// retrieve Message-Id and Return-Path from headers

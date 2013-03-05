@@ -7,9 +7,13 @@ import java.util.Map;
 import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 import jpa.exception.DataValidationException;
+import jpa.message.MessageBean;
 import jpa.message.MessageContext;
+import jpa.model.message.MessageRendered;
+import jpa.service.message.MessageRenderedService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
@@ -37,6 +41,28 @@ public class MailSenderBo extends MailSenderBase {
 		super();
 	}
 
+	public static void main(String[] args) {
+		MailSenderBo sender = (MailSenderBo) SpringUtil.getAppContext().getBean("mailSenderBo");
+		MsgOutboxBo msgOutboxBo = (MsgOutboxBo) SpringUtil.getAppContext().getBean("msgOutboxBo");
+		MessageRenderedService msgRenderedService = (MessageRenderedService) SpringUtil.getAppContext().getBean("messageRenderedService");
+		SpringUtil.startTransaction();
+		try {
+			MessageRendered mr = msgRenderedService.getFirstRecord();
+			MessageBean bean = msgOutboxBo.getMessageByPK(mr.getRowId());
+			if (bean.getTo()==null || bean.getTo().length==0) {
+				bean.setTo(InternetAddress.parse("testto@localhost"));
+			}
+			System.out.println("MessageBean retrieved:\n" + bean);
+			sender.process(bean);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			SpringUtil.commitTransaction();
+		}
+	}
+
 	/**
 	 * process request. Either a ObjectMessage contains a MessageBean or a
 	 * BytesMessage contains a SMTP raw stream.
@@ -49,14 +75,13 @@ public class MailSenderBo extends MailSenderBase {
 	 * @throws SmtpException 
 	 * @throws MessagingException 
 	 */
-	public void process(MessageContext req) throws IOException, MessagingException,
-			InterruptedException, SmtpException {
+	public void process(MessageContext req) throws SmtpException, IOException, InterruptedException {
 		if (req == null) {
 			logger.error("a null request was received.");
 			return;
 		}
-		if (req.getMessages()==null || req.getMessages().length==0) {
-			throw new IllegalArgumentException("Request did not contain java mail message(s).");
+		if (req.getMessageBean()==null && req.getMessageStream()==null) {
+			throw new IllegalArgumentException("Request did not contain a MessageBean nor a MessageStream.");
 		}
 		
 		// define transaction properties
@@ -76,10 +101,6 @@ public class MailSenderBo extends MailSenderBase {
 			}
 			SpringUtil.commitTransaction();
 		}
-		catch (InterruptedException e) {
-			logger.error("MailSenderBo thread was interrupted. Process exiting...");
-			SpringUtil.rollbackTransaction(); // message will be re-delivered
-		}
 		catch (DataValidationException dex) {
 			// failed to send the message
 			logger.error("DataValidationException caught", dex);
@@ -96,17 +117,24 @@ public class MailSenderBo extends MailSenderBase {
 		}
 		catch (NullPointerException en) {
 			logger.error("NullPointerException caught", en);
-			SpringUtil.commitTransaction();		}
+			SpringUtil.commitTransaction();
+		}
 		catch (IndexOutOfBoundsException eb) {
 			// AddressException from InternetAddress.parse() caused this
 			// Exception to be thrown
 			// write the original message to error queue
 			logger.error("IndexOutOfBoundsException caught", eb);
-			SpringUtil.commitTransaction();		}
+			SpringUtil.commitTransaction();
+		}
 		catch (NumberFormatException ef) {
 			logger.error("NumberFormatException caught", ef);
 			// TODO send error notification
 			SpringUtil.commitTransaction();
+		}
+		catch (InterruptedException e) {
+			logger.error("MailSenderBo thread was interrupted. Process exiting...");
+			SpringUtil.rollbackTransaction(); // message will be re-delivered
+			throw e;
 		}
 		catch (SmtpException se) {
 			logger.error("SmtpException caught", se);

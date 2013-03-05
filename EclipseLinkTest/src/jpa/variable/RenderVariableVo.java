@@ -113,7 +113,7 @@ public class RenderVariableVo implements Serializable {
 			if (variableFormat != null) {
 				fmt.applyPattern(variableFormat); // validate the format
 			}
-			if (variableValue == null) {
+			if (variableValue == null) { // populate "CurrentDateTime"
 				if (GlobalVariableEnum.CurrentDateTime.name().equals(variableName)
 						|| GlobalVariableEnum.CurrentDate.name().equals(variableName)
 						|| GlobalVariableEnum.CurrentTime.name().equals(variableName)) {

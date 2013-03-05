@@ -112,7 +112,7 @@ public class MsgOutboxBo {
 			e.printStackTrace();
 		}
 		finally {
-			SpringUtil.rollbackTransaction();
+			SpringUtil.commitTransaction();
 		}
 	}
 
@@ -244,7 +244,8 @@ public class MsgOutboxBo {
 								+ value.getClass().getName());
 					}
 					// create a record
-					renderAttachmentDao.insert(renderAttc);
+					msgVo.getRenderAttachmentList().add(renderAttc);
+					//renderAttachmentDao.insert(renderAttc);
 				}
 //				else if (VariableType.COLLECTION.equals(req.getVariableType())) {
 //					// save to RenderObject
@@ -325,11 +326,12 @@ public class MsgOutboxBo {
 									+ ", ignored");
 					}
 					// create a record
-					renderVariableDao.insert(renderVar);
+					msgVo.getRenderVariableList().add(renderVar);
+					//renderVariableDao.insert(renderVar);
 				}
 			}
 		}
-		
+		msgRenderedDao.update(msgVo);
 		return msgVo.getRowId();
 	}
 	

@@ -80,6 +80,14 @@ public class SpringUtil {
 		statusThreadLocal.remove();
 	}
 
+	public static void releaseTransaction() {
+		PlatformTransactionManager txmgr = txmgrThreadLocal.get();
+		TransactionStatus status = statusThreadLocal.get();
+		if (txmgr!=null && status!=null) {
+			rollbackTransaction();
+		}
+	}
+
 	private static final ThreadLocal<AtomicInteger> TX_COUNTER = new ThreadLocal<AtomicInteger>() {
 		public AtomicInteger initialValue() {
 			return new AtomicInteger(1);
