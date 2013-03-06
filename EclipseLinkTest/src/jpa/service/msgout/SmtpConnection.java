@@ -248,11 +248,10 @@ public final class SmtpConnection implements java.io.Serializable {
 	 * @param errors -
 	 *            a map object containing errors if Exception is thrown
 	 * @throws SmtpException
-	 * @throws InterruptedException
 	 * @throws MessagingException
 	 */
 	public void sendMail(Message msg, Map<String, Address[]> errors) throws SmtpException,
-			InterruptedException, MessagingException {
+			MessagingException {
 		try {
 			// use a Transport instance to send message via a specified SMTP
 			// server
@@ -328,10 +327,9 @@ public final class SmtpConnection implements java.io.Serializable {
 	/**
 	 * Obtain a transport and close it.
 	 * 
-	 * @throws InterruptedException
 	 * @throws MessagingException
 	 */
-	public void testConnection() throws MessagingException, InterruptedException {
+	public void testConnection() throws MessagingException {
 		testConnection(false);
 	}
 
@@ -340,11 +338,9 @@ public final class SmtpConnection implements java.io.Serializable {
 	 * 
 	 * @param forceConnect -
 	 *            force reconnect
-	 * @throws InterruptedException
 	 * @throws MessagingException
 	 */
-	public void testConnection(boolean forceConnect) throws MessagingException,
-			InterruptedException {
+	public void testConnection(boolean forceConnect) throws MessagingException {
 		try {
 			obtainTransport(0, forceConnect);
 		}
@@ -397,7 +393,7 @@ public final class SmtpConnection implements java.io.Serializable {
 	 * @param retries -
 	 *            number of retries before giving up
 	 */
-	private void obtainTransport(int retries) throws MessagingException, InterruptedException {
+	private void obtainTransport(int retries) throws MessagingException {
 		obtainTransport(retries, false);
 	}
 
@@ -409,10 +405,8 @@ public final class SmtpConnection implements java.io.Serializable {
 	 * @param forceReconnect -
 	 *            force reconnect
 	 * @throws MessagingException
-	 * @throws InterruptedException
 	 */
-	private void obtainTransport(int retries, boolean forceReconnect) throws MessagingException,
-			InterruptedException {
+	private void obtainTransport(int retries, boolean forceReconnect) throws MessagingException {
 		if (retries == 0) {
 			time_stopped_total = 0;
 			time_stopped_session = 0;
@@ -463,7 +457,6 @@ public final class SmtpConnection implements java.io.Serializable {
 					}
 					catch (InterruptedException ie) {
 						logger.error("ObtainTransport().sleep() was interrupted", ie);
-						throw e;
 					}
 					logger.error("Connecting to " + smtpHost + ", number of retries attempted: "
 							+ retries);
