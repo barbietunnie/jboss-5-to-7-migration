@@ -38,8 +38,8 @@ public class MailProcessor {
 	static Logger duplicateReport = Logger.getLogger("jpa.message.report.duplicate");
 
 	//volatile boolean keepRunning = true;
-	private final int MAX_INBOUND_BODY_SIZE = 150 * 1024;
-	private final int MAX_INBOUND_CMPT_SIZE = 1024 * 1024;
+	private final int MAX_INBOUND_BODY_SIZE = 150 * 1024; // 150K
+	private final int MAX_INBOUND_CMPT_SIZE = 1024 * 1024; // 1M
 
 	final static String LF = System.getProperty("line.separator", "\n");
 
@@ -50,7 +50,7 @@ public class MailProcessor {
 	@Autowired
 	MessageParser msgParser;
 	
-	private MailInbox mailBoxVo;
+	private MailInbox mInbox;
 	
 	public MailProcessor() {}
 
@@ -64,7 +64,7 @@ public class MailProcessor {
 		logger.info("Entering process() method...");
 		if (req != null && req.getMessages()!=null && req.getMailInbox()!=null) {
 			Message[] msgs = req.getMessages();
-			mailBoxVo = req.getMailInbox();
+			mInbox = req.getMailInbox();
 			// Just dump out the new messages and set the delete flags
 			for (int i = 0; i < msgs.length; i++) {
 				if (msgs[i] != null && !msgs[i].isSet(Flags.Flag.SEEN)
@@ -92,25 +92,25 @@ public class MailProcessor {
 		long start_tms = System.currentTimeMillis();
 		
 		// parse the MimeMessage to MessageBean
-		MessageBean msgBean = MessageBeanBuilder.processPart(p, mailBoxVo.getToAddressDomain());
+		MessageBean msgBean = MessageBeanBuilder.processPart(p, mInbox.getToAddressDomain());
 		msgBean.setIsReceived(true);
 		
 		// mailbox carrierCode
-		msgBean.setCarrierCode(CarrierCode.getByValue(mailBoxVo.getCarrierCode()));
+		msgBean.setCarrierCode(CarrierCode.getByValue(mInbox.getCarrierCode()));
 		// internal mail only flag
-		msgBean.setInternalOnly(mailBoxVo.getIsInternalOnly());
+		msgBean.setInternalOnly(mInbox.getIsInternalOnly());
 		// mailbox SSL flag
-		msgBean.setUseSecureServer(mailBoxVo.isUseSsl());
+		msgBean.setUseSecureServer(mInbox.isUseSsl());
 		// MailBox Host Address
-		msgBean.setMailboxHost(mailBoxVo.getMailInboxPK().getHostName());
+		msgBean.setMailboxHost(mInbox.getMailInboxPK().getHostName());
 		// MailBox User Id
-		msgBean.setMailboxUser(mailBoxVo.getMailInboxPK().getUserId());
+		msgBean.setMailboxUser(mInbox.getMailInboxPK().getUserId());
 		// MailBox Name
-		msgBean.setMailboxName(mailBoxVo.getDescription());
+		msgBean.setMailboxName(mInbox.getDescription());
 		// Folder Name
-		msgBean.setFolderName(mailBoxVo.getFolderName());
+		msgBean.setFolderName(mInbox.getFolderName());
 		// to_plain_text indicator, default to "no"
-		msgBean.setToPlainText(mailBoxVo.getIsToPlainText());
+		msgBean.setToPlainText(mInbox.getIsToPlainText());
 		
 		// TODO for prototype only. Remove it.
 		if (CarrierCode.READONLY.equals(msgBean.getCarrierCode())) {
@@ -153,7 +153,7 @@ public class MailProcessor {
 			boolean isDuplicate = false;
 			// check for duplicate
 			if (StringUtils.isNotBlank(msgBean.getSmtpMessageId())) {
-				if (mailBoxVo.getIsCheckDuplicate()) {
+				if (mInbox.getIsCheckDuplicate()) {
 					isDuplicate = inboxService.isMessageIdDuplicate(msgBean.getSmtpMessageId());
 				}
 			}
@@ -164,11 +164,11 @@ public class MailProcessor {
 			if (isDuplicate) {
 				logger.error("Duplicate Message received, messageId: " + msgBean.getSmtpMessageId());
 				// issue an info_event alert
-				if (mailBoxVo.getIsAlertDuplicate()) {
+				if (mInbox.getIsAlertDuplicate()) {
 					// TODO
 				}
 				// write raw stream to logging file
-				if (mailBoxVo.getIsLogDuplicate()) {
+				if (mInbox.getIsLogDuplicate()) {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					p.writeTo(baos);
 					duplicateReport.info("<========== Message-id: " + msgBean.getSmtpMessageId()
@@ -187,7 +187,7 @@ public class MailProcessor {
 
 		// message has been sent, delete it from mail box
 		// keep the message if it's from notes
-		if (!CarrierCode.READONLY.getValue().equals(mailBoxVo.getCarrierCode())) {
+		if (!CarrierCode.READONLY.getValue().equals(mInbox.getCarrierCode())) {
 			((Message) p).setFlag(Flags.Flag.DELETED, true);
 			// may throw MessageingException, stop MailReader to
 			// prevent from producing duplicate messages

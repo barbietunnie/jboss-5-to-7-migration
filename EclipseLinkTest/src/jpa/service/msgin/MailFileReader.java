@@ -35,7 +35,7 @@ public class MailFileReader {
 			logger.error("Exception caught", e);
 		}
 		finally {
-			SpringUtil.releaseTransaction();
+			SpringUtil.clearTransaction();
 		}
 		System.exit(0);
 	}
