@@ -45,7 +45,7 @@ import org.apache.log4j.Logger;
  * 	. set DELETE flag for the message and issue folder.close()
  * </pre>
  */
-public class MailReaderMain implements Serializable, ConnectionListener, StoreListener {
+public class MailReaderMain implements Serializable, Runnable, ConnectionListener, StoreListener {
 	private static final long serialVersionUID = -9061869821061961065L;
 	private static final Logger logger = Logger.getLogger(MailReaderMain.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
@@ -184,13 +184,14 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 		SpringUtil.startTransaction();
 		try {
 			MailInbox vo = mailBoxDao.getByPrimaryKey(pk);
-			vo.setFromTimer(true);
+			//vo.setFromTimer(true);
 			MailReaderMain reader = new MailReaderMain(vo);
+			//Thread thread = new Thread(reader);
 			try {
-					//reader.start();
-					//reader.join();
-					reader.readMail(vo.isFromTimer());
-					SpringUtil.commitTransaction();
+				//thread.start();
+				//thread.join();
+				reader.readMail(vo.isFromTimer());
+				SpringUtil.commitTransaction();
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -206,38 +207,19 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 	/**
 	 * run the MailReader, invoke Application plug-in to process e-mails.
 	 */
+	@Override
 	public void run() {
 		logger.info("thread " + Thread.currentThread().getName() + " running");
 		try {
 			readMail(mailBoxVo.isFromTimer());
 		}
-		catch (InterruptedException e) {
-			logger.info("InterruptedException caught. Process exiting...", e);
-		}
-		catch (MessagingException e) {
-			logger.fatal("MessagingException caught, exiting...", e);
-			throw new RuntimeException(e.getMessage());
-		}
-		catch (DataValidationException e) {
-			logger.fatal("DataValidationException caught, exiting...", e);
-			throw new RuntimeException(e.getMessage());
-		}
-		catch (IOException e) {
-			logger.fatal("IOException caught, exiting...", e);
+		catch (Exception e) {
+			logger.fatal(e.getClass().getName() + " caught, exiting...", e);
 			throw new RuntimeException(e.getMessage());
 		}
 		finally {
-			try {
-				if (folder != null && folder.isOpen()) {
-					folder.close(false);
-				}
-				store.close();
-			}
-			catch (Exception e) {
-				logger.error("Exception caught", e);
-			}
+			logger.info("MailReader thread " + Thread.currentThread().getName() + " ended");
 		}
-		logger.info("MailReader thread " + Thread.currentThread().getName() + " ended");
 	}
 	
 	public void process(Object req) throws IOException, MessagingException {
@@ -257,7 +239,7 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 	 * @throws DataValidationException
 	 */
 	public void readMail(boolean isFromTimer) throws MessagingException, IOException,
-			InterruptedException, DataValidationException {
+			DataValidationException {
 		session.setDebug(true); // DON'T CHANGE THIS
 		if (isFromTimer) {
 			MESSAGE_COUNT = 500; // not to starve other mailboxes
@@ -300,12 +282,6 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 				imap(isFromTimer);
 			}
 		}
-		catch (InterruptedException e) {
-			logger.info("InterruptedException caught. Process exiting...", e);
-			if (!isFromTimer) {
-				throw e;
-			}
-		}
 		finally {
 			try {
 				if (folder != null && folder.isOpen()) {
@@ -323,8 +299,7 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 		start_idling = new Date().getTime();
 	} // end of run()
 
-	private void pop3(boolean fromTimer) throws InterruptedException, MessagingException,
-			IOException {
+	private void pop3(boolean fromTimer) throws MessagingException, IOException {
 		final String _user = mailBoxVo.getMailInboxPK().getUserId();
 		final String _host = mailBoxVo.getMailInboxPK().getHostName();
 		final String _folder = mailBoxVo.getFolderName();
@@ -344,6 +319,10 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 				// reopen the folder in order to pick up the new messages
 				folder.open(Folder.READ_WRITE);
 			}
+			catch (InterruptedException e) {
+				logger.warn("InterruptedException caught, exit.");
+				break;
+			}
 			catch (MessagingException e) {
 				logger.error("Failed to open folder " + _user + "@" + _host + ":" + _folder);
 				logger.error("MessagingException caught", e);
@@ -357,8 +336,14 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 					}
 					logger.error("Exception caught during folder.open(), retry(=" + retries
 							+ ") in " + sleepFor + " seconds");
-					Thread.sleep(sleepFor * 1000);
+					try {
+						Thread.sleep(sleepFor * 1000);
+					}
+					catch (InterruptedException ie) {
+						logger.warn("InterruptedException caught, exit.");
 						// terminate if interrupted
+						break;
+					}
 					continue;
 				}
 				else {
@@ -411,7 +396,7 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 				folder.close(true); // "true" to delete the flagged messages
 				logger.info(msgs.length + " messages have been purged from pop3 mailbox.");
 				messagesProcessed += msgs.length;
-				long proc_time = new Date().getTime() - start_tms.getTime();
+				long proc_time = System.currentTimeMillis() - start_tms.getTime();
 				if (isDebugEnabled)
 					logger.debug(msgs.length+ " messages processed, time taken: " + proc_time);
 				if (MESSAGE_COUNT > 0 && messagesProcessed > MESSAGE_COUNT) {
@@ -424,7 +409,7 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 		} while (keepRunning); // end of do-while
 	}
 	
-	private void imap(boolean fromTimer) throws MessagingException, InterruptedException,
+	private void imap(boolean fromTimer) throws MessagingException,
 			IOException {
 		boolean keepRunning = true;
 		folder.open(Folder.READ_WRITE);
@@ -441,13 +426,19 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 			execute(msgs);
 			folder.expunge(); // remove messages marked as DELETED
 			logger.info(msgs.length + " messages have been expunged from imap mailbox.");
-			long proc_time = new Date().getTime() - start_tms.getTime();
+			long proc_time = System.currentTimeMillis() - start_tms.getTime();
 			if (isDebugEnabled)
 				logger.debug(msgs.length+ " messages processed, time took: " + proc_time);
 		}
 		/* end of fix for iPlanet */
 		while (keepRunning) {
-			Thread.sleep(waitTime(freq)); // sleep for "freq" milliseconds
+			try {
+				Thread.sleep(waitTime(freq)); // sleep for "freq" milliseconds
+			}
+			catch (InterruptedException e) {
+				logger.warn("InterruptedException caught, exit.");
+				break;
+			}
 			// This is to force the IMAP server to send us
 			// EXISTS notifications.
 			int msgCount = folder.getMessageCount();
@@ -480,10 +471,6 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 					logger.info(msgs.length + " messages have been expunged from imap mailbox.");
 					messagesProcessed += msgs.length;
 				}
-				catch (InterruptedException e) {
-					logger.info("InterruptedException caught. Process exiting...", e);
-					Thread.currentThread().interrupt();
-				}
 				catch (MessagingException ex) {
 					logger.fatal("MessagingException caught", ex);
 					throw new RuntimeException(ex.getMessage());
@@ -493,7 +480,7 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 					throw new RuntimeException(ex.getMessage());
 				}
 				finally {
-					long proc_time = new Date().getTime() - start_tms.getTime();
+					long proc_time = System.currentTimeMillis() - start_tms.getTime();
 					if (isDebugEnabled)
 						logger.debug(msgs.length+ " messages processed, time took: " + proc_time);
 					//update(MetricsLogger.PROC_TIME, (int) proc_time, msgs.length);
@@ -506,7 +493,7 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 	}
 	
 	private long waitTime(int freq) {
-		long diff = new Date().getTime() - start_idling;
+		long diff = System.currentTimeMillis() - start_idling;
 		if (freq > diff) {
 			return (freq - diff);
 		}
@@ -526,8 +513,7 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 	 * @throws JMSException
 	 * @throws IOException
 	 */
-	private void execute(Message[] msgs) throws InterruptedException, IOException,
-			MessagingException {
+	private void execute(Message[] msgs) throws IOException, MessagingException {
 		if (msgs == null || msgs.length == 0) return;
 		MailProcessor processor = (MailProcessor) SpringUtil.getAppContext().getBean("mailProcessor");
 		MessageContext ctx = new MessageContext(msgs, mailBoxVo);
@@ -540,6 +526,7 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 	 * @param e -
 	 *            Connection event
 	 */
+	@Override
 	public void opened(ConnectionEvent e) {
 		if (isDebugEnabled)
 			logger.debug(">>> ConnectionListener: connection opened()");
@@ -551,6 +538,7 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 	 * @param e -
 	 *            Connection event
 	 */
+	@Override
 	public void disconnected(ConnectionEvent e) {
 		logger.info(">>> ConnectionListener: connection disconnected()");
 	}
@@ -561,11 +549,13 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 	 * @param e -
 	 *            Connection event
 	 */
+	@Override
 	public void closed(ConnectionEvent e) {
 		if (isDebugEnabled)
 			logger.debug(">>> ConnectionListener: connection closed()");
 	}
 
+	@Override
 	public void notification(StoreEvent e) {
 		if (isDebugEnabled)
 			logger.debug(">>> StoreListener: notification event: " + e.getMessage());
@@ -689,9 +679,5 @@ public class MailReaderMain implements Serializable, ConnectionListener, StoreLi
 			v.add(mailBoxVo.toString());
 		}
 		return v;
-	}
-
-	public MailInbox getMailInbox() {
-		return mailBoxVo;
 	}
 }

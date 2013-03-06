@@ -90,11 +90,10 @@ public abstract class MailSenderBase {
 	 * @throws MessagingException
 	 * @throws IOException
 	 * @throws SmtpException
-	 * @throws InterruptedException
 	 * @throws DataValidationException 
 	 */
 	public void process(MessageBean msgBean) throws MessagingException, IOException, SmtpException,
-			InterruptedException, DataValidationException {
+			DataValidationException {
 
 		if (msgBean == null) {
 			throw new DataValidationException("Input MessageBean is null");
@@ -191,11 +190,10 @@ public abstract class MailSenderBase {
 	 * @throws MessagingException
 	 * @throws IOException
 	 * @throws SmtpException
-	 * @throws InterruptedException
 	 * @throws DataValidationException 
 	 */
 	public void process(byte[] msgStream) throws MessagingException, IOException, SmtpException,
-			InterruptedException, DataValidationException {
+			DataValidationException {
 
 		javax.mail.Message mimeMsg = MessageBeanUtil.createMimeMessage(msgStream);
 		
@@ -250,7 +248,7 @@ public abstract class MailSenderBase {
 		}
 		msgBean.setUseSecureServer(isSecure);
 		
-		//String[] ruleName = mimeMsg.getHeader(RULE_NAME);
+		//String[] ruleName = mimeMsg.getHeader(XHeaderName.RULE_NAME.getValue());
 		//if (ruleName != null && ruleName.length > 0) {
 		//	msgBean.setRuleName(ruleName[0]);
 		//}
@@ -418,13 +416,12 @@ public abstract class MailSenderBase {
 	 *            exception
 	 * @param errors -
 	 *            error map
-	 * @throws InterruptedException
 	 * @throws SmtpException
 	 * @throws IOException
 	 * @throws MessagingException
 	 */
 	public void updtDlvrStatAndLoopback(MessageBean msgBean, SendFailedException exp,
-			Map<String, ?> errors) throws MessagingException, IOException {
+			Map<String, ?> errors) throws MessagingException, IOException, SmtpException {
 		if (errors.get("validUnsent") != null) {
 			Address[] validUnsent = (Address[]) errors.get("validUnsent");
 			validUnsent(msgBean, exp, validUnsent);
@@ -436,7 +433,7 @@ public abstract class MailSenderBase {
 	}
 
 	protected void validUnsent(MessageBean msgBean, SendFailedException exp, Address[] validUnsent)
-			throws MessagingException, IOException {
+			throws MessagingException, IOException, SmtpException {
 		
 		try {
 			msgInboxDao.getByPrimaryKey(msgBean.getMsgId());
@@ -466,7 +463,7 @@ public abstract class MailSenderBase {
 	}
 	
 	protected void invalid(MessageBean msgBean, SendFailedException exp, Address[] invalid)
-			throws MessagingException, IOException {
+			throws MessagingException, IOException, SmtpException {
 		
 		try {
 			msgInboxDao.getByPrimaryKey(msgBean.getMsgId());
@@ -558,10 +555,10 @@ public abstract class MailSenderBase {
 	 * @throws IOException
 	 * @throws MessagingException
 	 * @throws DataValidationException 
-	 * @throws JMSException 
+	 * @throws SmtpException 
 	 */
 	protected void loopbackMail(MessageBean msgBean, String errmsg, Address failedAddr,
-			String reason) throws MessagingException, IOException, DataValidationException {
+			String reason) throws MessagingException, IOException, SmtpException {
 		
 		logger.info("Entering LoopbackMail method, error message: " + errmsg);
 		// generate delivery failure report
@@ -577,18 +574,17 @@ public abstract class MailSenderBase {
 		logger.info("loopbackMail() - Undelivered message has been routed to "
 				+ "loopback@localhost");
 		Message msg = MessageBeanUtil.createMimeMessage(msgBean, failedAddr, loopbackText);
-		MessageBean loopBackBean = MessageBeanBuilder.processPart(msg, null);
-		loopBackBean.setMsgRefId(msgBean.getMsgId());
-		loopBackBean.setIsReceived(true);
-		if (isDebugEnabled) {
-			logger.debug("loopbackMail() - The loopback MessageBean:" + LF + "<----" + LF
-					+ loopBackBean + LF + "---->");
-		}
-		// use MessageParser to invoke rule engine
-		parser.parse(loopBackBean);
-		// use TaskScheduler to schedule tasks
-//		TaskScheduler scheduler = new TaskScheduler(factory); TODO
-//		scheduler.scheduleTasks(loopBackBean);
+//		MessageBean loopBackBean = MessageBeanBuilder.processPart(msg, null);
+//		loopBackBean.setMsgRefId(msgBean.getMsgId());
+//		loopBackBean.setIsReceived(true);
+//		if (isDebugEnabled) {
+//			logger.debug("loopbackMail() - The loopback MessageBean:" + LF + "<----" + LF
+//					+ loopBackBean + LF + "---->");
+//		}
+//		// use MessageParser to invoke rule engine
+//		parser.parse(loopBackBean);
+		// send the loop back mail off
+		sendMail(msg, new HashMap<String, Address[]>());
 	}
 
 	/**
@@ -603,10 +599,9 @@ public abstract class MailSenderBase {
 	 * @throws MessagingException
 	 * @throws IOException
 	 * @throws SmtpException
-	 * @throws InterruptedException
 	 */
 	public abstract void sendMail(Message msg, boolean isSecure, Map<String, Address[]> errors)
-		throws MessagingException, IOException, SmtpException, InterruptedException;
+		throws MessagingException, IOException, SmtpException;
 
 	/**
 	 * send the email off via unsecured SMTP server. to be implemented by
@@ -614,11 +609,10 @@ public abstract class MailSenderBase {
 	 * 
 	 * @param msg -
 	 *            a JavaMail message object
-	 * @throws InterruptedException
 	 * @throws SmtpException
 	 * @throws MessagingException
 	 */
 	public abstract void sendMail(Message msg, Map<String, Address[]> errors)
-			throws MessagingException, SmtpException, InterruptedException;
+			throws MessagingException, SmtpException;
 
 }

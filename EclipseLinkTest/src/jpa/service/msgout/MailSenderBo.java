@@ -67,15 +67,11 @@ public class MailSenderBo extends MailSenderBase {
 	 * process request. Either a ObjectMessage contains a MessageBean or a
 	 * BytesMessage contains a SMTP raw stream.
 	 * 
-	 * @param req -
-	 *            a JMS message
+	 * @param req - a message bean or a message stream
 	 * @throws IOException 
-	 * @throws JMSException 
-	 * @throws InterruptedException 
 	 * @throws SmtpException 
-	 * @throws MessagingException 
 	 */
-	public void process(MessageContext req) throws SmtpException, IOException, InterruptedException {
+	public void process(MessageContext req) throws SmtpException, IOException {
 		if (req == null) {
 			logger.error("a null request was received.");
 			return;
@@ -131,11 +127,6 @@ public class MailSenderBo extends MailSenderBase {
 			// TODO send error notification
 			SpringUtil.commitTransaction();
 		}
-		catch (InterruptedException e) {
-			logger.error("MailSenderBo thread was interrupted. Process exiting...");
-			SpringUtil.rollbackTransaction(); // message will be re-delivered
-			throw e;
-		}
 		catch (SmtpException se) {
 			logger.error("SmtpException caught", se);
 			// SMTP error, roll back and exit
@@ -154,12 +145,11 @@ public class MailSenderBo extends MailSenderBase {
 	 *            send via secure SMTP server when true
 	 * @param errors -
 	 *            contains delivery errors if any
-	 * @throws InterruptedException
 	 * @throws SmtpException
 	 * @throws MessagingException
 	 */
 	public void sendMail(javax.mail.Message msg, boolean isSecure, Map<String, Address[]> errors)
-			throws MessagingException, IOException, SmtpException, InterruptedException {
+			throws MessagingException, IOException, SmtpException {
 		NamedPools smtp = SmtpWrapperUtil.getSmtpNamedPools();
 		NamedPools secu = SmtpWrapperUtil.getSecuNamedPools();
 		/* Send Message */
@@ -194,12 +184,11 @@ public class MailSenderBo extends MailSenderBase {
 	 * 
 	 * @param msg -
 	 *            message
-	 * @throws InterruptedException 
 	 * @throws SmtpException 
 	 * @throws MessagingException 
 	 */
 	public void sendMail(javax.mail.Message msg, Map<String, Address[]> errors)
-			throws MessagingException, SmtpException, InterruptedException {
+			throws MessagingException, SmtpException {
 		NamedPools smtp = SmtpWrapperUtil.getSmtpNamedPools();
 		if (smtp.isEmpty()) {
 			smtp = SmtpWrapperUtil.getSecuNamedPools();

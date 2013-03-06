@@ -139,7 +139,7 @@ public class MsgOutboxBo {
 		}
 		
 		MessageBean msgBean = rsp.getMessageBean();
-		Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
+		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 		
 		//
 		// save MsgRendered record
@@ -196,7 +196,7 @@ public class MsgOutboxBo {
 		
 		if (rsp.getMessageSource().isExcludingIdToken()) {
 			// operation moved to MailSender after message is written to database
-			msgBean.setEmBedEmailId(Boolean.valueOf(false));
+			msgBean.setEmBedEmailId(Boolean.FALSE);
 		}
 		
 		if (!rsp.getMessageSource().isSaveMsgStream()) {
@@ -245,7 +245,6 @@ public class MsgOutboxBo {
 					}
 					// create a record
 					msgVo.getRenderAttachmentList().add(renderAttc);
-					//renderAttachmentDao.insert(renderAttc);
 				}
 //				else if (VariableType.COLLECTION.equals(req.getVariableType())) {
 //					// save to RenderObject
@@ -327,7 +326,6 @@ public class MsgOutboxBo {
 					}
 					// create a record
 					msgVo.getRenderVariableList().add(renderVar);
-					//renderVariableDao.insert(renderVar);
 				}
 			}
 		}
@@ -390,7 +388,7 @@ public class MsgOutboxBo {
 			clientId = client.getClientId();
 		}
 		catch (NoResultException e) {}
-		// populate variableFinal
+		// add renderVariables to variableFinal
 		Map<String, RenderVariableVo> varblFinal = new HashMap<String, RenderVariableVo>();
 		List<RenderVariable> renderVariables = renderVariableDao.getByRenderId(renderId);
 		if (!renderVariables.isEmpty()) {
@@ -410,7 +408,7 @@ public class MsgOutboxBo {
 			}
 		}
 
-		// populate renderObjects into variableFinal
+		// add renderObjects to variableFinal
 //		List<RenderObject> renderObjects = renderObjectDao.getByRenderId(renderId);
 //		if (!renderObjects.isEmpty()) {
 //			Iterator<RenderObject> it = renderObjects.iterator();
@@ -440,7 +438,7 @@ public class MsgOutboxBo {
 //			}
 //		}
 
-		// populate renderAttachments into variableFinal
+		// add renderAttachments to variableFinal
 		List<RenderAttachment> renderAttachments = renderAttachmentDao.getByRenderId(renderId);
 		if (!renderAttachments.isEmpty()) {
 			for (Iterator<RenderAttachment> it = renderAttachments.iterator(); it.hasNext();) {
