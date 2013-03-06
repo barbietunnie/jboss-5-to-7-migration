@@ -80,7 +80,7 @@ public class SpringUtil {
 		statusThreadLocal.remove();
 	}
 
-	public static void releaseTransaction() {
+	public static void clearTransaction() {
 		PlatformTransactionManager txmgr = txmgrThreadLocal.get();
 		TransactionStatus status = statusThreadLocal.get();
 		if (txmgr!=null && status!=null) {
