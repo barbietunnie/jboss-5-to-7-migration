@@ -2,6 +2,7 @@ package jpa.service.msgin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -15,6 +16,7 @@ public class MailReaderMain {
 		MailInboxService mailBoxDao = (MailInboxService) SpringUtil.getAppContext().getBean("mailInboxService");
 		List<MailInbox> mboxes = mailBoxDao.getAll(true);
 		List<Thread> threads = new ArrayList<Thread>();
+		Random random = new Random();
 		for (MailInbox mbox : mboxes) {
 			try {
 				//mbox.setFromTimer(true);
@@ -23,6 +25,7 @@ public class MailReaderMain {
 				threads.add(thread);
 				try {
 					thread.start();
+					Thread.sleep(1000 + random.nextInt(5000));
 				}
 				catch (Exception e) {
 					logger.error("Exception caught", e);
