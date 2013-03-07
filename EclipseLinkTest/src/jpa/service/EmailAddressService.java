@@ -10,6 +10,7 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.Query;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -67,6 +68,7 @@ public class EmailAddressService {
 				" a.lastSentTime, " +
 				" a.lastRcptTime, " +
 				" a.isAcceptHtml, " +
+				" a.origAddress, " +
 				" a.UpdtUserid, " +
 				" a.UpdtTime ";
 		try {
@@ -162,6 +164,17 @@ public class EmailAddressService {
 		String sql = "select t.* from Email_Address t where address REGEXP '" + addressPattern + "' ";
 		if ("PostgreSQL".equalsIgnoreCase(prodName)) {
 			sql = "select t.* from Email_Address t where address ~ '" + addressPattern + "' ";
+		}
+		else if ("Apache Derby".equalsIgnoreCase(prodName)) {
+			String pattern = StringUtils.remove(addressPattern, "^");
+			pattern = StringUtils.remove(pattern, "$");
+			if (addressPattern.startsWith("^")) {
+				pattern = pattern + "%";
+			}
+			else if (addressPattern.endsWith("$")) {
+				pattern = "%" + pattern;
+			}
+			sql = "select t.* from Email_Address t where address like '" + pattern + "' ";
 		}
 		try {
 			Query query = em.createNativeQuery(sql, EmailAddress.MAPPING_EMAIL_ADDR_ENTITY);

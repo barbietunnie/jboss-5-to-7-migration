@@ -118,7 +118,7 @@ public final class MessageBeanBuilder {
 		
 		processAttachment((BodypartBean) msgBean, p, msgBean, 0);
 		
-		saveMsgStream(p, msgBean);
+		addMsgStreamToBean(p, msgBean);
 		
 		if (isDebugEnabled) {
 			logger.debug("Number of attachments: " + msgBean.getAttachCount());
@@ -1030,7 +1030,7 @@ public final class MessageBeanBuilder {
 	 * @throws IOException
 	 *             if any error
 	 */
-	private static void saveMsgStream(Part p, MessageBean msgBean) throws IOException,
+	private static void addMsgStreamToBean(Part p, MessageBean msgBean) throws IOException,
 			MessagingException {
 		/* save the message in its raw format to the HashMap */
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

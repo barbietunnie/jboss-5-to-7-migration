@@ -81,7 +81,7 @@ public class MessageInboxTest {
 		in.setLockTime(null);
 		in.setLockId(null);
 		
-		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.name());
+		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.getValue());
 		in.setRuleLogicRowId(logic.getRowId());
 		in.setMsgContentType("multipart/mixed");
 		in.setBodyContentType("text/plain");

@@ -102,7 +102,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		data1.setLockTime(null);
 		data1.setLockId(null);
 		
-		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.name());
+		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.getValue());
 		data1.setRuleLogicRowId(logic.getRowId());
 		data1.setMsgContentType("multipart/mixed");
 		data1.setBodyContentType("text/plain");
@@ -130,7 +130,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		data2.setLockTime(null);
 		data2.setLockId(null);
 		
-		logic = logicService.getByRuleName(RuleNameEnum.BROADCAST.name());
+		logic = logicService.getByRuleName(RuleNameEnum.BROADCAST.getValue());
 		data2.setRuleLogicRowId(logic.getRowId());
 		data2.setMsgContentType("text/plain");
 		data2.setBodyContentType("text/plain");

@@ -54,7 +54,7 @@ public class MessageInboxBoTest {
 		// parse the message bean to set rule name
 		msgParser.parse(msgBean2);
 		
-		System.out.println("Msgid = " + msgInboxBo.saveMessage(msgBean1));
+		System.out.println("Msgid = " + msgInboxBo.saveMessage(msgBean2));
 	}
 	
 	private MessageBean testReadFromDatabase(int msgId) throws MessagingException {
@@ -77,7 +77,7 @@ public class MessageInboxBoTest {
 		catch (NoResultException e) {
 			msgStreamVo = streamService.getLastRecord();
 		}
-		System.out.println("MsgStreamDao - getByPrimaryKey: "+LF+msgStreamVo);
+		logger.info("MsgStreamDao - getByPrimaryKey: "+LF+msgStreamVo);
 		return msgStreamVo.getMsgStream();
 	}
 }

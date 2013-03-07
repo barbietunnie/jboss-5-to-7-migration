@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -21,6 +22,7 @@ public class MessageHeader extends BaseModel implements Serializable
 
 	@Column(length=100, nullable=true)
 	private String headerName = null;
+	@Lob
 	@Column(length=32700, nullable=true)
 	private String headerValue = null;
 
