@@ -12,7 +12,7 @@ import javax.persistence.UniqueConstraint;
 import jpa.model.BaseVariableModel;
 
 @Entity
-@Table(name="template_variable", uniqueConstraints=@UniqueConstraint(columnNames = {"ClientDataRowId", "variableId", "variableName", "startTime"}))
+@Table(name="template_variable", uniqueConstraints=@UniqueConstraint(columnNames = {"SenderDataRowId", "variableId", "variableName", "startTime"}))
 public class TemplateVariable extends BaseVariableModel implements Serializable
 {
 	private static final long serialVersionUID = -5646384767553614998L;

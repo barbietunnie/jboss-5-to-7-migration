@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 import jpa.constant.Constants;
 import jpa.constant.EmailIdToken;
 import jpa.message.MsgHeader;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.IdTokens;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.util.SpringUtil;
 import jpa.util.StringUtil;
 
@@ -33,17 +33,17 @@ public final class EmailIdParser implements Serializable {
 	
 	private static EmailIdParser emailIdParser = null;
 
-	private ClientData clientData = null;
+	private SenderData senderData = null;
 
 	private EmailIdParser(IdTokens _tokens) {
-		ClientDataService clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
-		clientData = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		SenderDataService senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
+		senderData = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		if (_tokens != null) { // not used
 			this.id_tokens = _tokens;
 		}
 		else { // use default values from Constants class
 			this.id_tokens = new IdTokens();
-			this.id_tokens.setClientData(clientData);
+			this.id_tokens.setSenderData(senderData);
 			this.id_tokens.setBodyBeginToken(EmailIdToken.BODY_BEGIN);
 			this.id_tokens.setBodyEndToken(EmailIdToken.BODY_END);
 			this.id_tokens.setXhdrBeginToken(EmailIdToken.XHDR_BEGIN);
@@ -59,7 +59,7 @@ public final class EmailIdParser implements Serializable {
 		 * one or more white spaces(\\s+).
 		 */
 		// body regular expression
-		String bodyBegin = StringUtil.replaceAll(getClientId() + " " + getBodyBegin(), " ", "\\s+");
+		String bodyBegin = StringUtil.replaceAll(getSenderId() + " " + getBodyBegin(), " ", "\\s+");
 		bodyBegin = StringUtil.replaceAll(bodyBegin, ".", "\\.");
 		String bodyEnd = StringUtil.replaceAll(getBodyEnd(), " ", "\\s+");
 		bodyEnd = StringUtil.replaceAll(bodyEnd, ".", "\\.");
@@ -288,7 +288,7 @@ public final class EmailIdParser implements Serializable {
 			return null;
 		}
 		else {
-			return getClientId() + " " + getBodyBegin() + MsgIdCipher.encode(msgId) + getBodyEnd();
+			return getSenderId() + " " + getBodyBegin() + MsgIdCipher.encode(msgId) + getBodyEnd();
 		}
 	}
 	
@@ -318,12 +318,12 @@ public final class EmailIdParser implements Serializable {
 		return id_tokens.getXheaderName();
 	}
 
-	private String getClientId() {
-		if (clientData != null) {
-			return clientData.getClientId();
+	private String getSenderId() {
+		if (senderData != null) {
+			return senderData.getSenderId();
 		}
 		else {
-			return Constants.DEFAULT_CLIENTID;
+			return Constants.DEFAULT_SENDER_ID;
 		}
 	}
 	

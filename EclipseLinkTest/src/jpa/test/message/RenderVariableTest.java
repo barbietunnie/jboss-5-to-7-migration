@@ -11,12 +11,12 @@ import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
 import jpa.constant.VariableType;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.message.MessageRendered;
 import jpa.model.message.MessageSource;
 import jpa.model.message.RenderVariable;
 import jpa.model.message.RenderVariablePK;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.message.MessageRenderedService;
 import jpa.service.message.RenderVariableService;
 import jpa.service.message.MessageSourceService;
@@ -49,7 +49,7 @@ public class RenderVariableTest {
 	@Autowired
 	MessageRenderedService renderedService;
 	@Autowired
-	ClientDataService clientService;
+	SenderDataService senderService;
 	@Autowired
 	MessageSourceService sourceService;
 
@@ -60,7 +60,7 @@ public class RenderVariableTest {
 	public void prepare() {
 		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 		
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		List<MessageSource> srcs = sourceService.getAll();
 		assertFalse(srcs.isEmpty());
 		MessageSource src1 = srcs.get(0);
@@ -69,8 +69,8 @@ public class RenderVariableTest {
 		mrn1.setMessageSourceRowId(src1.getRowId());
 		mrn1.setMessageTemplateRowId(src1.getTemplateData().getRowId());
 		mrn1.setStartTime(updtTime);
-		mrn1.setClientDataRowId(client.getRowId());
-		mrn1.setCustomerDataRowId(null);
+		mrn1.setSenderDataRowId(sender.getRowId());
+		mrn1.setSubscriberDataRowId(null);
 		mrn1.setPurgeAfter(null);
 		renderedService.insert(mrn1);
 

@@ -2,8 +2,8 @@ package jpa.constant;
 
 public enum TableColumnName {
 
-	// address names associated to client_data table columns
-	CUSTOMER_CARE_ADDR("custcareEmail"),
+	// address names associated to sender_data table columns
+	SUBSCRIBER_CARE_ADDR("subrCareEmail"),
 	SECURITY_DEPT_ADDR("securityEmail"),
 	RMA_DEPT_ADDR("rmaDeptEmail"),
 	SPAM_CONTROL_ADDR("spamCntrlEmail"),

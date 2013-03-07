@@ -24,8 +24,8 @@ import jpa.message.MessageBeanUtil;
 import jpa.message.MessageBodyBuilder;
 import jpa.message.MessageNode;
 import jpa.message.MsgHeader;
-import jpa.model.ClientData;
-import jpa.model.CustomerData;
+import jpa.model.SenderData;
+import jpa.model.SubscriberData;
 import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.message.MessageActionLog;
@@ -41,8 +41,8 @@ import jpa.model.message.MessageRfcField;
 import jpa.model.message.MessageRfcFieldPK;
 import jpa.model.message.MessageStream;
 import jpa.model.rule.RuleLogic;
-import jpa.service.ClientDataService;
-import jpa.service.CustomerDataService;
+import jpa.service.SenderDataService;
+import jpa.service.SubscriberDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.MailingListService;
 import jpa.service.message.MessageActionLogService;
@@ -98,9 +98,9 @@ public class MessageInboxBo {
 	@Autowired
 	private MessageClickCountService msgClickCountsDao;
 	@Autowired
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	@Autowired
-	private CustomerDataService custService;
+	private SubscriberDataService subrService;
 	@Autowired
 	private RuleLogicService logicService;
 	@Autowired
@@ -160,7 +160,7 @@ public class MessageInboxBo {
 		// set purge Date
 		msgVo.setPurgeDate(new java.sql.Date(cal.getTimeInMillis()));
 
-		// find LeadMsgId. Also find client id if it's from MailReader
+		// find LeadMsgId. Also find sender id if it's from MailReader
 		if (msgBean.getMsgRefId() != null) {
 			try {
 				MessageInbox origVo = msgInboxDao.getByPrimaryKey(msgBean.getMsgRefId());
@@ -243,17 +243,17 @@ public class MessageInboxBo {
 			}
 		}
 		
-		if (StringUtils.isNotBlank(msgBean.getClientId())) {
+		if (StringUtils.isNotBlank(msgBean.getSenderId())) {
 			try {
-				ClientData client = clientService.getByClientId(msgBean.getClientId());
-				msgVo.setClientDataRowId(client.getRowId());
+				SenderData sender = senderService.getBySenderId(msgBean.getSenderId());
+				msgVo.setSenderDataRowId(sender.getRowId());
 			}
 			catch (NoResultException e) {}
 		}
-		if (StringUtils.isNotBlank(msgBean.getCustId())) {
+		if (StringUtils.isNotBlank(msgBean.getSubrId())) {
 			try {
-				CustomerData customer = custService.getByCustomerId(msgBean.getCustId());
-				msgVo.setCustomerDataRowId(customer.getRowId());
+				SubscriberData subscriber = subrService.getBySubscriberId(msgBean.getSubrId());
+				msgVo.setSubscriberDataRowId(subscriber.getRowId());
 			}
 			catch (NoResultException e) {}
 		}
@@ -305,8 +305,8 @@ public class MessageInboxBo {
 				}
 				catch (NoResultException e) {}
 			}
-			if (msgBean.getToCustomersOnly()) {
-				msgClickCountsVo.setDeliveryType(MailingListDeliveryType.CUSTOMERS_ONLY.getValue());
+			if (msgBean.getToSubscribersOnly()) {
+				msgClickCountsVo.setDeliveryType(MailingListDeliveryType.SUBSCRIBERS_ONLY.getValue());
 			}
 			else if (msgBean.getToProspectsOnly()) {
 				msgClickCountsVo.setDeliveryType(MailingListDeliveryType.PROSPECTS_ONLY.getValue());

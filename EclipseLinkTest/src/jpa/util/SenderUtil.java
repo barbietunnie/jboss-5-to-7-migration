@@ -3,18 +3,18 @@ package jpa.util;
 import java.util.Calendar;
 import java.util.Date;
 
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 
 import org.apache.log4j.Logger;
 
-public final class ClientUtil {
-	static final Logger logger = Logger.getLogger(ClientUtil.class);
+public final class SenderUtil {
+	static final Logger logger = Logger.getLogger(SenderUtil.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
-	private static ClientDataService clientService = null;
+	private static SenderDataService senderService = null;
 	private static final int TRIAL_DAYS = 30;
 	
-	private ClientUtil() {
+	private SenderUtil() {
 		// static only
 	}
 	
@@ -29,15 +29,15 @@ public final class ClientUtil {
 		System.exit(0);
 	}
 
-	private static ClientDataService getClientDataService() {
-		if(clientService == null) {
-			clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+	private static SenderDataService getSenderDataService() {
+		if(senderService == null) {
+			senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		}
-		return clientService;
+		return senderService;
 	}
 
 	public static boolean isTrialPeriodEnded() {
-		String systemId = getClientDataService().getSystemId();
+		String systemId = getSenderDataService().getSystemId();
 		if (systemId != null) {
 			String db2ts = null;
 			try {
@@ -68,36 +68,36 @@ public final class ClientUtil {
 
 	/**
 	 * Check product key
-	 * @return true if either productkey.txt or clients.SystemKey is valid.
+	 * @return true if either productkey.txt or senders.SystemKey is valid.
 	 */
 	public static boolean isProductKeyValid() {
-		String key = getClientDataService().getSystemKey();
+		String key = getSenderDataService().getSystemKey();
 		return (ProductKey.validateKey(key) | ProductUtil.isProductKeyValid());
 	}
 
-//	public ClientVo getDefaultClientVo() {
-//		return getSiteProfile(DEFAULT_CLIENTID);
+//	public SenderVo getDefaultSenderVo() {
+//		return getSiteProfile(DEFAULT_SENDER_ID);
 //	}
 //	
-//	public ClientVo getClientVo(String clientId) {
-//		return getSiteProfile(clientId);
+//	public SenderVo getSenderVo(String senderId) {
+//		return getSiteProfile(senderId);
 //	}
 //	
-//	public ClientVo getSiteProfile(String clientId) {
-//		if (StringUtil.isEmpty(clientId)) {
-//			clientId = DEFAULT_CLIENTID;
+//	public SenderVo getSiteProfile(String senderId) {
+//		if (StringUtil.isEmpty(senderId)) {
+//			senderId = DEFAULT_SENDER_ID;
 //		}
-//		ClientVo vo = getClientDao().getByClientId(clientId);
+//		SenderVo vo = getSenderDao().getBySenderId(senderId);
 //		if (vo != null) {
 //			return vo;
 //		}
 //		else {
-//			vo = getClientDao().getByClientId(DEFAULT_CLIENTID);
+//			vo = getSenderDao().getBySenderId(DEFAULT_SENDER_ID);
 //			if (vo != null) {
 //				return vo;
 //			}
 //			else {
-//				throw new RuntimeException("Clients table missing: " + DEFAULT_CLIENTID);
+//				throw new RuntimeException("Senders table missing: " + DEFAULT_SENDER_ID);
 //			}
 //		}
 //	}

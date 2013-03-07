@@ -8,14 +8,14 @@ import javax.mail.Part;
 import jpa.constant.Constants;
 import jpa.constant.VariableName;
 import jpa.constant.VariableType;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.message.MessageRendered;
 import jpa.model.message.MessageSource;
 import jpa.model.message.RenderAttachment;
 import jpa.model.message.RenderAttachmentPK;
 import jpa.model.message.RenderVariable;
 import jpa.model.message.RenderVariablePK;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.message.MessageRenderedService;
 import jpa.service.message.MessageSourceService;
 import jpa.service.message.RenderAttachmentService;
@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 public class MessageRenderedLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(MessageRenderedLoader.class);
 	private MessageRenderedService service;
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	private MessageSourceService sourceService;
 	private RenderVariableService variableService;
 	private RenderAttachmentService attachmentService;
@@ -41,7 +41,7 @@ public class MessageRenderedLoader extends AbstractDataLoader {
 	@Override
 	public void loadData() {
 		service = (MessageRenderedService) SpringUtil.getAppContext().getBean("messageRenderedService");
-		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		sourceService = (MessageSourceService) SpringUtil.getAppContext().getBean("messageSourceService");
 		variableService = (RenderVariableService) SpringUtil.getAppContext().getBean("renderVariableService");
 		attachmentService = (RenderAttachmentService) SpringUtil.getAppContext().getBean("renderAttachmentService");
@@ -59,7 +59,7 @@ public class MessageRenderedLoader extends AbstractDataLoader {
 	private void loadMessageRendered() {
 		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 		
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		List<MessageSource> srcs = sourceService.getAll();
 		MessageSource src1 = srcs.get(0);
 
@@ -67,16 +67,16 @@ public class MessageRenderedLoader extends AbstractDataLoader {
 		in1.setMessageSourceRowId(src1.getRowId());
 		in1.setMessageTemplateRowId(src1.getTemplateData().getRowId());
 		in1.setStartTime(updtTime);
-		in1.setClientDataRowId(client.getRowId());
-		in1.setCustomerDataRowId(null);
+		in1.setSenderDataRowId(sender.getRowId());
+		in1.setSubscriberDataRowId(null);
 		in1.setPurgeAfter(null);
 		service.insert(in1);
 		
 		RenderVariable rv1 = new RenderVariable();
-		RenderVariablePK rvpk1 = new RenderVariablePK(in1,VariableName.CLIENT_ID.getValue());
+		RenderVariablePK rvpk1 = new RenderVariablePK(in1,VariableName.SENDER_ID.getValue());
 		rv1.setRenderVariablePK(rvpk1);
 		rv1.setVariableType(VariableType.TEXT.getValue());
-		rv1.setVariableValue(Constants.DEFAULT_CLIENTID);
+		rv1.setVariableValue(Constants.DEFAULT_SENDER_ID);
 		variableService.insert(rv1);
 		
 		RenderVariable rv2 = new RenderVariable();

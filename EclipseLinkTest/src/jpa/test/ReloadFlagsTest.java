@@ -43,11 +43,11 @@ public class ReloadFlagsTest {
 			throw e;
 		}
 		
-		record.setClients(record.getClients() + 1);
+		record.setSenders(record.getSenders() + 1);
 		service.update(record);
-		assertTrue(record.getClients()==(backup.getClients()+1));
+		assertTrue(record.getSenders()==(backup.getSenders()+1));
 		
-		service.updateClientReloadFlag();
+		service.updateSenderReloadFlag();
 		service.updateRuleReloadFlag();
 		service.updateActionReloadFlag();
 		service.updateTemplateReloadFlag();
@@ -55,7 +55,7 @@ public class ReloadFlagsTest {
 		
 		ReloadFlags record2 = service.select();
 
-		assertTrue(record2.getClients()==backup.getClients()+2);
+		assertTrue(record2.getSenders()==backup.getSenders()+2);
 		assertTrue(record2.getRules()==backup.getRules()+1);
 		assertTrue(record2.getActions()==backup.getActions()+1);
 		assertTrue(record2.getTemplates()==backup.getTemplates()+1);

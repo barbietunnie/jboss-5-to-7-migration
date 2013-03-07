@@ -2,7 +2,7 @@ package jpa.data.preload;
 
 public enum QueueNameEnum {
 	RMA_REQUEST_INPUT("rmaRequestInputJmsTemplate"),
-	CUSTOMER_CARE_INPUT("customerCareInputJmsTemplate");
+	SUBSCRIBER_CARE_INPUT("subscriberCareInputJmsTemplate");
 	
 	private String jmstemplate;
 	private QueueNameEnum(String jmstemplate) {

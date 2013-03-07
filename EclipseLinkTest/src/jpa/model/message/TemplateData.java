@@ -12,7 +12,7 @@ import javax.persistence.UniqueConstraint;
 import jpa.model.BaseModel;
 
 @Entity
-@Table(name="template_data", uniqueConstraints=@UniqueConstraint(columnNames = {"ClientDataRowId", "templateId", "startTime"}))
+@Table(name="template_data", uniqueConstraints=@UniqueConstraint(columnNames = {"SenderDataRowId", "templateId", "startTime"}))
 public class TemplateData extends BaseModel implements Serializable
 {
 	private static final long serialVersionUID = 577665280960727849L;

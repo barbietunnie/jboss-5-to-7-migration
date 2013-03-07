@@ -5,9 +5,9 @@ import java.sql.Timestamp;
 
 import jpa.constant.Constants;
 import jpa.constant.EmailIdToken;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.IdTokens;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.IdTokensService;
 import jpa.util.SpringUtil;
 
@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 public class IdTokensDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(IdTokensDataLoader.class);
 	private IdTokensService itService;
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 
 	public static void main(String[] args) {
 		IdTokensDataLoader loader = new IdTokensDataLoader();
@@ -26,7 +26,7 @@ public class IdTokensDataLoader extends AbstractDataLoader {
 	@Override
 	public void loadData() {
 		itService = (IdTokensService) SpringUtil.getAppContext().getBean("idTokensService");
-		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		startTransaction();
 		try {
 			loadIdTokens();
@@ -39,12 +39,12 @@ public class IdTokensDataLoader extends AbstractDataLoader {
 	}
 
 	void loadIdTokens() throws SQLException {
-		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		SenderData cd = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		IdTokens in = new IdTokens();
 
 		Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
 
-		in.setClientData(cd);
+		in.setSenderData(cd);
 		in.setDescription("Default SenderId");
 		in.setBodyBeginToken(EmailIdToken.BODY_BEGIN);
 		in.setBodyEndToken(EmailIdToken.BODY_END);

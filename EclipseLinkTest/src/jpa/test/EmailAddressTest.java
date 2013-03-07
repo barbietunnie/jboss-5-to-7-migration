@@ -8,9 +8,9 @@ import javax.persistence.EntityManager;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
-import jpa.model.CustomerData;
+import jpa.model.SubscriberData;
 import jpa.model.EmailAddress;
-import jpa.service.CustomerDataService;
+import jpa.service.SubscriberDataService;
 import jpa.service.EmailAddressService;
 import jpa.util.StringUtil;
 
@@ -44,7 +44,7 @@ public class EmailAddressTest {
 	EmailAddressService service;
 	
 	@Autowired
-	CustomerDataService custService;
+	SubscriberDataService subrService;
 
 	private String testEmailAddr1 = "jpatest1@localhost";
 	private String testEmailAddr2 = "jpatest2@localhost";
@@ -79,7 +79,7 @@ public class EmailAddressTest {
 		EmailAddress rcd3 = service.getByRowId(rcd2.getRowId());
 		assertTrue("JpaTest".equals(rcd2.getUpdtUserId()));
 
-		List<CustomerData> lst1 = custService.getAll();
+		List<SubscriberData> lst1 = subrService.getAll();
 		assertFalse(lst1.isEmpty());
 		
 		EmailAddress rcd4 = new EmailAddress();
@@ -94,7 +94,7 @@ public class EmailAddressTest {
 		}
 		rcd4.setAddress(testEmailAddr2);
 		rcd4.setOrigAddress(testEmailAddr2);
-		rcd4.setCustomerData(lst1.get(0));
+		rcd4.setSubscriberData(lst1.get(0));
 		service.insert(rcd4);
 		
 		int bounceCount = rcd4.getBounceCount();
@@ -104,7 +104,7 @@ public class EmailAddressTest {
 		
 		EmailAddress rcd5 = service.getByAddress(testEmailAddr2);
 		System.out.println(StringUtil.prettyPrint(rcd5,1));
-		assertNotNull(rcd5.getCustomerData());
+		assertNotNull(rcd5.getSubscriberData());
 		assertTrue(rcd5.getBounceCount()==(bounceCount+Constants.BOUNCE_SUSPEND_THRESHOLD));
 		assertTrue(StatusId.SUSPENDED.getValue().equals(rcd5.getStatusId()));
 		

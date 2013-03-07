@@ -9,15 +9,15 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 
 @Embeddable
 public class TemplateVariablePK implements Serializable {
 	private static final long serialVersionUID = 7193883507541681000L;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=ClientData.class)
-	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private ClientData clientData;
+	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=SenderData.class)
+	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	private SenderData senderData;
 	
 	@Column(name="VariableId", nullable=false, length=26)
 	private String variableId = "";
@@ -28,19 +28,19 @@ public class TemplateVariablePK implements Serializable {
 
 	public TemplateVariablePK() {}
 	
-	public TemplateVariablePK(ClientData clientData, String variableId, String variableName, Timestamp startTime) {
-		this.clientData = clientData;
+	public TemplateVariablePK(SenderData senderData, String variableId, String variableName, Timestamp startTime) {
+		this.senderData = senderData;
 		this.variableId = variableId;
 		this.variableName = variableName;
 		this.startTime = startTime;
 	}
 
-	public ClientData getClientData() {
-		return clientData;
+	public SenderData getSenderData() {
+		return senderData;
 	}
 
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setSenderData(SenderData senderData) {
+		this.senderData = senderData;
 	}
 	public String getVariableId() {
 		return variableId;

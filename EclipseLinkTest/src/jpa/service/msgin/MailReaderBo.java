@@ -56,7 +56,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	private Store store = null;
 	private final boolean debugSession = false;
 
-	protected int MAX_CLIENTS = 0;
+	protected int MAX_SENDERS = 0;
 	protected int MESSAGE_COUNT = 0;
 	private final int MAX_MESSAGE_COUNT = 6000;
 	private final int MAX_READ_PER_PASS = 500;
@@ -86,9 +86,9 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 		logger.info("in Constructor - MailBox Properties:" + LF + mInbox);
 		MESSAGE_COUNT = mInbox.getMessageCount();
 
-		MAX_CLIENTS = mInbox.getNumberOfThreads();
-		MAX_CLIENTS = MAX_CLIENTS > MAX_NUM_THREADS ? MAX_NUM_THREADS : MAX_CLIENTS;
-		MAX_CLIENTS = MAX_CLIENTS <= 0 ? 1 : MAX_CLIENTS; // sanity check
+		MAX_SENDERS = mInbox.getNumberOfThreads();
+		MAX_SENDERS = MAX_SENDERS > MAX_NUM_THREADS ? MAX_NUM_THREADS : MAX_SENDERS;
+		MAX_SENDERS = MAX_SENDERS <= 0 ? 1 : MAX_SENDERS; // sanity check
 		
 		int MIN_WAIT = 2 * 1000; // default = 2 seconds
 		int MAX_WAIT = 120 * 1000; // up to two minutes
@@ -500,7 +500,6 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	 * 
 	 * @param msgs -
 	 *            messages to be processed.
-	 * @throws InterruptedException
 	 * @throws MessagingException
 	 * @throws JMSException
 	 * @throws IOException
@@ -688,7 +687,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 		List<String> v = new ArrayList<String>();
 		if (mInbox != null) {
 			v.add("MailReaderBo: user=" + mInbox.getMailInboxPK().getUserId() + ", host="
-					+ mInbox.getMailInboxPK().getHostName() + ", #Threads=" + MAX_CLIENTS);
+					+ mInbox.getMailInboxPK().getHostName() + ", #Threads=" + MAX_SENDERS);
 			v.add(mInbox.toString());
 		}
 		return v;

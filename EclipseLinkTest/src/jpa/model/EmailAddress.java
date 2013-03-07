@@ -60,7 +60,7 @@ public class EmailAddress extends BaseModel implements java.io.Serializable {
 	private String origAddress = "";
 
 	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.MERGE}, fetch=FetchType.LAZY, optional=true, mappedBy="emailAddr")
-	private CustomerData customerData;
+	private SubscriberData subscriberData;
 	
 	@OneToOne(cascade={CascadeType.PERSIST,CascadeType.MERGE}, fetch=FetchType.LAZY,optional=true, mappedBy="emailAddr")
 	private UserData userData;
@@ -156,12 +156,12 @@ public class EmailAddress extends BaseModel implements java.io.Serializable {
 		this.isAcceptHtml = isAcceptHtml;
 	}
 
-	public CustomerData getCustomerData() {
-		return customerData;
+	public SubscriberData getSubscriberData() {
+		return subscriberData;
 	}
 
-	public void setCustomerData(CustomerData customerData) {
-		this.customerData = customerData;
+	public void setSubscriberData(SubscriberData subscriberData) {
+		this.subscriberData = subscriberData;
 	}
 
 	public String getRuleName() {

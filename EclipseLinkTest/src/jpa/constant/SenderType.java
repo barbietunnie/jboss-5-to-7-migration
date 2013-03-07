@@ -1,11 +1,11 @@
 package jpa.constant;
 
-public enum ClientType {
+public enum SenderType {
 	Custom("C"),
 	System("S");
 	
 	private final String value;
-	private ClientType(String value) {
+	private SenderType(String value) {
 		this.value = value;
 	}
 	

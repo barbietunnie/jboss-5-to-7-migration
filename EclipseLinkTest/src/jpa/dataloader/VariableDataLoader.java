@@ -10,23 +10,23 @@ import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.constant.VariableType;
 import jpa.constant.XHeaderName;
-import jpa.data.preload.ClientVariableEnum;
+import jpa.data.preload.SenderVariableEnum;
 import jpa.data.preload.GlobalVariableEnum;
-import jpa.model.ClientData;
-import jpa.model.ClientVariable;
-import jpa.model.ClientVariablePK;
+import jpa.model.SenderData;
+import jpa.model.SenderVariable;
+import jpa.model.SenderVariablePK;
 import jpa.model.GlobalVariable;
 import jpa.model.GlobalVariablePK;
-import jpa.service.ClientDataService;
-import jpa.service.ClientVariableService;
+import jpa.service.SenderDataService;
+import jpa.service.SenderVariableService;
 import jpa.service.GlobalVariableService;
 import jpa.util.SpringUtil;
 
 public class VariableDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(VariableDataLoader.class);
-	private ClientVariableService cvService;
+	private SenderVariableService cvService;
 	private GlobalVariableService gvService;
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 
 	public static void main(String[] args) {
 		VariableDataLoader loader = new VariableDataLoader();
@@ -35,12 +35,12 @@ public class VariableDataLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		cvService = (ClientVariableService) SpringUtil.getAppContext().getBean("clientVariableService");
+		cvService = (SenderVariableService) SpringUtil.getAppContext().getBean("senderVariableService");
 		gvService = (GlobalVariableService) SpringUtil.getAppContext().getBean("globalVariableService");
-		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		startTransaction();
 		try {
-			loadClientVariables();
+			loadSenderVariables();
 			loadGlobalVariables();
 		} catch (SQLException e) {
 			logger.error("Exception caught", e);
@@ -50,14 +50,14 @@ public class VariableDataLoader extends AbstractDataLoader {
 		}
 	}
 
-	private void loadClientVariables() throws SQLException {
-		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+	private void loadSenderVariables() throws SQLException {
+		SenderData cd = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 
 		Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
-		for (ClientVariableEnum variable : ClientVariableEnum.values()) {
-			ClientVariable in = new ClientVariable();
-			ClientVariablePK pk1 = new ClientVariablePK(cd, variable.name(), updtTime);
-			in.setClientVariablePK(pk1);
+		for (SenderVariableEnum variable : SenderVariableEnum.values()) {
+			SenderVariable in = new SenderVariable();
+			SenderVariablePK pk1 = new SenderVariablePK(cd, variable.name(), updtTime);
+			in.setSenderVariablePK(pk1);
 			in.setVariableValue(variable.getDefaultValue());
 			in.setVariableFormat(variable.getVariableFormat());
 			in.setVariableType(variable.getVariableType().getValue());
@@ -87,9 +87,9 @@ public class VariableDataLoader extends AbstractDataLoader {
 		}
 
 		GlobalVariable in = new GlobalVariable();
-		GlobalVariablePK pk1 = new GlobalVariablePK(XHeaderName.CLIENT_ID.getValue(), updtTime);
+		GlobalVariablePK pk1 = new GlobalVariablePK(XHeaderName.SENDER_ID.getValue(), updtTime);
 		in.setGlobalVariablePK(pk1);
-		in.setVariableValue(Constants.DEFAULT_CLIENTID);
+		in.setVariableValue(Constants.DEFAULT_SENDER_ID);
 		in.setVariableFormat(null);
 		in.setVariableType(VariableType.X_HEADER.getValue());
 		in.setStatusId(StatusId.ACTIVE.getValue());

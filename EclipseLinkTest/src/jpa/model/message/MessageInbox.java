@@ -21,8 +21,8 @@ import javax.persistence.Transient;
 import jpa.constant.CarrierCode;
 import jpa.constant.MsgDirectionCode;
 import jpa.model.BaseModel;
-import jpa.model.ClientData;
-import jpa.model.CustomerData;
+import jpa.model.SenderData;
+import jpa.model.SubscriberData;
 import jpa.model.EmailAddress;
 import jpa.model.rule.RuleLogic;
 
@@ -80,15 +80,15 @@ public class MessageInbox extends BaseModel implements Serializable {
 	@Transient
 	private EmailAddress toAddress;
 
-	@Column(name="ClientDataRowId", nullable=true, columnDefinition="Integer")
-	private Integer clientDataRowId;
+	@Column(name="SenderDataRowId", nullable=true, columnDefinition="Integer")
+	private Integer senderDataRowId;
 	@Transient
-	private ClientData clientData;
+	private SenderData senderData;
 
-	@Column(name="CustomerDataRowId", nullable=true, columnDefinition="Integer")
-	private Integer customerDataRowId;
+	@Column(name="SubscriberDataRowId", nullable=true, columnDefinition="Integer")
+	private Integer subscriberDataRowId;
 	@Transient
-	private CustomerData customerData;
+	private SubscriberData subscriberData;
 
 	@Column(name="RuleLogicRowId", nullable=false)
 	private int ruleLogicRowId;
@@ -232,20 +232,20 @@ public class MessageInbox extends BaseModel implements Serializable {
 		this.toAddrRowId = toAddrRowId;
 	}
 
-	public Integer getClientDataRowId() {
-		return clientDataRowId;
+	public Integer getSenderDataRowId() {
+		return senderDataRowId;
 	}
 
-	public void setClientDataRowId(Integer clientDataRowId) {
-		this.clientDataRowId = clientDataRowId;
+	public void setSenderDataRowId(Integer senderDataRowId) {
+		this.senderDataRowId = senderDataRowId;
 	}
 
-	public Integer getCustomerDataRowId() {
-		return customerDataRowId;
+	public Integer getSubscriberDataRowId() {
+		return subscriberDataRowId;
 	}
 
-	public void setCustomerDataRowId(Integer customerDataRowId) {
-		this.customerDataRowId = customerDataRowId;
+	public void setSubscriberDataRowId(Integer subscriberDataRowId) {
+		this.subscriberDataRowId = subscriberDataRowId;
 	}
 
 	public int getRuleLogicRowId() {
@@ -588,20 +588,20 @@ public class MessageInbox extends BaseModel implements Serializable {
 		this.toAddress = toAddress;
 	}
 
-	public ClientData getClientData() {
-		return clientData;
+	public SenderData getSenderData() {
+		return senderData;
 	}
 
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setSenderData(SenderData senderData) {
+		this.senderData = senderData;
 	}
 
-	public CustomerData getCustomerData() {
-		return customerData;
+	public SubscriberData getSubscriberData() {
+		return subscriberData;
 	}
 
-	public void setCustomerData(CustomerData customerData) {
-		this.customerData = customerData;
+	public void setSubscriberData(SubscriberData subscriberData) {
+		this.subscriberData = subscriberData;
 	}
 
 	public RuleLogic getRuleLogic() {

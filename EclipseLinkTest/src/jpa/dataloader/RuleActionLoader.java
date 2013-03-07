@@ -15,14 +15,14 @@ import jpa.data.preload.RuleActionDetailEnum;
 import jpa.data.preload.RuleActionEnum;
 import jpa.data.preload.RuleDataTypeEnum;
 import jpa.data.preload.RuleNameEnum;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.rule.RuleAction;
 import jpa.model.rule.RuleActionDetail;
 import jpa.model.rule.RuleDataType;
 import jpa.model.rule.RuleDataValue;
 import jpa.model.rule.RuleDataValuePK;
 import jpa.model.rule.RuleLogic;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.rule.RuleActionDetailService;
 import jpa.service.rule.RuleActionService;
 import jpa.service.rule.RuleDataTypeService;
@@ -40,7 +40,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 	private RuleActionDetailService detailService;
 	private RuleActionService actionService;
 	private RuleLogicService logicService;
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 
 	public static void main(String[] args) {
 		RuleActionLoader loader = new RuleActionLoader();
@@ -54,7 +54,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 		detailService = (RuleActionDetailService) SpringUtil.getAppContext().getBean("ruleActionDetailService");
 		actionService = (RuleActionService) SpringUtil.getAppContext().getBean("ruleActionService");
 		logicService = (RuleLogicService) SpringUtil.getAppContext().getBean("ruleLogicService");
-		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		startTransaction();
 		try {
 			loadRuleDataTypeAndValues();
@@ -88,7 +88,7 @@ public class RuleActionLoader extends AbstractDataLoader {
 				// insert column names storing email address
 				for (TableColumnName addrColumn : TableColumnName.values()) {
 					RuleDataValuePK pk1 = new RuleDataValuePK(tp, "$" + addrColumn.getValue());
-					RuleDataValue data = new RuleDataValue(pk1, "clientDataService");
+					RuleDataValue data = new RuleDataValue(pk1, "senderDataService");
 					valueService.insert(data);
 				}
 			}
@@ -187,17 +187,17 @@ public class RuleActionLoader extends AbstractDataLoader {
 		}
 
 		try {
-			ClientData client = clientService.getByClientId("JBatchCorp");
-			logger.debug("JbatchCorp Client found: " + StringUtil.prettyPrint(client));
+			SenderData sender = senderService.getBySenderId("JBatchCorp");
+			logger.debug("JbatchCorp Sender found: " + StringUtil.prettyPrint(sender));
 		}
 		catch (NoResultException e) {}
 		/*
 		logic = logicService.getByRuleName(RuleNameEnum.GENERIC.getValue());
 		dtl = detailService.getByActionId(RuleActionDetailEnum.SAVE.name());
-		act = new RuleAction(logic,1,now,client,dtl,null);
+		act = new RuleAction(logic,1,now,sender,dtl,null);
 		actionService.insert(act);
 		dtl = detailService.getByActionId(RuleActionDetailEnum.FORWARD.name());
-		act = new RuleAction(logic,2,now,client,dtl,"$"+TableColumnName.CUSTOMER_CARE_ADDR);
+		act = new RuleAction(logic,2,now,sender,dtl,"$"+TableColumnName.SUBSCRIBER_CARE_ADDR);
 		actionService.insert(act);
 		 */
 

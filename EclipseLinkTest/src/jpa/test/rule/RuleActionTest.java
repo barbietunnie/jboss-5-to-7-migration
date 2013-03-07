@@ -22,13 +22,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.rule.RuleAction;
 import jpa.model.rule.RuleActionDetail;
 import jpa.model.rule.RuleActionPK;
 import jpa.model.rule.RuleDataType;
 import jpa.model.rule.RuleLogic;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.rule.RuleActionDetailService;
 import jpa.service.rule.RuleActionService;
 import jpa.service.rule.RuleDataTypeService;
@@ -54,7 +54,7 @@ public class RuleActionTest {
 	@Autowired
 	RuleLogicService logicService;
 	@Autowired
-	ClientDataService clientService;
+	SenderDataService senderService;
 	@Autowired
 	RuleActionDetailService detailService;
 	@Autowired
@@ -91,9 +91,9 @@ public class RuleActionTest {
 		assertFalse(lst1.isEmpty());
 		RuleLogic rlg1 = lst1.get(0);
 		
-		List<ClientData> lst2 = clientService.getAll();
+		List<SenderData> lst2 = senderService.getAll();
 		assertFalse(lst2.isEmpty());
-		ClientData clt1 = lst2.get(0);
+		SenderData clt1 = lst2.get(0);
 		
 		List<RuleActionDetail> lst3 = detailService.getAll();
 		if (!lst3.isEmpty()) {
@@ -104,7 +104,7 @@ public class RuleActionTest {
 		RuleAction var1 = new RuleAction();
 		RuleActionPK pk1 = new RuleActionPK();
 		pk1.setActionSequence(0);
-		pk1.setClientData(clt1);
+		pk1.setSenderData(clt1);
 		pk1.setRuleLogic(rlg1);
 		pk1.setStartTime(new java.sql.Timestamp(System.currentTimeMillis()));
 		var1.setRuleActionPK(pk1);
@@ -124,8 +124,8 @@ public class RuleActionTest {
 		List<RuleAction> list1 = service.getAll();
 		assertFalse(list1.isEmpty());
 		
-		service.getByBestMatch(rlg1.getRuleName(), null, clt1.getClientId());
-		RuleAction var4 = service.getMostCurrent(rlg1.getRuleName(), 0, clt1.getClientId());
+		service.getByBestMatch(rlg1.getRuleName(), null, clt1.getSenderId());
+		RuleAction var4 = service.getMostCurrent(rlg1.getRuleName(), 0, clt1.getSenderId());
 		logger.info("RuleAction: " + StringUtil.prettyPrint(var4,2));
 		
 		service.delete(var3);

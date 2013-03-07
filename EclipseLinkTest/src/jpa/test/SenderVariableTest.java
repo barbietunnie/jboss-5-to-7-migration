@@ -20,54 +20,54 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
-import jpa.model.ClientData;
-import jpa.model.ClientVariable;
-import jpa.model.ClientVariablePK;
-import jpa.service.ClientVariableService;
+import jpa.model.SenderData;
+import jpa.model.SenderVariable;
+import jpa.model.SenderVariablePK;
+import jpa.service.SenderVariableService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class ClientVariableTest {
-	static Logger logger = Logger.getLogger(ClientVariableTest.class);
+public class SenderVariableTest {
+	static Logger logger = Logger.getLogger(SenderVariableTest.class);
 	
 	final String testVariableName = "CurrentDate";
-	final String testClientId = Constants.DEFAULT_CLIENTID;
+	final String testSenderId = Constants.DEFAULT_SENDER_ID;
 	
 	@BeforeClass
-	public static void ClientVariablePrepare() {
+	public static void SenderVariablePrepare() {
 	}
 
 	@Autowired
-	ClientVariableService service;
+	SenderVariableService service;
 
 	@Test
-	public void clientVariableService() {
-		ClientData cd0 = new ClientData();
-		cd0.setClientId(testClientId);
-		ClientVariablePK pk0 = new ClientVariablePK(cd0, testVariableName, new Date(System.currentTimeMillis()));
-		ClientVariable var1 = service.getByBestMatch(pk0);
+	public void senderVariableService() {
+		SenderData cd0 = new SenderData();
+		cd0.setSenderId(testSenderId);
+		SenderVariablePK pk0 = new SenderVariablePK(cd0, testVariableName, new Date(System.currentTimeMillis()));
+		SenderVariable var1 = service.getByBestMatch(pk0);
 		assertNotNull(var1);
-		System.out.println("ClientVariable: " + StringUtil.prettyPrint(var1));
+		System.out.println("SenderVariable: " + StringUtil.prettyPrint(var1));
 
-		ClientVariablePK pk1 = var1.getClientVariablePK();
-		ClientVariable var2 = service.getByPrimaryKey(pk1);
+		SenderVariablePK pk1 = var1.getSenderVariablePK();
+		SenderVariable var2 = service.getByPrimaryKey(pk1);
 		assertTrue(var1.equals(var2));
 
-		List<ClientVariable> list1 = service.getByVariableName(pk1.getVariableName());
+		List<SenderVariable> list1 = service.getByVariableName(pk1.getVariableName());
 		assertFalse(list1.isEmpty());
 		
-		List<ClientVariable> list2 = service.getCurrentByClientId(testClientId);
+		List<SenderVariable> list2 = service.getCurrentBySenderId(testSenderId);
 		assertFalse(list2.isEmpty());
 
 		// test insert
 		Date newTms = new Date(System.currentTimeMillis()+1);
-		ClientVariable var3 = createNewInstance(var2);
-		ClientVariablePK pk2 = var2.getClientVariablePK();
-		ClientVariablePK pk3 = new ClientVariablePK(pk2.getClientData(), pk2.getVariableName(), newTms);
-		var3.setClientVariablePK(pk3);
+		SenderVariable var3 = createNewInstance(var2);
+		SenderVariablePK pk2 = var2.getSenderVariablePK();
+		SenderVariablePK pk3 = new SenderVariablePK(pk2.getSenderData(), pk2.getVariableName(), newTms);
+		var3.setSenderVariablePK(pk3);
 		service.insert(var3);
 		assertNotNull(service.getByPrimaryKey(pk3));
 		// end of test insert
@@ -80,9 +80,9 @@ public class ClientVariableTest {
 		catch (NoResultException e) {}
 
 		// test deleteByVariableName
-		ClientVariable var4 = createNewInstance(var2);
-		ClientVariablePK pk4 = new ClientVariablePK(pk2.getClientData(), pk2.getVariableName()+"_v4", pk2.getStartTime());
-		var4.setClientVariablePK(pk4);
+		SenderVariable var4 = createNewInstance(var2);
+		SenderVariablePK pk4 = new SenderVariablePK(pk2.getSenderData(), pk2.getVariableName()+"_v4", pk2.getStartTime());
+		var4.setSenderVariablePK(pk4);
 		service.insert(var4);
 		assertTrue(1==service.deleteByVariableName(pk4.getVariableName()));
 		try {
@@ -92,9 +92,9 @@ public class ClientVariableTest {
 		catch (NoResultException e) {}
 
 		// test deleteByPrimaryKey
-		ClientVariable var5 = createNewInstance(var2);
-		ClientVariablePK pk5 = new ClientVariablePK(pk2.getClientData(), pk2.getVariableName()+"_v5", pk2.getStartTime());
-		var5.setClientVariablePK(pk5);
+		SenderVariable var5 = createNewInstance(var2);
+		SenderVariablePK pk5 = new SenderVariablePK(pk2.getSenderData(), pk2.getVariableName()+"_v5", pk2.getStartTime());
+		var5.setSenderVariablePK(pk5);
 		service.insert(var5);
 		assertTrue(1==service.deleteByPrimaryKey(pk5));
 		try {
@@ -103,21 +103,21 @@ public class ClientVariableTest {
 		}
 		catch (NoResultException e) {}
 
-		// test getCurrentByClientId
-		List<ClientVariable> list3 = service.getCurrentByClientId(pk2.getClientData().getClientId());
-		for (ClientVariable rec : list3) {
+		// test getCurrentBySenderId
+		List<SenderVariable> list3 = service.getCurrentBySenderId(pk2.getSenderData().getSenderId());
+		for (SenderVariable rec : list3) {
 			logger.info(StringUtil.prettyPrint(rec));
 		}
 
 		// test update
-		ClientVariable var6 = createNewInstance(var2);
-		ClientVariablePK pk6 = new ClientVariablePK(pk2.getClientData(), pk2.getVariableName()+"_v6", pk2.getStartTime());
-		var6.setClientVariablePK(pk6);
+		SenderVariable var6 = createNewInstance(var2);
+		SenderVariablePK pk6 = new SenderVariablePK(pk2.getSenderData(), pk2.getVariableName()+"_v6", pk2.getStartTime());
+		var6.setSenderVariablePK(pk6);
 		service.insert(var6);
 		assertNotNull(service.getByPrimaryKey(pk6));
 		var6.setVariableValue("new test value");
 		service.update(var6);
-		ClientVariable var_updt = service.getByRowId(var6.getRowId());
+		SenderVariable var_updt = service.getByRowId(var6.getRowId());
 		assertTrue("new test value".equals(var_updt.getVariableValue()));
 		// end of test update
 		
@@ -131,8 +131,8 @@ public class ClientVariableTest {
 		}
 	}
 
-	private ClientVariable createNewInstance(ClientVariable orig) {
-		ClientVariable dest = new ClientVariable();
+	private SenderVariable createNewInstance(SenderVariable orig) {
+		SenderVariable dest = new SenderVariable();
 		try {
 			BeanUtils.copyProperties(dest, orig);
 		}

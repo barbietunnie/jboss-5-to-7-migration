@@ -84,12 +84,12 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	// email type, set by RuleEngine
 	private String ruleName = null;
 
-	// holds the information about templates, client, etc.
+	// holds the information about templates, sender, etc.
 	// for incoming: derived from msgRefId -> msgId of a MsgInbox record
 	private String msgSourceId;
 
 	// incoming: derived from msgRefId
-	private String clientId, custId;
+	private String senderId, subrId;
 
 	// the original email if this is a reply
 	private MessageBean origMail;
@@ -103,7 +103,7 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 
 	// Mailing list id used for broadcasting
 	private String mailingListId = null;
-	private boolean toCustomersOnly = false;
+	private boolean toSubscribersOnly = false;
 	private boolean toProspectsOnly = false;
 
 	// can be used to store extra string properties w/o code change
@@ -461,17 +461,17 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	}
 
 	/**
-	 * @return client id
+	 * @return sender id
 	 */
-	public String getClientId() {
-		return clientId;
+	public String getSenderId() {
+		return senderId;
 	}
 
 	/**
-	 * @return customer id
+	 * @return subscriber id
 	 */
-	public String getCustId() {
-		return custId;
+	public String getSubrId() {
+		return subrId;
 	}
 
 	/**
@@ -499,8 +499,8 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 		return mailingListId;
 	}
 	
-	public boolean getToCustomersOnly() {
-		return toCustomersOnly;
+	public boolean getToSubscribersOnly() {
+		return toSubscribersOnly;
 	}
 	
 	public boolean getToProspectsOnly() {
@@ -759,21 +759,21 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	}
 
 	/**
-	 * set client id
+	 * set sender id
 	 * 
-	 * @param clientId
+	 * @param senderId
 	 */
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
+	public void setSenderId(String senderId) {
+		this.senderId = senderId;
 	}
 
 	/**
-	 * set customer id
+	 * set subscriber id
 	 * 
-	 * @param custId
+	 * @param subrId
 	 */
-	public void setCustId(String custId) {
-		this.custId = custId;
+	public void setSubrId(String subrId) {
+		this.subrId = subrId;
 	}
 
 	/**
@@ -807,8 +807,8 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 		this.mailingListId = mailingListId;
 	}
 	
-	public void setToCustomersOnly(boolean toCustomersOnly) {
-		this.toCustomersOnly = toCustomersOnly;
+	public void setToSubscribersOnly(boolean toSubscribersOnly) {
+		this.toSubscribersOnly = toSubscribersOnly;
 	}
 	
 	public void setToProspectsOnly(boolean toProspectsOnly) {
@@ -1011,13 +1011,13 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 		msgRefId = null;
 		ruleName = null;
 		msgSourceId = null;
-		clientId = null;
-		custId = null;
+		senderId = null;
+		subrId = null;
 		origMail = null;
 		toPlainText = false;
 		overrideTestAddr = false;
 		mailingListId = null;
-		toCustomersOnly = false;
+		toSubscribersOnly = false;
 		rfc822 = null;
 		report = null;
 		attachments = null;
@@ -1092,17 +1092,17 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 			sb.append("RuleName: " + ruleName + LF);
 		if (mailingListId != null)  {
 			sb.append("Mailing List Id: " + mailingListId + LF);
-			sb.append("ToCustomersOnly: " + toCustomersOnly + LF);
+			sb.append("ToSubscribersOnly: " + toSubscribersOnly + LF);
 		}
 		if (renderId != null) {
 			sb.append("RenderId: " + renderId.toString() + LF);
 		}
 		if (msgSourceId != null)
 			sb.append("MsgSourceId: " + msgSourceId + LF);
-		if (clientId != null)
-			sb.append("Client Id: " + clientId + LF);
-		if (custId != null)
-			sb.append("Cust Id: " + custId + LF);
+		if (senderId != null)
+			sb.append("Sender Id: " + senderId + LF);
+		if (subrId != null)
+			sb.append("Subr Id: " + subrId + LF);
 		sb.append("To PlainText: " + toPlainText + LF);
 		sb.append("Override TestAddr: " + overrideTestAddr + LF);
 		if (mailboxHost != null)

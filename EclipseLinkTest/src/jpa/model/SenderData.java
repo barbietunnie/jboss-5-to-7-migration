@@ -17,34 +17,34 @@ import jpa.constant.Constants;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 @Entity
-@Table(name="client_data")
-public class ClientData extends BaseModel implements Serializable {
+@Table(name="sender_data")
+public class SenderData extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 8789436921442107499L;
 
-	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="clientVariablePK.clientData", orphanRemoval=true)
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="senderVariablePK.senderData", orphanRemoval=true)
 	@CascadeOnDelete
-	private List<ClientVariable> clientVariables;
+	private List<SenderVariable> senderVariables;
 
-	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="clientData", orphanRemoval=true)
+	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="senderData", orphanRemoval=true)
 	@CascadeOnDelete
 	private IdTokens idTokens;
 	
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="clientData")
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="senderData")
 	@CascadeOnDelete
-	private List<CustomerData> customers;
+	private List<SubscriberData> subscribers;
 	
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="clientData")
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="senderData")
 	@CascadeOnDelete
 	private List<UserData> userDatas;
 	
 	//@Index
-	@Column(name="ClientId", unique=true, nullable=false, length=16)
-	private String clientId = "";
+	@Column(name="SenderId", unique=true, nullable=false, length=16)
+	private String senderId = "";
 	
 	@Column(length=40, nullable=false)
-	private String clientName = "";
+	private String senderName = "";
 	@Column(length=1, columnDefinition="char")
-	private String clientType = null;
+	private String senderType = null;
 	@Column(length=100, nullable=false)
 	private String domainName = "";
 	@Column(length=10)
@@ -60,7 +60,7 @@ public class ClientData extends BaseModel implements Serializable {
 	@Column(length=255, nullable=false)
 	private String securityEmail = "";
 	@Column(length=255, nullable=false)
-	private String custcareEmail = "";
+	private String subrCareEmail = "";
 	@Column(length=255, nullable=false)
 	private String rmaDeptEmail = "";
 	@Column(length=255, nullable=false)
@@ -103,18 +103,18 @@ public class ClientData extends BaseModel implements Serializable {
 	private Boolean isSpf = null;
 
 	@Transient
-	private String origClientId = null;
+	private String origSenderId = null;
 	
-	public ClientData() {
+	public SenderData() {
 		// must have a no-argument constructor
 	}
 
-	public List<ClientVariable> getClientVariables() {
-		return clientVariables;
+	public List<SenderVariable> getSenderVariables() {
+		return senderVariables;
 	}
 
-	public void setClientVariables(List<ClientVariable> clientVariables) {
-		this.clientVariables = clientVariables;
+	public void setSenderVariables(List<SenderVariable> senderVariables) {
+		this.senderVariables = senderVariables;
 	}
 
 	public IdTokens getIdTokens() {
@@ -126,28 +126,28 @@ public class ClientData extends BaseModel implements Serializable {
 	}
 
 	/** define components for UI */
-	public boolean isSystemClient() {
-		return Constants.DEFAULT_CLIENTID.equalsIgnoreCase(clientId);
+	public boolean isSystemSender() {
+		return Constants.DEFAULT_SENDER_ID.equalsIgnoreCase(senderId);
 	}
 	/** end of UI components */
 	
-	public String getClientId() {
-		return clientId;
+	public String getSenderId() {
+		return senderId;
 	}
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
+	public void setSenderId(String senderId) {
+		this.senderId = senderId;
 	}
-	public String getClientName() {
-		return clientName;
+	public String getSenderName() {
+		return senderName;
 	}
-	public void setClientName(String clientName) {
-		this.clientName = clientName;
+	public void setSenderName(String senderName) {
+		this.senderName = senderName;
 	}
-	public String getClientType() {
-		return clientType;
+	public String getSenderType() {
+		return senderType;
 	}
-	public void setClientType(String clientType) {
-		this.clientType = clientType;
+	public void setSenderType(String senderType) {
+		this.senderType = senderType;
 	}
 	public String getDomainName() {
 		return domainName;
@@ -193,11 +193,11 @@ public class ClientData extends BaseModel implements Serializable {
 	public void setSecurityEmail(String securityEmail) {
 		this.securityEmail = securityEmail;
 	}
-	public String getCustcareEmail() {
-		return custcareEmail;
+	public String getSubrCareEmail() {
+		return subrCareEmail;
 	}
-	public void setCustcareEmail(String custcareEmail) {
-		this.custcareEmail = custcareEmail;
+	public void setSubrCareEmail(String subrCareEmail) {
+		this.subrCareEmail = subrCareEmail;
 	}
 	public String getRmaDeptEmail() {
 		return rmaDeptEmail;
@@ -283,11 +283,11 @@ public class ClientData extends BaseModel implements Serializable {
 	public void setVerpRemoveInbox(String verpRemoveInbox) {
 		this.verpRemoveInbox = verpRemoveInbox;
 	}
-	public String getOrigClientId() {
-		return origClientId;
+	public String getOrigSenderId() {
+		return origSenderId;
 	}
-	public void setOrigClientId(String origClientId) {
-		this.origClientId = origClientId;
+	public void setOrigSenderId(String origSenderId) {
+		this.origSenderId = origSenderId;
 	}
 	public String getReturnPathLeft() {
 		return returnPathLeft;
@@ -336,12 +336,12 @@ public class ClientData extends BaseModel implements Serializable {
 		this.isSpf = isSpf;
 	}
 
-	public List<CustomerData> getCustomers() {
-		return customers;
+	public List<SubscriberData> getSubscribers() {
+		return subscribers;
 	}
 
-	public void setCustomers(List<CustomerData> customers) {
-		this.customers = customers;
+	public void setSubscribers(List<SubscriberData> subscribers) {
+		this.subscribers = subscribers;
 	}
 
 	public List<UserData> getUserDatas() {

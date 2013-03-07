@@ -21,9 +21,9 @@ public class UserData extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 14989739185873317L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="ClientDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
+	@JoinColumn(name="SenderDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
 	@OnDelete( action = OnDeleteAction.CASCADE )
-	private ClientData clientData; // sender user is associated to
+	private SenderData senderData; // sender user is associated to
 
 	@OneToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddress.class)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
@@ -68,12 +68,12 @@ public class UserData extends BaseModel implements java.io.Serializable {
 	}
 	/** end of UI components */
 
-	public ClientData getClientData() {
-		return clientData;
+	public SenderData getSenderData() {
+		return senderData;
 	}
 
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setSenderData(SenderData senderData) {
+		this.senderData = senderData;
 	}
 
 	public EmailAddress getEmailAddr() {

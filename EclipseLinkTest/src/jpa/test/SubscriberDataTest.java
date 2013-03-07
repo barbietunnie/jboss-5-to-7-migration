@@ -8,10 +8,10 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import jpa.model.ClientData;
-import jpa.model.CustomerData;
-import jpa.service.ClientDataService;
-import jpa.service.CustomerDataService;
+import jpa.model.SenderData;
+import jpa.model.SubscriberData;
+import jpa.service.SenderDataService;
+import jpa.service.SubscriberDataService;
 import jpa.service.EmailAddressService;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -32,40 +32,40 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
-public class CustomerDataTest {
+public class SubscriberDataTest {
 
 	@Autowired
 	private EntityManager entityManager;
 
 	@BeforeClass
-	public static void CustomerDataPrepare() {
+	public static void SubscriberDataPrepare() {
 	}
 
 	@Autowired
-	CustomerDataService service;
+	SubscriberDataService service;
 	
 	@Autowired
-	ClientDataService cdService;
+	SenderDataService cdService;
 	@Autowired
 	EmailAddressService emailService;
 
 	@Test
-	public void customerDataService() {
-		List<CustomerData> list = service.getAll();
+	public void subscriberDataService() {
+		List<SubscriberData> list = service.getAll();
 		assertFalse(list.isEmpty());
 		
-		CustomerData rcd0 = service.getByCustomerId(list.get(0).getCustomerId());
+		SubscriberData rcd0 = service.getBySubscriberId(list.get(0).getSubscriberId());
 		assertNotNull(rcd0);
 		
 		// test update
 		rcd0.setUpdtUserId("JpaTest");
 		service.update(rcd0);
-		CustomerData rcd1 = service.getByRowId(rcd0.getRowId());
+		SubscriberData rcd1 = service.getByRowId(rcd0.getRowId());
 		assertTrue("JpaTest".equals(rcd1.getUpdtUserId()));
 		
 		// test insert
-		ClientData cd2 = cdService.getByClientId(rcd0.getClientData().getClientId());
-		CustomerData rcd2 = new CustomerData();
+		SenderData cd2 = cdService.getBySenderId(rcd0.getSenderData().getSenderId());
+		SubscriberData rcd2 = new SubscriberData();
 		try {
 			// allow null sql timestamp to be copied
 			SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
@@ -79,15 +79,15 @@ public class CustomerDataTest {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		rcd2.setClientData(cd2);
-		rcd2.setCustomerId(rcd1.getCustomerId()+"_2");
-		rcd2.setEmailAddr(emailService.findSertAddress(rcd2.getCustomerId()+"@localhost"));
+		rcd2.setSenderData(cd2);
+		rcd2.setSubscriberId(rcd1.getSubscriberId()+"_2");
+		rcd2.setEmailAddr(emailService.findSertAddress(rcd2.getSubscriberId()+"@localhost"));
 		service.insert(rcd2);
 		
-		CustomerData rcd3 = service.getByCustomerId(rcd1.getCustomerId()+"_2");
+		SubscriberData rcd3 = service.getBySubscriberId(rcd1.getSubscriberId()+"_2");
 		assertNotNull(rcd3);
 		assertTrue(rcd1.getRowId()!=rcd3.getRowId());
 		
-		assertTrue(1==service.deleteByCustomerId(rcd3.getCustomerId()));
+		assertTrue(1==service.deleteBySubscriberId(rcd3.getSubscriberId()));
 	}
 }

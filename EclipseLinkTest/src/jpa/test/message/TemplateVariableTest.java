@@ -24,15 +24,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
 import jpa.constant.VariableType;
-import jpa.model.ClientData;
-import jpa.model.ClientVariable;
-import jpa.model.CustomerData;
+import jpa.model.SenderData;
+import jpa.model.SenderVariable;
+import jpa.model.SubscriberData;
 import jpa.model.UserData;
 import jpa.model.message.TemplateData;
 import jpa.model.message.TemplateDataPK;
 import jpa.model.message.TemplateVariable;
 import jpa.model.message.TemplateVariablePK;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.message.TemplateDataService;
 import jpa.service.message.TemplateVariableService;
 import jpa.util.StringUtil;
@@ -45,7 +45,7 @@ public class TemplateVariableTest {
 	static Logger logger = Logger.getLogger(TemplateVariableTest.class);
 	
 	final String testTemplateId = "jpa test template id";
-	final String testClientId = Constants.DEFAULT_CLIENTID;
+	final String testSenderId = Constants.DEFAULT_SENDER_ID;
 	final String testVariableId = "jpa test variable id";
 	final String testVariableName = "jpa test variable name";
 	
@@ -58,27 +58,27 @@ public class TemplateVariableTest {
 	@Autowired
 	TemplateDataService templateService;
 	@Autowired
-	ClientDataService clientService;
+	SenderDataService senderService;
 	
 	private TemplateData tmp0;
-	private ClientData cd0;
+	private SenderData cd0;
 	
 	@Before
 	public void prepare() {
-		ClientData client = clientService.getByClientId(testClientId);
+		SenderData sender = senderService.getBySenderId(testSenderId);
 		
-		cd0 = new ClientData();
+		cd0 = new SenderData();
 		try {
-			BeanUtils.copyProperties(cd0, client);
+			BeanUtils.copyProperties(cd0, sender);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		cd0.setClientId(Constants.DEFAULT_CLIENTID + "_v2");
-		cd0.setClientVariables(new ArrayList<ClientVariable>());
-		cd0.setCustomers(new ArrayList<CustomerData>());
+		cd0.setSenderId(Constants.DEFAULT_SENDER_ID + "_v2");
+		cd0.setSenderVariables(new ArrayList<SenderVariable>());
+		cd0.setSubscribers(new ArrayList<SubscriberData>());
 		cd0.setUserDatas(new ArrayList<UserData>());
-		clientService.insert(cd0);
+		senderService.insert(cd0);
 
 		TemplateDataPK pk0 = new TemplateDataPK(cd0, testTemplateId, new Timestamp(System.currentTimeMillis()));
 		tmp0 = new TemplateData();
@@ -119,7 +119,7 @@ public class TemplateVariableTest {
 		list1 = service.getCurrentByVariableId(pk1.getVariableId());
 		assertFalse(list1.isEmpty());
 		
-		List<TemplateVariable> list2 = service.getCurrentByClientId(testClientId);
+		List<TemplateVariable> list2 = service.getCurrentBySenderId(testSenderId);
 		assertFalse(list2.isEmpty());
 		for (TemplateVariable rec : list2) {
 			logger.info(StringUtil.prettyPrint(rec,2));
@@ -129,7 +129,7 @@ public class TemplateVariableTest {
 		Timestamp newTms = new Timestamp(System.currentTimeMillis()+1000);
 		TemplateVariable var3 = createNewInstance(var2);
 		TemplateVariablePK pk2 = var2.getTemplateVariablePK();
-		TemplateVariablePK pk3 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName(), newTms);
+		TemplateVariablePK pk3 = new TemplateVariablePK(pk2.getSenderData(), pk2.getVariableId(), pk2.getVariableName(), newTms);
 		var3.setTemplateVariablePK(pk3);
 		service.insert(var3);
 		assertNotNull(service.getByPrimaryKey(pk3));
@@ -144,7 +144,7 @@ public class TemplateVariableTest {
 
 		// test deleteByVariableName
 		TemplateVariable var4 = createNewInstance(var2);
-		TemplateVariablePK pk4 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName()+"_v4", pk2.getStartTime());
+		TemplateVariablePK pk4 = new TemplateVariablePK(pk2.getSenderData(), pk2.getVariableId(), pk2.getVariableName()+"_v4", pk2.getStartTime());
 		var4.setTemplateVariablePK(pk4);
 		service.insert(var4);
 		assertTrue(1==service.deleteByVariableName(pk4.getVariableName()));
@@ -156,7 +156,7 @@ public class TemplateVariableTest {
 
 		// test deleteByPrimaryKey
 		TemplateVariable var5 = createNewInstance(var2);
-		TemplateVariablePK pk5 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName()+"_v5", pk2.getStartTime());
+		TemplateVariablePK pk5 = new TemplateVariablePK(pk2.getSenderData(), pk2.getVariableId(), pk2.getVariableName()+"_v5", pk2.getStartTime());
 		var5.setTemplateVariablePK(pk5);
 		service.insert(var5);
 		assertTrue(1==service.deleteByPrimaryKey(pk5));
@@ -168,7 +168,7 @@ public class TemplateVariableTest {
 
 		// test deleteVariableId
 		TemplateVariable var6 = createNewInstance(var2);
-		TemplateVariablePK pk6 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName()+"_v6", pk2.getStartTime());
+		TemplateVariablePK pk6 = new TemplateVariablePK(pk2.getSenderData(), pk2.getVariableId(), pk2.getVariableName()+"_v6", pk2.getStartTime());
 		var6.setTemplateVariablePK(pk6);
 		service.insert(var6);
 		int rowsDeleted = service.deleteByVariableId(pk6.getVariableId());
@@ -179,12 +179,12 @@ public class TemplateVariableTest {
 		}
 		catch (NoResultException e) {}
 		
-		// test deleteClientId
+		// test deleteSenderId
 		TemplateVariable var7 = createNewInstance(var2);
-		TemplateVariablePK pk7 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName()+"_v7", pk2.getStartTime());
+		TemplateVariablePK pk7 = new TemplateVariablePK(pk2.getSenderData(), pk2.getVariableId(), pk2.getVariableName()+"_v7", pk2.getStartTime());
 		var7.setTemplateVariablePK(pk7);
 		service.insert(var7);
-		rowsDeleted = service.deleteByClientId(pk7.getClientData().getClientId());
+		rowsDeleted = service.deleteBySenderId(pk7.getSenderData().getSenderId());
 		assertTrue(1<=rowsDeleted);
 		try {
 			service.getByPrimaryKey(pk6);
@@ -194,7 +194,7 @@ public class TemplateVariableTest {
 		
 		// test update
 		TemplateVariable var9 = createNewInstance(var2);
-		TemplateVariablePK pk9 = new TemplateVariablePK(pk2.getClientData(), pk2.getVariableId(), pk2.getVariableName()+"_v6", pk2.getStartTime());
+		TemplateVariablePK pk9 = new TemplateVariablePK(pk2.getSenderData(), pk2.getVariableId(), pk2.getVariableName()+"_v6", pk2.getStartTime());
 		var9.setTemplateVariablePK(pk9);
 		service.insert(var9);
 		assertNotNull(service.getByPrimaryKey(pk9));

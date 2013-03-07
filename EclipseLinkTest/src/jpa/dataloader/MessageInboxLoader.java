@@ -12,7 +12,7 @@ import jpa.constant.MsgDirectionCode;
 import jpa.constant.MsgStatusCode;
 import jpa.constant.XHeaderName;
 import jpa.data.preload.RuleNameEnum;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageAddress;
 import jpa.model.message.MessageAttachment;
@@ -24,7 +24,7 @@ import jpa.model.message.MessageRfcField;
 import jpa.model.message.MessageRfcFieldPK;
 import jpa.model.message.MessageStream;
 import jpa.model.rule.RuleLogic;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageAddressService;
 import jpa.service.message.MessageAttachmentService;
@@ -41,7 +41,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(MessageInboxLoader.class);
 	private MessageInboxService service;
 	private MessageAddressService msgAddrService;
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	private EmailAddressService emailAddrService;
 	private RuleLogicService logicService;
 	private MessageHeaderService headerService;
@@ -57,7 +57,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 	@Override
 	public void loadData() {
 		service = (MessageInboxService) SpringUtil.getAppContext().getBean("messageInboxService");
-		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		emailAddrService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
 		logicService = (RuleLogicService) SpringUtil.getAppContext().getBean("ruleLogicService");
 		msgAddrService = (MessageAddressService) SpringUtil.getAppContext().getBean("messageAddressService");
@@ -78,7 +78,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 
 	private void loadMessageInbox() throws IOException {
 		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 
 		MessageInbox data1 = new MessageInbox();
 		data1.setCarrierCode(CarrierCode.SMTPMAIL.getValue());
@@ -91,11 +91,11 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		data1.setFromAddrRowId(from.getRowId());
 		data1.setReplytoAddrRowId(null);
 
-		String to_addr = client.getReturnPathLeft() + "@" + client.getDomainName();
+		String to_addr = sender.getReturnPathLeft() + "@" + sender.getDomainName();
 		EmailAddress to = emailAddrService.findSertAddress(to_addr);
 		data1.setToAddrRowId(to.getRowId());
-		data1.setClientDataRowId(client.getRowId());
-		data1.setCustomerDataRowId(null);
+		data1.setSenderDataRowId(sender.getRowId());
+		data1.setSubscriberDataRowId(null);
 		data1.setPurgeDate(null);
 		data1.setUpdtTime(updtTime);
 		data1.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -122,8 +122,8 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		data2.setReplytoAddrRowId(null);
 
 		data2.setToAddrRowId(from.getRowId());
-		data2.setClientDataRowId(client.getRowId());
-		data2.setCustomerDataRowId(null);
+		data2.setSenderDataRowId(sender.getRowId());
+		data2.setSubscriberDataRowId(null);
 		data2.setPurgeDate(null);
 		data2.setUpdtTime(updtTime);
 		data2.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -194,8 +194,8 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		MessageHeader hdr3 = new MessageHeader();
 		MessageHeaderPK pk3 = new MessageHeaderPK(inbox,3);
 		hdr3.setMessageHeaderPK(pk3);
-		hdr3.setHeaderName(XHeaderName.CLIENT_ID.getValue());
-		hdr3.setHeaderValue(Constants.DEFAULT_CLIENTID);
+		hdr3.setHeaderName(XHeaderName.SENDER_ID.getValue());
+		hdr3.setHeaderValue(Constants.DEFAULT_SENDER_ID);
 		headerService.insert(hdr3);
 	}
 	

@@ -5,30 +5,30 @@ import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 
-import jpa.constant.ClientType;
+import jpa.constant.SenderType;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
-import jpa.model.ClientData;
-import jpa.service.ClientDataService;
+import jpa.model.SenderData;
+import jpa.service.SenderDataService;
 import jpa.util.ProductUtil;
 import jpa.util.SpringUtil;
 import jpa.util.TimestampUtil;
 
-public class ClientDataLoader extends AbstractDataLoader {
-	static final Logger logger = Logger.getLogger(ClientDataLoader.class);
-	private ClientDataService service;
+public class SenderDataLoader extends AbstractDataLoader {
+	static final Logger logger = Logger.getLogger(SenderDataLoader.class);
+	private SenderDataService service;
 
 	public static void main(String[] args) {
-		ClientDataLoader loader = new ClientDataLoader();
+		SenderDataLoader loader = new SenderDataLoader();
 		loader.loadData();
 	}
 
 	@Override
 	public void loadData() {
-		service = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		service = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		startTransaction();
 		try {
-			loadClientData(true);
+			loadSenderData(true);
 			loadJBatchData();
 		} catch (SQLException e) {
 			logger.error("Exception caught", e);
@@ -38,29 +38,29 @@ public class ClientDataLoader extends AbstractDataLoader {
 		}
 	}
 
-	private void loadClientData(boolean loadTestData) {
-		ClientData data = new ClientData();
-		data.setClientId(Constants.DEFAULT_CLIENTID);
-		data.setClientName(getProperty("client.name"));
-		data.setDomainName(getProperty("client.domain")); // domain name
-		data.setClientType(ClientType.System.getValue());
-		data.setContactName(getProperty("client.contact.name"));
-		data.setContactPhone(getProperty("client.contact.phone"));
+	private void loadSenderData(boolean loadTestData) {
+		SenderData data = new SenderData();
+		data.setSenderId(Constants.DEFAULT_SENDER_ID);
+		data.setSenderName(getProperty("sender.name"));
+		data.setDomainName(getProperty("sender.domain")); // domain name
+		data.setSenderType(SenderType.System.getValue());
+		data.setContactName(getProperty("sender.contact.name"));
+		data.setContactPhone(getProperty("sender.contact.phone"));
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setIrsTaxId("0000000000");
-		data.setWebSiteUrl(getProperty("client.website.url"));
+		data.setWebSiteUrl(getProperty("sender.website.url"));
 		data.setSaveRawMsg(true); // save raw stream
-		data.setVirusCntrlEmail(getProperty("client.contact.email"));
-		data.setSecurityEmail(getProperty("client.security.email"));
-		data.setCustcareEmail(getProperty("client.customer.care.email"));
-		data.setRmaDeptEmail(getProperty("client.rma.dept.email"));
-		data.setSpamCntrlEmail(getProperty("client.spam.control.email"));
-		data.setChaRspHndlrEmail(getProperty("client.challenge.email"));
+		data.setVirusCntrlEmail(getProperty("sender.contact.email"));
+		data.setSecurityEmail(getProperty("sender.security.email"));
+		data.setSubrCareEmail(getProperty("sender.subscriber.care.email"));
+		data.setRmaDeptEmail(getProperty("sender.rma.dept.email"));
+		data.setSpamCntrlEmail(getProperty("sender.spam.control.email"));
+		data.setChaRspHndlrEmail(getProperty("sender.challenge.email"));
 		data.setEmbedEmailId(true); // Embed EmailId 
 		data.setReturnPathLeft("support"); // return-path left
 		data.setUseTestAddr(true); // use testing address
-		data.setTestFromAddr(getProperty("client.test.from.address"));
-		data.setTestToAddr(getProperty("client.test.to.address"));
+		data.setTestFromAddr(getProperty("sender.test.from.address"));
+		data.setTestToAddr(getProperty("sender.test.to.address"));
 		data.setVerpEnabled(true); // is VERP enabled
 		data.setVerpSubDomain(null); // VERP sub-domain
 		data.setVerpInboxName("bounce"); // VERP bounce mailbox
@@ -75,18 +75,18 @@ public class ClientDataLoader extends AbstractDataLoader {
 	}
 	
 	private void loadJBatchData() throws SQLException {
-		ClientData data = new ClientData();
-		data.setClientId("JBatchCorp");
-		data.setClientName("JBatch Corp. Site");
+		SenderData data = new SenderData();
+		data.setSenderId("JBatchCorp");
+		data.setSenderName("JBatch Corp. Site");
 		data.setDomainName("jbatch.com"); // domain name
-		data.setClientType(ClientType.Custom.getValue());
+		data.setSenderType(SenderType.Custom.getValue());
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setIrsTaxId( "0000000000");
 		data.setWebSiteUrl("http://www.jbatch.com");
 		data.setSaveRawMsg(true); // save raw stream
 		data.setVirusCntrlEmail("sitemaster@jbatch.com");
 		data.setSecurityEmail("security@jbatch.com");
-		data.setCustcareEmail("custcare@jbatch.com");
+		data.setSubrCareEmail("subrcare@jbatch.com");
 		data.setRmaDeptEmail("rma.dept@jbatch.com");
 		data.setSpamCntrlEmail("spam.control@jbatch.com");
 		data.setChaRspHndlrEmail("challenge@jbatch.com");

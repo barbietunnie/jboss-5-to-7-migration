@@ -6,35 +6,35 @@ import java.util.TimeZone;
 import jpa.constant.Constants;
 import jpa.constant.MobileCarrierEnum;
 import jpa.constant.StatusId;
-import jpa.model.ClientData;
-import jpa.model.CustomerData;
+import jpa.model.SenderData;
+import jpa.model.SubscriberData;
 import jpa.model.EmailAddress;
-import jpa.service.ClientDataService;
-import jpa.service.CustomerDataService;
+import jpa.service.SenderDataService;
+import jpa.service.SubscriberDataService;
 import jpa.service.EmailAddressService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
 
-public class CustomerDataLoader extends AbstractDataLoader {
-	static final Logger logger = Logger.getLogger(CustomerDataLoader.class);
-	private CustomerDataService service;
+public class SubscriberDataLoader extends AbstractDataLoader {
+	static final Logger logger = Logger.getLogger(SubscriberDataLoader.class);
+	private SubscriberDataService service;
 	private EmailAddressService emailAddrService;
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 
 	public static void main(String[] args) {
-		CustomerDataLoader loader = new CustomerDataLoader();
+		SubscriberDataLoader loader = new SubscriberDataLoader();
 		loader.loadData();
 	}
 
 	@Override
 	public void loadData() {
-		service = (CustomerDataService) SpringUtil.getAppContext().getBean("customerDataService");
+		service = (SubscriberDataService) SpringUtil.getAppContext().getBean("subscriberDataService");
 		emailAddrService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
-		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		startTransaction();
 		try {
-			loadCustomerData();
+			loadSubscriberData();
 		} catch (Exception e) {
 			logger.error("Exception caught", e);
 		}
@@ -43,14 +43,14 @@ public class CustomerDataLoader extends AbstractDataLoader {
 		}
 	}
 
-	private void loadCustomerData() {
-		String addr = getProperty("customer.email.1");
+	private void loadSubscriberData() {
+		String addr = getProperty("subscriber.email.1");
 		EmailAddress emailaddr = emailAddrService.findSertAddress(addr);
-		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
-		CustomerData data = new CustomerData();
-		data.setClientData(cd);
+		SenderData cd = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
+		SubscriberData data = new SubscriberData();
+		data.setSenderData(cd);
 		data.setEmailAddr(emailaddr);
-		data.setCustomerId(getProperty("customer.id.1"));
+		data.setSubscriberId(getProperty("subscriber.id.1"));
 		data.setSsnNumber("123-45-6789");
 		data.setTaxId(null);
 		data.setProfession("Software Consultant");
@@ -74,7 +74,7 @@ public class CustomerDataLoader extends AbstractDataLoader {
 		data.setMsgDetail("Dear Joe,");
 		data.setMsgFooter("Have a nice day.");
 		data.setTimeZone(TimeZone.getDefault().getID());
-		data.setMemoText("E-Sphere Pilot customer");
+		data.setMemoText("E-Sphere Pilot subscriber");
 		data.setStatusId(StatusId.ACTIVE.getValue());
 		data.setSecurityQuestion("What is your favorite movie?");
 		data.setSecurityAnswer("Rambo");

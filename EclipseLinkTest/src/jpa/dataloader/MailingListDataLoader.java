@@ -8,10 +8,10 @@ import jpa.constant.StatusId;
 import jpa.data.preload.MailingListEnum;
 import jpa.data.preload.SubscriberEnum;
 import jpa.data.preload.SubscriberEnum.Subscriber;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.MailingListService;
 import jpa.service.SubscriptionService;
@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 public class MailingListDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(MailingListDataLoader.class);
 	private MailingListService mlistService;
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	private EmailAddressService emailService;
 	private SubscriptionService subService;
 
@@ -34,7 +34,7 @@ public class MailingListDataLoader extends AbstractDataLoader {
 	@Override
 	public void loadData() {
 		mlistService = (MailingListService) SpringUtil.getAppContext().getBean("mailingListService");
-		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		emailService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
 		subService = (SubscriptionService) SpringUtil.getAppContext().getBean("subscriptionService");
 		startTransaction();
@@ -50,14 +50,14 @@ public class MailingListDataLoader extends AbstractDataLoader {
 	}
 
 	private void loadMailingLists() throws SQLException {
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
-		String domain = client.getDomainName();
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
+		String domain = sender.getDomainName();
 
 		Timestamp createTime = new Timestamp(new java.util.Date().getTime());
 		for (MailingListEnum mlist : MailingListEnum.values()) {
 			if (mlist.isProd()) continue;
 			MailingList in = new MailingList();
-			in.setClientData(client);
+			in.setSenderData(sender);
 			in.setListId(mlist.name());
 			in.setDisplayName(mlist.getDisplayName());
 			in.setAcctUserName(mlist.getAcctName());
@@ -74,15 +74,15 @@ public class MailingListDataLoader extends AbstractDataLoader {
 	}
 	
 	void loadProdMailingLists() throws SQLException {
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
-		String domain = client.getDomainName();
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
+		String domain = sender.getDomainName();
 
 		Timestamp createTime = new Timestamp(new java.util.Date().getTime());
 		
 		for (MailingListEnum mlist : MailingListEnum.values()) {
 			if (!mlist.isProd()) continue;
 			MailingList in = new MailingList();
-			in.setClientData(client);
+			in.setSenderData(sender);
 			in.setListId(mlist.name());
 			in.setDisplayName(mlist.getDisplayName());
 			in.setAcctUserName(mlist.getAcctName());

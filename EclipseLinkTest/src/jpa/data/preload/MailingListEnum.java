@@ -10,8 +10,8 @@ public enum MailingListEnum {
 	SMPLLST1("Sample List 1","demolist1","Sample mailing list 1",StatusId.ACTIVE,false,false),
 	SMPLLST2("Sample List 2","demolist2","Sample mailing list 2",StatusId.ACTIVE,false,false),
 	SYSLIST1("NOREPLY Empty List","noreply","Auto-Responder, confirm subscription",StatusId.INACTIVE,true,false),
-	ALERT_LIST("NOREPLY Empty List","noreply","System alert, customer order or internal errors",StatusId.INACTIVE,true,true),
-	ORDER_LIST("Order Confirmation List","support","Auto-Responder, confirm customer order",StatusId.INACTIVE,true,true);
+	ALERT_LIST("NOREPLY Empty List","noreply","System alert, subscriber order or internal errors",StatusId.INACTIVE,true,true),
+	ORDER_LIST("Order Confirmation List","support","Auto-Responder, confirm subscriber order",StatusId.INACTIVE,true,true);
 	
 	private String displayName;
 	private String acctName;

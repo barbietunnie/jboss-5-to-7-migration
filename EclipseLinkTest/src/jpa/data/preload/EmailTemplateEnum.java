@@ -7,7 +7,7 @@ public enum EmailTemplateEnum implements EnumInterface {
 	SampleNewsletter1(MailingListEnum.SMPLLST1,false,null,true,
 			MailingListType.PERSONALIZED, MailingListDeliveryType.ALL_ON_LIST,
 			"Sample newsletter to ${SubscriberAddress} with Open/Click/Unsubscribe tracking",
-			"Dear ${CustomerName},<p/>" + LF +
+			"Dear ${SubscriberName},<p/>" + LF +
 			"This is a sample newsletter message for a web-based mailing list. With a web-based " + LF +
 			"mailing list, people who want to subscribe to the list must visit a web page and " + LF +
 			"fill out a form with their email address. After submitting the form, they will " + LF +
@@ -97,7 +97,7 @@ public enum EmailTemplateEnum implements EnumInterface {
 	UserProfileChangeLetter(MailingListEnum.SYSLIST1,true,null,true,
 			MailingListType.PERSONALIZED, MailingListDeliveryType.ALL_ON_LIST,
 			"[notify] Changes of user profile details",
-			"Dear ${CustomerName},<br/>" + LF +
+			"Dear ${SubscriberName},<br/>" + LF +
 			"This message is to inform you of a change of your user profile details" + LF +
 			"on our newsletter database. You are currently subscribed to our following" + LF +
 			"newsletters:<br/>" + LF +
@@ -111,7 +111,7 @@ public enum EmailTemplateEnum implements EnumInterface {
 	EmailAddressChangeLetter(MailingListEnum.SYSLIST1,true,null,true,
 			MailingListType.PERSONALIZED, MailingListDeliveryType.ALL_ON_LIST,
 			"[notify] Change of your email address",
-			"Dear ${CustomerName},<br/>" + LF +
+			"Dear ${SubscriberName},<br/>" + LF +
 			"When updating your user profile details, your email address has changed.<br/>" + LF +
 			"Please confirm your new email address by " +
 			"<a href='$%7BConfirmationURL%7D' target='_blank'>visiting this web page</a>.<br/>" + LF +
@@ -201,7 +201,7 @@ public enum EmailTemplateEnum implements EnumInterface {
 			"Please note: This e-mail was sent from a notification-only address that" + LF +
 			"cannot accept incoming e-mail. Please do not reply to this message." + LF + LF +
 			"Thank you for shopping at Emailsphere.com." + LF + LF +
-			"Emailsphere.com Customer Service" + LF +
+			"Emailsphere.com Subscriber Service" + LF +
 			"http://www.emailsphere.com" + LF),
 	
 	EmailsphereInternalAlert(MailingListEnum.ALERT_LIST,false,null,false,

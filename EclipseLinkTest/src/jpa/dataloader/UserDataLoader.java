@@ -4,11 +4,11 @@ import java.sql.Timestamp;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.SessionUpload;
 import jpa.model.SessionUploadPK;
 import jpa.model.UserData;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.SessionUploadService;
 import jpa.service.UserDataService;
 import jpa.util.SpringUtil;
@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 public class UserDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(UserDataLoader.class);
 	private UserDataService service;
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	private SessionUploadService uploadService;
 
 	public static void main(String[] args) {
@@ -29,7 +29,7 @@ public class UserDataLoader extends AbstractDataLoader {
 	@Override
 	public void loadData() {
 		service = (UserDataService) SpringUtil.getAppContext().getBean("userDataService");
-		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		uploadService = (SessionUploadService) SpringUtil.getAppContext().getBean("sessionUploadService");
 		startTransaction();
 		try {
@@ -44,9 +44,9 @@ public class UserDataLoader extends AbstractDataLoader {
 	}
 
 	private void loadUserData() {
-		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		SenderData cd = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		UserData data = new UserData();
-		data.setClientData(cd);
+		data.setSenderData(cd);
 		data.setUserId("admin");
 		data.setPassword("admin");
 		data.setFirstName("default");
@@ -58,7 +58,7 @@ public class UserDataLoader extends AbstractDataLoader {
 		service.insert(data);
 
 		data = new UserData();
-		data.setClientData(cd);
+		data.setSenderData(cd);
 		data.setUserId(getProperty("user.id.1"));
 		data.setPassword(getProperty("user.password.1"));
 		data.setFirstName("default");

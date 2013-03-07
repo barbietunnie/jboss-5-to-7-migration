@@ -10,10 +10,10 @@ import java.util.List;
 import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.message.MessageRendered;
 import jpa.model.message.MessageSource;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.message.MessageRenderedService;
 import jpa.service.message.MessageSourceService;
 import jpa.util.StringUtil;
@@ -42,7 +42,7 @@ public class MessageRenderedTest {
 	@Autowired
 	MessageRenderedService service;
 	@Autowired
-	ClientDataService clientService;
+	SenderDataService senderService;
 	@Autowired
 	MessageSourceService sourceService;
 
@@ -50,7 +50,7 @@ public class MessageRenderedTest {
 	public void messageRenderedService() {
 		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 		
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		List<MessageSource> srcs = sourceService.getAll();
 		assertFalse(srcs.isEmpty());
 		MessageSource src1 = srcs.get(0);
@@ -59,8 +59,8 @@ public class MessageRenderedTest {
 		in1.setMessageSourceRowId(src1.getRowId());
 		in1.setMessageTemplateRowId(src1.getTemplateData().getRowId());
 		in1.setStartTime(updtTime);
-		in1.setClientDataRowId(client.getRowId());
-		in1.setCustomerDataRowId(null);
+		in1.setSenderDataRowId(sender.getRowId());
+		in1.setSubscriberDataRowId(null);
 		in1.setPurgeAfter(null);
 		service.insert(in1);
 		

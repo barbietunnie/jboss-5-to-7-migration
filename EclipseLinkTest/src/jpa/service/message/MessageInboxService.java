@@ -12,8 +12,8 @@ import javax.persistence.Query;
 
 import jpa.model.message.MessageIdDuplicate;
 import jpa.model.message.MessageInbox;
-import jpa.service.ClientDataService;
-import jpa.service.CustomerDataService;
+import jpa.service.SenderDataService;
+import jpa.service.SubscriberDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.rule.RuleLogicService;
 
@@ -34,9 +34,9 @@ public class MessageInboxService {
 	@Autowired
 	private EmailAddressService emailService;
 	@Autowired
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	@Autowired
-	private CustomerDataService customerService;
+	private SubscriberDataService subscriberService;
 	@Autowired
 	private RuleLogicService logicService;
 	@Autowired
@@ -93,15 +93,15 @@ public class MessageInboxService {
 			}
 			catch (NoResultException e) {}
 		}
-		if (mi.getClientDataRowId()!=null) {
+		if (mi.getSenderDataRowId()!=null) {
 			try {
-				mi.setClientData(clientService.getByRowId(mi.getClientDataRowId()));
+				mi.setSenderData(senderService.getByRowId(mi.getSenderDataRowId()));
 			}
 			catch (NoResultException e) {}
 		}
-		if (mi.getCustomerDataRowId()!=null) {
+		if (mi.getSubscriberDataRowId()!=null) {
 			try {
-				mi.setCustomerData(customerService.getByRowId(mi.getCustomerDataRowId()));
+				mi.setSubscriberData(subscriberService.getByRowId(mi.getSubscriberDataRowId()));
 			}
 			catch (NoResultException e) {}
 		}

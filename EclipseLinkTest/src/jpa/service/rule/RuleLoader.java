@@ -15,13 +15,13 @@ import jpa.constant.RuleCategory;
 import jpa.constant.RuleCriteria;
 import jpa.constant.RuleType;
 import jpa.constant.XHeaderName;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.MailingList;
 import jpa.model.ReloadFlags;
 import jpa.model.rule.RuleElement;
 import jpa.model.rule.RuleLogic;
 import jpa.model.rule.RuleSubruleMap;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.MailingListService;
 import jpa.service.ReloadFlagsService;
 import jpa.util.SpringUtil;
@@ -54,7 +54,7 @@ public final class RuleLoader implements java.io.Serializable {
 	@Autowired
 	private ReloadFlagsService flagsService;
 	@Autowired
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	@Autowired
 	private MailingListService listService;
 	
@@ -149,10 +149,10 @@ public final class RuleLoader implements java.io.Serializable {
 					reloadFlags.setActions(vo.getActions());
 					loadRules();
 				}
-				if (reloadFlags.getClients() < vo.getClients()
+				if (reloadFlags.getSenders() < vo.getSenders()
 						|| reloadFlags.getTemplates() < vo.getTemplates()) {
-					logger.info("====== Clients/Templates changed, reload Address Patterns ======");
-					reloadFlags.setClients(vo.getClients());
+					logger.info("====== Senders/Templates changed, reload Address Patterns ======");
+					reloadFlags.setSenders(vo.getSenders());
 					reloadAddressPatterns();
 				}
 				reloadFlags.setTemplates(vo.getTemplates());
@@ -340,7 +340,7 @@ public final class RuleLoader implements java.io.Serializable {
 		}		
 	}
 	
-	public String findClientIdByAddr(String addr) {
+	public String findSenderIdByAddr(String addr) {
 		if (StringUtil.isEmpty(addr)) {
 			return null;
 		}
@@ -371,38 +371,38 @@ public final class RuleLoader implements java.io.Serializable {
 	
 	private final Map<String, Pattern> loadAddressPatterns() {
 		Map<String, String> map = new LinkedHashMap<String, String>();
-		// make sure the default client is the first on the list
-		ClientData client0 = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
-		if (client0 != null) {
-			String clientId = client0.getClientId();
-			String returnPath = buildReturnPath(client0);
-			map.put(clientId, returnPath);
+		// make sure the default sender is the first on the list
+		SenderData sender0 = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
+		if (sender0 != null) {
+			String senderId = sender0.getSenderId();
+			String returnPath = buildReturnPath(sender0);
+			map.put(senderId, returnPath);
 		}
-		List<ClientData> clients = clientService.getAll();
-		// now add all other clients' return path
-		for (ClientData client : clients) {
-			String clientId = client.getClientId();
-			if (Constants.DEFAULT_CLIENTID.equalsIgnoreCase(clientId)) {
-				continue; // skip the default client
+		List<SenderData> senders = senderService.getAll();
+		// now add all other senders' return path
+		for (SenderData sender : senders) {
+			String senderId = sender.getSenderId();
+			if (Constants.DEFAULT_SENDER_ID.equalsIgnoreCase(senderId)) {
+				continue; // skip the default sender
 			}
-			String returnPath = buildReturnPath(client);
-			if (map.containsKey(clientId)) {
-				map.put(clientId, map.get(clientId) + "|" + returnPath);
+			String returnPath = buildReturnPath(sender);
+			if (map.containsKey(senderId)) {
+				map.put(senderId, map.get(senderId) + "|" + returnPath);
 			}
 			else {
-				map.put(clientId, returnPath);
+				map.put(senderId, returnPath);
 			}
 		}
 		// add mailing list addresses
 		List<MailingList> lists = listService.getAll(true);
 		for (MailingList list : lists) {
-			String clientId = list.getClientData().getClientId();
+			String senderId = list.getSenderData().getSenderId();
 			String returnPath = list.getListEmailAddr();
-			if (map.containsKey(clientId)) {
-				map.put(clientId, map.get(clientId) + "|" + returnPath);
+			if (map.containsKey(senderId)) {
+				map.put(senderId, map.get(senderId) + "|" + returnPath);
 			}
 			else {
-				map.put(clientId, returnPath);
+				map.put(senderId, returnPath);
 			}
 		}
 		// create regular expressions
@@ -419,30 +419,30 @@ public final class RuleLoader implements java.io.Serializable {
 		return patterns;
 	}
 	
-	private String buildReturnPath(ClientData client) {
-		String domainName = client.getDomainName().trim();
-		String returnPath = client.getReturnPathLeft().trim() + "@" + domainName;
-		if (client.isVerpEnabled()) {
+	private String buildReturnPath(SenderData sender) {
+		String domainName = sender.getDomainName().trim();
+		String returnPath = sender.getReturnPathLeft().trim() + "@" + domainName;
+		if (sender.isVerpEnabled()) {
 			// if VERP is enabled, add VERP addresses to the pattern 
-			String verpSub = client.getVerpSubDomain();
+			String verpSub = sender.getVerpSubDomain();
 			verpSub = (StringUtil.isEmpty(verpSub) ? "" : verpSub.trim() + ".");
-			if (!StringUtil.isEmpty(client.getVerpInboxName())) {
-				returnPath += "|" + client.getVerpInboxName().trim() + "@" + verpSub + domainName;
+			if (!StringUtil.isEmpty(sender.getVerpInboxName())) {
+				returnPath += "|" + sender.getVerpInboxName().trim() + "@" + verpSub + domainName;
 			}
-			if (!StringUtil.isEmpty(client.getVerpRemoveInbox())) {
-				returnPath += "|" + client.getVerpRemoveInbox().trim() + "@" + verpSub + domainName;
+			if (!StringUtil.isEmpty(sender.getVerpRemoveInbox())) {
+				returnPath += "|" + sender.getVerpRemoveInbox().trim() + "@" + verpSub + domainName;
 			}
 		}
-		if (client.isUseTestAddr()) {
+		if (sender.isUseTestAddr()) {
 			// if in test mode, add test address to the pattern
-			if (!StringUtil.isEmpty(client.getTestFromAddr())) {
-				returnPath += "|" + client.getTestFromAddr().trim();
+			if (!StringUtil.isEmpty(sender.getTestFromAddr())) {
+				returnPath += "|" + sender.getTestFromAddr().trim();
 			}
-			if (!StringUtil.isEmpty(client.getTestReplytoAddr())) {
-				returnPath += "|" + client.getTestReplytoAddr().trim();
+			if (!StringUtil.isEmpty(sender.getTestReplytoAddr())) {
+				returnPath += "|" + sender.getTestReplytoAddr().trim();
 			}
-			if (!StringUtil.isEmpty(client.getTestToAddr())) {
-				returnPath += "|" + client.getTestToAddr().trim();
+			if (!StringUtil.isEmpty(sender.getTestToAddr())) {
+				returnPath += "|" + sender.getTestToAddr().trim();
 			}
 		}
 		return returnPath;

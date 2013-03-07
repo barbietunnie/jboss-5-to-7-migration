@@ -68,10 +68,10 @@ public class Subscription extends BaseModel implements java.io.Serializable {
 		return (acceptHtml==false ? CodeType.NO.getValue() : CodeType.YES.getValue());
 	}
 	
-//	public String getCustomerName() {
-//		if (getEmailAddr()!=null && getEmailAddr().getCustomerData()!=null) {
-//			String firstName = getEmailAddr().getCustomerData().getFirstName();
-//			String lastName = getEmailAddr().getCustomerData().getLastName();
+//	public String getSubscriberName() {
+//		if (getEmailAddr()!=null && getEmailAddr().getSubscriberData()!=null) {
+//			String firstName = getEmailAddr().getSubscriberData().getFirstName();
+//			String lastName = getEmailAddr().getSubscriberData().getLastName();
 //			return (firstName == null ? "" : firstName + " ") + (lastName == null ? "" : lastName);
 //		}
 //		else {

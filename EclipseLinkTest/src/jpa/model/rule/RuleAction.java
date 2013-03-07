@@ -12,11 +12,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import jpa.model.BaseModel;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 
 @Entity
 @Table(name="rule_action", 
-	uniqueConstraints=@UniqueConstraint(columnNames = {"RuleLogicRowId", "actionSequence", "startTime", "ClientDataRowId"}))
+	uniqueConstraints=@UniqueConstraint(columnNames = {"RuleLogicRowId", "actionSequence", "startTime", "SenderDataRowId"}))
 public class RuleAction extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 6097614369008930898L;
 
@@ -35,13 +35,13 @@ public class RuleAction extends BaseModel implements java.io.Serializable {
 	}
 
 	public RuleAction(RuleLogic ruleLogic, int actionSequence,
-			Timestamp startTime, ClientData clientData,
+			Timestamp startTime, SenderData senderData,
 			RuleActionDetail ruleActionDetail, String fieldValues) {
 		ruleActionPK = new RuleActionPK();
 		ruleActionPK.setRuleLogic(ruleLogic);
 		ruleActionPK.setActionSequence(actionSequence);
 		ruleActionPK.setStartTime(startTime);
-		ruleActionPK.setClientData(clientData);
+		ruleActionPK.setSenderData(senderData);
 		this.ruleActionDetail = ruleActionDetail;
 		this.fieldValues = fieldValues;
 	}

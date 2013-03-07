@@ -9,15 +9,15 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 
 @Embeddable
 public class TemplateDataPK implements Serializable {
 	private static final long serialVersionUID = 3942772930671670809L;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=ClientData.class)
-	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private ClientData clientData;
+	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=SenderData.class)
+	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	private SenderData senderData;
 
 	@Column(name="TemplateId", nullable=false, length=26)
 	private String templateId = "";
@@ -26,8 +26,8 @@ public class TemplateDataPK implements Serializable {
 
 	public TemplateDataPK() {}
 	
-	public TemplateDataPK(ClientData clientData, String templateId, Timestamp startTime) {
-		this.clientData = clientData;
+	public TemplateDataPK(SenderData senderData, String templateId, Timestamp startTime) {
+		this.senderData = senderData;
 		this.templateId = templateId;
 		this.startTime = startTime;
 	}
@@ -40,12 +40,12 @@ public class TemplateDataPK implements Serializable {
 		this.templateId = templateId;
 	}
 
-	public ClientData getClientData() {
-		return clientData;
+	public SenderData getSenderData() {
+		return senderData;
 	}
 
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setSenderData(SenderData senderData) {
+		this.senderData = senderData;
 	}
 
 	public Timestamp getStartTime() {

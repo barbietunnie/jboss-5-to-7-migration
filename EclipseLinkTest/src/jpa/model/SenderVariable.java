@@ -9,24 +9,24 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="client_variable", uniqueConstraints=@UniqueConstraint(columnNames = {"clientDataRowId", "variableName", "startTime"}))
-public class ClientVariable extends BaseVariableModel implements Serializable
+@Table(name="sender_variable", uniqueConstraints=@UniqueConstraint(columnNames = {"senderDataRowId", "variableName", "startTime"}))
+public class SenderVariable extends BaseVariableModel implements Serializable
 {
 	private static final long serialVersionUID = -5873779791693771806L;
 
 	@Embedded
-	private ClientVariablePK clientVariablePK;
+	private SenderVariablePK senderVariablePK;
 
 	@Column(name="VariableValue", length=2046, nullable=true)
 	private String variableValue = null;
 
-	public ClientVariable() {}
+	public SenderVariable() {}
 	
-	public ClientVariablePK getClientVariablePK() {
-		return clientVariablePK;
+	public SenderVariablePK getSenderVariablePK() {
+		return senderVariablePK;
 	}
-	public void setClientVariablePK(ClientVariablePK clientVariablePK) {
-		this.clientVariablePK = clientVariablePK;
+	public void setSenderVariablePK(SenderVariablePK senderVariablePK) {
+		this.senderVariablePK = senderVariablePK;
 	}
 	public String getVariableValue() {
 		return variableValue;

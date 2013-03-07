@@ -19,9 +19,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.IdTokens;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.IdTokensService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -54,14 +54,14 @@ public class IdTokens1Test {
 	IdTokensService service;
 	
 	@Autowired
-	ClientDataService cdService;
+	SenderDataService cdService;
 
 	@Test
 	public void idTokensService1() {
 		List<IdTokens> list = service.getAll();
 		assertFalse(list.isEmpty());
 		
-		IdTokens tkn0 = service.getByClientId(Constants.DEFAULT_CLIENTID);
+		IdTokens tkn0 = service.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		assertNotNull(tkn0);
 		
 		// test update
@@ -71,7 +71,7 @@ public class IdTokens1Test {
 		assertTrue("JpaTest".equals(tkn1.getUpdtUserId()));
 		
 		// test insert
-		ClientData cd2 = cdService.getByClientId("JBatchCorp");
+		SenderData cd2 = cdService.getBySenderId("JBatchCorp");
 		IdTokens tkn2 = new IdTokens();
 		try {
 			BeanUtils.copyProperties(tkn2, tkn1);
@@ -79,13 +79,13 @@ public class IdTokens1Test {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		tkn2.setClientData(cd2);
+		tkn2.setSenderData(cd2);
 		service.insert(tkn2);
 		
-		IdTokens tkn3 = service.getByClientId("JBatchCorp");
+		IdTokens tkn3 = service.getBySenderId("JBatchCorp");
 		assertNotNull(tkn3);
 		assertTrue(tkn1.getRowId()!=tkn3.getRowId());
 		
-		assertTrue(1==service.deleteByClientId(tkn3.getClientData().getClientId()));
+		assertTrue(1==service.deleteBySenderId(tkn3.getSenderData().getSenderId()));
 	}
 }

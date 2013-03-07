@@ -15,20 +15,20 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name="customer_data")
-public class CustomerData extends BaseModel implements java.io.Serializable {
+@Table(name="subscriber_data")
+public class SubscriberData extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -2242214285799087578L;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=ClientData.class)
-	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private ClientData clientData;
+	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=SenderData.class)
+	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	private SenderData senderData;
 
 	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddress.class)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private EmailAddress emailAddr;
 
 	@Column(nullable=false, length=20, unique=true)
-	private String customerId = "";
+	private String subscriberId = "";
 	@Column(length=11)
 	private String ssnNumber = null;
 	@Column(length=10)
@@ -100,21 +100,21 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 	private String securityAnswer = null;
 
 	@Transient
-	private String origCustId = null;
+	private String origSubrId = null;
 	@Transient
 	private String emailAddress = null;
 
-	public CustomerData() {
+	public SubscriberData() {
 		// must have a no-argument constructor
 		startDate = new Date(System.currentTimeMillis());
 	}
 
-	public ClientData getClientData() {
-		return clientData;
+	public SenderData getSenderData() {
+		return senderData;
 	}
 
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setSenderData(SenderData senderData) {
+		this.senderData = senderData;
 	}
 
 	public EmailAddress getEmailAddr() {
@@ -125,12 +125,12 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 		this.emailAddr = emailAddr;
 	}
 
-	public String getCustomerId() {
-		return customerId;
+	public String getSubscriberId() {
+		return subscriberId;
 	}
 
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
+	public void setSubscriberId(String subscriberId) {
+		this.subscriberId = subscriberId;
 	}
 
 	public String getSsnNumber() {
@@ -397,12 +397,12 @@ public class CustomerData extends BaseModel implements java.io.Serializable {
 		this.securityAnswer = securityAnswer;
 	}
 
-	public String getOrigCustId() {
-		return origCustId;
+	public String getOrigSubrId() {
+		return origSubrId;
 	}
 
-	public void setOrigCustId(String origCustId) {
-		this.origCustId = origCustId;
+	public void setOrigSubrId(String origSubrId) {
+		this.origSubrId = origSubrId;
 	}
 
 	public String getEmailAddress() {

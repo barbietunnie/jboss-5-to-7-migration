@@ -17,8 +17,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import jpa.model.BaseModel;
-import jpa.model.ClientData;
-import jpa.model.CustomerData;
+import jpa.model.SenderData;
+import jpa.model.SubscriberData;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
@@ -55,15 +55,15 @@ public class MessageRendered extends BaseModel implements Serializable {
 	@Transient
 	private TemplateData messageTemplate;
 
-	@Column(name="ClientDataRowId", nullable=true, columnDefinition="Integer")
-	private Integer clientDataRowId = null;
+	@Column(name="SenderDataRowId", nullable=true, columnDefinition="Integer")
+	private Integer senderDataRowId = null;
 	@Transient
-	private ClientData clientData;
+	private SenderData senderData;
 
-	@Column(name="CustomerDataRowId", nullable=true, columnDefinition="Integer")
-	private Integer customerDataRowId = null;
+	@Column(name="SubscriberDataRowId", nullable=true, columnDefinition="Integer")
+	private Integer subscriberDataRowId = null;
 	@Transient
-	private CustomerData customerData;
+	private SubscriberData subscriberData;
 
 	@Column(nullable=false)
 	private Timestamp startTime;
@@ -122,20 +122,20 @@ public class MessageRendered extends BaseModel implements Serializable {
 		this.startTime = startTime;
 	}
 
-	public Integer getClientDataRowId() {
-		return clientDataRowId;
+	public Integer getSenderDataRowId() {
+		return senderDataRowId;
 	}
 
-	public void setClientDataRowId(Integer clientDataRowId) {
-		this.clientDataRowId = clientDataRowId;
+	public void setSenderDataRowId(Integer senderDataRowId) {
+		this.senderDataRowId = senderDataRowId;
 	}
 
-	public Integer getCustomerDataRowId() {
-		return customerDataRowId;
+	public Integer getSubscriberDataRowId() {
+		return subscriberDataRowId;
 	}
 
-	public void setCustomerDataRowId(Integer customerDataRowId) {
-		this.customerDataRowId = customerDataRowId;
+	public void setSubscriberDataRowId(Integer subscriberDataRowId) {
+		this.subscriberDataRowId = subscriberDataRowId;
 	}
 
 	public Integer getPurgeAfter() {
@@ -162,20 +162,20 @@ public class MessageRendered extends BaseModel implements Serializable {
 		this.messageTemplate = messageTemplate;
 	}
 
-	public ClientData getClientData() {
-		return clientData;
+	public SenderData getSenderData() {
+		return senderData;
 	}
 
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setSenderData(SenderData senderData) {
+		this.senderData = senderData;
 	}
 
-	public CustomerData getCustomerData() {
-		return customerData;
+	public SubscriberData getSubscriberData() {
+		return subscriberData;
 	}
 
-	public void setCustomerData(CustomerData customerData) {
-		this.customerData = customerData;
+	public void setSubscriberData(SubscriberData subscriberData) {
+		this.subscriberData = subscriberData;
 	}
 
 }

@@ -11,7 +11,7 @@ import javax.persistence.Table;
 public class ReloadFlags extends BaseModel {	
 	private static final long serialVersionUID = -5657762883755527124L;
 
-	private int clients = 0;
+	private int senders = 0;
 	private int rules = 0;
 	private int actions = 0;
 	private int templates = 0;
@@ -25,11 +25,11 @@ public class ReloadFlags extends BaseModel {
 		return rowId;
 	}
 
-	public int getClients() {
-		return clients;
+	public int getSenders() {
+		return senders;
 	}
-	public void setClients(int clients) {
-		this.clients = clients;
+	public void setSenders(int senders) {
+		this.senders = senders;
 	}
 	public int getRules() {
 		return rules;

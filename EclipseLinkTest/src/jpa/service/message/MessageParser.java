@@ -24,12 +24,12 @@ import jpa.message.MessageBean;
 import jpa.message.MessageNode;
 import jpa.message.MsgHeader;
 import jpa.message.util.EmailIdParser;
-import jpa.model.ClientData;
-import jpa.model.CustomerData;
+import jpa.model.SenderData;
+import jpa.model.SubscriberData;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageInbox;
-import jpa.service.ClientDataService;
-import jpa.service.CustomerDataService;
+import jpa.service.SenderDataService;
+import jpa.service.SubscriberDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.rule.RuleBase;
 import jpa.service.rule.RuleLoader;
@@ -66,9 +66,9 @@ public final class MessageParser {
 	@Autowired
 	private MessageInboxService msgInboxDao;
 	@Autowired
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	@Autowired
-	private CustomerDataService custService;;
+	private SubscriberDataService subrService;;
 //	@Autowired
 //	private MsgRenderedDao msgRenderedDao;
 	
@@ -343,19 +343,19 @@ public final class MessageParser {
 			}
 		}
 
-		// find client id by matching Email's TO address to addresses from
-		// Client records (Send E-mails Return-Path) and EmailTemplate records
+		// find sender id by matching Email's TO address to addresses from
+		// Sender records (Send E-mails Return-Path) and EmailTemplate records
 		// (Mailing List address)
-		String clientId = ruleLoader.findClientIdByAddr(msgBean.getToAsString());
-		if (clientId != null) {
+		String senderId = ruleLoader.findSenderIdByAddr(msgBean.getToAsString());
+		if (senderId != null) {
 			if (isDebugEnabled)
-				logger.debug("parse() - Client Id found by matching TO address: " + clientId);
-			if (StringUtil.isEmpty(msgBean.getClientId())) {
-				msgBean.setClientId(clientId);
+				logger.debug("parse() - Sender Id found by matching TO address: " + senderId);
+			if (StringUtil.isEmpty(msgBean.getSenderId())) {
+				msgBean.setSenderId(senderId);
 			}
-			else if (!clientId.equals(msgBean.getClientId())) {
-				logger.warn("parse() - Client Id from TO: " + clientId + " is different from"
-						+ " MessageBean's existing Client Id: " + msgBean.getClientId());
+			else if (!senderId.equals(msgBean.getSenderId())) {
+				logger.warn("parse() - Sender Id from TO: " + senderId + " is different from"
+						+ " MessageBean's existing Sender Id: " + msgBean.getSenderId());
 			}
 		}
 
@@ -379,26 +379,26 @@ public final class MessageParser {
 					logger.warn("parse() - EmailAddress record not found by MsgRefId: "
 							+ msgBean.getMsgRefId());
 				}
-				// find original client id
-				if (StringUtil.isEmpty(msgBean.getClientId())) {
-					if (origVo.getClientDataRowId()!=null) {
+				// find original sender id
+				if (StringUtil.isEmpty(msgBean.getSenderId())) {
+					if (origVo.getSenderDataRowId()!=null) {
 						try {
-							ClientData client = clientService.getByRowId(origVo.getClientDataRowId());
-							msgBean.setClientId(client.getClientId());
+							SenderData sender = senderService.getByRowId(origVo.getSenderDataRowId());
+							msgBean.setSenderId(sender.getSenderId());
 						}
 						catch (NoResultException e) {
-							logger.warn("ClientData record not found by RowId: " + origVo.getClientDataRowId());
+							logger.warn("SenderData record not found by RowId: " + origVo.getSenderDataRowId());
 						}
 					}
 				}
-				if (StringUtil.isEmpty(msgBean.getCustId())) {
-					if (origVo.getCustomerDataRowId()!=null) {
+				if (StringUtil.isEmpty(msgBean.getSubrId())) {
+					if (origVo.getSubscriberDataRowId()!=null) {
 						try {
-							CustomerData customer = custService.getByRowId(origVo.getCustomerDataRowId());
-							msgBean.setCustId(customer.getCustomerId());
+							SubscriberData subscriber = subrService.getByRowId(origVo.getSubscriberDataRowId());
+							msgBean.setSubrId(subscriber.getSubscriberId());
 						}
 						catch (NoResultException e) {
-							logger.warn("CustomerData record not found by RowId: " + origVo.getCustomerDataRowId());
+							logger.warn("SubscriberData record not found by RowId: " + origVo.getSubscriberDataRowId());
 						}
 					}
 				}
