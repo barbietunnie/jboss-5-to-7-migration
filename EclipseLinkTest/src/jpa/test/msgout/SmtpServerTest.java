@@ -38,7 +38,7 @@ public class SmtpServerTest {
 	jpa.service.msgout.SmtpServerService service;
 
 	@Test
-	public void mailInboxService() {
+	public void smtpServerService() {
 		SmtpServer mc1 = null;
 		// test insert
 		SmtpServerEnum mc = SmtpServerEnum.SUPPORT;

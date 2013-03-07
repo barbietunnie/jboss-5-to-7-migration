@@ -94,7 +94,7 @@ public class MessageUnsubCommentTest {
 		inbox1.setLockTime(null);
 		inbox1.setLockId(null);
 		
-		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.name());
+		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.getValue());
 		inbox1.setRuleLogicRowId(logic.getRowId());
 		inbox1.setMsgContentType("multipart/mixed");
 		inbox1.setBodyContentType("text/plain");

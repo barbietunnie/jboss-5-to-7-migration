@@ -186,7 +186,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 		MailInboxPK pk = new MailInboxPK("testto", "localhost");
 		try {
 			MailInbox vo = mailBoxDao.getByPrimaryKey(pk);
-			//vo.setFromTimer(true);
+			vo.setFromTimer(true);
 			MailReaderBo reader = new MailReaderBo(vo);
 			//Thread thread = new Thread(reader);
 			try {

@@ -132,7 +132,12 @@ public class MailingListTest {
 		assertTrue(mlst1[0] instanceof MailingList);
 		assertTrue(mlst1[1] instanceof Number);
 		assertTrue(mlst1[2] instanceof Number);
-		assertTrue(mlst1[3] instanceof BigDecimal || mlst1[3] instanceof BigInteger);
+		assertTrue(mlst1[3] instanceof BigDecimal || mlst1[3] instanceof BigInteger || mlst1[3] instanceof Number);
+		/*
+		 * MySQL 	 : BigDecimal
+		 * PostgreSQL: BigInteger
+		 * Derby 	 : Integer
+		 */
 		System.out.println(StringUtil.prettyPrint(mlst1[0],1));
 		System.out.println("Mailing List Counts: " + mlst1[1] + "," + mlst1[2] + "," + mlst1[3]);
 		

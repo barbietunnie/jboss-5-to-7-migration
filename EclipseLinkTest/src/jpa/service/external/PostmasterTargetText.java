@@ -11,7 +11,7 @@ import jpa.util.SpringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-@Component("postmastersTargetText")
+@Component("postmasterTargetText")
 public class PostmasterTargetText implements RuleTargetProc {
 	static final Logger logger = Logger.getLogger(PostmasterTargetText.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

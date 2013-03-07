@@ -34,7 +34,7 @@ public class MailInbox extends BaseModel implements java.io.Serializable {
 	private String carrierCode = CarrierCode.SMTPMAIL.getValue();
 	@Column(nullable=true, columnDefinition="Boolean")
 	private Boolean isInternalOnly = null;
-	@Column(nullable=false, columnDefinition="mediumint")
+	@Column(nullable=false, columnDefinition="int")
 	private int readPerPass = -1;
 	@Column(nullable=false, columnDefinition="boolean")
 	private boolean isUseSsl = false;

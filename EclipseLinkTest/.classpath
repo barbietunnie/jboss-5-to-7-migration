@@ -43,5 +43,6 @@
 	<classpathentry kind="lib" path="lib/aopalliance.jar"/>
 	<classpathentry kind="lib" path="lib/aspectj/aspectjrt-1.6.11.jar"/>
 	<classpathentry kind="lib" path="lib/aspectj/aspectjweaver-1.6.11.jar"/>
+	<classpathentry kind="lib" path="lib/derby.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
