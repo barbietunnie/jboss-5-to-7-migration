@@ -6,7 +6,7 @@ import java.util.List;
 import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
 import jpa.message.util.EmailIdParser;
-import jpa.util.ClientUtil;
+import jpa.util.SenderUtil;
 import jpa.util.EmailAddrUtil;
 import jpa.util.StringUtil;
 
@@ -91,7 +91,7 @@ public final class MessageBodyBuilder {
 		String newBody = null;
 		if (msgBean.getBodyContentType().indexOf("html") >= 0) {
 			origBody = removeHtmlBodyTags(origBody);
-			if (!ClientUtil.isProductKeyValid() && ClientUtil.isTrialPeriodEnded()) {
+			if (!SenderUtil.isProductKeyValid() && SenderUtil.isTrialPeriodEnded()) {
 				if (Constants.EmbedPoweredByToFreeVersion) {
 					newBody = appendTextToHtml(msgBody, LF + Constants.POWERED_BY_HTML_TAG + LF);
 				}
@@ -100,7 +100,7 @@ public final class MessageBodyBuilder {
 		}
 		else { // only original is HTML
 			msgBody = removeHtmlBodyTags(msgBody);
-			if (!ClientUtil.isProductKeyValid() && ClientUtil.isTrialPeriodEnded()) {
+			if (!SenderUtil.isProductKeyValid() && SenderUtil.isTrialPeriodEnded()) {
 				if (Constants.EmbedPoweredByToFreeVersion) {
 					msgBody += LF + Constants.POWERED_BY_HTML_TAG + LF;
 				}
@@ -120,7 +120,7 @@ public final class MessageBodyBuilder {
 			// embed Message_Id into the body (before the original message)
 			msgBody = embedEmailId(msgBean, msgBody, false);
 		}
-		if (!ClientUtil.isProductKeyValid() && ClientUtil.isTrialPeriodEnded()) {
+		if (!SenderUtil.isProductKeyValid() && SenderUtil.isTrialPeriodEnded()) {
 			if (Constants.EmbedPoweredByToFreeVersion) {
 				msgBody += Constants.CRLF + Constants.CRLF + Constants.POWERED_BY_TEXT + Constants.CRLF;
 			}

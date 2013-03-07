@@ -56,8 +56,8 @@ public class MsgOutboxBoTest {
 			MessageBean bean = service.getMessageByPK(mr.getRowId());
 			System.out.println("MessageBean retrieved:\n" + bean);
 			assertTrue(bean.getRenderId()!=null && mr.getRowId()==bean.getRenderId());
-			if (StringUtils.isNotBlank(bean.getClientId())) {
-				assertTrue(bean.getClientId().equals(mr.getClientData().getClientId()));
+			if (StringUtils.isNotBlank(bean.getSenderId())) {
+				assertTrue(bean.getSenderId().equals(mr.getSenderData().getSenderId()));
 			}
 			assertTrue(bean.getFromAsString().equals(mr.getMessageSource().getFromAddress().getAddress()));
 			assertTrue(bean.getCarrierCode().getValue().equals(mr.getMessageSource().getCarrierCode()));
@@ -80,13 +80,13 @@ public class MsgOutboxBoTest {
 		RenderRequest req = service.getRenderRequestByPK(mr.getRowId());
 		assertNotNull(req);
 		assertTrue(req.getMsgSourceId().equals(mr.getMessageSource().getMsgSourceId()));
-		assertTrue(req.getClientId().equals(mr.getClientData().getClientId()));
+		assertTrue(req.getSenderId().equals(mr.getSenderData().getSenderId()));
 		assertTrue(req.getVariableOverrides().size()>=mr.getRenderVariableList().size());
 		try {
 			RenderResponse rsp = renderBo.getRenderedEmail(req);
 			int renderId = service.saveRenderData(rsp);
 			MessageRendered mr2 = renderedService.getByPrimaryKey(renderId);
-			assertTrue(mr2.getClientDataRowId()==mr.getClientDataRowId());
+			assertTrue(mr2.getSenderDataRowId()==mr.getSenderDataRowId());
 			assertTrue(mr2.getMessageSourceRowId()==mr.getMessageSourceRowId());
 			assertTrue(mr2.getMessageTemplateRowId()==mr.getMessageTemplateRowId());
 			assertTrue(mr2.getRenderAttachmentList().size()==mr.getRenderAttachmentList().size());

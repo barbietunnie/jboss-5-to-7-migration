@@ -178,11 +178,11 @@ public final class MessageBeanUtil {
 	 */
 	public static void addBeanFieldsToHeader(MessageBean messageBean, Message msg)
 			throws MessagingException {
-		if (messageBean.getClientId() != null) {
-			msg.setHeader(XHeaderName.CLIENT_ID.getValue(), messageBean.getClientId());
+		if (messageBean.getSenderId() != null) {
+			msg.setHeader(XHeaderName.SENDER_ID.getValue(), messageBean.getSenderId());
 		}
-		if (messageBean.getCustId() != null) {
-			msg.setHeader(XHeaderName.CUSTOMER_ID.getValue(), messageBean.getCustId());
+		if (messageBean.getSubrId() != null) {
+			msg.setHeader(XHeaderName.SUBSCRIBER_ID.getValue(), messageBean.getSubrId());
 		}
 		if (messageBean.getMsgId() != null) {
 			msg.setHeader(XHeaderName.MSG_ID.getValue(), messageBean.getMsgId().toString());

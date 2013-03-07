@@ -8,14 +8,14 @@ import jpa.constant.CodeType;
 import jpa.constant.Constants;
 import jpa.constant.VariableName;
 import jpa.constant.VariableType;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageSource;
 import jpa.model.message.TemplateData;
 import jpa.model.message.TemplateDataPK;
 import jpa.model.message.TemplateVariable;
 import jpa.model.message.TemplateVariablePK;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageSourceService;
 import jpa.service.message.TemplateDataService;
@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 
 public class TemplateDataLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(TemplateDataLoader.class);
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	private TemplateDataService templateService;
 	private TemplateVariableService variableService;
 	private MessageSourceService sourceService;
@@ -39,7 +39,7 @@ public class TemplateDataLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		templateService = (TemplateDataService) SpringUtil.getAppContext().getBean("templateDataService");
 		variableService = (TemplateVariableService) SpringUtil.getAppContext().getBean("templateVariableService");
 		sourceService = (MessageSourceService) SpringUtil.getAppContext().getBean("messageSourceService");
@@ -56,15 +56,15 @@ public class TemplateDataLoader extends AbstractDataLoader {
 	}
 
 	private void loadTemplateData() {
-		ClientData cd = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		SenderData cd = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		Timestamp tms =  new Timestamp(System.currentTimeMillis());
 		TemplateData data = new TemplateData();
 		TemplateDataPK tpk = new TemplateDataPK(cd, "WeekendDeals", tms);
 
 		data.setTemplateDataPK(tpk);
 		data.setContentType("text/plain");
-		data.setBodyTemplate("Dear customer, here is a list of great deals on gardening tools provided to you by mydot.com.\n" +
-				"Available by ${CurrentDate}. Sponsor (${ClientId}).");
+		data.setBodyTemplate("Dear subscriber, here is a list of great deals on gardening tools provided to you by mydot.com.\n" +
+				"Available by ${CurrentDate}. Sponsor (${SenderId}).");
 		data.setSubjectTemplate("Weekend Deals at MyBestDeals.com - ${CurrentDate}");
 		templateService.insert(data);
 
@@ -89,7 +89,7 @@ public class TemplateDataLoader extends AbstractDataLoader {
 		variableService.insert(var2);
 		
 		TemplateVariable var3 = new TemplateVariable();
-		TemplateVariablePK vpk3 = new TemplateVariablePK(cd, variableId, VariableName.CUSTOMER_ID.getValue(), tms);
+		TemplateVariablePK vpk3 = new TemplateVariablePK(cd, variableId, VariableName.SUBSCRIBER_ID.getValue(), tms);
 		var3.setTemplateVariablePK(vpk3);
 		var3.setVariableType(VariableType.TEXT.getValue());
 		var3.setAllowOverride(CodeType.YES_CODE.getValue());

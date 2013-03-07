@@ -11,13 +11,13 @@ import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
 import jpa.constant.MsgDirectionCode;
 import jpa.data.preload.RuleNameEnum;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageInbox;
 import jpa.model.message.MessageRfcField;
 import jpa.model.message.MessageRfcFieldPK;
 import jpa.model.rule.RuleLogic;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.message.MessageRfcFieldService;
@@ -52,7 +52,7 @@ public class MessageRfcFieldTest {
 	@Autowired
 	EmailAddressService addrService;
 	@Autowired
-	ClientDataService clientService;
+	SenderDataService senderService;
 	@Autowired
 	RuleLogicService logicService;
 
@@ -76,12 +76,12 @@ public class MessageRfcFieldTest {
 		inbox1.setFromAddrRowId(from.getRowId());
 		inbox1.setReplytoAddrRowId(null);
 
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
-		String to_addr = client.getReturnPathLeft() + "@" + client.getDomainName();
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
+		String to_addr = sender.getReturnPathLeft() + "@" + sender.getDomainName();
 		to = addrService.findSertAddress(to_addr);
 		inbox1.setToAddrRowId(to.getRowId());
-		inbox1.setClientDataRowId(client.getRowId());
-		inbox1.setCustomerDataRowId(null);
+		inbox1.setSenderDataRowId(sender.getRowId());
+		inbox1.setSubscriberDataRowId(null);
 		inbox1.setPurgeDate(null);
 		inbox1.setUpdtTime(updtTime);
 		inbox1.setUpdtUserId(Constants.DEFAULT_USER_ID);

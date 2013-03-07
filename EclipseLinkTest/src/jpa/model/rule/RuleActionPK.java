@@ -9,7 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 
 @Embeddable
 public class RuleActionPK implements Serializable {
@@ -24,17 +24,17 @@ public class RuleActionPK implements Serializable {
 	@Column(nullable=false)
 	private Timestamp startTime;
 
-	@ManyToOne(targetEntity=ClientData.class, fetch=FetchType.LAZY, optional=true)
-	@JoinColumn(name="ClientDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
-	private ClientData clientData;
+	@ManyToOne(targetEntity=SenderData.class, fetch=FetchType.LAZY, optional=true)
+	@JoinColumn(name="SenderDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
+	private SenderData senderData;
 
 	public RuleActionPK() {}
 	
-	public RuleActionPK(RuleLogic ruleLogic, int actionSequence, Timestamp startTime, ClientData clientData) {
+	public RuleActionPK(RuleLogic ruleLogic, int actionSequence, Timestamp startTime, SenderData senderData) {
 		this.ruleLogic = ruleLogic;
 		this.actionSequence = actionSequence;
 		this.startTime = startTime;
-		this.clientData = clientData;
+		this.senderData = senderData;
 	}
 
 	public RuleLogic getRuleLogic() {
@@ -61,11 +61,11 @@ public class RuleActionPK implements Serializable {
 		this.startTime = startTime;
 	}
 
-	public ClientData getClientData() {
-		return clientData;
+	public SenderData getSenderData() {
+		return senderData;
 	}
 
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setSenderData(SenderData senderData) {
+		this.senderData = senderData;
 	}
 }

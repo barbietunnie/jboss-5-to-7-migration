@@ -74,9 +74,9 @@ public class ReloadFlagsService {
 		}
 	}
 	
-	public void updateClientReloadFlag() {
+	public void updateSenderReloadFlag() {
 		ReloadFlags record = select();
-		record.setClients(record.getClients()+1);
+		record.setSenders(record.getSenders()+1);
 		update(record);
 	}
 

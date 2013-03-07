@@ -12,7 +12,7 @@ import jpa.variable.RenderVariableVo;
 public class RenderResponse implements Serializable {
 	private static final long serialVersionUID = -735532735569912023L;
 	MessageSource msgSourceVo;
-	String clientId;
+	String senderId;
 	Timestamp startTime;
 	Map<String, RenderVariableVo> variableFinal;
 	Map<String, ErrorVariableVo> variableErrors;
@@ -20,14 +20,14 @@ public class RenderResponse implements Serializable {
 
 	RenderResponse(
 			MessageSource msgSourceVo,
-			String clientId,
+			String senderId,
 			Timestamp startTime,
 			Map<String, RenderVariableVo> variableFinal,
 			Map<String, ErrorVariableVo> variableErrors,
 			MessageBean messageBean)
 		{
 			this.msgSourceVo=msgSourceVo;
-			this.clientId=clientId;
+			this.senderId=senderId;
 			this.startTime=startTime;
 			this.variableFinal=variableFinal;
 			this.variableErrors=variableErrors;
@@ -45,7 +45,7 @@ public class RenderResponse implements Serializable {
 		else {
 			sb.append("MsgSourceReq:     "+"null"+LF);
 		}
-		sb.append("ClientId:        "+clientId+LF);
+		sb.append("SenderId:        "+senderId+LF);
 		sb.append("StartTime:       "+startTime+LF+LF);
 		if (variableFinal!=null && !variableFinal.isEmpty()) {
 			sb.append("Display Final Variables.........."+LF);
@@ -74,8 +74,8 @@ public class RenderResponse implements Serializable {
 		return sb.toString();
 	}
 	   
-    public String getClientId() {
-		return clientId;
+    public String getSenderId() {
+		return senderId;
 	}
 
 	public MessageBean getMessageBean() {

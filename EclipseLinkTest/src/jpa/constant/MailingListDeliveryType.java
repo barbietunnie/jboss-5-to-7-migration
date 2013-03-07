@@ -4,7 +4,7 @@ public enum MailingListDeliveryType {
 
 	// define mailing list delivery options
 	ALL_ON_LIST("ALL"),
-	CUSTOMERS_ONLY("CUSTOMERS"),
+	SUBSCRIBERS_ONLY("SUBSCRIBERS"),
 	PROSPECTS_ONLY("PROSPECTS");
 
 	private final String value;

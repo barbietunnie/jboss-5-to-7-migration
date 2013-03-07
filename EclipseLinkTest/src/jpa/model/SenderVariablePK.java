@@ -12,12 +12,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Embeddable
-public class ClientVariablePK implements Serializable {
+public class SenderVariablePK implements Serializable {
 	private static final long serialVersionUID = 1422523897905980641L;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=ClientData.class)
-	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private ClientData clientData;
+	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=SenderData.class)
+	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	private SenderData senderData;
 	
 	@Column(name="VariableName", nullable=false, length=26)
 	protected String variableName = "";
@@ -25,20 +25,20 @@ public class ClientVariablePK implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	protected Date startTime = new Date(System.currentTimeMillis());
 
-	public ClientVariablePK() {}
+	public SenderVariablePK() {}
 	
-	public ClientVariablePK(ClientData clientData, String variableName, java.util.Date startTime) {
-		this.clientData = clientData;
+	public SenderVariablePK(SenderData senderData, String variableName, java.util.Date startTime) {
+		this.senderData = senderData;
 		this.variableName = variableName;
 		this.startTime = startTime;
 	}
 
-	public ClientData getClientData() {
-		return clientData;
+	public SenderData getSenderData() {
+		return senderData;
 	}
 
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setSenderData(SenderData senderData) {
+		this.senderData = senderData;
 	}
 	public String getVariableName() {
 		return variableName;

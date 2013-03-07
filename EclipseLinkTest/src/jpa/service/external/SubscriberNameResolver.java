@@ -7,9 +7,9 @@ import jpa.util.SpringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-@Component("customerNameResolver")
-public class CustomerNameResolver implements VariableResolver {
-	static final Logger logger = Logger.getLogger(CustomerNameResolver.class);
+@Component("subscriberNameResolver")
+public class SubscriberNameResolver implements VariableResolver {
+	static final Logger logger = Logger.getLogger(SubscriberNameResolver.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
 	public String process(int addrId) throws DataValidationException {
@@ -17,7 +17,7 @@ public class CustomerNameResolver implements VariableResolver {
 			logger.debug("Entering process() method...");
 		}
 		String query = "SELECT CONCAT(c.firstName,' ',c.lastName) as ResultStr " +
-				" FROM customer_data c, email_addr e " +
+				" FROM subscriber_data c, email_addr e " +
 				" where e.Row_Id=c.EmailAddrRowId and e.Row_Id=?1";
 		
 		EmailVariableService dao = (EmailVariableService) SpringUtil.getAppContext().getBean(
@@ -28,10 +28,10 @@ public class CustomerNameResolver implements VariableResolver {
 	}
 	
 	public static void main(String[] args) {
-		VariableResolver resolver = new CustomerNameResolver();
+		VariableResolver resolver = new SubscriberNameResolver();
 		try {
 			String name = resolver.process(1);
-			System.err.println("Customer name: " + name);
+			System.err.println("Subscriber name: " + name);
 		}
 		catch (Exception e) {
 			logger.error("Exception", e);

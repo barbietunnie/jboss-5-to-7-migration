@@ -5,19 +5,19 @@ import jpa.constant.Constants;
 import jpa.constant.VariableType;
 
 /*
- * define sample client variables
+ * define sample sender variables
  */
-public enum ClientVariableEnum {
+public enum SenderVariableEnum {
 	CurrentDateTime(null,null,VariableType.DATETIME,CodeType.YES_CODE),
 	CurrentDate(null,"yyyy-MM-dd",VariableType.DATETIME,CodeType.YES_CODE),
 	CurrentTime(null,"hh:mm:ss a",VariableType.DATETIME,CodeType.YES_CODE),
-	ClientId(Constants.DEFAULT_CLIENTID,null,VariableType.TEXT,CodeType.YES_CODE);
+	SenderId(Constants.DEFAULT_SENDER_ID,null,VariableType.TEXT,CodeType.YES_CODE);
 	
 	private String value;
 	private String format;
 	private VariableType type;
 	private CodeType allowOverride;
-	private ClientVariableEnum(String value, String format, VariableType type, CodeType allowOverride) {
+	private SenderVariableEnum(String value, String format, VariableType type, CodeType allowOverride) {
 		this.value=value;
 		this.format=format;
 		this.type=type;

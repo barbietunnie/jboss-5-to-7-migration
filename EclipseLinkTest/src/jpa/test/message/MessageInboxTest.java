@@ -14,11 +14,11 @@ import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
 import jpa.constant.MsgDirectionCode;
 import jpa.data.preload.RuleNameEnum;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageInbox;
 import jpa.model.rule.RuleLogic;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.rule.RuleLogicService;
@@ -49,7 +49,7 @@ public class MessageInboxTest {
 	@Autowired
 	EmailAddressService addrService;
 	@Autowired
-	ClientDataService clientService;
+	SenderDataService senderService;
 	@Autowired
 	RuleLogicService logicService;
 
@@ -69,12 +69,12 @@ public class MessageInboxTest {
 		in.setFromAddrRowId(from.getRowId());
 		in.setReplytoAddrRowId(null);
 
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
-		String to_addr = client.getReturnPathLeft() + "@" + client.getDomainName();
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
+		String to_addr = sender.getReturnPathLeft() + "@" + sender.getDomainName();
 		EmailAddress to = addrService.findSertAddress(to_addr);
 		in.setToAddrRowId(to.getRowId());
-		in.setClientDataRowId(client.getRowId());
-		in.setCustomerDataRowId(null);
+		in.setSenderDataRowId(sender.getRowId());
+		in.setSubscriberDataRowId(null);
 		in.setPurgeDate(null);
 		in.setUpdtTime(updtTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);

@@ -27,7 +27,7 @@ public class TestRunner {
 
 	final static String PS = File.separator;
 	static Class<?>[] getAllJpaTestClasses(String pkgName) {
-		// looking for class name ending with "Test", for example CustomerTest.class
+		// looking for class name ending with "Test", for example SubscriberTest.class
 		List<Class<?>> clsList = new ArrayList<Class<?>>();
 		String homeDir = System.getProperty("user.dir") + PS + "bin" + PS;
 		System.out.println("Working directory: " + homeDir);

@@ -19,8 +19,8 @@ public enum VariableName {
 	MAILBOX_USER("MailboxUser"),
 	MAILBOX_NAME("MailboxName"),
 	FOLDER_NAME("FolderName"),
-	CLIENT_ID("ClientId"),
-	CUSTOMER_ID("CustId"),
+	SENDER_ID("SenderId"),
+	SUBSCRIBER_ID("SubrId"),
 	TO_PLAIN_TEXT("ToPlainText"), // "yes" or "no"
 	// field names for numeric fields (Integer)
 	MSG_ID("MsgId"),

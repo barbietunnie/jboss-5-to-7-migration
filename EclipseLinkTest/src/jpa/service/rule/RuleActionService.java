@@ -34,10 +34,10 @@ public class RuleActionService {
 	
 	public List<RuleAction> getByRuleName(String ruleName) {
 		String sql = 
-				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, ClientData c " +
-				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.clientData=c " +
+				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, SenderData c " +
+				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.senderData=c " +
 				"and r.ruleActionPK.ruleLogic.ruleName=:ruleName " +
-				"order by r.ruleActionPK.actionSequence, c.clientId, r.ruleActionPK.startTime ";
+				"order by r.ruleActionPK.actionSequence, c.senderId, r.ruleActionPK.startTime ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("ruleName", ruleName);
@@ -49,24 +49,24 @@ public class RuleActionService {
 		}
 	}
 
-	public List<RuleAction> getByBestMatch(String ruleName, Timestamp startTime, String clientId) {
+	public List<RuleAction> getByBestMatch(String ruleName, Timestamp startTime, String senderId) {
 		if (startTime == null) {
 			startTime = new Timestamp(System.currentTimeMillis());
 		}
 		String sql = 
-				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, ClientData c " +
-				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.clientData=c " +
+				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, SenderData c " +
+				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.senderData=c " +
 				"and r.ruleActionPK.ruleLogic.ruleName=:ruleName " +
-				"and (c.clientId=:clientId or r.ruleActionPK.clientData is null) " +
+				"and (c.senderId=:senderId or r.ruleActionPK.senderData is null) " +
 				"and r.ruleActionPK.startTime<=:startTime and r.statusId=:statusId " +
-				"order by r.ruleActionPK.actionSequence, c.clientId desc, r.ruleActionPK.startTime desc ";
-		if (clientId==null) {
-			clientId = "";
+				"order by r.ruleActionPK.actionSequence, c.senderId desc, r.ruleActionPK.startTime desc ";
+		if (senderId==null) {
+			senderId = "";
 		}
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("ruleName", ruleName);
-			query.setParameter("clientId", clientId);
+			query.setParameter("senderId", senderId);
 			query.setParameter("startTime", startTime);
 			query.setParameter("statusId", StatusId.ACTIVE.getValue());
 			@SuppressWarnings("unchecked")
@@ -79,8 +79,8 @@ public class RuleActionService {
 
 	public List<RuleAction> getAll() {
 		String sql = 
-				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, ClientData c " +
-				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.clientData=c " +
+				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, SenderData c " +
+				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.senderData=c " +
 				"order by r.ruleActionPK.actionSequence ";
 		try {
 			Query query = em.createQuery(sql);
@@ -97,21 +97,21 @@ public class RuleActionService {
 			throw new IllegalArgumentException("A RuleLogic instance must be provided in Primary Key object.");
 		}
 		String sql = 
-				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, ClientData c " +
-				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.clientData=c " +
+				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, SenderData c " +
+				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.senderData=c " +
 				"and r.ruleActionPK.ruleLogic.ruleName=:ruleName " +
-				"and (c.clientId=:clientId or r.ruleActionPK.clientData is null) " +
+				"and (c.senderId=:senderId or r.ruleActionPK.senderData is null) " +
 				"and r.ruleActionPK.startTime<=:startTime and r.ruleActionPK.actionSequence=:actionSequence " +
-				"order by r.ruleActionPK.actionSequence, c.clientId desc, r.ruleActionPK.startTime desc ";
-		String clientId = "";
-		if (pk.getClientData()!=null || pk.getClientData().getClientId()!=null) {
-			clientId = pk.getClientData().getClientId();
+				"order by r.ruleActionPK.actionSequence, c.senderId desc, r.ruleActionPK.startTime desc ";
+		String senderId = "";
+		if (pk.getSenderData()!=null || pk.getSenderData().getSenderId()!=null) {
+			senderId = pk.getSenderData().getSenderId();
 		}
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("ruleName", pk.getRuleLogic().getRuleName());
 			query.setParameter("actionSequence", pk.getActionSequence());
-			query.setParameter("clientId", clientId);
+			query.setParameter("senderId", senderId);
 			query.setParameter("startTime", pk.getStartTime());
 			RuleAction action = (RuleAction) query.getSingleResult();
 			em.lock(action, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
@@ -121,26 +121,26 @@ public class RuleActionService {
 		}
 	}
 
-	public RuleAction getMostCurrent(String ruleName, int actionSequence, String clientId) throws NoResultException {
+	public RuleAction getMostCurrent(String ruleName, int actionSequence, String senderId) throws NoResultException {
 		String sql = 
-				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, ClientData c " +
-				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.clientData=c " +
+				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, SenderData c " +
+				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.senderData=c " +
 				"and r.ruleActionPK.ruleLogic.ruleName=:ruleName " +
-				"and (c.clientId=:clientId or r.ruleActionPK.clientData is null) " +
+				"and (c.senderId=:senderId or r.ruleActionPK.senderData is null) " +
 				"and r.ruleActionPK.actionSequence=:actionSequence and r.statusId=:statusId " +
-				"order by c.clientId desc, r.ruleActionPK.startTime desc ";
+				"order by c.senderId desc, r.ruleActionPK.startTime desc ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("ruleName", ruleName);
 			query.setParameter("actionSequence", actionSequence);
-			query.setParameter("clientId", clientId);
+			query.setParameter("senderId", senderId);
 			query.setParameter("statusId", StatusId.ACTIVE.getValue());
 			@SuppressWarnings("unchecked")
 			List<RuleAction> list = query.getResultList();
 			if (list.isEmpty()) {
 				throw new NoResultException("Result not found by Rulename ("
 						+ ruleName + ") ActionSequence (" + actionSequence
-						+ ") ClientId (" + clientId + ").");
+						+ ") SenderId (" + senderId + ").");
 			}
 			return list.get(0);
 		}
@@ -150,8 +150,8 @@ public class RuleActionService {
 
 	public RuleAction getByRowId(int rowId) throws NoResultException {
 		String sql =
-				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, ClientData c " +
-				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.clientData=c " +
+				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, SenderData c " +
+				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.senderData=c " +
 				"and r.rowId = :rowId";
 		try {
 			Query query = em.createQuery(sql);
@@ -195,20 +195,20 @@ public class RuleActionService {
 				"delete from Rule_Action where " +
 				"actionSequence=?1 and startTime=?2 and RuleLogicRowId = " +
 				"(select Row_Id from rule_logic rl where rl.ruleName=?3) ";
-		String clientId = "";
-		if (pk.getClientData()!=null && StringUtils.isNotBlank(pk.getClientData().getClientId())) {
-			sql += "and ClientDataRowId = (select Row_Id from client_data c where c.clientId=?4)";
+		String senderId = "";
+		if (pk.getSenderData()!=null && StringUtils.isNotBlank(pk.getSenderData().getSenderId())) {
+			sql += "and SenderDataRowId = (select Row_Id from sender_data c where c.senderId=?4)";
 		}
 		else {
-			sql += "and ClientDataRowId is null";
+			sql += "and SenderDataRowId is null";
 		}
 		try {
 			Query query = em.createNativeQuery(sql);
 			query.setParameter(1, pk.getActionSequence());
 			query.setParameter(2, pk.getStartTime());
 			query.setParameter(3, pk.getRuleLogic().getRuleName());
-			if (StringUtils.isNotBlank(clientId)) {
-				query.setParameter(4, clientId);
+			if (StringUtils.isNotBlank(senderId)) {
+				query.setParameter(4, senderId);
 			}
 			reloadFlagsService.updateRuleReloadFlag();
 			int rows = query.executeUpdate();

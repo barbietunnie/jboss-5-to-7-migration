@@ -44,9 +44,9 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	@CascadeOnDelete
 	private List<Subscription> subscriptions; // subscribers of this list
 	
-	@ManyToOne(fetch=FetchType.EAGER, optional=false, targetEntity=ClientData.class)
-	@JoinColumn(name="ClientDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
-	private ClientData clientData; // client the list associated to
+	@ManyToOne(fetch=FetchType.EAGER, optional=false, targetEntity=SenderData.class)
+	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	private SenderData senderData; // sender the list associated to
 	
 	@Column(nullable=false, length=20, unique=true)
 	private String listId = "";
@@ -76,8 +76,8 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	}
 	
 	public String getListEmailAddr() {
-		if (getClientData()!=null) {
-			return acctUserName + "@" + getClientData().getDomainName();
+		if (getSenderData()!=null) {
+			return acctUserName + "@" + getSenderData().getDomainName();
 		}
 		else {
 			return acctUserName + "@" + "localhost";
@@ -101,12 +101,12 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 		this.listMasterEmailAddr = listMasterEmailAddr;
 	}
 
-	public ClientData getClientData() {
-		return clientData;
+	public SenderData getSenderData() {
+		return senderData;
 	}
 
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setSenderData(SenderData senderData) {
+		this.senderData = senderData;
 	}
 
 	public String getListId() {

@@ -3,11 +3,11 @@ package jpa.dataloader;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.data.preload.EmailTemplateEnum;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.EmailTemplate;
 import jpa.model.MailingList;
 import jpa.model.SchedulesBlob;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.EmailTemplateService;
 import jpa.service.MailingListService;
 import jpa.util.SpringUtil;
@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 public class EmailTemplateLoader extends AbstractDataLoader {
 	static final Logger logger = Logger.getLogger(EmailTemplateLoader.class);
 	private EmailTemplateService service;
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	private MailingListService mlistService;
 
 	public static void main(String[] args) {
@@ -28,7 +28,7 @@ public class EmailTemplateLoader extends AbstractDataLoader {
 	@Override
 	public void loadData() {
 		service = (EmailTemplateService) SpringUtil.getAppContext().getBean("emailTemplateService");
-		clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
+		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		mlistService = (MailingListService) SpringUtil.getAppContext().getBean("mailingListService");
 		startTransaction();
 		try {
@@ -42,13 +42,13 @@ public class EmailTemplateLoader extends AbstractDataLoader {
 	}
 
 	private void loadEmailTemplates() {
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		
 		for (EmailTemplateEnum tmp : EmailTemplateEnum.values()) {
 			if (tmp.getMailingList().isProd()) continue;
 			MailingList mlist = mlistService.getByListId(tmp.getMailingList().name());
 			EmailTemplate data = new EmailTemplate();
-			data.setClientData(client);
+			data.setSenderData(sender);
 			data.setMailingList(mlist);
 			data.setTemplateId(tmp.name());
 			data.setSubject(tmp.getSubject());
@@ -69,13 +69,13 @@ public class EmailTemplateLoader extends AbstractDataLoader {
 	}
 	
 	void loadProdEmailTemplates() {
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 
 		for (EmailTemplateEnum tmp : EmailTemplateEnum.values()) {
 			if (!tmp.getMailingList().isProd()) continue;
 			MailingList mlist = mlistService.getByListId(tmp.getMailingList().name());
 			EmailTemplate data = new EmailTemplate();
-			data.setClientData(client);
+			data.setSenderData(sender);
 			data.setMailingList(mlist);
 			data.setTemplateId(tmp.name());
 			data.setSubject(tmp.getSubject());

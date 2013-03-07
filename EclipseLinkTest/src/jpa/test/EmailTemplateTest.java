@@ -21,10 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import jpa.constant.Constants;
 import jpa.constant.MailingListDeliveryType;
 import jpa.constant.MailingListType;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.EmailTemplate;
 import jpa.model.MailingList;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.EmailTemplateService;
 import jpa.service.MailingListService;
 import jpa.util.StringUtil;
@@ -45,20 +45,20 @@ public class EmailTemplateTest {
 	@Autowired
 	EmailTemplateService service;
 	@Autowired
-	ClientDataService clientService;
+	SenderDataService senderService;
 	@Autowired
 	MailingListService mlistService;
 
 	@Test
 	public void emailTemplateService() {
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		List<MailingList> mlist = mlistService.getAll(false);
 		assertFalse(mlist.isEmpty());
 		assertNotNull(mlist.get(0).getListEmailAddr());
-		assertNotNull(mlist.get(0).getClientData());
+		assertNotNull(mlist.get(0).getSenderData());
 		// test insert
 		EmailTemplate var1 = new EmailTemplate();
-		var1.setClientData(client);
+		var1.setSenderData(sender);
 		var1.setMailingList(mlist.get(0));
 		var1.setTemplateId(testTemplateId);
 		var1.setDeliveryOption(MailingListDeliveryType.ALL_ON_LIST.getValue());

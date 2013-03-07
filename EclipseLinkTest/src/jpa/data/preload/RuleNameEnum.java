@@ -25,7 +25,7 @@ public enum RuleNameEnum {
 	SPAM_BLOCK("Spam Block", RuleType.ANY, RuleCategory.MAIN_RULE, true, false, "Bounced from Spam blocker"), // blocked by SPAM filter, 
 	VIRUS_BLOCK("Virus Block", RuleType.ANY, RuleCategory.MAIN_RULE, true, false, "Bounced from Virus blocker"), // blocked by Virus Scan,
 	CHALLENGE_RESPONSE("Challenge Response", RuleType.ANY, RuleCategory.MAIN_RULE, true, false, "Bounced from Challenge Response"), // human response needed
-	AUTO_REPLY("Auto Reply", RuleType.ANY, RuleCategory.MAIN_RULE, true, false, "Auto reply from email client software"), // automatic response from mail client
+	AUTO_REPLY("Auto Reply", RuleType.ANY, RuleCategory.MAIN_RULE, true, false, "Auto reply from email sender software"), // automatic response from mail sender
 	CC_USER("Carbon Copies", RuleType.SIMPLE, RuleCategory.MAIN_RULE, true, false, "From scan routine, message received as recipient of CC or BCC"), // Mail received from a CC address, drop
 	MDN_RECEIPT("MDN Receipt", RuleType.SIMPLE, RuleCategory.MAIN_RULE, true, false, "From RFC scan, Message Delivery Notification, a positive receipt"), // MDN - read receipt, drop
 	UNSUBSCRIBE("Unsubscribe", RuleType.ALL, RuleCategory.MAIN_RULE, true, false, "Remove from a mailing list"), // remove from mailing list

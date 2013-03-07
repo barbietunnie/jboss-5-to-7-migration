@@ -12,14 +12,14 @@ import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
 import jpa.constant.VariableType;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageSource;
 import jpa.model.message.TemplateData;
 import jpa.model.message.TemplateDataPK;
 import jpa.model.message.TemplateVariable;
 import jpa.model.message.TemplateVariablePK;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageSourceService;
 import jpa.service.message.TemplateDataService;
@@ -57,7 +57,7 @@ public class MessageSourceTest {
 	@Autowired
 	TemplateVariableService variableService;
 	@Autowired
-	ClientDataService clientService;
+	SenderDataService senderService;
 
 	private TemplateData tmp1;
 	private TemplateVariable var1;
@@ -66,8 +66,8 @@ public class MessageSourceTest {
 	public void prepare() {
 		Timestamp tms = new Timestamp(System.currentTimeMillis());
 		String testTemplateId = "jpa test template id";
-		String testClientId = Constants.DEFAULT_CLIENTID;
-		ClientData cd0 = clientService.getByClientId(testClientId);
+		String testSenderId = Constants.DEFAULT_SENDER_ID;
+		SenderData cd0 = senderService.getBySenderId(testSenderId);
 		TemplateDataPK tpk0 = new TemplateDataPK(cd0, testTemplateId, tms);
 		tmp1 = new TemplateData();
 		tmp1.setTemplateDataPK(tpk0);

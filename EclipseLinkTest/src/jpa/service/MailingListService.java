@@ -49,7 +49,7 @@ public class MailingListService {
 				" sum(b.ClickCount) as clickCount " +
 				"from Mailing_List a " +
 				" LEFT OUTER JOIN Subscription b on a.Row_Id = b.MailingListRowId " +
-				" JOIN Client_Data c on a.ClientDataRowId = c.Row_Id " +
+				" JOIN sender_data c on a.SenderDataRowId = c.Row_Id " +
 				" where a.ListId = ?1 " +
 				"group by " +
 				" a.Row_Id, " +
@@ -62,7 +62,7 @@ public class MailingListService {
 				" a.CreateTime, " +
 				" a.UpdtUserid, " +
 				" a.UpdtTime, " +
-				" a.ClientDataRowId, " +
+				" a.SenderDataRowId, " +
 				" a.ListMasterEmailAddr ";
 		try {
 			Query query = em.createNativeQuery(sql,MailingList.MAPPING_MAILING_LIST_WITH_COUNTS);
@@ -124,11 +124,11 @@ public class MailingListService {
 		}
 	}
 
-	public int deleteByClientId(String clientId) {
+	public int deleteBySenderId(String senderId) {
 		try {
-			Query query = em.createNativeQuery("delete from Mailing_List where clientDataRowId in " +
-					" (select row_id from client_data cd where cd.clientId=?1)");
-			query.setParameter(1, clientId);
+			Query query = em.createNativeQuery("delete from Mailing_List where senderDataRowId in " +
+					" (select row_id from sender_data cd where cd.senderId=?1)");
+			query.setParameter(1, senderId);
 			int rows = query.executeUpdate();
 			return rows;
 		}

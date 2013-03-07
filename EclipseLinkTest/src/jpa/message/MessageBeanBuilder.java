@@ -35,16 +35,16 @@ import jpa.constant.EmailAddrType;
 import jpa.constant.MsgDirectionCode;
 import jpa.constant.XHeaderName;
 import jpa.exception.DataValidationException;
-import jpa.model.ClientData;
-import jpa.model.CustomerData;
+import jpa.model.SenderData;
+import jpa.model.SubscriberData;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageAddress;
 import jpa.model.message.MessageAttachment;
 import jpa.model.message.MessageHeader;
 import jpa.model.message.MessageInbox;
 import jpa.model.rule.RuleLogic;
-import jpa.service.ClientDataService;
-import jpa.service.CustomerDataService;
+import jpa.service.SenderDataService;
+import jpa.service.SubscriberDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.rule.RuleLogicService;
 import jpa.util.EmailAddrUtil;
@@ -457,13 +457,13 @@ public final class MessageBeanBuilder {
 	private static void addXHeadersToBean(MessageBean msgBean, Message mimeMsg)
 			throws MessagingException {
 		// check X Headers and populate MessageBean properties
-		String[] clientId = mimeMsg.getHeader(XHeaderName.CLIENT_ID.getValue());
-		if (clientId != null && clientId.length > 0) {
-			msgBean.setClientId(clientId[0]);
+		String[] senderId = mimeMsg.getHeader(XHeaderName.SENDER_ID.getValue());
+		if (senderId != null && senderId.length > 0) {
+			msgBean.setSenderId(senderId[0]);
 		}
-		String[] custId = mimeMsg.getHeader(XHeaderName.CUSTOMER_ID.getValue());
-		if (custId != null && custId.length > 0) {
-			msgBean.setCustId(custId[0]);
+		String[] subrId = mimeMsg.getHeader(XHeaderName.SUBSCRIBER_ID.getValue());
+		if (subrId != null && subrId.length > 0) {
+			msgBean.setSubrId(subrId[0]);
 		}
 		// DO NOT SET MessageBean's MsgRefId property here
 	}
@@ -1080,19 +1080,19 @@ public final class MessageBeanBuilder {
 		msgBean.setSendDate(msgVo.getReceivedTime());
 		
 		msgBean.setIsReceived(MsgDirectionCode.RECEIVED.getValue().equals(msgVo.getMsgDirection()));
-		ClientDataService clientService = (ClientDataService) SpringUtil.getAppContext().getBean("clientDataService");
-		if (msgVo.getClientDataRowId()!=null) {
+		SenderDataService senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
+		if (msgVo.getSenderDataRowId()!=null) {
 			try {
-				ClientData client = clientService.getByRowId(msgVo.getClientDataRowId());
-				msgBean.setClientId(client.getClientId());
+				SenderData sender = senderService.getByRowId(msgVo.getSenderDataRowId());
+				msgBean.setSenderId(sender.getSenderId());
 			}
 			catch (NoResultException e) {}
 		}
-		CustomerDataService custService = (CustomerDataService) SpringUtil.getAppContext().getBean("customerDataService");
-		if (msgVo.getCustomerDataRowId()!=null) {
+		SubscriberDataService subrService = (SubscriberDataService) SpringUtil.getAppContext().getBean("subscriberDataService");
+		if (msgVo.getSubscriberDataRowId()!=null) {
 			try {
-				CustomerData cust = custService.getByRowId(msgVo.getCustomerDataRowId());
-				msgBean.setCustId(cust.getCustomerId());
+				SubscriberData subr = subrService.getByRowId(msgVo.getSubscriberDataRowId());
+				msgBean.setSubrId(subr.getSubscriberId());
 			}
 			catch (NoResultException e) {}
 		}

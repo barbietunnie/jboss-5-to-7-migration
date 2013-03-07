@@ -5,8 +5,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import jpa.model.message.MessageRendered;
-import jpa.service.ClientDataService;
-import jpa.service.CustomerDataService;
+import jpa.service.SenderDataService;
+import jpa.service.SubscriberDataService;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +27,9 @@ public class MessageRenderedService {
 	@Autowired
 	private TemplateDataService tmpltService;
 	@Autowired
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	@Autowired
-	private CustomerDataService customerService;
+	private SubscriberDataService subscriberService;
 
 	public MessageRendered getByRowId(int rowId) throws NoResultException {
 		String sql = 
@@ -60,15 +60,15 @@ public class MessageRenderedService {
 			mr.setMessageTemplate(tmpltService.getByRowId(mr.getMessageTemplateRowId()));
 		}
 		catch (NoResultException e) {}
-		if (mr.getClientDataRowId()!=null) {
+		if (mr.getSenderDataRowId()!=null) {
 			try {
-				mr.setClientData(clientService.getByRowId(mr.getClientDataRowId()));
+				mr.setSenderData(senderService.getByRowId(mr.getSenderDataRowId()));
 			}
 			catch (NoResultException e) {}
 		}
-		if (mr.getCustomerDataRowId()!=null) {
+		if (mr.getSubscriberDataRowId()!=null) {
 			try {
-				mr.setCustomerData(customerService.getByRowId(mr.getCustomerDataRowId()));
+				mr.setSubscriberData(subscriberService.getByRowId(mr.getSubscriberDataRowId()));
 			}
 			catch (NoResultException e) {}
 		}

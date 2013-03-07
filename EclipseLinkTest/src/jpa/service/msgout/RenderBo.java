@@ -29,14 +29,14 @@ import jpa.exception.TemplateException;
 import jpa.message.BodypartBean;
 import jpa.message.MessageBean;
 import jpa.message.MsgHeader;
-import jpa.model.ClientVariable;
+import jpa.model.SenderVariable;
 import jpa.model.GlobalVariable;
 import jpa.model.message.MessageRendered;
 import jpa.model.message.MessageSource;
 import jpa.model.message.RenderVariable;
 import jpa.model.message.TemplateData;
 import jpa.model.message.TemplateVariable;
-import jpa.service.ClientVariableService;
+import jpa.service.SenderVariableService;
 import jpa.service.EmailAddressService;
 import jpa.service.GlobalVariableService;
 import jpa.service.message.MessageRenderedService;
@@ -69,7 +69,7 @@ public class RenderBo {
 	@Autowired
 	private TemplateDataService templateDao;
 	@Autowired
-	private ClientVariableService clientVariableDao;
+	private SenderVariableService senderVariableDao;
 	@Autowired
 	private GlobalVariableService globalVariableDao;
 	@Autowired
@@ -138,7 +138,7 @@ public class RenderBo {
 		}
 		RenderResponse rsp = new RenderResponse(
 				vo,
-				req.clientId,
+				req.senderId,
 				req.startTime,
 				new HashMap<String, RenderVariableVo>(),
 				new HashMap<String, ErrorVariableVo>(),
@@ -360,10 +360,10 @@ public class RenderBo {
 					mBean.setMailboxUser((String)r.getVariableValue());
 				else if (VariableName.FOLDER_NAME.getValue().equals(r.getVariableName()))
 					mBean.setFolderName((String)r.getVariableValue());
-				else if (VariableName.CLIENT_ID.getValue().equals(r.getVariableName()))
-					mBean.setClientId((String)r.getVariableValue());
-				else if (VariableName.CUSTOMER_ID.getValue().equals(r.getVariableName()))
-					mBean.setCustId((String)r.getVariableValue());
+				else if (VariableName.SENDER_ID.getValue().equals(r.getVariableName()))
+					mBean.setSenderId((String)r.getVariableValue());
+				else if (VariableName.SUBSCRIBER_ID.getValue().equals(r.getVariableName()))
+					mBean.setSubrId((String)r.getVariableValue());
 				else if (VariableName.TO_PLAIN_TEXT.getValue().equals(r.getVariableName()))
 					mBean.setToPlainText(CodeType.YES_CODE.getValue().equals((String)r.getVariableValue()));
 			}
@@ -418,9 +418,9 @@ public class RenderBo {
 	}
 	
 	/*
-	 * If MessageBean's ClientId field is not valued, and X-Client_id header is
-	 * found and valued, populate MessageBean's ClientId field with the value
-	 * from X-Client_id header. <br> 
+	 * If MessageBean's SenderId field is not valued, and X-Sender_id header is
+	 * found and valued, populate MessageBean's SenderId field with the value
+	 * from X-Sender_id header. <br> 
 	 */
 	private void buildRenderedXHdrs(RenderRequest req, RenderResponse rsp) {
 		logger.info("in buildRenderedXHdrs()...");
@@ -437,15 +437,15 @@ public class RenderBo {
 				msgHeader.setName(r.getVariableName());
 				msgHeader.setValue((String) r.getVariableValue());
 				headers.add(msgHeader);
-				// set ClientId for MessageBean
-				if (XHeaderName.CLIENT_ID.getValue().equals(r.getVariableName())) {
-					if (StringUtils.isBlank(mBean.getClientId())) {
-						mBean.setClientId((String) r.getVariableValue());
+				// set SenderId for MessageBean
+				if (XHeaderName.SENDER_ID.getValue().equals(r.getVariableName())) {
+					if (StringUtils.isBlank(mBean.getSenderId())) {
+						mBean.setSenderId((String) r.getVariableValue());
 					}
 				}
-				else if (XHeaderName.CUSTOMER_ID.getValue().equals(r.getVariableName())) {
-					if (StringUtils.isBlank(mBean.getCustId())) {
-						mBean.setCustId((String) r.getVariableValue());
+				else if (XHeaderName.SUBSCRIBER_ID.getValue().equals(r.getVariableName())) {
+					if (StringUtils.isBlank(mBean.getSubrId())) {
+						mBean.setSubrId((String) r.getVariableValue());
 					}
 				}
 			}
@@ -461,20 +461,20 @@ public class RenderBo {
 		
 		// retrieve variables
 		Collection<GlobalVariable> globalVariables = globalVariableDao.getCurrent();
-		Collection<ClientVariable> clientVariables = clientVariableDao.getCurrentByClientId(
-				req.clientId);
+		Collection<SenderVariable> senderVariables = senderVariableDao.getCurrentBySenderId(
+				req.senderId);
 		Collection<TemplateVariable> templateVariables = msgSourceVo.getTemplateVariableList();
 		
 		// convert variables into Map
 		Map<String, RenderVariableVo> g_ht = globalVariablesToMap(globalVariables);
-		Map<String, RenderVariableVo> c_ht = clientVariablesToMap(clientVariables);
+		Map<String, RenderVariableVo> c_ht = senderVariablesToMap(senderVariables);
 		Map<String, RenderVariableVo> t_ht = templateVariablesToMap(templateVariables);
 		
 		// variables from req and MsgSource table
 		Map<String, RenderVariableVo> s_ht = new HashMap<String, RenderVariableVo>();
 		RenderVariableVo vreq = new RenderVariableVo(
-				VariableName.CLIENT_ID.getValue(),
-				req.clientId,
+				VariableName.SENDER_ID.getValue(),
+				req.senderId,
 				null,
 				VariableType.TEXT, 
 				CodeType.YES_CODE.getValue(),
@@ -581,18 +581,18 @@ public class RenderBo {
 		return ht;
 	}
 	
-	private Map<String, RenderVariableVo> clientVariablesToMap(Collection<ClientVariable> c) {
+	private Map<String, RenderVariableVo> senderVariablesToMap(Collection<SenderVariable> c) {
 		Map<String, RenderVariableVo> ht = new HashMap<String, RenderVariableVo>();
-		for (ClientVariable req : c) {
+		for (SenderVariable req : c) {
 			RenderVariableVo r = new RenderVariableVo(
-				req.getClientVariablePK().getVariableName(),
+				req.getSenderVariablePK().getVariableName(),
 				req.getVariableValue(), 
 				req.getVariableFormat(), 
 				VariableType.getByValue(req.getVariableType()), 
 				req.getAllowOverride(), 
 				req.isRequired()
 				);
-			ht.put(req.getClientVariablePK().getVariableName(), r);
+			ht.put(req.getSenderVariablePK().getVariableName(), r);
 		}
 		return ht;
 	}

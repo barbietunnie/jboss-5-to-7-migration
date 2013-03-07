@@ -25,8 +25,8 @@ import jpa.data.preload.RuleNameEnum;
 import jpa.exception.DataValidationException;
 import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
-import jpa.model.ClientData;
-import jpa.model.CustomerData;
+import jpa.model.SenderData;
+import jpa.model.SubscriberData;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageRendered;
 import jpa.model.message.MessageSource;
@@ -34,8 +34,8 @@ import jpa.model.message.RenderAttachment;
 import jpa.model.message.RenderAttachmentPK;
 import jpa.model.message.RenderVariable;
 import jpa.model.message.RenderVariablePK;
-import jpa.service.ClientDataService;
-import jpa.service.CustomerDataService;
+import jpa.service.SenderDataService;
+import jpa.service.SubscriberDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageAddressService;
 import jpa.service.message.MessageAttachmentService;
@@ -82,9 +82,9 @@ public class MsgOutboxBo {
 	@Autowired
 	private EmailAddressService emailAddrDao;
 	@Autowired
-	private ClientDataService clientService;
+	private SenderDataService senderService;
 	@Autowired
-	private CustomerDataService custService;
+	private SubscriberDataService subrService;
 	@Autowired
 	private MessageSourceService msgSourceDao;
 	
@@ -149,17 +149,17 @@ public class MsgOutboxBo {
 		msgVo.setMessageSourceRowId(rsp.getMessageSource().getRowId());
 		msgVo.setMessageTemplateRowId(rsp.getMessageSource().getTemplateData().getRowId());
 		msgVo.setStartTime(rsp.getStartTime());
-		if (StringUtils.isNotBlank(msgBean.getClientId())) {
+		if (StringUtils.isNotBlank(msgBean.getSenderId())) {
 			try {
-				ClientData client = clientService.getByClientId(msgBean.getClientId());
-				msgVo.setClientDataRowId(client.getRowId());
+				SenderData sender = senderService.getBySenderId(msgBean.getSenderId());
+				msgVo.setSenderDataRowId(sender.getRowId());
 			}
 			catch (NoResultException e) {}
 		}
-		if (StringUtils.isNotBlank(msgBean.getCustId())) {
+		if (StringUtils.isNotBlank(msgBean.getSubrId())) {
 			try {
-				CustomerData cust = custService.getByCustomerId(msgBean.getCustId());
-				msgVo.setCustomerDataRowId(cust.getRowId());
+				SubscriberData subr = subrService.getBySubscriberId(msgBean.getSubrId());
+				msgVo.setSubscriberDataRowId(subr.getRowId());
 			}
 			catch (NoResultException e) {}
 		}
@@ -381,11 +381,11 @@ public class MsgOutboxBo {
 		catch (NoResultException e) {
 			throw new DataValidationException("MsgSourceId is null for RenderId: " + renderId);
 		}
-		String clientId = null;
+		String senderId = null;
 		try {
-			int rowId = msgRenderedVo.getClientDataRowId();
-			ClientData client = clientService.getByRowId(rowId);
-			clientId = client.getClientId();
+			int rowId = msgRenderedVo.getSenderDataRowId();
+			SenderData sender = senderService.getByRowId(rowId);
+			senderId = sender.getSenderId();
 		}
 		catch (NoResultException e) {}
 		// add renderVariables to variableFinal
@@ -464,7 +464,7 @@ public class MsgOutboxBo {
 		
 		RenderRequest renderRequest = new RenderRequest(
 			msgSourceId,
-			clientId,
+			senderId,
 			msgRenderedVo.getStartTime(),
 			varblFinal
 			);

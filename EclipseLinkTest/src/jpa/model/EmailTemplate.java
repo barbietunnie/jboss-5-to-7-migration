@@ -18,8 +18,8 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -4595181759983336810L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="ClientDataRowId",insertable=true,referencedColumnName="Row_Id",nullable=false)
-	private ClientData clientData;
+	@JoinColumn(name="SenderDataRowId",insertable=true,referencedColumnName="Row_Id",nullable=false)
+	private SenderData senderData;
 	
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="MailingListRowId",insertable=true,referencedColumnName="Row_Id",nullable=false)
@@ -55,12 +55,12 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 		// must have a no-argument constructor
 	}
 
-	public ClientData getClientData() {
-		return clientData;
+	public SenderData getSenderData() {
+		return senderData;
 	}
 
-	public void setClientData(ClientData clientData) {
-		this.clientData = clientData;
+	public void setSenderData(SenderData senderData) {
+		this.senderData = senderData;
 	}
 
 	public MailingList getMailingList() {

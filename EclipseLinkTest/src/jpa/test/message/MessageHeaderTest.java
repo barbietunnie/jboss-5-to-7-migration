@@ -12,13 +12,13 @@ import jpa.constant.Constants;
 import jpa.constant.MsgDirectionCode;
 import jpa.constant.XHeaderName;
 import jpa.data.preload.RuleNameEnum;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageHeader;
 import jpa.model.message.MessageHeaderPK;
 import jpa.model.message.MessageInbox;
 import jpa.model.rule.RuleLogic;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageHeaderService;
 import jpa.service.message.MessageInboxService;
@@ -53,7 +53,7 @@ public class MessageHeaderTest {
 	@Autowired
 	EmailAddressService addrService;
 	@Autowired
-	ClientDataService clientService;
+	SenderDataService senderService;
 	@Autowired
 	RuleLogicService logicService;
 
@@ -77,12 +77,12 @@ public class MessageHeaderTest {
 		inbox1.setFromAddrRowId(from.getRowId());
 		inbox1.setReplytoAddrRowId(null);
 
-		ClientData client = clientService.getByClientId(Constants.DEFAULT_CLIENTID);
-		String to_addr = client.getReturnPathLeft() + "@" + client.getDomainName();
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
+		String to_addr = sender.getReturnPathLeft() + "@" + sender.getDomainName();
 		to = addrService.findSertAddress(to_addr);
 		inbox1.setToAddrRowId(to.getRowId());
-		inbox1.setClientDataRowId(client.getRowId());
-		inbox1.setCustomerDataRowId(null);
+		inbox1.setSenderDataRowId(sender.getRowId());
+		inbox1.setSubscriberDataRowId(null);
 		inbox1.setPurgeDate(null);
 		inbox1.setUpdtTime(updtTime);
 		inbox1.setUpdtUserId(Constants.DEFAULT_USER_ID);
@@ -152,8 +152,8 @@ public class MessageHeaderTest {
 		hdr3 = new MessageHeader();
 		MessageHeaderPK pk3 = new MessageHeaderPK(inbox1,3);
 		hdr3.setMessageHeaderPK(pk3);
-		hdr3.setHeaderName(XHeaderName.CLIENT_ID.getValue());
-		hdr3.setHeaderValue(Constants.DEFAULT_CLIENTID);
+		hdr3.setHeaderName(XHeaderName.SENDER_ID.getValue());
+		hdr3.setHeaderValue(Constants.DEFAULT_SENDER_ID);
 		service.insert(hdr3);
 		
 		assertTrue(service.getByMsgInboxId(inbox1.getRowId()).size()==3);		

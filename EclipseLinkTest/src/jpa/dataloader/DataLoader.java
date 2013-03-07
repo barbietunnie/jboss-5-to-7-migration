@@ -20,11 +20,11 @@ public class DataLoader {
 	}
 	
 	void loadAllTables() {
-		new ClientDataLoader().loadData();
+		new SenderDataLoader().loadData();
 		new IdTokensDataLoader().loadData();
 		new EmailAddressLoader().loadData();
 		new UserDataLoader().loadData();
-		new CustomerDataLoader().loadData();
+		new SubscriberDataLoader().loadData();
 		new VariableDataLoader().loadData();
 		new MailingListDataLoader().loadData();
 		new EmailVariableLoader().loadData();

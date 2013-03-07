@@ -28,11 +28,11 @@ import jpa.message.MessageBeanBuilder;
 import jpa.message.MessageBeanUtil;
 import jpa.message.MsgHeader;
 import jpa.message.util.MsgIdCipher;
-import jpa.model.ClientData;
+import jpa.model.SenderData;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageInbox;
 import jpa.model.message.MessageStream;
-import jpa.service.ClientDataService;
+import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageDeliveryStatusService;
 import jpa.service.message.MessageInboxService;
@@ -55,7 +55,7 @@ public abstract class MailSenderBase {
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
 	protected boolean debugSession = false;
-	protected ClientData clientVo = null;
+	protected SenderData senderVo = null;
 
 	@Autowired
 	protected MessageInboxBo msgInboxBo;
@@ -70,7 +70,7 @@ public abstract class MailSenderBase {
 	@Autowired
 	protected MessageStreamService msgStreamDao;
 	@Autowired
-	protected ClientDataService clientService;
+	protected SenderDataService senderService;
 	@Autowired
 	private MessageParser parser;
 
@@ -105,20 +105,20 @@ public abstract class MailSenderBase {
 		// set rule name to SEND_MAIL
 		msgBean.setRuleName(RuleNameEnum.SEND_MAIL.getValue());
 		try {
-			clientVo = clientService.getByClientId(msgBean.getClientId());
+			senderVo = senderService.getBySenderId(msgBean.getSenderId());
 		}
 		catch (NoResultException e) {
-			throw new DataValidationException("ClientId (" + msgBean.getClientId() + ") not found.");
+			throw new DataValidationException("SenderId (" + msgBean.getSenderId() + ") not found.");
 		}
 		msgBean.setIsReceived(false); // out going message
 		if (msgBean.getEmBedEmailId() == null) { // not provided by calling program
 			// use system default
-			msgBean.setEmBedEmailId(Boolean.valueOf(clientVo.isEmbedEmailId()));
+			msgBean.setEmBedEmailId(Boolean.valueOf(senderVo.isEmbedEmailId()));
 		}
 		// save the message to the database
 		msgInboxBo.saveMessage(msgBean);
 		// check if VERP is enabled
-		if (clientVo.isVerpEnabled()) {
+		if (senderVo.isVerpEnabled()) {
 			// set return path with VERP, msgBean.msgId must be valued.
 			String emailId = EmailIdToken.XHDR_BEGIN + MsgIdCipher.encode(msgBean.getMsgId())
 					+ EmailIdToken.XHDR_END;
@@ -127,22 +127,22 @@ public abstract class MailSenderBase {
 				throw new DataValidationException("TO address is not provided.");
 			}
 			String recipient = EmailAddrUtil.removeDisplayName(addrs[0].toString());
-			if (StringUtils.isBlank(clientVo.getVerpInboxName())) {
-				throw new DataValidationException("VERP inbox name is blank in ClientData table.");
+			if (StringUtils.isBlank(senderVo.getVerpInboxName())) {
+				throw new DataValidationException("VERP inbox name is blank in SenderData table.");
 			}
-			String left = clientVo.getVerpInboxName() + "-" + emailId + "-"
+			String left = senderVo.getVerpInboxName() + "-" + emailId + "-"
 					+ recipient.replaceAll("@", "=");
-			String verpDomain = clientVo.getDomainName();
-			if (StringUtils.isNotBlank(clientVo.getVerpSubDomain())) {
-				verpDomain = clientVo.getVerpSubDomain() + "." + verpDomain;
+			String verpDomain = senderVo.getDomainName();
+			if (StringUtils.isNotBlank(senderVo.getVerpSubDomain())) {
+				verpDomain = senderVo.getVerpSubDomain() + "." + verpDomain;
 			}
 			msgBean.setReturnPath("<" + left + "@" + verpDomain + ">");
 			// set List-Unsubscribe VERP header
 			if (StringUtils.isNotBlank(msgBean.getMailingListId())) {
-				if (StringUtils.isBlank(clientVo.getVerpRemoveInbox())) {
-					throw new DataValidationException("VERP remove inbox is blank in ClientData table.");
+				if (StringUtils.isBlank(senderVo.getVerpRemoveInbox())) {
+					throw new DataValidationException("VERP remove inbox is blank in SenderData table.");
 				}
-				left = clientVo.getVerpRemoveInbox() + "-" + msgBean.getMailingListId() + "-"
+				left = senderVo.getVerpRemoveInbox() + "-" + msgBean.getMailingListId() + "-"
 						+ recipient.replaceAll("@", "=");
 				MsgHeader header = new MsgHeader();
 				header.setName("List-Unsubscribe");
@@ -294,11 +294,11 @@ public abstract class MailSenderBase {
 			logger.debug("Entering rebuildAddresses method...");
 		}
 		// set TO address to Test Address if it's a test run
-		if (clientVo.isUseTestAddr() && !isOverrideTestAddr) {
+		if (senderVo.isUseTestAddr() && !isOverrideTestAddr) {
 			if (isDebugEnabled) {
 				logger.debug("rebuildAddresses() - Replace original TO: "
 						+ EmailAddrUtil.emailAddrToString(m.getRecipients(javax.mail.Message.RecipientType.TO))
-						+ ", with testing address: " + clientVo.getTestToAddr());
+						+ ", with testing address: " + senderVo.getTestToAddr());
 			}
 			boolean toAddrIsLocal = false;
 			String displayName = null;
@@ -317,12 +317,12 @@ public abstract class MailSenderBase {
 			}
 			if (!toAddrIsLocal) { // DO NOT override if TO address is local
 				if (displayName == null) {
-					m.setRecipients(RecipientType.TO, InternetAddress.parse(clientVo.getTestToAddr()));
+					m.setRecipients(RecipientType.TO, InternetAddress.parse(senderVo.getTestToAddr()));
 				}
 				else {
 					m.setRecipients(RecipientType.TO, InternetAddress.parse("\""
 								+ displayName + "\" <"
-								+ EmailAddrUtil.removeDisplayName(clientVo.getTestToAddr()) + ">"));
+								+ EmailAddrUtil.removeDisplayName(senderVo.getTestToAddr()) + ">"));
 				}
 			}
 		}
@@ -332,17 +332,17 @@ public abstract class MailSenderBase {
 			throw new AddressException("TO address is blank!");
 		}
 		// Set From address to Test Address if it's a test run and not provided
-		if (clientVo.isUseTestAddr() && !isOverrideTestAddr
+		if (senderVo.isUseTestAddr() && !isOverrideTestAddr
 				&& (m.getFrom() == null || m.getFrom().length == 0)) {
 			if (isDebugEnabled) {
 				logger.debug("rebuildAddresses() - Original From is missing, use testing address: "
-						+  clientVo.getTestFromAddr());
+						+  senderVo.getTestFromAddr());
 			}
-			if (EmailAddrUtil.hasDisplayName(clientVo.getTestFromAddr())) {
-				m.setFrom(InternetAddress.parse(clientVo.getTestFromAddr())[0]);
+			if (EmailAddrUtil.hasDisplayName(senderVo.getTestFromAddr())) {
+				m.setFrom(InternetAddress.parse(senderVo.getTestFromAddr())[0]);
 			}
 			else {
-				m.setFrom(InternetAddress.parse("\"MailSender\" <" + clientVo.getTestFromAddr()
+				m.setFrom(InternetAddress.parse("\"MailSender\" <" + senderVo.getTestFromAddr()
 						+ ">")[0]);
 			}
 		}
@@ -351,15 +351,15 @@ public abstract class MailSenderBase {
 			throw new AddressException("FROM address is blank!");
 		}
 		// set ReplyTo address to Test Address if it's a test run and not provided
-		if (clientVo.isUseTestAddr() && !isOverrideTestAddr
+		if (senderVo.isUseTestAddr() && !isOverrideTestAddr
 				&& (m.getReplyTo() == null || m.getReplyTo().length == 0)) {
-			if (StringUtils.isNotBlank(clientVo.getTestReplytoAddr())) {
-				if (EmailAddrUtil.hasDisplayName(clientVo.getTestReplytoAddr())) {
-					m.setReplyTo(InternetAddress.parse(clientVo.getTestReplytoAddr()));
+			if (StringUtils.isNotBlank(senderVo.getTestReplytoAddr())) {
+				if (EmailAddrUtil.hasDisplayName(senderVo.getTestReplytoAddr())) {
+					m.setReplyTo(InternetAddress.parse(senderVo.getTestReplytoAddr()));
 				}
 				else {
 					m.setReplyTo(InternetAddress.parse("\"MailSender Reply\" " + "<"
-							+ clientVo.getTestReplytoAddr() + ">"));
+							+ senderVo.getTestReplytoAddr() + ">"));
 				}
 			}
 		}

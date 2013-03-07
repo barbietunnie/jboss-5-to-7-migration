@@ -1,6 +1,6 @@
-package jpa.service.message;
+package jpa.service;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -14,84 +14,83 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.StatusId;
-import jpa.model.message.TemplateData;
-import jpa.model.message.TemplateDataPK;
+import jpa.model.SenderVariable;
+import jpa.model.SenderVariablePK;
 
-@Component("templateDataService")
+@Component("senderVariableService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class TemplateDataService {
-	static Logger logger = Logger.getLogger(TemplateDataService.class);
+public class SenderVariableService {
+	static Logger logger = Logger.getLogger(SenderVariableService.class);
 	
 	@Autowired
 	EntityManager em;
 
-	public TemplateData getByRowId(int rowId) throws NoResultException {
+	public SenderVariable getByRowId(int rowId) throws NoResultException {
 		String sql = 
 			"select t " +
 			"from " +
-				"TemplateData t where t.rowId=:rowId";
+				"SenderVariable t where t.rowId=:rowId";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("rowId", rowId);
-			TemplateData record = (TemplateData) query.getSingleResult();
+			SenderVariable record = (SenderVariable) query.getSingleResult();
 			return record;
 		}
 		finally {
 		}
 	}
 
-	public TemplateData getByPrimaryKey(TemplateDataPK pk) throws NoResultException {
+	public SenderVariable getByPrimaryKey(SenderVariablePK pk) throws NoResultException {
 		if (pk.getSenderData()==null) {
 			throw new IllegalArgumentException("A SenderData instance must be provided in Primary Key object.");
 		}
 		String sql = 
 			"select t " +
 			"from " +
-				"TemplateData t, SenderData c " +
-				"where c=t.templateDataPK.senderData and c.senderId=:senderId " +
-				"and t.templateDataPK.templateId=:templateId ";
+				"SenderVariable t, SenderData c " +
+				"where c=t.senderVariablePK.senderData and c.senderId=:senderId and t.senderVariablePK.variableName=:variableName";
 		if (pk.getStartTime()!=null) {
-			sql += " and t.templateDataPK.startTime=:starTtime ";
+			sql += " and t.senderVariablePK.startTime=:starTtime ";
 		}
 		else {
-			sql += " and t.templateDataPK.startTime is null ";
+			sql += " and t.senderVariablePK.startTime is null ";
 		}
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("senderId", pk.getSenderData().getSenderId());
-			query.setParameter("templateId", pk.getTemplateId());
+			query.setParameter("variableName", pk.getVariableName());
 			if (pk.getStartTime() != null) {
 				query.setParameter("starTtime", pk.getStartTime());
 			}
-			TemplateData template = (TemplateData) query.getSingleResult();
-			return template;
+			SenderVariable sender = (SenderVariable) query.getSingleResult();
+			return sender;
 		}
 		finally {
 		}
 	}
 
-	public TemplateData getByBestMatch(TemplateDataPK pk) {
+	public SenderVariable getByBestMatch(SenderVariablePK pk) {
 		if (pk.getSenderData()==null) {
 			throw new IllegalArgumentException("A SenderData instance must be provided in Primary Key object.");
 		}
 		if (pk.getStartTime()==null) {
-			pk.setStartTime(new Timestamp(System.currentTimeMillis()));
+			pk.setStartTime(new Date(System.currentTimeMillis()));
 		}
 		String sql = 
 				"select t " +
 				"from " +
-					"TemplateData t, SenderData c " +
-					" where c=t.templateDataPK.senderData and c.senderId=:senderId " +
-					" and t.templateDataPK.templateId=:templateId " +
-					" and (t.templateDataPK.startTime<=:startTime or t.templateDataPK.startTime is null) " +
-					" order by t.templateDataPK.startTime desc ";
+					"SenderVariable t, SenderData c " +
+					" where c=t.senderVariablePK.senderData and c.senderId=:senderId " +
+					" and t.senderVariablePK.variableName=:variableName " +
+					" and (t.senderVariablePK.startTime<=:startTime or t.senderVariablePK.startTime is null) " +
+					" order by t.senderVariablePK.startTime desc ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("templateId", pk.getTemplateId());
+			query.setParameter("variableName", pk.getVariableName());
 			query.setParameter("startTime", pk.getStartTime());
 			query.setParameter("senderId", pk.getSenderData().getSenderId());
 			@SuppressWarnings("unchecked")
-			List<TemplateData> list = query.setMaxResults(1).getResultList();
+			List<SenderVariable> list = query.setMaxResults(1).getResultList();
 			if (!list.isEmpty()) {
 				return list.get(0);
 			}
@@ -101,70 +100,70 @@ public class TemplateDataService {
 		}
 	}
 
-	public List<TemplateData> getByTemplateId(String templateId) {
+	public List<SenderVariable> getByVariableName(String variableName) {
 		String sql = 
 				"select t " +
 				" from " +
-					" TemplateData t, SenderData c " +
-					" where c=t.templateDataPK.senderData and t.templateDataPK.templateId=:templateId " +
-				" order by c.senderId, t.templateDataPK.startTime asc ";
+					" SenderVariable t, SenderData c " +
+					" where c=t.senderVariablePK.senderData and t.senderVariablePK.variableName=:variableName " +
+				" order by c.senderId, t.senderVariablePK.startTime asc ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("templateId", templateId);
+			query.setParameter("variableName", variableName);
 			@SuppressWarnings("unchecked")
-			List<TemplateData> list = query.getResultList();
+			List<SenderVariable> list = query.getResultList();
 			return list;
 		}
 		finally {
 		}
 	}
 
-	public List<TemplateData> getCurrentBySenderId(String senderId) {
+	public List<SenderVariable> getCurrentBySenderId(String senderId) {
 		String sql = 
 				"select a.* " +
-					" from template_data a " +
+					" from sender_variable a " +
 					" inner join ( " +
-					"  select b.senderDataRowId as senderDataRowId, b.templateId as templateId, max(b.startTime) as maxTime " +
-					"   from template_data b, sender_data cd " +
+					"  select b.senderDataRowId as senderDataRowId, b.variableName as variableName, max(b.startTime) as maxTime " +
+					"   from sender_variable b, sender_data cd " +
 					"   where b.statusId = ?1 and b.startTime<=?2 and b.senderDataRowId=cd.row_Id and cd.senderId=?3 " +
-					"   group by b.senderDataRowId, b.templateId " +
+					"   group by b.senderDataRowId, b.variableName " +
 					" ) as c " +
-					"  on a.templateId=c.templateId and a.startTime=c.maxTime and a.senderDataRowId=c.senderDataRowId " +
+					"  on a.variableName=c.variableName and a.startTime=c.maxTime and a.senderDataRowId=c.senderDataRowId " +
 					" order by a.row_id asc ";
 		try {
-			Query query = em.createNativeQuery(sql, TemplateData.class);
+			Query query = em.createNativeQuery(sql, SenderVariable.class);
 			query.setParameter(1, StatusId.ACTIVE.getValue());
-			query.setParameter(2, new Timestamp(System.currentTimeMillis()));
+			query.setParameter(2, new Date(System.currentTimeMillis()));
 			query.setParameter(3, senderId);
 			@SuppressWarnings("unchecked")
-			List<TemplateData> list = query.getResultList();
+			List<SenderVariable> list = query.getResultList();
 			return list;
 		}
 		finally {
 		}
 	}
 
-	public void delete(TemplateData template) {
-		if (template == null) return;
+	public void delete(SenderVariable var) {
+		if (var == null) return;
 		try {
-			em.remove(template);
+			em.remove(var);
 		}
 		finally {
 		}
 	}
 
-	public int deleteByPrimaryKey(TemplateDataPK pk) {
+	public int deleteByPrimaryKey(SenderVariablePK pk) {
 		if (pk.getSenderData()==null) {
 			throw new IllegalArgumentException("A SenderData instance must be provided in Primary Key object.");
 		}
 		String sql = 
-				"delete from Template_Data " +
-				" where templateId=?1 and startTime=?2 " +
+				"delete from sender_variable " +
+				" where variableName=?1 and startTime=?2 " +
 				" and senderDataRowId in " +
 				" (select row_id from sender_data cd where cd.senderId=?3)";
 		try {
 			Query query = em.createNativeQuery(sql);
-			query.setParameter(1, pk.getTemplateId());
+			query.setParameter(1, pk.getVariableName());
 			query.setParameter(2, pk.getStartTime());
 			query.setParameter(3, pk.getSenderData().getSenderId());
 			int rows = query.executeUpdate();
@@ -174,12 +173,12 @@ public class TemplateDataService {
 		}
 	}
 
-	public int deleteByTemplateId(String templateId) {
+	public int deleteByVariableName(String variableName) {
 		String sql = 
-				"delete from TemplateData t where t.templateDataPK.templateId=:templateId ";
+				"delete from SenderVariable t where t.senderVariablePK.variableName=:variableName ";
 		try {
 			Query query = em.createQuery(sql);
-			query.setParameter("templateId", templateId);
+			query.setParameter("variableName", variableName);
 			int rows = query.executeUpdate();
 			return rows;
 		}
@@ -189,7 +188,7 @@ public class TemplateDataService {
 
 	public int deleteBySenderId(String senderId) {
 		String sql = 
-				"delete from template_data where senderDataRowId in " +
+				"delete from sender_variable where senderDataRowId in " +
 				" (select row_id from sender_data cd where cd.senderId=?1)";
 		try {
 			Query query = em.createNativeQuery(sql);
@@ -201,22 +200,22 @@ public class TemplateDataService {
 		}
 	}
 
-	public void update(TemplateData template) {
+	public void update(SenderVariable var) {
 		try {
-			if (em.contains(template)) {
-				em.persist(template);
+			if (em.contains(var)) {
+				em.persist(var);
 			}
 			else {
-				em.merge(template);
+				em.merge(var);
 			}
 		}
 		finally {
 		}
 	}
 
-	public void insert(TemplateData template) {
+	public void insert(SenderVariable var) {
 		try {
-			em.persist(template);
+			em.persist(var);
 			em.flush();
 		}
 		finally {
