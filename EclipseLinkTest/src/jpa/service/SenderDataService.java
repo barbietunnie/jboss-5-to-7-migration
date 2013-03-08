@@ -7,15 +7,15 @@ import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import jpa.constant.Constants;
+import jpa.model.SenderData;
+import jpa.util.StringUtil;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import jpa.constant.Constants;
-import jpa.model.SenderData;
-import jpa.util.StringUtil;
 
 @Component("senderDataService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -23,6 +23,7 @@ public class SenderDataService {
 	static Logger logger = Logger.getLogger(SenderDataService.class);
 	
 	@Autowired
+	//@PersistenceContext(name="MessageDB")
 	EntityManager em;
 
 	public SenderData getBySenderId(String senderId) throws NoResultException {
@@ -30,7 +31,7 @@ public class SenderDataService {
 			Query query = em.createQuery("select t from SenderData t where t.senderId = :senderId");
 			query.setParameter("senderId", senderId);
 			SenderData sender = (SenderData) query.getSingleResult();
-			em.lock(sender, LockModeType.OPTIMISTIC);
+			//em.lock(sender, LockModeType.OPTIMISTIC);
 			return sender;
 		}
 		finally {

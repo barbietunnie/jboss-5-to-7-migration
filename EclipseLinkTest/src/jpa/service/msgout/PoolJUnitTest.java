@@ -15,7 +15,7 @@ import jpa.constant.MailServerType;
 import jpa.model.SmtpServer;
 import jpa.util.SpringUtil;
 
-public class PoolsJUnitTest {
+public class PoolJUnitTest {
 	static int init_count = 0;
 
 	final static String LF = System.getProperty("line.separator", "\n");
@@ -40,12 +40,12 @@ public class PoolsJUnitTest {
 		ArrayList<ObjectPool> poolItems = new ArrayList<ObjectPool> ();
 		poolItems.add(new ObjectPool(smtpConnection, 2, "smtp1", MailServerType.SMTP, 50));
 		// two servers with equal distribution
-		NamedPools pools = new NamedPools(poolItems);
+		NamedPool pools = new NamedPool(poolItems);
 		distribution(pools);
 
 		// two servers with unequal distribution
 		poolItems.add(new ObjectPool(smtpConnection, 2, "smtp2", MailServerType.SMTP, 50));
-		pools = new NamedPools(poolItems);
+		pools = new NamedPool(poolItems);
 		List<String> names = pools.getNames();
 		Iterator<String> it = names.iterator();
 		int row = 70;
@@ -71,7 +71,7 @@ public class PoolsJUnitTest {
 	public void testSmtpConnection() throws Exception {
 		System.out.println(LF + "********** Starting testSmtpConnection **********");
 		{
-			NamedPools pools = SmtpWrapperUtil.getSmtpNamedPools();
+			NamedPool pools = SmtpWrapperUtil.getSmtpNamedPool();
 			assertNotNull(pools);
 			if (pools.size() > 0) {
 				ObjectPool pool = pools.getPools().get(0);
@@ -93,7 +93,7 @@ public class PoolsJUnitTest {
 		}
 		
 		{
-			NamedPools pools = SmtpWrapperUtil.getSecuNamedPools();
+			NamedPool pools = SmtpWrapperUtil.getSecuNamedPool();
 			assertNotNull(pools);
 			if (pools.size() > 0) {
 				ObjectPool pool = pools.getPools().get(0);
@@ -118,7 +118,7 @@ public class PoolsJUnitTest {
 	@Test
 	public void testAllSmtpPools() throws Exception {
 		System.out.println(LF + "********** Starting testAllSmtpPools **********");
-		NamedPools pools = SmtpWrapperUtil.getSmtpNamedPools();
+		NamedPool pools = SmtpWrapperUtil.getSmtpNamedPool();
 		assertNotNull(pools);
 		for (int i=0; i<pools.size(); i++) {
 			ObjectPool pool = pools.getPools().get(i);
@@ -128,7 +128,7 @@ public class PoolsJUnitTest {
 		for (int i = 0; pools.size()> 0 && i < 4; i++) {
 			smtpPools(pools);
 		}
-		SmtpWrapperUtil.clearSmtpNamedPools();
+		SmtpWrapperUtil.clearSmtpNamedPool();
 	}
 
 	@Test
@@ -137,7 +137,7 @@ public class PoolsJUnitTest {
 		List<ObjectPool> poolItems = new ArrayList<ObjectPool>();
 		poolItems.add(new ObjectPool(smtpConnection, 2, "postfix1", MailServerType.SMTP, 50));
 		poolItems.add(new ObjectPool(smtpConnection, 2, "smtpsvr1", MailServerType.SMTP, 50));
-		NamedPools pools = new NamedPools(poolItems);
+		NamedPool pools = new NamedPool(poolItems);
 		assertNotNull(pools);
 		assertTrue(pools.size() > 0);
 		smtpPools(pools, "postfix1");
@@ -155,7 +155,7 @@ public class PoolsJUnitTest {
 		List<ObjectPool> poolItems = new ArrayList<ObjectPool>();
 		poolItems.add(new ObjectPool(smtpConnection, 2, "postexch", MailServerType.SMTP, 50));
 		poolItems.add(new ObjectPool(smtpConnection, 2, "exchsvr1", MailServerType.SMTP, 50));
-		NamedPools pools = new NamedPools(poolItems);
+		NamedPool pools = new NamedPool(poolItems);
 		assertNotNull(pools);
 		assertTrue(pools.size() > 0);
 		Object obj = pools.remove("postexch");
@@ -168,7 +168,7 @@ public class PoolsJUnitTest {
 		pools.close();
 	}
 
-	private void distribution(NamedPools pools) {
+	private void distribution(NamedPool pools) {
 		pools.setUseDistribution(false);
 		List<String> names = pools.getNames();
 		for (int j = 0; j < 10; j++) {
@@ -206,7 +206,7 @@ public class PoolsJUnitTest {
 		System.out.println();
 	}
 
-	private void smtpPools(NamedPools pools, String name) throws Exception {
+	private void smtpPools(NamedPool pools, String name) throws Exception {
 		ObjectPool pool = pools.getPool(name);
 		SmtpConnection[] conn = new SmtpConnection[pool.getSize()];
 		for (int i = 0; i < pool.getSize(); i++) {
@@ -219,7 +219,7 @@ public class PoolsJUnitTest {
 		}
 	}
 
-	private void smtpPools(NamedPools pools) throws Exception {
+	private void smtpPools(NamedPool pools) throws Exception {
 		SmtpConnection conn = (SmtpConnection) pools.getConnection();
 		assertNotNull(conn);
 		conn.testConnection(true);

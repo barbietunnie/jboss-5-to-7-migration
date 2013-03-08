@@ -118,7 +118,7 @@ public class MessageInboxBo {
 	 * @throws SQLException
 	 *             if SQL error occurred
 	 */
-	public int saveMessage(MessageBean msgBean) throws DataValidationException {
+	public MessageInbox saveMessage(MessageBean msgBean) throws DataValidationException {
 		if (isDebugEnabled) {
 			logger.debug("Entering saveMessage() method..." + LF + msgBean);
 		}
@@ -166,7 +166,7 @@ public class MessageInboxBo {
 				MessageInbox origVo = msgInboxDao.getByPrimaryKey(msgBean.getMsgRefId());
 				msgVo.setLeadMessageRowId(origVo.getLeadMessageRowId());
 				if (msgBean.getIsReceived()) { // from MailReader
-					// code has been moved to MessageParser.parse()
+					// code has been moved to MessageParserBo.parse()
 				}
 			}
 			catch (NoResultException e) {
@@ -431,12 +431,12 @@ public class MessageInboxBo {
 			msgVo.setMessageStream(msgStreamVo);
 		}
 		msgInboxDao.update(msgVo);
-		
+
 		if (isDebugEnabled) {
 			logger.debug("saveMessage() - Message has been saved to database, MsgId: "
 					+ msgVo.getRowId());
 		}
-		return msgVo.getRowId();
+		return msgVo;
 	}
 	
 	/**
@@ -521,7 +521,6 @@ public class MessageInboxBo {
 				EmailAddress email = emailAddrDao.findSertAddress(StringUtils.left(addr.toString(),255));
 				addrVo.setEmailAddrRowId(email.getRowId());
 				msgVo.getMessageAddressList().add(addrVo);
-				//msgAddrsDao.insert(addrVo);
 			}
 		}
 	}

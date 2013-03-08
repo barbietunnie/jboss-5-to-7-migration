@@ -13,17 +13,17 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<context:property-placeholder ignore-resource-not-found="true" 
-		location="classpath:/META-INF/eclipselink.${env:mysql}.properties"/>
+		location="classpath:/META-INF/eclipselink.${env:psql}.properties"/>
 
 	<context:component-scan base-package="jpa.service" />
 	<context:annotation-config/>
 
 	<!-- Spring JPA transaction manager -->
-	<bean id="mysqlTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+	<bean id="msgTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
 			p:entityManagerFactory-ref="entityManagerFactory" />
 
 	<!-- Data Sources -->
-	<bean id="mysqlDataSource"
+	<bean id="msgDataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${dataSource.driverClassName}" />
 		<property name="url" value="${dataSource.url}" />
@@ -31,7 +31,7 @@
 		<property name="password" value="${dataSource.password}" />
 	</bean>
 
-	<bean id="mysqlDataSource_v1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	<bean id="msgDataSource_v1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<!-- Connection Settings -->
 		<property name="driverClassName" value="${dataSource.driverClassName}" />
 		<property name="defaultAutoCommit" value="${dataSource.defaultAutoCommit}" />
@@ -61,8 +61,8 @@
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource" lazy-init="true">
 		<property name="driverClassName" value="${dataSource.driverClassName}" />
 		<property name="url" value="${dataSource.init.url}" />
-		<property name="username" value="root" />
-		<property name="password" value="mysql_root_password" />
+		<property name="username" value="${dataSource.init.user}" />
+		<property name="password" value="${dataSource.init.pswd}" />
 	</bean>
 	<!-- End of Data Sources -->
 
@@ -74,7 +74,7 @@
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceXmlLocation" value="classpath*:/META-INF/jpa-persistence.xml" />
-	    <property name="dataSource" ref="mysqlDataSource" />
+	    <property name="dataSource" ref="msgDataSource" />
 	    <property name="persistenceUnitName" value="MessageDB" />
 	    <property name="jpaDialect" ref="jpaDialect" />
 	    <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
@@ -96,11 +96,11 @@
 	</bean>
 
 	<!-- Transaction Advice -->
-	<tx:advice id="dsTxAdviceEmailAddr" transaction-manager="mysqlTransactionManager">
+	<tx:advice id="dsTxAdviceEmailAddr" transaction-manager="msgTransactionManager">
 		<!-- the transactional semantics... -->
 		<tx:attributes>
 			<!-- all methods use the default transaction settings (see below) -->
-			<tx:method name="findSertAddress"/>
+			<tx:method name="findSertAddress" no-rollback-for="javax.persistence.NoResultException"/>
 		</tx:attributes>
 	</tx:advice>
 	
@@ -110,13 +110,13 @@
 		<aop:advisor advice-ref="dsTxAdviceEmailAddr" pointcut-ref="emailAddrOperation"/>
 	</aop:config>
 	
-	<tx:advice id="dsTxAdvice" transaction-manager="mysqlTransactionManager">
+	<tx:advice id="dsTxAdvice" transaction-manager="msgTransactionManager">
 		<!-- the transactional semantics... -->
 		<tx:attributes>
 			<!-- all methods starting with 'get' are read-only -->
-			<tx:method name="get*" read-only="true"/>
+			<tx:method name="get*" read-only="true" no-rollback-for="javax.persistence.NoResultException"/>
 			<!-- other methods use the default transaction settings (see below) -->
-			<tx:method name="*"/>
+			<tx:method name="*" no-rollback-for="javax.persistence.NoResultException"/>
 		</tx:attributes>
 	</tx:advice>
 	

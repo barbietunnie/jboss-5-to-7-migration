@@ -1,7 +1,10 @@
-package jpa.service;
+package jpa.util;
+
+import java.sql.SQLException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
@@ -9,17 +12,26 @@ import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import jpa.util.SpringUtil;
-
-/**
- * @deprecated - use injection instead
- */
 public class JpaUtil {
 	static final Logger logger = Logger.getLogger(JpaUtil.class);
 	static boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private static EntityManagerFactory emf;
 	
+	public static String getDBProductName() {
+		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("msgDataSource");
+		try {
+			String prodName = ds.getConnection().getMetaData().getDatabaseProductName();
+			logger.info("Database product name: " + prodName);
+			return prodName;
+		}
+		catch (SQLException e) {}
+		return "UnKnown";
+	}
+
+	/**
+	 * @deprecated - use injection instead
+	 */
 	public static EntityManagerFactory getEntityManagerFactory() {
 		if (emf == null) {
 			emf = SpringUtil.getAppContext().getBean(LocalContainerEntityManagerFactoryBean.class).getObject();
@@ -27,6 +39,9 @@ public class JpaUtil {
 		return emf;
  	}
 	
+	/**
+	 * @deprecated - use injection instead
+	 */
 	public static EntityManager getEntityManager() {
 		EntityManagerFactory factory = getEntityManagerFactory();
 		// Check for EM associated with any currency transaction
@@ -52,6 +67,9 @@ public class JpaUtil {
 		return factory.createEntityManager();
 	}
 
+	/**
+	 * @deprecated - use injection instead
+	 */
 	public static void releaseEntityManager(EntityManager em) {
 		EntityManagerFactory factory = getEntityManagerFactory();
 		try {

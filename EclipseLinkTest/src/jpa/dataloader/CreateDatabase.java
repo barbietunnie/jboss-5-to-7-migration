@@ -154,7 +154,7 @@ public class CreateDatabase {
 	}
 
 	private boolean isEmailDatabaseExist() {
-		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("mysqlDataSource");
+		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("msgDataSource");
 		Connection con = null;
 		try {
 			con = ds.getConnection();

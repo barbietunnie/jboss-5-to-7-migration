@@ -10,7 +10,7 @@ import javax.persistence.NoResultException;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
 import jpa.model.message.MessageStream;
-import jpa.service.message.MessageParser;
+import jpa.service.message.MessageParserBo;
 import jpa.service.message.MessageStreamService;
 import jpa.service.msgin.MessageInboxBo;
 import jpa.util.TestUtil;
@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=false)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=false)
 @Transactional(propagation=Propagation.REQUIRED)
 public class MessageInboxBoTest {
 	final static String LF = System.getProperty("line.separator","\n");
@@ -37,13 +37,13 @@ public class MessageInboxBoTest {
 	@Autowired
 	MessageStreamService streamService;
 	@Autowired
-	MessageParser msgParser;
+	MessageParserBo msgParser;
 	@Autowired
 	MessageInboxBo msgInboxBo;
 	
 	@Test
 	public void testMessageInboxBo() throws MessagingException, IOException {
-		MessageBean msgBean1 = testReadFromDatabase(1);
+		MessageBean msgBean1 = testReadFromDatabase(100);
 		assertNotNull(msgBean1);
 		// parse the message bean to set rule name
 		msgParser.parse(msgBean1);

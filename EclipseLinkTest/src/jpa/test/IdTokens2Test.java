@@ -43,7 +43,7 @@ public class IdTokens2Test {
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setName("idtokens_service");
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
+		txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("msgTransactionManager");
 		status = txmgr.getTransaction(def);
 	}
 

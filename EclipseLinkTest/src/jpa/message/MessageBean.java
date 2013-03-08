@@ -54,7 +54,7 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	private List<MessageNode> attachments; // list of MessageNode
 	// end
 	
-	// to be set by MessageParser.parse()
+	// to be set by MessageParserBo.parse()
 	private String origRcpt, finalRcpt, dsnAction, dsnStatus;
 	private String origSubject, diagnosticCode, rfcMessageId;
 	private String dsnRfc822, dsnText, dsnDlvrStat;

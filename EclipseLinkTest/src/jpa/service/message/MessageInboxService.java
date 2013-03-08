@@ -10,12 +10,14 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
+import jpa.constant.Constants;
 import jpa.model.message.MessageIdDuplicate;
 import jpa.model.message.MessageInbox;
+import jpa.service.EmailAddressService;
 import jpa.service.SenderDataService;
 import jpa.service.SubscriberDataService;
-import jpa.service.EmailAddressService;
 import jpa.service.rule.RuleLogicService;
+import jpa.util.JpaUtil;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -263,7 +265,16 @@ public class MessageInboxService {
 	 * @param smtpMessageId to check.
 	 * @return true if the smtpMessageId exists.
 	 */
-	public boolean isMessageIdDuplicate(String smtpMessageId) {
+	public synchronized boolean isMessageIdDuplicate(String smtpMessageId) {
+		if (Constants.DB_PRODNAME_PSQL.equalsIgnoreCase(JpaUtil.getDBProductName())) {
+			return isMessageIdDuplicateV2(smtpMessageId);
+		}
+		else {
+			return isMessageIdDuplicateV1(smtpMessageId);
+		}
+	}
+	
+	private boolean isMessageIdDuplicateV1(String smtpMessageId) {
 		MessageIdDuplicate mdup = new MessageIdDuplicate();
 		mdup.setMessageId(smtpMessageId);
 		mdup.setAddTime(new java.sql.Timestamp(System.currentTimeMillis()));
@@ -279,7 +290,19 @@ public class MessageInboxService {
 			return true;
 		}
 		finally {
+			em.detach(mdup);
 		}
+	}
+
+	private boolean isMessageIdDuplicateV2(String smtpMessageId) {
+		// PostgreSQL will abort the transaction when a duplicate key error is occurred.
+		// Work around for PostgreSQL:
+		// 1) query the record first
+		// 2) insert a record if not found
+		if (isMessageIdExist(smtpMessageId)) {
+			return true;
+		}
+		return isMessageIdDuplicateV1(smtpMessageId);
 	}
 
 	public boolean isMessageIdExist(String smtpMessageId) {
@@ -309,6 +332,11 @@ public class MessageInboxService {
 		Timestamp go_back=new Timestamp(calendar.getTimeInMillis());
 
 		try {
+			if (Constants.DB_PRODNAME_MYSQL.equalsIgnoreCase(JpaUtil.getDBProductName())
+					|| Constants.DB_PRODNAME_DERBY.equalsIgnoreCase(JpaUtil.getDBProductName())) {
+				em.clear(); // to work around a weird problem (MySQL and Derby) where
+					// the query.executeUpdate() triggers an INSERT from em cache.
+			}
 			Query query = em.createQuery(sql);
 			query.setParameter("addTime", go_back);
 			int rows = query.executeUpdate();
@@ -352,6 +380,9 @@ public class MessageInboxService {
 			}
 		}
 		finally {
+			if ("Apache Derby".equalsIgnoreCase(JpaUtil.getDBProductName())) {
+				em.clear();
+			}
 		}
 	}
 

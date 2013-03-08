@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
@@ -42,6 +43,7 @@ public class MessageRendered extends BaseModel implements Serializable {
 	private List<RenderVariable> renderVariableList;
 
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="renderAttachmentPK.messageRendered", orphanRemoval=true)
+	@OrderBy
 	@CascadeOnDelete
 	private List<RenderAttachment> renderAttachmentList;
 

@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
 public class MsgOutboxBoTest {
 
@@ -86,7 +86,7 @@ public class MsgOutboxBoTest {
 			RenderResponse rsp = renderBo.getRenderedEmail(req);
 			int renderId = service.saveRenderData(rsp);
 			MessageRendered mr2 = renderedService.getByPrimaryKey(renderId);
-			assertTrue(mr2.getSenderDataRowId()==mr.getSenderDataRowId());
+			assertTrue(mr2.getSenderDataRowId().equals(mr.getSenderDataRowId()));
 			assertTrue(mr2.getMessageSourceRowId()==mr.getMessageSourceRowId());
 			assertTrue(mr2.getMessageTemplateRowId()==mr.getMessageTemplateRowId());
 			assertTrue(mr2.getRenderAttachmentList().size()==mr.getRenderAttachmentList().size());

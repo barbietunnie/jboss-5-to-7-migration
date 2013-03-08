@@ -1,6 +1,5 @@
 package jpa.service;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -8,7 +7,13 @@ import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.Query;
-import javax.sql.DataSource;
+
+import jpa.constant.Constants;
+import jpa.constant.StatusId;
+import jpa.model.EmailAddress;
+import jpa.util.EmailAddrUtil;
+import jpa.util.JpaUtil;
+import jpa.util.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -17,13 +22,6 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import jpa.constant.Constants;
-import jpa.constant.StatusId;
-import jpa.model.EmailAddress;
-import jpa.util.EmailAddrUtil;
-import jpa.util.SpringUtil;
-import jpa.util.StringUtil;
 
 @Component("emailAddressService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -154,18 +152,11 @@ public class EmailAddressService {
 	 * 2) find by email user name - '^myname@' or 'noreply@'
 	 */
 	public List<EmailAddress> getByAddressPattern(String addressPattern) {
-		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("mysqlDataSource");
-		String prodName = null;
-		try {
-			prodName = ds.getConnection().getMetaData().getDatabaseProductName();
-			logger.info("Database product name: " + prodName); // returned "MySQL" for MySQL database
-		}
-		catch (SQLException e) {}
 		String sql = "select t.* from Email_Address t where address REGEXP '" + addressPattern + "' ";
-		if ("PostgreSQL".equalsIgnoreCase(prodName)) {
+		if (Constants.DB_PRODNAME_PSQL.equalsIgnoreCase(JpaUtil.getDBProductName())) {
 			sql = "select t.* from Email_Address t where address ~ '" + addressPattern + "' ";
 		}
-		else if ("Apache Derby".equalsIgnoreCase(prodName)) {
+		else if (Constants.DB_PRODNAME_DERBY.equalsIgnoreCase(JpaUtil.getDBProductName())) {
 			String pattern = StringUtils.remove(addressPattern, "^");
 			pattern = StringUtils.remove(pattern, "$");
 			if (addressPattern.startsWith("^")) {

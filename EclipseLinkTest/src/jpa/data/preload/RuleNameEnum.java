@@ -11,7 +11,7 @@ import jpa.constant.RuleType;
 //
 public enum RuleNameEnum {
 	/*
-	 * From MessageParser, when no rules were matched
+	 * From MessageParserBo, when no rules were matched
 	 */
 	GENERIC("Generic", RuleType.SIMPLE, RuleCategory.MAIN_RULE, true, false, "Non bounce or system could not recognize it"), // default rule name for SMTP Email
 	/* 

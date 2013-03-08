@@ -7,7 +7,7 @@ import javax.mail.MessagingException;
 import jpa.constant.CarrierCode;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
-import jpa.service.message.MessageParser;
+import jpa.service.message.MessageParserBo;
 import jpa.util.SpringUtil;
 import jpa.util.TestUtil;
 
@@ -43,7 +43,7 @@ public class MailFileReader {
 	MessageBean start(String filePath, String fileName) throws MessagingException, IOException {
 		MessageBean msgBean = readMessageBean(filePath, fileName);
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
-		MessageParser parser = (MessageParser) SpringUtil.getAppContext().getBean("messageParser");
+		MessageParserBo parser = (MessageParserBo) SpringUtil.getAppContext().getBean("messageParserBo");
 		msgBean.setRuleName(parser.parse(msgBean));
 		// TODO save message
 		return msgBean;

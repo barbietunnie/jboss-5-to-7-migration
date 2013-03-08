@@ -13,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
@@ -102,6 +103,7 @@ public class MessageInbox extends BaseModel implements Serializable {
 	/* end of simplify */
 	
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageHeaderPK.messageInbox", orphanRemoval=true)
+	@OrderBy
 	@CascadeOnDelete
 	private List<MessageHeader> messageHeaderList;
 
@@ -118,6 +120,7 @@ public class MessageInbox extends BaseModel implements Serializable {
 	private List<MessageRfcField> messageRfcFieldList;
 
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageAttachmentPK.messageInbox", orphanRemoval=true)
+	@OrderBy
 	@CascadeOnDelete
 	private List<MessageAttachment> messageAttachmentList;
 
