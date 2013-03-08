@@ -165,7 +165,7 @@ public class MessageInbox extends BaseModel implements Serializable {
 	private Timestamp deliveryTime;
 	@Column(nullable=true, length=255)
 	private String smtpMessageId = null;
-	@Column(nullable=true)
+	@Column(nullable=true, columnDefinition="Integer")
 	private Integer renderId = null; // TODO
 	@Column(nullable=false,columnDefinition="boolean")
 	private boolean isOverrideTestAddr = false;
