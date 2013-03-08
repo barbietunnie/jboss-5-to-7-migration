@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional
 public class RuleMatch2Test {
 	final static String LF = System.getProperty("line.separator", "\n");
@@ -37,7 +37,7 @@ public class RuleMatch2Test {
 	@Resource
 	private RuleLogicService rulesDataService;
 	@Resource
-	private RuleLoader loader;
+	private RuleLoaderBo loader;
 
 	private RuleMatcher matcher;
 	Timestamp updtTime = new Timestamp(new java.util.Date().getTime());

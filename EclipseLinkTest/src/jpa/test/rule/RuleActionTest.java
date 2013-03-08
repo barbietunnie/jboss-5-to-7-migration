@@ -37,7 +37,7 @@ import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
 public class RuleActionTest {
 	static Logger logger = Logger.getLogger(RuleActionTest.class);

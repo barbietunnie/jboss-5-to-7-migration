@@ -32,7 +32,7 @@ import jpa.service.SenderDataService;
 import jpa.service.SubscriberDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.rule.RuleBase;
-import jpa.service.rule.RuleLoader;
+import jpa.service.rule.RuleLoaderBo;
 import jpa.service.rule.RuleMatcher;
 import jpa.util.EmailAddrUtil;
 import jpa.util.SpringUtil;
@@ -46,10 +46,10 @@ import org.springframework.stereotype.Component;
 /**
  * Scan email header and body, and match rules to determine the ruleName.
  */
-@Component("messageParser")
+@Component("messageParserBo")
 @Scope(value="prototype")
-public final class MessageParser {
-	static final Logger logger = Logger.getLogger(MessageParser.class);
+public final class MessageParserBo {
+	static final Logger logger = Logger.getLogger(MessageParserBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private final RfcCodeScan rfcScan;
@@ -60,7 +60,7 @@ public final class MessageParser {
 	static final String LF = System.getProperty("line.separator", "\n");
 
 	@Autowired
-	private RuleLoader ruleLoader;
+	private RuleLoaderBo ruleLoader;
 	@Autowired
 	private EmailAddressService emailAddrDao;
 	@Autowired
@@ -75,7 +75,7 @@ public final class MessageParser {
 	/**
 	 * default constructor
 	 */
-	public MessageParser() throws IOException {
+	public MessageParserBo() throws IOException {
 		rfcScan = RfcCodeScan.getInstance();
 		ruleMatcher = new RuleMatcher();
 	}
@@ -682,8 +682,9 @@ public final class MessageParser {
 
 	public static void main(String[] args) {
 		try {
-			MessageParser parser = (MessageParser) SpringUtil.getAppContext().getBean("messageParser");
+			MessageParserBo parser = (MessageParserBo) SpringUtil.getAppContext().getBean("messageParserBo");
 			MessageBean mBean = new MessageBean();
+			SpringUtil.startTransaction();
 			try {
 				mBean.setFrom(InternetAddress.parse("event.alert@localhost", false));
 				mBean.setTo(InternetAddress.parse("abc@domain.com", false));
@@ -699,6 +700,9 @@ public final class MessageParser {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}
+		finally {
+			SpringUtil.commitTransaction();
 		}
 	}
 }

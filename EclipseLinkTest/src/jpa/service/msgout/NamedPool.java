@@ -29,8 +29,8 @@ import org.apache.log4j.Logger;
  * sub-pool 2 : 60% of the load
  * </pre>
  */
-public final class NamedPools {
-	static final Logger logger = Logger.getLogger(NamedPools.class);
+public final class NamedPool {
+	static final Logger logger = Logger.getLogger(NamedPool.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private final LinkedHashMap<String, ObjectPool> pools;
@@ -46,7 +46,7 @@ public final class NamedPools {
 	/**
 	 * constructor, create a named pool instance
 	 */
-	public NamedPools() {
+	public NamedPool() {
 		pools = new LinkedHashMap<String, ObjectPool>();
 		nameSet = pools.keySet();
 		nameList = new ArrayList<String>(nameSet);
@@ -61,7 +61,7 @@ public final class NamedPools {
 	 * @param objPools -
 	 *            a list of ObjectPool instances
 	 */
-	public NamedPools(List<ObjectPool> objPools) {
+	public NamedPool(List<ObjectPool> objPools) {
 		pools = new LinkedHashMap<String, ObjectPool>();
 		for (Iterator<ObjectPool> it = objPools.iterator(); it.hasNext();) {
 			ObjectPool pool = it.next();
@@ -89,7 +89,7 @@ public final class NamedPools {
 	 */
 	public synchronized Object getConnection(String name) {
 		if (isEmpty()) {
-			throw new IllegalStateException("The NamedPools are empty, either not initialized or have been closed.");
+			throw new IllegalStateException("The NamedPool are empty, either not initialized or have been closed.");
 		}
 		ObjectPool pool = (ObjectPool) pools.get(name);
 		if (pool == null) {
@@ -133,7 +133,7 @@ public final class NamedPools {
 	 */
 	public synchronized Object getConnection() {
 		if (isEmpty()) {
-			throw new IllegalStateException("The NamedPools are empty, either not initialized or have been closed.");
+			throw new IllegalStateException("The NamedPool are empty, either not initialized or have been closed.");
 		}
 		for (int i=0; i<size(); i++) {
 			ObjectPool pool = getNextPool();
@@ -338,7 +338,7 @@ public final class NamedPools {
 		}
 		pools.clear();
 		nameList.clear();
-		logger.info("close() - NamedPools has been closed.");
+		logger.info("close() - NamedPool has been closed.");
 	}
 	
 	public boolean isEmpty() {

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional
 public class RfcCodeScanTest {
 	final static String LF = System.getProperty("line.separator", "\n");

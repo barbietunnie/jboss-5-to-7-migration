@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
 public class UserDataTest {
 
@@ -41,7 +41,7 @@ public class UserDataTest {
 
 	@Test
 	public void userDataService() {
-		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("mysqlDataSource");
+		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("msgDataSource");
 		Connection con = null;
 		try {
 			con = ds.getConnection();

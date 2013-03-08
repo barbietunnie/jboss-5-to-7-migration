@@ -15,7 +15,7 @@ import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
 import jpa.message.MessageNode;
 import jpa.model.message.MessageStream;
-import jpa.service.message.MessageParser;
+import jpa.service.message.MessageParserBo;
 import jpa.service.message.MessageStreamService;
 import jpa.util.EmailAddrUtil;
 import jpa.util.StringUtil;
@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
 public class MessageBeanTest {
 	final static String LF = System.getProperty("line.separator","\n");
@@ -44,7 +44,7 @@ public class MessageBeanTest {
 	@Autowired
 	MessageStreamService streamService;
 	@Autowired
-	MessageParser msgParser;
+	MessageParserBo msgParser;
 	
 	@Test
 	public void testMessageBean() throws MessagingException, IOException {

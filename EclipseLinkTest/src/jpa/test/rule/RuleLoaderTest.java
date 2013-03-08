@@ -2,7 +2,7 @@ package jpa.test.rule;
 
 import javax.annotation.Resource;
 
-import jpa.service.rule.RuleLoader;
+import jpa.service.rule.RuleLoaderBo;
 
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
@@ -15,14 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="mysqlTransactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional
 public class RuleLoaderTest {
 	final static String LF = System.getProperty("line.separator", "\n");
 	static final Logger logger = Logger.getLogger(RuleLoaderTest.class);
 	
 	@Resource
-	private RuleLoader loader;
+	private RuleLoaderBo loader;
 	@BeforeClass
 	public static void RuleLoaderPrepare() {
 	}

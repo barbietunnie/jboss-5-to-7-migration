@@ -36,7 +36,7 @@ import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageDeliveryStatusService;
 import jpa.service.message.MessageInboxService;
-import jpa.service.message.MessageParser;
+import jpa.service.message.MessageParserBo;
 import jpa.service.message.MessageStreamService;
 import jpa.service.msgin.MessageInboxBo;
 import jpa.util.EmailAddrUtil;
@@ -46,9 +46,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * process queue messages handed over by QueueListener.
+ * Base class for sending messages off through SMTP server(s).
  * 
- * @author Administrator
+ * @author Jack Wang
  */
 public abstract class MailSenderBase {
 	protected static final Logger logger = Logger.getLogger(MailSenderBase.class);
@@ -72,7 +72,7 @@ public abstract class MailSenderBase {
 	@Autowired
 	protected SenderDataService senderService;
 	@Autowired
-	private MessageParser parser;
+	private MessageParserBo parser;
 
 	//private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	protected static final String LF = System.getProperty("line.separator", "\n");
@@ -116,7 +116,7 @@ public abstract class MailSenderBase {
 			msgBean.setEmBedEmailId(Boolean.valueOf(senderVo.isEmbedEmailId()));
 		}
 		// save the message to the database
-		msgInboxBo.saveMessage(msgBean);
+		MessageInbox minbox = msgInboxBo.saveMessage(msgBean);
 		// check if VERP is enabled
 		if (senderVo.isVerpEnabled()) {
 			// set return path with VERP, msgBean.msgId must be valued.
@@ -166,19 +166,19 @@ public abstract class MailSenderBase {
 		try {
 			sendMail(mimeMsg, msgBean.isUseSecureServer(), errors);
 			/* Update message delivery status */
-			updateMsgStatus(msgBean);
+			updateMsgStatus(msgBean, minbox);
 		}
 		catch (SendFailedException sfex) {
 			// failed to send the message to certain recipients
 			logger.error("SendFailedException caught: ", sfex);
 			updtDlvrStatAndLoopback(msgBean, sfex, errors);
 			if (errors.containsKey("validSent")) {
-				sendDeliveryReport(msgBean);
+				sendDeliveryReport(msgBean, minbox);
 			}
 		}
 		// save message raw stream to database
 		if (msgBean.getSaveMsgStream()) {
-			saveMsgStream(mimeMsg, msgBean.getMsgId());
+			saveMsgStream(mimeMsg, minbox);
 		}
 	}
 	
@@ -375,18 +375,10 @@ public abstract class MailSenderBase {
 	 * @throws MessagingException
 	 * @throws IOException
 	 */
-	protected void saveMsgStream(javax.mail.Message msg, int msgId) throws MessagingException,
+	protected void saveMsgStream(javax.mail.Message msg, MessageInbox msgInboxVo) throws MessagingException,
 			IOException {
 		if (isDebugEnabled)
-			logger.debug("saveMsgStream() - msgId: " + msgId);
-		MessageInbox msgInboxVo = null;
-		try {
-			msgInboxVo = msgInboxDao.getByPrimaryKey(msgId);
-		}
-		catch (NoResultException e) {
-			logger.error("saveMsgStream() - MsgInbox record not found by MsgId: " + msgId);
-			return;
-		}
+			logger.debug("saveMsgStream() - msgId: " + msgInboxVo.getRowId());
 		MessageStream msgStreamVo = new MessageStream();
 		msgStreamVo.setMessageInbox(msgInboxVo);
 		Address[] fromAddrs = msg.getFrom();
@@ -403,7 +395,8 @@ public abstract class MailSenderBase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		msg.writeTo(baos);
 		msgStreamVo.setMsgStream(baos.toByteArray());
-		msgStreamDao.insert(msgStreamVo);
+		msgInboxVo.setMessageStream(msgStreamVo);
+		msgInboxDao.update(msgInboxVo);
 	}
 	
 	/**
@@ -498,14 +491,14 @@ public abstract class MailSenderBase {
 	 * @return number of email's that were sent
 	 * @throws MessagingException
 	 */
-	public int sendDeliveryReport(MessageBean m) throws MessagingException {
+	public int sendDeliveryReport(MessageBean m, MessageInbox minbox) throws MessagingException {
 		int rspCount = 0;
 		if (CarrierCode.SMTPMAIL.equals(m.getCarrierCode())) {
 			if (m.isInternalOnly()) {
-				rspCount = updateMsgStatus(m);
+				rspCount = updateMsgStatus(m, minbox);
 			}
 			else {
-				rspCount = updateMsgStatus(m);
+				rspCount = updateMsgStatus(m, minbox);
 			}
 		}
 		else {
@@ -522,16 +515,8 @@ public abstract class MailSenderBase {
 	 * @return number records updated
 	 * @throws MessagingException 
 	 */
-	protected int updateMsgStatus(MessageBean msgBean) throws MessagingException {
+	protected int updateMsgStatus(MessageBean msgBean, MessageInbox msgInboxVo) throws MessagingException {
 		// update MsgInbox status (to delivered)
-		MessageInbox msgInboxVo = null;
-		try {
-			msgInboxVo = msgInboxDao.getByPrimaryKey(msgBean.getMsgId());
-		}
-		catch (NoResultException e) {
-			logger.error("updateMsgStatus() - MsgInbox record not found for MsgId: " + msgBean.getMsgId());
-			return 0;
-		}
 		Timestamp ts = new Timestamp(System.currentTimeMillis());
 		msgInboxVo.setStatusId(MsgStatusCode.DELIVERED.getValue());
 		msgInboxVo.setDeliveryTime(ts);
@@ -581,7 +566,7 @@ public abstract class MailSenderBase {
 //			logger.debug("loopbackMail() - The loopback MessageBean:" + LF + "<----" + LF
 //					+ loopBackBean + LF + "---->");
 //		}
-//		// use MessageParser to invoke rule engine
+//		// use MessageParserBo to invoke rule engine
 //		parser.parse(loopBackBean);
 		// send the loop back mail off
 		sendMail(msg, new HashMap<String, Address[]>());

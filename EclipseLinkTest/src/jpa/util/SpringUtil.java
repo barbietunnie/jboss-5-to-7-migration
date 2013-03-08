@@ -52,7 +52,7 @@ public class SpringUtil {
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setName("service_"+ TX_COUNTER.get().incrementAndGet());
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("mysqlTransactionManager");
+		PlatformTransactionManager txmgr = (PlatformTransactionManager) SpringUtil.getAppContext().getBean("msgTransactionManager");
 		TransactionStatus status = txmgr.getTransaction(def);
 		txmgrThreadLocal.set(txmgr);
 		statusThreadLocal.set(status);

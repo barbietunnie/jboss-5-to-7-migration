@@ -35,12 +35,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component("ruleLoader")
+@Component("ruleLoaderBo")
 @Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
-public final class RuleLoader implements java.io.Serializable {
+public final class RuleLoaderBo implements java.io.Serializable {
 	private static final long serialVersionUID = 5251082728950956779L;
-	static final Logger logger = Logger.getLogger(RuleLoader.class);
+	static final Logger logger = Logger.getLogger(RuleLoaderBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	final List<RuleBase>[] mainRules;
@@ -66,7 +66,7 @@ public final class RuleLoader implements java.io.Serializable {
 	final static int INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 	@SuppressWarnings("unchecked")
-	public RuleLoader() {
+	public RuleLoaderBo() {
 		/*
 		 * define place holders for two sets of rules
 		 */
@@ -86,7 +86,7 @@ public final class RuleLoader implements java.io.Serializable {
 	}
 	
 	public static void main(String[] args) {
-		RuleLoader loader = (RuleLoader) SpringUtil.getAppContext().getBean("ruleLoader");
+		RuleLoaderBo loader = (RuleLoaderBo) SpringUtil.getAppContext().getBean("ruleLoaderBo");
 		SpringUtil.startTransaction();
 		try {
 			loader.loadRules();
@@ -298,7 +298,7 @@ public final class RuleLoader implements java.io.Serializable {
 		while (it.hasNext()) {
 			RuleBase r = it.next();
 			String ruleName = StringUtils.rightPad(r.getRuleName(), 28, " ");
-			prt.print("RuleLoader.1 - " + ruleLit + ": " + ruleName);
+			prt.print("RuleLoaderBo.1 - " + ruleLit + ": " + ruleName);
 			if (isPrintRuleContents) {
 				prt.print(r.getRuleContent());
 				prt.println();
@@ -315,7 +315,7 @@ public final class RuleLoader implements java.io.Serializable {
 			if (obj instanceof RuleBase) {
 				RuleBase r = (RuleBase) obj;
 				String ruleName = StringUtils.rightPad(r.getRuleName(), 28, " ");
-				prt.println("RuleLoader.2 - " + ruleLit + ": " + ruleName);
+				prt.println("RuleLoaderBo.2 - " + ruleLit + ": " + ruleName);
 				if (isPrintRuleContents) {
 					prt.print(r.getRuleContent());
 					prt.println();
@@ -324,7 +324,7 @@ public final class RuleLoader implements java.io.Serializable {
  			}
 			else {
 				String ruleName = (String) obj;
-				prt.println("RuleLoader.3 - " + ruleLit + ": " + ruleName);
+				prt.println("RuleLoaderBo.3 - " + ruleLit + ": " + ruleName);
 			}
 		}
 	}

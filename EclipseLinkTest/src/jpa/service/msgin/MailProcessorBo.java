@@ -16,7 +16,7 @@ import jpa.message.MessageBeanBuilder;
 import jpa.message.MessageContext;
 import jpa.model.MailInbox;
 import jpa.service.message.MessageInboxService;
-import jpa.service.message.MessageParser;
+import jpa.service.message.MessageParserBo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -29,11 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * process email's handed over by MailReader class.
  */
-@Component("mailProcessor")
+@Component("mailProcessorBo")
 @Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MailProcessor {
-	static final Logger logger = Logger.getLogger(MailProcessor.class);
+public class MailProcessorBo {
+	static final Logger logger = Logger.getLogger(MailProcessorBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	static Logger duplicateReport = Logger.getLogger("jpa.message.report.duplicate");
 
@@ -48,11 +48,11 @@ public class MailProcessor {
 	@Autowired
 	private MessageInboxBo messageInboxBo;
 	@Autowired
-	MessageParser msgParser;
+	MessageParserBo msgParser;
 	
 	private MailInbox mInbox;
 	
-	public MailProcessor() {}
+	public MailProcessorBo() {}
 
 	/**
 	 * process request
@@ -179,7 +179,7 @@ public class MailProcessor {
 			}
 			else { // persist to database
 				msgBean.setRuleName(msgParser.parse(msgBean));
-				int msgId = messageInboxBo.saveMessage(msgBean);
+				int msgId = messageInboxBo.saveMessage(msgBean).getRowId();
 				logger.info("MessageBean saved to database, MessageInbox RowId: " + msgId);
 			}
 		}

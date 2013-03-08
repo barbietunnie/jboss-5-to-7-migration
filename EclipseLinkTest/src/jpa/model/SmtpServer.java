@@ -3,14 +3,13 @@ package jpa.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="smtp_server", uniqueConstraints=@UniqueConstraint(columnNames = {"serverName"}))
+@Table(name="smtp_server")
 public class SmtpServer extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -5853276462328429525L;
 
-	@Column(nullable=true, length=50)
+	@Column(nullable=true, length=50, unique=true)
 	private String serverName = null;
 	@Column(nullable=false, length=100)
 	private String smtpHostName = "";

@@ -74,6 +74,29 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 
 	private long start_idling = 0;
 
+	public static void main(String[] args) {
+		MailInboxService mailBoxDao = (MailInboxService) SpringUtil.getAppContext().getBean("mailInboxService");
+		MailInboxPK pk = new MailInboxPK("testto", "localhost");
+		try {
+			MailInbox vo = mailBoxDao.getByPrimaryKey(pk);
+			vo.setFromTimer(true);
+			MailReaderBo reader = new MailReaderBo(vo);
+			//Thread thread = new Thread(reader);
+			try {
+				//thread.start();
+				//thread.join();
+				reader.readMail(vo.isFromTimer());
+			}
+			catch (Exception e) {
+				logger.error("Exception caught", e);
+			}
+		}
+		catch (NoResultException e) {}
+		finally {
+		}
+		System.exit(0);
+	}
+
 	/**
 	 * create a MailReaderBo instance
 	 * 
@@ -181,28 +204,6 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 		session.setDebug(false); //true); // DON'T CHANGE THIS
 	}
 	
-	public static void main(String[] args) {
-		MailInboxService mailBoxDao = (MailInboxService) SpringUtil.getAppContext().getBean("mailInboxService");
-		MailInboxPK pk = new MailInboxPK("testto", "localhost");
-		try {
-			MailInbox vo = mailBoxDao.getByPrimaryKey(pk);
-			vo.setFromTimer(true);
-			MailReaderBo reader = new MailReaderBo(vo);
-			//Thread thread = new Thread(reader);
-			try {
-				//thread.start();
-				//thread.join();
-				reader.readMail(vo.isFromTimer());
-			}
-			catch (Exception e) {
-				logger.error("Exception caught", e);
-			}
-		}
-		catch (NoResultException e) {}
-		finally {
-		}
-		System.exit(0);
-	}
 
 	/**
 	 * run the MailReader, invoke Application plug-in to process e-mails.
@@ -294,6 +295,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	private void pop3(boolean isFromTimer) throws MessagingException, IOException {
 		final String _user = mInbox.getMailInboxPK().getUserId();
 		final String _host = mInbox.getMailInboxPK().getHostName();
+		final String mailbox = _user + "@" + _host;
 		final String _folder = mInbox.getFolderName();
 		boolean keepRunning = true;
 		int retries = 0;
@@ -316,7 +318,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 				break;
 			}
 			catch (MessagingException e) {
-				logger.error("Failed to open folder " + _user + "@" + _host + ":" + _folder);
+				logger.error("Failed to open folder " + mailbox + ":" + _folder);
 				logger.error("MessagingException caught", e);
 				if (retries++ < RETRY_MAX || RETRY_MAX < 0) {
 					// wait for a while and try to reopen the folder
@@ -339,20 +341,18 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 					continue;
 				}
 				else {
-					logger.fatal("All retries failed for " + _user + "@" + _host + ":" + _folder);
+					logger.fatal("All retries failed for " + mailbox + ":" + _folder);
 					throw e;
 				}
 			}
 			if (retries > 0) {
-				logger.error("Opened " + _user + "@" + _host + ":" + _folder + " after " + retries
-						+ " retries");
+				logger.error("Opened " + mailbox + ":" + _folder + " after " + retries + " retries");
 				retries = 0; // reset retry counter
 			}
 			Date start_tms = new Date();
 			int msgCount = 0;
 			if ((msgCount = folder.getMessageCount()) > 0) {
-				logger.info(mInbox.getMailInboxPK().getUserId() + "'s " + _folder + " has " + msgCount
-						+ " messages.");
+				logger.info(_user + "'s " + _folder + " has " + msgCount + " messages.");
 				// "readPerPass" is used so the flagged messages will be
 				// purged more often
 				int msgsToRead = Math.min(msgCount, readPerPass);
@@ -386,11 +386,12 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 				}
 				execute(msgs); // process the messages
 				folder.close(true); // "true" to delete the flagged messages
-				logger.info(msgs.length + " messages have been purged from pop3 mailbox.");
+				logger.info(msgs.length + " messages have been purged from pop3 mailbox: " + mailbox);
 				messagesProcessed += msgs.length;
 				long proc_time = System.currentTimeMillis() - start_tms.getTime();
-				if (isDebugEnabled)
-					logger.debug(msgs.length+ " messages processed, time taken: " + proc_time);
+				if (isDebugEnabled) {
+					logger.debug(msgs.length+ " messages processed, time taken: " + proc_time + ", mailbox: " + mailbox);
+				} 
 				if (MESSAGE_COUNT > 0 && messagesProcessed > MESSAGE_COUNT) {
 					keepRunning = false;
 				}
@@ -495,8 +496,8 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	}
 	
 	/**
-	 * process e-mails using MailProcessor, and the results will be sent to
-	 * ruleEngineInput queue by the MailProcessor.
+	 * process e-mails using MailProcessorBo, and the results will be sent to
+	 * ruleEngineInput queue by the MailProcessorBo.
 	 * 
 	 * @param msgs -
 	 *            messages to be processed.
@@ -508,7 +509,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 		if (msgs == null || msgs.length == 0) return;
 		SpringUtil.startTransaction();
 		try {
-			MailProcessor processor = (MailProcessor) SpringUtil.getAppContext().getBean("mailProcessor");
+			MailProcessorBo processor = (MailProcessorBo) SpringUtil.getAppContext().getBean("mailProcessorBo");
 			MessageContext ctx = new MessageContext(msgs, mInbox);
 			processor.process(ctx);
 			SpringUtil.commitTransaction();

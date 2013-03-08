@@ -22,9 +22,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * process queue messages handed over by QueueListener
+ * Class to send the email off.
  * 
- * @author Administrator
+ * @author Jack Wang
  */
 @Component("mailSenderBo")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -35,7 +35,7 @@ public class MailSenderBo extends MailSenderBase {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	/**
-	 * must use constructor without any parameters
+	 * must be a no-argument constructor.
 	 */
 	public MailSenderBo() {
 		super();
@@ -64,8 +64,8 @@ public class MailSenderBo extends MailSenderBase {
 	}
 
 	/**
-	 * process request. Either a ObjectMessage contains a MessageBean or a
-	 * BytesMessage contains a SMTP raw stream.
+	 * Process the request. The message context should contain an email
+	 * message represented by either a MessageBean or a ByteStream.
 	 * 
 	 * @param req - a message bean or a message stream
 	 * @throws IOException 
@@ -133,6 +133,9 @@ public class MailSenderBo extends MailSenderBase {
 			SpringUtil.rollbackTransaction();
 			throw se;
 		}
+		finally {
+			SpringUtil.clearTransaction();
+		}
 	}
 
 	/**
@@ -150,8 +153,8 @@ public class MailSenderBo extends MailSenderBase {
 	 */
 	public void sendMail(javax.mail.Message msg, boolean isSecure, Map<String, Address[]> errors)
 			throws MessagingException, IOException, SmtpException {
-		NamedPools smtp = SmtpWrapperUtil.getSmtpNamedPools();
-		NamedPools secu = SmtpWrapperUtil.getSecuNamedPools();
+		NamedPool smtp = SmtpWrapperUtil.getSmtpNamedPool();
+		NamedPool secu = SmtpWrapperUtil.getSecuNamedPool();
 		/* Send Message */
 		SmtpConnection smtp_conn = null;
 		if (isSecure && !secu.isEmpty() || smtp.isEmpty()) {
@@ -189,9 +192,9 @@ public class MailSenderBo extends MailSenderBase {
 	 */
 	public void sendMail(javax.mail.Message msg, Map<String, Address[]> errors)
 			throws MessagingException, SmtpException {
-		NamedPools smtp = SmtpWrapperUtil.getSmtpNamedPools();
+		NamedPool smtp = SmtpWrapperUtil.getSmtpNamedPool();
 		if (smtp.isEmpty()) {
-			smtp = SmtpWrapperUtil.getSecuNamedPools();
+			smtp = SmtpWrapperUtil.getSecuNamedPool();
 		}
 		SmtpConnection smtp_conn = null;
 		try {

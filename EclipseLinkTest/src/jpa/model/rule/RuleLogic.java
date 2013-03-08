@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
@@ -38,6 +39,7 @@ public class RuleLogic extends BaseModel implements Serializable {
 	public static final String MAPPING_RULE_LOGIC_WITH_COUNT = "RuleLogictWithCount";
 
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ruleElementPK.ruleLogic", orphanRemoval=true)
+	@OrderBy
 	private List<RuleElement> ruleElements;
 	
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ruleSubruleMapPK.ruleLogic", orphanRemoval=true)

@@ -22,7 +22,7 @@ import org.htmlparser.util.ParserException;
 /**
  * provide method for constructing reply email message.
  * 
- * @author Administrator
+ * @author Jack Wang
  */
 public class MailReaderReply {
 	static final Logger logger = Logger.getLogger(MailReaderReply.class);

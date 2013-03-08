@@ -9,11 +9,11 @@ import jpa.util.SpringUtil;
 public class SmtpWrapperUtil {
 	private static SmtpServerService smtpServerDao = null;
 	private static java.util.Date lastGetTime = new java.util.Date();
-	private static NamedPools smtpPools = null;
-	private static NamedPools secuPools = null;
+	private static NamedPool smtpPools = null;
+	private static NamedPool secuPools = null;
 	
 	public static void main(String[] args) {
-		NamedPools pools = getSmtpNamedPools();
+		NamedPool pools = getSmtpNamedPool();
 		for (String name :pools.getNames()) {
 			System.out.println("Pool name: " + name);
 		}
@@ -40,17 +40,17 @@ public class SmtpWrapperUtil {
 		System.exit(0);
 	}
 
-	public synchronized static NamedPools getSmtpNamedPools() {
-		refreshPools();
+	public synchronized static NamedPool getSmtpNamedPool() {
+		refreshPool();
 		return smtpPools;
 	}
 	
-	public synchronized static NamedPools getSecuNamedPools() {
-		refreshPools();
+	public synchronized static NamedPool getSecuNamedPool() {
+		refreshPool();
 		return secuPools;
 	}
 
-	public synchronized static void clearSmtpNamedPools() {
+	public synchronized static void clearSmtpNamedPool() {
 		if (smtpPools != null) {
 			if (!smtpPools.isEmpty())
 				smtpPools.close();
@@ -58,7 +58,7 @@ public class SmtpWrapperUtil {
 		}
 	}
 
-	public synchronized static void clearSecuNamedPools() {
+	public synchronized static void clearSecuNamedPool() {
 		if (secuPools != null) {
 			if (!secuPools.isEmpty())
 				secuPools.close();
@@ -66,16 +66,16 @@ public class SmtpWrapperUtil {
 		}
 	}
 
-	private static void refreshPools() {
+	private static void refreshPool() {
 		java.util.Date currTime = new java.util.Date();
 		if (smtpPools == null || secuPools == null || (smtpPools.isEmpty() && secuPools.isEmpty())
 				|| (currTime.getTime() - lastGetTime.getTime()) > (15 * 60 * 1000)) {
-			clearSmtpNamedPools();
-			clearSecuNamedPools();
+			clearSmtpNamedPool();
+			clearSecuNamedPool();
 			List<SmtpServer> smtpConnVos = getSmtpServers(false);
-			smtpPools =getNamedPools(smtpConnVos);
+			smtpPools =getNamedPool(smtpConnVos);
 			List<SmtpServer> secuConnVos = getSmtpServers(true);
-			secuPools =getNamedPools(secuConnVos);
+			secuPools =getNamedPool(secuConnVos);
 			lastGetTime = currTime;
 		}
 	}
@@ -83,14 +83,14 @@ public class SmtpWrapperUtil {
 	/*
 	 * returns a list of named pools or an empty list
 	 */
-	private static NamedPools getNamedPools(List<SmtpServer> smtpConnVos) {
+	private static NamedPool getNamedPool(List<SmtpServer> smtpConnVos) {
 		List<ObjectPool> objPools = new ArrayList<ObjectPool>();
 		for (int i = 0; i < smtpConnVos.size(); i++) {
 			SmtpServer smtpConnVo = smtpConnVos.get(i);
 			ObjectPool smtpPool = new ObjectPool(smtpConnVo);
 			objPools.add(smtpPool);
 		}
-		NamedPools pools = new NamedPools(objPools);
+		NamedPool pools = new NamedPool(objPools);
 		return pools;
 	}
 

@@ -47,7 +47,8 @@ public class RuleLogicService {
 
 	public List<RuleLogic> getAll(boolean builtinRules) {
 		String sql = 
-				"select r from RuleLogic r where r.isBuiltinRule=:builtinRules ";
+				"select r from RuleLogic r where r.isBuiltinRule=:builtinRules " +
+				" order by r.rowId";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("builtinRules", builtinRules);
@@ -61,7 +62,8 @@ public class RuleLogicService {
 	
 	public List<RuleLogic> getActiveRules() throws NoResultException {
 		String sql = 
-				"select r from RuleLogic r where r.statusId=:statusId and r.startTime<=:startTime ";
+				"select r from RuleLogic r where r.statusId=:statusId and r.startTime<=:startTime " +
+				" order by r.rowId";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("statusId", StatusId.ACTIVE.getValue());
