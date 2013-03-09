@@ -1,4 +1,4 @@
-package jpa.service.message;
+package jpa.service.msgin;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -31,6 +31,7 @@ import jpa.model.message.MessageInbox;
 import jpa.service.SenderDataService;
 import jpa.service.SubscriberDataService;
 import jpa.service.EmailAddressService;
+import jpa.service.message.MessageInboxService;
 import jpa.service.rule.RuleBase;
 import jpa.service.rule.RuleLoaderBo;
 import jpa.service.rule.RuleMatcher;

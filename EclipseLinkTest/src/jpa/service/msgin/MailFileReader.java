@@ -7,7 +7,6 @@ import javax.mail.MessagingException;
 import jpa.constant.CarrierCode;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
-import jpa.service.message.MessageParserBo;
 import jpa.util.SpringUtil;
 import jpa.util.TestUtil;
 

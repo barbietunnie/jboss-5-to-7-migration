@@ -10,9 +10,9 @@ import javax.persistence.NoResultException;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
 import jpa.model.message.MessageStream;
-import jpa.service.message.MessageParserBo;
 import jpa.service.message.MessageStreamService;
 import jpa.service.msgin.MessageInboxBo;
+import jpa.service.msgin.MessageParserBo;
 import jpa.util.TestUtil;
 
 import org.apache.log4j.Logger;

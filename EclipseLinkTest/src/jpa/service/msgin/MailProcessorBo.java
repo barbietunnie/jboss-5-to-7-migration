@@ -16,7 +16,6 @@ import jpa.message.MessageBeanBuilder;
 import jpa.message.MessageContext;
 import jpa.model.MailInbox;
 import jpa.service.message.MessageInboxService;
-import jpa.service.message.MessageParserBo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
