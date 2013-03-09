@@ -1,4 +1,4 @@
-package jpa.service.message;
+package jpa.service.msgin;
 
 import static org.junit.Assert.*;
 import jpa.data.preload.RuleNameEnum;

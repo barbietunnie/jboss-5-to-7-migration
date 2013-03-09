@@ -36,9 +36,9 @@ import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageDeliveryStatusService;
 import jpa.service.message.MessageInboxService;
-import jpa.service.message.MessageParserBo;
 import jpa.service.message.MessageStreamService;
 import jpa.service.msgin.MessageInboxBo;
+import jpa.service.msgin.MessageParserBo;
 import jpa.util.EmailAddrUtil;
 
 import org.apache.commons.lang3.StringUtils;

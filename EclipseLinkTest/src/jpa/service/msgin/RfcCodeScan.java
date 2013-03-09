@@ -1,4 +1,4 @@
-package jpa.service.message;
+package jpa.service.msgin;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
