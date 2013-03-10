@@ -47,6 +47,36 @@ public class SubscriptionService {
 		}
 	}
 	
+	public List<Subscription> getByListIdSubscribersOnly(String listId) {
+		try {
+			Query query = em.createQuery("select t from Subscription t, MailingList l, " +
+					" SubscriberData sub, EmailAddress ea " +
+					" where l=t.mailingList and l.listId = :listId " +
+					" and ea=t.emailAddr and sub=ea.subscriberData and sub is not null");
+			query.setParameter("listId", listId);
+			@SuppressWarnings("unchecked")
+			List<Subscription> list = query.getResultList();
+			return list;
+		}
+		finally {
+		}
+	}
+	
+	public List<Subscription> getByListIdProsperctsOnly(String listId) {
+		try {
+			Query query = em.createQuery("select t from Subscription t, MailingList l, " +
+					" SubscriberData sub, EmailAddress ea " +
+					" where l=t.mailingList and l.listId = :listId " +
+					" and ea=t.emailAddr and sub=ea.subscriberData and sub is null"); // TODO
+			query.setParameter("listId", listId);
+			@SuppressWarnings("unchecked")
+			List<Subscription> list = query.getResultList();
+			return list;
+		}
+		finally {
+		}
+	}
+	
 	public List<Subscription> getByAddress(String address) {
 		try {
 			Query query = em.createQuery("select t from Subscription t, EmailAddress e " +
@@ -337,5 +367,26 @@ public class SubscriptionService {
 		finally {
 		}
 	}
+
+	public int updateSentCount(int rowId) {
+		return updateSentCount(rowId, 1);
+	}
+
+	public int updateSentCount(int rowId, int mailsSent) {
+		String sql = 
+				"update Subscription t " +
+				" set t.sentCount = (t.sentCount + :mailsSent) " +
+				"where t.rowId=:rowId";
+		try {
+			Query query = em.createQuery(sql);
+			query.setParameter("mailsSent", mailsSent);
+			query.setParameter("rowId", rowId);
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
+
 
 }

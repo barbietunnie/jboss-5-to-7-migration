@@ -196,7 +196,7 @@ public final class Renderer implements java.io.Serializable {
 	 * Curly braces are encoded in URL as "%7B" and "%7D". This method convert
 	 * them back to "{" and "}".
 	 */
-	private String convertUrlBraces(String text) {
+	static String convertUrlBraces(String text) {
 		//Sample input: "Web Beacon<img src='http://localhost/es/wsmopen.php?msgid=$%7BBroadcastMsgId%7D&amp;listid=$%7BListId%7D' width='1' height='1' alt=''>"
 		String regex = "\\$\\%7B(.{1," + VARIABLE_NAME_LENGTH + "}?)\\%7D";
 		Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);

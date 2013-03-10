@@ -20,6 +20,7 @@ import javax.persistence.NoResultException;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.CodeType;
+import jpa.constant.Constants;
 import jpa.constant.EmailAddrType;
 import jpa.constant.VariableName;
 import jpa.constant.VariableType;
@@ -29,16 +30,19 @@ import jpa.exception.TemplateException;
 import jpa.message.BodypartBean;
 import jpa.message.MessageBean;
 import jpa.message.MsgHeader;
-import jpa.model.SenderVariable;
 import jpa.model.GlobalVariable;
+import jpa.model.SenderData;
+import jpa.model.SenderVariable;
 import jpa.model.message.MessageRendered;
 import jpa.model.message.MessageSource;
 import jpa.model.message.RenderVariable;
 import jpa.model.message.TemplateData;
+import jpa.model.message.TemplateDataPK;
 import jpa.model.message.TemplateVariable;
-import jpa.service.SenderVariableService;
 import jpa.service.EmailAddressService;
 import jpa.service.GlobalVariableService;
+import jpa.service.SenderDataService;
+import jpa.service.SenderVariableService;
 import jpa.service.message.MessageRenderedService;
 import jpa.service.message.MessageSourceService;
 import jpa.service.message.TemplateDataService;
@@ -76,6 +80,8 @@ public class RenderBo {
 	private TemplateVariableService templateVariableDao;
 	@Autowired
 	private EmailAddressService emailAddrDao;
+	@Autowired
+	private SenderDataService senderService;
 	
 	public static void main(String[] args) {
 		RenderBo bo = (RenderBo) SpringUtil.getAppContext().getBean("renderBo");
@@ -628,6 +634,169 @@ public class RenderBo {
 			ht.put(req.getRenderVariablePK().getVariableName(), r);
 		}
 		return ht;
+	}
+	
+	
+	/**
+	 * render a template by templateId and senderId.
+	 * 
+	 * @param templateId -
+	 *            template id
+	 * @param senderId -
+	 *            sender id
+	 * @param variables -
+	 *            variables
+	 * @return rendered text
+	 * @throws DataValidationException
+	 * @throws ParseException
+	 * @throws TemplateException 
+	 */
+	public String renderTemplateById(String templateId, String senderId,
+			Map<String, RenderVariableVo> variables) throws DataValidationException,
+			ParseException, TemplateException {
+		if (StringUtils.isBlank(senderId)) {
+			senderId = Constants.DEFAULT_SENDER_ID;
+		}
+		SenderData sender = senderService.getBySenderId(senderId);
+		Timestamp startTime = new Timestamp(System.currentTimeMillis());
+		TemplateDataPK pk = new TemplateDataPK(sender,templateId,startTime);
+		TemplateData tmpltVo = null;
+		try {
+			tmpltVo = templateDao.getByBestMatch(pk);
+		}
+		catch (NoResultException e) {
+			throw new DataValidationException("TemplateData not found by: " + templateId + "/"
+					+ senderId + "/" + startTime);
+		}
+		if (isDebugEnabled) {
+			logger.debug("Template to render:" + LF + tmpltVo.getBodyTemplate());
+		}
+		
+		HashMap<String, RenderVariableVo> map = new HashMap<String, RenderVariableVo>();
+
+		List<TemplateVariable> tmpltList = templateVariableDao.getByVariableId(templateId);
+		for (Iterator<TemplateVariable> it = tmpltList.iterator(); it.hasNext();) {
+			TemplateVariable vo = it.next();
+			RenderVariableVo var = new RenderVariableVo(
+					vo.getTemplateVariablePK().getVariableName(),
+					vo.getVariableValue(),
+					vo.getVariableFormat(),
+					VariableType.getByValue(vo.getVariableType()),
+					vo.getAllowOverride(),
+					vo.isRequired());
+			if (map.containsKey(vo.getTemplateVariablePK().getVariableName())) {
+				RenderVariableVo v2 = map.get(vo.getTemplateVariablePK().getVariableName());
+				if (CodeType.YES_CODE.getValue().equalsIgnoreCase(v2.getAllowOverride())) {
+					map.put(vo.getTemplateVariablePK().getVariableName(), var);
+				}
+			}
+			else {
+				map.put(vo.getTemplateVariablePK().getVariableName(), var);
+			}
+		}
+		
+		if (variables != null) {
+			Set<String> keys = variables.keySet();
+			for (Iterator<String> it=keys.iterator(); it.hasNext(); ) {
+				String key = it.next();
+				if (map.containsKey(key)) {
+					RenderVariableVo v2 = map.get(key);
+					if (CodeType.YES_CODE.getValue().equalsIgnoreCase(v2.getAllowOverride())) {
+						map.put(key, variables.get(key));
+					}
+				}
+				else {
+					map.put(key, variables.get(key));
+				}
+			}
+		}
+		
+		String text = renderTemplateText(tmpltVo.getBodyTemplate(), senderId, map);
+		return text;
+	}
+
+	/**
+	 * render a template by template text and client id.
+	 * 
+	 * @param templateText -
+	 *            template text
+	 * @param senderId -
+	 *            client id
+	 * @param variables -
+	 *            variables
+	 * @return rendered text
+	 * @throws DataValidationException
+	 * @throws ParseException
+	 * @throws TemplateException 
+	 */
+	public String renderTemplateText(String templateText, String senderId,
+			Map<String, RenderVariableVo> variables) throws
+			ParseException, TemplateException {
+		if (templateText == null || templateText.trim().length() == 0) {
+			return templateText;
+		}
+		if (StringUtils.isBlank(senderId)) {
+			senderId = Constants.DEFAULT_SENDER_ID;
+		}
+		
+		Map<String, RenderVariableVo> map = new HashMap<String, RenderVariableVo>();
+
+		List<GlobalVariable> globalList = globalVariableDao.getCurrent();
+		for (Iterator<GlobalVariable> it = globalList.iterator(); it.hasNext();) {
+			GlobalVariable vo = it.next();
+			RenderVariableVo var = new RenderVariableVo(
+					vo.getGlobalVariablePK().getVariableName(),
+					vo.getVariableValue(),
+					vo.getVariableFormat(),
+					VariableType.getByValue(vo.getVariableType()),
+					vo.getAllowOverride(),
+					vo.isRequired());
+			map.put(vo.getGlobalVariablePK().getVariableName(), var);
+		}
+
+		List<SenderVariable> clientList = null;
+		if (senderId != null) {
+			clientList = senderVariableDao.getCurrentBySenderId(senderId);
+			for (Iterator<SenderVariable> it = clientList.iterator(); it.hasNext();) {
+				SenderVariable vo = it.next();
+				RenderVariableVo var = new RenderVariableVo(
+						vo.getSenderVariablePK().getVariableName(),
+						vo.getVariableValue(),
+						vo.getVariableFormat(),
+						VariableType.getByValue(vo.getVariableType()),
+						vo.getAllowOverride(),
+						vo.isRequired());
+				if (map.containsKey(vo.getSenderVariablePK().getVariableName())) {
+					RenderVariableVo v2 = map.get(vo.getSenderVariablePK().getVariableName());
+					if (CodeType.YES_CODE.getValue().equalsIgnoreCase(v2.getAllowOverride())) {
+						map.put(vo.getSenderVariablePK().getVariableName(), var);
+					}
+				}
+				else {
+					map.put(vo.getSenderVariablePK().getVariableName(), var);
+				}
+			}
+		}
+
+		if (variables != null) {
+			Set<String> keys = variables.keySet();
+			for (Iterator<String> it=keys.iterator(); it.hasNext(); ) {
+				String key = it.next();
+				if (map.containsKey(key)) {
+					RenderVariableVo v2 = map.get(key);
+					if (CodeType.YES_CODE.getValue().equalsIgnoreCase(v2.getAllowOverride())) {
+						map.put(key, variables.get(key));
+					}
+				}
+				else {
+					map.put(key, variables.get(key));
+				}
+			}
+		}
+		
+		Map<String, ErrorVariableVo> errors = new HashMap<String, ErrorVariableVo>();
+		String text = Renderer.getInstance().render(templateText, map, errors);
+		return text;
 	}
 	
 }

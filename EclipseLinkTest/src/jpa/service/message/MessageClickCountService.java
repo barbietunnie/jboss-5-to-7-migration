@@ -100,6 +100,41 @@ public class MessageClickCountService {
 		}
 	}
 
+	public int updateStartTime(int msgId) {
+		String sql = 
+				"update MessageClickCount t " +
+				" set t.startTime = CURRENT_TIMESTAMP " +
+				" where t.messageInbox.rowId=:msgId ";
+		try {
+			Query query = em.createQuery(sql);
+			query.setParameter("msgId", msgId);
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
+
+	public int updateSentCount(int msgId) {
+		return updateSentCount(msgId, 1);
+	}
+
+	public int updateSentCount(int msgId, int mailsSent) {
+		String sql = 
+				"update MessageClickCount t " +
+				" set t.sentCount = (t.sentCount + :mailsSent) " +
+				" where t.messageInbox.rowId=:msgId ";
+		try {
+			Query query = em.createQuery(sql);
+			query.setParameter("mailsSent", mailsSent);
+			query.setParameter("msgId", msgId);
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
+
 	public void insert(MessageClickCount clickCount) {
 		try {
 			em.persist(clickCount);

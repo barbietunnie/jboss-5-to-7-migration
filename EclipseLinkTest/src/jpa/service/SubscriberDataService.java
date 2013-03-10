@@ -32,7 +32,8 @@ public class SubscriberDataService {
 
 	public SubscriberData getBySubscriberId(String subscriberId) throws NoResultException {
 		try {
-			Query query = em.createQuery("select t from SubscriberData t where t.subscriberId = :subscriberId");
+			Query query = em.createQuery("select t from SubscriberData t where " +
+					" t.subscriberId = :subscriberId");
 			query.setParameter("subscriberId", subscriberId);
 			SubscriberData subscriber = (SubscriberData) query.getSingleResult();
 			em.lock(subscriber, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
@@ -46,6 +47,19 @@ public class SubscriberDataService {
 		try {
 			Query query = em.createQuery("select t from SubscriberData t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
+			SubscriberData subscriber = (SubscriberData) query.getSingleResult();
+			em.lock(subscriber, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			return subscriber;
+		}
+		finally {
+		}
+	}
+	
+	public SubscriberData getByEmailAddress(String address) throws NoResultException {
+		try {
+			Query query = em.createQuery("select t from SubscriberData t, EmailAddress ea where " +
+					" ea=t.emailAddr and ea.address = :address");
+			query.setParameter("address", address);
 			SubscriberData subscriber = (SubscriberData) query.getSingleResult();
 			em.lock(subscriber, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 			return subscriber;

@@ -106,63 +106,65 @@ public class MessageClickCountTest {
 		mlist=mlists.get(0);
 	}
 	
-	private MessageClickCount adr1;
-	private MessageClickCount adr2;
+	private MessageClickCount mcc1;
+	private MessageClickCount mcc2;
 
 	@Test
 	public void messageClickCountService() throws IOException {
 		insertMsgClickCounts();
-		MessageClickCount adr11 = service.getByRowId(adr1.getRowId());
+		MessageClickCount mcc11 = service.getByRowId(mcc1.getRowId());
 		
-		System.out.println(StringUtil.prettyPrint(adr11,2));
+		System.out.println(StringUtil.prettyPrint(mcc11,2));
 		
-		MessageClickCount adr12 = service.getByMsgInboxId(inbox1.getRowId());
-		assertTrue(adr11.equals(adr12));
+		MessageClickCount mcc12 = service.getByMsgInboxId(inbox1.getRowId());
+		assertTrue(mcc11.equals(mcc12));
 		
 		// test update
-		adr2.setUpdtUserId("jpa test");
-		service.update(adr2);
-		MessageClickCount adr22 = service.getByRowId(adr2.getRowId());
-		assertTrue("jpa test".equals(adr22.getUpdtUserId()));
+		mcc2.setUpdtUserId("jpa test");
+		service.update(mcc2);
+		MessageClickCount mcc22 = service.getByRowId(mcc2.getRowId());
+		assertTrue("jpa test".equals(mcc22.getUpdtUserId()));
+		assertTrue(1==service.updateStartTime(mcc11.getMessageInbox().getRowId()));
+		assertTrue(1==service.updateSentCount(mcc11.getMessageInbox().getRowId()));
 		
 		// test delete
-		service.delete(adr11);
+		service.delete(mcc11);
 		try {
-			service.getByRowId(adr11.getRowId());
+			service.getByRowId(mcc11.getRowId());
 			fail();
 		}
 		catch (NoResultException e) {}
 		
-		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
+		assertTrue(1==service.deleteByRowId(mcc2.getRowId()));
 		
 		insertMsgClickCounts();
-		assertTrue(1==service.deleteByRowId(adr2.getRowId()));
+		assertTrue(1==service.deleteByRowId(mcc2.getRowId()));
 		assertTrue(1==service.deleteByMsgInboxId(inbox1.getRowId()));
 	}
 	
 	private void insertMsgClickCounts() throws IOException {
 		Timestamp clickTime = new Timestamp(System.currentTimeMillis());
 		// test insert
-		adr1 = new MessageClickCount();
-		adr1.setMessageInbox(inbox1);
-		adr1.setClickCount(3);
-		adr1.setOpenCount(2);
-		adr1.setComplaintCount(0);
-		adr1.setLastClickTime(clickTime);
-		adr1.setLastOpenTime(clickTime);
-		adr1.setDeliveryType(MailingListDeliveryType.ALL_ON_LIST.getValue());
-		adr1.setMailingListRowId(mlist.getRowId());
-		service.insert(adr1);
+		mcc1 = new MessageClickCount();
+		mcc1.setMessageInbox(inbox1);
+		mcc1.setClickCount(3);
+		mcc1.setOpenCount(2);
+		mcc1.setComplaintCount(0);
+		mcc1.setLastClickTime(clickTime);
+		mcc1.setLastOpenTime(clickTime);
+		mcc1.setDeliveryType(MailingListDeliveryType.ALL_ON_LIST.getValue());
+		mcc1.setMailingListRowId(mlist.getRowId());
+		service.insert(mcc1);
 		
 		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
-		adr2 = new MessageClickCount();
-		adr2.setMessageInbox(inbox2);
-		adr2.setClickCount(1);
-		adr2.setOpenCount(0);
-		adr2.setComplaintCount(0);
-		adr2.setLastClickTime(clickTime);
-		adr2.setDeliveryType(MailingListDeliveryType.ALL_ON_LIST.getValue());
-		adr2.setMailingListRowId(mlist.getRowId());
-		service.insert(adr2);
+		mcc2 = new MessageClickCount();
+		mcc2.setMessageInbox(inbox2);
+		mcc2.setClickCount(1);
+		mcc2.setOpenCount(0);
+		mcc2.setComplaintCount(0);
+		mcc2.setLastClickTime(clickTime);
+		mcc2.setDeliveryType(MailingListDeliveryType.ALL_ON_LIST.getValue());
+		mcc2.setMailingListRowId(mlist.getRowId());
+		service.insert(mcc2);
 	}
 }
