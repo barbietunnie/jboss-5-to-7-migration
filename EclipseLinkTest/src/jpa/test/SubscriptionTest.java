@@ -123,9 +123,13 @@ public class SubscriptionTest {
 		//assertTrue(1==service.deleteByPrimaryKey(emailAddr3.getRowId(), list.get(0).getRowId()));
 		assertTrue(1==service.deleteByAddress(emailAddr3.getAddress()));
 
+		assertTrue(1<=service.getByListIdSubscribersOnly(list.get(0).getListId()).size());
+//		assertTrue(1<=service.getByListIdProsperctsOnly(list.get(0).getListId()).size());
+
 		// test update
 		rcd2.setUpdtUserId("JpaTest");
 		service.update(rcd2);
+		assertTrue(1==service.updateSentCount(rcd2.getRowId(), 1));
 		
 		Subscription rcd3 = service.getByRowId(rcd2.getRowId());
 		assertTrue("JpaTest".equals(rcd3.getUpdtUserId()));

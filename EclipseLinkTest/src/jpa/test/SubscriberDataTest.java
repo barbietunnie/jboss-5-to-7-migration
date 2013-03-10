@@ -57,6 +57,8 @@ public class SubscriberDataTest {
 		SubscriberData rcd0 = service.getBySubscriberId(list.get(0).getSubscriberId());
 		assertNotNull(rcd0);
 		
+		service.getByEmailAddress(rcd0.getEmailAddr().getAddress());
+		
 		// test update
 		rcd0.setUpdtUserId("JpaTest");
 		service.update(rcd0);
