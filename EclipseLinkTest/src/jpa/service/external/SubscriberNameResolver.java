@@ -1,7 +1,9 @@
 package jpa.service.external;
 
+import jpa.constant.Constants;
 import jpa.exception.DataValidationException;
 import jpa.service.EmailVariableService;
+import jpa.util.JpaUtil;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
@@ -16,8 +18,12 @@ public class SubscriberNameResolver implements VariableResolver {
 		if (isDebugEnabled) {
 			logger.debug("Entering process() method...");
 		}
-		String query = "SELECT CONCAT(c.firstName,' ',c.lastName) as ResultStr " +
-				" FROM subscriber_data c, email_addr e " +
+		String query = "SELECT CONCAT(c.firstName,' ',c.lastName) as ResultStr ";
+		if (Constants.DB_PRODNAME_DERBY.equals(JpaUtil.getDBProductName())) {
+			query = "SELECT (c.firstName || ' ' || c.lastName) as ResultStr ";
+		}
+		
+		query += " FROM subscriber_data c, email_address e " +
 				" where e.Row_Id=c.EmailAddrRowId and e.Row_Id=?1";
 		
 		EmailVariableService dao = (EmailVariableService) SpringUtil.getAppContext().getBean(
