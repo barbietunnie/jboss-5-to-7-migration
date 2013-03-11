@@ -12,6 +12,7 @@ import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
 import jpa.service.EmailAddressService;
+import jpa.service.EntityManagerService;
 import jpa.service.MailingListService;
 import jpa.service.SubscriptionService;
 import jpa.util.StringUtil;
@@ -47,6 +48,8 @@ public class SubscriptionTest {
 	EmailAddressService eaService;
 	@Autowired
 	MailingListService mlService;
+	@Autowired
+	EntityManagerService emService;
 
 	private EmailAddress emailAddr1 = null;
 	private EmailAddress emailAddr2 = null;
@@ -120,17 +123,20 @@ public class SubscriptionTest {
 		service.insert(rcd6);
 
 		assertFalse(service.getByAddress(emailAddr3.getAddress()).isEmpty());
-		//assertTrue(1==service.deleteByPrimaryKey(emailAddr3.getRowId(), list.get(0).getRowId()));
-		assertTrue(1==service.deleteByAddress(emailAddr3.getAddress()));
 
 		assertTrue(1<=service.getByListIdSubscribersOnly(list.get(0).getListId()).size());
-//		assertTrue(1<=service.getByListIdProsperctsOnly(list.get(0).getListId()).size());
+		assertTrue(0<=service.getByListIdProsperctsOnly(list.get(0).getListId()).size());
+		
+		//assertTrue(1==service.deleteByPrimaryKey(emailAddr3.getRowId(), list.get(0).getRowId()));
+		assertTrue(1==service.deleteByAddress(emailAddr3.getAddress()));
 
 		// test update
 		rcd2.setUpdtUserId("JpaTest");
 		service.update(rcd2);
 		assertTrue(1==service.updateSentCount(rcd2.getRowId(), 1));
 		
+		emService.detach(rcd2); /* added to work around following Derby error:
+		 			"cannot be updated because it has changed or been deleted since it was last read." */
 		Subscription rcd3 = service.getByRowId(rcd2.getRowId());
 		assertTrue("JpaTest".equals(rcd3.getUpdtUserId()));
 		// end of test update

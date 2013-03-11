@@ -59,6 +59,7 @@ public class MailingListService {
 				" a.Description, " +
 				" a.StatusId, " +
 				" a.IsBuiltin, " +
+				" a.IsSendText, " +
 				" a.CreateTime, " +
 				" a.UpdtUserid, " +
 				" a.UpdtTime, " +
@@ -91,6 +92,7 @@ public class MailingListService {
 		if (onlyActive) {
 			sql += " where t.statusId=:statusId ";
 		}
+		sql += " order by t.listId ";
 		try {
 			Query query = em.createQuery(sql);
 			if (onlyActive) {

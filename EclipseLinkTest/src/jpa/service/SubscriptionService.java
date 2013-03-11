@@ -48,11 +48,12 @@ public class SubscriptionService {
 	}
 	
 	public List<Subscription> getByListIdSubscribersOnly(String listId) {
+		String sql = "select t from Subscription t, MailingList l, " +
+				" SubscriberData sub, EmailAddress ea " +
+				" where l=t.mailingList and l.listId = :listId " +
+				" and ea=t.emailAddr and sub=ea.subscriberData and sub is not null";
 		try {
-			Query query = em.createQuery("select t from Subscription t, MailingList l, " +
-					" SubscriberData sub, EmailAddress ea " +
-					" where l=t.mailingList and l.listId = :listId " +
-					" and ea=t.emailAddr and sub=ea.subscriberData and sub is not null");
+			Query query = em.createQuery(sql);
 			query.setParameter("listId", listId);
 			@SuppressWarnings("unchecked")
 			List<Subscription> list = query.getResultList();
@@ -63,11 +64,12 @@ public class SubscriptionService {
 	}
 	
 	public List<Subscription> getByListIdProsperctsOnly(String listId) {
+		String sql = "select t from Subscription t, MailingList l, " +
+				" SubscriberData sub, EmailAddress ea " +
+				" where l=t.mailingList and l.listId = :listId " +
+				" and ea=t.emailAddr and sub=ea.subscriberData and sub is null"; // TODO
 		try {
-			Query query = em.createQuery("select t from Subscription t, MailingList l, " +
-					" SubscriberData sub, EmailAddress ea " +
-					" where l=t.mailingList and l.listId = :listId " +
-					" and ea=t.emailAddr and sub=ea.subscriberData and sub is null"); // TODO
+			Query query = em.createQuery(sql);
 			query.setParameter("listId", listId);
 			@SuppressWarnings("unchecked")
 			List<Subscription> list = query.getResultList();

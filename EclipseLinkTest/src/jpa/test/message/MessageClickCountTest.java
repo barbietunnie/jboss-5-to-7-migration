@@ -20,6 +20,7 @@ import jpa.model.MailingList;
 import jpa.model.message.MessageClickCount;
 import jpa.model.message.MessageInbox;
 import jpa.model.rule.RuleLogic;
+import jpa.service.EntityManagerService;
 import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.MailingListService;
@@ -61,6 +62,8 @@ public class MessageClickCountTest {
 	RuleLogicService logicService;
 	@Autowired
 	MailingListService listService;
+	@Autowired
+	EntityManagerService emService;
 
 	private MessageInbox inbox1;
 	private EmailAddress from;
@@ -126,6 +129,12 @@ public class MessageClickCountTest {
 		assertTrue("jpa test".equals(mcc22.getUpdtUserId()));
 		assertTrue(1==service.updateStartTime(mcc11.getMessageInbox().getRowId()));
 		assertTrue(1==service.updateSentCount(mcc11.getMessageInbox().getRowId()));
+		
+		 // to work around Derby/EclipseLink error on the next "delete"
+		service.update(mcc11);
+		emService.clearEM();
+		mcc11 = service.getByRowId(mcc11.getRowId());
+		// end of work around
 		
 		// test delete
 		service.delete(mcc11);
