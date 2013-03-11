@@ -73,8 +73,11 @@ public class EmailTemplateBo {
 			bo.processMain();
 			SpringUtil.commitTransaction();
 		}
+		catch (Exception e) {
+			logger.error("Exception", e);
+			SpringUtil.rollbackTransaction();
+		}
 		finally {
-			SpringUtil.clearTransaction();
 		}
 	}
 	

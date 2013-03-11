@@ -1,6 +1,7 @@
 package jpa.service;
 
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -152,20 +153,34 @@ public class EmailAddressService {
 	 * 2) find by email user name - '^myname@' or 'noreply@'
 	 */
 	public List<EmailAddress> getByAddressPattern(String addressPattern) {
-		String sql = "select t.* from Email_Address t where address REGEXP '" + addressPattern + "' ";
+		String sql = "select t.* from Email_Address t where t.address REGEXP '" + addressPattern + "' ";
 		if (Constants.DB_PRODNAME_PSQL.equalsIgnoreCase(JpaUtil.getDBProductName())) {
-			sql = "select t.* from Email_Address t where address ~ '" + addressPattern + "' ";
+			sql = "select t.* from Email_Address t where t.address ~ '" + addressPattern + "' ";
 		}
 		else if (Constants.DB_PRODNAME_DERBY.equalsIgnoreCase(JpaUtil.getDBProductName())) {
 			String pattern = StringUtils.remove(addressPattern, "^");
 			pattern = StringUtils.remove(pattern, "$");
-			if (addressPattern.startsWith("^")) {
-				pattern = pattern + "%";
+			pattern = StringUtils.removeStart(pattern, "(");
+			pattern = StringUtils.removeEnd(pattern, ")");
+			sql = "select t.* from Email_Address t " ; //where address like '" + pattern + "' ";
+			String whereClause = "";
+			StringTokenizer st = new StringTokenizer(pattern, "|");
+			while (st.hasMoreTokens()) {
+				String token = st.nextToken();
+				if (addressPattern.startsWith("^")) {
+					token = token + "%";
+				}
+				else if (addressPattern.endsWith("$")) {
+					token = "%" + token;
+				}
+				if (StringUtils.isBlank(whereClause)) {
+					whereClause = " where (t.address like '" + token + "') ";
+				}
+				else {
+					whereClause += " or (t.address like '" + token + "') ";
+				}
 			}
-			else if (addressPattern.endsWith("$")) {
-				pattern = "%" + pattern;
-			}
-			sql = "select t.* from Email_Address t where address like '" + pattern + "' ";
+			sql += whereClause;
 		}
 		try {
 			Query query = em.createNativeQuery(sql, EmailAddress.MAPPING_EMAIL_ADDR_ENTITY);
