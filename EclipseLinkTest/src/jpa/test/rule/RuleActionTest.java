@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.Constants;
+import jpa.data.preload.RuleNameEnum;
 import jpa.model.SenderData;
 import jpa.model.rule.RuleAction;
 import jpa.model.rule.RuleActionDetail;
@@ -100,6 +101,9 @@ public class RuleActionTest {
 			dtl1 = lst3.get(0);
 		}
 		
+		List<RuleAction> actions = service.getByBestMatch(RuleNameEnum.GENERIC.getValue(), null, null);
+		assertTrue(3==actions.size());
+		
 		// test insert
 		RuleAction var1 = new RuleAction();
 		RuleActionPK pk1 = new RuleActionPK();
@@ -124,7 +128,8 @@ public class RuleActionTest {
 		List<RuleAction> list1 = service.getAll();
 		assertFalse(list1.isEmpty());
 		
-		service.getByBestMatch(rlg1.getRuleName(), null, clt1.getSenderId());
+		List<RuleAction> list2 = service.getByBestMatch(rlg1.getRuleName(), null, clt1.getSenderId());
+		assertFalse(list2.isEmpty());
 		RuleAction var4 = service.getMostCurrent(rlg1.getRuleName(), 0, clt1.getSenderId());
 		logger.info("RuleAction: " + StringUtil.prettyPrint(var4,2));
 		

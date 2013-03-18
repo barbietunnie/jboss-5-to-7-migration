@@ -121,6 +121,6 @@ public class ActivateAddress extends TaskBaseAdaptor {
 				addrsActiveted++;
 			}
 		}
-		return Integer.valueOf(addrsActiveted);
+		return addrsActiveted;
 	}
 }

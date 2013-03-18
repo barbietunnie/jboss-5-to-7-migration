@@ -197,6 +197,17 @@ public class EmailAddrUtil {
 		return null;
 	}
 
+	public static String getEmailLeftPart(String addr) {
+		addr = addr == null ? "" : addr;
+		addr = removeDisplayName(addr);
+		String acctUserName = addr;
+		int atSignPos = addr.indexOf("@");
+		if (atSignPos >= 0) {
+			return addr.substring(0, atSignPos);
+		}
+		return acctUserName;
+	}
+
 	/**
 	 * Add PRE tags for plain text message so the spaces and line breaks are
 	 * preserved in web browser.

@@ -1,9 +1,13 @@
 package jpa.service.task;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.mail.MessagingException;
 
 import jpa.constant.XHeaderName;
 import jpa.exception.DataValidationException;
+import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
 import jpa.message.MsgHeader;
 
@@ -21,13 +25,19 @@ public class AssignRuleName extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(AssignRuleName.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	private TaskSchedulerBo taskBo;
+	
 	/**
 	 * reset the rule name to the value from TaskArguments field and send
 	 * the message back to task scheduler.
 	 * 
 	 * @return the message bean with assigned rule name.
+	 * @throws TemplateException 
+	 * @throws IOException 
+	 * @throws MessagingException 
 	 */
-	public MessageBean process(MessageBean messageBean) throws DataValidationException {
+	public MessageBean process(MessageBean messageBean) throws DataValidationException,
+			MessagingException, IOException, TemplateException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
 		if (messageBean==null) {
@@ -55,11 +65,8 @@ public class AssignRuleName extends TaskBaseAdaptor {
 			// append to the thread
 			messageBean.setMsgRefId(messageBean.getMsgId());
 		}
-		// TODO send the bean back to task scheduler
-		
-		/*
-		 * TODO
-		 */
+		// send the bean back to task scheduler
+		taskBo.scheduleTasks(messageBean);
 		return messageBean;
 	}
 }

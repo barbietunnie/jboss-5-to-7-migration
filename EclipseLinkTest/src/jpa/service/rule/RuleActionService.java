@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.model.rule.RuleAction;
 import jpa.model.rule.RuleActionPK;
@@ -53,15 +54,16 @@ public class RuleActionService {
 		if (startTime == null) {
 			startTime = new Timestamp(System.currentTimeMillis());
 		}
+		// TODO revisit when SenderDataRowId column is populated on RuleAction table
 		String sql = 
 				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, SenderData c " +
-				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.senderData=c " +
+				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and c.senderId=:senderId " +
+				" and (r.ruleActionPK.senderData=c or r.ruleActionPK.senderData is null)" +
 				"and r.ruleActionPK.ruleLogic.ruleName=:ruleName " +
-				"and (c.senderId=:senderId or r.ruleActionPK.senderData is null) " +
 				"and r.ruleActionPK.startTime<=:startTime and r.statusId=:statusId " +
 				"order by r.ruleActionPK.actionSequence, c.senderId desc, r.ruleActionPK.startTime desc ";
-		if (senderId==null) {
-			senderId = "";
+		if (StringUtils.isBlank(senderId)) {
+			senderId = Constants.DEFAULT_SENDER_ID;
 		}
 		try {
 			Query query = em.createQuery(sql);

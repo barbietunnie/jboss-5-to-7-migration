@@ -79,6 +79,10 @@ public class MailingListTest {
 		List<MailingList> list = service.getAll(true);
 		assertFalse(list.isEmpty());
 		
+		MailingList ml01 = list.get(0);
+		MailingList ml02 = service.getByListAddress(ml01.getAcctUserName() + "@" + ml01.getSenderData().getDomainName());
+		assertTrue(ml01.equals(ml02));
+
 		// test insert
 		MailingList rcd1 = new MailingList();
 		try {
@@ -91,6 +95,7 @@ public class MailingListTest {
 		}
 		rcd1.setListMasterEmailAddr("sitemaster@localhost");
 		rcd1.setListId(testListId1);
+		rcd1.setAcctUserName(testListId1);
 		List<Subscription> subs = new ArrayList<Subscription>();
 		// added next line to prevent this Hibernate error: 
 		//	"Found shared references to a collection"
@@ -120,6 +125,7 @@ public class MailingListTest {
 		}
 		rcd4.setListMasterEmailAddr("sitemaster2@localhost");
 		rcd4.setListId(testListId2);
+		rcd4.setAcctUserName(testListId2);
 		rcd4.setSubscriptions(new ArrayList<Subscription>());
 		service.insert(rcd4);
 		

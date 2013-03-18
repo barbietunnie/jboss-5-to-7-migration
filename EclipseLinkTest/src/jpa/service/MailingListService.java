@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jpa.constant.StatusId;
 import jpa.model.MailingList;
+import jpa.util.EmailAddrUtil;
 
 @Component("mailingListService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -32,6 +33,21 @@ public class MailingListService {
 			query.setParameter("listId", listId);
 			MailingList mailingList = (MailingList) query.getSingleResult();
 			em.lock(mailingList, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			return mailingList;
+		}
+		finally {
+		}
+	}
+
+	public MailingList getByListAddress(String address) throws NoResultException {
+		String domain = EmailAddrUtil.getEmailDomainName(address);
+		String acctUser = EmailAddrUtil.getEmailLeftPart(address);
+		try {
+			Query query = em.createQuery("select t from MailingList t, SenderData sd " +
+					" where sd=t.senderData and t.acctUserName=:acctUser and sd.domainName=:domain ");
+			query.setParameter("acctUser", acctUser);
+			query.setParameter("domain", domain);
+			MailingList mailingList = (MailingList) query.getSingleResult();
 			return mailingList;
 		}
 		finally {
