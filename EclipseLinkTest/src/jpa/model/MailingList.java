@@ -16,13 +16,14 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import jpa.constant.StatusId;
 
 @Entity
-@Table(name="mailing_list")
+@Table(name="mailing_list", uniqueConstraints=@UniqueConstraint(columnNames = {"SenderDataRowId", "acctUserName"}))
 @SqlResultSetMappings({ // used by native queries
 	  @SqlResultSetMapping(name="MailingListWithCounts",
 		entities={
