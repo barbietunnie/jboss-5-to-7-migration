@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("ruleLoaderBo")
 @Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
-public final class RuleLoaderBo implements java.io.Serializable {
+public class RuleLoaderBo implements java.io.Serializable {
 	private static final long serialVersionUID = 5251082728950956779L;
 	static final Logger logger = Logger.getLogger(RuleLoaderBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
@@ -46,7 +46,7 @@ public final class RuleLoaderBo implements java.io.Serializable {
 	final List<RuleBase>[] mainRules;
 	final List<RuleBase>[] preRules;
 	final List<RuleBase>[] postRules;
-	final HashMap<String, List<RuleBase>>[] subRules;
+	final Map<String, List<RuleBase>>[] subRules;
 	
 	private int currIndex = 0;
 	@Autowired
@@ -73,7 +73,7 @@ public final class RuleLoaderBo implements java.io.Serializable {
 		mainRules = new List[2];
 		preRules = new List[2];
 		postRules = new List[2];
-		subRules = new HashMap[2];
+		subRules = new Map[2];
 		
 		mainRules[0] = new ArrayList<RuleBase>();
 		mainRules[1] = new ArrayList<RuleBase>();
@@ -87,7 +87,7 @@ public final class RuleLoaderBo implements java.io.Serializable {
 	
 	public static void main(String[] args) {
 		RuleLoaderBo loader = (RuleLoaderBo) SpringUtil.getAppContext().getBean("ruleLoaderBo");
-		SpringUtil.startTransaction();
+		SpringUtil.beginTransaction();
 		try {
 			loader.loadRules();
 			loader.listRuleNames();

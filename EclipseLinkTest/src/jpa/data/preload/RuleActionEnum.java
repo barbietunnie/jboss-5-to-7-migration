@@ -51,6 +51,7 @@ public enum RuleActionEnum {
 	GENERIC_1(RuleNameEnum.GENERIC,1,RuleActionDetailEnum.SAVE,null),
 	GENERIC_2(RuleNameEnum.GENERIC,2,RuleActionDetailEnum.ACTIVATE,"$"+EmailAddrType.FROM_ADDR.getValue()),
 	GENERIC_3(RuleNameEnum.GENERIC,3,RuleActionDetailEnum.TO_CSR,"genericmail@localhost"),
+	GENERIC_4(RuleNameEnum.GENERIC,3,RuleActionDetailEnum.OPEN,null),
 	UNATTENDED_MAILBOX_1(RuleNameEnum.UNATTENDED_MAILBOX,1,RuleActionDetailEnum.DROP,null),
 	OUF_OF_OFFICE_AUTO_REPLY_1(RuleNameEnum.OUF_OF_OFFICE_AUTO_REPLY,1,RuleActionDetailEnum.SAVE,null),
 	OUF_OF_OFFICE_AUTO_REPLY_2(RuleNameEnum.OUF_OF_OFFICE_AUTO_REPLY,2,RuleActionDetailEnum.CLOSE,null),

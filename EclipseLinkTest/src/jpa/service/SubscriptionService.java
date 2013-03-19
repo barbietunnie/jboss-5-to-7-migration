@@ -3,7 +3,6 @@ package jpa.service;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.Query;
@@ -113,7 +112,7 @@ public class SubscriptionService {
 			query.setParameter("address", address);
 			query.setParameter("listId", listId);
 			Subscription subscription = (Subscription) query.getSingleResult();
-			em.lock(subscription, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(subscription, LockModeType.OPTIMISTIC);
 			return subscription;
 		}
 		finally {
@@ -125,7 +124,7 @@ public class SubscriptionService {
 			Query query = em.createQuery("select t from Subscription t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			Subscription subscription = (Subscription) query.getSingleResult();
-			em.lock(subscription, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(subscription, LockModeType.OPTIMISTIC);
 			return subscription;
 		}
 		finally {

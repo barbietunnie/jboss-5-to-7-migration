@@ -30,7 +30,7 @@ public class MobileCarrierService {
 					" where t.carrierId = :carrierId");
 			query.setParameter("carrierId", carrierId);
 			MobileCarrier carrier = (MobileCarrier) query.getSingleResult();
-			em.lock(carrier, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(carrier, LockModeType.OPTIMISTIC);
 			return carrier;
 		}
 		finally {
@@ -42,7 +42,7 @@ public class MobileCarrierService {
 			Query query = em.createQuery("select t from MobileCarrier t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			MobileCarrier carrier = (MobileCarrier) query.getSingleResult();
-			em.lock(carrier, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(carrier, LockModeType.OPTIMISTIC);
 			return carrier;
 		}
 		finally {

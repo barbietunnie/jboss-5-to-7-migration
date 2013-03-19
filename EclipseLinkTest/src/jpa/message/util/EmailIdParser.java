@@ -352,7 +352,7 @@ public final class EmailIdParser implements Serializable {
 	}
 
 	public static void main(String[] args) {
-		SpringUtil.startTransaction();
+		SpringUtil.beginTransaction();
 		try {
 			int msgId = 12345;
 			EmailIdParser parser = EmailIdParser.getDefaultParser();

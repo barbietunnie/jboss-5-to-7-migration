@@ -3,7 +3,6 @@ package jpa.service.message;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -28,7 +27,7 @@ public class MessageSourceService {
 			Query query = em.createQuery("select t from MessageSource t where t.msgSourceId = :sourceId");
 			query.setParameter("sourceId", sourceId);
 			MessageSource source = (MessageSource) query.getSingleResult();
-			em.lock(source, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(source, LockModeType.OPTIMISTIC);
 			return source;
 		}
 		finally {
@@ -40,7 +39,7 @@ public class MessageSourceService {
 			Query query = em.createQuery("select t from MessageSource t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			MessageSource source = (MessageSource) query.getSingleResult();
-			em.lock(source, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(source, LockModeType.OPTIMISTIC);
 			return source;
 		}
 		finally {

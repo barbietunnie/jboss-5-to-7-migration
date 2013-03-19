@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
@@ -27,8 +26,8 @@ public abstract class BaseModel implements java.io.Serializable {
 	@Column(name="StatusId", length=1, nullable=false, columnDefinition="char not null")
 	private String statusId = StatusId.ACTIVE.getValue();
 	@Column(name="UpdtTime", nullable=false)
-	@Version
-	protected Timestamp updtTime = null;
+	//@Version // revisit until JPA knows transaction boundary with Optimistic Locking
+	protected Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 	@Column(name="UpdtUserId", length=10, nullable=false)
 	protected String updtUserId = Constants.DEFAULT_USER_ID;
 

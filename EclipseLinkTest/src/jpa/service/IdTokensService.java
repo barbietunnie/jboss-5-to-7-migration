@@ -35,7 +35,7 @@ public class IdTokensService {
 					" where cd=t.senderData and cd.senderId = :senderId");
 			query.setParameter("senderId", senderId);
 			IdTokens idTokens = (IdTokens) query.getSingleResult();
-			em.lock(idTokens, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(idTokens, LockModeType.OPTIMISTIC);
 			return idTokens;
 		}
 		finally {
@@ -47,7 +47,7 @@ public class IdTokensService {
 			Query query = em.createQuery("select t from IdTokens t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			IdTokens idTokens = (IdTokens) query.getSingleResult();
-			em.lock(idTokens, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(idTokens, LockModeType.OPTIMISTIC);
 			return idTokens;
 		}
 		finally {

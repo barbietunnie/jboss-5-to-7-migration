@@ -36,7 +36,7 @@ public class SubscriberDataService {
 					" t.subscriberId = :subscriberId");
 			query.setParameter("subscriberId", subscriberId);
 			SubscriberData subscriber = (SubscriberData) query.getSingleResult();
-			em.lock(subscriber, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(subscriber, LockModeType.OPTIMISTIC);
 			return subscriber;
 		}
 		finally {
@@ -48,7 +48,7 @@ public class SubscriberDataService {
 			Query query = em.createQuery("select t from SubscriberData t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			SubscriberData subscriber = (SubscriberData) query.getSingleResult();
-			em.lock(subscriber, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(subscriber, LockModeType.OPTIMISTIC);
 			return subscriber;
 		}
 		finally {
@@ -61,7 +61,7 @@ public class SubscriberDataService {
 					" ea=t.emailAddr and ea.address = :address");
 			query.setParameter("address", address);
 			SubscriberData subscriber = (SubscriberData) query.getSingleResult();
-			em.lock(subscriber, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(subscriber, LockModeType.OPTIMISTIC);
 			return subscriber;
 		}
 		finally {

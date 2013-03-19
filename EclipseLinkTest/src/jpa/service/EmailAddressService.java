@@ -37,7 +37,7 @@ public class EmailAddressService {
 			Query query = em.createQuery("select t from EmailAddress t where t.address = :address");
 			query.setParameter("address", EmailAddrUtil.removeDisplayName(addr));
 			EmailAddress emailAddr = (EmailAddress) query.getSingleResult();
-			em.lock(emailAddr, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(emailAddr, LockModeType.OPTIMISTIC);
 			return emailAddr;
 		}
 		finally {
@@ -132,7 +132,7 @@ public class EmailAddressService {
 			Query query = em.createQuery("select t from EmailAddress t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			EmailAddress emailAddr = (EmailAddress) query.getSingleResult();
-			em.lock(emailAddr, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(emailAddr, LockModeType.OPTIMISTIC);
 			return emailAddr;
 		}
 		finally {

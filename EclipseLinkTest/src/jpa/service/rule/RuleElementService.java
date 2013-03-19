@@ -40,7 +40,7 @@ public class RuleElementService {
 			query.setParameter("ruleName", pk.getRuleLogic().getRuleName());
 			query.setParameter("elementSequence", pk.getElementSequence());
 			RuleElement element = (RuleElement) query.getSingleResult();
-			em.lock(element, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(element, LockModeType.OPTIMISTIC);
 			return element;
 		}
 		finally {
@@ -66,7 +66,7 @@ public class RuleElementService {
 			Query query = em.createQuery("select t from RuleElement t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			RuleElement element = (RuleElement) query.getSingleResult();
-			em.lock(element, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(element, LockModeType.OPTIMISTIC);
 			return element;
 		}
 		finally {

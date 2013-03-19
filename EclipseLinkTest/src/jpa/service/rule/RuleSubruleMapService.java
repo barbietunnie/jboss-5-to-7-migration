@@ -43,7 +43,7 @@ public class RuleSubruleMapService {
 			query.setParameter("ruleName", pk.getRuleLogic().getRuleName());
 			query.setParameter("subruleName", pk.getSubruleLogic().getRuleName());
 			RuleSubruleMap rsmap = (RuleSubruleMap) query.getSingleResult();
-			em.lock(rsmap, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(rsmap, LockModeType.OPTIMISTIC);
 			return rsmap;
 		}
 		finally {
@@ -69,7 +69,7 @@ public class RuleSubruleMapService {
 			Query query = em.createQuery("select t from RuleSubruleMap t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			RuleSubruleMap rsmap = (RuleSubruleMap) query.getSingleResult();
-			em.lock(rsmap, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(rsmap, LockModeType.OPTIMISTIC);
 			return rsmap;
 		}
 		finally {

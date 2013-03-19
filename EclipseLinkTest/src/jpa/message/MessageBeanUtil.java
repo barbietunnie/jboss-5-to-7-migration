@@ -641,7 +641,7 @@ public final class MessageBeanUtil {
 			invokeMethod(msgBean, name.getValue());
 		}
 		
-		SpringUtil.startTransaction();
+		SpringUtil.beginTransaction();
 		try {
 			Address addr = new InternetAddress("bad.address@localhost");
 			Message msg = createMimeMessage(msgBean, addr, "5.1.1" + LF + LF);

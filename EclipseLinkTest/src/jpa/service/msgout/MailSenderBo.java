@@ -45,7 +45,7 @@ public class MailSenderBo extends MailSenderBase {
 		MailSenderBo sender = (MailSenderBo) SpringUtil.getAppContext().getBean("mailSenderBo");
 		MsgOutboxBo msgOutboxBo = (MsgOutboxBo) SpringUtil.getAppContext().getBean("msgOutboxBo");
 		MessageRenderedService msgRenderedService = (MessageRenderedService) SpringUtil.getAppContext().getBean("messageRenderedService");
-		SpringUtil.startTransaction();
+		SpringUtil.beginTransaction();
 		try {
 			MessageRendered mr = msgRenderedService.getFirstRecord();
 			MessageBean bean = msgOutboxBo.getMessageByPK(mr.getRowId());
@@ -80,9 +80,6 @@ public class MailSenderBo extends MailSenderBase {
 			throw new IllegalArgumentException("Request did not contain a MessageBean nor a MessageStream.");
 		}
 		
-		// define transaction properties
-		SpringUtil.startTransaction();
-
 		// defined here to be used in catch blocks
 		try {
 			if (req.getMessageBean()!=null) {
@@ -95,46 +92,37 @@ public class MailSenderBo extends MailSenderBase {
 			else {
 				logger.error("message was not a message type as expected");
 			}
-			SpringUtil.commitTransaction();
 		}
 		catch (DataValidationException dex) {
 			// failed to send the message
 			logger.error("DataValidationException caught", dex);
-			SpringUtil.commitTransaction();
 		}
 		catch (AddressException ae) {
 			logger.error("AddressException caught", ae);
-			SpringUtil.commitTransaction();
 		}
 		catch (MessagingException mex) {
 			// failed to send the message
 			logger.error("MessagingException caught", mex);
-			SpringUtil.commitTransaction();
 		}
 		catch (NullPointerException en) {
 			logger.error("NullPointerException caught", en);
-			SpringUtil.commitTransaction();
 		}
 		catch (IndexOutOfBoundsException eb) {
 			// AddressException from InternetAddress.parse() caused this
 			// Exception to be thrown
 			// write the original message to error queue
 			logger.error("IndexOutOfBoundsException caught", eb);
-			SpringUtil.commitTransaction();
 		}
 		catch (NumberFormatException ef) {
 			logger.error("NumberFormatException caught", ef);
 			// TODO send error notification
-			SpringUtil.commitTransaction();
 		}
 		catch (SmtpException se) {
 			logger.error("SmtpException caught", se);
 			// SMTP error, roll back and exit
-			SpringUtil.rollbackTransaction();
 			throw se;
 		}
 		finally {
-			SpringUtil.clearTransaction();
 		}
 	}
 

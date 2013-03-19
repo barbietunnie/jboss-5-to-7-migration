@@ -28,7 +28,7 @@ public class EmailVariableService {
 			Query query = em.createQuery("select t from EmailVariable t where t.variableName = :variableName");
 			query.setParameter("variableName", variableName);
 			EmailVariable variable = (EmailVariable) query.getSingleResult();
-			em.lock(variable, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(variable, LockModeType.OPTIMISTIC);
 			return variable;
 		}
 		finally {
@@ -40,7 +40,7 @@ public class EmailVariableService {
 			Query query = em.createQuery("select t from EmailVariable t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			EmailVariable variable = (EmailVariable) query.getSingleResult();
-			em.lock(variable, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(variable, LockModeType.OPTIMISTIC);
 			return variable;
 		}
 		finally {

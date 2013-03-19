@@ -43,13 +43,17 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Scan email header and body, and match rules to determine the ruleName.
  */
 @Component("messageParserBo")
 @Scope(value="prototype")
-public final class MessageParserBo {
+@Transactional(propagation=Propagation.REQUIRED)
+public class MessageParserBo implements java.io.Serializable {
+	private static final long serialVersionUID = -2858192030452453504L;
 	static final Logger logger = Logger.getLogger(MessageParserBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
@@ -685,7 +689,7 @@ public final class MessageParserBo {
 		try {
 			MessageParserBo parser = (MessageParserBo) SpringUtil.getAppContext().getBean("messageParserBo");
 			MessageBean mBean = new MessageBean();
-			SpringUtil.startTransaction();
+			SpringUtil.beginTransaction();
 			try {
 				mBean.setFrom(InternetAddress.parse("event.alert@localhost", false));
 				mBean.setTo(InternetAddress.parse("abc@domain.com", false));
@@ -698,12 +702,13 @@ public final class MessageParserBo {
 			mBean.setMailboxUser("testUser");
 			String ruleName = parser.parse(mBean);
 			System.out.println("### RuleName: " + ruleName);
+			SpringUtil.commitTransaction();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		finally {
-			SpringUtil.commitTransaction();
+			SpringUtil.clearTransaction();
 		}
 	}
 }

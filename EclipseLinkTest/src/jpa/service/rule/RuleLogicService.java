@@ -38,7 +38,8 @@ public class RuleLogicService {
 			Query query = em.createQuery(sql);
 			query.setParameter("ruleName", ruleName);
 			RuleLogic logic = (RuleLogic) query.getSingleResult();
-			em.lock(logic, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(logic, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(logic, LockModeType.OPTIMISTIC);
 			return logic;
 		}
 		finally {
@@ -101,7 +102,7 @@ public class RuleLogicService {
 			Query query = em.createQuery("select t from RuleLogic t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			RuleLogic logic = (RuleLogic) query.getSingleResult();
-			em.lock(logic, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(logic, LockModeType.OPTIMISTIC);
 			return logic;
 		}
 		finally {

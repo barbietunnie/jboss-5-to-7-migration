@@ -48,7 +48,7 @@ public class SpringUtil {
 	private static final ThreadLocal<PlatformTransactionManager> txmgrThreadLocal = new ThreadLocal<PlatformTransactionManager>();
 	private static final ThreadLocal<TransactionStatus> statusThreadLocal = new ThreadLocal<TransactionStatus>();
 	
-	public static void startTransaction() {
+	public static void beginTransaction() {
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setName("service_"+ TX_COUNTER.get().incrementAndGet());
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
@@ -64,7 +64,9 @@ public class SpringUtil {
 		if (txmgr==null || status==null) {
 			throw new IllegalStateException("No transaction is in progress.");
 		}
-		txmgr.commit(status);
+		if (!status.isCompleted()) {
+			txmgr.commit(status);
+		}
 		txmgrThreadLocal.remove();
 		statusThreadLocal.remove();
 	}
@@ -75,7 +77,9 @@ public class SpringUtil {
 		if (txmgr==null || status==null) {
 			throw new IllegalStateException("No transaction is in progress.");
 		}
-		txmgr.rollback(status);
+		if (!status.isCompleted()) {
+			txmgr.rollback(status);
+		}
 		txmgrThreadLocal.remove();
 		statusThreadLocal.remove();
 	}

@@ -116,7 +116,7 @@ public class RuleActionService {
 			query.setParameter("senderId", senderId);
 			query.setParameter("startTime", pk.getStartTime());
 			RuleAction action = (RuleAction) query.getSingleResult();
-			em.lock(action, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(action, LockModeType.OPTIMISTIC);
 			return action;
 		}
 		finally {
@@ -159,7 +159,7 @@ public class RuleActionService {
 			Query query = em.createQuery(sql);
 			query.setParameter("rowId", rowId);
 			RuleAction action = (RuleAction) query.getSingleResult();
-			em.lock(action, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(action, LockModeType.OPTIMISTIC);
 			return action;
 		}
 		finally {

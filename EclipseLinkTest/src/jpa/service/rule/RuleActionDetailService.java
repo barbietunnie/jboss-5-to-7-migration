@@ -29,7 +29,7 @@ public class RuleActionDetailService {
 					"t.actionId = :actionId ");
 			query.setParameter("actionId", actionId);
 			RuleActionDetail detail = (RuleActionDetail) query.getSingleResult();
-			em.lock(detail, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(detail, LockModeType.OPTIMISTIC);
 			return detail;
 		}
 		finally {
@@ -41,7 +41,7 @@ public class RuleActionDetailService {
 			Query query = em.createQuery("select t from RuleActionDetail t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			RuleActionDetail detail = (RuleActionDetail) query.getSingleResult();
-			em.lock(detail, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(detail, LockModeType.OPTIMISTIC);
 			return detail;
 		}
 		finally {

@@ -32,7 +32,7 @@ public class MailingListService {
 					" where t.listId = :listId");
 			query.setParameter("listId", listId);
 			MailingList mailingList = (MailingList) query.getSingleResult();
-			em.lock(mailingList, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(mailingList, LockModeType.OPTIMISTIC);
 			return mailingList;
 		}
 		finally {
@@ -96,7 +96,7 @@ public class MailingListService {
 			Query query = em.createQuery("select t from MailingList t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			MailingList mailingList = (MailingList) query.getSingleResult();
-			em.lock(mailingList, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(mailingList, LockModeType.OPTIMISTIC);
 			return mailingList;
 		}
 		finally {
