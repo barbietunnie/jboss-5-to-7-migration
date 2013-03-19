@@ -35,7 +35,7 @@ public class RuleDataValueService {
 			query.setParameter("dataType", pk.getRuleDataType().getDataType());
 			query.setParameter("dataValue", pk.getDataValue());
 			RuleDataValue dType = (RuleDataValue) query.getSingleResult();
-			em.lock(dType, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(dType, LockModeType.OPTIMISTIC);
 			return dType;
 		}
 		finally {
@@ -47,7 +47,7 @@ public class RuleDataValueService {
 			Query query = em.createQuery("select t from RuleDataValue t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			RuleDataValue dataType = (RuleDataValue) query.getSingleResult();
-			em.lock(dataType, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(dataType, LockModeType.OPTIMISTIC);
 			return dataType;
 		}
 		finally {

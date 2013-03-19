@@ -68,7 +68,7 @@ public class EmailTemplateBo {
 	
 	public static void main(String[] args) {
 		EmailTemplateBo bo = (EmailTemplateBo) SpringUtil.getAppContext().getBean("emailTemplateBo");
-		SpringUtil.startTransaction();
+		SpringUtil.beginTransaction();
 		try {
 			bo.processMain();
 			SpringUtil.commitTransaction();

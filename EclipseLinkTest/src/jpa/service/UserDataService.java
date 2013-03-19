@@ -28,7 +28,7 @@ public class UserDataService {
 			Query query = em.createQuery("select t from UserData t where t.userId = :userId");
 			query.setParameter("userId", userId);
 			UserData user = (UserData) query.getSingleResult();
-			em.lock(user, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(user, LockModeType.OPTIMISTIC);
 			return user;
 		}
 		finally {
@@ -40,7 +40,7 @@ public class UserDataService {
 			Query query = em.createQuery("select t from UserData t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			UserData user = (UserData) query.getSingleResult();
-			em.lock(user, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(user, LockModeType.OPTIMISTIC);
 			return user;
 		}
 		finally {

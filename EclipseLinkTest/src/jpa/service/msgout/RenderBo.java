@@ -87,7 +87,7 @@ public class RenderBo {
 		RenderBo bo = (RenderBo) SpringUtil.getAppContext().getBean("renderBo");
 		MsgOutboxBo outboxBo = (MsgOutboxBo) SpringUtil.getAppContext().getBean("msgOutboxBo");
 		MessageRenderedService rndrDao = (MessageRenderedService) SpringUtil.getAppContext().getBean("messageRenderedService");
-		SpringUtil.startTransaction();
+		SpringUtil.beginTransaction();
 		try {
 			MessageRendered mr = null;
 			try {

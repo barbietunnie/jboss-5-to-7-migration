@@ -28,7 +28,7 @@ public class EmailTemplateService {
 			Query query = em.createQuery("select t from EmailTemplate t where t.templateId = :templateId");
 			query.setParameter("templateId", templateId);
 			EmailTemplate template = (EmailTemplate) query.getSingleResult();
-			em.lock(template, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(template, LockModeType.OPTIMISTIC);
 			return template;
 		}
 		finally {
@@ -40,7 +40,7 @@ public class EmailTemplateService {
 			Query query = em.createQuery("select t from EmailTemplate t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			EmailTemplate template = (EmailTemplate) query.getSingleResult();
-			em.lock(template, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(template, LockModeType.OPTIMISTIC);
 			return template;
 		}
 		finally {

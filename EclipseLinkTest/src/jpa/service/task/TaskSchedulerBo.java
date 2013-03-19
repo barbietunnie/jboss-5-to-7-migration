@@ -12,6 +12,7 @@ import jpa.data.preload.RuleNameEnum;
 import jpa.exception.DataValidationException;
 import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
+import jpa.message.util.EmailIdParser;
 import jpa.model.rule.RuleAction;
 import jpa.service.rule.RuleActionService;
 import jpa.util.SpringUtil;
@@ -108,12 +109,20 @@ public class TaskSchedulerBo {
 		catch (AddressException e) {
 			logger.error("AddressException caught", e);
 		}
-		mBean.setSubject("A Exception occured");
-		mBean.setValue(new Date()+ "Test body message.");
+		mBean.setSubject("Delivery Status Notification (Failure)");
+		mBean.setFinalRcpt("testbounce@test.com");
+		mBean.setValue(new Date()+ "Test body message." + LF + LF + "System Email Id: 10.0645.0" + LF);
+		EmailIdParser parser = EmailIdParser.getDefaultParser();
+		String id = parser.parseMsg(mBean.getBody());
+		if (StringUtils.isNotBlank(id)) {
+			mBean.setMsgRefId(Integer.parseInt(id));
+		}
 		mBean.setMailboxUser("testUser");
-		mBean.setRuleName(RuleNameEnum.GENERIC.getValue());
+		mBean.setRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
+		SpringUtil.beginTransaction();
 		try {
 			bo.scheduleTasks(mBean);
+			SpringUtil.commitTransaction();
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);

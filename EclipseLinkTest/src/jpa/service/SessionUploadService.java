@@ -43,7 +43,7 @@ public class SessionUploadService {
 			Query query = em.createQuery("select t from SessionUpload t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			SessionUpload session = (SessionUpload) query.getSingleResult();
-			em.lock(session, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(session, LockModeType.OPTIMISTIC);
 			return session;
 		}
 		finally {
@@ -57,7 +57,7 @@ public class SessionUploadService {
 			query.setParameter("sessionId", pk.getSessionId());
 			query.setParameter("sessionSequence", pk.getSessionSequence());
 			SessionUpload session = (SessionUpload) query.getSingleResult();
-			em.lock(session, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(session, LockModeType.OPTIMISTIC);
 			return session;
 		}
 		finally {

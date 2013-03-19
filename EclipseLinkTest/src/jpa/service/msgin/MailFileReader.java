@@ -20,7 +20,7 @@ public class MailFileReader {
 	public static void main(String[] args){
 		String filePath = "jpa/test/bouncedmails";
 		String fileName = "BouncedMail_1.txt";
-		SpringUtil.startTransaction();
+		SpringUtil.beginTransaction();
 		try {
 			MailFileReader fReader = new MailFileReader();
 			//MessageBean msgBean = fReader.start(filePath);

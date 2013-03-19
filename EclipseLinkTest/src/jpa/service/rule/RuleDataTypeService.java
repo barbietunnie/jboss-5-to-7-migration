@@ -29,7 +29,7 @@ public class RuleDataTypeService {
 					"t.dataType = :dataType ");
 			query.setParameter("dataType", dataType);
 			RuleDataType dataName = (RuleDataType) query.getSingleResult();
-			em.lock(dataName, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(dataName, LockModeType.OPTIMISTIC);
 			return dataName;
 		}
 		finally {
@@ -41,7 +41,7 @@ public class RuleDataTypeService {
 			Query query = em.createQuery("select t from RuleDataType t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			RuleDataType dataName = (RuleDataType) query.getSingleResult();
-			em.lock(dataName, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(dataName, LockModeType.OPTIMISTIC);
 			return dataName;
 		}
 		finally {

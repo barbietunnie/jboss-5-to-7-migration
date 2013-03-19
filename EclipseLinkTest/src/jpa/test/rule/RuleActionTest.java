@@ -102,7 +102,7 @@ public class RuleActionTest {
 		}
 		
 		List<RuleAction> actions = service.getByBestMatch(RuleNameEnum.GENERIC.getValue(), null, null);
-		assertTrue(3==actions.size());
+		assertTrue(3==actions.size() || 4==actions.size());
 		
 		// test insert
 		RuleAction var1 = new RuleAction();

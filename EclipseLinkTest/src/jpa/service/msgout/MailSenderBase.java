@@ -395,8 +395,9 @@ public abstract class MailSenderBase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		msg.writeTo(baos);
 		msgStreamVo.setMsgStream(baos.toByteArray());
-		msgInboxVo.setMessageStream(msgStreamVo);
-		msgInboxDao.update(msgInboxVo);
+		//msgInboxVo.setMessageStream(msgStreamVo);
+		//msgInboxDao.update(msgInboxVo); // may trigger OptimisticLockingException
+		msgStreamDao.insert(msgStreamVo);
 	}
 	
 	/**

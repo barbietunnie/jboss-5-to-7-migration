@@ -14,6 +14,7 @@
 
    <appender name="FILE" class="org.apache.log4j.FileAppender">
       <param name="File" value="./logs/jpatest.log"/>
+      <param name="Threshold" value="DEBUG"/>
       <param name="Append" value="false"/>
 
       <layout class="org.apache.log4j.PatternLayout">

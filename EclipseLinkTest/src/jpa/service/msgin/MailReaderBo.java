@@ -507,7 +507,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	 */
 	private void execute(Message[] msgs) throws IOException, MessagingException {
 		if (msgs == null || msgs.length == 0) return;
-		SpringUtil.startTransaction();
+		SpringUtil.beginTransaction();
 		try {
 			MailProcessorBo processor = (MailProcessorBo) SpringUtil.getAppContext().getBean("mailProcessorBo");
 			MessageContext ctx = new MessageContext(msgs, mInbox);

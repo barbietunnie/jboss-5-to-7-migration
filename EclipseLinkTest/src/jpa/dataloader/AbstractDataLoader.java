@@ -13,7 +13,7 @@ public abstract class AbstractDataLoader {
 	public abstract void loadData();
 
 	protected void startTransaction() {
-		SpringUtil.startTransaction();
+		SpringUtil.beginTransaction();
 	}
 	
 	protected void commitTransaction() {

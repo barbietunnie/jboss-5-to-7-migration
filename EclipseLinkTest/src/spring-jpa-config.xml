@@ -97,14 +97,12 @@
 
 	<!-- Transaction Advice -->
 	<tx:advice id="dsTxAdviceEmailAddr" transaction-manager="msgTransactionManager">
-		<!-- the transactional semantics... -->
 		<tx:attributes>
-			<!-- all methods use the default transaction settings (see below) -->
 			<tx:method name="findSertAddress" no-rollback-for="javax.persistence.NoResultException"/>
 		</tx:attributes>
 	</tx:advice>
 	
-	<aop:config>
+	<aop:config proxy-target-class="true">
 		<aop:pointcut id="emailAddrOperation"
 			expression="execution(* jpa.service.EmailAddressService.*(..))"/>
 		<aop:advisor advice-ref="dsTxAdviceEmailAddr" pointcut-ref="emailAddrOperation"/>
@@ -120,16 +118,22 @@
 		</tx:attributes>
 	</tx:advice>
 	
-	<aop:config>
+	<aop:config proxy-target-class="true">
 		<!-- all Service classes are bound to transaction advice -->
 		<aop:pointcut id="serviceOperation" 
 			expression="execution(* jpa.service..*Service.*(..))"/>
 		<aop:advisor advice-ref="dsTxAdvice" pointcut-ref="serviceOperation"/>
 	</aop:config>
+
+	<!-- aop:config>
+		<aop:pointcut id="taskOperation" 
+			expression="execution(* jpa.service.task..*(..))"/>
+		<aop:advisor advice-ref="dsTxAdvice" pointcut-ref="taskOperation"/>
+	</aop:config -->
 	
-	<aop:config>
+	<aop:config proxy-target-class="true">
 		<aop:pointcut id="boOperation" 
-			expression="execution(* jpa.message..*Bo.*(..))"/>
+			expression="execution(* jpa.service..*Bo.*(..))"/>
 		<aop:advisor advice-ref="dsTxAdvice" pointcut-ref="boOperation"/>
 	</aop:config>
 	<!-- end of Advice -->

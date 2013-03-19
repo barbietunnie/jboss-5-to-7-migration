@@ -31,7 +31,6 @@ public class SenderDataService {
 			Query query = em.createQuery("select t from SenderData t where t.senderId = :senderId");
 			query.setParameter("senderId", senderId);
 			SenderData sender = (SenderData) query.getSingleResult();
-			//em.lock(sender, LockModeType.OPTIMISTIC);
 			return sender;
 		}
 		finally {
@@ -43,7 +42,7 @@ public class SenderDataService {
 			Query query = em.createQuery("select t from SenderData t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			SenderData sender = (SenderData) query.getSingleResult();
-			em.lock(sender, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(sender, LockModeType.OPTIMISTIC);
 			return sender;
 		}
 		finally {

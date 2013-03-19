@@ -41,7 +41,7 @@ public class UnsubCommentService {
 			Query query = em.createQuery("select t from UnsubComment t where t.rowId = :rowId");
 			query.setParameter("rowId", rowId);
 			UnsubComment comment = (UnsubComment) query.getSingleResult();
-			em.lock(comment, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			//em.lock(comment, LockModeType.OPTIMISTIC);
 			return comment;
 		}
 		finally {
