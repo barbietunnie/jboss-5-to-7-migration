@@ -5,6 +5,7 @@ import javax.persistence.NoResultException;
 
 import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
+import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.service.EmailAddressService;
@@ -14,13 +15,11 @@ import jpa.service.SubscriptionService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("subscribeToList")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class SubscribeToList extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(SubscribeToList.class);
@@ -39,13 +38,13 @@ public class SubscribeToList extends TaskBaseAdaptor {
 	 * @return a Integer value representing number of addresses that have been
 	 *         updated.
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException {
+	public Integer process(MessageContext ctx) throws DataValidationException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (messageBean==null) {
+		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
-		
+		MessageBean messageBean = ctx.getMessageBean();
 		int addrsUpdated = 0;
 		Address[] toAddrs = messageBean.getTo();
 		if (toAddrs == null || toAddrs.length == 0) { // just for safety

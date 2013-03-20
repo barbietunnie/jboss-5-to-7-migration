@@ -24,13 +24,11 @@ import jpa.service.msgout.SmtpException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("forwardMessage")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class ForwardMessage extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(ForwardMessage.class);
@@ -51,17 +49,18 @@ public class ForwardMessage extends TaskBaseAdaptor {
 	 * @return a Integer value representing number of addresses the message is
 	 *         forwarded to.
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException,
+	public Integer process(MessageContext ctx) throws DataValidationException,
 			MessagingException, IOException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (messageBean==null) {
+		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
+		MessageBean messageBean = ctx.getMessageBean();
 		if (!messageBean.getHashMap().containsKey(MessageBeanBuilder.MSG_RAW_STREAM)) {
 			logger.warn("Email Raw Stream not found in MessageBean.hashMap");
 		}
-		if (taskArguments == null || taskArguments.trim().length() == 0) {
+		if (StringUtils.isBlank(ctx.getTaskArguments())) {
 			throw new DataValidationException("Arguments is not valued, can't forward");
 		}
 		
@@ -76,7 +75,7 @@ public class ForwardMessage extends TaskBaseAdaptor {
 
 		// example: $Forward,securityDept@mycompany.com
 		String forwardAddrs = "";
-		StringTokenizer st = new StringTokenizer(taskArguments, ",");
+		StringTokenizer st = new StringTokenizer(ctx.getTaskArguments(), ",");
 		while (st.hasMoreTokens()) {
 			String addrs = null;
 			String token = st.nextToken();
@@ -157,7 +156,7 @@ public class ForwardMessage extends TaskBaseAdaptor {
 		
 		// send the message off
 		try {
-			mailSenderBo.process(new MessageContext(messageBean));
+			mailSenderBo.process(ctx);
 			if (isDebugEnabled) {
 				logger.debug("Message forwarded to: " + messageBean.getToAsString());
 			}

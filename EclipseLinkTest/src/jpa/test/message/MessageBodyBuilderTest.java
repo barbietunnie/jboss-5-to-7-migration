@@ -48,7 +48,7 @@ public class MessageBodyBuilderTest {
 				+ emailIdStr + Constants.MSG_DELIMITER_END + "</HTML>");
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
 		msgBean.setMsgId(Integer.valueOf(999999));
-		msgBean.setBody(MessageBodyBuilder.getBody(msgBean));
+		msgBean.setBody(MessageBodyBuilder.getBodyWithEmailId(msgBean));
 		System.out.println(">>>>>>>>>>>>>>>>HTML Message:" + LF + msgBean);
 
 		String msgId = parser.parseMsg(msgBean.getBody());
@@ -63,7 +63,7 @@ public class MessageBodyBuilderTest {
 				+ emailIdStr + Constants.MSG_DELIMITER_END);
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
 		msgBean.setMsgId(Integer.valueOf(999999));
-		msgBean.setBody(MessageBodyBuilder.getBody(msgBean));
+		msgBean.setBody(MessageBodyBuilder.getBodyWithEmailId(msgBean));
 		MsgHeader hdr = new MsgHeader();
 		hdr.setName(parser.getEmailIdXHdrName());
 		hdr.setValue(emailIdXhdr);

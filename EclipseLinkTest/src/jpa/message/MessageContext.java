@@ -1,6 +1,8 @@
 package jpa.message;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import jpa.model.MailInbox;
 
@@ -11,6 +13,8 @@ public class MessageContext implements Serializable {
 	private MailInbox mailInbox;
 	private MessageBean messageBean;
 	private byte[] messageStream;
+	private String taskArguments;
+	private List<Integer> rowIds;
 	
 	public MessageContext() {}
 	
@@ -47,7 +51,30 @@ public class MessageContext implements Serializable {
 		return messageBean;
 	}
 
+	public void setMessageBean(MessageBean messageBean) {
+		this.messageBean = messageBean;
+	}
+
 	public byte[] getMessageStream() {
 		return messageStream;
+	}
+
+	public String getTaskArguments() {
+		return taskArguments;
+	}
+
+	public void setMessageStream(byte[] messageStream) {
+		this.messageStream = messageStream;
+	}
+
+	public void setTaskArguments(String taskArguments) {
+		this.taskArguments = taskArguments;
+	}
+
+	public List<Integer> getRowIds() {
+		if (rowIds == null) {
+			rowIds = new ArrayList<Integer>();
+		}
+		return rowIds;
 	}
 }

@@ -12,6 +12,7 @@ import jpa.constant.StatusId;
 import jpa.data.preload.RuleNameEnum;
 import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
+import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageInbox;
 import jpa.service.EmailAddressService;
@@ -20,13 +21,11 @@ import jpa.service.message.MessageInboxService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("suspendAddress")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class SuspendAddress extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(SuspendAddress.class);
@@ -44,24 +43,25 @@ public class SuspendAddress extends TaskBaseAdaptor {
 	 * @return a Integer value representing the number of addresses that have been
 	 *         suspended.
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException {
+	public Integer process(MessageContext ctx) throws DataValidationException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (messageBean==null) {
+		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
 		
-		if (taskArguments == null || taskArguments.trim().length() == 0) {
+		if (StringUtils.isBlank(ctx.getTaskArguments())) {
 			throw new DataValidationException("Arguments is not valued, nothing to suspend");
 		}
 		else if (isDebugEnabled) {
-			logger.debug("Arguments passed: " + taskArguments);
+			logger.debug("Arguments passed: " + ctx.getTaskArguments());
 		}
 		
+		MessageBean messageBean = ctx.getMessageBean();
 		// example: $FinalRcpt,$OriginalRcpt,badaddress@badcompany.com
 		int addrsSuspended = 0;
 		Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
-		StringTokenizer st = new StringTokenizer(taskArguments, ",");
+		StringTokenizer st = new StringTokenizer(ctx.getTaskArguments(), ",");
 		while (st.hasMoreTokens()) {
 			String addrs = null;
 			String token = st.nextToken();

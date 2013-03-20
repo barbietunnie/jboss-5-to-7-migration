@@ -14,13 +14,11 @@ import jpa.service.msgout.SmtpException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("csrReplyMessage")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class CsrReplyMessage extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(CsrReplyMessage.class);
@@ -41,13 +39,14 @@ public class CsrReplyMessage extends TaskBaseAdaptor {
 	 *         been replied to.
 	 * @throws IOException 
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException,
+	public Integer process(MessageContext ctx) throws DataValidationException,
 			AddressException, IOException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (messageBean==null) {
+		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
+		MessageBean messageBean = ctx.getMessageBean();
 		if (messageBean.getOriginalMail()==null) {
 			throw new DataValidationException("Original MessageBean is null");
 		}

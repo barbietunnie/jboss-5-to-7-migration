@@ -6,16 +6,12 @@ import javax.mail.MessagingException;
 
 import jpa.exception.DataValidationException;
 import jpa.exception.TemplateException;
-import jpa.message.MessageBean;
+import jpa.message.MessageContext;
 
 public interface TaskBaseBo {
 
 	static final String LF = System.getProperty("line.separator", "\n");
 	
-	public Object process(MessageBean messageBean) throws DataValidationException, 
+	public Object process(MessageContext messageCtx) throws DataValidationException, 
 			MessagingException, IOException, TemplateException;
-	
-	public String getTaskArguments();
-
-	public void setTaskArguments(String taskArguments);
 }

@@ -17,13 +17,11 @@ import jpa.service.msgout.SmtpException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("sendMessage")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class SendMessage extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(SendMessage.class);
@@ -44,13 +42,14 @@ public class SendMessage extends TaskBaseAdaptor {
 	 *         been sent to.
 	 * @throws IOException 
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException,
+	public Integer process(MessageContext ctx) throws DataValidationException,
 			AddressException, IOException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (messageBean==null) {
+		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
+		MessageBean messageBean = ctx.getMessageBean();
 		if (messageBean.getMsgRefId()==null) {
 			logger.warn("messageBean.getMsgRefId() returned null");
 			//throw new DataValidationException("messageBean.getMsgRefId() returned null");
@@ -69,7 +68,7 @@ public class SendMessage extends TaskBaseAdaptor {
 				// send the mail off
 				messageBean.setTo(new Address[]{addr});
 				try {
-					mailSenderBo.process(new MessageContext(messageBean));
+					mailSenderBo.process(ctx);
 					if (isDebugEnabled) {
 						logger.debug("Message sent to: " + addr.toString());
 					}

@@ -1,19 +1,17 @@
 package jpa.service.task;
 
 import jpa.exception.DataValidationException;
-import jpa.message.MessageBean;
+import jpa.message.MessageContext;
 import jpa.model.message.MessageInbox;
 import jpa.service.msgin.MessageInboxBo;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("saveMessage")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class SaveMessage extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(SaveMessage.class);
@@ -27,14 +25,15 @@ public class SaveMessage extends TaskBaseAdaptor {
 	 * 
 	 * @return a Integer value representing the msgId inserted into MsgInbox.
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException {
+	public Integer process(MessageContext ctx) throws DataValidationException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (messageBean==null) {
+		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
 		
-		MessageInbox msgInbox = msgInboxBo.saveMessage(messageBean);
+		MessageInbox msgInbox = msgInboxBo.saveMessage(ctx.getMessageBean());
+		ctx.getRowIds().add(msgInbox.getRowId());
 		
 		return msgInbox.getRowId();
 	}

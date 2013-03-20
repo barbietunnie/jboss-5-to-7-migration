@@ -14,6 +14,7 @@ public enum XHeaderName {
 	SAVE_RAW_STREAM("X-Save_Raw_Stream"), // Yes/No
 	OVERRIDE_TEST_ADDR("X-Override_Test_Addr"), // Yes/No
 	EMBED_EMAILID("X-Embed_Email_Id"), // Yes/No
+	EMAIL_ID(EmailIdToken.XHEADER_NAME),
 	RENDER_ID("X-Render_Id"),
 	RULE_NAME("X-Rule_Name"),
 	ORIG_RULE_NAME("X-Orig_Rule_Name"),

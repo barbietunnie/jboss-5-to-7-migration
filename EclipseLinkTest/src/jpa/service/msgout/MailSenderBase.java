@@ -26,6 +26,7 @@ import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanBuilder;
 import jpa.message.MessageBeanUtil;
+import jpa.message.MessageContext;
 import jpa.message.MsgHeader;
 import jpa.message.util.MsgIdCipher;
 import jpa.model.SenderData;
@@ -83,20 +84,41 @@ public abstract class MailSenderBase {
 	}
 	
 	/**
-	 * send a message off and update delivery status and message tables.
+	 * Process the request. The message context should contain an email
+	 * message represented by either a MessageBean or a ByteStream.
 	 * 
-	 * @param msgBean -
-	 *            a MessageBean object
+	 * @param messageContext -
+	 *            contains a MessageBean or a MessageStream object
 	 * @throws MessagingException
 	 * @throws IOException
 	 * @throws SmtpException
 	 * @throws DataValidationException 
 	 */
-	public void process(MessageBean msgBean) throws MessagingException, IOException, SmtpException,
+	protected void processMessage(MessageContext ctx) throws MessagingException, IOException, SmtpException,
 			DataValidationException {
 
-		if (msgBean == null) {
-			throw new DataValidationException("Input MessageBean is null");
+		if (ctx == null) {
+			logger.error("a null request was received.");
+			return;
+		}
+		if (ctx.getMessageBean()==null && ctx.getMessageStream()==null) {
+			throw new IllegalArgumentException("Request did not contain a MessageBean nor a MessageStream.");
+		}
+		
+		MessageBean msgBean = ctx.getMessageBean();
+		if (msgBean==null) {
+			javax.mail.Message mimeMsg = MessageBeanUtil.createMimeMessage(ctx.getMessageStream());
+			/*
+			 * In order to save the message to database, a MessageBean is required
+			 * by saveMessage method. So first we convert the JavaMail message to a
+			 * MessageBean and save it. Second we convert the MessageBean back to
+			 * JavaMail message and send it off (as an Email_Id may have been added
+			 * to the message body and X-header).
+			 */
+			// convert the JavaMail message to a MessageBean
+			msgBean = MessageBeanBuilder.processPart(mimeMsg, null);
+			// convert extra mimeMessage headers
+			addXHeadersToBean(msgBean, mimeMsg);
 		}
 		// was the outgoing message rendered?
 		if (msgBean.getRenderId() == null) {
@@ -117,6 +139,7 @@ public abstract class MailSenderBase {
 		}
 		// save the message to the database
 		MessageInbox minbox = msgInboxBo.saveMessage(msgBean);
+		ctx.getRowIds().add(minbox.getRowId());
 		// check if VERP is enabled
 		if (senderVo.isVerpEnabled()) {
 			// set return path with VERP, msgBean.msgId must be valued.
@@ -180,36 +203,6 @@ public abstract class MailSenderBase {
 		if (msgBean.getSaveMsgStream()) {
 			saveMsgStream(mimeMsg, minbox);
 		}
-	}
-	
-	/**
-	 * send a message off and update delivery status and message tables.
-	 * 
-	 * @param msgStream -
-	 *            an email raw stream
-	 * @throws MessagingException
-	 * @throws IOException
-	 * @throws SmtpException
-	 * @throws DataValidationException 
-	 */
-	public void process(byte[] msgStream) throws MessagingException, IOException, SmtpException,
-			DataValidationException {
-
-		javax.mail.Message mimeMsg = MessageBeanUtil.createMimeMessage(msgStream);
-		
-		/*
-		 * In order to save the message to database, a MessageBean is required
-		 * by saveMessage method. So first we convert the JavaMail message to a
-		 * MessageBean and save it. Second we convert the MessageBean back to
-		 * JavaMail message and send it off (as an Email_Id may have been added
-		 * to the message body and X-header).
-		 */
-		// convert the JavaMail message to a MessageBean
-		MessageBean msgBean = MessageBeanBuilder.processPart(mimeMsg, null);
-		// convert extra mimeMessage headers
-		addXHeadersToBean(msgBean, mimeMsg);
-		// save the message and send it off
-		process(msgBean);
 	}
 	
 	private void addXHeadersToBean(MessageBean msgBean, javax.mail.Message mimeMsg)

@@ -19,13 +19,11 @@ import jpa.service.msgout.SmtpException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("forwardToCsr")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class ForwardToCsr extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(ForwardToCsr.class);
@@ -44,20 +42,21 @@ public class ForwardToCsr extends TaskBaseAdaptor {
 	 * @throws IOException 
 	 * @throws AddressException 
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException,
+	public Integer process(MessageContext ctx) throws DataValidationException,
 			IOException, AddressException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (messageBean==null) {
+		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
-		if (getArgumentList().size() == 0) {
+		if (getArgumentList(ctx.getTaskArguments()).size() == 0) {
 			logger.warn("Arguments is not valued, use default csr address from SenderData");
 		}
 		else if (isDebugEnabled) {
-			logger.debug("Arguments passed: " + taskArguments);
+			logger.debug("Arguments passed: " + ctx.getTaskArguments());
 		}
 		
+		MessageBean messageBean = ctx.getMessageBean();
 		String senderId = messageBean.getSenderId();
 		if (StringUtils.isBlank(senderId)) {
 			messageBean.setSenderId(Constants.DEFAULT_SENDER_ID);
@@ -70,9 +69,9 @@ public class ForwardToCsr extends TaskBaseAdaptor {
 			throw new DataValidationException("SenderData not found by senderId: " + messageBean.getSenderId());
 		}
 		String forwardAddr = null;
-		if (StringUtils.isNotBlank(taskArguments)) {
-			if (taskArguments.startsWith("$")) {
-				String dept = taskArguments.substring(1);
+		if (StringUtils.isNotBlank(ctx.getTaskArguments())) {
+			if (ctx.getTaskArguments().startsWith("$")) {
+				String dept = ctx.getTaskArguments().substring(1);
 				if (RuleNameEnum.RMA_REQUEST.getValue().equals(dept)) {
 					forwardAddr = sender.getRmaDeptEmail();
 				}
@@ -93,7 +92,7 @@ public class ForwardToCsr extends TaskBaseAdaptor {
 				}
 			}
 			else {
-				forwardAddr = taskArguments;
+				forwardAddr = ctx.getTaskArguments();
 			}
 		}
 		if (StringUtils.isBlank(forwardAddr)) {
@@ -101,9 +100,8 @@ public class ForwardToCsr extends TaskBaseAdaptor {
 		}
 		// send the mail off
 		messageBean.setTo(InternetAddress.parse(forwardAddr));
-		MessageContext msgctx = new MessageContext(messageBean);
 		try {
-			mailSenderBo.process(msgctx);
+			mailSenderBo.process(ctx);
 			if (isDebugEnabled) {
 				logger.debug("Message forwarded to: " + forwardAddr);
 			}

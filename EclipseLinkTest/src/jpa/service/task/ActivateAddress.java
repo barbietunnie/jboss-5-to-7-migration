@@ -13,19 +13,18 @@ import jpa.constant.EmailAddrType;
 import jpa.constant.StatusId;
 import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
+import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
 import jpa.service.EmailAddressService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("activateAddress")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class ActivateAddress extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(ActivateAddress.class);
@@ -42,24 +41,24 @@ public class ActivateAddress extends TaskBaseAdaptor {
 	 * @return a Long value representing the number of addresses that have been
 	 *         activated.
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException {
+	public Integer process(MessageContext ctx) throws DataValidationException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (messageBean==null) {
+		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
-		
-		if (StringUtils.isBlank(taskArguments)) {
+		if (StringUtils.isBlank(ctx.getTaskArguments())) {
 			throw new DataValidationException("Arguments is not valued, nothing to activate");
 		}
 		else if (isDebugEnabled) {
-			logger.debug("Arguments passed: " + taskArguments);
+			logger.debug("Arguments passed: " + ctx.getTaskArguments());
 		}
 		
+		MessageBean messageBean = ctx.getMessageBean();
 		// example: $From,$To,myaddress@mydomain.com
 		int addrsActiveted = 0;
 		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
-		List<String> list = TaskBaseAdaptor.getArgumentList(taskArguments);
+		List<String> list = getArgumentList(ctx.getTaskArguments());
 		for (Iterator<String> it=list.iterator(); it.hasNext(); ) {
 			String addrs = null;
 			String token = it.next();

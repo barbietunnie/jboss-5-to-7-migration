@@ -12,6 +12,7 @@ import jpa.data.preload.RuleNameEnum;
 import jpa.exception.DataValidationException;
 import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
+import jpa.message.MessageContext;
 import jpa.message.util.EmailIdParser;
 import jpa.model.rule.RuleAction;
 import jpa.service.rule.RuleActionService;
@@ -37,14 +38,15 @@ public class TaskSchedulerBo {
 
 	static final String LF = System.getProperty("line.separator", "\n");
 
-	public void scheduleTasks(MessageBean msgBean) throws DataValidationException,
+	public void scheduleTasks(MessageContext ctx) throws DataValidationException,
 			MessagingException, IOException, TemplateException {
 		if (isDebugEnabled)
-			logger.debug("Entering scheduleTasks() method. MessageBean:" + LF + msgBean);
-		if (msgBean.getRuleName() == null) {
+			logger.debug("Entering scheduleTasks() method. MessageBean:" + LF + ctx.getMessageBean());
+		if (ctx.getMessageBean().getRuleName() == null) {
 			throw new DataValidationException("RuleName is not valued");
 		}
 		
+		MessageBean msgBean = ctx.getMessageBean();
 		RuleActionService ruleActionDao = (RuleActionService) SpringUtil.getAppContext().getBean("ruleActionService");
 		List<RuleAction> actions = ruleActionDao.getByBestMatch(msgBean.getRuleName(), null,	msgBean.getSenderId());
 		if (actions == null || actions.isEmpty()) {
@@ -53,7 +55,7 @@ public class TaskSchedulerBo {
 			logger.warn("scheduleTasks() - No Actions found for ruleName: " + msgBean.getRuleName()
 					+ ", ProcessBeanId [0]: " + processBeanId);
 			TaskBaseBo bo = (TaskBaseBo) SpringUtil.getAppContext().getBean(processBeanId);
-			bo.process(msgBean);
+			bo.process(ctx);
 			return;
 		}
 		for (int i = 0; i < actions.size(); i++) {
@@ -89,13 +91,13 @@ public class TaskSchedulerBo {
 			 * retrieve arguments
 			 */
 			if (StringUtils.isNotBlank(ruleActionVo.getFieldValues())) {
-				bo.setTaskArguments(ruleActionVo.getFieldValues());
+				ctx.setTaskArguments(ruleActionVo.getFieldValues());
 			}
 			else {
-				bo.setTaskArguments(null);
+				ctx.setTaskArguments(null);
 			}
 			// invoke the processor
-			bo.process(msgBean);
+			bo.process(ctx);
 		}
 	}
 
@@ -121,7 +123,8 @@ public class TaskSchedulerBo {
 		mBean.setRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
 		SpringUtil.beginTransaction();
 		try {
-			bo.scheduleTasks(mBean);
+			MessageContext ctx = new MessageContext(mBean);
+			bo.scheduleTasks(ctx);
 			SpringUtil.commitTransaction();
 		}
 		catch (Exception e) {
