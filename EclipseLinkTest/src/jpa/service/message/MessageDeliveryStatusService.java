@@ -153,11 +153,11 @@ public class MessageDeliveryStatusService {
 				SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
 				ConvertUtils.register(converter1, java.sql.Timestamp.class);
 				BeanUtils.copyProperties(status, dlvrStatus);
-				update(status);
 			}
 			catch (Exception e) {
 				logger.error("Failed to copy bean: " + StringUtil.prettyPrint(dlvrStatus));
 			}
+			update(status);
 		}
 		catch (NoResultException e) {
 			try {
@@ -166,15 +166,6 @@ public class MessageDeliveryStatusService {
 			}
 			finally {
 			}
-		}
-	}
-
-	public void insertWithDelete(MessageDeliveryStatus dlvrStatus) {
-		try {
-			delete(dlvrStatus);
-			insert(dlvrStatus);
-		}
-		finally {
 		}
 	}
 }

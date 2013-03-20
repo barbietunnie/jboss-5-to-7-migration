@@ -1,5 +1,7 @@
 package jpa.service.task;
 
+import java.io.IOException;
+
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -7,8 +9,11 @@ import javax.mail.internet.InternetAddress;
 import jpa.constant.StatusId;
 import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
+import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
 import jpa.service.EmailAddressService;
+import jpa.service.msgout.MailSenderBo;
+import jpa.service.msgout.SmtpException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +31,8 @@ public class SendMessage extends TaskBaseAdaptor {
 	
 	@Autowired
 	private EmailAddressService emailAddrDao;
+	@Autowired
+	private MailSenderBo mailSenderBo;
 
 	/**
 	 * Send the email off by writing the MessageBean object to MailSender input
@@ -35,9 +42,10 @@ public class SendMessage extends TaskBaseAdaptor {
 	 *            MsgRefId that links to a received message must be populated.
 	 * @return a Integer value representing number of addresses the message has
 	 *         been sent to.
+	 * @throws IOException 
 	 */
 	public Integer process(MessageBean messageBean) throws DataValidationException,
-			AddressException {
+			AddressException, IOException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
 		if (messageBean==null) {
@@ -58,10 +66,18 @@ public class SendMessage extends TaskBaseAdaptor {
 			if (addr == null) continue;
 			EmailAddress vo = emailAddrDao.findSertAddress(addr.toString());
 			if (StatusId.ACTIVE.getValue().equals(vo.getStatusId())) {
-				// TODO send the mail off
+				// send the mail off
+				messageBean.setTo(new Address[]{addr});
+				try {
+					mailSenderBo.process(new MessageContext(messageBean));
+					if (isDebugEnabled) {
+						logger.debug("Message sent to: " + addr.toString());
+					}
+				}
+				catch (SmtpException e) {
+					throw new IOException(e.getMessage(), e);
+				}
 				mailsSent++;
-				if (isDebugEnabled)
-					logger.debug("Jms Message Id returned: ");
 			}
 		}
 		return Integer.valueOf(mailsSent);

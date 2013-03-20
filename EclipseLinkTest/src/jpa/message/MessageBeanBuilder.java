@@ -342,9 +342,9 @@ public final class MessageBeanBuilder {
 				msgBean.setTo(envelope_to);
 			}
 		}
-		logger.info("Email To from Delivered-To: " + EmailAddrUtil.emailAddrToString(delivered_to, false)
-				+ ", from Received Header: " + EmailAddrUtil.emailAddrToString(received_to, false)
-				+ ", from Envelope: " + EmailAddrUtil.emailAddrToString(envelope_to, false));
+		logger.info("Email To from Delivered-To: " + EmailAddrUtil.addressToString(delivered_to, false)
+				+ ", from Received Header: " + EmailAddrUtil.addressToString(received_to, false)
+				+ ", from Envelope: " + EmailAddrUtil.addressToString(envelope_to, false));
 		
 		// CC
 		try {

@@ -1,11 +1,9 @@
 package jpa.service.task;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
 import javax.mail.Address;
-import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -16,10 +14,12 @@ import jpa.constant.TableColumnName;
 import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanBuilder;
-import jpa.message.MessageBeanUtil;
+import jpa.message.MessageContext;
 import jpa.model.SenderData;
 import jpa.service.SenderDataService;
 import jpa.service.message.MessageStreamService;
+import jpa.service.msgout.MailSenderBo;
+import jpa.service.msgout.SmtpException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -40,12 +40,13 @@ public class ForwardMessage extends TaskBaseAdaptor {
 	private MessageStreamService msgStreamDao;
 	@Autowired
 	private SenderDataService senderDao;
+	@Autowired
+	private MailSenderBo mailSenderBo;
 
 	/**
 	 * Forward the message to the specified addresses. The forwarding addresses
 	 * or address types are obtained from "DataTypeValues" column of MsgAction
-	 * table. The original email raw stream should be included in the input
-	 * MessageBean by the calling program.
+	 * table.
 	 * 
 	 * @return a Integer value representing number of addresses the message is
 	 *         forwarded to.
@@ -142,7 +143,7 @@ public class ForwardMessage extends TaskBaseAdaptor {
 		if (isDebugEnabled) {
 			logger.debug("Address(es) to forward to: " + forwardAddrs);
 		}
-		if (forwardAddrs.trim().length() == 0) {
+		if (StringUtils.isBlank(forwardAddrs)) {
 			throw new DataValidationException("forward address is not valued");
 		}
 		
@@ -150,35 +151,20 @@ public class ForwardMessage extends TaskBaseAdaptor {
 			messageBean.setMsgRefId(messageBean.getMsgId());
 		}
 		Address[] addresses = InternetAddress.parse(forwardAddrs);
-		Message msg = null;
-		byte[] stream = (byte[]) messageBean.getHashMap().get(MessageBeanBuilder.MSG_RAW_STREAM);
-		if (stream == null) { // just for safety
-			try {
-				msg = MessageBeanUtil.createMimeMessage(messageBean);
-			}
-			catch (IOException e) {
-				logger.error("IOException caught", e);
-				throw new MessagingException("IOException caught, " + e);
+		
+		messageBean.setSubject("Fwd: " + messageBean.getSubject());
+		messageBean.setTo(addresses);
+		
+		// send the message off
+		try {
+			mailSenderBo.process(new MessageContext(messageBean));
+			if (isDebugEnabled) {
+				logger.debug("Message forwarded to: " + messageBean.getToAsString());
 			}
 		}
-		else {
-			msg = MessageBeanUtil.createMimeMessage(stream);
-			MessageBeanUtil.addBeanFieldsToHeader(messageBean, msg);
+		catch (SmtpException e) {
+			throw new IOException(e.getMessage(), e);
 		}
-		//msg.removeHeader("Received"); // remove "Received" history
-		//msg.removeHeader("Delivered-To"); // remove delivery history
-		
-		msg.setSubject("Fwd: " + messageBean.getSubject());
-		msg.setRecipients(Message.RecipientType.TO, addresses);
-		msg.setRecipients(Message.RecipientType.CC, null);
-		msg.setRecipients(Message.RecipientType.BCC, null);
-		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		msg.writeTo(baos);
-		
-		// TODO send the message off
-		if (isDebugEnabled)
-			logger.debug("Jms Message Id returned: ");
 		return Integer.valueOf(addresses.length);
 	}
 }

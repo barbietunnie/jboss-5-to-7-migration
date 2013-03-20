@@ -40,8 +40,8 @@ public class EmailAddrUtil {
 	 * @return addresses in string format comma delimited, or null if input is
 	 *         null
 	 */
-	public static String emailAddrToString(Address[] addrs) {
-		return emailAddrToString(addrs, true);
+	public static String addressToString(Address[] addrs) {
+		return addressToString(addrs, true);
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class EmailAddrUtil {
 	 * @return addresses in string format comma delimited, or null if input is
 	 *         null
 	 */
-	public static String emailAddrToString(Address[] addrs, boolean removeDisplayName) {
+	public static String addressToString(Address[] addrs, boolean removeDisplayName) {
 		if (addrs == null || addrs.length == 0) {
 			return null;
 		}

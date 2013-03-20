@@ -57,7 +57,7 @@ public class MessageBeanTest {
 		assertTrue("support.hotline@jbatch.com".equals(msgBean2.getToAsString()));
 		assertTrue("postmaster@synnex.com.au".equals(msgBean2.getFromAsString()));
 		assertNotNull(msgBean2.getToEnvelope());
-		assertTrue("jackwng@gmail.com".equals(EmailAddrUtil.emailAddrToString(msgBean2.getToEnvelope())));
+		assertTrue("jackwng@gmail.com".equals(EmailAddrUtil.addressToString(msgBean2.getToEnvelope())));
 		assertTrue("Delivery Status Notification (Failure)".equals(msgBean2.getSubject()));
 		String contentType = msgBean2.getContentType();
 		assertTrue(StringUtils.contains(contentType, "multipart/report;"));
