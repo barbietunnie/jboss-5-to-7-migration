@@ -11,7 +11,7 @@ import javax.persistence.UniqueConstraint;
 import jpa.model.BaseModel;
 
 @Entity
-@Table(name="message_action_log", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId", "LeadMessageRowId"}))
+@Table(name="message_action_log", uniqueConstraints={@UniqueConstraint(columnNames = {"MessageInboxRowId", "LeadMessageRowId"})})
 public class MessageActionLog extends BaseModel implements Serializable
 {
 	private static final long serialVersionUID = 60873582256305774L;

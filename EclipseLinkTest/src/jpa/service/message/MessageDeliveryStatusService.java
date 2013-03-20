@@ -8,7 +8,11 @@ import javax.persistence.Query;
 
 import jpa.model.message.MessageDeliveryStatus;
 import jpa.model.message.MessageDeliveryStatusPK;
+import jpa.util.StringUtil;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -144,10 +148,24 @@ public class MessageDeliveryStatusService {
 
 	public void insert(MessageDeliveryStatus dlvrStatus) {
 		try {
-			em.persist(dlvrStatus);
-			em.flush(); // to populate the @Id field
+			MessageDeliveryStatus status = getByPrimaryKey(dlvrStatus.getMessageDeliveryStatusPK());
+			try {
+				SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
+				ConvertUtils.register(converter1, java.sql.Timestamp.class);
+				BeanUtils.copyProperties(status, dlvrStatus);
+				update(status);
+			}
+			catch (Exception e) {
+				logger.error("Failed to copy bean: " + StringUtil.prettyPrint(dlvrStatus));
+			}
 		}
-		finally {
+		catch (NoResultException e) {
+			try {
+				em.persist(dlvrStatus);
+				em.flush(); // to populate the @Id field
+			}
+			finally {
+			}
 		}
 	}
 
