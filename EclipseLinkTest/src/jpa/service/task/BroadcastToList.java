@@ -36,13 +36,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.htmlparser.util.ParserException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("broadcastToList")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class BroadcastToList extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(BroadcastToList.class);
@@ -71,32 +69,33 @@ public class BroadcastToList extends TaskBaseAdaptor {
 	 * @throws TemplateException 
 	 * @throws IOException 
 	 */
-	public Integer process(MessageBean msgBean) throws DataValidationException,
+	public Integer process(MessageContext ctx) throws DataValidationException,
 			AddressException, TemplateException, IOException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (msgBean==null) {
+		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
-		if (msgBean.getMsgId()==null) {
+		MessageBean messageBean = ctx.getMessageBean();
+		if (messageBean.getMsgId()==null) {
 			throw new DataValidationException("MsgId is null");
 		}
-		if (!RuleNameEnum.BROADCAST.getValue().equals(msgBean.getRuleName())) {
-			throw new DataValidationException("Invalid Rule Name: " + msgBean.getRuleName());
+		if (!RuleNameEnum.BROADCAST.getValue().equals(messageBean.getRuleName())) {
+			throw new DataValidationException("Invalid Rule Name: " + messageBean.getRuleName());
 		}
-		if (StringUtils.isNotBlank(taskArguments)) {
+		if (StringUtils.isNotBlank(ctx.getTaskArguments())) {
 			// mailing list from MessageBean takes precedence
-			if (StringUtils.isBlank(msgBean.getMailingListId())) {
-				msgBean.setMailingListId(taskArguments);
+			if (StringUtils.isBlank(messageBean.getMailingListId())) {
+				messageBean.setMailingListId(ctx.getTaskArguments());
 			}
 		}
-		if (StringUtils.isBlank(msgBean.getMailingListId())) {
+		if (StringUtils.isBlank(messageBean.getMailingListId())) {
 			throw new DataValidationException("Mailing List was not provided.");
 		}
 		
 		int mailsSent = 0;
-		Boolean saveEmbedEmailId = msgBean.getEmBedEmailId();
-		String listId = msgBean.getMailingListId();
+		Boolean saveEmbedEmailId = messageBean.getEmBedEmailId();
+		String listId = messageBean.getMailingListId();
 		MailingList listVo = null;
 		try {
 			listVo = mailingListDao.getByListId(listId);
@@ -116,22 +115,22 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		logger.info("Broadcasting to Mailing List: " + listId + ", From: " + _from);
 		Address[] from = InternetAddress.parse(_from);
 		// set FROM to list address
-		msgBean.setFrom(from);
+		messageBean.setFrom(from);
 		// get message body from body node
 		String bodyText = null;
-		if (msgBean.getBodyNode() != null) {
-			bodyText = new String(msgBean.getBodyNode().getValue());
+		if (messageBean.getBodyNode() != null) {
+			bodyText = new String(messageBean.getBodyNode().getValue());
 		}
 		if (bodyText == null) {
 			throw new DataValidationException("Message body is empty.");
 		}
-		msgClickCountsDao.updateStartTime(msgBean.getMsgId());
+		msgClickCountsDao.updateStartTime(messageBean.getMsgId());
 		// extract variables from message body
 		List<String> varNames = RenderUtil.retrieveVariableNames(bodyText);
 		if (isDebugEnabled)
 			logger.debug("Body Variable names: " + varNames);
 		// extract variables from message subject
-		String subjText = msgBean.getSubject() == null ? "" : msgBean.getSubject();
+		String subjText = messageBean.getSubject() == null ? "" : messageBean.getSubject();
 		List<String> subjVarNames = RenderUtil.retrieveVariableNames(subjText);
 		if (!subjVarNames.isEmpty()) {
 			varNames.addAll(subjVarNames);
@@ -140,10 +139,10 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		}
 		// get subscribers
 		List<Subscription> subs = null;
-		if (msgBean.getToSubscribersOnly()) {
+		if (messageBean.getToSubscribersOnly()) {
 			subs = subscriptionDao.getByListId(listId);
 		}
-		else if (msgBean.getToProspectsOnly()) {
+		else if (messageBean.getToProspectsOnly()) {
 			subs = subscriptionDao.getByListId(listId);
 		}
 		else {
@@ -151,14 +150,14 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		}
 		// sending email to each subscriber
 		for (Subscription sub : subs) {
-			mailsSent += constructAndSendMessage(msgBean, sub, listVo, bodyText, subjVarNames, saveEmbedEmailId, false);
+			mailsSent += constructAndSendMessage(messageBean, sub, listVo, bodyText, subjVarNames, saveEmbedEmailId, false);
 			if (listVo.isSendText()) {
-				mailsSent += constructAndSendMessage(msgBean, sub, listVo, bodyText, subjVarNames, saveEmbedEmailId, true);
+				mailsSent += constructAndSendMessage(messageBean, sub, listVo, bodyText, subjVarNames, saveEmbedEmailId, true);
 			}
 		}
-		if (mailsSent > 0 && msgBean.getMsgId() != null) {
+		if (mailsSent > 0 && messageBean.getMsgId() != null) {
 			// update sent count to the Broadcasted message
-			msgClickCountsDao.updateSentCount(msgBean.getMsgId(), (int) mailsSent);
+			msgClickCountsDao.updateSentCount(messageBean.getMsgId(), (int) mailsSent);
 		}
 		return Integer.valueOf(mailsSent);
 	}

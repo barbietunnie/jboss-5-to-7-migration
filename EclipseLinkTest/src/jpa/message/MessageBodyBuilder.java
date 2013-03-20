@@ -42,7 +42,7 @@ public final class MessageBodyBuilder {
 	 * 
 	 * @return message body
 	 */
-	public static String getBody(MessageBean msgBean) {
+	public static String getBodyWithEmailId(MessageBean msgBean) {
 		String msgBody = msgBean.getBody();
 		if (msgBody != null) {
 			if (msgBody.length() > MAX_OUTBOUND_BODY_SIZE) {
@@ -452,7 +452,7 @@ public final class MessageBodyBuilder {
 				+ emailIdStr + Constants.MSG_DELIMITER_END + "</HTML>");
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
 		msgBean.setMsgId(Integer.valueOf(999999));
-		msgBean.setBody(getBody(msgBean));
+		msgBean.setBody(getBodyWithEmailId(msgBean));
 		System.out.println(">>>>>>>>>>>>>>>>HTML Message:" + LF + msgBean);
 
 		// embed email_id for plain text email
@@ -463,7 +463,7 @@ public final class MessageBodyBuilder {
 				+ emailIdStr + Constants.MSG_DELIMITER_END);
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
 		msgBean.setMsgId(Integer.valueOf(999999));
-		msgBean.setBody(getBody(msgBean));
+		msgBean.setBody(getBodyWithEmailId(msgBean));
 		MsgHeader hdr = new MsgHeader();
 		hdr.setName(parser.getEmailIdXHdrName());
 		hdr.setValue(emailIdXhdr);

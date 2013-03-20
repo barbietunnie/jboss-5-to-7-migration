@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -110,7 +111,7 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	private final Properties properties;
 
 	// can be used to store extra objects w/o code change
-	private final HashMap<String, Object> hashMap;
+	private final Map<String, Object> hashMap;
 
 	// for incoming only, stores sizes of each attachment.
 	private final List<Integer> componentsSize;
@@ -542,7 +543,7 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	/**
 	 * @return Hash-table object
 	 */
-	public HashMap<String, Object> getHashMap() {
+	public Map<String, Object> getHashMap() {
 		return hashMap;
 	}
 

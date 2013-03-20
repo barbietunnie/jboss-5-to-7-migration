@@ -221,8 +221,9 @@ public class MessageInboxBo {
 					msgVo.setBodyContentType(StringUtils.left(origContentType,50));
 				}
 			}
+			// TODO use sequence table for message_inbox, get next sequence here for email_id
 			/* Rebuild the Message Body, generate Email_Id from MsgId */
-			String msgBody = MessageBodyBuilder.getBody(msgBean);
+			String msgBody = MessageBodyBuilder.getBodyWithEmailId(msgBean);
 			/* end of rebuild */
 			msgVo.setMsgBody(msgBody);
 			msgVo.setMsgBodySize(msgBody == null ? 0 : msgBody.length());

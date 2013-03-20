@@ -10,19 +10,18 @@ import javax.persistence.NoResultException;
 import jpa.constant.EmailAddrType;
 import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
+import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
 import jpa.service.EmailAddressService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("bounceUpAddress")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class BounceUpAddress extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(BounceUpAddress.class);
@@ -38,23 +37,24 @@ public class BounceUpAddress extends TaskBaseAdaptor {
 	 * 
 	 * @return a Long representing the number of addresses updated.
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException {
+	public Integer process(MessageContext ctx) throws DataValidationException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (messageBean==null) {
+		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
 		
-		if (taskArguments == null || taskArguments.trim().length() == 0) {
+		if (StringUtils.isBlank(ctx.getTaskArguments())) {
 			throw new DataValidationException("Arguments is not valued, nothing to suspend");
 		}
 		else if (isDebugEnabled) {
-			logger.debug("Arguments passed: " + taskArguments);
+			logger.debug("Arguments passed: " + ctx.getTaskArguments());
 		}
 		
+		MessageBean messageBean = ctx.getMessageBean();
 		// example: $FinalRcpt,$OriginalRcpt,badaddress@baddomain.com
 		int addrsUpdated = 0;
-		StringTokenizer st = new StringTokenizer(taskArguments, ",");
+		StringTokenizer st = new StringTokenizer(ctx.getTaskArguments(), ",");
 		while (st.hasMoreTokens()) {
 			String addrs = null;
 			String token = st.nextToken();

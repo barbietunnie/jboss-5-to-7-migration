@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.mail.Address;
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import jpa.exception.DataValidationException;
@@ -53,13 +52,13 @@ public class MailSenderBo extends MailSenderBase {
 				bean.setTo(InternetAddress.parse("testto@localhost"));
 			}
 			System.out.println("MessageBean retrieved:\n" + bean);
-			sender.process(bean);
+			sender.process(new MessageContext(bean));
+			SpringUtil.commitTransaction();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		finally {
-			SpringUtil.commitTransaction();
 		}
 	}
 
@@ -72,36 +71,14 @@ public class MailSenderBo extends MailSenderBase {
 	 * @throws SmtpException 
 	 */
 	public void process(MessageContext req) throws SmtpException, IOException {
-		if (req == null) {
-			logger.error("a null request was received.");
-			return;
-		}
-		if (req.getMessageBean()==null && req.getMessageStream()==null) {
-			throw new IllegalArgumentException("Request did not contain a MessageBean nor a MessageStream.");
-		}
-		
-		// defined here to be used in catch blocks
 		try {
-			if (req.getMessageBean()!=null) {
-				process(req.getMessageBean());
-			}
-			else if (req.getMessageStream()!=null) {
-				// SMTP raw stream
-				process(req.getMessageStream());
-			}
-			else {
-				logger.error("message was not a message type as expected");
-			}
+			processMessage(req);
 		}
 		catch (DataValidationException dex) {
 			// failed to send the message
 			logger.error("DataValidationException caught", dex);
 		}
-		catch (AddressException ae) {
-			logger.error("AddressException caught", ae);
-		}
 		catch (MessagingException mex) {
-			// failed to send the message
 			logger.error("MessagingException caught", mex);
 		}
 		catch (NullPointerException en) {
@@ -121,7 +98,7 @@ public class MailSenderBo extends MailSenderBase {
 			logger.error("SmtpException caught", se);
 			// SMTP error, roll back and exit
 			throw se;
-		}
+		} 
 		finally {
 		}
 	}

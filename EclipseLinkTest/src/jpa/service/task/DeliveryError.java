@@ -8,6 +8,7 @@ import jpa.constant.Constants;
 import jpa.constant.MsgStatusCode;
 import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
+import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageDeliveryStatus;
 import jpa.model.message.MessageDeliveryStatusPK;
@@ -20,14 +21,12 @@ import jpa.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("deliveryError")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class DeliveryError extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(DeliveryError.class);
@@ -48,12 +47,13 @@ public class DeliveryError extends TaskBaseAdaptor {
 	 * @return a Long value representing the MsgId inserted into DeliveryStatus
 	 *         table, or -1 if nothing is saved.
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException {
+	public Integer process(MessageContext ctx) throws DataValidationException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (messageBean == null) {
+		if (ctx==null || ctx.getMessageBean() == null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
+		MessageBean messageBean = ctx.getMessageBean();
 		if (messageBean.getMsgRefId() == null) {
 			logger.warn("Inbox MsgRefId not found, nothing to update");
 			return Integer.valueOf(-1);

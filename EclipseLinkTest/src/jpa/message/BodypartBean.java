@@ -9,9 +9,9 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.mail.Header;
@@ -199,7 +199,7 @@ public class BodypartBean implements Serializable {
 	 *            plain text alternative is saved here
 	 * @return body text
 	 */
-	String getBody(int level, HashMap<String, Object> hashMap) {
+	String getBody(int level, Map<String, Object> hashMap) {
 		StringBuffer sb = new StringBuffer();
 		String label = LF + "content-type: ";
 		boolean showInlineContentType = false;

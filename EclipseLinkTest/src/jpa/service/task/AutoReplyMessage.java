@@ -25,13 +25,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.htmlparser.util.ParserException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("autoReplyMessage")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class AutoReplyMessage extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(AutoReplyMessage.class);
@@ -60,19 +58,20 @@ public class AutoReplyMessage extends TaskBaseAdaptor {
 	 * @throws TemplateException 
 	 * @throws IOException 
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException,
+	public Integer process(MessageContext ctx) throws DataValidationException,
 			AddressException, TemplateException, IOException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
-		if (messageBean==null) {
+		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
-		if (StringUtils.isBlank(taskArguments)) {
+		if (StringUtils.isBlank(ctx.getTaskArguments())) {
 			throw new DataValidationException("Arguments(TemplateId) is not valued.");
 		}
 		else if (isDebugEnabled) {
-			logger.debug("Arguments passed: " + taskArguments);
+			logger.debug("Arguments passed: " + ctx.getTaskArguments());
 		}
+		MessageBean messageBean = ctx.getMessageBean();
 		// check FROM address
 		Address[] from = messageBean.getFrom();
 		if (from == null || from.length == 0) {
@@ -101,12 +100,12 @@ public class AutoReplyMessage extends TaskBaseAdaptor {
 			TemplateRenderVo renderVo = null;
 			try {
 				// Mailing List id may have been provided by upstream process (subscribe)
-				renderVo = tmpltBo.renderEmailTemplate(vo.getAddress(), variables, taskArguments,
+				renderVo = tmpltBo.renderEmailTemplate(vo.getAddress(), variables, ctx.getTaskArguments(),
 						messageBean.getMailingListId());
 			}
 			catch (TemplateNotFoundException e) {
 				throw new DataValidationException("Email Template not found by Id: "
-						+ taskArguments);
+						+ ctx.getTaskArguments());
 			}
 			replyBean.setSubject(renderVo.getSubject());
 			String body = renderVo.getBody();
@@ -137,7 +136,8 @@ public class AutoReplyMessage extends TaskBaseAdaptor {
 			Address[] _to = {_from};
 			replyBean.setTo(_to);
 			try {
-				mailSenderBo.process(new MessageContext(replyBean));
+				ctx.setMessageBean(replyBean);
+				mailSenderBo.process(ctx);
 				if (isDebugEnabled) {
 					logger.debug("Message replied to: " + replyBean.getToAsString());
 				}
