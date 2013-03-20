@@ -607,7 +607,7 @@ public final class MessageBeanUtil {
 				result = ((Integer)obj).toString();
 			}
 			else if (obj instanceof Address[]) {
-				result = EmailAddrUtil.emailAddrToString((Address[])obj);
+				result = EmailAddrUtil.addressToString((Address[])obj);
 			}
 			else if (obj != null) {
 				logger.warn("invokeMethod() - invalid return type: " + obj.getClass().getName());

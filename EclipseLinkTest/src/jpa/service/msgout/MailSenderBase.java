@@ -297,7 +297,7 @@ public abstract class MailSenderBase {
 		if (senderVo.isUseTestAddr() && !isOverrideTestAddr) {
 			if (isDebugEnabled) {
 				logger.debug("rebuildAddresses() - Replace original TO: "
-						+ EmailAddrUtil.emailAddrToString(m.getRecipients(javax.mail.Message.RecipientType.TO))
+						+ EmailAddrUtil.addressToString(m.getRecipients(javax.mail.Message.RecipientType.TO))
 						+ ", with testing address: " + senderVo.getTestToAddr());
 			}
 			boolean toAddrIsLocal = false;

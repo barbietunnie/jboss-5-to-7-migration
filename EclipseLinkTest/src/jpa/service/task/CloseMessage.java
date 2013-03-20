@@ -45,7 +45,7 @@ public class CloseMessage extends TaskBaseAdaptor {
 			msgInboxVo.setStatusId(MsgStatusCode.CLOSED.getValue());
 			inboxService.update(msgInboxVo);
 			if (isDebugEnabled)
-				logger.debug("Message with Row_Id of (" + msgInboxVo.getRowId() + ") has been Closed.");
+				logger.debug("Message with Row_Id of (" + msgInboxVo.getRowId() + ") is Closed.");
 		}
 		return Integer.valueOf(msgId);
 	}

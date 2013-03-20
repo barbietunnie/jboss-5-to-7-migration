@@ -3,7 +3,6 @@ package jpa.service.task;
 import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
 import jpa.model.message.MessageInbox;
-import jpa.service.EntityManagerService;
 import jpa.service.msgin.MessageInboxBo;
 
 import org.apache.log4j.Logger;
@@ -22,8 +21,6 @@ public class SaveMessage extends TaskBaseAdaptor {
 	
 	@Autowired
 	private MessageInboxBo msgInboxBo;
-	@Autowired
-	private EntityManagerService emService;
 
 	/**
 	 * Save the message into the MsgInbox and its satellite tables.
@@ -37,7 +34,6 @@ public class SaveMessage extends TaskBaseAdaptor {
 			throw new DataValidationException("input MessageBean is null");
 		}
 		
-		emService.clearEM(); // work around Hibernate OptimisticLockException
 		MessageInbox msgInbox = msgInboxBo.saveMessage(messageBean);
 		
 		return msgInbox.getRowId();

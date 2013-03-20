@@ -15,6 +15,7 @@ import jpa.model.message.MessageInbox;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageDeliveryStatusService;
 import jpa.service.message.MessageInboxService;
+import jpa.util.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -105,13 +106,12 @@ public class DeliveryError extends TaskBaseAdaptor {
 		
 		try {
 			//msgInboxVo.getMessageDeliveryStatusList().add(deliveryStatusVo);
-			deliveryStatusDao.insertWithDelete(deliveryStatusVo);
+			deliveryStatusDao.insert(deliveryStatusVo);
 			if (isDebugEnabled) {
-				logger.debug("Insert DeliveryStatus:" + LF + deliveryStatusVo);
+				logger.debug("Insert DeliveryStatus:" + LF + StringUtil.prettyPrint(deliveryStatusVo));
 			}
 		}
 		catch (DataIntegrityViolationException e) {
-			// most likely caused by "Duplicate entry" error
 			logger.error("DataIntegrityViolationException caught, ignore.", e);
 		}
 		// update MsgInbox status (delivery failure)

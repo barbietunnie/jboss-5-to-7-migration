@@ -150,7 +150,7 @@ public class MessageDeliveryStatusTest {
 		log2.setDsnText("jpa test DSN text");
 		service.insert(log2);
 		
-		service.insertWithDelete(log2);
+		service.insert(log2);
 		
 		assertTrue(2==service.getByMsgInboxId(inbox1.getRowId()).size());
 	}

@@ -1,13 +1,19 @@
 package jpa.service.task;
 
+import java.io.IOException;
+
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
+import jpa.message.MessageContext;
+import jpa.service.msgout.MailSenderBo;
+import jpa.service.msgout.SmtpException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,6 +26,9 @@ public class CsrReplyMessage extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(CsrReplyMessage.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
+	private MailSenderBo mailSenderBo;
+
 	/**
 	 * The input MessageBean should contain the CSR reply message plus the
 	 * original message. If the input bean's getTo() method returns a null,
@@ -30,9 +39,10 @@ public class CsrReplyMessage extends TaskBaseAdaptor {
 	 *            calling this method.
 	 * @return a Integer value representing number of addresses the message has
 	 *         been replied to.
+	 * @throws IOException 
 	 */
 	public Integer process(MessageBean messageBean) throws DataValidationException,
-			AddressException {
+			AddressException, IOException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
 		if (messageBean==null) {
@@ -63,9 +73,15 @@ public class CsrReplyMessage extends TaskBaseAdaptor {
 		
 		// write to MailSender input queue
 		messageBean.setMsgRefId(messageBean.getOriginalMail().getMsgId());
-		// TODO send the reply off
-		if (isDebugEnabled) {
-			logger.debug("Jms Message Id returned: ");
+		// send the reply off
+		try {
+			mailSenderBo.process(new MessageContext(messageBean));
+			if (isDebugEnabled) {
+				logger.debug("Message replied to: " + messageBean.getToAsString());
+			}
+		}
+		catch (SmtpException e) {
+			throw new IOException(e.getMessage(), e);
 		}
 		return Integer.valueOf(messageBean.getTo().length);
 	}

@@ -13,7 +13,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<context:property-placeholder ignore-resource-not-found="true" 
-		location="classpath:/META-INF/eclipselink.${env:mysql}.properties"/>
+		location="classpath:/META-INF/eclipselink.${env:derby}.properties"/>
 
 	<context:component-scan base-package="jpa.service" />
 	<context:annotation-config/>
@@ -125,11 +125,11 @@
 		<aop:advisor advice-ref="dsTxAdvice" pointcut-ref="serviceOperation"/>
 	</aop:config>
 
-	<!-- aop:config>
+	<aop:config>
 		<aop:pointcut id="taskOperation" 
 			expression="execution(* jpa.service.task..*(..))"/>
 		<aop:advisor advice-ref="dsTxAdvice" pointcut-ref="taskOperation"/>
-	</aop:config -->
+	</aop:config>
 	
 	<aop:config proxy-target-class="true">
 		<aop:pointcut id="boOperation" 

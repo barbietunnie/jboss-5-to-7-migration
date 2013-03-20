@@ -1,5 +1,6 @@
 package jpa.service.task;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import jpa.exception.DataValidationException;
 import jpa.exception.TemplateException;
 import jpa.message.HtmlConverter;
 import jpa.message.MessageBean;
+import jpa.message.MessageContext;
 import jpa.model.MailingList;
 import jpa.model.SubscriberData;
 import jpa.model.Subscription;
@@ -25,6 +27,8 @@ import jpa.service.SubscriptionService;
 import jpa.service.message.MessageClickCountService;
 import jpa.service.msgin.EmailTemplateBo;
 import jpa.service.msgin.TemplateRenderVo;
+import jpa.service.msgout.MailSenderBo;
+import jpa.service.msgout.SmtpException;
 import jpa.util.PhoneNumberUtil;
 import jpa.variable.RenderUtil;
 
@@ -54,6 +58,8 @@ public class BroadcastToList extends TaskBaseAdaptor {
 	private SubscriberDataService subscriberDao;
 	@Autowired
 	private EmailTemplateBo emailTemplateBo;
+	@Autowired
+	private MailSenderBo mailSenderBo;
 
 	/**
 	 * Send the email to the addresses on the Mailing List.
@@ -63,9 +69,10 @@ public class BroadcastToList extends TaskBaseAdaptor {
 	 * @return an Integer value representing number of addresses the message has
 	 *         been sent to.
 	 * @throws TemplateException 
+	 * @throws IOException 
 	 */
 	public Integer process(MessageBean msgBean) throws DataValidationException,
-			AddressException, TemplateException {
+			AddressException, TemplateException, IOException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
 		if (msgBean==null) {
@@ -159,7 +166,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 	private int constructAndSendMessage(MessageBean msgBean, Subscription sub,
 			MailingList listVo, String bodyText, List<String> varNames,
 			Boolean saveEmbedEmailId, boolean isText)
-			throws DataValidationException, TemplateException {
+			throws DataValidationException, TemplateException, IOException {
 		String listId = msgBean.getMailingListId();
 		String subjText = msgBean.getSubject() == null ? "" : msgBean.getSubject();
 		Address[] to = null;
@@ -239,7 +246,16 @@ public class BroadcastToList extends TaskBaseAdaptor {
 			msgBean.setEmBedEmailId(saveEmbedEmailId);
 			subscriptionDao.updateSentCount(sub.getRowId());
 		}
-		// TODO invoke mail sender to send the mail off
+		// invoke mail sender to send the mail off
+		try {
+			mailSenderBo.process(new MessageContext(msgBean));
+			if (isDebugEnabled) {
+				logger.debug("Message sent to: " + msgBean.getToAsString());
+			}
+		}
+		catch (SmtpException e) {
+			throw new IOException(e.getMessage(), e);
+		}
 		int mailsSent = msgBean.getTo().length;
 		return mailsSent;
 	}

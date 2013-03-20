@@ -1,5 +1,6 @@
 package jpa.service.task;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.mail.Address;
@@ -10,12 +11,15 @@ import jpa.exception.TemplateException;
 import jpa.exception.TemplateNotFoundException;
 import jpa.message.HtmlConverter;
 import jpa.message.MessageBean;
+import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
 import jpa.service.EmailAddressService;
 import jpa.service.EmailTemplateService;
 import jpa.service.MailingListService;
 import jpa.service.msgin.EmailTemplateBo;
 import jpa.service.msgin.TemplateRenderVo;
+import jpa.service.msgout.MailSenderBo;
+import jpa.service.msgout.SmtpException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -41,6 +45,8 @@ public class AutoReplyMessage extends TaskBaseAdaptor {
 	private MailingListService mailingListDao;
 	@Autowired
 	private EmailTemplateBo tmpltBo;
+	@Autowired
+	private MailSenderBo mailSenderBo;
 	
 	/**
 	 * construct the reply text from the TaskArguments, render the text and send
@@ -52,9 +58,10 @@ public class AutoReplyMessage extends TaskBaseAdaptor {
 	 *         replied to.
 	 * @throws AddressException
 	 * @throws TemplateException 
+	 * @throws IOException 
 	 */
 	public Integer process(MessageBean messageBean) throws DataValidationException,
-			AddressException, TemplateException {
+			AddressException, TemplateException, IOException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
 		if (messageBean==null) {
@@ -129,7 +136,15 @@ public class AutoReplyMessage extends TaskBaseAdaptor {
 			// set recipient address
 			Address[] _to = {_from};
 			replyBean.setTo(_to);
-			// TODO send the reply off
+			try {
+				mailSenderBo.process(new MessageContext(replyBean));
+				if (isDebugEnabled) {
+					logger.debug("Message replied to: " + replyBean.getToAsString());
+				}
+			}
+			catch (SmtpException e) {
+				throw new IOException(e.getMessage(), e);
+			}
 			msgsSent++;
 			if (isDebugEnabled) {
 				logger.debug("Reply message processed: " + LF + replyBean);

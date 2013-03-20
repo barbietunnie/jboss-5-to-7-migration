@@ -264,8 +264,8 @@ public final class SmtpConnection implements java.io.Serializable {
 			msg.saveChanges();
 			// send the thing off
 			transport.sendMessage(msg, msg.getAllRecipients());
-			logger.info("sendMail() - Mail from: " + EmailAddrUtil.emailAddrToString(msg.getFrom(), false)
-					+ " was sent to: " + EmailAddrUtil.emailAddrToString(msg.getAllRecipients(), false)
+			logger.info("sendMail() - Mail from: " + EmailAddrUtil.addressToString(msg.getFrom(), false)
+					+ " was sent to: " + EmailAddrUtil.addressToString(msg.getAllRecipients(), false)
 					+ ", via " + smtpHost + ", " + new Date());
 		}
 		catch (SendFailedException sfex) {

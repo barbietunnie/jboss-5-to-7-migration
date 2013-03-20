@@ -2,6 +2,8 @@ package jpa.service.task;
 
 import java.io.IOException;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
@@ -40,8 +42,10 @@ public class ForwardToCsr extends TaskBaseAdaptor {
 	 * 
 	 * @return number of messages forwarded.
 	 * @throws IOException 
+	 * @throws AddressException 
 	 */
-	public Integer process(MessageBean messageBean) throws DataValidationException, IOException {
+	public Integer process(MessageBean messageBean) throws DataValidationException,
+			IOException, AddressException {
 		if (isDebugEnabled)
 			logger.debug("Entering process() method...");
 		if (messageBean==null) {
@@ -96,6 +100,7 @@ public class ForwardToCsr extends TaskBaseAdaptor {
 			forwardAddr = sender.getSubrCareEmail();
 		}
 		// send the mail off
+		messageBean.setTo(InternetAddress.parse(forwardAddr));
 		MessageContext msgctx = new MessageContext(messageBean);
 		try {
 			mailSenderBo.process(msgctx);
