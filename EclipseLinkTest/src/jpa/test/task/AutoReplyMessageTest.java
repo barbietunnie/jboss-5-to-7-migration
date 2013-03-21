@@ -60,7 +60,7 @@ public class AutoReplyMessageTest {
 			logger.error("AddressException caught", e);
 		}
 		mBean.setSubject("A Exception occured");
-		mBean.setValue(new Date()+ "Test body message." + LF + LF + "System Email Id: 10.2127.0" + LF);
+		mBean.setValue(new Date()+ " Test body message." + LF + LF + "System Email Id: 10.2127.0" + LF);
 		mBean.setMailboxUser("testUser");
 		EmailIdParser parser = EmailIdParser.getDefaultParser();
 		String id = parser.parseMsg(mBean.getBody());

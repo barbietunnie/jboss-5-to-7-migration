@@ -2,7 +2,6 @@ package jpa.service.external;
 
 import java.util.List;
 
-import jpa.exception.DataValidationException;
 import jpa.model.EmailAddress;
 import jpa.service.EmailAddressService;
 import jpa.util.EmailAddrUtil;
@@ -22,7 +21,7 @@ public class PostmasterTargetText implements RuleTargetProc {
 	 * 
 	 * @return a regular expression
 	 */
-	public String process() throws DataValidationException {
+	public String process() {
 		if (isDebugEnabled) {
 			logger.debug("Entering process() method...");
 		}

@@ -93,6 +93,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 			throw new DataValidationException("Mailing List was not provided.");
 		}
 		
+		messageBean.setIsReceived(false);
 		int mailsSent = 0;
 		Boolean saveEmbedEmailId = messageBean.getEmBedEmailId();
 		String listId = messageBean.getMailingListId();
@@ -150,9 +151,9 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		}
 		// sending email to each subscriber
 		for (Subscription sub : subs) {
-			mailsSent += constructAndSendMessage(messageBean, sub, listVo, bodyText, subjVarNames, saveEmbedEmailId, false);
+			mailsSent += constructAndSendMessage(ctx, sub, listVo, bodyText, subjVarNames, saveEmbedEmailId, false);
 			if (listVo.isSendText()) {
-				mailsSent += constructAndSendMessage(messageBean, sub, listVo, bodyText, subjVarNames, saveEmbedEmailId, true);
+				mailsSent += constructAndSendMessage(ctx, sub, listVo, bodyText, subjVarNames, saveEmbedEmailId, true);
 			}
 		}
 		if (mailsSent > 0 && messageBean.getMsgId() != null) {
@@ -162,10 +163,11 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		return Integer.valueOf(mailsSent);
 	}
 	
-	private int constructAndSendMessage(MessageBean msgBean, Subscription sub,
+	private int constructAndSendMessage(MessageContext ctx, Subscription sub,
 			MailingList listVo, String bodyText, List<String> varNames,
 			Boolean saveEmbedEmailId, boolean isText)
 			throws DataValidationException, TemplateException, IOException {
+		MessageBean msgBean = ctx.getMessageBean();
 		String listId = msgBean.getMailingListId();
 		String subjText = msgBean.getSubject() == null ? "" : msgBean.getSubject();
 		Address[] to = null;
@@ -247,7 +249,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		}
 		// invoke mail sender to send the mail off
 		try {
-			mailSenderBo.process(new MessageContext(msgBean));
+			mailSenderBo.process(ctx);
 			if (isDebugEnabled) {
 				logger.debug("Message sent to: " + msgBean.getToAsString());
 			}

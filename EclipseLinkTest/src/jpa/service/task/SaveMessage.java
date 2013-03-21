@@ -2,7 +2,6 @@ package jpa.service.task;
 
 import jpa.exception.DataValidationException;
 import jpa.message.MessageContext;
-import jpa.model.message.MessageInbox;
 import jpa.service.msgin.MessageInboxBo;
 
 import org.apache.log4j.Logger;
@@ -32,10 +31,10 @@ public class SaveMessage extends TaskBaseAdaptor {
 			throw new DataValidationException("input MessageBean is null");
 		}
 		
-		MessageInbox msgInbox = msgInboxBo.saveMessage(ctx.getMessageBean());
-		ctx.getRowIds().add(msgInbox.getRowId());
+		int rowId = msgInboxBo.saveMessage(ctx.getMessageBean());
+		ctx.getRowIds().add(rowId);
 		
-		return msgInbox.getRowId();
+		return rowId;
 	}
 	
 }

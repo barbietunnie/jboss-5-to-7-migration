@@ -138,8 +138,9 @@ public abstract class MailSenderBase {
 			msgBean.setEmBedEmailId(Boolean.valueOf(senderVo.isEmbedEmailId()));
 		}
 		// save the message to the database
-		MessageInbox minbox = msgInboxBo.saveMessage(msgBean);
-		ctx.getRowIds().add(minbox.getRowId());
+		int rowId = msgInboxBo.saveMessage(msgBean);
+		ctx.getRowIds().add(rowId);
+		MessageInbox minbox = msgInboxDao.getByPrimaryKey(rowId);
 		// check if VERP is enabled
 		if (senderVo.isVerpEnabled()) {
 			// set return path with VERP, msgBean.msgId must be valued.

@@ -4,10 +4,15 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.Query;
+
+import jpa.constant.Constants;
+import jpa.constant.StatusId;
+import jpa.model.rule.RuleAction;
+import jpa.model.rule.RuleActionPK;
+import jpa.service.ReloadFlagsService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,12 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import jpa.constant.Constants;
-import jpa.constant.StatusId;
-import jpa.model.rule.RuleAction;
-import jpa.model.rule.RuleActionPK;
-import jpa.service.ReloadFlagsService;
 
 @Component("ruleActionService")
 @Transactional(propagation=Propagation.REQUIRED)

@@ -3,9 +3,13 @@ package jpa.service;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+
+import jpa.constant.MobileCarrierEnum;
+import jpa.exception.DataValidationException;
+import jpa.model.SubscriberData;
+import jpa.util.PhoneNumberUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -13,11 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import jpa.constant.MobileCarrierEnum;
-import jpa.exception.DataValidationException;
-import jpa.model.SubscriberData;
-import jpa.util.PhoneNumberUtil;
 
 @Component("subscriberDataService")
 @Transactional(propagation=Propagation.REQUIRED)

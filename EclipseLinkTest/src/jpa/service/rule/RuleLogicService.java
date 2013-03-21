@@ -3,21 +3,20 @@ package jpa.service.rule;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
+import jpa.constant.StatusId;
+import jpa.model.rule.RuleLogic;
+import jpa.service.ReloadFlagsService;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import jpa.constant.StatusId;
-import jpa.model.rule.RuleLogic;
-import jpa.service.ReloadFlagsService;
 
 @Component("ruleLogicService")
 @Transactional(propagation=Propagation.REQUIRED)

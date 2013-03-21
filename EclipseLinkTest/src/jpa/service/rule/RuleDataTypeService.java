@@ -3,17 +3,16 @@ package jpa.service.rule;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+
+import jpa.model.rule.RuleDataType;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import jpa.model.rule.RuleDataType;
 
 @Component("ruleDataTypeService")
 @Transactional(propagation=Propagation.REQUIRED)

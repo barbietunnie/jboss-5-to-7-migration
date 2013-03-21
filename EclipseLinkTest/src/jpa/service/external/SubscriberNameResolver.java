@@ -1,7 +1,6 @@
 package jpa.service.external;
 
 import jpa.constant.Constants;
-import jpa.exception.DataValidationException;
 import jpa.service.EmailVariableService;
 import jpa.util.JpaUtil;
 import jpa.util.SpringUtil;
@@ -14,7 +13,7 @@ public class SubscriberNameResolver implements VariableResolver {
 	static final Logger logger = Logger.getLogger(SubscriberNameResolver.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
-	public String process(int addrId) throws DataValidationException {
+	public String process(int addrId) {
 		if (isDebugEnabled) {
 			logger.debug("Entering process() method...");
 		}

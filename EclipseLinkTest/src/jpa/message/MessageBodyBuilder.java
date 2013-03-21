@@ -225,7 +225,7 @@ public final class MessageBodyBuilder {
 	 *            true if HTML message, false plain text message
 	 * @return original message headers
 	 */
-	public static String constructOriginalHeader(MessageBean msgBean, boolean isHtml) {
+	private static String constructOriginalHeader(MessageBean msgBean, boolean isHtml) {
 		String headers = "";
 		MessageBean origMsg = msgBean.getOriginalMail();
 		if (origMsg == null) { // not a reply

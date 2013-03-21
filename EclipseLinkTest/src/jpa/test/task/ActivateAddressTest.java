@@ -46,9 +46,11 @@ public class ActivateAddressTest {
 	@Test
 	public void testActivateAddress() throws Exception {
 		MessageBean mBean = new MessageBean();
+		String fromaddr = "event.alert@localhost";
+		String toaddr = "watched_maibox@domain.com";
 		try {
-			mBean.setFrom(InternetAddress.parse("event.alert@localhost", false));
-			mBean.setTo(InternetAddress.parse("watched_maibox@domain.com", false));
+			mBean.setFrom(InternetAddress.parse(fromaddr, false));
+			mBean.setTo(InternetAddress.parse(toaddr, false));
 		}
 		catch (AddressException e) {
 			logger.error("AddressException caught", e);

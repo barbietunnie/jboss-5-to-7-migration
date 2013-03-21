@@ -47,16 +47,16 @@ public class AutoReplyMessage extends TaskBaseAdaptor {
 	private MailSenderBo mailSenderBo;
 	
 	/**
-	 * construct the reply text from the TaskArguments, render the text and send
-	 * the reply message to MailSender input queue.
+	 * Construct the reply text from the EmailTemplateId passed in the
+	 * TaskArguments, render the text and send the reply message.
 	 * 
-	 * @param messageBean -
-	 *            the original email that is replying to.
+	 * @param messageBean
+	 *            - the original email that is replying to.
 	 * @return a Integer value representing number of addresses the message is
 	 *         replied to.
 	 * @throws AddressException
-	 * @throws TemplateException 
-	 * @throws IOException 
+	 * @throws TemplateException
+	 * @throws IOException
 	 */
 	public Integer process(MessageContext ctx) throws DataValidationException,
 			AddressException, TemplateException, IOException {
@@ -87,6 +87,7 @@ public class AutoReplyMessage extends TaskBaseAdaptor {
 			replyBean.setMsgRefId(messageBean.getMsgRefId());
 		}
 		replyBean.setMailboxUser(messageBean.getMailboxUser());
+		//replyBean.setOriginalMail(messageBean);
 		int msgsSent = 0;
 		for (int i = 0; i < from.length; i++) {
 			Address _from = from[i];

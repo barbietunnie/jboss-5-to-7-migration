@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.Query;
@@ -14,7 +13,6 @@ import jpa.constant.StatusId;
 import jpa.model.EmailAddress;
 import jpa.util.EmailAddrUtil;
 import jpa.util.JpaUtil;
-import jpa.util.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -277,12 +275,12 @@ public class EmailAddressService {
 		if (emailAddr.getBounceCount() >= Constants.BOUNCE_SUSPEND_THRESHOLD) {
 			if (!StatusId.SUSPENDED.getValue().equals(emailAddr.getStatusId())) {
 				emailAddr.setStatusId(StatusId.SUSPENDED.getValue());
-				if (!StringUtil.isEmpty(emailAddr.getUpdtUserId())) {
+				if (StringUtils.isNotBlank(emailAddr.getUpdtUserId())) {
 					emailAddr.setStatusChangeUserId(emailAddr.getUpdtUserId());
 				} else {
 					emailAddr.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
 				}
-				emailAddr.setStatusChangeTime(emailAddr.getUpdtTime());
+				emailAddr.setStatusChangeTime(new java.sql.Timestamp(System.currentTimeMillis()));
 			}
 		}
 		update(emailAddr);

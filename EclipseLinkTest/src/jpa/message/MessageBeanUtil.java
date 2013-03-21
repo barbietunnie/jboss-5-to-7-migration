@@ -166,7 +166,7 @@ public final class MessageBeanUtil {
 			constructSinglePart(msg, (BodypartBean) msgBean, 0);
 		}
 		msg.saveChanges(); // please remember to save the message
-		
+
 		return msg;
 	}
 	

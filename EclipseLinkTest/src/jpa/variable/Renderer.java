@@ -97,7 +97,9 @@ public final class Renderer implements java.io.Serializable {
 					continue;
 				}
 				RenderVariableVo r = (RenderVariableVo) value;
-				if (VariableType.TEXT.equals(r.getVariableType())) {
+				if (VariableType.TEXT.equals(r.getVariableType())
+						|| VariableType.ADDRESS.equals(r.getVariableType())
+						|| VariableType.X_HEADER.equals(r.getVariableType())) {
 					if (r.getVariableValue() != null) {
 						if (getNextVariableName((String) r.getVariableValue(), 0) != null) {
 							// recursive variable

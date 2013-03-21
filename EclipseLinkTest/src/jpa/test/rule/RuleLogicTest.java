@@ -13,6 +13,7 @@ import javax.persistence.NoResultException;
 import jpa.constant.Constants;
 import jpa.constant.RuleCategory;
 import jpa.constant.RuleType;
+import jpa.data.preload.RuleNameEnum;
 import jpa.model.rule.RuleLogic;
 import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
@@ -97,6 +98,8 @@ public class RuleLogicTest {
 			System.out.println(StringUtil.prettyPrint(objs,1));
 		}
 		System.out.println("Number of active rules: " + lst1.size());
+		RuleLogic logic = service.getByRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
+		System.out.println(StringUtil.prettyPrint(logic));
 		
 		List<RuleLogic> lst2 = service.getSubRules(false);
 		assertFalse(lst2.isEmpty());

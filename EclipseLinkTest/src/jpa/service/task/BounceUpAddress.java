@@ -99,7 +99,7 @@ public class BounceUpAddress extends TaskBaseAdaptor {
 				Address iAddr = iAddrs[i];
 				String addr = iAddr.toString();
 				try {
-				EmailAddress emailAddrVo = emailAddrDao.getByAddress(addr);
+					EmailAddress emailAddrVo = emailAddrDao.getByAddress(addr);
 					if (isDebugEnabled) {
 						logger.debug("Increasing bounce count to EmailAddr: " + addr);
 					}
