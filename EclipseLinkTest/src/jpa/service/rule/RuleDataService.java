@@ -5,9 +5,9 @@ import java.util.List;
 import jpa.model.rule.RuleElement;
 import jpa.model.rule.RuleLogic;
 import jpa.service.external.RuleTargetProc;
-import jpa.service.task.TaskBaseBo;
 import jpa.util.SpringUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,26 +28,26 @@ public class RuleDataService {
 	
 	public List<RuleLogic> getCurrentRules() {
 		List<RuleLogic> rules = logicService.getActiveRules();
-		substituteTargetProc(rules);
-		substituteExclListProc(rules);
+		substituteTargetText(rules);
+		substituteExclusions(rules);
 		return rules;
 	}
 	
 	public RuleLogic getRuleByRuleName(String ruleName) {
 		RuleLogic ruleVo = (RuleLogic) logicService.getByRuleName(ruleName);
-		substituteTargetProc(ruleVo);
-		substituteExclListProc(ruleVo);
+		substituteTargetText(ruleVo);
+		substituteExclusions(ruleVo);
 		return ruleVo;
 	}
 	
-	private void substituteTargetProc(List<RuleLogic> rules) {
+	private void substituteTargetText(List<RuleLogic> rules) {
 		if (rules == null || rules.size() == 0) return;
 		for (RuleLogic rule : rules) {
-			substituteTargetProc(rule);
+			substituteTargetText(rule);
 		}
 	}
 	
-	private void substituteTargetProc(RuleLogic rule) {
+	private void substituteTargetText(RuleLogic rule) {
 		List<RuleElement> elements = rule.getRuleElements();
 		if (elements == null || elements.isEmpty()) return;
 		for (RuleElement element : elements) {
@@ -72,19 +72,15 @@ public class RuleDataService {
 			}
 			try {
 				String text = null;
-				if (obj instanceof TaskBaseBo) {
-					TaskBaseBo bo = (TaskBaseBo) obj;
-					text = (String) bo.process(null);
-				}
-				else if (obj instanceof RuleTargetProc) {
+				if (obj instanceof RuleTargetProc) {
 					RuleTargetProc bo = (RuleTargetProc) obj;
 					text = bo.process();
 				}
-				if (text != null && text.trim().length() > 0) {
+				if (StringUtils.isNotBlank(text)) {
 					logger.info("Changing Target Text for rule: " + rule.getRuleName());
 					logger.info("  From: " + element.getTargetText());
 					logger.info("    To: " + text);
-					element.setTargetText(text);
+					element.setTargetTextAll(text);
 				}
 			}
 			catch (Exception e) {
@@ -94,14 +90,14 @@ public class RuleDataService {
 		}
 	}
 	
-	private void substituteExclListProc(List<RuleLogic> rules) {
+	private void substituteExclusions(List<RuleLogic> rules) {
 		if (rules == null || rules.isEmpty()) return;
 		for (RuleLogic rule : rules) {
-			substituteExclListProc(rule);
+			substituteExclusions(rule);
 		}
 	}
 	
-	private void substituteExclListProc(RuleLogic rule) {
+	private void substituteExclusions(RuleLogic rule) {
 		List<RuleElement> elements = rule.getRuleElements();
 		if (elements == null || elements.isEmpty()) return;
 		for (RuleElement element : elements) {
@@ -116,15 +112,11 @@ public class RuleDataService {
 			}
 			try {
 				String text = null;
-				if (obj instanceof TaskBaseBo) {
-					TaskBaseBo bo = (TaskBaseBo) obj;
-					text = (String) bo.process(null);
-				}
-				else if (obj instanceof RuleTargetProc) {
+				if (obj instanceof RuleTargetProc) {
 					RuleTargetProc bo = (RuleTargetProc) obj;
 					text = bo.process();
 				}
-				if (text != null && text.trim().length() > 0) {
+				if (StringUtils.isNotBlank(text)) {
 					logger.info("Appending Exclusion list for rule: " + rule.getRuleName());
 					logger.info("  Exclusion List: " + text);
 					String delimiter = element.getDelimiter();
@@ -132,13 +124,13 @@ public class RuleDataService {
 						delimiter = ",";
 					}
 					String origText = element.getExclusions();
-					if (origText != null && origText.length() > 0) {
+					if (StringUtils.isNotBlank(origText)) {
 						origText = origText + delimiter;
 					}
 					else {
 						origText = "";
 					}
-					element.setExclusions(origText + text);
+					element.setExclusionsAll(origText + text);
 				}
 			}
 			catch (Exception e) {

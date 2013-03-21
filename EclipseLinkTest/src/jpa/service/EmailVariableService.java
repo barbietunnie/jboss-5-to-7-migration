@@ -1,19 +1,23 @@
 package jpa.service;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import jpa.constant.Constants;
+import jpa.model.EmailVariable;
+import jpa.util.JpaUtil;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import jpa.model.EmailVariable;
 
 @Component("emailVariableService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -80,6 +84,22 @@ public class EmailVariableService {
 	}
 	
 	public String getByQuery(String queryStr, int addrId) {
+		if (Constants.DB_PRODNAME_DERBY.equalsIgnoreCase(JpaUtil.getDBProductName())) {
+			// Derby, replace CONCAT function with concatenate operators
+			 Pattern p = Pattern.compile("^(\\w{1,20} )(CONCAT\\(.*\\))(.*)$",
+					 Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+			 Matcher m = p.matcher(queryStr);
+			 if (m.find() && m.groupCount()>=3) {
+				 String concat = "";
+				 for (int i=0; i<=m.groupCount(); i++) {
+					 if (i==2) {
+						 concat = StringUtils.removeStartIgnoreCase(m.group(i), "CONCAT");
+						 concat = StringUtils.replace(concat, ",", "||");
+					 }
+				 }
+				queryStr = m.group(1) + concat + m.group(3);
+			 }
+		}
 		try {
 			Query query = em.createNativeQuery(queryStr);
 			query.setParameter(1, addrId);

@@ -74,7 +74,7 @@ public class CsrReplyMessage extends TaskBaseAdaptor {
 		messageBean.setMsgRefId(messageBean.getOriginalMail().getMsgId());
 		// send the reply off
 		try {
-			mailSenderBo.process(new MessageContext(messageBean));
+			mailSenderBo.process(ctx);
 			if (isDebugEnabled) {
 				logger.debug("Message replied to: " + messageBean.getToAsString());
 			}

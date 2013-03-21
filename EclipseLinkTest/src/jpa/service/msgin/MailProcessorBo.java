@@ -178,7 +178,7 @@ public class MailProcessorBo {
 			}
 			else { // persist to database
 				msgBean.setRuleName(msgParser.parse(msgBean));
-				int msgId = messageInboxBo.saveMessage(msgBean).getRowId();
+				int msgId = messageInboxBo.saveMessage(msgBean);
 				logger.info("MessageBean saved to database, MessageInbox RowId: " + msgId);
 			}
 		}

@@ -206,8 +206,8 @@ public class RuleLoaderBo implements java.io.Serializable {
 					XHeaderName.getByValue(element.getHeaderName()),
 					RuleCriteria.getByValue(element.getCriteria()),
 					element.isCaseSensitive(),
-					element.getTargetText(),
-					element.getExclusions(),
+					element.getTargetTextAll(),
+					element.getExclusionsAll(),
 					element.getExclListProcName(),
 					element.getDelimiter()
 					);
@@ -232,8 +232,8 @@ public class RuleLoaderBo implements java.io.Serializable {
 					XHeaderName.getByValue(element.getHeaderName()),
 					RuleCriteria.getByValue(element.getCriteria()),
 					element.isCaseSensitive(),
-					element.getTargetText(),
-					element.getExclusions(),
+					element.getTargetTextAll(),
+					element.getExclusionsAll(),
 					element.getExclListProcName(),
 					element.getDelimiter()
 					);

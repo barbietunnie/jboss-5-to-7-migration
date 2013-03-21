@@ -6,7 +6,10 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+
+import org.apache.commons.lang3.StringUtils;
 
 import jpa.model.BaseModel;
 
@@ -37,6 +40,11 @@ public class RuleElement extends BaseModel implements Serializable {
 	@Column(length=5, nullable=true, columnDefinition="char(5)")
 	private String delimiter = null;
 
+	@Transient
+	private String exclusionsAll;
+	@Transient
+	private String targetTextAll;
+	
 	public RuleElement() {
 		// must have a no-argument constructor
 	}
@@ -119,6 +127,28 @@ public class RuleElement extends BaseModel implements Serializable {
 
 	public void setDelimiter(String delimiter) {
 		this.delimiter = delimiter;
+	}
+
+	public String getExclusionsAll() {
+		if (StringUtils.isBlank(exclusionsAll)) {
+			return exclusions;
+		}
+		return exclusionsAll;
+	}
+
+	public void setExclusionsAll(String exclusionsAll) {
+		this.exclusionsAll = exclusionsAll;
+	}
+
+	public String getTargetTextAll() {
+		if (StringUtils.isBlank(targetTextAll)) {
+			return targetText;
+		}
+		return targetTextAll;
+	}
+
+	public void setTargetTextAll(String targetTextAll) {
+		this.targetTextAll = targetTextAll;
 	}
 
 }

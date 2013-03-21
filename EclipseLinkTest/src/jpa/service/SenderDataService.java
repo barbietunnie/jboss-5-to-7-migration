@@ -3,7 +3,6 @@ package jpa.service;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -132,6 +131,7 @@ public class SenderDataService {
 			validateSender(sender);
 			em.persist(sender);
 			reloadFlagsService.updateSenderReloadFlag();
+			em.flush();
 		}
 		finally {
 		}

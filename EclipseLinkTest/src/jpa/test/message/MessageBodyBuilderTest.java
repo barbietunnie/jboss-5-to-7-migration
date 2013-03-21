@@ -39,6 +39,7 @@ public class MessageBodyBuilderTest {
 		int xheaderId = 345678;
 		String emailIdStr = parser.wrapupEmailId(bodyId);
 		String emailIdXhdr = parser.wrapupEmailId4XHdr(xheaderId);
+		int msgId2 = 999999;
 
 		// embed email_id for HTML email
 		MessageBean msgBean = new MessageBean();
@@ -47,7 +48,7 @@ public class MessageBodyBuilderTest {
 		msgBean.setBody("<HTML>This is the original message." + Constants.MSG_DELIMITER_BEGIN
 				+ emailIdStr + Constants.MSG_DELIMITER_END + "</HTML>");
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
-		msgBean.setMsgId(Integer.valueOf(999999));
+		msgBean.setMsgId(Integer.valueOf(msgId2));
 		msgBean.setBody(MessageBodyBuilder.getBodyWithEmailId(msgBean));
 		System.out.println(">>>>>>>>>>>>>>>>HTML Message:" + LF + msgBean);
 
@@ -62,7 +63,7 @@ public class MessageBodyBuilderTest {
 		msgBean.setBody("This is the original message.\n" + Constants.MSG_DELIMITER_BEGIN
 				+ emailIdStr + Constants.MSG_DELIMITER_END);
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
-		msgBean.setMsgId(Integer.valueOf(999999));
+		msgBean.setMsgId(Integer.valueOf(msgId2));
 		msgBean.setBody(MessageBodyBuilder.getBodyWithEmailId(msgBean));
 		MsgHeader hdr = new MsgHeader();
 		hdr.setName(parser.getEmailIdXHdrName());
@@ -79,5 +80,13 @@ public class MessageBodyBuilderTest {
 		msgId = parser.parseHeaders(msgBean.getHeaders());
 		System.out.println("Email_Id from X-Header: " + msgId);
 		assertTrue((""+xheaderId).equals(msgId));
+		
+		// embed email_id by MessageBodyBuilder
+		msgBean.setEmBedEmailId(Boolean.TRUE);
+		msgBean.setBody(MessageBodyBuilder.getBodyWithEmailId(msgBean));
+		String emailId_Xhdr = parser.parseHeaders(msgBean.getHeaders());
+		String emailId_Body = parser.parseMsg(msgBean.getBody());
+		assertTrue(emailId_Xhdr.equals(emailId_Body));
+		assertTrue(emailId_Body.equals(msgId2+""));
 	}
 }

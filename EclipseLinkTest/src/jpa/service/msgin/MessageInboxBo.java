@@ -118,7 +118,7 @@ public class MessageInboxBo {
 	 * @throws SQLException
 	 *             if SQL error occurred
 	 */
-	public MessageInbox saveMessage(MessageBean msgBean) throws DataValidationException {
+	public int saveMessage(MessageBean msgBean) throws DataValidationException {
 		if (isDebugEnabled) {
 			logger.debug("Entering saveMessage() method..." + LF + msgBean);
 		}
@@ -221,23 +221,6 @@ public class MessageInboxBo {
 					msgVo.setBodyContentType(StringUtils.left(origContentType,50));
 				}
 			}
-			// TODO use sequence table for message_inbox, get next sequence here for email_id
-			/* Rebuild the Message Body, generate Email_Id from MsgId */
-			String msgBody = MessageBodyBuilder.getBodyWithEmailId(msgBean);
-			/* end of rebuild */
-			msgVo.setMsgBody(msgBody);
-			msgVo.setMsgBodySize(msgBody == null ? 0 : msgBody.length());
-			BodypartBean bodyNode = msgBean.getBodyNode();
-			// update MessageBean.body with Email_Id
-			if (bodyNode == null) {
-				logger.fatal("saveMessage() - Programming error: bodyNode is null");
-				msgBean.setContentType(msgVo.getMsgContentType());
-				msgBean.setBody(msgVo.getMsgBody());
-			}
-			else {
-				bodyNode.setContentType(msgVo.getBodyContentType());
-				bodyNode.setValue(msgVo.getMsgBody().getBytes());
-			}
 			// update "Last Sent" time
 			if (msgVo.getToAddrRowId() != null) {
 				emailAddrDao.updateLastSentTime(msgVo.getToAddrRowId());
@@ -289,10 +272,30 @@ public class MessageInboxBo {
 			logger.debug("Message to insert" + LF + StringUtil.prettyPrint(msgVo));
 		}
 		msgInboxDao.insert(msgVo);
-		
-		msgBean.setMsgId(msgVo.getRowId());
 		logger.info("saveMessage() - MsgId saved as: " + msgVo.getRowId() + ", From MailReader: "
 				+ msgBean.getIsReceived());
+		
+		msgBean.setMsgId(msgVo.getRowId());
+		if (!msgBean.getIsReceived()) { /* from MailSender */
+			/* Rebuild the Message Body, generate Email_Id from MsgId */
+			String msgBody = MessageBodyBuilder.getBodyWithEmailId(msgBean);
+			/* end of rebuild */
+			msgVo.setMsgBody(msgBody);
+			msgVo.setMsgBodySize(msgBody == null ? 0 : msgBody.length());
+			BodypartBean bodyNode = msgBean.getBodyNode();
+			// update MessageBean.body with Email_Id
+			if (bodyNode == null) {
+				logger.fatal("saveMessage() - Programming error: bodyNode is null");
+				msgBean.setContentType(msgVo.getMsgContentType());
+				msgBean.setBody(msgVo.getMsgBody());
+			}
+			else {
+				bodyNode.setContentType(msgVo.getBodyContentType());
+				bodyNode.setValue(msgVo.getMsgBody().getBytes());
+			}
+			msgInboxDao.update(msgVo);
+			logger.info("saveMessage() - Message Body with Email_Id is saved.");
+		}
 
 		// insert click count record for Broadcasting e-mail
 		if (RuleNameEnum.BROADCAST.getValue().equals(msgBean.getRuleName())) {
@@ -437,7 +440,7 @@ public class MessageInboxBo {
 			logger.debug("saveMessage() - Message has been saved to database, MsgId: "
 					+ msgVo.getRowId());
 		}
-		return msgVo;
+		return msgVo.getRowId();
 	}
 	
 	/**

@@ -2,7 +2,6 @@ package jpa.service.external;
 
 import java.util.List;
 
-import jpa.exception.DataValidationException;
 import jpa.model.MailingList;
 import jpa.service.MailingListService;
 import jpa.util.EmailAddrUtil;
@@ -23,7 +22,7 @@ public class MailingListTargetText implements RuleTargetProc {
 	 * 
 	 * @return a regular expression
 	 */
-	public String process() throws DataValidationException {
+	public String process() {
 		if (isDebugEnabled) {
 			logger.debug("Entering process() method...");
 		}

@@ -1,17 +1,21 @@
 package jpa.test.task;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
-import jpa.data.preload.RuleNameEnum;
+import jpa.constant.Constants;
+import jpa.constant.StatusId;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.message.util.EmailIdParser;
+import jpa.model.EmailAddress;
 import jpa.service.EmailAddressService;
-import jpa.service.task.AssignRuleName;
+import jpa.service.task.BounceUpAddress;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -27,12 +31,12 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional
-public class AssignRuleNameTest {
+public class BounceUpAddressTest {
 	final static String LF = System.getProperty("line.separator", "\n");
-	static final Logger logger = Logger.getLogger(AssignRuleNameTest.class);
+	static final Logger logger = Logger.getLogger(BounceUpAddressTest.class);
 	
 	@Resource
-	private AssignRuleName task;
+	private BounceUpAddress task;
 	@Resource
 	private EmailAddressService emailService;
 
@@ -41,10 +45,10 @@ public class AssignRuleNameTest {
 	}
 
 	@Test
-	public void testAssignRuleName() throws Exception {
+	public void testBounceUpAddress() throws Exception {
 		MessageBean mBean = new MessageBean();
-		String fromaddr = "event.alert@localhost";
-		String toaddr = "watched_maibox@domain.com";
+		String fromaddr = "testfrom@localhost";
+		String toaddr = "testto@localhost";
 		try {
 			mBean.setFrom(InternetAddress.parse(fromaddr, false));
 			mBean.setTo(InternetAddress.parse(toaddr, false));
@@ -53,7 +57,7 @@ public class AssignRuleNameTest {
 			logger.error("AddressException caught", e);
 		}
 		mBean.setSubject("A Exception occured");
-		mBean.setValue(new Date()+ "Test body message." + LF + LF + "System Email Id: 10.2127.0" + LF);
+		mBean.setValue(new Date()+ " Test body message." + LF + LF + "System Email Id: 10.2127.0" + LF);
 		mBean.setMailboxUser("testUser");
 		EmailIdParser parser = EmailIdParser.getDefaultParser();
 		String id = parser.parseMsg(mBean.getBody());
@@ -61,11 +65,24 @@ public class AssignRuleNameTest {
 			mBean.setMsgRefId(Integer.parseInt(id));
 		}
 		mBean.setFinalRcpt("testbounce@test.com");
-		mBean.setRuleName(RuleNameEnum.SEND_MAIL.getValue());
 
 		MessageContext ctx = new MessageContext(mBean);
-		ctx.setTaskArguments(RuleNameEnum.HARD_BOUNCE.getValue());
+		ctx.setTaskArguments("$From,$To,event.alert@localhost");
 		task.process(ctx);
-		// TODO
+		
+		verifyBounceCount(mBean.getFromAsString());
+		verifyBounceCount(mBean.getToAsString());
+		verifyBounceCount("event.alert@localhost");
+	}
+	
+	private void verifyBounceCount(String address) {
+		EmailAddress addr = emailService.getByAddress(address);
+		assertTrue(0<addr.getBounceCount());
+		if (addr.getBounceCount()>=Constants.BOUNCE_SUSPEND_THRESHOLD) {
+			assertTrue(StatusId.SUSPENDED.getValue().equals(addr.getStatusId()));
+		}
+		else {
+			assertTrue(!StatusId.SUSPENDED.getValue().equals(addr.getStatusId()));
+		}
 	}
 }

@@ -22,9 +22,9 @@ import javax.persistence.Transient;
 import jpa.constant.CarrierCode;
 import jpa.constant.MsgDirectionCode;
 import jpa.model.BaseModel;
+import jpa.model.EmailAddress;
 import jpa.model.SenderData;
 import jpa.model.SubscriberData;
-import jpa.model.EmailAddress;
 import jpa.model.rule.RuleLogic;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
