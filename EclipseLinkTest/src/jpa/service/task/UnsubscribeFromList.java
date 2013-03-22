@@ -8,6 +8,7 @@ import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
 import jpa.model.MailingList;
+import jpa.model.Subscription;
 import jpa.service.EmailAddressService;
 import jpa.service.MailingListService;
 import jpa.service.SubscriptionService;
@@ -73,7 +74,8 @@ public class UnsubscribeFromList extends TaskBaseAdaptor {
 				}
 				EmailAddress emailAddrVo = emailAddrDao.findSertAddress(addr.toString());
 				messageBean.setMailingListId(mlist.getListId());
-				subscriptionDao.unsubscribe(emailAddrVo.getAddress(), mlist.getListId());
+				Subscription sub = subscriptionDao.unsubscribe(emailAddrVo.getAddress(), mlist.getListId());
+				ctx.getRowIds().add(sub.getRowId());
 				logger.info(addr + " unsubscribed from: " + mlist.getListId());
 				addrsUpdated++;
 			}

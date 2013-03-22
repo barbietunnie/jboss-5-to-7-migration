@@ -13,7 +13,6 @@ import jpa.constant.EmailAddrType;
 import jpa.constant.TableColumnName;
 import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
-import jpa.message.MessageBeanBuilder;
 import jpa.message.MessageContext;
 import jpa.model.SenderData;
 import jpa.service.SenderDataService;
@@ -56,21 +55,18 @@ public class ForwardMessage extends TaskBaseAdaptor {
 		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
-		MessageBean messageBean = ctx.getMessageBean();
-		if (!messageBean.getHashMap().containsKey(MessageBeanBuilder.MSG_RAW_STREAM)) {
-			logger.warn("Email Raw Stream not found in MessageBean.hashMap");
-		}
 		if (StringUtils.isBlank(ctx.getTaskArguments())) {
 			throw new DataValidationException("Arguments is not valued, can't forward");
 		}
 		
+		MessageBean messageBean = ctx.getMessageBean();
 		String senderId = messageBean.getSenderId();
 		SenderData senderVo = null;
 		try {
 			senderVo = senderDao.getBySenderId(senderId);
 		}
 		catch (NoResultException e) {
-			throw new DataValidationException("Client record not found by clientId: " + senderId);
+			throw new DataValidationException("SenderData record not found by senderId: " + senderId);
 		}
 
 		// example: $Forward,securityDept@mycompany.com

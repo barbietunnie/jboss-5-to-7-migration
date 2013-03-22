@@ -70,6 +70,7 @@ public class BounceUpAddressTest {
 		ctx.setTaskArguments("$From,$To,event.alert@localhost");
 		task.process(ctx);
 		
+		// verify results
 		verifyBounceCount(mBean.getFromAsString());
 		verifyBounceCount(mBean.getToAsString());
 		verifyBounceCount("event.alert@localhost");
