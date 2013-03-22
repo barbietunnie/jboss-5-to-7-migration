@@ -31,7 +31,7 @@ public class TimestampUtil implements java.io.Serializable {
 		String converted = db2ToDecimalString(db2tm);
 		// converted = "30023805873165862201";
 		String restored = decimalStringToDb2(converted);
-		System.out.println("Date: " + db2tm + ", converted: " + converted + ", restored: "
+		logger.info("Date: " + db2tm + ", converted: " + converted + ", restored: "
 				+ restored);
 	}
 

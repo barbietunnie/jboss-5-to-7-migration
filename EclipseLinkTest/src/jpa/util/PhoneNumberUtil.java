@@ -6,8 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 public class PhoneNumberUtil {
+	static final Logger logger = Logger.getLogger(PhoneNumberUtil.class);
 
 	private static final Map<String, Integer> alphaMap = new HashMap<String, Integer>();
 	
@@ -93,7 +95,7 @@ public class PhoneNumberUtil {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(convertPhoneLetters("1 614-JOe-Cell"));
-		System.out.println(convertTo10DigitNumber("1 614-JO6-G0LO"));
+		logger.info(convertPhoneLetters("1 614-JOe-Cell"));
+		logger.info(convertTo10DigitNumber("1 614-JO6-G0LO"));
 	}
 }

@@ -10,8 +10,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 public final class SchedulesBlob implements Serializable {
 	private static final long serialVersionUID = 4238845382852251582L;
+	static final Logger logger = Logger.getLogger(SchedulesBlob.class);
 
 	public static enum Events {
 		WEEKLY, BIWEEKLY, MONTHLY, END_OF_MONTH, EOM_MINUS_1DAY, EOM_MINUS_2DAY, DATE_LIST
@@ -261,7 +264,7 @@ public final class SchedulesBlob implements Serializable {
 	public static void main(String[] args) {
 		try {
 			SchedulesBlob blob = new SchedulesBlob();
-			System.out.println(blob.toString());
+			logger.info(blob.toString());
 		}
 		catch (Exception e) {
 			e.printStackTrace();

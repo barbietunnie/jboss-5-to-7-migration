@@ -430,12 +430,12 @@ final class RfcCodeScan {
 		try {
 			RfcCodeScan scan = RfcCodeScan.getInstance();
 			String ruleName = scan.examineBody("aaaaab\n5.0.0\nefg ");
-			System.out.println("RuleName: " + ruleName);
+			logger.info("RuleName: " + ruleName);
 			ruleName = scan.examineBody("aaa 201 aab\n422\naccount is full ");
-			System.out.println("RuleName: " + ruleName);
+			logger.info("RuleName: " + ruleName);
 			ruleName = scan.examineBody("aaaaab\n400\ntemporary failure ");
-			System.out.println("RuleName: " + ruleName);
-			System.out.println(scan.getMatchingRegex("{(?:mailbox|account).{0,180}(?:storage|full|limit|quota)}"));
+			logger.info("RuleName: " + ruleName);
+			logger.info(scan.getMatchingRegex("{(?:mailbox|account).{0,180}(?:storage|full|limit|quota)}"));
 		}
 		catch (Exception e) {
 			e.printStackTrace();

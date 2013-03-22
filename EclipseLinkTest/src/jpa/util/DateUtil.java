@@ -35,18 +35,18 @@ public class DateUtil {
 		String oldDate = "2006-12-15-12:56:18.095856";
 		//oldDate = "2003-04-03.09.04.47.123562";
 		String newDate = correctDB2Date(oldDate);
-		System.out.println(oldDate);
-		System.out.println(newDate);
+		logger.info(oldDate);
+		logger.info(newDate);
 		
-		System.out.println(isValidBirthDate("12/25/1980"));
+		logger.info(isValidBirthDate("12/25/1980"));
 
 		String dateStr = "20001012";
 		try {
 			String converted = convertDateString(dateStr,"yyyyMMdd","MM/dd/yyyy");
-			System.out.println("From "+dateStr+" -> "+converted);
+			logger.info("From "+dateStr+" -> "+converted);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception", e);
 		}
 
 		System.exit(0);

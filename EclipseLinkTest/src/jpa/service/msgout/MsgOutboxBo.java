@@ -99,7 +99,7 @@ public class MsgOutboxBo {
 		try {
 			MessageRendered mr = rndrDao.getFirstRecord();
 			MessageBean bean = msgOutboxBo.getMessageByPK(mr.getRowId());
-			System.out.println("MessageBean retrieved:\n" + bean);
+			logger.info("MessageBean retrieved:\n" + bean);
 			
 			RenderRequest renderRequest = msgOutboxBo.getRenderRequestByPK(mr.getRowId());
 			if (renderRequest == null) { // should never happen

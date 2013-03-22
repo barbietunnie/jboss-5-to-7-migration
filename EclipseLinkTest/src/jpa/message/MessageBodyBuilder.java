@@ -442,9 +442,9 @@ public final class MessageBodyBuilder {
 		String origText = "<HTML>This is the original message.</HTML>";
 		String newText = "This is the new Text.";
 		String str = appendTextToHtml(origText, newText);
-		System.out.println("Append: "+ str);
+		logger.info("Append: "+ str);
 		str = prependTextToHtml(origText, newText);
-		System.out.println("Prepend: "+ str);
+		logger.info("Prepend: "+ str);
 		
 		EmailIdParser parser = EmailIdParser.getDefaultParser();
 		String emailIdStr = parser.wrapupEmailId(123456);
@@ -459,7 +459,7 @@ public final class MessageBodyBuilder {
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
 		msgBean.setMsgId(Integer.valueOf(999999));
 		msgBean.setBody(getBodyWithEmailId(msgBean));
-		System.out.println(">>>>>>>>>>>>>>>>HTML Message:" + LF + msgBean);
+		logger.info(">>>>>>>>>>>>>>>>HTML Message:" + LF + msgBean);
 
 		// embed email_id for plain text email
 		msgBean = new MessageBean();
@@ -476,12 +476,12 @@ public final class MessageBodyBuilder {
 		List<MsgHeader> hdrs = new ArrayList<MsgHeader>();
 		hdrs.add(hdr);
 		msgBean.setHeaders(hdrs);
-		System.out.println(">>>>>>>>>>>>>>>>TEXT Message:" + LF +msgBean);
+		logger.info(">>>>>>>>>>>>>>>>TEXT Message:" + LF +msgBean);
 
 		// parse email_id
 		String msgId = parser.parseMsg(msgBean.getBody());
-		System.out.println("Email_Id from Body: " + msgId);
+		logger.info("Email_Id from Body: " + msgId);
 		msgId = parser.parseHeaders(msgBean.getHeaders());
-		System.out.println("Email_Id from X-Header: " + msgId);
+		logger.info("Email_Id from X-Header: " + msgId);
 	}
 }

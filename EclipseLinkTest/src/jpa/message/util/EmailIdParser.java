@@ -357,22 +357,22 @@ public final class EmailIdParser implements Serializable {
 			int msgId = 12345;
 			EmailIdParser parser = EmailIdParser.getDefaultParser();
 			String msgStr = "this is my message text.\n" + parser.wrapupEmailId(msgId) + "\n...the rest";
-			System.out.println("Original Msg Text: " + msgStr);
+			logger.info("Original Msg Text: " + msgStr);
 			String id = parser.parseMsg(msgStr);
-			System.out.println("Email Id restored: " + id);
+			logger.info("Email Id restored: " + id);
 			String msgStr2 = parser.replaceEmailId(msgStr, msgId);
-			System.out.println("Msg Text after replace: " + msgStr2);
-			System.out.println("Email Id restored: " + parser.parseMsg(msgStr2));
-			System.out.println("Msg: " + parser.replaceKey(msgStr, parser.bodyPattern, 9876543));
-			System.out.println("Msg: " + parser.removeKey(msgStr, parser.bodyPattern));
+			logger.info("Msg Text after replace: " + msgStr2);
+			logger.info("Email Id restored: " + parser.parseMsg(msgStr2));
+			logger.info("Msg: " + parser.replaceKey(msgStr, parser.bodyPattern, 9876543));
+			logger.info("Msg: " + parser.removeKey(msgStr, parser.bodyPattern));
 			
 			Matcher matcher = parser.bodyPattern.matcher("aaaaab \nSystem Email \r\tId: \n 10.123456.0 ... the rest");
 			if (matcher.find()) {
 				String matched = matcher.group(matcher.groupCount());
-				System.out.println("Matched String: " + matched + ", groups: " + matcher.groupCount());
+				logger.info("Matched String: " + matched + ", groups: " + matcher.groupCount());
 			}
 			else {
-				System.out.println("Pattern not matched.");
+				logger.info("Pattern not matched.");
 			}
 		}
 		finally {

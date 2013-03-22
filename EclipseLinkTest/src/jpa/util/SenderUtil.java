@@ -20,8 +20,8 @@ public final class SenderUtil {
 	
 	public static void main(String[] args){
 		try {
-			System.out.println("Trial Ended? " + isTrialPeriodEnded());
-			System.out.println("ProductKey Valid? " + isProductKeyValid());
+			logger.info("Trial Ended? " + isTrialPeriodEnded());
+			logger.info("ProductKey Valid? " + isProductKeyValid());
 		}
 		catch (Exception e) {
 			e.printStackTrace();

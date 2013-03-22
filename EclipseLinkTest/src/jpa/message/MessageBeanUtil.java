@@ -632,7 +632,7 @@ public final class MessageBeanUtil {
 			sb.append(methodNameList.get(i) + LF);
 		}
 		sb.append("=========== End of method name list =============" + LF);
-		System.out.println(sb.toString());
+		logger.info(sb.toString());
 		
 		MessageBean msgBean = new MessageBean();
 		msgBean.setBody("test body text");

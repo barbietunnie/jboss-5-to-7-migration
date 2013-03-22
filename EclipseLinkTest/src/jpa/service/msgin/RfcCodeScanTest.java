@@ -40,25 +40,25 @@ public class RfcCodeScanTest {
 		
 		bodyText = "test message 450 Requested mail action not taken: mailbox unavailable";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.SOFT_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 
 		bodyText = "test message 451 Requested action aborted: local error in processing";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.SOFT_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 
 		bodyText = "test message 452 Requested action not taken: insufficient system storage";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.SOFT_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 		
 		bodyText = "test message 455 delivery temporary failure";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.SOFT_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 	}
@@ -74,37 +74,37 @@ public class RfcCodeScanTest {
 		
 		bodyText = "test message 501 Syntax error in parameters or arguments";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 
 		bodyText = "test message 502 Command not implemented";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 
 		bodyText = "test message 503 Bad sequence of commands";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 		
 		bodyText = "test message 504 Command parameter not implemented";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 		
 		bodyText = "test message 550 Requested action not taken: mailbox unavailable";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 		
 		bodyText = "test message 551 User not local; please try <forward-path>";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 		
@@ -116,19 +116,19 @@ public class RfcCodeScanTest {
 		
 		bodyText = "test message 553 Requested action not taken: mailbox name not allowed";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 		
 		bodyText = "test message 554 Transaction failed";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 		
 		bodyText = "test message 555 delivery permanent error";
 		ruleName = scanner.examineBody(bodyText);
-		System.out.println("BodyText: " + bodyText + ", RuleName: " + ruleName);
+		logger.info("BodyText: " + bodyText + ", RuleName: " + ruleName);
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		logger.info(LF);
 	}

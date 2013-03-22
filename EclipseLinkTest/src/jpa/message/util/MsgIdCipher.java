@@ -3,12 +3,15 @@ package jpa.message.util;
 import java.math.BigInteger;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
+
 /*
  * 	See the theoretical basis at:
  *	http://theory.lcs.mit.edu/~rivest/rsapaper.pdf
  */
 
 public final class MsgIdCipher {
+	static final Logger logger = Logger.getLogger(MsgIdCipher.class);
 	// Values from original author's web page.
 	// See URL in above comments.
 	static final BigInteger p = new BigInteger("47");
@@ -24,19 +27,19 @@ public final class MsgIdCipher {
 		int plainText = 103132;
 		plainText = 926785317;
 		//plainText = 10L;
-		System.out.println("plainText:      " + plainText);
+		logger.info("plainText:      " + plainText);
 		
 		String withOnes = insertOnes(plainText+"");
-		System.out.println("After InsertZeros: "+withOnes);
+		logger.info("After InsertZeros: "+withOnes);
 		String withoutOnes = removeOnes(withOnes);
-		System.out.println("After RemoveZeros: "+withoutOnes);
+		logger.info("After RemoveZeros: "+withoutOnes);
 		
 		// Encrypt the encoded text and display the result.
 		String cipherText = encode(plainText);
-		System.out.println("cipherText:     " + cipherText);
+		logger.info("cipherText:     " + cipherText);
 
 		int decipheredText = decode(cipherText);
-		System.out.println("decipheredText: " + decipheredText);
+		logger.info("decipheredText: " + decipheredText);
 	}
 	
 	/**

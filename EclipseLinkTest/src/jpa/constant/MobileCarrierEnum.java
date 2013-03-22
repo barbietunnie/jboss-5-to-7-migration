@@ -1,5 +1,9 @@
 package jpa.constant;
 
+import jpa.util.TimestampUtil;
+
+import org.apache.log4j.Logger;
+
 public enum MobileCarrierEnum {
 	TMobile("T-Mobile USA", "tmomail.net", null, "1"),
 	Verizon("Verizon Wireless", "vtext.com", "vzwpix.com", null),
@@ -47,7 +51,8 @@ public enum MobileCarrierEnum {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(MobileCarrierEnum.valueOf("TMobile"));
-		System.out.println(MobileCarrierEnum.getByValue("T-Mobile USA"));
+		Logger logger = Logger.getLogger(MobileCarrierEnum.class);
+		logger.info(MobileCarrierEnum.valueOf("TMobile"));
+		logger.info(MobileCarrierEnum.getByValue("T-Mobile USA"));
 	}
 }
