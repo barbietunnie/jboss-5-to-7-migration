@@ -5,6 +5,7 @@ import java.util.StringTokenizer;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
 import jpa.constant.EmailAddrType;
@@ -109,16 +110,19 @@ public class SuspendAddress extends TaskBaseAdaptor {
 			StringTokenizer st2 = new StringTokenizer(addrs, ",");
 			while (st2.hasMoreTokens()) {
 				String addr = st2.nextToken();
-				EmailAddress emailAddrVo = emailAddrDao.getByAddress(addr);
-				if (emailAddrVo != null && !StatusId.SUSPENDED.getValue().equals(emailAddrVo.getStatusId())) {
-					if (isDebugEnabled)
-						logger.debug("Suspending EmailAddr: " + addr);
-					emailAddrVo.setStatusId(StatusId.SUSPENDED.getValue());
-					emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
-					emailAddrVo.setStatusChangeTime(updtTime);
-					emailAddrDao.update(emailAddrVo);
-					addrsSuspended++;
+				try {
+					EmailAddress emailAddrVo = emailAddrDao.getByAddress(addr);
+					if (!StatusId.SUSPENDED.getValue().equals(emailAddrVo.getStatusId())) {
+						if (isDebugEnabled)
+							logger.debug("Suspending EmailAddr: " + addr);
+						emailAddrVo.setStatusId(StatusId.SUSPENDED.getValue());
+						emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
+						emailAddrVo.setStatusChangeTime(updtTime);
+						emailAddrDao.update(emailAddrVo);
+						addrsSuspended++;
+					}
 				}
+				catch (NoResultException e) {}
 			}
 		} // end of while loop
 		// if failed to suspend any address, check if MsgRefId is valued
@@ -146,16 +150,19 @@ public class SuspendAddress extends TaskBaseAdaptor {
 		}
 		else if (msgInboxVo.getToAddrRowId() != null) { // should always valued
 			int toAddr = msgInboxVo.getToAddrRowId().intValue();
-			EmailAddress emailAddrVo = emailAddrDao.getByRowId(toAddr);
-			if (!StatusId.SUSPENDED.getValue().equals(emailAddrVo.getStatusId())) {
-				if (isDebugEnabled)
-					logger.debug("Suspending EmailAddr: " + emailAddrVo.getAddress());
-				emailAddrVo.setStatusId(StatusId.SUSPENDED.getValue());
-				emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
-				emailAddrVo.setStatusChangeTime(updtTime);
-				emailAddrDao.update(emailAddrVo);
-				addrsSuspended++;
+			try {
+				EmailAddress emailAddrVo = emailAddrDao.getByRowId(toAddr);
+				if (!StatusId.SUSPENDED.getValue().equals(emailAddrVo.getStatusId())) {
+					if (isDebugEnabled)
+						logger.debug("Suspending EmailAddr: " + emailAddrVo.getAddress());
+					emailAddrVo.setStatusId(StatusId.SUSPENDED.getValue());
+					emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
+					emailAddrVo.setStatusChangeTime(updtTime);
+					emailAddrDao.update(emailAddrVo);
+					addrsSuspended++;
+				}
 			}
+			catch (NoResultException e) {}
 		}
 		return addrsSuspended;
 	}

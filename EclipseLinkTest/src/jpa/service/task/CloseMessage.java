@@ -1,5 +1,7 @@
 package jpa.service.task;
 
+import javax.persistence.NoResultException;
+
 import jpa.constant.MsgStatusCode;
 import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
@@ -39,13 +41,16 @@ public class CloseMessage extends TaskBaseAdaptor {
 			return Integer.valueOf(msgId);
 		}
 		
-		MessageInbox msgInboxVo = inboxService.getByPrimaryKey(messageBean.getMsgId());
-		if (msgInboxVo != null) {
+		try {
+			MessageInbox msgInboxVo = inboxService.getByPrimaryKey(messageBean.getMsgId());
 			msgId = msgInboxVo.getRowId();
 			msgInboxVo.setStatusId(MsgStatusCode.CLOSED.getValue());
 			inboxService.update(msgInboxVo);
 			if (isDebugEnabled)
 				logger.debug("Message with Row_Id of (" + msgInboxVo.getRowId() + ") is Closed.");
+		}
+		catch (NoResultException e) {
+			logger.error("Message with RowId (" + msgId + ") not found in Message_Inbox!");
 		}
 		return Integer.valueOf(msgId);
 	}

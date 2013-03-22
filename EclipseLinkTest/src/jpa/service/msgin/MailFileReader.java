@@ -23,8 +23,7 @@ public class MailFileReader {
 		SpringUtil.beginTransaction();
 		try {
 			MailFileReader fReader = new MailFileReader();
-			//MessageBean msgBean = fReader.start(filePath);
-			MessageBean msgBean = fReader.start(filePath, fileName);
+			MessageBean msgBean = fReader.read(filePath, fileName);
 			logger.info("Number of Attachments: " + msgBean.getAttachCount());
 			logger.info("******************************");
 			logger.info("MessageBean created:" + LF + msgBean);
@@ -39,8 +38,8 @@ public class MailFileReader {
 		System.exit(0);
 	}
 	
-	MessageBean start(String filePath, String fileName) throws MessagingException, IOException {
-		MessageBean msgBean = readMessageBean(filePath, fileName);
+	MessageBean read(String filePath, String fileName) throws MessagingException, IOException {
+		MessageBean msgBean = readIntoMessageBean(filePath, fileName);
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
 		MessageParserBo parser = (MessageParserBo) SpringUtil.getAppContext().getBean("messageParserBo");
 		msgBean.setRuleName(parser.parse(msgBean));
@@ -48,7 +47,7 @@ public class MailFileReader {
 		return msgBean;
 	}
 
-	private MessageBean readMessageBean(String filePath, String fileName) throws MessagingException, IOException {
+	private MessageBean readIntoMessageBean(String filePath, String fileName) throws MessagingException, IOException {
 		byte[] mailStream = TestUtil.loadFromFile(filePath, fileName);
 		MessageBean msgBean = MessageBeanUtil.createBeanFromStream(mailStream);
 		return msgBean;

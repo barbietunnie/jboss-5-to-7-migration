@@ -1,12 +1,14 @@
 package jpa.test.msgin;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
 import javax.mail.MessagingException;
 import javax.persistence.NoResultException;
 
+import jpa.data.preload.RuleNameEnum;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
 import jpa.model.message.MessageStream;
@@ -27,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=false)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
 public class MessageInboxBoTest {
 	final static String LF = System.getProperty("line.separator","\n");
@@ -46,13 +48,15 @@ public class MessageInboxBoTest {
 		MessageBean msgBean1 = testReadFromDatabase(100);
 		assertNotNull(msgBean1);
 		// parse the message bean to set rule name
-		msgParser.parse(msgBean1);
+		String ruleName = msgParser.parse(msgBean1);
+		assertNotNull(ruleName);
 
 		String fileName = "BouncedMail_1.txt";
 		MessageBean msgBean2 = testReadFromFile(fileName);
 		assertNotNull(msgBean2);
 		// parse the message bean to set rule name
-		msgParser.parse(msgBean2);
+		ruleName = msgParser.parse(msgBean2);
+		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		
 		System.out.println("Msgid = " + msgInboxBo.saveMessage(msgBean2));
 	}
@@ -75,7 +79,13 @@ public class MessageInboxBoTest {
 			msgStreamVo = streamService.getByMsgInboxId(msgId);
 		}
 		catch (NoResultException e) {
-			msgStreamVo = streamService.getLastRecord();
+			try {
+				msgStreamVo = streamService.getLastRecord();
+			}
+			catch (NoResultException e2) {
+				String fileName = "BouncedMail_2.txt";
+				return TestUtil.loadFromFile(fileName);
+			}
 		}
 		logger.info("MsgStreamDao - getByPrimaryKey: "+LF+msgStreamVo);
 		return msgStreamVo.getMsgStream();

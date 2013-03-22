@@ -41,7 +41,7 @@ public class PhoneNumberUtil {
 		alphaMap.put("Z", 9);
 	}
 	
-    private static final String phoneRegex = "^(?:1[ -]?)?((?:\\(\\d{3}\\)|\\d{3}))[ -]?((?:\\d{3}|[a-z]{3}))[ -]?((?:\\d{4}|[a-z]{4}))$";
+    private static final String phoneRegex = "^(?:1[ -]?)?((?:\\(\\d{3}\\)|\\d{3}))[ -]?((?:[\\da-z]{3}))[ -]?((?:[\\da-z]{4}))$";
     private final static Pattern phonePattern = Pattern.compile(phoneRegex, Pattern.CASE_INSENSITIVE);
     
     /*
@@ -78,11 +78,11 @@ public class PhoneNumberUtil {
 	 * This method removes hyphens or spaces in a phone number.
 	 * @param phoneNumber contains hyphens or spaces
 	 * @return a 10 digit number
-	 * @throws IllegalArgumentException if an invalid number is passed in.
+	 * @throws NumberFormatException if an invalid number is passed in.
 	 */
-	public static String convertTo10DigitNumber(String phoneNumber) throws IllegalArgumentException {
+	public static String convertTo10DigitNumber(String phoneNumber) throws NumberFormatException {
 		if (!isValidPhoneNumber(phoneNumber)) {
-			throw new IllegalArgumentException("Invalid phone number (" + phoneNumber + ") passed in.");
+			throw new NumberFormatException("Invalid phone number (" + phoneNumber + ") passed in.");
 		}
 		String phone = convertPhoneLetters(phoneNumber);
 		Matcher m = phonePattern.matcher(phone);
@@ -94,6 +94,6 @@ public class PhoneNumberUtil {
 	
 	public static void main(String[] args) {
 		System.out.println(convertPhoneLetters("1 614-JOe-Cell"));
-		System.out.println(convertTo10DigitNumber("1 614-JOe-Cell"));
+		System.out.println(convertTo10DigitNumber("1 614-JO6-G0LO"));
 	}
 }
