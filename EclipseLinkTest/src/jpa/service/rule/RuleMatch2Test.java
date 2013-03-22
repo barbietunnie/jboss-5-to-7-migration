@@ -52,10 +52,10 @@ public class RuleMatch2Test {
 	public void testRuleMatcher() throws Exception {
 		try {
 			RuleLogic logic = rulesDataService.getByRuleName("HardBouce_WatchedMailbox");
-			System.out.println("RuleDataService - getRuleByPrimaryKey: " + LF + logic);
+			logger.info("RuleDataService - getRuleByPrimaryKey: " + LF + logic);
 			
 			logic = rulesDataService.getByRuleName(RuleNameEnum.VIRUS_BLOCK.getValue());
-			System.out.println("RuleDataService - getRuleByPrimaryKey: " + LF + logic);
+			logger.info("RuleDataService - getRuleByPrimaryKey: " + LF + logic);
 			
 			loader.listRuleNames();
 			

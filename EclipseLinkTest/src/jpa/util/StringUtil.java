@@ -526,6 +526,6 @@ public final class StringUtil {
     }
 
 	public static void main(String[] args) {
-		System.out.println(removeStringFirst("<pre>12345abcdefklqhdkh</pre>", "<pre>"));
+		logger.info(removeStringFirst("<pre>12345abcdefklqhdkh</pre>", "<pre>"));
 	}
 }

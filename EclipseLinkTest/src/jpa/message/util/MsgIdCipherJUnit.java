@@ -4,10 +4,11 @@ import static org.junit.Assert.*;
 
 import java.util.Random;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 
 public class MsgIdCipherJUnit {
-	
+	static final Logger logger = Logger.getLogger(MsgIdCipherJUnit.class);
 	@Test 
 	public void testMsgIdCipher() {
 		long startTime =System.currentTimeMillis();
@@ -23,7 +24,7 @@ public class MsgIdCipherJUnit {
 			assertEquals(msgId, decoded1);
 			assertEquals(msgId, decoded2);
 		}
-		System.out.println("Test completed, time taken: "
+		logger.info("Test completed, time taken: "
 				+ (System.currentTimeMillis() - startTime)
 				+ " ms, number of unequal encoding: " + count);
 	}

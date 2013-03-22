@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 public class VarReplProperties extends Properties {
+	static Logger logger = Logger.getLogger(VarReplProperties.class);
 	private static final long serialVersionUID = 4115280968301218916L;
 
 	public VarReplProperties() {
@@ -37,11 +40,11 @@ public class VarReplProperties extends Properties {
 	public static void main(String[] args) {
 		VarReplProperties props = loadMyProperties(fileName);
 		props.list(System.out);
-		System.out.println("=================================");
-		System.out.println(props.getProperty("dataSource.url"));
-		System.out.println(props.getProperty("jndi.url"));
-		System.out.println(props.getProperty("jdbc.host"));
-		System.out.println(props.getProperty("not.found", "property not found"));
+		logger.info("=================================");
+		logger.info(props.getProperty("dataSource.url"));
+		logger.info(props.getProperty("jndi.url"));
+		logger.info(props.getProperty("jdbc.host"));
+		logger.info(props.getProperty("not.found", "property not found"));
 	}
 	
 	public static VarReplProperties loadMyProperties(String fileName) {

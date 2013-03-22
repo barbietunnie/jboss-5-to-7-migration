@@ -9,8 +9,11 @@ import javax.mail.Address;
 import jpa.constant.EmailIdToken;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 public class EmailAddrUtil {
+	static final Logger logger = Logger.getLogger(EmailAddrUtil.class);
+
 	final static String localPart = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*";
 	final static String remotePart = "@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])+";
 	final static String intraPart = "@[a-z0-9](?:[a-z0-9-]*[a-z0-9])+";
@@ -337,12 +340,12 @@ public class EmailAddrUtil {
 	public static void main(String[] args) {
 		String addr = "\"ORCPT jwang@nc.rr.com\" <jwang@nc.rr.com>";
 		addr = "DirectStarTV <fqusoogd.undlwfeteot@chaffingphotosensitive.com>";
-		System.out.println(addr+" --> "+EmailAddrUtil.removeDisplayName(addr));
+		logger.info(addr+" --> "+EmailAddrUtil.removeDisplayName(addr));
 		
-		System.out.println("EmailAddress: " + EmailAddrUtil.isRemoteEmailAddress("A!#$%&'*+/=?.^_`{|}~-BC@localhost.us"));
-		System.out.println("EmailAddress: " + EmailAddrUtil.isRemoteOrLocalEmailAddress("A!#$%&'*+/=?.^_`{|}~-BC"));
-		System.out.println(EmailAddrUtil.getOrigAddrFromVERP("bounce-10.07410251.0-jsmith=test.com@localhost"));
-		System.out.println(EmailAddrUtil.getOrigAddrFromVERP("remove-testlist-jsmith=test.com@localhost"));
+		logger.info("EmailAddress: " + EmailAddrUtil.isRemoteEmailAddress("A!#$%&'*+/=?.^_`{|}~-BC@localhost.us"));
+		logger.info("EmailAddress: " + EmailAddrUtil.isRemoteOrLocalEmailAddress("A!#$%&'*+/=?.^_`{|}~-BC"));
+		logger.info(EmailAddrUtil.getOrigAddrFromVERP("bounce-10.07410251.0-jsmith=test.com@localhost"));
+		logger.info(EmailAddrUtil.getOrigAddrFromVERP("remove-testlist-jsmith=test.com@localhost"));
 	}
 
 	public static String removeCRLFTabs(String str) {

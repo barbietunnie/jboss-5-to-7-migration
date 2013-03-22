@@ -9,7 +9,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Calendar;
 
+import org.apache.log4j.Logger;
+
 public final class BlobUtil {
+	static final Logger logger = Logger.getLogger(BlobUtil.class);
 	private BlobUtil() {
 		// utility class
 	}
@@ -88,10 +91,10 @@ public final class BlobUtil {
             obj = in.readObject();
         }
         catch(IOException e) {
-            e.printStackTrace();
+        	logger.error("IOException caught", e);
         }
         catch(ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
+        	logger.error("ClassNotFoundException caught", cnfe);
         }
         return obj;
     }
@@ -100,14 +103,14 @@ public final class BlobUtil {
     	try {
     		Calendar cal = Calendar.getInstance();
 			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-			System.out.println("Calendar 1: " + cal.getTime());
+			logger.info("Calendar 1: " + cal.getTime());
 			cal.roll(Calendar.MONTH, false);
-			System.out.println("Calendar 2: " + cal.getTime());
+			logger.info("Calendar 2: " + cal.getTime());
 			cal.roll(Calendar.MONTH, false);
-			System.out.println("Calendar 3: " + cal.getTime());
+			logger.info("Calendar 3: " + cal.getTime());
     	}
     	catch (Exception e) {
-    		e.printStackTrace();
+    		logger.error("Exceeption", e);
     	}
     }
 }

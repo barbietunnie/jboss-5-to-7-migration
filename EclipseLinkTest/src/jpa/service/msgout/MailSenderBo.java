@@ -51,7 +51,7 @@ public class MailSenderBo extends MailSenderBase {
 			if (bean.getTo()==null || bean.getTo().length==0) {
 				bean.setTo(InternetAddress.parse("testto@localhost"));
 			}
-			System.out.println("MessageBean retrieved:\n" + bean);
+			logger.info("MessageBean retrieved:\n" + bean);
 			sender.process(new MessageContext(bean));
 			SpringUtil.commitTransaction();
 		}

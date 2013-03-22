@@ -3,10 +3,14 @@ package jpa.service.msgout;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import jpa.model.SmtpServer;
 import jpa.util.SpringUtil;
 
 public class SmtpWrapperUtil {
+	static final Logger logger = Logger.getLogger(SmtpWrapperUtil.class);
+	
 	private static SmtpServerService smtpServerDao = null;
 	private static java.util.Date lastGetTime = new java.util.Date();
 	private static NamedPool smtpPools = null;
@@ -15,7 +19,7 @@ public class SmtpWrapperUtil {
 	public static void main(String[] args) {
 		NamedPool pools = getSmtpNamedPool();
 		for (String name :pools.getNames()) {
-			System.out.println("Pool name: " + name);
+			logger.info("Pool name: " + name);
 		}
 		List<ObjectPool> objPools = pools.getPools();
 		int _size = 0;
@@ -23,7 +27,7 @@ public class SmtpWrapperUtil {
 			ObjectPool pool = objPools.get(i);
 			_size += pool.getSize();
 		}
-		System.out.println("Total Connections: " + _size);
+		logger.info("Total Connections: " + _size);
 		SmtpConnection[] conns = new SmtpConnection[_size];
 		try {
 			for (int i = 0; i < _size; i++) {

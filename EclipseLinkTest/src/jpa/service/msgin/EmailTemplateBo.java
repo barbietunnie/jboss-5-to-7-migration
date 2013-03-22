@@ -84,7 +84,7 @@ public class EmailTemplateBo {
 	void processMain() {
 		try {
 			String text = renderBo.renderTemplateById("testTemplate", null, null);
-			System.out.println(text);
+			logger.info(text);
 			SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 			TemplateDataPK pk = new TemplateDataPK(sender, "testTemplate", null);
 			TemplateData bodyVo = templateDataDao.getByBestMatch(pk);
@@ -95,14 +95,14 @@ public class EmailTemplateBo {
 				logger.debug("Template to render:" + LF + bodyVo.getBodyTemplate());
 			}
 			List<String> variables = RenderUtil.retrieveVariableNames(bodyVo.getBodyTemplate());
-			System.out.println("Variables: " + variables);
+			logger.info("Variables: " + variables);
 			
 			Map<String, String> vars = new HashMap<String, String>();
 			vars.put("BroadcastMsgId","3");
 			TemplateRenderVo renderVo = renderEmailTemplate("jsmith@test.com",vars, "SampleNewsletter1");
-			System.out.println(renderVo);
+			logger.info(renderVo);
 			
-			System.out.println(renderEmailVariable("UserProfileURL", Integer.valueOf(1)));
+			logger.info(renderEmailVariable("UserProfileURL", Integer.valueOf(1)));
 			
 			String checkText = "Dear ${SubscriberAddress}," + LF + LF + 
 			"This is a sample text newsletter message for a traditional mailing list." + LF +
@@ -231,7 +231,7 @@ public class EmailTemplateBo {
 				renderedValue = renderBo.renderTemplateText(vo.getDefaultValue(), null, vars);
 			}
 			catch (Exception e) {
-				System.out.println("loadSbsrDaos.jsp - renderEmailVariable: " + e.toString());
+				logger.info("loadSbsrDaos.jsp - renderEmailVariable: " + e.toString());
 			}
 		}
 		return renderedValue;

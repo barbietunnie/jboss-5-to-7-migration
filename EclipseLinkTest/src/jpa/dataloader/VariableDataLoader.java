@@ -155,7 +155,7 @@ public class VariableDataLoader extends AbstractDataLoader {
 		in.setRequired(false);
 		gvService.insert(in);
 		
-		System.out.println("loadGlobalVariables() completed.\n"+in);
+		logger.info("loadGlobalVariables() completed.\n"+in);
 	}
 }
 
