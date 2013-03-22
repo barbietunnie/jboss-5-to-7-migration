@@ -167,7 +167,7 @@ public class EmailTemplateBo {
 			}
 			EmailVariable vo =null;
 			try {
-			vo= emailVariableDao.getByVariableName(name);
+				vo= emailVariableDao.getByVariableName(name);
 			}	
 			catch (NoResultException e) {
 				logger.info("renderEmailVariables() - EmailVariable record not found, "

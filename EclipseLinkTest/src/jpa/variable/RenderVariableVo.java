@@ -13,6 +13,7 @@ import javax.mail.Address;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
+import jpa.constant.CodeType;
 import jpa.constant.VariableType;
 import jpa.data.preload.GlobalVariableEnum;
 
@@ -69,7 +70,7 @@ public class RenderVariableVo implements Serializable {
 	 */
 	public RenderVariableVo(String variableName, Object variableValue, VariableType variableType,
 			String variableFormat) {
-		this(variableName, variableValue, variableFormat, variableType, null, null);
+		this(variableName, variableValue, variableFormat, variableType, CodeType.YES_CODE.getValue(), Boolean.FALSE);
 	}
 
 	public RenderVariableVo(

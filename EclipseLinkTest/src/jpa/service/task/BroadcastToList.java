@@ -151,9 +151,11 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		}
 		// sending email to each subscriber
 		for (Subscription sub : subs) {
-			mailsSent += constructAndSendMessage(ctx, sub, listVo, bodyText, subjVarNames, saveEmbedEmailId, false);
+			//messageBean.setSubject(subjText);
+			//messageBean.getBodyNode().setValue(bodyText);
+			mailsSent += constructAndSendMessage(ctx, sub, listVo, subjText, bodyText, subjVarNames, saveEmbedEmailId, false);
 			if (listVo.isSendText()) {
-				mailsSent += constructAndSendMessage(ctx, sub, listVo, bodyText, subjVarNames, saveEmbedEmailId, true);
+				mailsSent += constructAndSendMessage(ctx, sub, listVo, subjText, bodyText, subjVarNames, saveEmbedEmailId, true);
 			}
 		}
 		if (mailsSent > 0 && messageBean.getMsgId() != null) {
@@ -164,12 +166,11 @@ public class BroadcastToList extends TaskBaseAdaptor {
 	}
 	
 	private int constructAndSendMessage(MessageContext ctx, Subscription sub,
-			MailingList listVo, String bodyText, List<String> varNames,
+			MailingList listVo, String subjText, String bodyText, List<String> varNames,
 			Boolean saveEmbedEmailId, boolean isText)
 			throws DataValidationException, TemplateException, IOException {
 		MessageBean msgBean = ctx.getMessageBean();
 		String listId = msgBean.getMailingListId();
-		String subjText = msgBean.getSubject() == null ? "" : msgBean.getSubject();
 		Address[] to = null;
 		String toAddress = null;
 		try {

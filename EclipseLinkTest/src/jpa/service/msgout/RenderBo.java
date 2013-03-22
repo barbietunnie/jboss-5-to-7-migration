@@ -629,7 +629,7 @@ public class RenderBo {
 				req.getVariableFormat(), 
 				VariableType.getByValue(req.getVariableType()), 
 				CodeType.YES_CODE.getValue(), 
-				false
+				Boolean.FALSE
 				);
 			ht.put(req.getRenderVariablePK().getVariableName(), r);
 		}
