@@ -2,6 +2,7 @@ package jpa.dataloader;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -53,7 +54,7 @@ public class VariableDataLoader extends AbstractDataLoader {
 	private void loadSenderVariables() throws SQLException {
 		SenderData cd = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 
-		Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
+		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 		for (SenderVariableEnum variable : SenderVariableEnum.values()) {
 			SenderVariable in = new SenderVariable();
 			SenderVariablePK pk1 = new SenderVariablePK(cd, variable.name(), updtTime);
@@ -63,10 +64,67 @@ public class VariableDataLoader extends AbstractDataLoader {
 			in.setVariableType(variable.getVariableType().getValue());
 			in.setStatusId(StatusId.ACTIVE.getValue());
 			in.setAllowOverride(variable.getAllowOverride().getValue());
-			in.setRequired(false);
+			in.setRequired(Boolean.FALSE);
 			cvService.insert(in);
 		}
 		
+		List<SenderData> senders = senderService.getAll();
+		for (SenderData sender : senders) {
+			SenderVariable in = new SenderVariable();
+			SenderVariablePK pk1 = new SenderVariablePK(sender, "SenderId", updtTime);
+			in.setSenderVariablePK(pk1);
+			in.setVariableValue(sender.getSenderId());
+			in.setVariableFormat(null);
+			in.setVariableType(VariableType.TEXT.getValue());
+			in.setStatusId(StatusId.ACTIVE.getValue());
+			in.setAllowOverride(CodeType.YES_CODE.getValue());
+			in.setRequired(Boolean.FALSE);
+			cvService.insert(in);
+			
+			in = new SenderVariable();
+			pk1 = new SenderVariablePK(sender, "DomainName", updtTime);
+			in.setSenderVariablePK(pk1);
+			in.setVariableValue(sender.getDomainName());
+			in.setVariableFormat(null);
+			in.setVariableType(VariableType.TEXT.getValue());
+			in.setStatusId(StatusId.ACTIVE.getValue());
+			in.setAllowOverride(CodeType.YES_CODE.getValue());
+			in.setRequired(Boolean.FALSE);
+			cvService.insert(in);
+
+			in = new SenderVariable();
+			pk1 = new SenderVariablePK(sender, "SenderName", updtTime);
+			in.setSenderVariablePK(pk1);
+			in.setVariableValue(sender.getSenderName());
+			in.setVariableFormat(null);
+			in.setVariableType(VariableType.TEXT.getValue());
+			in.setStatusId(StatusId.ACTIVE.getValue());
+			in.setAllowOverride(CodeType.YES_CODE.getValue());
+			in.setRequired(Boolean.FALSE);
+			cvService.insert(in);
+
+			in = new SenderVariable();
+			pk1 = new SenderVariablePK(sender, "WebSiteUrl", updtTime);
+			in.setSenderVariablePK(pk1);
+			in.setVariableValue(sender.getWebSiteUrl());
+			in.setVariableFormat(null);
+			in.setVariableType(VariableType.TEXT.getValue());
+			in.setStatusId(StatusId.ACTIVE.getValue());
+			in.setAllowOverride(CodeType.YES_CODE.getValue());
+			in.setRequired(Boolean.FALSE);
+			cvService.insert(in);
+
+			in = new SenderVariable();
+			pk1 = new SenderVariablePK(sender, "ContactEmailAddress", updtTime);
+			in.setSenderVariablePK(pk1);
+			in.setVariableValue(sender.getSubrCareEmail());
+			in.setVariableFormat(null);
+			in.setVariableType(VariableType.ADDRESS.getValue());
+			in.setStatusId(StatusId.ACTIVE.getValue());
+			in.setAllowOverride(CodeType.YES_CODE.getValue());
+			in.setRequired(Boolean.FALSE);
+			cvService.insert(in);
+		}
 		logger.info("EntityManager persisted the record.");
 	}
 	

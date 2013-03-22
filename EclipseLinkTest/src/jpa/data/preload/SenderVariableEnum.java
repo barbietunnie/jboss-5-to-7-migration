@@ -1,7 +1,6 @@
 package jpa.data.preload;
 
 import jpa.constant.CodeType;
-import jpa.constant.Constants;
 import jpa.constant.VariableType;
 
 /*
@@ -11,7 +10,8 @@ public enum SenderVariableEnum {
 	CurrentDateTime(null,null,VariableType.DATETIME,CodeType.YES_CODE),
 	CurrentDate(null,"yyyy-MM-dd",VariableType.DATETIME,CodeType.YES_CODE),
 	CurrentTime(null,"hh:mm:ss a",VariableType.DATETIME,CodeType.YES_CODE),
-	SenderId(Constants.DEFAULT_SENDER_ID,null,VariableType.TEXT,CodeType.YES_CODE);
+	//SenderId(Constants.DEFAULT_SENDER_ID,null,VariableType.TEXT,CodeType.YES_CODE)
+	;
 	
 	private String value;
 	private String format;

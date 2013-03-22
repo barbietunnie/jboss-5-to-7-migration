@@ -55,7 +55,7 @@ public class RenderBoTest {
 		assertTrue(Constants.DEFAULT_SENDER_ID.equals(req.getSenderId()));
 		assertFalse(req.getVariableOverrides().isEmpty());
 		assertTrue(req.getVariableOverrides().containsKey(GlobalVariableEnum.CurrentDate.name()));
-		assertTrue(req.getVariableOverrides().containsKey(SenderVariableEnum.SenderId.name()));
+		//assertTrue(req.getVariableOverrides().containsKey(SenderVariableEnum.SenderId.name()));
 		RenderVariableVo vo = new RenderVariableVo(
 				EmailAddrType.TO_ADDR.getValue(),
 				"testto@test.com",

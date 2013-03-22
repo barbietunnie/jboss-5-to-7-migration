@@ -35,7 +35,7 @@ public class SubscriberNameResolver implements VariableResolver {
 	public static void main(String[] args) {
 		VariableResolver resolver = new SubscriberNameResolver();
 		try {
-			String name = resolver.process(1);
+			String name = resolver.process(2);
 			System.err.println("Subscriber name: " + name);
 		}
 		catch (Exception e) {
