@@ -64,6 +64,9 @@ public class MailingListDataLoader extends AbstractDataLoader {
 			in.setDescription(mlist.getDescription());
 			in.setStatusId(mlist.getStatusId().getValue());
 			in.setBuiltin(mlist.isBuiltin());
+			if (mlist.equals(MailingListEnum.SMPLLST1) || mlist.equals(MailingListEnum.SMPLLST2)) {
+				in.setSendText(true);
+			}
 			in.setCreateTime(createTime);
 			in.setUpdtUserId(Constants.DEFAULT_USER_ID);
 			in.setListMasterEmailAddr("sitemaster@"+domain);

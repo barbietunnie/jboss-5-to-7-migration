@@ -85,8 +85,9 @@ public final class MessageBodyBuilder {
 	private static String constructHtmlBody(MessageBean msgBean, String msgBody) {
 		if (msgBean.getEmBedEmailId() != null && msgBean.getEmBedEmailId().booleanValue()) {
 			// embed Message_Id into the body (before the original message)
-			msgBody = embedEmailId(msgBean, msgBody, true);
+			msgBody = embedEmailId2Body(msgBean, msgBody, true);
 		}
+		embedEmailId2Header(msgBean); // always embed Email_Id to header
 		String origBody = getOriginal(msgBean, true);
 		String newBody = null;
 		if (msgBean.getBodyContentType().indexOf("html") >= 0) {
@@ -118,8 +119,9 @@ public final class MessageBodyBuilder {
 	private static String constructTextBody(MessageBean msgBean, String msgBody) {
 		if (msgBean.getEmBedEmailId() != null && msgBean.getEmBedEmailId().booleanValue()) {
 			// embed Message_Id into the body (before the original message)
-			msgBody = embedEmailId(msgBean, msgBody, false);
+			msgBody = embedEmailId2Body(msgBean, msgBody, false);
 		}
+		embedEmailId2Header(msgBean); // always embed Email_Id to header
 		if (!SenderUtil.isProductKeyValid() && SenderUtil.isTrialPeriodEnded()) {
 			if (Constants.EmbedPoweredByToFreeVersion) {
 				msgBody += Constants.CRLF + Constants.CRLF + Constants.POWERED_BY_TEXT + Constants.CRLF;
@@ -140,7 +142,7 @@ public final class MessageBodyBuilder {
 	 * @param body - body text
 	 * @return body text with Email_Id embedded.
 	 */
-	private static String embedEmailId(MessageBean msgBean, String body, boolean isHtml) {
+	private static String embedEmailId2Body(MessageBean msgBean, String body, boolean isHtml) {
 		if (msgBean.getMsgId() == null) return body;
 		if (EmailIdParser.getDefaultParser().isEmailIdExist(body)) {
 			// Replace existing EmailId with a new one
@@ -165,6 +167,12 @@ public final class MessageBodyBuilder {
 				}
 			}
 		}
+		
+		return body;
+	}
+	
+	private static void embedEmailId2Header(MessageBean msgBean) {
+		if (msgBean.getMsgId() == null) return;
 		// Embed Email_Id to X-Header
 		MsgHeader header = new MsgHeader();
 		String headerName = EmailIdParser.getDefaultParser().getEmailIdXHdrName();
@@ -181,10 +189,8 @@ public final class MessageBodyBuilder {
 		}
 		// now add the new header to the list
 		list.add(header);
-		
-		return body;
 	}
-	
+
 	/**
 	 * construct original message.
 	 * 

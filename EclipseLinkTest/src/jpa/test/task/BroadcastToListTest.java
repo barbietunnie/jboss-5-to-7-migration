@@ -3,6 +3,7 @@ package jpa.test.task;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,14 +53,15 @@ public class BroadcastToListTest {
 	private MessageInboxService inboxService;
 
 	@BeforeClass
-	public static void RuleMatchPrepare() {
+	public static void BroadcastPrepare() {
 	}
 
 	@Test
 	public void testBroadcastToList() throws Exception {
+		EmailTemplateEnum testNewsLetter = EmailTemplateEnum.SampleNewsletter2;
 		MessageBean mBean = new MessageBean();
-		mBean.setSubject(EmailTemplateEnum.SampleNewsletter2.getSubject());
-		mBean.setValue(EmailTemplateEnum.SampleNewsletter2.getBodyText());
+		mBean.setSubject(testNewsLetter.getSubject());
+		mBean.setValue(testNewsLetter.getBodyText());
 		mBean.setMailboxUser("testUser");
 		mBean.setRuleName(RuleNameEnum.BROADCAST.getValue());
 		MessageInbox _minbox = inboxService.getLastRecord();
@@ -70,6 +72,7 @@ public class BroadcastToListTest {
 		ctx.setTaskArguments(MailingListEnum.SMPLLST1.name());
 		task.process(ctx);
 		
+		// now verify results
 		assertFalse(ctx.getRowIds().isEmpty());
 		EmailIdParser parser = EmailIdParser.getDefaultParser();
 		for (Integer rowid : ctx.getRowIds()) {
@@ -84,8 +87,10 @@ public class BroadcastToListTest {
 			}
 			String emailId_xhdr = parser.parseHeaders(mBean.getHeaders());
 			System.out.println("Email_Id from body: " + emailId_body + ", from XHdr: " + emailId_xhdr);
-			assertTrue(emailId_body.equals(emailId_xhdr));
-			assertTrue(emailId_body.equals(minbox.getRowId()+""));
+			if (emailId_body != null) { // in case of text message
+				assertTrue(emailId_body.equals(emailId_xhdr));
+			}
+			assertTrue(emailId_xhdr.equals(minbox.getRowId()+""));
 			
 			String to_sent = minbox.getToAddress().getAddress();
 			RenderVariableVo vo = new RenderVariableVo(
@@ -95,11 +100,17 @@ public class BroadcastToListTest {
 			Map<String, RenderVariableVo> vars = new HashMap<String, RenderVariableVo>();
 			vars.put(vo.getVariableName(), vo);
 			String subj = Renderer.getInstance().render(
-					EmailTemplateEnum.SampleNewsletter2.getSubject(), vars,
+					testNewsLetter.getSubject(), vars,
 					new HashMap<String, ErrorVariableVo>());
 			System.out.println("Subject rendered: " + subj);
 			System.out.println("Subject msginbox: " + minbox.getMsgSubject());
 			assertTrue(subj.equals(minbox.getMsgSubject()));
+			
+			if (EmailTemplateEnum.SampleNewsletter2.equals(testNewsLetter)) {
+				assertTrue(minbox.getMsgBody().indexOf(to_sent)>0);
+			}
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			assertTrue(minbox.getMsgBody().indexOf(sdf.format(new java.util.Date()))>0);
 		}
 	}
 }

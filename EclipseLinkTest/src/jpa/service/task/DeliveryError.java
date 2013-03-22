@@ -120,6 +120,7 @@ public class DeliveryError extends TaskBaseAdaptor {
 		msgInboxVo.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		
 		msgInboxDao.update(msgInboxVo);
+		ctx.getRowIds().add(msgInboxVo.getRowId());
 		return Integer.valueOf(msgId);
 	}
 	

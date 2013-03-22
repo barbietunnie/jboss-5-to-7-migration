@@ -18,6 +18,7 @@ public class TemplateRenderVo implements Serializable {
 	private MailingList mailingList = null;
 	
 	static final String LF = System.getProperty("line.separator", "\n");
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("From: " + fromAddr + LF);

@@ -139,23 +139,23 @@ public class BroadcastToList extends TaskBaseAdaptor {
 				logger.debug("Subject Variable names: " + subjVarNames);
 		}
 		// get subscribers
-		List<Subscription> subs = null;
+		List<Subscription> subrs = null;
 		if (messageBean.getToSubscribersOnly()) {
-			subs = subscriptionDao.getByListId(listId);
+			subrs = subscriptionDao.getByListId(listId);
 		}
 		else if (messageBean.getToProspectsOnly()) {
-			subs = subscriptionDao.getByListId(listId);
+			subrs = subscriptionDao.getByListId(listId);
 		}
 		else {
-			subs = subscriptionDao.getByListId(listId);
+			subrs = subscriptionDao.getByListId(listId);
 		}
 		// sending email to each subscriber
-		for (Subscription sub : subs) {
+		for (Subscription subr : subrs) {
 			//messageBean.setSubject(subjText);
 			//messageBean.getBodyNode().setValue(bodyText);
-			mailsSent += constructAndSendMessage(ctx, sub, listVo, subjText, bodyText, subjVarNames, saveEmbedEmailId, false);
+			mailsSent += constructAndSendMessage(ctx, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, false);
 			if (listVo.isSendText()) {
-				mailsSent += constructAndSendMessage(ctx, sub, listVo, subjText, bodyText, subjVarNames, saveEmbedEmailId, true);
+				mailsSent += constructAndSendMessage(ctx, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, true);
 			}
 		}
 		if (mailsSent > 0 && messageBean.getMsgId() != null) {
@@ -165,7 +165,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		return Integer.valueOf(mailsSent);
 	}
 	
-	private int constructAndSendMessage(MessageContext ctx, Subscription sub,
+	private int constructAndSendMessage(MessageContext ctx, Subscription subr,
 			MailingList listVo, String subjText, String bodyText, List<String> varNames,
 			Boolean saveEmbedEmailId, boolean isText)
 			throws DataValidationException, TemplateException, IOException {
@@ -176,7 +176,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		try {
 			if (isText) {
 				try {
-					SubscriberData subrVo = subscriberDao.getByEmailAddress(sub.getEmailAddr().getAddress());
+					SubscriberData subrVo = subscriberDao.getByEmailAddress(subr.getEmailAddr().getAddress());
 					if (StringUtils.isNotBlank(subrVo.getMobilePhone())
 							&& StringUtils.isNotBlank(subrVo.getMobileCarrier())) {
 						try {
@@ -188,8 +188,11 @@ public class BroadcastToList extends TaskBaseAdaptor {
 							toAddress = phone+"@"+mc.getText();
 							to = InternetAddress.parse(toAddress);
 						}
+						catch (NumberFormatException e) {
+							logger.error("Invalid mobile phone number (" + subrVo.getMobilePhone() + ") found in Subscriber_Data!");
+						}
 						catch (IllegalArgumentException e) {
-							logger.error("Mobile carrier (" + subrVo.getMobileCarrier() + ") not found in enum MobileCarrier!");
+							logger.error("Mobile carrier (" + subrVo.getMobileCarrier() + ") not found in enum MobileCarrierEnum!");
 							// TODO notify programming
 						}
 					}
@@ -200,7 +203,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 				}
 			}
 			else {
-				toAddress = sub.getEmailAddr().getAddress();
+				toAddress = subr.getEmailAddr().getAddress();
 				to = InternetAddress.parse(toAddress);
 			}
 		}
@@ -228,7 +231,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		msgBean.setTo(to);
 		String body = renderVo.getBody();
 		if ("text/html".equals(msgBean.getBodyContentType())
-				&& !sub.getEmailAddr().isAcceptHtml() || isText) {
+				&& !subr.getEmailAddr().isAcceptHtml() || isText) {
 			// convert to plain text
 			try {
 				body = HtmlConverter.getInstance().convertToText(body);
@@ -246,7 +249,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		}
 		else {
 			msgBean.setEmBedEmailId(saveEmbedEmailId);
-			subscriptionDao.updateSentCount(sub.getRowId());
+			subscriptionDao.updateSentCount(subr.getRowId());
 		}
 		// invoke mail sender to send the mail off
 		try {

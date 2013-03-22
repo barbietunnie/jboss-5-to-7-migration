@@ -41,7 +41,7 @@ public class BounceUpAddressTest {
 	private EmailAddressService emailService;
 
 	@BeforeClass
-	public static void RuleMatchPrepare() {
+	public static void BounceUpPrepare() {
 	}
 
 	@Test

@@ -37,7 +37,7 @@ public class AssignRuleNameTest {
 	private EmailAddressService emailService;
 
 	@BeforeClass
-	public static void RuleMatchPrepare() {
+	public static void AssignRuleNamePrepare() {
 	}
 
 	@Test

@@ -48,6 +48,6 @@ public enum MobileCarrierEnum {
 	
 	public static void main(String[] args) {
 		System.out.println(MobileCarrierEnum.valueOf("TMobile"));
-		System.out.println(MobileCarrierEnum.getByValue("Boost Mobile"));
+		System.out.println(MobileCarrierEnum.getByValue("T-Mobile USA"));
 	}
 }
