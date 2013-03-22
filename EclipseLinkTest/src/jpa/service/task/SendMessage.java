@@ -52,7 +52,6 @@ public class SendMessage extends TaskBaseAdaptor {
 		MessageBean messageBean = ctx.getMessageBean();
 		if (messageBean.getMsgRefId()==null) {
 			logger.warn("messageBean.getMsgRefId() returned null");
-			//throw new DataValidationException("messageBean.getMsgRefId() returned null");
 		}
 		
 		if (isDebugEnabled) {

@@ -1,19 +1,23 @@
 package jpa.test.task;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
-import jpa.data.preload.RuleNameEnum;
+import jpa.constant.Constants;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.message.util.EmailIdParser;
-import jpa.service.EmailAddressService;
-import jpa.service.task.AssignRuleName;
+import jpa.model.message.MessageInbox;
+import jpa.service.message.MessageInboxService;
+import jpa.service.msgin.MessageParserBo;
+import jpa.service.task.SendMessage;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,24 +31,26 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional
-public class AssignRuleNameTest {
+public class SendMessageTest {
 	final static String LF = System.getProperty("line.separator", "\n");
-	static final Logger logger = Logger.getLogger(AssignRuleNameTest.class);
+	static final Logger logger = Logger.getLogger(SendMessageTest.class);
 	
 	@Resource
-	private AssignRuleName task;
+	private SendMessage task;
 	@Resource
-	private EmailAddressService emailService;
+	private MessageInboxService inboxService;
+	@Resource
+	private MessageParserBo parserBo;
 
 	@BeforeClass
-	public static void AssignRuleNamePrepare() {
+	public static void SendMessagePrepare() {
 	}
 
 	@Test
-	public void testAssignRuleName() throws Exception {
+	public void testSendMessage() throws Exception {
 		MessageBean mBean = new MessageBean();
 		String fromaddr = "event.alert@localhost";
-		String toaddr = "watched_maibox@domain.com";
+		String toaddr = "support@localhost";
 		try {
 			mBean.setFrom(InternetAddress.parse(fromaddr, false));
 			mBean.setTo(InternetAddress.parse(toaddr, false));
@@ -55,17 +61,21 @@ public class AssignRuleNameTest {
 		mBean.setSubject("A Exception occured");
 		mBean.setValue(new Date()+ "Test body message." + LF + LF + "System Email Id: 10.2127.0" + LF);
 		mBean.setMailboxUser("testUser");
-		EmailIdParser parser = EmailIdParser.getDefaultParser();
-		String id = parser.parseMsg(mBean.getBody());
-		if (StringUtils.isNotBlank(id)) {
-			mBean.setMsgRefId(Integer.parseInt(id));
-		}
-		mBean.setFinalRcpt("testbounce@test.com");
-		mBean.setRuleName(RuleNameEnum.SEND_MAIL.getValue());
+		mBean.setSenderId(Constants.DEFAULT_SENDER_ID);
 
 		MessageContext ctx = new MessageContext(mBean);
-		ctx.setTaskArguments(RuleNameEnum.HARD_BOUNCE.getValue());
 		task.process(ctx);
-		// TODO verify results
+		
+		// verify results
+		assertFalse(ctx.getRowIds().isEmpty());
+		MessageInbox minbox = inboxService.getAllDataByPrimaryKey(ctx.getRowIds().get(0));
+		assertTrue(fromaddr.equals(minbox.getFromAddress().getAddress()));
+		assertTrue(toaddr.equals(minbox.getToAddress().getAddress()));
+		assertTrue(mBean.getSubject().equals(minbox.getMsgSubject()));
+		assertTrue(mBean.getBody().equals(minbox.getMsgBody()));
+		
+		EmailIdParser parser = EmailIdParser.getDefaultParser();
+		String id = parser.parseMsg(mBean.getBody());
+		assertTrue(id.equals(minbox.getRowId()+""));
 	}
 }

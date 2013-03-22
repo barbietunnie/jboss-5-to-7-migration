@@ -1,5 +1,6 @@
 package jpa.test.task;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
@@ -8,9 +9,15 @@ import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
+import jpa.constant.Constants;
+import jpa.constant.TableColumnName;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
-import jpa.service.task.DropMessage;
+import jpa.model.SenderData;
+import jpa.model.message.MessageInbox;
+import jpa.service.SenderDataService;
+import jpa.service.message.MessageInboxService;
+import jpa.service.task.ForwardToCsr;
 
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
@@ -25,22 +32,26 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional
-public class DropMessageTest {
+public class ForwardtoCsrTest {
 	final static String LF = System.getProperty("line.separator", "\n");
-	static final Logger logger = Logger.getLogger(DropMessageTest.class);
+	static final Logger logger = Logger.getLogger(ForwardtoCsrTest.class);
 	
 	@Resource
-	private DropMessage task;
+	private ForwardToCsr task;
+	@Resource
+	private MessageInboxService inboxService;
+	@Resource
+	private SenderDataService senderService;
 
 	@BeforeClass
-	public static void DropMessagePrepare() {
+	public static void ForwardPrepare() {
 	}
 
 	@Test
-	public void testDropMessage() throws Exception {
+	public void testForwardToCsr() throws Exception {
+		String fromaddr = "testfrom@localhost";
+		String toaddr = "testto@localhost";
 		MessageBean mBean = new MessageBean();
-		String fromaddr = "event.alert@localhost";
-		String toaddr = "watched_maibox@domain.com";
 		try {
 			mBean.setFrom(InternetAddress.parse(fromaddr, false));
 			mBean.setTo(InternetAddress.parse(toaddr, false));
@@ -49,13 +60,22 @@ public class DropMessageTest {
 			logger.error("AddressException caught", e);
 		}
 		mBean.setSubject("A Exception occured");
-		mBean.setValue(new Date()+ "Test body message.");
+		mBean.setValue(new Date()+ " Test body message.");
 		mBean.setMailboxUser("testUser");
+		mBean.setSenderId(Constants.DEFAULT_SENDER_ID);
 
 		MessageContext ctx = new MessageContext(mBean);
+		ctx.setTaskArguments("$" + TableColumnName.SUBSCRIBER_CARE_ADDR.getValue());
 		task.process(ctx);
 		
 		// verify results
-		assertTrue(ctx.getRowIds().isEmpty());
+		assertFalse(ctx.getRowIds().isEmpty());
+		MessageInbox minbox = inboxService.getAllDataByPrimaryKey(ctx.getRowIds().get(0));
+		assertTrue(fromaddr.equals(minbox.getFromAddress().getAddress()));
+		SenderData sender = senderService.getBySenderId(mBean.getSenderId());
+		assertTrue(sender.getSubrCareEmail().equals(minbox.getToAddress().getAddress()));
+		
+		assertTrue(minbox.getMsgSubject().equals(mBean.getSubject()));
+		assertTrue(minbox.getMsgBody().equals(mBean.getBody()));
 	}
 }

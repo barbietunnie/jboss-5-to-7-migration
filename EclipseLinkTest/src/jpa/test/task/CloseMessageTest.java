@@ -66,6 +66,7 @@ public class CloseMessageTest {
 		MessageContext ctx = new MessageContext(mBean);
 		task.process(ctx);
 		
+		// verify results
 		MessageInbox minbox2 = inboxService.getByPrimaryKey(mBean.getMsgId());
 		assertTrue(MsgStatusCode.CLOSED.getValue().equals(minbox2.getStatusId()));
 	}

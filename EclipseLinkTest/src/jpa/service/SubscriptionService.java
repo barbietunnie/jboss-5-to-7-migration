@@ -347,6 +347,7 @@ public class SubscriptionService {
 	public void insert(Subscription subscription) {
 		try {
 			em.persist(subscription);
+			em.flush(); // to populate the @Id field
 		}
 		finally {
 		}

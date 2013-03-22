@@ -197,7 +197,7 @@ public abstract class MailSenderBase {
 			logger.error("SendFailedException caught: ", sfex);
 			updtDlvrStatAndLoopback(msgBean, sfex, errors);
 			if (errors.containsKey("validSent")) {
-				sendDeliveryReport(msgBean, minbox);
+				updateDeliveryReport(msgBean, minbox);
 			}
 		}
 		// save message raw stream to database
@@ -289,11 +289,6 @@ public abstract class MailSenderBase {
 		}
 		// set TO address to Test Address if it's a test run
 		if (senderVo.isUseTestAddr() && !isOverrideTestAddr) {
-			if (isDebugEnabled) {
-				logger.debug("rebuildAddresses() - Replace original TO: "
-						+ EmailAddrUtil.addressToString(m.getRecipients(javax.mail.Message.RecipientType.TO))
-						+ ", with testing address: " + senderVo.getTestToAddr());
-			}
 			boolean toAddrIsLocal = false;
 			String displayName = null;
 			// use the original address as Display Name 
@@ -310,6 +305,11 @@ public abstract class MailSenderBase {
 				}
 			}
 			if (!toAddrIsLocal) { // DO NOT override if TO address is local
+				if (isDebugEnabled) {
+					logger.debug("rebuildAddresses() - Replace original TO: "
+							+ EmailAddrUtil.addressToString(m.getRecipients(javax.mail.Message.RecipientType.TO))
+							+ ", with testing address: " + senderVo.getTestToAddr());
+				}
 				if (displayName == null) {
 					m.setRecipients(RecipientType.TO, InternetAddress.parse(senderVo.getTestToAddr()));
 				}
@@ -486,7 +486,7 @@ public abstract class MailSenderBase {
 	 * @return number of email's that were sent
 	 * @throws MessagingException
 	 */
-	public int sendDeliveryReport(MessageBean m, MessageInbox minbox) throws MessagingException {
+	public int updateDeliveryReport(MessageBean m, MessageInbox minbox) throws MessagingException {
 		int rspCount = 0;
 		if (CarrierCode.SMTPMAIL.equals(m.getCarrierCode())) {
 			if (m.isInternalOnly()) {

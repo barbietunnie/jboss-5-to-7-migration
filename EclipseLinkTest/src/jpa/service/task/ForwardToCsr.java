@@ -68,6 +68,8 @@ public class ForwardToCsr extends TaskBaseAdaptor {
 		catch (NoResultException e) {
 			throw new DataValidationException("SenderData not found by senderId: " + messageBean.getSenderId());
 		}
+		
+		// example: $RMA Request or securityDept@mycompany.com
 		String forwardAddr = null;
 		if (StringUtils.isNotBlank(ctx.getTaskArguments())) {
 			if (ctx.getTaskArguments().startsWith("$")) {

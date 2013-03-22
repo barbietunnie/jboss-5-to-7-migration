@@ -69,6 +69,7 @@ public class ActivateAddressTest {
 		ctx.setTaskArguments("$From,$To,testto@test.com");
 		task.process(ctx);
 		
+		// verify results
 		EmailAddress from = emailService.getByAddress(mBean.getFromAsString());
 		assertTrue(StatusId.ACTIVE.getValue().equals(from.getStatusId()));
 		assertTrue(0==from.getBounceCount());

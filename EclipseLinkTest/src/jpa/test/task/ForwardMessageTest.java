@@ -4,21 +4,26 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
-import jpa.data.preload.EmailTemplateEnum;
+import jpa.constant.Constants;
+import jpa.constant.EmailAddrType;
+import jpa.constant.TableColumnName;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
-import jpa.message.util.EmailIdParser;
+import jpa.model.EmailAddress;
+import jpa.model.SenderData;
+import jpa.model.message.MessageAddress;
 import jpa.model.message.MessageInbox;
 import jpa.service.EmailAddressService;
+import jpa.service.SenderDataService;
 import jpa.service.message.MessageInboxService;
-import jpa.service.task.AutoReplyMessage;
+import jpa.service.task.ForwardMessage;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,23 +37,25 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
 @TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional
-public class AutoReplyMessageTest {
+public class ForwardMessageTest {
 	final static String LF = System.getProperty("line.separator", "\n");
-	static final Logger logger = Logger.getLogger(AutoReplyMessageTest.class);
+	static final Logger logger = Logger.getLogger(ForwardMessageTest.class);
 	
 	@Resource
-	private AutoReplyMessage task;
+	private ForwardMessage task;
 	@Resource
 	private EmailAddressService emailService;
 	@Resource
 	private MessageInboxService inboxService;
+	@Resource
+	private SenderDataService senderService;
 
 	@BeforeClass
-	public static void AutoReplyPrepare() {
+	public static void ForwardPrepare() {
 	}
 
 	@Test
-	public void testAutoReplyMessage() throws Exception {
+	public void testForwardMessage() throws Exception {
 		String fromaddr = "testfrom@localhost";
 		String toaddr = "testto@localhost";
 		MessageBean mBean = new MessageBean();
@@ -60,23 +67,39 @@ public class AutoReplyMessageTest {
 			logger.error("AddressException caught", e);
 		}
 		mBean.setSubject("A Exception occured");
-		mBean.setValue(new Date()+ " Test body message." + LF + LF + "System Email Id: 10.2127.0" + LF);
+		mBean.setValue(new Date()+ " Test body message.");
 		mBean.setMailboxUser("testUser");
-		EmailIdParser parser = EmailIdParser.getDefaultParser();
-		String id = parser.parseMsg(mBean.getBody());
-		if (StringUtils.isNotBlank(id)) {
-			mBean.setMsgRefId(Integer.parseInt(id));
-		}
-		mBean.setFinalRcpt("testbounce@test.com");
+		mBean.setSenderId(Constants.DEFAULT_SENDER_ID);
+		String forwardAddr = "twang@localhost";
+		mBean.setForward(InternetAddress.parse(forwardAddr));
 
 		MessageContext ctx = new MessageContext(mBean);
-		ctx.setTaskArguments(EmailTemplateEnum.SubscribeByEmailReply.name());
+		ctx.setTaskArguments("$" + EmailAddrType.FORWARD_ADDR.getValue() + ",$" + TableColumnName.SUBSCRIBER_CARE_ADDR.getValue());
 		task.process(ctx);
 		
 		// verify results
 		assertFalse(ctx.getRowIds().isEmpty());
 		MessageInbox minbox = inboxService.getAllDataByPrimaryKey(ctx.getRowIds().get(0));
-		assertTrue(toaddr.equals(minbox.getFromAddress().getAddress()));
-		assertTrue(fromaddr.equals(minbox.getToAddress().getAddress()));
+		assertTrue(fromaddr.equals(minbox.getFromAddress().getAddress()));
+		List<MessageAddress> addrs = minbox.getMessageAddressList();
+		assertTrue(addrs.size()>=3);
+		SenderData sender = senderService.getBySenderId(mBean.getSenderId());
+		int addrsFound = 0;
+		for (MessageAddress addr : addrs) {
+			EmailAddress emailaddr = emailService.getByRowId(addr.getEmailAddrRowId());
+			if (forwardAddr.equals(emailaddr.getAddress())) {
+				addrsFound++;
+			}
+			else if (fromaddr.equals(emailaddr.getAddress())) {
+				addrsFound++;
+			}
+			else if (sender.getSubrCareEmail().equals(emailaddr.getAddress())) {
+				addrsFound++;
+			}
+		}
+		assertTrue(addrsFound==3);
+		
+		assertTrue(minbox.getMsgSubject().equals(mBean.getSubject()));
+		assertTrue(minbox.getMsgBody().equals(mBean.getBody()));
 	}
 }
