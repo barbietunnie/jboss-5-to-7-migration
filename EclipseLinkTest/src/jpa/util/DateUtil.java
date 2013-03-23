@@ -55,37 +55,37 @@ public class DateUtil {
 	/**
 	 * Convert date from "yyyy-MM-dd-hh.mm.ss.SSSSSS" to "yyyy-MM-dd HH:mm:ss.SSSSSS".
 	 * 
-	 * @param date
-	 * @return converted date.
+	 * @param dateStr
+	 * @return converted date in string.
 	 */
-	public static String correctDB2Date(String date) {
-		if (date!=null) {
-			if(validateDate(date,DB2_DASH_DOTS) || validateDate(date,DB2_ALL_DOTS)) {
-				return date.substring(0,10)+" "+date.substring(11,13)
-					+":"+date.substring(14,16)+":"+date.substring(17);
+	public static String correctDB2Date(String dateStr) {
+		if (dateStr!=null) {
+			if(validateDate(dateStr,DB2_DASH_DOTS) || validateDate(dateStr,DB2_ALL_DOTS)) {
+				return dateStr.substring(0,10)+" "+dateStr.substring(11,13)
+					+":"+dateStr.substring(14,16)+":"+dateStr.substring(17);
 			}
-			else if (validateDate(date,DB2_3RD_DASH)) {
-				return date.substring(0,10)+" "+date.substring(11);
+			else if (validateDate(dateStr,DB2_3RD_DASH)) {
+				return dateStr.substring(0,10)+" "+dateStr.substring(11);
 			}
-			else if (validateDate(date,DB2)) {
-				return date;
+			else if (validateDate(dateStr,DB2)) {
+				return dateStr;
 			}
 		}
-		logger.error("Received a non DB2 Timestamp: "+date);
-		return date;
+		logger.error("Received a non DB2 Timestamp: "+dateStr);
+		return dateStr;
 	}
 	
 	/**
 	 * check if this is a valid db2 date
-	 * @param date
+	 * @param dateStr
 	 * @return true if yes
 	 */
-	public static boolean isValidDB2Date(String date) {
-		if (date!=null) {
-			if(validateDate(date,DB2_DASH_DOTS) || validateDate(date,DB2_ALL_DOTS)) {
+	public static boolean isValidDB2Date(String dateStr) {
+		if (dateStr!=null) {
+			if(validateDate(dateStr,DB2_DASH_DOTS) || validateDate(dateStr,DB2_ALL_DOTS)) {
 				return true;
 			}
-			else if (validateDate(date,DB2_3RD_DASH) || validateDate(date,DB2)) {
+			else if (validateDate(dateStr,DB2_3RD_DASH) || validateDate(dateStr,DB2)) {
 				return true;
 			}
 		}
@@ -94,15 +94,15 @@ public class DateUtil {
 	
 	/**
 	 * validate a birth date against format: "yyyy-MM-dd"
-	 * @param date
+	 * @param dateStr
 	 * @return true if valid
 	 */
-	public static boolean isValidBirthDate(String date) {
-		if (date!=null) {
-			if (validateBirthDate(date, "yyyy-MM-dd")) {
+	public static boolean isValidBirthDate(String dateStr) {
+		if (dateStr!=null) {
+			if (validateBirthDate(dateStr, "yyyy-MM-dd")) {
 				return true;
 			}
-			else if (validateBirthDate(date, "MM/dd/yyyy")) {
+			else if (validateBirthDate(dateStr, "MM/dd/yyyy")) {
 				return true;
 			}
 		}
@@ -116,13 +116,13 @@ public class DateUtil {
 	 * @param pattern must be one of format pattern constants 
 	 * and match the @param date format
 	 */
-	private static boolean validateDate(String date, int pattern) {
+	private static boolean validateDate(String dateStr, int pattern) {
 		
 		SimpleDateFormat format = getSimpleDateFormat(pattern);
 		format.setLenient(true);
 		
 		try {
-			format.parse(date);
+			format.parse(dateStr);
 			return true;
 		}
 		catch (ParseException pe) {
@@ -137,13 +137,13 @@ public class DateUtil {
 	 * @param pattern must be one of format pattern constants 
 	 * and match the @param date format
 	 */
-	private static boolean validateBirthDate(String date, String pattern) {
+	private static boolean validateBirthDate(String dateStr, String pattern) {
 		
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
 		format.setLenient(true);
 		
 		try {
-			format.parse(date);
+			format.parse(dateStr);
 			return true;
 		}
 		catch (ParseException pe) {
