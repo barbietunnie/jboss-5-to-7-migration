@@ -101,13 +101,14 @@ public final class BlobUtil {
     
     public static void main(String[] args) {
     	try {
-    		Calendar cal = Calendar.getInstance();
-			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-			logger.info("Calendar 1: " + cal.getTime());
-			cal.roll(Calendar.MONTH, false);
-			logger.info("Calendar 2: " + cal.getTime());
-			cal.roll(Calendar.MONTH, false);
-			logger.info("Calendar 3: " + cal.getTime());
+    		Calendar cal1 = Calendar.getInstance();
+			cal1.set(Calendar.DAY_OF_MONTH, cal1.getActualMaximum(Calendar.DAY_OF_MONTH));
+			Calendar cal2 = (Calendar) deepCopy(cal1);
+			logger.info("Calendar 1: " + cal1.getTime());
+			cal1.roll(Calendar.MONTH, false);
+			logger.info("Calendar 2: " + cal1.getTime());
+			cal2.roll(Calendar.MONTH, false);
+			logger.info("Calendar 3: " + cal2.getTime());
     	}
     	catch (Exception e) {
     		logger.error("Exceeption", e);

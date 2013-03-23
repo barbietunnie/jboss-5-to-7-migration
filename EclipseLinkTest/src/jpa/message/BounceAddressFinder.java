@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import jpa.util.EmailAddrUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public final class BounceAddressFinder {
@@ -30,7 +31,7 @@ public final class BounceAddressFinder {
 	}
 	
 	public String find(String body) {
-		if (body != null && body.trim().length() > 0) {
+		if (StringUtils.isNotBlank(body)) {
 			for (MyPattern myPattern : patternList) {
 				Matcher m = myPattern.getPattern().matcher(body);
 				if (m.find()) {
