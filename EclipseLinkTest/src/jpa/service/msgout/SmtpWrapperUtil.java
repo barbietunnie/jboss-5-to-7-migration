@@ -109,7 +109,7 @@ public class SmtpWrapperUtil {
 		return list;
 	}
 	
-	public static SmtpServerService getSmtpServerService() {
+	private static SmtpServerService getSmtpServerService() {
 		if (smtpServerDao == null) {
 			smtpServerDao = (SmtpServerService) SpringUtil.getAppContext().getBean("smtpServerService");
 		}
