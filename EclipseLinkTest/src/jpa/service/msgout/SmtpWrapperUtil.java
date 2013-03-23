@@ -56,16 +56,18 @@ public class SmtpWrapperUtil {
 
 	public synchronized static void clearSmtpNamedPool() {
 		if (smtpPools != null) {
-			if (!smtpPools.isEmpty())
+			if (!smtpPools.isEmpty()) {
 				smtpPools.close();
+			}
 			smtpPools = null;
 		}
 	}
 
 	public synchronized static void clearSecuNamedPool() {
 		if (secuPools != null) {
-			if (!secuPools.isEmpty())
+			if (!secuPools.isEmpty()) {
 				secuPools.close();
+			}
 			secuPools = null;
 		}
 	}
