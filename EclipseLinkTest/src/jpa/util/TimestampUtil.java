@@ -20,7 +20,7 @@ public class TimestampUtil implements java.io.Serializable {
 	protected static final Logger logger = Logger.getLogger(TimestampUtil.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	private final SimpleDateFormat sdf = new SimpleDateFormat();
+	private final SimpleDateFormat sdf;
 	static final int RADIX = 36;
 	static final Random RANDOM = new Random(System.currentTimeMillis());
 
@@ -37,6 +37,7 @@ public class TimestampUtil implements java.io.Serializable {
 
 	/** constructor, using provided date pattern */
 	public TimestampUtil(String pattern) {
+		sdf = new SimpleDateFormat();
 		sdf.applyPattern(pattern);
 	}
 
@@ -85,10 +86,10 @@ public class TimestampUtil implements java.io.Serializable {
 		// Email servers, from bounced e-mails (MS exchange server for one).
 		// MS exchange server inserted \r\n\t into the Email_ID string, and it
 		// caused "check digit test" error.
-		StringTokenizer sTokens = new StringTokenizer(st, "\r\n\t ");
+		StringTokenizer tokens = new StringTokenizer(st, "\r\n\t ");
 		StringBuffer sb = new StringBuffer();
-		while (sTokens.hasMoreTokens()) {
-			sb.append(sTokens.nextToken());
+		while (tokens.hasMoreTokens()) {
+			sb.append(tokens.nextToken());
 		}
 		st = sb.toString();
 
@@ -233,7 +234,7 @@ public class TimestampUtil implements java.io.Serializable {
 		return formatter.parse(dateStr, pos);
 	}
 
-	static String fillWithTrailingZeros(String str, int len) {
+	private static String fillWithTrailingZeros(String str, int len) {
 		String zeros = "00000000";
 		if (str.length() > len) // this shouldn't happen
 		{
@@ -247,7 +248,7 @@ public class TimestampUtil implements java.io.Serializable {
 		}
 	}
 
-	static String fillWithTrailingZeros(int num, int len) {
+	private static String fillWithTrailingZeros(int num, int len) {
 		String str = Integer.valueOf(num).toString();
 		return fillWithTrailingZeros(str, len);
 	}
@@ -286,7 +287,7 @@ public class TimestampUtil implements java.io.Serializable {
 	/* methods added to generate Message Reference Id */
 
 	// convert db2 time stamp to an Email_ID
-	static String convert(String db2ts) throws NumberFormatException {
+	private static String convert(String db2ts) throws NumberFormatException {
 		StringTokenizer st = new StringTokenizer(db2ts, " -.:");
 		int years, months, days, hours, minutes, seconds;
 		String nanosStr;
@@ -334,7 +335,7 @@ public class TimestampUtil implements java.io.Serializable {
 	}
 
 	// restore db2 time stamp from an Email_ID
-	static String restore(String refid) throws NumberFormatException {
+	private static String restore(String refid) throws NumberFormatException {
 		//SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 		try {
 			String oldCheckDigit = refid.substring(refid.length() - 1);
@@ -490,7 +491,7 @@ public class TimestampUtil implements java.io.Serializable {
 	}
 
 	// shuffle the string
-	static String shuffle(String str, int span, boolean forward) {
+	private static String shuffle(String str, int span, boolean forward) {
 		if (span == 0 || span >= str.length()) {
 			return reverse(str);
 		}
@@ -507,22 +508,8 @@ public class TimestampUtil implements java.io.Serializable {
 		return reverse(str2) + reverse(str1);
 	}
 
-	// reverse the string
-	static String reverse(String str) {
-		char[] strary = str.toCharArray();
-		int last = str.length() - 1;
-
-		for (int i = 0; i < str.length() / 2; i++) {
-			char tmpchar = strary[last - i];
-			strary[last - i] = strary[i];
-			strary[i] = tmpchar;
-		}
-
-		return new String(strary);
-	}
-
 	// reverse the string, use method from StringBuffer
-	static String reverse_new(String str) {
+	private static String reverse(String str) {
 		StringBuffer sb = new StringBuffer(str);
 		return sb.reverse().toString();
 	}
@@ -565,7 +552,7 @@ public class TimestampUtil implements java.io.Serializable {
 				+ fillWithTrailingZeros("" + micros, 6);
 	}
 
-	static class myGregCal extends GregorianCalendar {
+	private static class myGregCal extends GregorianCalendar {
 		private static final long serialVersionUID = 4219232260493472518L;
 
 		public myGregCal() {
