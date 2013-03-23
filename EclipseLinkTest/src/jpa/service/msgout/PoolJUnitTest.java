@@ -39,7 +39,7 @@ public class PoolJUnitTest {
 	public void testDistribution() throws Exception {
 		logger.info(LF + "********** Starting testDistribution **********");
 
-		ArrayList<ObjectPool> poolItems = new ArrayList<ObjectPool> ();
+		List<ObjectPool> poolItems = new ArrayList<ObjectPool> ();
 		poolItems.add(new ObjectPool(smtpConnection, 2, "smtp1", MailServerType.SMTP, 50));
 		// two servers with equal distribution
 		NamedPool pools = new NamedPool(poolItems);
