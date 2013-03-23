@@ -497,34 +497,6 @@ public final class StringUtil {
 		}
 	}
 
-	/**
-	 * Trim the given string with the given trim value.
-	 * 
-	 * @param string
-	 *            The string to be trimmed.
-	 * @param trim
-	 *            The value to trim the given string off.
-	 * @return The trimmed string.
-	 */
-    public static String trim(String string, String trim) {
-        if (StringUtils.isEmpty(trim)) {
-            return string;
-        }
-        if (string == null) {
-        	return null;
-        }
-        int start = 0;
-        int end = string.length();
-        int length = trim.length();
-        while ((start + length) <= end && string.substring(start, start + length).equals(trim)) {
-			start += length;
-		}
-		while ((start + length) <= end && string.substring(end - length, end).equals(trim)) {
-			end -= length;
-		}
-        return string.substring(start, end);
-    }
-
 	public static void main(String[] args) {
 		logger.info(removeStringFirst("<pre>12345abcdefklqhdkh</pre>", "<pre>"));
 	}
