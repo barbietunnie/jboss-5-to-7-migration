@@ -4,7 +4,7 @@ import java.util.List;
 
 import jpa.model.rule.RuleElement;
 import jpa.model.rule.RuleLogic;
-import jpa.service.external.RuleTargetProc;
+import jpa.service.external.TargetTextProc;
 import jpa.util.SpringUtil;
 
 import org.apache.commons.lang3.StringUtils;
@@ -72,8 +72,8 @@ public class RuleDataService {
 			}
 			try {
 				String text = null;
-				if (obj instanceof RuleTargetProc) {
-					RuleTargetProc bo = (RuleTargetProc) obj;
+				if (obj instanceof TargetTextProc) {
+					TargetTextProc bo = (TargetTextProc) obj;
 					text = bo.process();
 				}
 				if (StringUtils.isNotBlank(text)) {
@@ -112,8 +112,8 @@ public class RuleDataService {
 			}
 			try {
 				String text = null;
-				if (obj instanceof RuleTargetProc) {
-					RuleTargetProc bo = (RuleTargetProc) obj;
+				if (obj instanceof TargetTextProc) {
+					TargetTextProc bo = (TargetTextProc) obj;
 					text = bo.process();
 				}
 				if (StringUtils.isNotBlank(text)) {
