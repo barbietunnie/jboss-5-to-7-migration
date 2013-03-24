@@ -11,11 +11,14 @@ import javax.mail.Part;
 import javax.mail.Transport;
 
 import jpa.constant.CarrierCode;
+import jpa.exception.DataValidationException;
+import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanBuilder;
 import jpa.message.MessageContext;
 import jpa.model.MailInbox;
 import jpa.service.message.MessageInboxService;
+import jpa.service.task.TaskSchedulerBo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -48,6 +51,8 @@ public class MailProcessorBo {
 	private MessageInboxBo messageInboxBo;
 	@Autowired
 	MessageParserBo msgParser;
+	@Autowired
+	TaskSchedulerBo taskBo;
 	
 	private MailInbox mInbox;
 	
@@ -58,8 +63,11 @@ public class MailProcessorBo {
 	 * 
 	 * @param req - request object.
 	 * @throws MessagingException if any error
+	 * @throws TemplateException 
+	 * @throws DataValidationException 
 	 */
-	public void process(MessageContext req) throws MessagingException, IOException {
+	public void process(MessageContext req) throws MessagingException,
+			IOException, DataValidationException, TemplateException {
 		logger.info("Entering process() method...");
 		if (req != null && req.getMessages()!=null && req.getMailInbox()!=null) {
 			Message[] msgs = req.getMessages();
@@ -68,7 +76,11 @@ public class MailProcessorBo {
 			for (int i = 0; i < msgs.length; i++) {
 				if (msgs[i] != null && !msgs[i].isSet(Flags.Flag.SEEN)
 						&& !msgs[i].isSet(Flags.Flag.DELETED)) {
-					processPart(msgs[i]);
+					MessageBean msgBean = processPart(msgs[i]);
+					String ruleName = msgParser.parse(msgBean);
+					msgBean.setRuleName(ruleName);
+					MessageContext ctx = new MessageContext(msgBean);
+					taskBo.scheduleTasks(ctx);
 				}
 				// release the instance for GC, not working w/pop3
 				// msgs[i]=null;

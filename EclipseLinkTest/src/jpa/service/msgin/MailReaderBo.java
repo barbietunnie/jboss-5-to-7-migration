@@ -24,6 +24,7 @@ import javax.persistence.NoResultException;
 import jpa.constant.MailProtocol;
 import jpa.constant.MailServerType;
 import jpa.exception.DataValidationException;
+import jpa.exception.TemplateException;
 import jpa.message.MessageContext;
 import jpa.model.MailInbox;
 import jpa.model.MailInboxPK;
@@ -231,9 +232,10 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	 * @throws MessagingException
 	 * @throws IOException
 	 * @throws DataValidationException
+	 * @throws TemplateException 
 	 */
 	public void readMail(boolean isFromTimer) throws MessagingException, IOException,
-			DataValidationException {
+			DataValidationException, TemplateException {
 		if (isFromTimer) {
 			MESSAGE_COUNT = 500; // not to starve other threads
 			messagesProcessed = 0; // reset this count
@@ -292,7 +294,8 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 		start_idling = System.currentTimeMillis();
 	} // end of run()
 
-	private void pop3(boolean isFromTimer) throws MessagingException, IOException {
+	private void pop3(boolean isFromTimer) throws MessagingException,
+			IOException, DataValidationException, TemplateException {
 		final String _user = mInbox.getMailInboxPK().getUserId();
 		final String _host = mInbox.getMailInboxPK().getHostName();
 		final String mailbox = _user + "@" + _host;
@@ -403,7 +406,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	}
 	
 	private void imap(boolean isFromTimer) throws MessagingException,
-			IOException {
+			IOException, DataValidationException, TemplateException {
 		boolean keepRunning = true;
 		folder.open(Folder.READ_WRITE);
 		/*
@@ -471,6 +474,12 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 				catch (IOException ex) {
 					logger.fatal("IOException caught", ex);
 					throw new RuntimeException(ex.getMessage());
+				} catch (DataValidationException e) {
+					logger.fatal("DataValidationException caught", e);
+					throw new RuntimeException(e.getMessage());
+				} catch (TemplateException e) {
+					logger.fatal("TemplateException caught", e);
+					throw new RuntimeException(e.getMessage());
 				}
 				finally {
 					long proc_time = System.currentTimeMillis() - start_tms.getTime();
@@ -504,8 +513,11 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	 * @throws MessagingException
 	 * @throws JMSException
 	 * @throws IOException
+	 * @throws TemplateException 
+	 * @throws DataValidationException 
 	 */
-	private void execute(Message[] msgs) throws IOException, MessagingException {
+	private void execute(Message[] msgs) throws IOException,
+			MessagingException, DataValidationException, TemplateException {
 		if (msgs == null || msgs.length == 0) return;
 		SpringUtil.beginTransaction();
 		try {
