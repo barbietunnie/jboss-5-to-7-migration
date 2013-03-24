@@ -58,7 +58,7 @@ public class MessageInboxBoTest {
 		ruleName = msgParser.parse(msgBean2);
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		
-		System.out.println("Msgid = " + msgInboxBo.saveMessage(msgBean2));
+		logger.info("Msgid = " + msgInboxBo.saveMessage(msgBean2));
 	}
 	
 	private MessageBean testReadFromDatabase(int msgId) throws MessagingException {

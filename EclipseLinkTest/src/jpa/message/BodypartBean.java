@@ -418,6 +418,18 @@ public class BodypartBean implements Serializable {
 		return this.headers;
 	}
 
+	public List<MsgHeader> getHeader(String headerName) {
+		List<MsgHeader> hdrs = new ArrayList<MsgHeader>();
+		if (headers!=null) {
+			for (MsgHeader hdr : headers) {
+				if (headerName.equals(hdr.getName())) {
+					hdrs.add(hdr);
+				}
+			}
+		}
+		return hdrs;
+	}
+
 	/**
 	 * @return size of the body part
 	 */

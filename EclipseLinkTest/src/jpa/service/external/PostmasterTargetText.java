@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component("postmasterTargetText")
-public class PostmasterTargetText implements RuleTargetProc {
+public class PostmasterTargetText implements TargetTextProc {
 	static final Logger logger = Logger.getLogger(PostmasterTargetText.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
@@ -41,7 +41,7 @@ public class PostmasterTargetText implements RuleTargetProc {
 	}
 	
 	public static void main(String[] args) {
-		RuleTargetProc resolver = new PostmasterTargetText();
+		TargetTextProc resolver = new PostmasterTargetText();
 		try {
 			String regex = resolver.process();
 			System.err.println("Email regular expression: " + regex);
