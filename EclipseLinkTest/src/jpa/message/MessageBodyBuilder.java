@@ -86,8 +86,13 @@ public final class MessageBodyBuilder {
 		if (msgBean.getEmBedEmailId() != null && msgBean.getEmBedEmailId().booleanValue()) {
 			// embed Message_Id into the body (before the original message)
 			msgBody = embedEmailId2Body(msgBean, msgBody, true);
+			embedEmailId2Header(msgBean);
 		}
-		embedEmailId2Header(msgBean); // always embed Email_Id to header
+		// if Email_Id not present in header, embed it anyway.
+		if (msgBean.getHeader(EmailIdParser.getDefaultParser().getEmailIdXHdrName()).isEmpty()) {
+			embedEmailId2Header(msgBean);
+		}
+
 		String origBody = getOriginal(msgBean, true);
 		String newBody = null;
 		if (msgBean.getBodyContentType().indexOf("html") >= 0) {
@@ -120,8 +125,13 @@ public final class MessageBodyBuilder {
 		if (msgBean.getEmBedEmailId() != null && msgBean.getEmBedEmailId().booleanValue()) {
 			// embed Message_Id into the body (before the original message)
 			msgBody = embedEmailId2Body(msgBean, msgBody, false);
+			embedEmailId2Header(msgBean);
 		}
-		embedEmailId2Header(msgBean); // always embed Email_Id to header
+		// if Email_Id not present in header, embed it anyway.
+		if (msgBean.getHeader(EmailIdParser.getDefaultParser().getEmailIdXHdrName()).isEmpty()) {
+			embedEmailId2Header(msgBean);
+		}
+
 		if (!SenderUtil.isProductKeyValid() && SenderUtil.isTrialPeriodEnded()) {
 			if (Constants.EmbedPoweredByToFreeVersion) {
 				msgBody += Constants.CRLF + Constants.CRLF + Constants.POWERED_BY_TEXT + Constants.CRLF;

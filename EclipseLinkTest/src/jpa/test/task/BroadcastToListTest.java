@@ -1,6 +1,7 @@
 package jpa.test.task;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.SimpleDateFormat;
@@ -39,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=false)
 @Transactional
 public class BroadcastToListTest {
 	final static String LF = System.getProperty("line.separator", "\n");
@@ -87,6 +88,7 @@ public class BroadcastToListTest {
 			}
 			String emailId_xhdr = parser.parseHeaders(mBean.getHeaders());
 			System.out.println("Email_Id from body: " + emailId_body + ", from XHdr: " + emailId_xhdr);
+			assertNotNull(emailId_xhdr);
 			if (emailId_body != null) { // in case of text message
 				assertTrue(emailId_body.equals(emailId_xhdr));
 			}

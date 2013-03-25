@@ -102,6 +102,7 @@ public class ForwardToCsr extends TaskBaseAdaptor {
 		}
 		// send the mail off
 		messageBean.setTo(InternetAddress.parse(forwardAddr));
+		messageBean.setEmBedEmailId(Boolean.FALSE);
 		try {
 			mailSenderBo.process(ctx);
 			if (isDebugEnabled) {

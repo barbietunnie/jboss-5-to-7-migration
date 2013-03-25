@@ -106,7 +106,8 @@ public abstract class MailSenderBase {
 		}
 		
 		MessageBean msgBean = ctx.getMessageBean();
-		if (msgBean==null) {
+		if (msgBean == null) {
+			logger.info("MessageBean is null, continue processing with a MessageStream...");
 			javax.mail.Message mimeMsg = MessageBeanUtil.createMimeMessage(ctx.getMessageStream());
 			/*
 			 * In order to save the message to database, a MessageBean is required

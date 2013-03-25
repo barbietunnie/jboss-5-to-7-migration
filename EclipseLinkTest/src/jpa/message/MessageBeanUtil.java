@@ -31,6 +31,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import jpa.constant.CodeType;
 import jpa.constant.Constants;
+import jpa.constant.EmailAddrType;
 import jpa.constant.RuleDataName;
 import jpa.constant.XHeaderName;
 import jpa.message.util.EmailIdParser;
@@ -88,28 +89,33 @@ public final class MessageBeanUtil {
 			for (int i = 0; i < msgBean.getFrom().length; i++) {
 				// just for safety
 				if (msgBean.getFrom()[i] != null) {
+					msg.removeHeader(EmailAddrType.FROM_ADDR.getValue());
 					msg.setFrom(msgBean.getFrom()[i]);
 					break;
 				}
 			}
 		}
 		else {
-			logger.warn("createMimeMessage() - MessageBean.getFrom() returns a null");
+			logger.warn("createMimeMessage() - MessageBean.getFrom() returned a null");
 			msg.setFrom();
 		}
 		if (msgBean.getTo() != null) {
+			msg.removeHeader(EmailAddrType.TO_ADDR.getValue());
 			msg.setRecipients(Message.RecipientType.TO, msgBean.getTo());
 		}
 		else {
-			logger.warn("createMimeMessage() - MessageBean.getTo() returns a null");
+			logger.warn("createMimeMessage() - MessageBean.getTo() returned a null");
 		}
 		if (msgBean.getCc() != null) {
+			msg.removeHeader(EmailAddrType.CC_ADDR.getValue());
 			msg.setRecipients(Message.RecipientType.CC, msgBean.getCc());
 		}
 		if (msgBean.getBcc() != null) {
+			msg.removeHeader(EmailAddrType.BCC_ADDR.getValue());
 			msg.setRecipients(Message.RecipientType.BCC, msgBean.getBcc());
 		}
 		if (msgBean.getReplyto() != null) {
+			msg.removeHeader(EmailAddrType.REPLYTO_ADDR.getValue());
 			msg.setReplyTo(msgBean.getReplyto());
 		}
 		
@@ -336,7 +342,7 @@ public final class MessageBeanUtil {
 			throws MessagingException, IOException {
 		// Set All Headers
 		List<MsgHeader> headers = aNode.getHeaders();
-		if (headers != null) {
+		if (headers != null && !(aNode instanceof MessageBean)) {
 			for (int i = 0; i < headers.size(); i++) {
 				MsgHeader header = headers.get(i);
 				if (!getReservedHeaders().contains(header.getName())) {
@@ -409,7 +415,7 @@ public final class MessageBeanUtil {
 			msg.setRecipients(Message.RecipientType.TO, msgBean.getTo());
 		}
 		else {
-			logger.warn("createMimeMessage() - MessageBean.getTo() returns a null");
+			logger.warn("createMimeMessage() - MessageBean.getTo() returned a null");
 		}
 		//if (msgBean.getReplyto() != null) {
 		//	msg.setReplyTo(msgBean.getReplyto());

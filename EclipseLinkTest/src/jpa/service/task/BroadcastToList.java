@@ -18,6 +18,7 @@ import jpa.exception.TemplateException;
 import jpa.message.HtmlConverter;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
+import jpa.message.util.EmailIdParser;
 import jpa.model.MailingList;
 import jpa.model.SubscriberData;
 import jpa.model.Subscription;
@@ -77,9 +78,6 @@ public class BroadcastToList extends TaskBaseAdaptor {
 			throw new DataValidationException("input MessageBean is null");
 		}
 		MessageBean messageBean = ctx.getMessageBean();
-		if (messageBean.getMsgId()==null) {
-			throw new DataValidationException("MsgId is null");
-		}
 		if (!RuleNameEnum.BROADCAST.getValue().equals(messageBean.getRuleName())) {
 			throw new DataValidationException("Invalid Rule Name: " + messageBean.getRuleName());
 		}
@@ -125,7 +123,6 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		if (bodyText == null) {
 			throw new DataValidationException("Message body is empty.");
 		}
-		msgClickCountsDao.updateStartTime(messageBean.getMsgId());
 		// extract variables from message body
 		List<String> varNames = RenderUtil.retrieveVariableNames(bodyText);
 		if (isDebugEnabled)
@@ -158,9 +155,12 @@ public class BroadcastToList extends TaskBaseAdaptor {
 				mailsSent += constructAndSendMessage(ctx, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, true);
 			}
 		}
-		if (mailsSent > 0 && messageBean.getMsgId() != null) {
-			// update sent count to the Broadcasted message
-			msgClickCountsDao.updateSentCount(messageBean.getMsgId(), (int) mailsSent);
+		if (messageBean.getMsgId() != null) {
+			msgClickCountsDao.updateStartTime(messageBean.getMsgId());
+			if (mailsSent > 0) {
+				// update sent count to the Broadcasted message
+				msgClickCountsDao.updateSentCount(messageBean.getMsgId(), (int) mailsSent);
+			}
 		}
 		return Integer.valueOf(mailsSent);
 	}
@@ -244,6 +244,11 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		}
 		msgBean.getBodyNode().setValue(body);
 		msgBean.setSubject(renderVo.getSubject());
+		/*
+		 * Remove existing Email_Id from header to ensure that a fresh Email_Id
+		 * is always embedded in the header.
+		 */
+		msgBean.removeHeader(EmailIdParser.getDefaultParser().getEmailIdXHdrName());
 		if (isText) { // do not embed email id in text message
 			msgBean.setEmBedEmailId(Boolean.FALSE);
 		}

@@ -143,12 +143,15 @@ public class ForwardMessage extends TaskBaseAdaptor {
 		}
 		
 		if (messageBean.getMsgId() != null) {
-			messageBean.setMsgRefId(messageBean.getMsgId());
+			if (messageBean.getMsgRefId() == null) {
+				messageBean.setMsgRefId(messageBean.getMsgId());
+			}
 		}
 		Address[] addresses = InternetAddress.parse(forwardAddrs);
 		
 		messageBean.setSubject("Fwd: " + messageBean.getSubject());
 		messageBean.setTo(addresses);
+		messageBean.setEmBedEmailId(Boolean.FALSE);
 		
 		// send the message off
 		try {
