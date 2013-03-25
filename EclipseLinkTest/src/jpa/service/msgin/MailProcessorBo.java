@@ -202,6 +202,7 @@ public class MailProcessorBo {
 			((Message) p).setFlag(Flags.Flag.DELETED, true);
 			// may throw MessageingException, stop MailReader to
 			// prevent from producing duplicate messages
+			logger.info("Msg from " + msgBean.getFromAsString() + " has been marked for deletion.");
 		}
 
 		long time_spent = System.currentTimeMillis() - start_tms;

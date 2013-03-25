@@ -418,11 +418,34 @@ public class BodypartBean implements Serializable {
 		return this.headers;
 	}
 
+	/**
+	 * get header by name.
+	 * @param headerName
+	 * @return headers matches the name.
+	 */
 	public List<MsgHeader> getHeader(String headerName) {
 		List<MsgHeader> hdrs = new ArrayList<MsgHeader>();
 		if (headers!=null) {
 			for (MsgHeader hdr : headers) {
-				if (headerName.equals(hdr.getName())) {
+				if (headerName.equalsIgnoreCase(hdr.getName())) {
+					hdrs.add(hdr);
+				}
+			}
+		}
+		return hdrs;
+	}
+	
+	/**
+	 * remove header by name.
+	 * @param headerName
+	 * @return headers removed
+	 */
+	public List<MsgHeader> removeHeader(String headerName) {
+		List<MsgHeader> hdrs = new ArrayList<MsgHeader>();
+		if (headers!=null) {
+			for (MsgHeader hdr : headers) {
+				if (headerName.equalsIgnoreCase(hdr.getName())) {
+					headers.remove(hdr);
 					hdrs.add(hdr);
 				}
 			}

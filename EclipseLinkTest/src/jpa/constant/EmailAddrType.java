@@ -2,7 +2,7 @@ package jpa.constant;
 
 public enum EmailAddrType {
 	FROM_ADDR("From"),
-	REPLYTO_ADDR("Replyto"),
+	REPLYTO_ADDR("Reply-To"),
 	TO_ADDR("To"),
 	CC_ADDR("Cc"),
 	BCC_ADDR("Bcc"),
