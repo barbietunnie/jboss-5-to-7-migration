@@ -194,6 +194,7 @@ public class EmailAddressService {
 		if (emailAddr==null) return;
 		try {
 			em.remove(emailAddr);
+			em.flush();
 		}
 		finally {
 		}
@@ -227,6 +228,7 @@ public class EmailAddressService {
 		}
 		try {
 			em.persist(emailAddr);
+			em.flush();
 		}
 		finally {
 		}
@@ -243,6 +245,7 @@ public class EmailAddressService {
 			else {
 				em.merge(emailAddr);
 			}
+			em.flush();
 		}
 		finally {
 		}

@@ -1,15 +1,15 @@
 package jpa.message;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
 import jpa.message.util.EmailIdParser;
-import jpa.util.SenderUtil;
 import jpa.util.EmailAddrUtil;
+import jpa.util.SenderUtil;
 import jpa.util.StringUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -49,7 +49,6 @@ public final class MessageBodyBuilder {
 				msgBody = msgBody.substring(0, MAX_OUTBOUND_BODY_SIZE) + LF
 						+ Constants.MESSAGE_TRUNCATED;
 			}
-			//msgBody = EmailIdParser.getDefaultParser().removeEmailId(msgBody);
 		}
 		else {
 			msgBody = "";
@@ -65,7 +64,7 @@ public final class MessageBodyBuilder {
 			// either the reply or the original message is HTML
 			if (msgBean.getBodyContentType().indexOf("html") < 0) {
 				// reply message is plain text
-				msgBody = EmailAddrUtil.getHtmlDisplayText(msgBody);
+				msgBody = StringUtil.getHtmlDisplayText(msgBody);
 			}
 			msgBody = constructHtmlBody(msgBean, msgBody);
 		}
@@ -86,7 +85,10 @@ public final class MessageBodyBuilder {
 		if (msgBean.getEmBedEmailId() != null && msgBean.getEmBedEmailId().booleanValue()) {
 			// embed Message_Id into the body (before the original message)
 			msgBody = embedEmailId2Body(msgBean, msgBody, true);
-			embedEmailId2Header(msgBean);
+			String emailId = embedEmailId2Header(msgBean);
+			if (isDebugEnabled) {
+				logger.debug("in constructHtmlBody() - Email_Id (" + emailId + ") is embeded to header.");
+			}
 		}
 		// if Email_Id not present in header, embed it anyway.
 		if (msgBean.getHeader(EmailIdParser.getDefaultParser().getEmailIdXHdrName()).isEmpty()) {
@@ -125,7 +127,10 @@ public final class MessageBodyBuilder {
 		if (msgBean.getEmBedEmailId() != null && msgBean.getEmBedEmailId().booleanValue()) {
 			// embed Message_Id into the body (before the original message)
 			msgBody = embedEmailId2Body(msgBean, msgBody, false);
-			embedEmailId2Header(msgBean);
+			String emailId = embedEmailId2Header(msgBean);
+			if (isDebugEnabled) {
+				logger.debug("in constructTextBody() - Email_Id (" + emailId + ") is embeded to header.");
+			}
 		}
 		// if Email_Id not present in header, embed it anyway.
 		if (msgBean.getHeader(EmailIdParser.getDefaultParser().getEmailIdXHdrName()).isEmpty()) {
@@ -176,18 +181,22 @@ public final class MessageBodyBuilder {
 					body += emailIdSec;
 				}
 			}
+			if (isDebugEnabled) {
+				logger.debug("in embedEmailId2Body() - Email_Id (" + StringUtils.trim(emailIdSec) + ") is embeded to body.");
+			}
 		}
 		
 		return body;
 	}
 	
-	private static void embedEmailId2Header(MessageBean msgBean) {
-		if (msgBean.getMsgId() == null) return;
+	private static String embedEmailId2Header(MessageBean msgBean) {
+		if (msgBean.getMsgId() == null) return null;
 		// Embed Email_Id to X-Header
 		MsgHeader header = new MsgHeader();
 		String headerName = EmailIdParser.getDefaultParser().getEmailIdXHdrName();
 		header.setName(headerName);
-		header.setValue(EmailIdParser.getDefaultParser().wrapupEmailId4XHdr(msgBean.getMsgId()));
+		String emailId = EmailIdParser.getDefaultParser().createEmailId4XHdr(msgBean.getMsgId());
+		header.setValue(emailId);
 		List<MsgHeader> list = msgBean.getHeaders();
 		// first remove old Email_Id X-Header from the header list
 		for (int i = 0; i < list.size(); i++) {
@@ -199,6 +208,7 @@ public final class MessageBodyBuilder {
 		}
 		// now add the new header to the list
 		list.add(header);
+		return emailId;
 	}
 
 	/**
@@ -223,7 +233,7 @@ public final class MessageBodyBuilder {
 				String origType = msgBean.getOriginalMail().getBodyContentType();
 				if (origType != null && origType.indexOf("html") < 0) {
 					// original message is plain text, add PRE tags
-					origBody = EmailAddrUtil.getHtmlDisplayText(origBody);
+					origBody = StringUtil.getHtmlDisplayText(origBody);
 				}
 				// insert headers after the <BODY> or <HTML> tag
 				return prependTextToHtml(origBody, header);
@@ -282,12 +292,12 @@ public final class MessageBodyBuilder {
 				&& msgBean.getMsgId() != null) {
 			if (isHtml) {
 				section += LF + "<div style='color: darkgray;'><p>";
-				section += EmailIdParser.getDefaultParser().wrapupEmailId(msgBean.getMsgId())
+				section += EmailIdParser.getDefaultParser().createEmailId(msgBean.getMsgId())
 						+ "</p></div>" + LF;
 			}
 			else {
 				section += Constants.CRLF + Constants.CRLF
-						+ EmailIdParser.getDefaultParser().wrapupEmailId(msgBean.getMsgId());
+						+ EmailIdParser.getDefaultParser().createEmailId(msgBean.getMsgId());
 			}
 			if (isDebugEnabled) {
 				logger.debug("getEmailIdSection() - MsgId: " + msgBean.getMsgId()
@@ -457,35 +467,31 @@ public final class MessageBodyBuilder {
 		logger.info("Prepend: "+ str);
 		
 		EmailIdParser parser = EmailIdParser.getDefaultParser();
-		String emailIdStr = parser.wrapupEmailId(123456);
-		String emailIdXhdr = parser.wrapupEmailId4XHdr(345678);
+		String emailIdStr = parser.createEmailId(123456);
 
 		// embed email_id for HTML email
 		MessageBean msgBean = new MessageBean();
 		msgBean.setContentType("text/html");
-		msgBean.setSubject("Test Embedding Email_Id");
-		msgBean.setBody("<HTML>This is the original message." + Constants.MSG_DELIMITER_BEGIN
-				+ emailIdStr + Constants.MSG_DELIMITER_END + "</HTML>");
-		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
 		msgBean.setMsgId(Integer.valueOf(999999));
+		msgBean.setSubject("Test Embedding Email_Id 1");
+		msgBean.setBody("<HTML>This is the test message with no Email_Id in the body.</HTML>");
+		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
 		msgBean.setBody(getBodyWithEmailId(msgBean));
 		logger.info(">>>>>>>>>>>>>>>>HTML Message:" + LF + msgBean);
 
 		// embed email_id for plain text email
 		msgBean = new MessageBean();
 		msgBean.setContentType("text/plain");
-		msgBean.setSubject("Test Embedding Email_Id");
-		msgBean.setBody("This is the original message.\n" + Constants.MSG_DELIMITER_BEGIN
-				+ emailIdStr + Constants.MSG_DELIMITER_END);
-		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
 		msgBean.setMsgId(Integer.valueOf(999999));
+		msgBean.setSubject("Test Embedding Email_Id 2");
+		msgBean.setBody("This is the test message that has an existing Email_Id\n"
+				+ Constants.MSG_DELIMITER_BEGIN
+				+ emailIdStr
+				+ Constants.MSG_DELIMITER_END
+				+ "\nand is replaced by a new one.");
+		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
+		msgBean.setEmBedEmailId(Boolean.TRUE);
 		msgBean.setBody(getBodyWithEmailId(msgBean));
-		MsgHeader hdr = new MsgHeader();
-		hdr.setName(parser.getEmailIdXHdrName());
-		hdr.setValue(emailIdXhdr);
-		List<MsgHeader> hdrs = new ArrayList<MsgHeader>();
-		hdrs.add(hdr);
-		msgBean.setHeaders(hdrs);
 		logger.info(">>>>>>>>>>>>>>>>TEXT Message:" + LF +msgBean);
 
 		// parse email_id
@@ -493,5 +499,15 @@ public final class MessageBodyBuilder {
 		logger.info("Email_Id from Body: " + msgId);
 		msgId = parser.parseHeaders(msgBean.getHeaders());
 		logger.info("Email_Id from X-Header: " + msgId);
+		
+		msgBean = new MessageBean();
+		msgBean.setContentType("text/plain");
+		msgBean.setMsgId(Integer.valueOf(999999));
+		msgBean.setSubject("Test Embedding Email_Id 3");
+		msgBean.setBody("This is the test message with embedded Email_Id.");
+		msgBean.setCarrierCode(CarrierCode.SMTPMAIL); 
+		msgBean.setEmBedEmailId(Boolean.TRUE);
+		msgBean.setBody(getBodyWithEmailId(msgBean));
+		logger.info(">>>>>>>>>>>>>>>>TEXT Message:" + LF +msgBean);
 	}
 }

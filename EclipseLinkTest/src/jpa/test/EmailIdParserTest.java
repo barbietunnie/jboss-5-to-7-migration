@@ -32,7 +32,7 @@ public class EmailIdParserTest {
 		int msgId = 12345;
 		EmailIdParser parser = EmailIdParser.getDefaultParser();
 		// embed an email id to a message
-		String msgStr = "this is my message text.\n" + parser.wrapupEmailId(msgId) + "\n...the rest";
+		String msgStr = "this is my message text.\n" + parser.createEmailId(msgId) + "\n...the rest";
 		System.out.println("Original Msg Text: " + msgStr);
 		String id = parser.parseMsg(msgStr);
 		System.out.println("Email Id restored: " + id);

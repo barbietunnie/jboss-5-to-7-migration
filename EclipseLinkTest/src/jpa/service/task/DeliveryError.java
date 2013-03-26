@@ -80,9 +80,20 @@ public class DeliveryError extends TaskBaseAdaptor {
 		}
 		EmailAddress emailAddrVo = emailAddrDao.findSertAddress(messageBean.getFinalRcpt());
 		if (msgInboxVo.getToAddrRowId() != emailAddrVo.getRowId()) {
+			String origTo = null;
+			if (msgInboxVo.getToAddress() == null) {
+				try {
+					EmailAddress to_addr = emailAddrDao.getByRowId(msgInboxVo.getToAddrRowId());
+					origTo = to_addr.getAddress();
+				}
+				catch (NoResultException e) {}
+			}
+			else {
+				origTo = msgInboxVo.getToAddress().getAddress();
+			}
 			logger.warn("Final Recipient <" + messageBean.getFinalRcpt()
 					+ "> is different from original email's TO address <"
-					+ msgInboxVo.getToAddress() + ">");
+					+ origTo + ">");
 		}
 		
 		// insert into deliveryStatus

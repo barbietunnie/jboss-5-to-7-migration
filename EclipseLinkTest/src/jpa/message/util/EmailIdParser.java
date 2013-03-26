@@ -218,7 +218,6 @@ public final class EmailIdParser implements Serializable {
 		
 		// second replace embedded: Email Id: 10.1234567890.0
 		String msgStr2 = replaceKey(msgStr1, bodyPattern, msgId);
-		
 		return msgStr2;
 	}
 
@@ -269,8 +268,15 @@ public final class EmailIdParser implements Serializable {
 		Matcher matcher = pattern.matcher(msg);
 		if (matcher.find()) {
 			//msg = matcher.replaceFirst(MsgIdCipher.encode(msgId)); // not working with group
-			msg = msg.substring(0, matcher.start(matcher.groupCount())) + MsgIdCipher.encode(msgId)
+			String newEmailId = MsgIdCipher.encode(msgId);
+			msg = msg.substring(0, matcher.start(matcher.groupCount())) + newEmailId
 					+ msg.substring(matcher.end(matcher.groupCount()));
+			if (isDebugEnabled) {
+				logger.debug("in replaceKey() - Email_Id ("
+						+ matcher.group(matcher.groupCount())
+						+ ") was found in message body and is replaced by ("
+						+ newEmailId + ").");
+			}
 		}
 		return msg;
 	}
@@ -283,7 +289,7 @@ public final class EmailIdParser implements Serializable {
 	 *            email_id to be wrapped
 	 * @return wrapped email_id
 	 */
-	public String wrapupEmailId(Integer msgId) throws NumberFormatException {
+	public String createEmailId(Integer msgId) throws NumberFormatException {
 		if (msgId == null) {
 			return null;
 		}
@@ -300,7 +306,7 @@ public final class EmailIdParser implements Serializable {
 	 *            email_id to be wrapped
 	 * @return wrapped email_id
 	 */
-	public String wrapupEmailId4XHdr(Integer msgId) throws NumberFormatException {
+	public String createEmailId4XHdr(Integer msgId) throws NumberFormatException {
 		if (msgId == null) {
 			return null;
 		}
@@ -356,7 +362,7 @@ public final class EmailIdParser implements Serializable {
 		try {
 			int msgId = 12345;
 			EmailIdParser parser = EmailIdParser.getDefaultParser();
-			String msgStr = "this is my message text.\n" + parser.wrapupEmailId(msgId) + "\n...the rest";
+			String msgStr = "this is my message text.\n" + parser.createEmailId(msgId) + "\n...the rest";
 			logger.info("Original Msg Text: " + msgStr);
 			String id = parser.parseMsg(msgStr);
 			logger.info("Email Id restored: " + id);
@@ -376,7 +382,7 @@ public final class EmailIdParser implements Serializable {
 			}
 		}
 		finally {
-			SpringUtil.rollbackTransaction();
+			SpringUtil.commitTransaction();
 		}
 	}
 }

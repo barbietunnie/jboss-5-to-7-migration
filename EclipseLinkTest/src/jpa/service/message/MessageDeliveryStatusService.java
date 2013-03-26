@@ -149,6 +149,7 @@ public class MessageDeliveryStatusService {
 	public void insert(MessageDeliveryStatus dlvrStatus) {
 		try {
 			MessageDeliveryStatus status = getByPrimaryKey(dlvrStatus.getMessageDeliveryStatusPK());
+			int receivedCount = status.getReceivedCount();
 			try {
 				SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
 				ConvertUtils.register(converter1, java.sql.Timestamp.class);
@@ -157,7 +158,9 @@ public class MessageDeliveryStatusService {
 			catch (Exception e) {
 				logger.error("Failed to copy bean: " + StringUtil.prettyPrint(dlvrStatus));
 			}
+			status.setReceivedCount(++receivedCount);
 			update(status);
+			dlvrStatus.setReceivedCount(status.getReceivedCount());
 		}
 		catch (NoResultException e) {
 			try {

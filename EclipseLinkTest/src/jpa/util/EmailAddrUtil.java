@@ -211,23 +211,6 @@ public class EmailAddrUtil {
 		return acctUserName;
 	}
 
-	/**
-	 * Add PRE tags for plain text message so the spaces and line breaks are
-	 * preserved in web browser.
-	 * 
-	 * @param msgBody -
-	 *            message text
-	 * @return new message text
-	 */
-	public static String getHtmlDisplayText(String text) {
-		if (text == null) return null;
-		if (text.startsWith("<pre>") && text.endsWith("</pre>")) {
-			return text;
-		}
-		String str = StringUtil.replaceAll(text, "<", "&lt;");
-		return "<pre>" + StringUtil.replaceAll(str, ">", "&gt;") + "</pre>";
-	}
-
 	public static String getEmailRegex() {
 		return localPart + remotePart;
 	}

@@ -294,7 +294,12 @@ public class MessageInboxBo {
 				bodyNode.setValue(msgVo.getMsgBody().getBytes());
 			}
 			msgInboxDao.update(msgVo);
-			logger.info("saveMessage() - Message Body with Email_Id is saved.");
+			if (msgBean.getEmBedEmailId()!=null && msgBean.getEmBedEmailId()) {
+				logger.info("saveMessage() - Message Body with Email_Id is saved.");
+			}
+			else {
+				logger.info("saveMessage() - Message Body is saved.");
+			}
 		}
 
 		// insert click count record for Broadcasting e-mail

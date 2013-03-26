@@ -7,8 +7,11 @@ import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component("subscriberNameResolver")
+@Transactional(propagation=Propagation.REQUIRED)
 public class SubscriberNameResolver implements VariableResolver {
 	static final Logger logger = Logger.getLogger(SubscriberNameResolver.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

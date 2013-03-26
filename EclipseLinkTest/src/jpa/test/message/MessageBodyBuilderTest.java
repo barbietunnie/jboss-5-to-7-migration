@@ -37,8 +37,8 @@ public class MessageBodyBuilderTest {
 		EmailIdParser parser = EmailIdParser.getDefaultParser();
 		int bodyId = 123456;
 		int xheaderId = 345678;
-		String emailIdStr = parser.wrapupEmailId(bodyId);
-		String emailIdXhdr = parser.wrapupEmailId4XHdr(xheaderId);
+		String emailIdStr = parser.createEmailId(bodyId);
+		String emailIdXhdr = parser.createEmailId4XHdr(xheaderId);
 		int msgId2 = 999999;
 
 		// embed email_id for HTML email
@@ -86,6 +86,14 @@ public class MessageBodyBuilderTest {
 		msgBean.setBody(MessageBodyBuilder.getBodyWithEmailId(msgBean));
 		String emailId_Xhdr = parser.parseHeaders(msgBean.getHeaders());
 		String emailId_Body = parser.parseMsg(msgBean.getBody());
+		assertTrue(emailId_Xhdr.equals(emailId_Body));
+		assertTrue(emailId_Body.equals(msgId2+""));
+
+		msgBean.setEmBedEmailId(Boolean.TRUE);
+		msgBean.setBody("This is test message with embedded Email_Id.");
+		msgBean.setBody(MessageBodyBuilder.getBodyWithEmailId(msgBean));
+		emailId_Xhdr = parser.parseHeaders(msgBean.getHeaders());
+		emailId_Body = parser.parseMsg(msgBean.getBody());
 		assertTrue(emailId_Xhdr.equals(emailId_Body));
 		assertTrue(emailId_Body.equals(msgId2+""));
 	}

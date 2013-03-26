@@ -9,8 +9,11 @@ import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component("postmasterTargetText")
+@Transactional(propagation=Propagation.REQUIRED)
 public class PostmasterTargetText implements TargetTextProc {
 	static final Logger logger = Logger.getLogger(PostmasterTargetText.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

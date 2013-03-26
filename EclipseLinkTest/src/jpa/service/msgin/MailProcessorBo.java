@@ -69,6 +69,7 @@ public class MailProcessorBo {
 	public void process(MessageContext req) throws MessagingException,
 			IOException, DataValidationException, TemplateException {
 		logger.info("Entering process() method...");
+		long startProc = System.currentTimeMillis();
 		if (req != null && req.getMessages()!=null && req.getMailInbox()!=null) {
 			Message[] msgs = req.getMessages();
 			mInbox = req.getMailInbox();
@@ -76,15 +77,22 @@ public class MailProcessorBo {
 			for (int i = 0; i < msgs.length; i++) {
 				if (msgs[i] != null && !msgs[i].isSet(Flags.Flag.SEEN)
 						&& !msgs[i].isSet(Flags.Flag.DELETED)) {
+					long start = System.currentTimeMillis();
+					logger.info("Processing message number[" + (i+1) +"]...");
 					MessageBean msgBean = processPart(msgs[i]);
 					String ruleName = msgParser.parse(msgBean);
 					msgBean.setRuleName(ruleName);
 					MessageContext ctx = new MessageContext(msgBean);
 					taskBo.scheduleTasks(ctx);
+					logger.info("Completed processing of message number["
+							+ (i + 1) + "], time taken: "
+							+ (System.currentTimeMillis() - start) + " ms");
 				}
 				// release the instance for GC, not working w/pop3
 				// msgs[i]=null;
 			}
+			logger.info("Exiting process() method, time taken: "
+					+ (System.currentTimeMillis() - startProc) + " ms");
 		}
 		else {
 			logger.error("Request is null!");
@@ -188,10 +196,11 @@ public class MailProcessorBo {
 					logger.error("The duplicate Message has been written to report file");
 				}
 			}
-			else { // persist to database
+			else { // parse the message for RuleName
 				msgBean.setRuleName(msgParser.parse(msgBean));
-				int msgId = messageInboxBo.saveMessage(msgBean);
-				logger.info("MessageBean saved to database, MessageInbox RowId: " + msgId);
+				/* saveMessage() is handled by TackschedulerBo */
+				//int msgId = messageInboxBo.saveMessage(msgBean);
+				//logger.info("MessageBean saved to database, MessageInbox RowId: " + msgId);
 			}
 		}
 		logger.info("Number of attachments: " + msgBean.getAttachCount());

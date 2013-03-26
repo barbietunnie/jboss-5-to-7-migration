@@ -393,7 +393,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 				messagesProcessed += msgs.length;
 				long proc_time = System.currentTimeMillis() - start_tms.getTime();
 				if (isDebugEnabled) {
-					logger.debug(msgs.length+ " messages processed, time taken: " + proc_time + ", mailbox: " + mailbox);
+					logger.debug(msgs.length+ " messages processed, time taken: " + proc_time + " ms, mailbox: " + mailbox);
 				} 
 				if (MESSAGE_COUNT > 0 && messagesProcessed > MESSAGE_COUNT) {
 					keepRunning = false;

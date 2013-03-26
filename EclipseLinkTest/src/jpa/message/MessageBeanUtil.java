@@ -134,7 +134,7 @@ public final class MessageBeanUtil {
 		// Add encoded MsgId to X-Header
 		if (msgBean.getMsgId() != null) {
 			EmailIdParser parser = EmailIdParser.getDefaultParser();
-			String xHeaderText = parser.wrapupEmailId4XHdr(msgBean.getMsgId());
+			String xHeaderText = parser.createEmailId4XHdr(msgBean.getMsgId());
 			String xHeaderName = parser.getEmailIdXHdrName();
 			msg.setHeader(xHeaderName, xHeaderText);
 			if (isDebugEnabled) {
@@ -422,7 +422,7 @@ public final class MessageBeanUtil {
 		//}
 		if (msgBean.getMsgId() != null) {
 			EmailIdParser parser = EmailIdParser.getDefaultParser();
-			String xHeaderText = parser.wrapupEmailId4XHdr(msgBean.getMsgId());
+			String xHeaderText = parser.createEmailId4XHdr(msgBean.getMsgId());
 			msg.setHeader(parser.getEmailIdXHdrName(), xHeaderText);
 		}
 
