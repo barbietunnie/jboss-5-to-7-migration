@@ -361,6 +361,7 @@ public class SubscriptionService {
 			else {
 				em.merge(subscription);
 			}
+			em.flush();
 		}
 		catch (OptimisticLockException e) {
 			logger.error("OptimisticLockException caught", e);

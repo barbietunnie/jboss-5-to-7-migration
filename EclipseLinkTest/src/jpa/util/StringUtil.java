@@ -497,6 +497,23 @@ public final class StringUtil {
 		}
 	}
 
+	/**
+	 * Add PRE tags for plain text message so the spaces and line breaks are
+	 * preserved in web browser.
+	 * 
+	 * @param msgBody -
+	 *            message text
+	 * @return new message text
+	 */
+	public static String getHtmlDisplayText(String text) {
+		if (text == null) return null;
+		if (text.startsWith("<pre>") && text.endsWith("</pre>")) {
+			return text;
+		}
+		String str = replaceAll(text, "<", "&lt;");
+		return "<pre>" + replaceAll(str, ">", "&gt;") + "</pre>";
+	}
+
 	public static void main(String[] args) {
 		logger.info(removeStringFirst("<pre>12345abcdefklqhdkh</pre>", "<pre>"));
 	}

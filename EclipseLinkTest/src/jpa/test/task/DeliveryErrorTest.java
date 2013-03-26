@@ -1,10 +1,13 @@
 package jpa.test.task;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Resource;
 
+import jpa.constant.MsgDirectionCode;
 import jpa.constant.MsgStatusCode;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
@@ -27,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=false)
 @Transactional
 public class DeliveryErrorTest {
 	final static String LF = System.getProperty("line.separator", "\n");
@@ -50,7 +53,20 @@ public class DeliveryErrorTest {
 	public void testDeliveryError() throws Exception {
 		MessageInbox inbox = inboxService.getLastRecord();
 		MessageBean mBean = msgBeanBo.createMessageBean(inbox);
-		mBean.setMsgRefId(inbox.getRowId());
+		EmailIdParser parser = EmailIdParser.getDefaultParser();
+		String id_xhdr = parser.parseHeaders(mBean.getHeaders());
+		assertNotNull(id_xhdr);
+		boolean isUpdatingSameRecord = true;
+		if (mBean.getMsgRefId()==null) {
+			mBean.setMsgRefId(Integer.parseInt(id_xhdr));
+		}
+		else if (!id_xhdr.equals(mBean.getMsgRefId()+"")) {
+			id_xhdr = mBean.getMsgRefId().toString();
+		}
+		if (!mBean.getMsgRefId().equals(inbox.getRowId())) {
+			// update delivery status to referring record.
+			isUpdatingSameRecord = false;
+		}
 		mBean.setMsgId(null);
 		String finalRcpt = "event.alert@localhost";
 		mBean.setFinalRcpt(finalRcpt);
@@ -66,13 +82,40 @@ public class DeliveryErrorTest {
 		
 		// verify results
 		assertFalse(ctx.getRowIds().isEmpty());
+		assertTrue(mBean.getMsgRefId().equals(ctx.getRowIds().get(0)));
 		MessageInbox minbox = inboxService.getAllDataByPrimaryKey(ctx.getRowIds().get(0));
-		assertTrue(mBean.getSubject().equals(minbox.getMsgSubject()));
-		EmailIdParser parser = EmailIdParser.getDefaultParser();
 		String id_bean = parser.parseMsg(mBean.getBody());
 		String id_ibox = parser.parseMsg(minbox.getMsgBody());
-		assertTrue(id_bean.equals(id_ibox));
-		assertTrue(id_bean.equals(minbox.getReferringMessageRowId()+""));
+		if (id_ibox!=null) {
+			if (isUpdatingSameRecord==false) {
+				assertTrue(id_ibox.equals(mBean.getMsgRefId()+""));
+				if (inbox.getReferringMessageRowId() != null) {
+					assertTrue(id_ibox.equals(inbox.getReferringMessageRowId()+""));
+				}
+				else {
+					assertTrue(id_ibox.equals(inbox.getLeadMessageRowId()+""));
+				}
+			}
+			else {
+				assertTrue(id_bean.equals(id_ibox));
+			}
+		}
+		else {
+			assertNull(id_bean);
+		}
+		if (MsgDirectionCode.SENT.getValue().equals(inbox.getMsgDirection())) {
+			if (isUpdatingSameRecord) {
+				assertTrue(id_xhdr.equals(inbox.getRowId()+""));
+			}
+			else {
+				assertTrue(id_xhdr.equals(minbox.getRowId()+""));
+			}
+		}
+		else if (MsgDirectionCode.RECEIVED.getValue().equals(inbox.getMsgDirection())) {
+			if (id_bean!=null) {
+				assertTrue(id_xhdr.equals(id_bean) || id_xhdr.equals(mBean.getMsgRefId()+""));
+			}
+		}
 		assertTrue(MsgStatusCode.DELIVERY_FAILED.getValue().equals(minbox.getStatusId()));
 		assertFalse(minbox.getMessageDeliveryStatusList().isEmpty());
 		boolean finalRcptFound = false;

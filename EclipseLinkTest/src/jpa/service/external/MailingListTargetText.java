@@ -10,8 +10,11 @@ import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component("mailingListTargetText")
+@Transactional(propagation=Propagation.REQUIRED)
 public class MailingListTargetText implements TargetTextProc {
 	static final Logger logger = Logger.getLogger(MailingListTargetText.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

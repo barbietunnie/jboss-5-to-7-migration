@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=false)
 @Transactional
 public class UnsubscribeFromListTest {
 	final static String LF = System.getProperty("line.separator", "\n");
@@ -59,7 +59,7 @@ public class UnsubscribeFromListTest {
 		catch (AddressException e) {
 			logger.error("AddressException caught", e);
 		}
-		mBean.setSubject("subscribe");
+		mBean.setSubject("unsubscribe");
 		mBean.setValue(new Date()+ "Test body message.");
 		mBean.setMailboxUser("testUser");
 

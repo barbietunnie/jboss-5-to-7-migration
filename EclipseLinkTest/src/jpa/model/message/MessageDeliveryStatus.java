@@ -26,6 +26,8 @@ public class MessageDeliveryStatus extends BaseModel implements Serializable
 	private Integer originalRcptAddrRowId = null;
 	@Column(length=255, nullable=true)
 	private String smtpMessageId = null;
+	@Column(nullable=false)
+	private int receivedCount = 0;
 	@Column(length=50, nullable=true)
 	private String dsnStatus = null;
 	@Column(length=255, nullable=true)
@@ -73,6 +75,14 @@ public class MessageDeliveryStatus extends BaseModel implements Serializable
 
 	public void setSmtpMessageId(String smtpMessageId) {
 		this.smtpMessageId = smtpMessageId;
+	}
+
+	public int getReceivedCount() {
+		return receivedCount;
+	}
+
+	public void setReceivedCount(int receivedCount) {
+		this.receivedCount = receivedCount;
 	}
 
 	public String getDsnStatus() {
