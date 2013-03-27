@@ -175,7 +175,17 @@ public class RuleLoaderBoTest {
 			logger.info("Rule TargetText: " + ruleSimple.getTargetText());
 			logger.info("Enum TargetText: " + elemEnum.getTargetText());
 			if (StringUtils.isBlank(elemEnum.getTargetProcName())) {
-				assertTrue(ruleSimple.getTargetText().equals(elemEnum.getTargetText()));
+				if (ruleSimple.getCriteria().equals(RuleCriteria.REG_EX)) {
+					assertTrue(ruleSimple.getTargetText().equals(elemEnum.getTargetText()));
+				}
+				else {
+					if (ruleSimple.isCaseSensitive()) {
+						assertTrue(ruleSimple.getTargetText().equals(elemEnum.getTargetText()));
+					}
+					else {
+						assertTrue(ruleSimple.getTargetText().equals(elemEnum.getTargetText().toLowerCase()));
+					}
+				}
 			}
 			else {
 				String targetText = mailingListProc.process();

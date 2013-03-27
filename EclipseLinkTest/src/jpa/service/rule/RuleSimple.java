@@ -12,6 +12,7 @@ import jpa.constant.RuleCriteria;
 import jpa.constant.RuleType;
 import jpa.constant.XHeaderName;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public class RuleSimple extends RuleBase {
@@ -37,23 +38,26 @@ public class RuleSimple extends RuleBase {
 			String _stored_procedure,
 			String _delimiter) {
 		super(_ruleName, _ruleType, _mailType, _dataName, _headerName, _criteria, _is_case_sensitive);
-		this.targetText = _targetText; // regular expression, do not change it lower case.
-		this.storedProcedure = _stored_procedure;
-		setExclusionList(_exclusion_list, _delimiter);
 		if (RuleCriteria.REG_EX.equals(_criteria)) {
 			if (isCaseSensitive) {
 				// enables dotall mode
-				pattern = Pattern.compile(this.targetText, Pattern.DOTALL);
+				pattern = Pattern.compile(_targetText, Pattern.DOTALL);
 			}
 			else {
 				// enables case-insensitive and dotall mode
-				pattern = Pattern.compile(this.targetText, Pattern.CASE_INSENSITIVE
+				pattern = Pattern.compile(_targetText, Pattern.CASE_INSENSITIVE
 						| Pattern.DOTALL);
 			}
 		}
 		else {
 			pattern = null;
+			if (!isCaseSensitive) {
+				_targetText = StringUtils.lowerCase(_targetText);
+			}
 		}
+		this.targetText = _targetText;
+		this.storedProcedure = _stored_procedure;
+		setExclusionList(_exclusion_list, _delimiter);
 		logger.info(">>>>> Simple-Rule initialized for " + ruleName);
 	}
 
