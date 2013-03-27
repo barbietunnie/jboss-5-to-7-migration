@@ -1,7 +1,5 @@
 package jpa.constant;
 
-import jpa.util.TimestampUtil;
-
 import org.apache.log4j.Logger;
 
 public enum MobileCarrierEnum {

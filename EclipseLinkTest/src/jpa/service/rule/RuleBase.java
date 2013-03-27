@@ -79,11 +79,23 @@ public abstract class RuleBase implements java.io.Serializable {
 		return subruleList;
 	}
 
-	public String getRuleContent() {
-		return getRuleContent(0);
+	public String getMailType() {
+		return mailType;
 	}
 
-	public String getRuleContent(int level) {
+	public RuleCriteria getCriteria() {
+		return criteria;
+	}
+
+	public boolean isCaseSensitive() {
+		return isCaseSensitive;
+	}
+
+	public String printRuleContent() {
+		return printRuleContent(0);
+	}
+
+	public String printRuleContent(int level) {
 		String dots = getBlanks(level) + StringUtil.getDots(level);
 		StringBuffer sb = new StringBuffer();
 		sb.append(LF + dots + "---- listing rule content for " + ruleName + " ----" + LF);
@@ -112,7 +124,7 @@ public abstract class RuleBase implements java.io.Serializable {
 		if (this instanceof RuleComplex) {
 			sb.append(dots + "Rule Category: Complex" + LF);
 			for (RuleBase rule :((RuleComplex)this).getRuleList()) {
-				sb.append(dots + rule.getRuleContent(level+1));
+				sb.append(dots + rule.printRuleContent(level+1));
 			}
 		}
 		else if (this instanceof RuleSimple) {

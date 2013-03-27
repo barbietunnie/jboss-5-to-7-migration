@@ -1,5 +1,8 @@
 package jpa.data.preload;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jpa.constant.Constants;
 import jpa.constant.RuleCriteria;
 import jpa.constant.RuleDataName;
@@ -286,6 +289,17 @@ public enum RuleElementEnum {
 		this.exclListProcName=exclListProcName;
 		this.delimiter=delimiter;
 	}
+
+	public static List<RuleElementEnum> getByRuleName(RuleNameEnum ruleNameEnum) {
+		List<RuleElementEnum> list = new ArrayList<RuleElementEnum>();
+		for (RuleElementEnum elemEnum : RuleElementEnum.values()) {
+			if (elemEnum.getRuleName().equals(ruleNameEnum)) {
+				list.add(elemEnum);
+			}
+		}
+		return list;
+	}
+
 	public RuleNameEnum getRuleName() {
 		return ruleName;
 	}

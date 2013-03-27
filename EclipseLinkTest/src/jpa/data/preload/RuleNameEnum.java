@@ -77,6 +77,15 @@ public enum RuleNameEnum {
 		this.description = description;
 	}
 	
+	public static RuleNameEnum getByValue(String value) {
+		for (RuleNameEnum rule : RuleNameEnum.values()) {
+			if (rule.getValue().equalsIgnoreCase(value)) {
+				return rule;
+			}
+		}
+		throw new IllegalArgumentException("No enum const found by value (" + value + ")");
+	}
+
 	private static final List<RuleNameEnum> builtinRules = new ArrayList<RuleNameEnum>();
 	public static List<RuleNameEnum> getBuiltinRules() {
 		if (builtinRules.isEmpty()) {
@@ -117,6 +126,34 @@ public enum RuleNameEnum {
 			}
 		}
 		return subRules;
+	}
+
+	private static final List<RuleNameEnum> preRules = new ArrayList<RuleNameEnum>();
+	public static List<RuleNameEnum> getPreRules() {
+		if (preRules.isEmpty()) {
+			synchronized (preRules) {
+				for (RuleNameEnum rn : RuleNameEnum.values()) {
+					if (rn.ruleCategory.equals(RuleCategory.PRE_RULE)) {
+						preRules.add(rn);
+					}
+				}
+			}
+		}
+		return preRules;
+	}
+
+	private static final List<RuleNameEnum> postRules = new ArrayList<RuleNameEnum>();
+	public static List<RuleNameEnum> getPostRules() {
+		if (postRules.isEmpty()) {
+			synchronized (postRules) {
+				for (RuleNameEnum rn : RuleNameEnum.values()) {
+					if (rn.ruleCategory.equals(RuleCategory.POST_RULE)) {
+						postRules.add(rn);
+					}
+				}
+			}
+		}
+		return postRules;
 	}
 
 	public String getValue() { 

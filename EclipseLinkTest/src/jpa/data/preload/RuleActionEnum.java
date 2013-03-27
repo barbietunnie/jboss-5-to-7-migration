@@ -1,5 +1,8 @@
 package jpa.data.preload;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jpa.constant.EmailAddrType;
 import jpa.constant.TableColumnName;
 
@@ -75,6 +78,17 @@ public enum RuleActionEnum {
 		this.actionDetail = actionDetail;
 		this.fieldValues = fieldValues;
 	}
+	
+	public static List<RuleActionEnum> getByRuleName(RuleNameEnum ruleNameEnum) {
+		List<RuleActionEnum> list = new ArrayList<RuleActionEnum>();
+		for (RuleActionEnum actionEnum : RuleActionEnum.values()) {
+			if (actionEnum.getRuleName().equals(ruleNameEnum)) {
+				list.add(actionEnum);
+			}
+		}
+		return list;
+	}
+
 	public RuleNameEnum getRuleName() {
 		return ruleName;
 	}
