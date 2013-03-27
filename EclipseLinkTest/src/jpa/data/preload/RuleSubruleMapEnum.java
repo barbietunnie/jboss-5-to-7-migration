@@ -1,5 +1,8 @@
 package jpa.data.preload;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum RuleSubruleMapEnum {
 	HARD_BOUNCE_0(RuleNameEnum.HARD_BOUNCE,RuleNameEnum.HardBounce_Subj_Match,0),
 	HARD_BOUNCE_1(RuleNameEnum.HARD_BOUNCE,RuleNameEnum.HardBounce_Body_Match,1),
@@ -16,6 +19,17 @@ public enum RuleSubruleMapEnum {
 		this.subruleName=subrule;
 		this.sequence=sequence;
 	}
+	
+	public static List<RuleSubruleMapEnum> getByRuleName(RuleNameEnum ruleNameEnum) {
+		List<RuleSubruleMapEnum> list = new ArrayList<RuleSubruleMapEnum>();
+		for (RuleSubruleMapEnum rule : RuleSubruleMapEnum.values()) {
+			if (rule.getRuleName().equals(ruleNameEnum)) {
+				list.add(rule);
+			}
+		}
+		return list;
+	}
+
 	public RuleNameEnum getRuleName() {
 		return ruleName;
 	}

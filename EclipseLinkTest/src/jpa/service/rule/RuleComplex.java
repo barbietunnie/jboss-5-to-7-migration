@@ -24,7 +24,7 @@ public class RuleComplex extends RuleBase {
 		logger.info(">>>>> Complex-Rule initialized for " + ruleName);
 	}
 
-	List<RuleBase> getRuleList() {
+	public List<RuleBase> getRuleList() {
 		return ruleList;
 	}
 

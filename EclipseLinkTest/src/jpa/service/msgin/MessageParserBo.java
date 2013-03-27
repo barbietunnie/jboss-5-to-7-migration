@@ -41,7 +41,6 @@ import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +49,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Scan email header and body, and match rules to determine the ruleName.
  */
 @Component("messageParserBo")
-@Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
 public class MessageParserBo implements java.io.Serializable {
 	private static final long serialVersionUID = -2858192030452453504L;
@@ -64,6 +62,8 @@ public class MessageParserBo implements java.io.Serializable {
 	static final String REPLY_SEPARATOR = "---------Reply Separator---------";
 	static final String LF = System.getProperty("line.separator", "\n");
 
+	private boolean reloadRules = true;
+	
 	@Autowired
 	private RuleLoaderBo ruleLoader;
 	@Autowired
@@ -112,7 +112,10 @@ public class MessageParserBo implements java.io.Serializable {
 			logger.warn("parse() - MsgRefId already exist: " + msgBean.getMsgRefId());
 		}
 		
-		ruleLoader.loadRules();
+		if (reloadRules) {
+			ruleLoader.loadRules();
+			reloadRules = false;
+		}
 		
 		String ruleName = null;
 		

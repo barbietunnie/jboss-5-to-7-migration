@@ -43,22 +43,26 @@ HostName=emailsphere.com
 HostIP=localhost
 EmailDomain=espheredemo.com
 #
-# Default recipients for unhandled error.
+# Default recipients for unchecked error.
 #
-RecipientId.DEV=developers
-RecipientId.TEST=quality.control
-RecipientId.UAT=user.acceptance
-RecipientId.PROD=prod.support
+RecipientsForUnchecked.DEV=developers
+RecipientsForUnchecked.TEST=quality.control
+RecipientsForUnchecked.UAT=user.acceptance
+RecipientsForUnchecked.PROD=prod.support
 #
-RecipientIdForFatalError.DEV=developers
-RecipientIdForFatalError.TEST=developers,quality.control
-RecipientIdForFatalError.UAT=developers
-RecipientIdForFatalError.PROD=developers,prod.support
+# Recipients for fatal error.
 #
-RecipientIdForDevelopers.DEV=developers
-RecipientIdForDevelopers.TEST=developers
-RecipientIdForDevelopers.UAT=developers
-RecipientIdForDevelopers.PROD=developers
+RecipientsForFatalError.DEV=developers
+RecipientsForFatalError.TEST=developers,quality.control
+RecipientsForFatalError.UAT=developers
+RecipientsForFatalError.PROD=developers,prod.support
+#
+# Recipients for developers.
+#
+RecipientsForDevelopers.DEV=developers
+RecipientsForDevelopers.TEST=developers
+RecipientsForDevelopers.UAT=developers
+RecipientsForDevelopers.PROD=developers
 #
 # disable email notification: yes/no
 disable=no
@@ -72,8 +76,11 @@ public class EmailSender {
 	private static Properties emailProps = null;
 	private static String hostName = null;
 	
+	private static List<String> hostNames = new ArrayList<String>();
+	private static int currHostIdx = 0;
+	
 	public enum EmailList {
-		ToUnhandled,
+		ToUnchecked,
 		ToFatalError,
 		ToDevelopers
 	}
@@ -81,13 +88,13 @@ public class EmailSender {
 	private EmailSender() {
 	}
 
-	private static void getEmailProperties() throws EmailSenderException {
+	private static void getEmailProperties() {
 		if (emailProps == null) {
 			logger.info("email properties file name: " + fileName);
 			ClassLoader loader = Thread.currentThread().getContextClassLoader();
 			URL url = loader.getResource(fileName);
 			if (url == null) {
-				throw new EmailSenderException("Could not find " + fileName + " file.");
+				throw new RuntimeException("Could not find " + fileName + " file.");
 			}
 			logger.info("loading email properties file from: " + url.getPath());
 			emailProps = new Properties();
@@ -96,7 +103,7 @@ public class EmailSender {
 				emailProps.load(is);
 			}
 			catch (IOException e) {
-				throw new EmailSenderException("IOException caught", e);
+				throw new RuntimeException("IOException caught, failed to load " + fileName, e);
 			}
 			logger.info(fileName + ": " + emailProps);
 			hostNames.add(emailProps.getProperty("HostName"));
@@ -104,7 +111,7 @@ public class EmailSender {
 			if (StringUtils.isNotBlank(hostIP)) {
 				hostNames.add(hostIP);
 			}
-			hostName = (String) hostNames.get(0);
+			hostName = hostNames.get(0);
 		}
 	}
 
@@ -128,122 +135,68 @@ public class EmailSender {
 	}
 
 	/**
-	 * Send an email notification when unhandled error was raised.
-	 * Email subject line is constructed from email.properties and input
-	 * parameter "region", <SenderId> Application - Error, <region>
+	 * Send an email notification when unchecked error was raised.
+	 * Email subject line is constructed as following: 
+	 * <SenderId> Application - Error, <region>
 	 * for example: Emailsphere Application - Error, TEST
 	 * 
 	 * @param body
 	 *            - message body
 	 * @param attachment
 	 *            - attachment, optional.
-	 * @param region
-	 *            - the region the listener is running in
 	 * @return true if email is sent successfully
-	 * @throws EmailSenderException
 	 */
-	public static boolean sendEmailUnhandled(String body, String attachment, String region)
-		throws EmailSenderException {
-		String recipientId = null;
-		String ccAddress = null;
-		return sendEmail(null, body, attachment, EmailList.ToUnhandled, region,
-				recipientId, ccAddress);
+	public static boolean sendToUnchecked(String body, String attachment) {
+		return sendEmail(null, body, attachment, EmailList.ToUnchecked);
 	}
 
 	/**
-	 * A send email method that sends email notifications to a specified
-	 * recipient.
-	 * 
-	 * @param subject
-	 *            - message subject.
-	 * @param body
-	 *            - message body
-	 * @param attachment
-	 *            - message attachment, optional.
-	 * @param region
-	 *            - the region the application is running in.
-	 * @param recipientId
-	 *            - use this recipient id if it is valued.
-	 * @return true if email is sent successfully
-	 * @throws EmailSenderException
-	 */
-	public static boolean sendEmail(
-		String subject,
-		String body,
-		String attachment,
-		String region,
-		String recipientId,
-		String ccAddress)
-		throws EmailSenderException {
-		return sendEmail(subject, body, attachment, EmailList.ToUnhandled,
-				region, recipientId, ccAddress);
-	}
-
-	/**
-	 * A send mail method that sends email notifications for both unhandled and
-	 * fatal errors.
-	 * 
-	 * @param subject
-	 *            - message subject, ignored if recipient is
-	 *            EmailList.ToUnhandled.
-	 * @param body
-	 *            - message body
-	 * @param attachment
-	 *            - message attachment, optional.
-	 * @param emailList
-	 *            - message recipients.
-	 * @param region
-	 *            - the region the listener is running in.
-	 * @return true if email is sent successfully
-	 * @throws EmailSenderException
-	 */
-	public static boolean sendEmail(
-		String subject,
-		String body,
-		String attachment,
-		EmailList emailList,
-		String region,
-		String ccAddress)
-		throws EmailSenderException {
-		String recipientId = null;
-		return sendEmail(subject, body, attachment, emailList, region,
-				recipientId, ccAddress);
-	}
-
-	private static List<String> hostNames = new ArrayList<String>();
-	private static int currHostIdx = 0;
-	
-	/**
-	 * A send mail method that sends email notifications when an unhandled error
+	 * A send mail method that sends email notifications when an unchecked error
 	 * or a fatal error was raised from application.
 	 * 
 	 * @param subject
 	 *            - message subject, ignored if recipient is
-	 *            EmailList.ToUnhandled.
+	 *            EmailList.ToUnchecked.
 	 * @param body
 	 *            - message body
 	 * @param attachment
 	 *            - message attachment, optional.
 	 * @param emailList
 	 *            - message recipients.
-	 * @param region
-	 *            - the region the listener is running in.
-	 * @param recipientId
-	 *            - use this recipient id if it is valued.
-	 * @param ccAddress
-	 *            - carbon copy to this address if it is valued.
 	 * @return true if email is sent successfully
-	 * @throws EmailSenderException
 	 */
-	public static boolean sendEmail(
-		String subject,
-		String body,
-		String attachment,
-		EmailList emailList,
-		String region,
-		String recipientId,
-		String ccAddress)
-		throws EmailSenderException {
+	public static boolean sendEmail(String subject, String body,
+			String attachment, EmailList emailList) {
+		// read email.properties
+		getEmailProperties();
+		String region = EnvUtil.getEnv().toUpperCase();
+		// get recipients from properties file
+		String recipients = emailProps.getProperty("RecipientsForUnchecked." + region);
+		if (EmailList.ToFatalError.equals(emailList)) {
+			recipients = emailProps.getProperty("RecipientsForFatalError." + region);
+		}
+		else if (EmailList.ToDevelopers.equals(emailList)) {
+			recipients = emailProps.getProperty("RecipientsForDevelopers." + region);
+		}
+		return sendEmail(subject, body, attachment, recipients); 
+	}
+
+	/**
+	 * A send mail method that sends email notifications when an unchecked error
+	 * or a fatal error was raised from application.
+	 * 
+	 * @param subject
+	 *            - message subject
+	 * @param body
+	 *            - message body
+	 * @param attachment
+	 *            - message attachment, optional.
+	 * @param recipients
+	 *            - message recipients.
+	 * @return true if email is sent successfully
+	 */
+	public static boolean sendEmail(String subject, String body,
+			String attachment, String recipients) {
 		// read email.properties
 		getEmailProperties();
 		if ("yes".equalsIgnoreCase(emailProps.getProperty("disable"))) {
@@ -251,8 +204,7 @@ public class EmailSender {
 			return false;
 		}
 		try {
-			sendEmail(hostName, subject, body, attachment, emailList, region,
-					recipientId, ccAddress);
+			send_mail(subject, body, attachment, recipients);
 			return true;
 		}
 		catch (AddressException e) {
@@ -263,48 +215,24 @@ public class EmailSender {
 			if ((e1.toString().indexOf("Could not connect to SMTP host") >= 0 
 					|| e1.toString().indexOf("Unknown SMTP host") >= 0)
 					&& (++currHostIdx < hostNames.size())) {
-				logger.error("Failed to send email via " + hostName + ", " + e1);
+				logger.error("Failed to send email via " + hostName, e1);
 				hostName = (String) hostNames.get(currHostIdx);
 				logger.error("Try next SMTP server " + hostName + " ...");
-				return sendEmail(subject, body, attachment, emailList, region,
-						recipientId, ccAddress);
+				return sendEmail(subject, body, attachment, recipients);
 			}
 			else {
-				throw new EmailSenderException("Failed to send email via " + hostName, e1);
+				throw new RuntimeException("Failed to send email via " + hostName, e1);
 			}
 		}
 	}
-
-	private static void sendEmail(
-		String hostName,
-		String _subject,
-		String body,
-		String attachment,
-		EmailList emailList,
-		String _region,
-		String _recipientId,
-		String _ccAddress)
-		throws AddressException, MessagingException {
-		// get "region" from properties file, for backward compatibility
-		String region = emailProps.getProperty("Region");
-		if (StringUtils.isNotBlank(_region)) {
-			region = _region;
-		}
+	
+	private static void send_mail(String _subject, String body, String attachment,
+			String recipients) throws AddressException, MessagingException {
+		// get "region" from system properties
+		String region = EnvUtil.getEnv().toUpperCase();
 		String senderId = emailProps.getProperty("SenderId");
-		// get recipient from properties file
-		String recipientId = emailProps.getProperty("RecipientId." + region);
-		if (EmailList.ToFatalError.equals(emailList)) {
-			recipientId = emailProps.getProperty("RecipientIdForFatalError." + region);
-		}
-		else if (EmailList.ToDevelopers.equals(emailList)) {
-			recipientId = emailProps.getProperty("RecipientIdForDevelopers." + region);
-		}
-		if (StringUtils.isNotBlank(_recipientId)) {
-			// send to the recipient from input parameter
-			recipientId = _recipientId;
-		}
-		if (StringUtils.isBlank(recipientId)) {
-			logger.warn("sendEmail() - Email recipient is not provided, quit.");
+		if (StringUtils.isBlank(recipients)) {
+			logger.warn("sendEmail() - Email recipients is not provided, quit.");
 			return;
 		}
 		
@@ -312,22 +240,14 @@ public class EmailSender {
 		
 		logger.info("EMail host name: " + hostName + ", Region: " + region);
 
-		// create some properties and get the default Session
-		//Properties props = System.getProperties();
-		//props.put("mail.smtp.host", hostName);
-		//Session session = Session.getInstance(props, null);
 		Session session = getMailSession();
 
 		// create a message
 		MimeMessage msg = new MimeMessage(session);
 		msg.setFrom(new InternetAddress(appendDomain(senderId, emailDomain)));
-		String recipientAddrs = appendDomain(recipientId, emailDomain);
+		String recipientAddrs = appendDomain(recipients, emailDomain);
 		InternetAddress[] address = InternetAddress.parse(recipientAddrs, false);
 		msg.setRecipients(Message.RecipientType.TO, address);
-		if (StringUtils.isNotBlank(_ccAddress)) {
-			InternetAddress[] cc = InternetAddress.parse(appendDomain(_ccAddress, emailDomain), false);
-			msg.setRecipients(Message.RecipientType.CC, cc);
-		}
 		if (StringUtils.isNotBlank(_subject)) {
 			String subj = StringUtils.replaceOnce(_subject, "{0}", region);
 			msg.setSubject(subj);
@@ -363,13 +283,21 @@ public class EmailSender {
 		logger.info("Email notification sent to: " + recipientAddrs);
 	}
 
+	/**
+	 * A generic send mail method.
+	 * @param from - from address
+	 * @param to - to address
+	 * @param subject - message subject
+	 * @param body - message body
+	 * @throws MessagingException
+	 */
 	public static void send(String from, String to, String subject, String body)
-			throws MessagingException, EmailSenderException {
+			throws MessagingException {
 		if (StringUtil.isEmpty(to)) {
-			throw new MessagingException("Input TO address is blank.");
+			throw new MessagingException("TO address is blank.");
 		}
 		if (StringUtil.isEmpty(subject)) {
-			throw new MessagingException("Input Subject is blank.");
+			throw new MessagingException("Subject is blank.");
 		}
 		getEmailProperties();
 		// Get a Session object
@@ -411,11 +339,11 @@ public class EmailSender {
 	}
 
 	public static void main(String[] args) {
-		fileName = "META-INF/email_sample.properties";
+		//fileName = "META-INF/email_sample.properties";
 		try {
 			EmailSender.sendEmail("Test from EmailSender",
 					"EmailSender...\ntest message", "attachment text",
-					EmailList.ToUnhandled, null, "jack.k.wang");
+					EmailList.ToUnchecked);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

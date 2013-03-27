@@ -56,6 +56,7 @@ public class ReloadFlagsService {
 	public void insert(ReloadFlags record) {
 		try {
 			em.persist(record);
+			em.flush();
 		}
 		finally {
 		}
@@ -69,6 +70,7 @@ public class ReloadFlagsService {
 			else {
 				em.merge(record);
 			}
+			em.flush();
 		}
 		finally {
 		}

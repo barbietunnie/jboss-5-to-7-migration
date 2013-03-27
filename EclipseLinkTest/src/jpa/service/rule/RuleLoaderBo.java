@@ -21,6 +21,7 @@ import jpa.model.ReloadFlags;
 import jpa.model.rule.RuleElement;
 import jpa.model.rule.RuleLogic;
 import jpa.model.rule.RuleSubruleMap;
+import jpa.service.EntityManagerService;
 import jpa.service.SenderDataService;
 import jpa.service.MailingListService;
 import jpa.service.ReloadFlagsService;
@@ -48,6 +49,8 @@ public class RuleLoaderBo implements java.io.Serializable {
 	final List<RuleBase>[] postRules;
 	final Map<String, List<RuleBase>>[] subRules;
 	
+	private static boolean isPrintRuleContents = true;
+
 	private int currIndex = 0;
 	@Autowired
 	private RuleDataService ruleDataService;
@@ -57,13 +60,16 @@ public class RuleLoaderBo implements java.io.Serializable {
 	private SenderDataService senderService;
 	@Autowired
 	private MailingListService listService;
+	@Autowired
+	private EntityManagerService emService;
 	
 	private int currIndex2 = 0;
+
 	private Map<String, Pattern>[] patternMaps;
 	
 	private ReloadFlags reloadFlags;
 	private long lastTimeLoaded;
-	final static int INTERVAL = 5 * 60 * 1000; // 5 minutes
+	public final static int INTERVAL = 1000; //5 * 60 * 1000; // 5 minutes
 
 	@SuppressWarnings("unchecked")
 	public RuleLoaderBo() {
@@ -91,10 +97,14 @@ public class RuleLoaderBo implements java.io.Serializable {
 		try {
 			loader.loadRules();
 			loader.listRuleNames();
-		}
-		finally {
 			SpringUtil.commitTransaction();
 		}
+		finally {
+		}
+	}
+
+	public int getCurrIndex() {
+		return currIndex;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -118,7 +128,10 @@ public class RuleLoaderBo implements java.io.Serializable {
 		patternMaps[0] = loadAddressPatterns();
 		patternMaps[1] = loadAddressPatterns();
 		
-		lastTimeLoaded = new java.util.Date().getTime();
+		reloadFlags = flagsService.select();
+		emService.detach(reloadFlags);
+		
+		lastTimeLoaded = System.currentTimeMillis();
 	}
 	
 	private void reloadAddressPatterns() {
@@ -147,12 +160,14 @@ public class RuleLoaderBo implements java.io.Serializable {
 					logger.info("====== Rules and/or Actions changed, reload Rules ======");
 					reloadFlags.setRules(vo.getRules());
 					reloadFlags.setActions(vo.getActions());
+					logger.info("Reloading all rules...");
 					loadRules();
 				}
 				if (reloadFlags.getSenders() < vo.getSenders()
 						|| reloadFlags.getTemplates() < vo.getTemplates()) {
 					logger.info("====== Senders/Templates changed, reload Address Patterns ======");
 					reloadFlags.setSenders(vo.getSenders());
+					logger.info("Reloading address patterns...");
 					reloadAddressPatterns();
 				}
 				reloadFlags.setTemplates(vo.getTemplates());
@@ -291,8 +306,6 @@ public class RuleLoaderBo implements java.io.Serializable {
 		}
 	}
 
-	private static boolean isPrintRuleContents = true;
-
 	private void listRuleNames(String ruleLit, List<RuleBase> rules, java.io.PrintStream prt) {
 		Iterator<RuleBase> it = rules.iterator();
 		while (it.hasNext()) {
@@ -300,7 +313,7 @@ public class RuleLoaderBo implements java.io.Serializable {
 			String ruleName = StringUtils.rightPad(r.getRuleName(), 28, " ");
 			prt.print("RuleLoaderBo.1 - " + ruleLit + ": " + ruleName);
 			if (isPrintRuleContents) {
-				prt.print(r.getRuleContent());
+				prt.print(r.printRuleContent());
 				prt.println();
 			}
 			listSubRuleNames(r.getSubRules(), prt);
@@ -317,7 +330,7 @@ public class RuleLoaderBo implements java.io.Serializable {
 				String ruleName = StringUtils.rightPad(r.getRuleName(), 28, " ");
 				prt.println("RuleLoaderBo.2 - " + ruleLit + ": " + ruleName);
 				if (isPrintRuleContents) {
-					prt.print(r.getRuleContent());
+					prt.print(r.printRuleContent());
 					prt.println();
 				}
 				listSubRuleNames(r.getSubRules(), prt);

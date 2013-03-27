@@ -20,7 +20,7 @@ public class RuleSimple extends RuleBase {
 	
 	final String targetText;
 	
-	private final String storedProcedure = null;
+	private final String storedProcedure;
 	private List<String> exclusionList = null;
 	private Set<String> exclusionSet = null;
 	private final Pattern pattern;
@@ -37,21 +37,16 @@ public class RuleSimple extends RuleBase {
 			String _stored_procedure,
 			String _delimiter) {
 		super(_ruleName, _ruleType, _mailType, _dataName, _headerName, _criteria, _is_case_sensitive);
-		if (isCaseSensitive) {
-			this.targetText = _targetText;
-		}
-		else {
-			this.targetText = _targetText.toLowerCase();
-		}
+		this.targetText = _targetText; // regular expression, do not change it lower case.
+		this.storedProcedure = _stored_procedure;
 		setExclusionList(_exclusion_list, _delimiter);
-		setStoredProcedure(_stored_procedure);
 		if (RuleCriteria.REG_EX.equals(_criteria)) {
 			if (isCaseSensitive) {
 				// enables dotall mode
 				pattern = Pattern.compile(this.targetText, Pattern.DOTALL);
 			}
 			else {
-				// enables case-insensitive matching and dotall mode
+				// enables case-insensitive and dotall mode
 				pattern = Pattern.compile(this.targetText, Pattern.CASE_INSENSITIVE
 						| Pattern.DOTALL);
 			}
@@ -60,6 +55,18 @@ public class RuleSimple extends RuleBase {
 			pattern = null;
 		}
 		logger.info(">>>>> Simple-Rule initialized for " + ruleName);
+	}
+
+	public String getTargetText() {
+		return targetText;
+	}
+
+	public String getStoredProcedure() {
+		return storedProcedure;
+	}
+
+	public List<String> getExclusionList() {
+		return exclusionList;
 	}
 
 	private void setExclusionList(String _exclusionList, String _delimiter) {
@@ -79,7 +86,7 @@ public class RuleSimple extends RuleBase {
 					}
 				}
 			}
-
+			
 			logger.info("----- Exclusion List for Rule: " + ruleName + ", type: " + mailType);
 			for (int i = 0; i < this.exclusionList.size(); i++) {
 				logger.info("      " + this.exclusionList.get(i));
@@ -88,9 +95,6 @@ public class RuleSimple extends RuleBase {
 			//this.exclusionSet = Collections.synchronizedSet(new HashSet(this.exclusionList));
 			this.exclusionSet = new HashSet<String>(this.exclusionList);
 		}
-	}
-
-	private void setStoredProcedure(String _storedProcedure) {
 	}
 
 	public String match(String mail_type, String data_type, String data) {
@@ -161,9 +165,9 @@ public class RuleSimple extends RuleBase {
 		}
 	}
 	
-	public String getRuleContent() {
+	public String printRuleContent() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(super.getRuleContent());
+		sb.append(super.printRuleContent());
 		
 		if (storedProcedure != null) {
 			sb.append("Stored Procedure: " + storedProcedure + LF);
