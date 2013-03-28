@@ -239,14 +239,8 @@ public final class MessageBeanUtil {
 	 */
 	public static MessageBean createBeanFromStream(byte[] mailStream) throws MessagingException {
 		Message msg = createMimeMessage(mailStream);
-		try {
-			MessageBean msgBean = MessageBeanBuilder.processPart(msg, null);
-			return msgBean;
-		}
-		catch (IOException e) {
-			logger.error("IOException caught", e);
-			throw new MessagingException(e.toString());
-		}
+		MessageBean msgBean = MessageBeanBuilder.processPart(msg, null);
+		return msgBean;
 	}
 	
 	/**

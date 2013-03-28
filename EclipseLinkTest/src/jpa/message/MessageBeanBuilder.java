@@ -60,8 +60,8 @@ public final class MessageBeanBuilder {
 	 * @throws IOException
 	 *             if any error
 	 */
-	public static MessageBean processPart(Part p, String toAddrDomain) throws IOException,
-			MessagingException {
+	public static MessageBean processPart(Part p, String toAddrDomain)
+			throws MessagingException {
 		// make sure it's a message
 		if (!(p instanceof Message) && !(p instanceof MimeMessage)) {
 			// not a known message type
@@ -1006,15 +1006,25 @@ public final class MessageBeanBuilder {
 	 * @param msgBean -
 	 *            MessageBean object
 	 * @throws MessagingException
-	 * @throws IOException
 	 *             if any error
 	 */
-	private static void addMsgStreamToBean(Part p, MessageBean msgBean) throws IOException,
-			MessagingException {
+	private static void addMsgStreamToBean(Part p, MessageBean msgBean)
+			throws MessagingException {
 		/* save the message in its raw format to the HashMap */
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		p.writeTo(baos);
-		msgBean.getHashMap().put(MSG_RAW_STREAM, baos.toByteArray());
+		try {
+			p.writeTo(baos);
+			msgBean.getHashMap().put(MSG_RAW_STREAM, baos.toByteArray());
+		}
+		catch (IOException e) {
+			logger.error("Failed to write message raw stream to HashMap", e);
+		}
+		finally {
+			try {
+				baos.close();
+			}
+			catch (IOException e) {}
+		}
 	}
 
 	/**

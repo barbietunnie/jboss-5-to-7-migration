@@ -119,7 +119,7 @@ public class DeliveryError extends TaskBaseAdaptor {
 			//msgInboxVo.getMessageDeliveryStatusList().add(deliveryStatusVo);
 			deliveryStatusDao.insert(deliveryStatusVo);
 			if (isDebugEnabled) {
-				logger.debug("Insert DeliveryStatus:" + LF + StringUtil.prettyPrint(deliveryStatusVo));
+				logger.debug("Insert DeliveryStatus:" + LF + StringUtil.prettyPrint(deliveryStatusVo,3));
 			}
 		}
 		catch (DataIntegrityViolationException e) {

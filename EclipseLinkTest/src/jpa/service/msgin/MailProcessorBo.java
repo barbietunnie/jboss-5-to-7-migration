@@ -19,8 +19,10 @@ import jpa.message.MessageContext;
 import jpa.model.MailInbox;
 import jpa.service.message.MessageInboxService;
 import jpa.service.task.TaskSchedulerBo;
+import jpa.util.EmailSender;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -87,6 +89,7 @@ public class MailProcessorBo {
 					logger.info("Completed processing of message number["
 							+ (i + 1) + "], time taken: "
 							+ (System.currentTimeMillis() - start) + " ms");
+					req.getRowIds().addAll(ctx.getRowIds());
 				}
 				// release the instance for GC, not working w/pop3
 				// msgs[i]=null;
@@ -181,10 +184,11 @@ public class MailProcessorBo {
 			}
 			// end of check
 			if (isDuplicate) {
-				logger.error("Duplicate Message received, messageId: " + msgBean.getSmtpMessageId());
+				String errMsg = "Duplicate Message received, messageId: " + msgBean.getSmtpMessageId();
+				logger.error(errMsg);
 				// issue an info_event alert
 				if (mInbox.getIsAlertDuplicate()) {
-					// TODO
+					EmailSender.sendToUnchecked(errMsg, ExceptionUtils.getStackTrace(new Exception()));
 				}
 				// write raw stream to logging file
 				if (mInbox.getIsLogDuplicate()) {

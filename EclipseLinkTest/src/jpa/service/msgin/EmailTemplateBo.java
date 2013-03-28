@@ -11,7 +11,6 @@ import javax.mail.internet.InternetAddress;
 import javax.persistence.NoResultException;
 
 import jpa.constant.CodeType;
-import jpa.constant.Constants;
 import jpa.constant.EmailAddrType;
 import jpa.constant.VariableType;
 import jpa.exception.DataValidationException;
@@ -21,9 +20,6 @@ import jpa.model.EmailAddress;
 import jpa.model.EmailTemplate;
 import jpa.model.EmailVariable;
 import jpa.model.MailingList;
-import jpa.model.SenderData;
-import jpa.model.message.TemplateData;
-import jpa.model.message.TemplateDataPK;
 import jpa.service.EmailAddressService;
 import jpa.service.EmailTemplateService;
 import jpa.service.EmailVariableService;
@@ -33,7 +29,6 @@ import jpa.service.external.VariableResolver;
 import jpa.service.message.TemplateDataService;
 import jpa.service.msgout.RenderBo;
 import jpa.util.EmailAddrUtil;
-import jpa.util.SpringUtil;
 import jpa.variable.RenderUtil;
 import jpa.variable.RenderVariableVo;
 
@@ -66,64 +61,6 @@ public class EmailTemplateBo {
 	@Autowired
 	private SenderDataService senderService;
 	
-	public static void main(String[] args) {
-		EmailTemplateBo bo = (EmailTemplateBo) SpringUtil.getAppContext().getBean("emailTemplateBo");
-		SpringUtil.beginTransaction();
-		try {
-			bo.processMain();
-			SpringUtil.commitTransaction();
-		}
-		catch (Exception e) {
-			logger.error("Exception", e);
-			SpringUtil.rollbackTransaction();
-		}
-		finally {
-		}
-	}
-	
-	void processMain() {
-		try {
-			String text = renderBo.renderTemplateById("testTemplate", null, null);
-			logger.info(text);
-			SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
-			TemplateDataPK pk = new TemplateDataPK(sender, "testTemplate", null);
-			TemplateData bodyVo = templateDataDao.getByBestMatch(pk);
-			if (bodyVo == null) {
-				throw new DataValidationException("BodyTemplate not found for testTemplate");
-			}
-			else if (isDebugEnabled) {
-				logger.debug("Template to render:" + LF + bodyVo.getBodyTemplate());
-			}
-			List<String> variables = RenderUtil.retrieveVariableNames(bodyVo.getBodyTemplate());
-			logger.info("Variables: " + variables);
-			
-			Map<String, String> vars = new HashMap<String, String>();
-			vars.put("BroadcastMsgId","3");
-			TemplateRenderVo renderVo = renderEmailTemplate("jsmith@test.com",vars, "SampleNewsletter1");
-			logger.info(renderVo);
-			
-			logger.info(renderEmailVariable("UserProfileURL", Integer.valueOf(1)));
-			
-			String checkText = "Dear ${SubscriberAddress}," + LF + LF + 
-			"This is a sample text newsletter message for a traditional mailing list." + LF +
-			"With a traditional mailing list, people who want to subscribe to the list " + LF +
-			"must send an email from their account to the mailing list address with " + LF +
-			"\"subscribe\" in the email subject." + LF + LF + 
-			"Unsubscribing from a traditional mailing list is just as easy; simply send " + LF +
-			"an email to the mailing list address with \"unsubscribe\" in subject." + LF + LF +
-			"Date sent: ${CurrentDate}" + LF + LF +
-			"BroadcastMsgId: ${BroadcastMsgId}, ListId: ${MailingListId}" + LF + LF +
-			"Contact Email: ${ContactEmailAddress}" + LF + LF +
-			"To see our promotions, copy and paste the following link in your browser:" + LF +
-			"${WebSiteUrl}/SamplePromoPage.jsp?msgid=${BroadcastMsgId}&listid=${MailingListId}&sbsrid=${SubscriberAddressId}" + LF +
-			"${FooterWithUnsubAddr}";
-			checkVariableLoop(checkText);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * This method first retrieves variable names from the input text and save
 	 * them into a list. It then loop through the list and for each name in the
@@ -212,7 +149,7 @@ public class EmailTemplateBo {
 	}
 	
 	/* experimental */
-	String renderEmailVariable(String emailVariableName, Integer sbsrId) throws DataValidationException {
+	public String renderEmailVariable(String emailVariableName, Integer sbsrId) throws DataValidationException {
 		String renderedValue = "";
 		EmailVariable vo = emailVariableDao.getByVariableName(emailVariableName);
 		HashMap<String, RenderVariableVo> vars = new HashMap<String, RenderVariableVo>();

@@ -21,16 +21,18 @@ import jpa.model.SenderData;
 import jpa.model.SubscriberData;
 import jpa.model.message.MessageAddress;
 import jpa.model.message.MessageAttachment;
+import jpa.model.message.MessageDeliveryStatus;
 import jpa.model.message.MessageHeader;
 import jpa.model.message.MessageInbox;
+import jpa.model.message.MessageRfcField;
 import jpa.model.rule.RuleLogic;
 import jpa.service.EmailAddressService;
 import jpa.service.SenderDataService;
 import jpa.service.SubscriberDataService;
 import jpa.service.rule.RuleLogicService;
-import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +42,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class MessageBeanBo {
 	static Logger logger = Logger.getLogger(MessageBeanBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
+	
+	@Autowired
+	private SenderDataService senderService;
+	@Autowired
+	private SubscriberDataService subrService;
+	@Autowired
+	private RuleLogicService logicService;
+	@Autowired
+	private EmailAddressService emailService;
 	
 	/**
 	 * create a MessageBean object from a MessageInbox object.
@@ -66,7 +77,6 @@ public class MessageBeanBo {
 		
 		msgBean.setIsReceived(MsgDirectionCode.RECEIVED.getValue().equals(msgVo.getMsgDirection()));
 		if (msgVo.getSenderData()==null && msgVo.getSenderDataRowId()!=null) {
-			SenderDataService senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 			try {
 				SenderData sender = senderService.getByRowId(msgVo.getSenderDataRowId());
 				msgVo.setSenderData(sender);
@@ -77,7 +87,6 @@ public class MessageBeanBo {
 			msgBean.setSenderId(msgVo.getSenderData().getSenderId());
 		}
 		if (msgVo.getSubscriberData()==null && msgVo.getSubscriberDataRowId()!=null) {
-			SubscriberDataService subrService = (SubscriberDataService) SpringUtil.getAppContext().getBean("subscriberDataService");
 			try {
 				SubscriberData subr = subrService.getByRowId(msgVo.getSubscriberDataRowId());
 				msgVo.setSubscriberData(subr);
@@ -91,7 +100,6 @@ public class MessageBeanBo {
 		msgBean.setRenderId(msgVo.getRenderId());
 		msgBean.setOverrideTestAddr(msgVo.isOverrideTestAddr());
 		if (msgVo.getRuleLogic()==null) {
-			RuleLogicService logicService = (RuleLogicService) SpringUtil.getAppContext().getBean("ruleLogicService");
 			try {
 				RuleLogic logic = logicService.getByRowId(msgVo.getRuleLogicRowId());
 				msgVo.setRuleLogic(logic);
@@ -143,6 +151,98 @@ public class MessageBeanBo {
 			msgBean.setBody(msgBody);
 		}
 		
+		List<MessageDeliveryStatus> statusList = msgVo.getMessageDeliveryStatusList();
+		if (statusList!=null) {
+			for (MessageDeliveryStatus status : statusList) {
+				BodypartBean aNode = new BodypartBean();
+				aNode.setContentType("message/delivery-status");
+				aNode.setValue(status.getDeliveryStatus());
+				aNode.setSize(aNode.getValue()==null?0:aNode.getValue().length);
+				msgBean.put(aNode);
+				List<MsgHeader> headers = new ArrayList<MsgHeader>(); 
+				aNode.setHeaders(headers);
+				if (status.getSmtpMessageId()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Message-Id");
+					header.setValue(status.getSmtpMessageId());
+					headers.add(header);
+				}
+				if (status.getFinalRecipientAddress()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Final-Recipient");
+					header.setValue("rfc822;" + status.getFinalRecipientAddress());
+					headers.add(header);
+				}
+				if (status.getOriginalRcptAddrRowId()!=null) {
+					try {
+						EmailAddress origAddr = emailService.getByRowId(status.getOriginalRcptAddrRowId());
+						MsgHeader header = new MsgHeader();
+						header.setName("To");
+						header.setValue(origAddr.getAddress());
+						headers.add(header);
+					}
+					catch (NoResultException e) {}
+				}
+				if (status.getDsnReason()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Action");
+					header.setValue(status.getDsnReason());
+					headers.add(header);
+				}
+				if (status.getDsnStatus()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Status");
+					header.setValue(status.getDsnStatus());
+					headers.add(header);
+				}
+			}
+		}
+		
+		List<MessageRfcField> rfcList = msgVo.getMessageRfcFieldList();
+		if (rfcList!=null) {
+			for (MessageRfcField rfc : rfcList) {
+				BodypartBean aNode = new BodypartBean();
+				aNode.setContentType(rfc.getMessageRfcFieldPK().getRfcType());
+				aNode.setValue(rfc.getDsnRfc822());
+				aNode.setSize(aNode.getValue()==null?0:aNode.getValue().length);
+				List<MsgHeader> headers = new ArrayList<MsgHeader>();
+				aNode.setHeaders(headers);
+				if (rfc.getDsnRfc822()!=null) {
+					// build headers
+				}
+				if (rfc.getMessageId()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Message-Id");
+					header.setValue(rfc.getMessageId());
+					headers.add(header);
+				}
+				if (rfc.getOriginalMsgSubject()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Subject");
+					header.setValue(rfc.getOriginalMsgSubject());
+					headers.add(header);
+				}
+				if (rfc.getOriginalRecipient()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("To");
+					header.setValue(rfc.getOriginalRecipient());
+					headers.add(header);
+				}
+				if (rfc.getRfcAction()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Action");
+					header.setValue(rfc.getRfcAction());
+					headers.add(header);
+				}
+				if (rfc.getRfcStatus()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Status");
+					header.setValue(rfc.getRfcStatus());
+					headers.add(header);
+				}
+			}
+		}
+
 		// set message headers
 		List<MessageHeader> headersVo = msgVo.getMessageHeaderList();
 		if (headersVo != null) {
@@ -160,7 +260,6 @@ public class MessageBeanBo {
 		// set addresses
 		List<MessageAddress> addrsVo = msgVo.getMessageAddressList();
 		if (addrsVo != null) {
-			EmailAddressService emailService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
 			String fromAddr = null;
 			String toAddr = null;
 			String replyToAddr = null;

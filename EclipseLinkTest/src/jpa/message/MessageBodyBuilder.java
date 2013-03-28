@@ -91,7 +91,8 @@ public final class MessageBodyBuilder {
 			}
 		}
 		// if Email_Id not present in header, embed it anyway.
-		if (msgBean.getHeader(EmailIdParser.getDefaultParser().getEmailIdXHdrName()).isEmpty()) {
+		if (msgBean.getHeader(EmailIdParser.getDefaultParser().getEmailIdXHdrName()).isEmpty()
+				|| msgBean.getIsReceived()==false) {
 			embedEmailId2Header(msgBean);
 		}
 
@@ -133,7 +134,8 @@ public final class MessageBodyBuilder {
 			}
 		}
 		// if Email_Id not present in header, embed it anyway.
-		if (msgBean.getHeader(EmailIdParser.getDefaultParser().getEmailIdXHdrName()).isEmpty()) {
+		if (msgBean.getHeader(EmailIdParser.getDefaultParser().getEmailIdXHdrName()).isEmpty()
+				|| msgBean.getIsReceived()==false) {
 			embedEmailId2Header(msgBean);
 		}
 

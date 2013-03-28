@@ -17,11 +17,9 @@ import jpa.message.MessageNode;
 import jpa.model.message.MessageStream;
 import jpa.service.message.MessageStreamService;
 import jpa.service.msgin.MessageParserBo;
-import jpa.util.EmailAddrUtil;
 import jpa.util.StringUtil;
 import jpa.util.TestUtil;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,13 +52,7 @@ public class MessageBeanTest {
 		String fileName = "BouncedMail_1.txt";
 		MessageBean msgBean2 = testReadFromFile(fileName);
 		assertNotNull(msgBean2);
-		assertTrue("support.hotline@jbatch.com".equals(msgBean2.getToAsString()));
-		assertTrue("postmaster@synnex.com.au".equals(msgBean2.getFromAsString()));
-		assertNotNull(msgBean2.getToEnvelope());
-		assertTrue("jackwng@gmail.com".equals(EmailAddrUtil.addressToString(msgBean2.getToEnvelope())));
-		assertTrue("Delivery Status Notification (Failure)".equals(msgBean2.getSubject()));
-		String contentType = msgBean2.getContentType();
-		assertTrue(StringUtils.contains(contentType, "multipart/report;"));
+		TestUtil.verifyMessageBean4BounceMail_1(msgBean2);
 
 		msgBean2.setToPlainText(true);
 		List<MessageNode> mNodes = BodypartUtil.retrieveAttachments(msgBean2);
