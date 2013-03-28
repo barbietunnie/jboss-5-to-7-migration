@@ -62,8 +62,6 @@ public class MessageParserBo implements java.io.Serializable {
 	static final String REPLY_SEPARATOR = "---------Reply Separator---------";
 	static final String LF = System.getProperty("line.separator", "\n");
 
-	private boolean reloadRules = true;
-	
 	@Autowired
 	private RuleLoaderBo ruleLoader;
 	@Autowired
@@ -112,9 +110,8 @@ public class MessageParserBo implements java.io.Serializable {
 			logger.warn("parse() - MsgRefId already exist: " + msgBean.getMsgRefId());
 		}
 		
-		if (reloadRules) {
+		if (ruleLoader.getRuleSet().isEmpty()) {
 			ruleLoader.loadRules();
-			reloadRules = false;
 		}
 		
 		String ruleName = null;
@@ -292,9 +289,9 @@ public class MessageParserBo implements java.io.Serializable {
 		String body = msgBean.getBody();
 		if (msgBean.getRfc822() != null && ruleName == null) {
 			// message/rfc822 is present, scan message body for rfc1893 status code
-			// TODO: may cause false positives. need to revisit this.
 			if (isDebugEnabled)
 				logger.debug("parse() - scan body text -----<" + LF + body + ">-----");
+			// TODO: may cause false positives. need to revisit this.
 			ruleName = rfcScan.examineBody(body);
 		}
 

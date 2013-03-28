@@ -5,8 +5,12 @@ import java.io.IOException;
 import javax.mail.MessagingException;
 
 import jpa.constant.CarrierCode;
+import jpa.exception.DataValidationException;
+import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
+import jpa.message.MessageContext;
+import jpa.service.task.TaskSchedulerBo;
 import jpa.util.SpringUtil;
 import jpa.util.TestUtil;
 
@@ -38,16 +42,19 @@ public class MailFileReader {
 		System.exit(0);
 	}
 	
-	MessageBean read(String filePath, String fileName) throws MessagingException, IOException {
+	MessageBean read(String filePath, String fileName) throws MessagingException,
+			IOException, DataValidationException, TemplateException {
 		MessageBean msgBean = readIntoMessageBean(filePath, fileName);
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
 		MessageParserBo parser = (MessageParserBo) SpringUtil.getAppContext().getBean("messageParserBo");
 		msgBean.setRuleName(parser.parse(msgBean));
-		// TODO save message
+		TaskSchedulerBo taskBo = (TaskSchedulerBo) SpringUtil.getAppContext().getBean("taskSchedulerBo");
+		taskBo.scheduleTasks(new MessageContext(msgBean));
 		return msgBean;
 	}
 
-	private MessageBean readIntoMessageBean(String filePath, String fileName) throws MessagingException, IOException {
+	private MessageBean readIntoMessageBean(String filePath, String fileName)
+			throws MessagingException, IOException {
 		byte[] mailStream = TestUtil.loadFromFile(filePath, fileName);
 		MessageBean msgBean = MessageBeanUtil.createBeanFromStream(mailStream);
 		return msgBean;

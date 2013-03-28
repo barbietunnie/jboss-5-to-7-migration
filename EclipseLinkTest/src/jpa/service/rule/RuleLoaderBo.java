@@ -69,7 +69,7 @@ public class RuleLoaderBo implements java.io.Serializable {
 	
 	private ReloadFlags reloadFlags;
 	private long lastTimeLoaded;
-	public final static int INTERVAL = 1000; //5 * 60 * 1000; // 5 minutes
+	public static int INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 	@SuppressWarnings("unchecked")
 	public RuleLoaderBo() {

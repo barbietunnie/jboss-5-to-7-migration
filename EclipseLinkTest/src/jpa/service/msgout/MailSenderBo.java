@@ -13,8 +13,10 @@ import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.message.MessageRendered;
 import jpa.service.message.MessageRenderedService;
+import jpa.util.EmailSender;
 import jpa.util.SpringUtil;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -92,7 +94,10 @@ public class MailSenderBo extends MailSenderBase {
 		}
 		catch (NumberFormatException ef) {
 			logger.error("NumberFormatException caught", ef);
-			// TODO send error notification
+			// send error notification
+			EmailSender.sendEmail(null, ef.getMessage(),
+					ExceptionUtils.getStackTrace(ef),
+					EmailSender.EmailList.ToDevelopers);
 		}
 		catch (SmtpException se) {
 			logger.error("SmtpException caught", se);
