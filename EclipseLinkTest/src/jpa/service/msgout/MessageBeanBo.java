@@ -31,6 +31,7 @@ import jpa.service.SenderDataService;
 import jpa.service.SubscriberDataService;
 import jpa.service.rule.RuleLogicService;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -154,46 +155,55 @@ public class MessageBeanBo {
 		List<MessageDeliveryStatus> statusList = msgVo.getMessageDeliveryStatusList();
 		if (statusList!=null) {
 			for (MessageDeliveryStatus status : statusList) {
-				BodypartBean aNode = new BodypartBean();
-				aNode.setContentType("message/delivery-status");
-				aNode.setValue(status.getDeliveryStatus());
-				aNode.setSize(aNode.getValue()==null?0:aNode.getValue().length);
-				msgBean.put(aNode);
-				List<MsgHeader> headers = new ArrayList<MsgHeader>(); 
-				aNode.setHeaders(headers);
-				if (status.getSmtpMessageId()!=null) {
-					MsgHeader header = new MsgHeader();
-					header.setName("Message-Id");
-					header.setValue(status.getSmtpMessageId());
-					headers.add(header);
-				}
-				if (status.getFinalRecipientAddress()!=null) {
-					MsgHeader header = new MsgHeader();
-					header.setName("Final-Recipient");
-					header.setValue("rfc822;" + status.getFinalRecipientAddress());
-					headers.add(header);
-				}
-				if (status.getOriginalRcptAddrRowId()!=null) {
-					try {
-						EmailAddress origAddr = emailService.getByRowId(status.getOriginalRcptAddrRowId());
+				if (StringUtils.isNotBlank(status.getDeliveryStatus())) {
+					BodypartBean aNode = new BodypartBean();
+					aNode.setContentType("message/delivery-status");
+					aNode.setValue(status.getDeliveryStatus());
+					aNode.setSize(aNode.getValue().length);
+					msgBean.put(aNode);
+					List<MsgHeader> headers = new ArrayList<MsgHeader>(); 
+					aNode.setHeaders(headers);
+					if (status.getSmtpMessageId()!=null) {
 						MsgHeader header = new MsgHeader();
-						header.setName("To");
-						header.setValue(origAddr.getAddress());
+						header.setName("Message-Id");
+						header.setValue(status.getSmtpMessageId());
 						headers.add(header);
 					}
-					catch (NoResultException e) {}
+					if (status.getFinalRecipientAddress()!=null) {
+						MsgHeader header = new MsgHeader();
+						header.setName("Final-Recipient");
+						header.setValue("rfc822;" + status.getFinalRecipientAddress());
+						headers.add(header);
+					}
+					if (status.getOriginalRcptAddrRowId()!=null) {
+						try {
+							EmailAddress origAddr = emailService.getByRowId(status.getOriginalRcptAddrRowId());
+							MsgHeader header = new MsgHeader();
+							header.setName("To");
+							header.setValue(origAddr.getAddress());
+							headers.add(header);
+						}
+						catch (NoResultException e) {}
+					}
+					if (status.getDsnReason()!=null) {
+						MsgHeader header = new MsgHeader();
+						header.setName("Action");
+						header.setValue(status.getDsnReason());
+						headers.add(header);
+					}
+					if (status.getDsnStatus()!=null) {
+						MsgHeader header = new MsgHeader();
+						header.setName("Status");
+						header.setValue(status.getDsnStatus());
+						headers.add(header);
+					}
 				}
-				if (status.getDsnReason()!=null) {
-					MsgHeader header = new MsgHeader();
-					header.setName("Action");
-					header.setValue(status.getDsnReason());
-					headers.add(header);
-				}
-				if (status.getDsnStatus()!=null) {
-					MsgHeader header = new MsgHeader();
-					header.setName("Status");
-					header.setValue(status.getDsnStatus());
-					headers.add(header);
+				if (StringUtils.isNotBlank(status.getDsnText())) {
+					BodypartBean aNode = new BodypartBean();
+					aNode.setContentType("message/report");
+					aNode.setValue(status.getDsnText());
+					aNode.setSize(aNode.getValue().length);
+					msgBean.put(aNode);
 				}
 			}
 		}
