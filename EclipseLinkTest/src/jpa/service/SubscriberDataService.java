@@ -9,9 +9,11 @@ import javax.persistence.Query;
 import jpa.constant.MobileCarrierEnum;
 import jpa.exception.DataValidationException;
 import jpa.model.SubscriberData;
+import jpa.util.EmailSender;
 import jpa.util.PhoneNumberUtil;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -142,9 +144,10 @@ public class SubscriberDataService {
 				MobileCarrierEnum.getByValue(subscriber.getMobileCarrier());
 			}
 			catch (IllegalArgumentException e) {
-				//throw new DataValidationException("Invalid Mobile carrier passed in: " + subscriber.getMobileCarrier());
-				// TODO could be a new carrier not yet entered in system, notify programming
-				// TODO define a mobile carrier table to store the information.
+				// could be a new carrier not yet entered in system, notify programming
+				String msg = "Invalid Mobile carrier passed in: " + subscriber.getMobileCarrier();
+				String subj = "(" + subscriber.getMobileCarrier() + ") need to be added to the system - {0}";
+				EmailSender.sendEmail(subj, msg, ExceptionUtils.getStackTrace(e), EmailSender.EmailList.ToDevelopers);
 			}
 		}
 		if (subscriber.getEmailAddr()==null) {

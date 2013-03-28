@@ -20,10 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class IdTokensService {
 	static Logger logger = Logger.getLogger(IdTokensService.class);
 	
-	/*
-	 * XXX This next annotation triggers JBoss to look for the persistence unit name "MessageDB"
-	 * when it is bundled and deployed in a war file. Use spring @Autowired injection instead.
-	 */
 	//@PersistenceContext(unitName="MessageDB")
 	@Autowired
 	EntityManager em;

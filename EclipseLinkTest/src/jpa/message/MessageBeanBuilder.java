@@ -763,7 +763,7 @@ public final class MessageBeanBuilder {
 			else {
 				setAnodeValue(aNode, p, "Unchecked Exception caught: " + e.toString());
 			}
-			// TODO notify programming with Email (requires an SMTP server on local host)
+			// notify programming with an Email (requires an SMTP server on local host)
 			String hostIp = HostUtil.getHostIpAddress();
 			String subj = "MessageBeanBuilder running on " + hostIp + " caught Unchecked Exception";
 			String fromAddr = "MessageBeanBuilder@" + HostUtil.getHostName();

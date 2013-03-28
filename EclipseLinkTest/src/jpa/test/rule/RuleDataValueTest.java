@@ -130,9 +130,8 @@ public class RuleDataValueTest {
 		valueService.insert(var5);
 		var5 = valueService.getByPrimaryKey(pk5);
 		assertTrue(1==valueService.deleteByRowId(var5.getRowId()));
-		// TODO the next two deletes caused INSERT error, revisit the issue.
-		//valueService.deleteByPrimaryKey(pk5.getRuleDataType().getDataType(), pk5.getDataValue());
-		//assertTrue(1==valueService.deleteByDataType(pk5.getRuleDataType().getDataType()));
+		valueService.deleteByPrimaryKey(pk5);
+		assertTrue(1==valueService.deleteByDataType(pk5.getRuleDataType().getDataType()));
 	}
 	
 	private RuleDataValue createNewInstance(RuleDataValue orig) {

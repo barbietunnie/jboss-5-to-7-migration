@@ -30,6 +30,7 @@ import jpa.service.msgin.EmailTemplateBo;
 import jpa.service.msgin.TemplateRenderVo;
 import jpa.service.msgout.MailSenderBo;
 import jpa.service.msgout.SmtpException;
+import jpa.util.EmailSender;
 import jpa.util.PhoneNumberUtil;
 import jpa.variable.RenderUtil;
 
@@ -192,8 +193,11 @@ public class BroadcastToList extends TaskBaseAdaptor {
 							logger.error("Invalid mobile phone number (" + subrVo.getMobilePhone() + ") found in Subscriber_Data!");
 						}
 						catch (IllegalArgumentException e) {
-							logger.error("Mobile carrier (" + subrVo.getMobileCarrier() + ") not found in enum MobileCarrierEnum!");
-							// TODO notify programming
+							String msg = "Mobile carrier (" + subrVo.getMobileCarrier() + ") not found in enum MobileCarrierEnum!";
+							logger.error(msg);
+							// notify programming
+							String subj = "(" + subrVo.getMobileCarrier() + ") need to be added to the system - {0}";
+							EmailSender.sendEmail(subj, msg, null, EmailSender.EmailList.ToDevelopers);
 						}
 					}
 				}

@@ -63,6 +63,8 @@ public class RuleLoaderBoTest {
 		
 		flagService.updateRuleReloadFlag();
 		flagService.updateTemplateReloadFlag();
+
+		RuleLoaderBo.INTERVAL = 1000;
 		try {
 			Thread.sleep(RuleLoaderBo.INTERVAL+100);
 		}
