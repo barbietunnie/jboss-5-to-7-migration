@@ -8,10 +8,14 @@ import java.io.IOException;
 import javax.mail.MessagingException;
 import javax.persistence.NoResultException;
 
+import jpa.constant.MsgStatusCode;
 import jpa.data.preload.RuleNameEnum;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
+import jpa.model.message.MessageInbox;
 import jpa.model.message.MessageStream;
+import jpa.service.EmailAddressService;
+import jpa.service.message.MessageInboxService;
 import jpa.service.message.MessageStreamService;
 import jpa.service.msgin.MessageInboxBo;
 import jpa.service.msgin.MessageParserBo;
@@ -29,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})
-@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=false)
 @Transactional(propagation=Propagation.REQUIRED)
 public class MessageInboxBoTest {
 	final static String LF = System.getProperty("line.separator","\n");
@@ -42,6 +46,10 @@ public class MessageInboxBoTest {
 	MessageParserBo msgParser;
 	@Autowired
 	MessageInboxBo msgInboxBo;
+	@Autowired
+	MessageInboxService inboxService;
+	@Autowired
+	private EmailAddressService emailService;
 	
 	@Test
 	public void testMessageInboxBo() throws MessagingException, IOException {
@@ -58,7 +66,10 @@ public class MessageInboxBoTest {
 		ruleName = msgParser.parse(msgBean2);
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName));
 		
-		logger.info("Msgid = " + msgInboxBo.saveMessage(msgBean2));
+		int rowId = msgInboxBo.saveMessage(msgBean2);
+		logger.info("Msgid = " + rowId);
+		MessageInbox inbox = TestUtil.verifyBouncedMail_1(rowId, inboxService, emailService);
+		assertTrue(MsgStatusCode.PENDING.getValue().equals(inbox.getStatusId()));
 	}
 	
 	private MessageBean testReadFromDatabase(int msgId) throws MessagingException {
