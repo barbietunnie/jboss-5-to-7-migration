@@ -123,7 +123,7 @@ public class EmailAddrUtil {
 	 * @return true if it has a display name
 	 */
 	public static boolean hasDisplayName(String addr) {
-		if (StringUtil.isEmpty(addr)) return false;
+		if (StringUtils.isBlank(addr)) return false;
 		return addr.matches("^\\s*\\S+.{0,250}\\<.+\\>\\s*$");
 	}
 
@@ -136,7 +136,7 @@ public class EmailAddrUtil {
 	 *         a display name.
 	 */
 	public static String getDisplayName(String addr) {
-		if (StringUtil.isEmpty(addr)) {
+		if (StringUtils.isBlank(addr)) {
 			return null;
 		}
 		int at_pos = addr.lastIndexOf("@");
@@ -186,7 +186,7 @@ public class EmailAddrUtil {
 	 * @return domain name of the address, or null if it's local address
 	 */
 	public static String getEmailDomainName(String addr) {
-		if (StringUtil.isEmpty(addr)) {
+		if (StringUtils.isBlank(addr)) {
 			return null;
 		}
 		int pos;
@@ -276,7 +276,7 @@ public class EmailAddrUtil {
 	private static Pattern removePattern = Pattern.compile(removeRegex);
  	
 	public static boolean isVERPAddress(String recipient) {
-		if (StringUtil.isEmpty(recipient)) {
+		if (StringUtils.isBlank(recipient)) {
 			return false;
 		}
 		Matcher bounceMatcher = bouncePattern.matcher(recipient);

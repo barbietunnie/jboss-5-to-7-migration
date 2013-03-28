@@ -26,7 +26,6 @@ import jpa.service.SenderDataService;
 import jpa.service.MailingListService;
 import jpa.service.ReloadFlagsService;
 import jpa.util.SpringUtil;
-import jpa.util.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -354,7 +353,7 @@ public class RuleLoaderBo implements java.io.Serializable {
 	}
 	
 	public String findSenderIdByAddr(String addr) {
-		if (StringUtil.isEmpty(addr)) {
+		if (StringUtils.isBlank(addr)) {
 			return null;
 		}
 		Map<String, Pattern> patterns = getPatterns();
@@ -433,28 +432,28 @@ public class RuleLoaderBo implements java.io.Serializable {
 	}
 	
 	private String buildReturnPath(SenderData sender) {
-		String domainName = sender.getDomainName().trim();
-		String returnPath = sender.getReturnPathLeft().trim() + "@" + domainName;
+		String domainName = StringUtils.trim(sender.getDomainName());
+		String returnPath = StringUtils.trim(sender.getReturnPathLeft()) + "@" + domainName;
 		if (sender.isVerpEnabled()) {
 			// if VERP is enabled, add VERP addresses to the pattern 
 			String verpSub = sender.getVerpSubDomain();
-			verpSub = (StringUtil.isEmpty(verpSub) ? "" : verpSub.trim() + ".");
-			if (!StringUtil.isEmpty(sender.getVerpInboxName())) {
+			verpSub = (StringUtils.isBlank(verpSub) ? "" : verpSub.trim() + ".");
+			if (StringUtils.isNotBlank(sender.getVerpInboxName())) {
 				returnPath += "|" + sender.getVerpInboxName().trim() + "@" + verpSub + domainName;
 			}
-			if (!StringUtil.isEmpty(sender.getVerpRemoveInbox())) {
+			if (StringUtils.isNotBlank(sender.getVerpRemoveInbox())) {
 				returnPath += "|" + sender.getVerpRemoveInbox().trim() + "@" + verpSub + domainName;
 			}
 		}
 		if (sender.isUseTestAddr()) {
 			// if in test mode, add test address to the pattern
-			if (!StringUtil.isEmpty(sender.getTestFromAddr())) {
+			if (StringUtils.isNotBlank(sender.getTestFromAddr())) {
 				returnPath += "|" + sender.getTestFromAddr().trim();
 			}
-			if (!StringUtil.isEmpty(sender.getTestReplytoAddr())) {
+			if (StringUtils.isNotBlank(sender.getTestReplytoAddr())) {
 				returnPath += "|" + sender.getTestReplytoAddr().trim();
 			}
-			if (!StringUtil.isEmpty(sender.getTestToAddr())) {
+			if (StringUtils.isNotBlank(sender.getTestToAddr())) {
 				returnPath += "|" + sender.getTestToAddr().trim();
 			}
 		}

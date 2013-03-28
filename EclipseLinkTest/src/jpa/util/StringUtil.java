@@ -27,10 +27,6 @@ public final class StringUtil {
         // static only
     }
 
-	public static boolean isEmpty(String str) {
-		return StringUtils.isEmpty(str);
-	}
-
 	/**
 	 * trim the input string from the right to the provided length.
 	 * 

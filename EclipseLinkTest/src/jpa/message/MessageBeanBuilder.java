@@ -30,8 +30,8 @@ import jpa.constant.XHeaderName;
 import jpa.util.EmailAddrUtil;
 import jpa.util.EmailSender;
 import jpa.util.HostUtil;
-import jpa.util.StringUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public final class MessageBeanBuilder {
@@ -309,7 +309,7 @@ public final class MessageBeanBuilder {
 		// TO: Received (non-VERP) > Delivered-To > Received (VERP) > Envelope 
 		if (received_to != null && received_to.length > 0) {
 			String dest = received_to[0] == null ? null : received_to[0].toString();
-			if (!StringUtil.isEmpty(dest) && !EmailAddrUtil.isVERPAddress(dest)) {
+			if (StringUtils.isNotBlank(dest) && !EmailAddrUtil.isVERPAddress(dest)) {
 				msgBean.setTo(received_to);
 			}
 		}
@@ -327,7 +327,7 @@ public final class MessageBeanBuilder {
 				// address. This will cause a disaster to EmailAddress table since all
 				// TO addresses are saved to that table.
 				String dest = received_to[0] == null ? null : received_to[0].toString();
-				if (!StringUtil.isEmpty(dest) && EmailAddrUtil.isVERPAddress(dest)) {
+				if (StringUtils.isNotBlank(dest) && EmailAddrUtil.isVERPAddress(dest)) {
 					String verpDest = EmailAddrUtil.getDestAddrFromVERP(dest);
 					try {
 						Address[] destAddr = InternetAddress.parse(verpDest);
@@ -803,7 +803,7 @@ public final class MessageBeanBuilder {
 
 	final static MailDateFormat mailDateFormat = new MailDateFormat();
 	static java.util.Date getHeaderDate(String text) {
-		if (StringUtil.isEmpty(text)) return null;
+		if (StringUtils.isBlank(text)) return null;
 		try {
 			java.util.Date date = mailDateFormat.parse(text);
 			return date;
@@ -825,7 +825,7 @@ public final class MessageBeanBuilder {
 	 * @deprecated: replaced by above method that uses MailDateFormat class.
 	 */
 	static java.util.Date getHeaderDate_v0(String text) {
-		if (StringUtil.isEmpty(text)) return null;
+		if (StringUtils.isBlank(text)) return null;
 		Matcher m = rfc822Pattern.matcher(text);
 		if (m.find() && m.groupCount() >= 1) {
 			String tsStr = m.group(1);

@@ -37,8 +37,8 @@ import jpa.service.rule.RuleLoaderBo;
 import jpa.service.rule.RuleMatcher;
 import jpa.util.EmailAddrUtil;
 import jpa.util.SpringUtil;
-import jpa.util.StringUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -247,7 +247,7 @@ public class MessageParserBo implements java.io.Serializable {
 				}
 				boolean foundAll = false;
 				String rfcHeaders = sb.toString();
-				if (!StringUtil.isEmpty(rfcHeaders)) {
+				if (StringUtils.isNotBlank(rfcHeaders)) {
 					// rfc822 headers
 					if (isDebugEnabled) {
 						logger.debug("parse() - scan rfc822 headers -----<" + LF + rfcHeaders
@@ -324,12 +324,12 @@ public class MessageParserBo implements java.io.Serializable {
 		for (MsgHeader header : headers) {
 			if (Constants.VERP_BOUNCE_ADDR_XHEADER.equals(header.getName())) {
 				logger.info("parse() - VERP Recipient found: ==>" + header.getValue() + "<==");
-				if (msgBean.getOrigRcpt() != null && !StringUtil.isEmpty(header.getValue())
+				if (msgBean.getOrigRcpt() != null && StringUtils.isNotBlank(header.getValue())
 						&& !msgBean.getOrigRcpt().equalsIgnoreCase(header.getValue())) {
 					logger.warn("parse() - replace original recipient: " + msgBean.getOrigRcpt()
 							+ " with VERP recipient: " + header.getValue());
 				}
-				if (!StringUtil.isEmpty(header.getValue())) {
+				if (StringUtils.isNotBlank(header.getValue())) {
 					// VERP Bounce - always override
 					msgBean.setOrigRcpt(header.getValue());
 				}
@@ -340,7 +340,7 @@ public class MessageParserBo implements java.io.Serializable {
 				if (ruleName == null) {
 					// a bounced mail shouldn't have Return-Path
 					String rPath = msgBean.getReturnPath() == null ? "" : msgBean.getReturnPath();
-					if (StringUtil.isEmpty(rPath) || "<>".equals(rPath.trim())) {
+					if (StringUtils.isBlank(rPath) || "<>".equals(rPath.trim())) {
 						ruleName = RuleNameEnum.SOFT_BOUNCE.getValue();
 					}
 				}
@@ -349,13 +349,13 @@ public class MessageParserBo implements java.io.Serializable {
 		}
 
 		// find sender id by matching Email's TO address to addresses from
-		// Sender records (Send E-mails Return-Path) and EmailTemplate records
-		// (Mailing List address)
+		// Sender records (Sender Email's Return-Path) and List records
+		// (Mailing List addresses)
 		String senderId = ruleLoader.findSenderIdByAddr(msgBean.getToAsString());
 		if (senderId != null) {
 			if (isDebugEnabled)
 				logger.debug("parse() - Sender Id found by matching TO address: " + senderId);
-			if (StringUtil.isEmpty(msgBean.getSenderId())) {
+			if (StringUtils.isBlank(msgBean.getSenderId())) {
 				msgBean.setSenderId(senderId);
 			}
 			else if (!senderId.equals(msgBean.getSenderId())) {
@@ -373,19 +373,19 @@ public class MessageParserBo implements java.io.Serializable {
 					EmailAddress addrVo = emailAddrDao.getByRowId(origVo.getToAddrRowId());
 					if (RuleNameEnum.SEND_MAIL.getValue().equals(addrVo.getRuleName())) {
 						// only if the original message is an "sent" message
-						if (StringUtil.isEmpty(msgBean.getFinalRcpt())
-								&& StringUtil.isEmpty(msgBean.getOrigRcpt())) {
+						if (StringUtils.isBlank(msgBean.getFinalRcpt())
+								&& StringUtils.isBlank(msgBean.getOrigRcpt())) {
 							// and nothing was found from delivery status or rfc822
 							msgBean.setFinalRcpt(addrVo.getAddress());
 						}
 					}
 				}
 				catch (NoResultException e) {
-					logger.warn("parse() - EmailAddress record not found by MsgRefId: "
-							+ msgBean.getMsgRefId());
+					logger.warn("parse() - EmailAddress record not found by RowId: "
+							+ origVo.getToAddrRowId());
 				}
 				// find original sender id
-				if (StringUtil.isEmpty(msgBean.getSenderId())) {
+				if (StringUtils.isBlank(msgBean.getSenderId())) {
 					if (origVo.getSenderDataRowId()!=null) {
 						try {
 							SenderData sender = senderService.getByRowId(origVo.getSenderDataRowId());
@@ -396,7 +396,7 @@ public class MessageParserBo implements java.io.Serializable {
 						}
 					}
 				}
-				if (StringUtil.isEmpty(msgBean.getSubrId())) {
+				if (StringUtils.isBlank(msgBean.getSubrId())) {
 					if (origVo.getSubscriberDataRowId()!=null) {
 						try {
 							SubscriberData subscriber = subrService.getByRowId(origVo.getSubscriberDataRowId());
@@ -415,7 +415,7 @@ public class MessageParserBo implements java.io.Serializable {
 //				}
 			}
 			catch (NoResultException e) {
-				logger.warn("parse() - MsgInbox record not found by MsgId: "
+				logger.warn("parse() - MsgInbox record not found by RowId: "
 						+ msgBean.getMsgRefId());
 			}
 		}
@@ -424,10 +424,10 @@ public class MessageParserBo implements java.io.Serializable {
 		// message body for final recipient using known patterns.
 		if (RuleNameEnum.HARD_BOUNCE.getValue().equals(ruleName)
 				|| RuleNameEnum.SOFT_BOUNCE.getValue().equals(ruleName)) {
-			if (StringUtil.isEmpty(msgBean.getFinalRcpt())
-					&& StringUtil.isEmpty(msgBean.getOrigRcpt())) {
+			if (StringUtils.isBlank(msgBean.getFinalRcpt())
+					&& StringUtils.isBlank(msgBean.getOrigRcpt())) {
 				String finalRcpt = BounceAddressFinder.getInstance().find(body);
-				if (!StringUtil.isEmpty(finalRcpt)) {
+				if (StringUtils.isNotBlank(finalRcpt)) {
 					logger.info("parse() - Final Recipient found from message body: " + finalRcpt);
 					msgBean.setFinalRcpt(finalRcpt);
 				}
@@ -588,7 +588,7 @@ public class MessageParserBo implements java.io.Serializable {
 				if (line.toLowerCase().startsWith("to:")) {
 					// "To" ":" generic-address
 					String token = line.substring(3).trim();
-					if (StringUtil.isEmpty(msgBean.getFinalRcpt())) {
+					if (StringUtils.isBlank(msgBean.getFinalRcpt())) {
 						msgBean.setFinalRcpt(token);
 					}
 					else if (EmailAddrUtil.compareEmailAddrs(msgBean.getFinalRcpt(), token) != 0) {
@@ -602,7 +602,7 @@ public class MessageParserBo implements java.io.Serializable {
 				else if (line.toLowerCase().startsWith("subject:")) {
 					// "Subject" ":" subject text
 					String token = line.substring(8).trim();
-					if (StringUtil.isEmpty(msgBean.getOrigSubject())) {
+					if (StringUtils.isBlank(msgBean.getOrigSubject())) {
 						msgBean.setOrigSubject(token);
 					}
 					logger.info("parseRfc() - Original_Subject(RFC822 To) found: ==>" + token
@@ -612,7 +612,7 @@ public class MessageParserBo implements java.io.Serializable {
 				else if (line.toLowerCase().startsWith("message-id:")) {
 					// "Message-Id" ":" SMTP message id
 					String token = line.substring(11).trim();
-					if (StringUtil.isEmpty(msgBean.getSmtpMessageId())) {
+					if (StringUtils.isBlank(msgBean.getSmtpMessageId())) {
 						msgBean.setRfcMessageId(token);
 					}
 					logger.info("parseRfc() - Smtp Message-Id(RFC822 To) found: ==>" + token
