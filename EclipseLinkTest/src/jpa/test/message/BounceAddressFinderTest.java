@@ -8,8 +8,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import jpa.message.BounceAddressFinder;
-import jpa.util.StringUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +57,7 @@ public class BounceAddressFinderTest {
 					String body = sb.toString();
 					sb = new StringBuilder();
 					String addr = BounceAddressFinder.getInstance().find(body);
-					if (StringUtil.isEmpty(addr)) {
+					if (StringUtils.isBlank(addr)) {
 						logger.info("(" + count + ") - not matched ##########.");
 					}
 					else {

@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import jpa.data.preload.RuleNameEnum;
-import jpa.util.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -113,7 +112,7 @@ final class RfcCodeScan {
 	private String examineBody(String body, int pass) {
 		if (isDebugEnabled)
 			logger.debug("Entering the examineBody method, pass " + pass);
-		if (StringUtil.isEmpty(body)) { // sanity check
+		if (StringUtils.isBlank(body)) { // sanity check
 			return null;
 		}
 		RuleNameEnum RuleName = null;

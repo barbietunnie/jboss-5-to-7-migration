@@ -8,8 +8,8 @@ import javax.persistence.Query;
 
 import jpa.constant.Constants;
 import jpa.model.SenderData;
-import jpa.util.StringUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -147,15 +147,15 @@ public class SenderDataService {
 	
 	private void validateSender(SenderData sender) {
 		if (sender.isUseTestAddr()) {
-			if (StringUtil.isEmpty(sender.getTestToAddr())) {
+			if (StringUtils.isBlank(sender.getTestToAddr())) {
 				throw new IllegalStateException("Test TO Address was null");
 			}
 		}
 		if (sender.isVerpEnabled()) {
-			if (StringUtil.isEmpty(sender.getVerpInboxName())) {
+			if (StringUtils.isBlank(sender.getVerpInboxName())) {
 				throw new IllegalStateException("VERP bounce inbox name was null");
 			}
-			if (StringUtil.isEmpty(sender.getVerpRemoveInbox())) {
+			if (StringUtils.isBlank(sender.getVerpRemoveInbox())) {
 				throw new IllegalStateException("VERP remove inbox name was null");
 			}
 		}

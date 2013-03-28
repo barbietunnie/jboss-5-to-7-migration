@@ -293,10 +293,10 @@ public class EmailSender {
 	 */
 	public static void send(String from, String to, String subject, String body)
 			throws MessagingException {
-		if (StringUtil.isEmpty(to)) {
+		if (StringUtils.isBlank(to)) {
 			throw new MessagingException("TO address is blank.");
 		}
-		if (StringUtil.isEmpty(subject)) {
+		if (StringUtils.isBlank(subject)) {
 			throw new MessagingException("Subject is blank.");
 		}
 		getEmailProperties();
