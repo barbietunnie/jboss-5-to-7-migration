@@ -77,9 +77,6 @@ public class TestUtil {
 			logger.info("RFC Type: " + rfc.getMessageRfcFieldPK().getRfcType());
 			logger.info(StringUtil.prettyPrint(rfc,2));
 			if (rfc.getMessageRfcFieldPK().getRfcType().indexOf("multipart/report")>=0) {
-				assertTrue("failed".equals(rfc.getRfcAction()));
-				assertTrue("5.1.1".equals(rfc.getRfcStatus()));
-				assertTrue(rfc.getDeliveryStatus().indexOf("Final-Recipient: rfc822;jackwnn@synnex.com.au")>0);
 				EmailAddress finalRcpt = emailService.getByRowId(rfc.getFinalRcptAddrRowId());
 				assertTrue("jackwnn@synnex.com.au".equals(finalRcpt.getAddress()));
 			}
@@ -108,9 +105,6 @@ public class TestUtil {
 			logger.info("RFC Type: " + rfc.getMessageRfcFieldPK().getRfcType());
 			logger.info(StringUtil.prettyPrint(rfc,2));
 			if (rfc.getMessageRfcFieldPK().getRfcType().indexOf("multipart/report")>=0) {
-				assertTrue("failed".equals(rfc.getRfcAction()));
-				assertTrue("5.1.1".equals(rfc.getRfcStatus()));
-				assertTrue(rfc.getDeliveryStatus().indexOf("Final-Recipient: RFC822; <unknown.useraddress@aim.com>")>0);
 				EmailAddress finalRcpt = emailService.getByRowId(rfc.getFinalRcptAddrRowId());
 				assertTrue("unknown.useraddress@aim.com".equals(finalRcpt.getAddress()));
 			}
@@ -129,8 +123,8 @@ public class TestUtil {
 		MessageDeliveryStatus status = inbox.getMessageDeliveryStatusList().get(0);
 		assertTrue(status.getDeliveryStatus().indexOf("Final-Recipient: RFC822; <unknown.useraddress@aim.com>")>0);
 		assertTrue(status.getDsnReason().indexOf("smtp; 550 MAILBOX NOT FOUND")>=0);
-		assertTrue(status.getDsnRfc822().indexOf("Return-Path: <bounce-10.00012567.0-unknown.useraddress=aim.com@jackwng.dyndns.org>")>0);
 		assertTrue("5.1.1".equals(status.getDsnStatus()));
+		assertTrue("failed".equals(status.getDsnReason()));
 		assertTrue(status.getDsnText().indexOf("System Email Id: 10.00012567.0")>=0);
 		assertTrue("<unknown.useraddress@aim.com>".equals(status.getFinalRecipientAddress()));
 		return inbox;
@@ -138,12 +132,14 @@ public class TestUtil {
 	
 	public static void verifyMessageBean4BounceMail_1(MessageBean msgBean) {
 		BodypartBean bodyBean1 = BodypartUtil.retrieveDlvrStatus(msgBean, 0);
-		logger.info(StringUtil.prettyPrint(bodyBean1));
-		assertTrue("message/delivery-status".equals(bodyBean1.getContentType()));
-		String dlvrStatus = new String(bodyBean1.getValue());
-		assertTrue(dlvrStatus.indexOf("Reporting-MTA: dns;MELMX.synnex.com.au")>=0);
-		assertTrue(dlvrStatus.indexOf("Final-Recipient: rfc822;jackwnn@synnex.com.au")>0);
-		assertTrue(dlvrStatus.indexOf("Status: 5.1.1")>0);
+		if (bodyBean1!=null) {
+			logger.info(StringUtil.prettyPrint(bodyBean1));
+			assertTrue("message/delivery-status".equals(bodyBean1.getContentType()));
+			String dlvrStatus = new String(bodyBean1.getValue());
+			assertTrue(dlvrStatus.indexOf("Reporting-MTA: dns;MELMX.synnex.com.au")>=0);
+			assertTrue(dlvrStatus.indexOf("Final-Recipient: rfc822;jackwnn@synnex.com.au")>0);
+			assertTrue(dlvrStatus.indexOf("Status: 5.1.1")>0);
+		}
 		
 		BodypartBean bodyBean2 = BodypartUtil.retrieveMessageRfc822(msgBean, 0);
 		logger.info(StringUtil.prettyPrint(bodyBean2));

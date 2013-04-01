@@ -23,7 +23,7 @@ public abstract class BaseModel implements java.io.Serializable {
 	@Column(name="Row_Id", updatable=false)
 	protected int rowId = 0;
 
-	@Column(name="StatusId", length=1, nullable=false, columnDefinition="char not null")
+	@Column(name="StatusId", length=1, nullable=false, columnDefinition="char not null default 'A'")
 	private String statusId = StatusId.ACTIVE.getValue();
 	@Column(name="UpdtTime", nullable=false)
 	//@Version // revisit until JPA knows transaction boundary with Optimistic Locking

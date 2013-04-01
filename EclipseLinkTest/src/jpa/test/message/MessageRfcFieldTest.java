@@ -138,7 +138,6 @@ public class MessageRfcFieldTest {
 		hdr1 = new MessageRfcField();
 		MessageRfcFieldPK pk1 = new MessageRfcFieldPK(inbox1,"message/rfc822");
 		hdr1.setMessageRfcFieldPK(pk1);
-		hdr1.setRfcStatus(null);
 		EmailAddress finalRcpt = addrService.findSertAddress("jackwnn@synnex.com.au");
 		hdr1.setFinalRcptAddrRowId(finalRcpt.getRowId());
 		hdr1.setOriginalMsgSubject("May 74% OFF");
@@ -200,25 +199,15 @@ public class MessageRfcFieldTest {
 			"Return-Path: jackwng@gmail.com" + LF +
 			"X-OriginalArrivalTime: 13 May 2008 22:50:31.0508 (UTC) FILETIME=[BF33D940:01C8B54B]" + LF +
 			"Date: 14 May 2008 08:50:31 +1000");
-		hdr1.setDeliveryStatus("Reporting-MTA: dns;MELMX.synnex.com.au" + LF +
-				"Received-From-MTA: dns;asp-6.reflexion.net" + LF +
-				"Arrival-Date: Wed, 14 May 2008 08:50:31 +1000" + LF + LF +
-				"Final-Recipient: rfc822;jackwnn@synnex.com.au" + LF +
-				"Action: failed" + LF +
-				"Status: 5.1.1"
-			);
 		service.insert(hdr1);
 		
 		hdr2 = new MessageRfcField();
 		MessageRfcFieldPK pk2 = new MessageRfcFieldPK(inbox1,"multipart/report; report-type=");
 		hdr2.setMessageRfcFieldPK(pk2);
-		hdr2.setRfcStatus("5.1.1");
-		hdr2.setRfcAction("failed");
 		hdr2.setFinalRcptAddrRowId(finalRcpt.getRowId());
 		hdr1.setOriginalMsgSubject("May 74% OFF");
 		hdr2.setMessageId("<1631635827.01357742709854.JavaMail.wangjack@WANGJACKDEV>");
 		hdr2.setDsnText(hdr1.getDsnText());
-		hdr2.setDeliveryStatus(hdr1.getDeliveryStatus());
 		service.insert(hdr2);
 		
 		hdr3 = new MessageRfcField();

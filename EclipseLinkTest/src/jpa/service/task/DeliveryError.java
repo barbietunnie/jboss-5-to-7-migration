@@ -102,11 +102,14 @@ public class DeliveryError extends TaskBaseAdaptor {
 		deliveryStatusVo.setMessageDeliveryStatusPK(pk);
 		
 		deliveryStatusVo.setSmtpMessageId(StringUtils.left(messageBean.getRfcMessageId(),255));
-		deliveryStatusVo.setDeliveryStatus(messageBean.getDsnDlvrStat());
+		if (StringUtils.isNotBlank(messageBean.getDsnDlvrStat())) {
+			deliveryStatusVo.setDeliveryStatus(messageBean.getDsnDlvrStat());
+		}
+		else if (StringUtils.isNotBlank(messageBean.getDsnText())) {
+			deliveryStatusVo.setDsnText(messageBean.getDsnText());
+		}
 		deliveryStatusVo.setDsnReason(StringUtils.left(messageBean.getDiagnosticCode(),255));
-		deliveryStatusVo.setDsnRfc822(messageBean.getDsnRfc822());
 		deliveryStatusVo.setDsnStatus(StringUtils.left(messageBean.getDsnStatus(),50));
-		deliveryStatusVo.setDsnText(messageBean.getDsnText());
 		
 		deliveryStatusVo.setFinalRecipientAddress(StringUtils.left(messageBean.getFinalRcpt(),255));
 		

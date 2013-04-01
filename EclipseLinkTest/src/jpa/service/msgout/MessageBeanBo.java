@@ -16,6 +16,7 @@ import jpa.exception.DataValidationException;
 import jpa.message.BodypartBean;
 import jpa.message.MessageBean;
 import jpa.message.MsgHeader;
+import jpa.message.util.MsgHeaderUtil;
 import jpa.model.EmailAddress;
 import jpa.model.SenderData;
 import jpa.model.SubscriberData;
@@ -30,6 +31,7 @@ import jpa.service.EmailAddressService;
 import jpa.service.SenderDataService;
 import jpa.service.SubscriberDataService;
 import jpa.service.rule.RuleLogicService;
+import jpa.util.HtmlUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -152,104 +154,91 @@ public class MessageBeanBo {
 			msgBean.setBody(msgBody);
 		}
 		
-		List<MessageDeliveryStatus> statusList = msgVo.getMessageDeliveryStatusList();
-		if (statusList!=null) {
-			for (MessageDeliveryStatus status : statusList) {
-				if (StringUtils.isNotBlank(status.getDeliveryStatus())) {
-					BodypartBean aNode = new BodypartBean();
-					aNode.setContentType("message/delivery-status");
-					aNode.setValue(status.getDeliveryStatus());
-					aNode.setSize(aNode.getValue().length);
-					msgBean.put(aNode);
-					List<MsgHeader> headers = new ArrayList<MsgHeader>(); 
-					aNode.setHeaders(headers);
-					if (status.getSmtpMessageId()!=null) {
-						MsgHeader header = new MsgHeader();
-						header.setName("Message-Id");
-						header.setValue(status.getSmtpMessageId());
-						headers.add(header);
-					}
-					if (status.getFinalRecipientAddress()!=null) {
-						MsgHeader header = new MsgHeader();
-						header.setName("Final-Recipient");
-						header.setValue("rfc822;" + status.getFinalRecipientAddress());
-						headers.add(header);
-					}
-					if (status.getOriginalRcptAddrRowId()!=null) {
-						try {
-							EmailAddress origAddr = emailService.getByRowId(status.getOriginalRcptAddrRowId());
-							MsgHeader header = new MsgHeader();
-							header.setName("To");
-							header.setValue(origAddr.getAddress());
-							headers.add(header);
-						}
-						catch (NoResultException e) {}
-					}
-					if (status.getDsnReason()!=null) {
-						MsgHeader header = new MsgHeader();
-						header.setName("Action");
-						header.setValue(status.getDsnReason());
-						headers.add(header);
-					}
-					if (status.getDsnStatus()!=null) {
-						MsgHeader header = new MsgHeader();
-						header.setName("Status");
-						header.setValue(status.getDsnStatus());
-						headers.add(header);
-					}
-				}
-				if (StringUtils.isNotBlank(status.getDsnText())) {
-					BodypartBean aNode = new BodypartBean();
-					aNode.setContentType("message/report");
-					aNode.setValue(status.getDsnText());
-					aNode.setSize(aNode.getValue().length);
-					msgBean.put(aNode);
-				}
-			}
-		}
+		setDeliveryStatus(msgVo, msgBean, msgBean);
 		
 		List<MessageRfcField> rfcList = msgVo.getMessageRfcFieldList();
-		if (rfcList!=null) {
+		if (rfcList!=null && rfcList.size()>0) {
 			for (MessageRfcField rfc : rfcList) {
 				BodypartBean aNode = new BodypartBean();
 				aNode.setContentType(rfc.getMessageRfcFieldPK().getRfcType());
-				aNode.setValue(rfc.getDsnRfc822());
+				if (isRfc822(rfc)) {
+					msgBean.setOrigSubject(rfc.getOriginalMsgSubject());
+					msgBean.setSmtpMessageId(rfc.getMessageId());
+					msgBean.setDsnRfc822(rfc.getDsnRfc822());
+					msgBean.setDsnText(rfc.getDsnText());
+					aNode.setValue(rfc.getDsnRfc822());
+				}
+				if (StringUtils.isNotBlank(rfc.getOriginalRecipient())) {
+					msgBean.setOrigRcpt(rfc.getOriginalRecipient());
+				}
+				if (rfc.getFinalRcptAddrRowId()!=null) {
+					try {
+						EmailAddress finalRcpt = emailService.getByRowId(rfc.getFinalRcptAddrRowId());
+						msgBean.setFinalRcpt(finalRcpt.getAddress());
+					}
+					catch (NoResultException e) {}
+				}
 				aNode.setSize(aNode.getValue()==null?0:aNode.getValue().length);
-				List<MsgHeader> headers = new ArrayList<MsgHeader>();
-				aNode.setHeaders(headers);
-				if (rfc.getDsnRfc822()!=null) {
-					// build headers
+				if (aNode.getValue()!=null || StringUtils.isNotBlank(msgBean.getDsnText())) {
+					BodypartBean textNode = new BodypartBean();
+					if (HtmlUtil.isHTML(msgBean.getDsnText())) {
+						textNode.setContentType("text/html");
+					}
+					else {
+						textNode.setContentType("text/plain");
+					}
+					String value = "";
+					if (StringUtils.isNotBlank(msgBean.getDsnRfc822())) {
+						value = msgBean.getDsnRfc822();
+					}
+					if (StringUtils.isNotBlank(msgBean.getDsnText())) {
+						value += msgBean.getDsnText();
+					}
+					textNode.setValue(value);
+					textNode.setSize(textNode.getValue().length);
+					aNode.put(textNode);
+					if (rfc.getDsnRfc822()!=null) {
+						List<MsgHeader> headers = MsgHeaderUtil.parseRfc822Headers(rfc.getDsnRfc822());
+						textNode.setHeaders(headers);
+					}
+					else {
+						List<MsgHeader> headers = new ArrayList<MsgHeader>();
+						if (rfc.getMessageId()!=null) {
+							MsgHeader header = new MsgHeader();
+							header.setName("Message-Id");
+							header.setValue(rfc.getMessageId());
+							headers.add(header);
+						}
+						if (rfc.getOriginalMsgSubject()!=null) {
+							MsgHeader header = new MsgHeader();
+							header.setName("Subject");
+							header.setValue(rfc.getOriginalMsgSubject());
+							headers.add(header);
+						}
+						if (rfc.getOriginalRecipient()!=null) {
+							MsgHeader header = new MsgHeader();
+							header.setName("To");
+							header.setValue(rfc.getOriginalRecipient());
+							headers.add(header);
+						}
+						if (StringUtils.isNotBlank(msgBean.getFinalRcpt())) {
+							MsgHeader header = new MsgHeader();
+							header.setName("Final-Recipient");
+							header.setValue(msgBean.getFinalRcpt());
+							headers.add(header);
+						}
+						if (StringUtils.isNotBlank(msgBean.getOrigRcpt())) {
+							MsgHeader header = new MsgHeader();
+							header.setName("Original-Recipient");
+							header.setValue(msgBean.getOrigRcpt());
+							headers.add(header);
+						}
+						if (headers.size()>0) {
+							textNode.setHeaders(headers);
+						}
+					}
 				}
-				if (rfc.getMessageId()!=null) {
-					MsgHeader header = new MsgHeader();
-					header.setName("Message-Id");
-					header.setValue(rfc.getMessageId());
-					headers.add(header);
-				}
-				if (rfc.getOriginalMsgSubject()!=null) {
-					MsgHeader header = new MsgHeader();
-					header.setName("Subject");
-					header.setValue(rfc.getOriginalMsgSubject());
-					headers.add(header);
-				}
-				if (rfc.getOriginalRecipient()!=null) {
-					MsgHeader header = new MsgHeader();
-					header.setName("To");
-					header.setValue(rfc.getOriginalRecipient());
-					headers.add(header);
-				}
-				if (rfc.getRfcAction()!=null) {
-					MsgHeader header = new MsgHeader();
-					header.setName("Action");
-					header.setValue(rfc.getRfcAction());
-					headers.add(header);
-				}
-				if (rfc.getRfcStatus()!=null) {
-					MsgHeader header = new MsgHeader();
-					header.setName("Status");
-					header.setValue(rfc.getRfcStatus());
-					headers.add(header);
-				}
+				msgBean.put(aNode);
 			}
 		}
 
@@ -364,4 +353,82 @@ public class MessageBeanBo {
 		return msgBean;
 	}
 
+	private void setDeliveryStatus(MessageInbox msgVo, MessageBean msgBean, BodypartBean subNode) {
+		List<MessageDeliveryStatus> statusList = msgVo.getMessageDeliveryStatusList();
+		if (statusList!=null && statusList.size()>0) {
+			for (MessageDeliveryStatus status : statusList) {
+				BodypartBean aNode = new BodypartBean();
+				aNode.setContentType("message/delivery-status");
+				aNode.setValue(status.getDeliveryStatus());
+				aNode.setSize(aNode.getValue().length);
+				subNode.put(aNode);
+				msgBean.setSmtpMessageId(status.getSmtpMessageId());
+				msgBean.setDsnDlvrStat(status.getDeliveryStatus());
+				msgBean.setDiagnosticCode(status.getDsnReason());
+				msgBean.setDsnStatus(status.getDsnStatus());
+				msgBean.setDsnText(status.getDsnText());
+				msgBean.setFinalRcpt(status.getFinalRecipientAddress());
+				if (status.getOriginalRcptAddrRowId()!=null) {
+					try {
+						EmailAddress origAddr = emailService.getByRowId(status.getOriginalRcptAddrRowId());
+						msgBean.setOrigRcpt(origAddr.getAddress());
+					}
+					catch (NoResultException e) {}
+				}
+ 				List<MsgHeader> headers = new ArrayList<MsgHeader>(); 
+				if (status.getSmtpMessageId()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Message-Id");
+					header.setValue(status.getSmtpMessageId());
+					headers.add(header);
+				}
+				if (status.getFinalRecipientAddress()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Final-Recipient");
+					header.setValue("rfc822;" + status.getFinalRecipientAddress());
+					headers.add(header);
+				}
+				if (StringUtils.isNotBlank(msgBean.getOrigRcpt())) {
+					MsgHeader header = new MsgHeader();
+					header.setName("To");
+					header.setValue(msgBean.getOrigRcpt());
+					headers.add(header);
+				}
+				if (status.getDsnReason()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Action");
+					header.setValue(status.getDsnReason());
+					headers.add(header);
+				}
+				if (status.getDsnStatus()!=null) {
+					MsgHeader header = new MsgHeader();
+					header.setName("Status");
+					header.setValue(status.getDsnStatus());
+					headers.add(header);
+				}
+				if (headers.size()>0) {
+					subNode.setHeaders(headers);
+				}
+			}
+		}
+	}
+
+	boolean isReport(MessageDeliveryStatus rfc) {
+		if (StringUtils.isNotBlank(rfc.getDsnReason())
+				|| StringUtils.isNotBlank(rfc.getDsnStatus())
+				|| StringUtils.isNotBlank(rfc.getDeliveryStatus())) {
+			return true;
+		}
+		return false;
+	}
+
+	boolean isRfc822(MessageRfcField rfc) {
+		if (StringUtils.isNotBlank(rfc.getMessageId())
+				|| StringUtils.isNotBlank(rfc.getOriginalMsgSubject())
+				|| StringUtils.isNotBlank(rfc.getDsnRfc822())
+				|| StringUtils.isNotBlank(rfc.getDsnText())) {
+			return true;
+		}
+		return false;
+	}
 }

@@ -37,9 +37,6 @@ public class MessageDeliveryStatus extends BaseModel implements Serializable
 	private String dsnText = null;
 	@Lob
 	@Column(length=32700, nullable=true)
-	private String dsnRfc822 = null;
-	@Lob
-	@Column(length=32700, nullable=true)
 	private String deliveryStatus = null;
 
 	public MessageDeliveryStatus() {}
@@ -107,14 +104,6 @@ public class MessageDeliveryStatus extends BaseModel implements Serializable
 
 	public void setDsnText(String dsnText) {
 		this.dsnText = dsnText;
-	}
-
-	public String getDsnRfc822() {
-		return dsnRfc822;
-	}
-
-	public void setDsnRfc822(String dsnRfc822) {
-		this.dsnRfc822 = dsnRfc822;
 	}
 
 	public String getDeliveryStatus() {
