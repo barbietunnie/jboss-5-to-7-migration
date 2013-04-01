@@ -34,6 +34,8 @@ import jpa.model.message.MessageAddress;
 import jpa.model.message.MessageAttachment;
 import jpa.model.message.MessageAttachmentPK;
 import jpa.model.message.MessageClickCount;
+import jpa.model.message.MessageDeliveryStatus;
+import jpa.model.message.MessageDeliveryStatusPK;
 import jpa.model.message.MessageHeader;
 import jpa.model.message.MessageHeaderPK;
 import jpa.model.message.MessageInbox;
@@ -358,36 +360,50 @@ public class MessageInboxBo {
 			}
 		}
 		
-		// save RFC fields
+		// save Delivery Status
 		if (msgBean.getReport() != null) {
 			MessageNode mNode = msgBean.getReport();
 			BodypartBean aNode = mNode.getBodypartNode();
-			MessageRfcField rfcFieldsVo = new MessageRfcField();
-			MessageRfcFieldPK pk = new MessageRfcFieldPK(msgVo,StringUtils.left(aNode.getContentType(),50));
-			rfcFieldsVo.setMessageRfcFieldPK(pk);
-			rfcFieldsVo.setRfcStatus(StringUtils.left(msgBean.getDsnStatus(),30));
-			rfcFieldsVo.setRfcAction(StringUtils.left(msgBean.getDsnAction(),30));
-			if (StringUtils.isNotBlank(msgBean.getFinalRcpt())) {
-				EmailAddress frcpt = emailAddrDao.findSertAddress(msgBean.getFinalRcpt());
-				rfcFieldsVo.setFinalRcptAddrRowId(frcpt.getRowId());
+			BodypartBean dlvrStatBean = BodypartUtil.retrieveDlvrStatus(aNode, 0);
+			if (dlvrStatBean == null) {
+				dlvrStatBean = BodypartUtil.retrieveMDNReceipt(aNode, 0);
 			}
-			rfcFieldsVo.setOriginalRecipient(StringUtils.left(msgBean.getOrigRcpt(),255));
-			//rfcFieldsVo.setOriginalMsgSubject(StringUtils.left(msgBean.getOrigSubject(),255));
-			//rfcFieldsVo.setMessageId(StringUtils.left(msgBean.getSmtpMessageId(),255));
-			rfcFieldsVo.setDsnText(msgBean.getDsnText());
-			rfcFieldsVo.setDsnRfc822(msgBean.getDiagnosticCode()); // TODO: revisit
-			rfcFieldsVo.setDeliveryStatus(msgBean.getDsnDlvrStat());
-			msgVo.getMessageRfcFieldList().add(rfcFieldsVo);
+			if (dlvrStatBean == null) {
+				List<BodypartBean> bpBeans = BodypartUtil.retrieveReportText(aNode, 0);
+				if (bpBeans!=null && bpBeans.size()>0) {
+					dlvrStatBean = bpBeans.get(0); // TODO revisit
+				}
+			}
+			if (dlvrStatBean != null && StringUtils.isNotBlank(msgBean.getFinalRcpt())) {
+				EmailAddress emailAddrVo = emailAddrDao.findSertAddress(msgBean.getFinalRcpt());
+				MessageDeliveryStatus deliveryStatusVo = new MessageDeliveryStatus();
+				MessageDeliveryStatusPK pk = new MessageDeliveryStatusPK(msgVo, emailAddrVo.getRowId());
+				deliveryStatusVo.setMessageDeliveryStatusPK(pk);
+				deliveryStatusVo.setSmtpMessageId(StringUtils.left(msgBean.getRfcMessageId(),255));
+				if (StringUtils.isNotBlank(msgBean.getDsnDlvrStat())) {
+					deliveryStatusVo.setDeliveryStatus(msgBean.getDsnDlvrStat());
+				}
+				else if (StringUtils.isNotBlank(msgBean.getDsnText())) {
+					deliveryStatusVo.setDsnText(msgBean.getDsnText());
+				}
+				deliveryStatusVo.setDsnReason(StringUtils.left(msgBean.getDiagnosticCode(),255));
+				deliveryStatusVo.setDsnStatus(StringUtils.left(msgBean.getDsnStatus(),50));
+				deliveryStatusVo.setFinalRecipientAddress(StringUtils.left(msgBean.getFinalRcpt(),255));
+				if (StringUtils.isNotBlank(msgBean.getOrigRcpt())) {
+					EmailAddress vo = emailAddrDao.findSertAddress(msgBean.getOrigRcpt());
+					deliveryStatusVo.setOriginalRcptAddrRowId(vo.getRowId());
+				}
+				msgVo.getMessageDeliveryStatusList().add(deliveryStatusVo);
+			}
 		}
-		
+
+		// save RFC fields
 		if (msgBean.getRfc822() != null) {
 			MessageNode mNode = msgBean.getRfc822();
 			BodypartBean aNode = mNode.getBodypartNode();
 			MessageRfcField rfcFieldsVo = new MessageRfcField();
 			MessageRfcFieldPK pk = new MessageRfcFieldPK(msgVo,StringUtils.left(aNode.getContentType(),50));
 			rfcFieldsVo.setMessageRfcFieldPK(pk);
-			//rfcFieldsVo.setRfcStatus(StringUtil.cut(msgBean.getDsnStatus(),30));
-			//rfcFieldsVo.setRfcAction(StringUtil.cut(msgBean.getDsnAction(),30));
 			if (StringUtils.isNotBlank(msgBean.getFinalRcpt())) {
 				EmailAddress frcpt = emailAddrDao.findSertAddress(msgBean.getFinalRcpt());
 				rfcFieldsVo.setFinalRcptAddrRowId(frcpt.getRowId());
@@ -397,7 +413,6 @@ public class MessageInboxBo {
 			rfcFieldsVo.setMessageId(StringUtils.left(msgBean.getSmtpMessageId(),255));
 			rfcFieldsVo.setDsnText(msgBean.getDsnText());
 			rfcFieldsVo.setDsnRfc822(msgBean.getDsnRfc822());
-			//rfcFieldsVo.setDeliveryStatus(msgBean.getDsnDlvrStat());
 			msgVo.getMessageRfcFieldList().add(rfcFieldsVo);
 		}
 		
@@ -413,7 +428,8 @@ public class MessageInboxBo {
 					EmailAddress frcpt = emailAddrDao.findSertAddress(msgBean.getFinalRcpt());
 					rfcFieldsVo.setFinalRcptAddrRowId(frcpt.getRowId());
 				}
-				rfcFieldsVo.setOriginalMsgSubject(StringUtils.left(msgBean.getOrigRcpt(),255));
+				rfcFieldsVo.setOriginalRecipient(StringUtils.left(msgBean.getOrigRcpt(),255));
+				rfcFieldsVo.setOriginalMsgSubject(StringUtils.left(msgBean.getOrigSubject(),255));
 				msgVo.getMessageRfcFieldList().add(rfcFieldsVo);
 			}
 		}
@@ -438,6 +454,9 @@ public class MessageInboxBo {
 			msgStreamVo.setMsgStream((byte[]) msgBean.getHashMap().get(
 					MessageBeanBuilder.MSG_RAW_STREAM));
 			msgVo.setMessageStream(msgStreamVo);
+		}
+		if (isDebugEnabled) {
+			logger.debug("Message to update" + LF + StringUtil.prettyPrint(msgVo));
 		}
 		msgInboxDao.update(msgVo);
 

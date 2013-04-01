@@ -23,10 +23,6 @@ public class MessageRfcField extends BaseModel implements Serializable
 	@Column(name="FinalRcptAddrRowId", nullable=true, columnDefinition="Integer")
 	private Integer finalRcptAddrRowId;
 
-	@Column(length=30, nullable=true)
-	private String rfcStatus = null;
-	@Column(length=30, nullable=true)
-	private String rfcAction = null;
 	@Column(length=255, nullable=true)
 	private String originalRecipient = null;
 	@Column(length=255, nullable=true)
@@ -39,9 +35,6 @@ public class MessageRfcField extends BaseModel implements Serializable
 	@Lob
 	@Column(length=32700, nullable=true)
 	private String dsnRfc822 = null;
-	@Lob
-	@Column(length=32700, nullable=true)
-	private String deliveryStatus = null;
 
 	public MessageRfcField() {}
 
@@ -59,22 +52,6 @@ public class MessageRfcField extends BaseModel implements Serializable
 
 	public void setFinalRcptAddrRowId(Integer finalRcptAddrRowId) {
 		this.finalRcptAddrRowId = finalRcptAddrRowId;
-	}
-
-	public String getRfcStatus() {
-		return rfcStatus;
-	}
-
-	public void setRfcStatus(String rfcStatus) {
-		this.rfcStatus = rfcStatus;
-	}
-
-	public String getRfcAction() {
-		return rfcAction;
-	}
-
-	public void setRfcAction(String rfcAction) {
-		this.rfcAction = rfcAction;
 	}
 
 	public String getOriginalRecipient() {
@@ -115,13 +92,5 @@ public class MessageRfcField extends BaseModel implements Serializable
 
 	public void setDsnRfc822(String dsnRfc822) {
 		this.dsnRfc822 = dsnRfc822;
-	}
-
-	public String getDeliveryStatus() {
-		return deliveryStatus;
-	}
-
-	public void setDeliveryStatus(String deliveryStatus) {
-		this.deliveryStatus = deliveryStatus;
 	}
 }

@@ -70,10 +70,10 @@ public class DeliveryErrorTest {
 		mBean.setMsgId(null);
 		String finalRcpt = "event.alert@localhost";
 		mBean.setFinalRcpt(finalRcpt);
-		mBean.setDsnDlvrStat("5.1.1");
-		mBean.setDsnStatus("5.3.0");
+		//mBean.setDsnAction("failed");
+		mBean.setDsnStatus("5.1.1");
 		mBean.setDiagnosticCode("smtp; 554 delivery error: dd This user doesn't have a yahoo.com account (unknown.useraddress@yahoo.com) [0] - mta522.mail.mud.yahoo.com");
-		mBean.setDsnText("The delivery of following message failed due to:" + LF +
+		mBean.setDsnDlvrStat("The delivery of following message failed due to:" + LF +
 				" 511 5.1.1 Invalid Destination Mailbox Address." + LF +
 				"Invalid Addresses..., TO addr: unknown.useraddress@nc.rr.com");
 
@@ -124,7 +124,7 @@ public class DeliveryErrorTest {
 				assertTrue(mBean.getDsnDlvrStat().equals(status.getDeliveryStatus()));
 				assertTrue(mBean.getDiagnosticCode().equals(status.getDsnReason()));
 				assertTrue(mBean.getDsnStatus().equals(status.getDsnStatus()));
-				assertTrue(mBean.getDsnText().equals(status.getDsnText()));
+				assertTrue(mBean.getDiagnosticCode().equals(status.getDsnReason()));
 				finalRcptFound = true;
 			}
 		}

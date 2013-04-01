@@ -13,10 +13,12 @@ import jpa.service.msgin.MessageParserBo;
 import jpa.service.msgout.MessageBeanBo;
 import jpa.util.TestUtil;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -42,12 +44,19 @@ public class MessageBeanBoTest {
 	@Autowired
 	MessageParserBo msgParser;
 
-	@Test
-	public void testMessageBeanBo() throws MessagingException, IOException {
+	private int msgId = -1;
+
+	@Before
+	@Rollback(false)
+	public void prepare() throws MessagingException, IOException {
 		String fileName = "BouncedMail_1.txt";
 		MessageBean msgBean = readFromFile(fileName);
 		msgParser.parse(msgBean);
-		int msgId = inboxBo.saveMessage(msgBean);
+		msgId = inboxBo.saveMessage(msgBean);
+	}
+
+	@Test
+	public void testMessageBeanBo() throws MessagingException, IOException {
 		MessageInbox inbox = inboxService.getAllDataByPrimaryKey(msgId);
 		MessageBean mBean = msgBeanBo.createMessageBean(inbox);
 		TestUtil.verifyMessageBean4BounceMail_1(mBean);

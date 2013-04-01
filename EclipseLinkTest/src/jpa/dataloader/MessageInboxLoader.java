@@ -17,6 +17,8 @@ import jpa.model.EmailAddress;
 import jpa.model.message.MessageAddress;
 import jpa.model.message.MessageAttachment;
 import jpa.model.message.MessageAttachmentPK;
+import jpa.model.message.MessageDeliveryStatus;
+import jpa.model.message.MessageDeliveryStatusPK;
 import jpa.model.message.MessageHeader;
 import jpa.model.message.MessageHeaderPK;
 import jpa.model.message.MessageInbox;
@@ -28,6 +30,7 @@ import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageAddressService;
 import jpa.service.message.MessageAttachmentService;
+import jpa.service.message.MessageDeliveryStatusService;
 import jpa.service.message.MessageHeaderService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.message.MessageRfcFieldService;
@@ -48,6 +51,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 	private MessageAttachmentService attchmntService;
 	private MessageRfcFieldService rfcService;
 	private MessageStreamService streamService;
+	private MessageDeliveryStatusService dlvrStatService;
 
 	public static void main(String[] args) {
 		MessageInboxLoader loader = new MessageInboxLoader();
@@ -65,6 +69,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		attchmntService = (MessageAttachmentService) SpringUtil.getAppContext().getBean("messageAttachmentService");
 		rfcService = (MessageRfcFieldService) SpringUtil.getAppContext().getBean("messageRfcFieldService");
 		streamService = (MessageStreamService) SpringUtil.getAppContext().getBean("messageStreamService");
+		dlvrStatService = (MessageDeliveryStatusService) SpringUtil.getAppContext().getBean("messageDeliveryStatusService");
 		startTransaction();
 		try {
 			loadMessageInbox();
@@ -89,11 +94,13 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		
 		EmailAddress from = emailAddrService.findSertAddress("jsmith@test.com");
 		data1.setFromAddrRowId(from.getRowId());
+		data1.setFromAddress(from);
 		data1.setReplytoAddrRowId(null);
 
 		String to_addr = sender.getReturnPathLeft() + "@" + sender.getDomainName();
 		EmailAddress to = emailAddrService.findSertAddress(to_addr);
 		data1.setToAddrRowId(to.getRowId());
+		data1.setToAddress(to);
 		data1.setSenderDataRowId(sender.getRowId());
 		data1.setSubscriberDataRowId(null);
 		data1.setPurgeDate(null);
@@ -119,9 +126,11 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		
 		from = emailAddrService.findSertAddress("demolist1@localhost");
 		data2.setFromAddrRowId(from.getRowId());
+		data2.setFromAddress(from);
 		data2.setReplytoAddrRowId(null);
 
 		data2.setToAddrRowId(from.getRowId());
+		data2.setToAddress(from);
 		data2.setSenderDataRowId(sender.getRowId());
 		data2.setSubscriberDataRowId(null);
 		data2.setPurgeDate(null);
@@ -158,6 +167,8 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		loadMessageStream(data1);
 		loadMessageStream(data2);
 
+		loadMessageDlvrStat(data1);
+		
 		logger.info("EntityManager persisted the record.");
 	}
 	
@@ -243,7 +254,6 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		MessageRfcField rfc1 = new MessageRfcField();
 		MessageRfcFieldPK pk1 = new MessageRfcFieldPK(inbox,"message/rfc822");
 		rfc1.setMessageRfcFieldPK(pk1);
-		rfc1.setRfcStatus(null);
 		EmailAddress finalRcpt = emailAddrService.findSertAddress("jackwnn@synnex.com.au");
 		rfc1.setFinalRcptAddrRowId(finalRcpt.getRowId());
 		rfc1.setOriginalMsgSubject("May 74% OFF");
@@ -305,25 +315,15 @@ public class MessageInboxLoader extends AbstractDataLoader {
 			"Return-Path: jackwng@gmail.com" + LF +
 			"X-OriginalArrivalTime: 13 May 2008 22:50:31.0508 (UTC) FILETIME=[BF33D940:01C8B54B]" + LF +
 			"Date: 14 May 2008 08:50:31 +1000");
-		rfc1.setDeliveryStatus("Reporting-MTA: dns;MELMX.synnex.com.au" + LF +
-				"Received-From-MTA: dns;asp-6.reflexion.net" + LF +
-				"Arrival-Date: Wed, 14 May 2008 08:50:31 +1000" + LF + LF +
-				"Final-Recipient: rfc822;jackwnn@synnex.com.au" + LF +
-				"Action: failed" + LF +
-				"Status: 5.1.1"
-			);
 		rfcService.insert(rfc1);
 		
 		MessageRfcField rfc2 = new MessageRfcField();
 		MessageRfcFieldPK pk2 = new MessageRfcFieldPK(inbox,"multipart/report; report-type=");
 		rfc2.setMessageRfcFieldPK(pk2);
-		rfc2.setRfcStatus("5.1.1");
-		rfc2.setRfcAction("failed");
 		rfc2.setFinalRcptAddrRowId(finalRcpt.getRowId());
 		rfc1.setOriginalMsgSubject("May 74% OFF");
 		rfc2.setMessageId("<1631635827.01357742709854.JavaMail.wangjack@WANGJACKDEV>");
 		rfc2.setDsnText(rfc1.getDsnText());
-		rfc2.setDeliveryStatus(rfc1.getDeliveryStatus());
 		rfcService.insert(rfc2);
 		
 		MessageRfcField rfc3 = new MessageRfcField();
@@ -333,6 +333,23 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		rfc3.setFinalRcptAddrRowId(finalRcpt2.getRowId());
 		rfc3.setOriginalRecipient("jsmith@test.com");
 		rfcService.insert(rfc3);
+	}
+	
+	private void loadMessageDlvrStat(MessageInbox inbox) {
+		MessageDeliveryStatus stat1 = new MessageDeliveryStatus();
+		MessageDeliveryStatusPK pk1 = new MessageDeliveryStatusPK(inbox, inbox.getFromAddrRowId());
+		stat1.setMessageDeliveryStatusPK(pk1);
+		stat1.setFinalRecipientAddress(inbox.getFromAddress().getAddress());
+		stat1.setDeliveryStatus("Reporting-MTA: dns;MELMX.synnex.com.au" + LF +
+				"Received-From-MTA: dns;asp-6.reflexion.net" + LF +
+				"Arrival-Date: Wed, 14 May 2008 08:50:31 +1000" + LF + LF +
+				"Final-Recipient: rfc822;jackwnn@synnex.com.au" + LF +
+				"Action: failed" + LF +
+				"Status: 5.1.1"
+			);
+		stat1.setDsnReason("smtp; 554 delivery error: This user doesn't have a synnex.com account (jackwnn@synnex.com.au) [0] - mta522.mail.synnex.com.au");
+		stat1.setDsnStatus("5.1.1");
+		dlvrStatService.insert(stat1);
 	}
 }
 
