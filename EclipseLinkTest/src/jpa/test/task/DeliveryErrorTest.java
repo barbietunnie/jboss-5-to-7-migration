@@ -20,9 +20,11 @@ import jpa.service.msgout.MessageBeanBo;
 import jpa.service.task.DeliveryError;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -49,14 +51,20 @@ public class DeliveryErrorTest {
 	public static void DeliveryErrorPrepare() {
 	}
 
-	@Test
-	public void testDeliveryError() throws Exception {
-		MessageInbox inbox = inboxService.getLastRecord();
-		MessageBean mBean = msgBeanBo.createMessageBean(inbox);
+	private boolean isUpdatingSameRecord = true;
+	private int rowId;
+	private MessageBean mBean = null;
+	private MessageInbox inbox = null;
+	private String finalRcpt = "event.alert@localhost";
+	
+	@Before
+	@Rollback(false)
+	public void prepare() {
+		inbox = inboxService.getLastRecord();
+		mBean = msgBeanBo.createMessageBean(inbox);
 		EmailIdParser parser = EmailIdParser.getDefaultParser();
 		String id_xhdr = parser.parseHeaders(mBean.getHeaders());
 		assertNotNull(id_xhdr);
-		boolean isUpdatingSameRecord = true;
 		if (mBean.getMsgRefId()==null) {
 			mBean.setMsgRefId(Integer.parseInt(id_xhdr));
 		}
@@ -68,9 +76,8 @@ public class DeliveryErrorTest {
 			isUpdatingSameRecord = false;
 		}
 		mBean.setMsgId(null);
-		String finalRcpt = "event.alert@localhost";
 		mBean.setFinalRcpt(finalRcpt);
-		//mBean.setDsnAction("failed");
+		mBean.setDsnAction("failed");
 		mBean.setDsnStatus("5.1.1");
 		mBean.setDiagnosticCode("smtp; 554 delivery error: dd This user doesn't have a yahoo.com account (unknown.useraddress@yahoo.com) [0] - mta522.mail.mud.yahoo.com");
 		mBean.setDsnDlvrStat("The delivery of following message failed due to:" + LF +
@@ -79,11 +86,17 @@ public class DeliveryErrorTest {
 
 		MessageContext ctx = new MessageContext(mBean);
 		task.process(ctx);
-		
+		assertTrue(ctx.getRowIds().size()==1);
+		rowId = ctx.getRowIds().get(0);
+	}
+
+	@Test
+	public void testDeliveryError() throws Exception {
+		EmailIdParser parser = EmailIdParser.getDefaultParser();
+		String id_xhdr = parser.parseHeaders(mBean.getHeaders());
 		// verify results
-		assertFalse(ctx.getRowIds().isEmpty());
-		assertTrue(mBean.getMsgRefId().equals(ctx.getRowIds().get(0)));
-		MessageInbox minbox = inboxService.getAllDataByPrimaryKey(ctx.getRowIds().get(0));
+		assertTrue(mBean.getMsgRefId().equals(rowId));
+		MessageInbox minbox = inboxService.getAllDataByPrimaryKey(rowId);
 		String id_bean = parser.parseMsg(mBean.getBody());
 		String id_ibox = parser.parseMsg(minbox.getMsgBody());
 		if (id_ibox!=null) {
