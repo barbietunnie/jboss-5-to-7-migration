@@ -31,7 +31,7 @@ public class UnsubscribeFromList extends TaskBaseAdaptor {
 	@Autowired
 	private MailingListService mailingListDao;
 	@Autowired
-	private SubscriptionService subscriptionDao;
+	private SubscriptionService subService;
 
 	/**
 	 * Remove the FROM address from the mailing list (TO).
@@ -74,7 +74,7 @@ public class UnsubscribeFromList extends TaskBaseAdaptor {
 				}
 				EmailAddress emailAddrVo = emailAddrDao.findSertAddress(addr.toString());
 				messageBean.setMailingListId(mlist.getListId());
-				Subscription sub = subscriptionDao.unsubscribe(emailAddrVo.getAddress(), mlist.getListId());
+				Subscription sub = subService.unsubscribe(emailAddrVo.getAddress(), mlist.getListId());
 				ctx.getRowIds().add(sub.getRowId());
 				logger.info(addr + " unsubscribed from: " + mlist.getListId());
 				addrsUpdated++;
