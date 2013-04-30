@@ -380,8 +380,8 @@ public class MessageInboxService {
 			}
 		}
 		finally {
+			em.flush();
 			if (Constants.DB_PRODNAME_DERBY.equalsIgnoreCase(JpaUtil.getDBProductName())) {
-				em.flush();
 				em.clear();
 			}
 		}
