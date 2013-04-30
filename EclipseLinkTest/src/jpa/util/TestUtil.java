@@ -110,6 +110,7 @@ public class TestUtil {
 			}
 			else if (rfc.getMessageRfcFieldPK().getRfcType().indexOf("message/rfc822")>=0) {
 				assertTrue(rfc.getDsnRfc822().indexOf("Return-Path: <bounce-10.00012567.0-unknown.useraddress=aim.com@jackwng.dyndns.org>")>0);
+				assertTrue(rfc.getDsnText().indexOf("System Email Id: 10.00012567.0")>=0);
 				assertTrue(rfc.getDsnText().indexOf("From: Jack Wang <df153@aim.com>")>0);
 				assertTrue("Re:test to itself".equals(rfc.getOriginalMsgSubject()));
 			}
@@ -124,8 +125,7 @@ public class TestUtil {
 		assertTrue(status.getDeliveryStatus().indexOf("Final-Recipient: RFC822; <unknown.useraddress@aim.com>")>0);
 		assertTrue(status.getDsnReason().indexOf("smtp; 550 MAILBOX NOT FOUND")>=0);
 		assertTrue("5.1.1".equals(status.getDsnStatus()));
-		assertTrue("failed".equals(status.getDsnReason()));
-		assertTrue(status.getDsnText().indexOf("System Email Id: 10.00012567.0")>=0);
+		//assertTrue("failed".equals(status.getDsnReason()));
 		assertTrue("<unknown.useraddress@aim.com>".equals(status.getFinalRecipientAddress()));
 		return inbox;
 	}
