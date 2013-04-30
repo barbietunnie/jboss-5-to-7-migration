@@ -17,11 +17,14 @@ import jpa.model.Subscription;
 import jpa.service.MailingListService;
 import jpa.service.SubscriptionService;
 import jpa.service.task.UnsubscribeFromList;
+import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -46,11 +49,15 @@ public class UnsubscribeFromListTest {
 	public static void UnsubscribeFromListPrepare() {
 	}
 
-	@Test
-	public void testUnsubscribeFromList() throws Exception {
+	private int rowId;
+	private List<MailingList> lists = null;
+	private String fromaddr = "event.alert@localhost";
+	
+	@Before
+	@Rollback(false)
+	public void prepare() {
 		MessageBean mBean = new MessageBean();
-		String fromaddr = "event.alert@localhost";
-		List<MailingList> lists = listService.getAll(true);
+		lists = listService.getAll(true);
 		String toaddr = lists.get(0).getListEmailAddr();
 		try {
 			mBean.setFrom(InternetAddress.parse(fromaddr, false));
@@ -65,10 +72,16 @@ public class UnsubscribeFromListTest {
 
 		MessageContext ctx = new MessageContext(mBean);
 		task.process(ctx);
-		
-		// verify results
 		assertFalse(ctx.getRowIds().isEmpty());
-		Subscription sub = subService.getByRowId(ctx.getRowIds().get(0));
+		rowId = ctx.getRowIds().get(0);
+	}
+	
+	@Test
+	public void testUnsubscribeFromList() throws Exception {
+		logger.info("in testUnsubscribeFromList() method...");
+		// verify results
+		Subscription sub = subService.getByRowId(rowId);
+		logger.info("Subscription record: " + StringUtil.prettyPrint(sub, 2));
 		assertTrue(fromaddr.equals(sub.getEmailAddr().getAddress()));
 		assertFalse(sub.isSubscribed());
 		assertTrue(lists.get(0).getListId().equals(sub.getMailingList().getListId()));
