@@ -119,8 +119,12 @@ public class DeliveryError extends TaskBaseAdaptor {
 		}
 		
 		try {
-			//msgInboxVo.getMessageDeliveryStatusList().add(deliveryStatusVo);
-			deliveryStatusDao.insert(deliveryStatusVo);
+			if (msgInboxVo.getMessageDeliveryStatusList().isEmpty()) {
+				msgInboxVo.getMessageDeliveryStatusList().add(deliveryStatusVo);
+			}
+			else {
+				deliveryStatusDao.insert(deliveryStatusVo);
+			}
 			if (isDebugEnabled) {
 				logger.debug("Insert DeliveryStatus:" + LF + StringUtil.prettyPrint(deliveryStatusVo,3));
 			}
