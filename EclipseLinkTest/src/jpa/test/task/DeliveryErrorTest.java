@@ -1,11 +1,11 @@
 package jpa.test.task;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import jpa.constant.MsgDirectionCode;
 import jpa.constant.MsgStatusCode;
@@ -56,6 +56,7 @@ public class DeliveryErrorTest {
 	private MessageBean mBean = null;
 	private MessageInbox inbox = null;
 	private String finalRcpt = "event.alert@localhost";
+	private String id_xhdr = null;
 	
 	@Before
 	@Rollback(false)
@@ -63,12 +64,25 @@ public class DeliveryErrorTest {
 		inbox = inboxService.getLastRecord();
 		mBean = msgBeanBo.createMessageBean(inbox);
 		EmailIdParser parser = EmailIdParser.getDefaultParser();
-		String id_xhdr = parser.parseHeaders(mBean.getHeaders());
-		assertNotNull(id_xhdr);
-		if (mBean.getMsgRefId()==null) {
-			mBean.setMsgRefId(Integer.parseInt(id_xhdr));
+		id_xhdr = parser.parseHeaders(mBean.getHeaders());
+		if (id_xhdr!=null) {
+			if (mBean.getMsgRefId()==null) {
+				mBean.setMsgRefId(Integer.parseInt(id_xhdr));
+			}
 		}
-		else if (!id_xhdr.equals(mBean.getMsgRefId()+"")) {
+		else {
+			mBean.setMsgRefId(inbox.getRowId());
+			id_xhdr = inbox.getRowId()+"";
+		}
+		
+		try {
+			inboxService.getByPrimaryKey(mBean.getMsgRefId());
+		}
+		catch (NoResultException e) {
+			mBean.setMsgRefId(inbox.getRowId());
+		}
+
+		if (!id_xhdr.equals(mBean.getMsgRefId()+"")) {
 			id_xhdr = mBean.getMsgRefId().toString();
 		}
 		if (!mBean.getMsgRefId().equals(inbox.getRowId())) {
@@ -93,7 +107,6 @@ public class DeliveryErrorTest {
 	@Test
 	public void testDeliveryError() throws Exception {
 		EmailIdParser parser = EmailIdParser.getDefaultParser();
-		String id_xhdr = parser.parseHeaders(mBean.getHeaders());
 		// verify results
 		assertTrue(mBean.getMsgRefId().equals(rowId));
 		MessageInbox minbox = inboxService.getAllDataByPrimaryKey(rowId);
