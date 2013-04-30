@@ -4,11 +4,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.mail.MessagingException;
 
 import jpa.constant.MsgStatusCode;
 import jpa.data.preload.MailInboxEnum;
+import jpa.exception.DataValidationException;
+import jpa.exception.TemplateException;
 import jpa.message.MessageBeanUtil;
 import jpa.message.MessageContext;
 import jpa.model.MailInbox;
@@ -22,9 +25,11 @@ import jpa.service.msgin.MessageParserBo;
 import jpa.util.TestUtil;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -51,17 +56,35 @@ public class MailProcessorBoTest {
 	@Autowired
 	private EmailAddressService emailService;
 	
-	@Test
-	public void testMailProcessorBo1() throws MessagingException, IOException {
-		testBouncedMail("BouncedMail_1.txt");
+	private List<Integer> rowIds_1 = null;
+	private List<Integer> rowIds_2 = null;
+	
+	@Before
+	@Rollback(false)
+	public void prepare() {
+		try {
+			List<Integer> rowids = persistRecord("BouncedMail_1.txt");
+			assertTrue(rowids.size()>0);
+			rowIds_1 = rowids;
+		}
+		catch (Exception e) {
+			logger.error("Exception caught", e);
+			fail();
+		}
+		try {
+			List<Integer> rowids = persistRecord("BouncedMail_2.txt");
+			assertTrue(rowids.size()>0);
+			rowIds_2 = rowids;
+		}
+		catch (Exception e) {
+			logger.error("Exception caught", e);
+			fail();
+		}
 	}
-
-	@Test
-	public void testMailProcessorBo2() throws MessagingException, IOException {
-		testBouncedMail("BouncedMail_2.txt");
-	}
-
-	private void testBouncedMail(String fileName) throws MessagingException, IOException {
+	
+	private List<Integer> persistRecord(String fileName)
+			throws DataValidationException, MessagingException, IOException,
+			TemplateException {
 		javax.mail.Message message = readFromFile(fileName);
 		MailInboxPK pk = new MailInboxPK(MailInboxEnum.BOUNCE.getUserId(), MailInboxEnum.BOUNCE.getHostName());
 		MailInbox mailbox = mailboxService.getByPrimaryKey(pk);
@@ -69,22 +92,36 @@ public class MailProcessorBoTest {
 		javax.mail.Message[] messages = {message};
 
 		MessageContext ctx = new MessageContext(messages, mailbox);
+		mailProcBo.process(ctx);
+		return ctx.getRowIds();
+	}
+	
+	@Test
+	public void testMailProcessorBo1() throws MessagingException, IOException {
+		testBouncedMail(rowIds_1, 1);
+	}
+
+	@Test
+	public void testMailProcessorBo2() throws MessagingException, IOException {
+		testBouncedMail(rowIds_2, 2);
+	}
+
+	private void testBouncedMail(List<Integer> rowIds, int fileNbr) throws MessagingException, IOException {
 		try {
-			mailProcBo.process(ctx);
-			assertTrue(ctx.getRowIds().size()>=1);
-			if (fileName.indexOf("_1")>0) {
-				MessageInbox inbox = TestUtil.verifyBouncedMail_1(ctx.getRowIds().get(0), inboxService, emailService);
+			if (fileNbr == 1) {
+				MessageInbox inbox = TestUtil.verifyBouncedMail_1(rowIds.get(0), inboxService, emailService);
 				assertTrue(MsgStatusCode.CLOSED.getValue().equals(inbox.getStatusId()));
 			}
-			else if (fileName.indexOf("_2")>0) {
-				MessageInbox inbox = TestUtil.verifyBouncedMail_2(ctx.getRowIds().get(0), inboxService, emailService);
+			else if (fileNbr == 2) {
+				MessageInbox inbox = TestUtil.verifyBouncedMail_2(rowIds.get(0), inboxService, emailService);
 				assertTrue(MsgStatusCode.CLOSED.getValue().equals(inbox.getStatusId()));
-				if (ctx.getRowIds().size()==2) { // Message Delivery Status
-					TestUtil.verifyDeliveryStatus4BounceMail_2(ctx.getRowIds().get(1), inboxService);
+				if (rowIds.size()==2) { // Message Delivery Status
+					TestUtil.verifyDeliveryStatus4BounceMail_2(rowIds.get(1), inboxService);
 				}
 			}
 		}
 		catch (Exception e) {
+			logger.error("Exception caught", e);
 			fail();
 		}
 	}
