@@ -25,7 +25,7 @@ public class TestRunner {
 				}
 				logger.error(failure.getTrace());
 			}
-			System.err.println("!!!!! JPA test stopped with error !!!!!");
+			System.err.println("!!!!! JPA test stopped with error, number of errors (" + result.getFailures().size()  + ") !!!!!");
 		}
 		else {
 			System.out.println("########## JPA test completed ##########");

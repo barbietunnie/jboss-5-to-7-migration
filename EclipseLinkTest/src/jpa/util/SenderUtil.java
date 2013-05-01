@@ -49,7 +49,8 @@ public final class SenderUtil {
 			}
 			Date date = null;
 			try {
-				date = TimestampUtil.db2ToDate(db2ts);
+				java.sql.Timestamp tms = TimestampUtil.db2ToTimestamp(db2ts);
+				date = new Date(tms.getTime());
 			}
 			catch (NumberFormatException e) {
 				logger.error("Failed to parse the timestamp: " + db2ts, e);
