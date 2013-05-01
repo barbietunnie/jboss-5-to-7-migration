@@ -1,13 +1,15 @@
 package jpa.util;
 
-import java.text.ParsePosition;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Random;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -20,48 +22,22 @@ public class TimestampUtil implements java.io.Serializable {
 	protected static final Logger logger = Logger.getLogger(TimestampUtil.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	private final SimpleDateFormat sdf;
-	static final int RADIX = 36;
-	static final Random RANDOM = new Random(System.currentTimeMillis());
+	private static final int RADIX = 36;
+	private static final String db2FormatPart1 = "yyyy-MM-dd-HH.mm.ss";
+	private static SimpleDateFormat db2SdfPart1 = new SimpleDateFormat(db2FormatPart1);
 
 	public static void main(String argv[]) {
 		String db2tm = "1582-10-23-00.48.04.702003";
 		db2tm = "0697-10-13-22.29.59.972003";
-		db2tm = getDb2Timestamp();
+		db2tm = getCurrentDb2Tms();
 		String converted = db2ToDecimalString(db2tm);
-		// converted = "30023805873165862201";
 		String restored = decimalStringToDb2(converted);
-		logger.info("Date: " + db2tm + ", converted: " + converted + ", restored: "
-				+ restored);
-	}
-
-	/** constructor, using provided date pattern */
-	public TimestampUtil(String pattern) {
-		sdf = new SimpleDateFormat();
-		sdf.applyPattern(pattern);
-	}
-
-	/** constructor, using default pattern: yyyy-MM-dd HH:mm:ss.SSS */
-	public TimestampUtil() {
-		this("yyyy-MM-dd HH:mm:ss.SSS");
-	}
-
-	/* Instance Methods */
-
-	/** convert the formatted time stamp to a java long */
-	public long timestampToLong(String ts) {
-		// convert a standard time stamp to a long number
-		ParsePosition pos = new ParsePosition(0);
-		Date date = sdf.parse(ts, pos);
-		return date.getTime();
-	}
-
-	/** convert the long to the formatted time stamp */
-	public String longToTimestamp(long tm) {
-		// convert a long number to a standard time stamp
-		Date date = new Date();
-		date.setTime(tm);
-		return sdf.format(date);
+		logger.info("Date: " + db2tm + ", converted: " + converted + ", restored: " + restored);
+		System.err.println("Is conversion a success? " + (db2tm.equals(restored)));
+		logger.info("Is (" + restored + ") valid? " + isValidDb2Timestamp(restored));
+		db2tm = timestampToDb2(null);
+		logger.info(db2tm);
+		logger.info(fillWithTrailingZeros(db2ToTimestamp(db2tm).toString(),26));
 	}
 
 	//
@@ -80,8 +56,6 @@ public class TimestampUtil implements java.io.Serializable {
 		long tm;
 		long millis = 0;
 
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
-
 		// remove possible CR/LF, tabs, and blanks, that are inserted by some
 		// Email servers, from bounced e-mails (MS exchange server for one).
 		// MS exchange server inserted \r\n\t into the Email_ID string, and it
@@ -95,20 +69,21 @@ public class TimestampUtil implements java.io.Serializable {
 
 		String db2ts = null;
 		int plusPos = st.indexOf("+");
-		if (plusPos > 0) { // string contains "+", example: 130da3bfd+75c29
+		if (plusPos > 0) {
+			// converted by old method, string contains "+", example: 130da3bfd+75c29
 			tm = Long.parseLong(st.substring(0, plusPos), RADIX);
 			millis = Long.parseLong(st.substring(plusPos + 1), RADIX);
 
-			String dateString = formatter.format(new Date(tm));
+			String dateString = db2SdfPart1.format(new Date(tm));
 
 			String ssssss;
 			if (Long.toString(millis).length() >= 6) {
 				// current year is prepended to the milliseconds, remove it.
-				ssssss = fillWithTrailingZeros(Long.toString(millis).substring(4), 6);
+				ssssss = fillWithLeadingZeros(Long.toString(millis).substring(4), 6);
 			}
 			else {
 				// make it compatible to old hex string.
-				ssssss = fillWithTrailingZeros(Long.toString(millis), 6);
+				ssssss = fillWithLeadingZeros(Long.toString(millis), 6);
 			}
 			db2ts = dateString + "." + ssssss;
 		}
@@ -123,13 +98,52 @@ public class TimestampUtil implements java.io.Serializable {
 		return db2ts;
 	}
 
-	/** swap the first and the last four bytes to show the real year */
-	public static String swapFirst4AndLast4(String db2ts) throws NumberFormatException {
-		if (!isValidDb2Timestamp(db2ts)) {
-			throw new NumberFormatException("Received an invalid DB2 Timestamp: <" + db2ts + ">");
+	/**
+	 * create a db2 time stamp using current system time, and system nanoseconds.
+	 */
+	public static String getCurrentDb2Tms() {
+		return timestampToDb2(null);
+	}
+
+	/**
+	 * convert a db2 time stamp to a Timestamp object.
+	 */
+	public static java.sql.Timestamp db2ToTimestamp(String ts) throws NumberFormatException {
+		if (ts == null || ts.length()!=26) {
+			throw new NumberFormatException("Invalid format of DB2 date received (" + ts + ")");
 		}
-		int len = db2ts.length();
-		return db2ts.substring(len - 4) + db2ts.substring(4, len - 4) + db2ts.substring(0, 4);
+		Date date = null;
+		try {
+			date = db2SdfPart1.parse(ts.substring(0,db2FormatPart1.length()));
+		}
+		catch (ParseException e) {
+			logger.error("ParseException caught", e);
+			throw new NumberFormatException("ParseException caught - " + e.getMessage());
+		}
+		java.sql.Timestamp tms = new java.sql.Timestamp(date.getTime());
+		tms.setNanos(Integer.parseInt(ts.substring(db2FormatPart1.length()+1)) * 1000);
+		return tms;
+	}
+
+	public static String timestampToDb2(java.sql.Timestamp tms) {
+		if (tms == null) {
+			tms = new java.sql.Timestamp(System.currentTimeMillis());
+			long timeInNanos = System.nanoTime();
+			tms.setNanos((int)(timeInNanos % 1000000000));
+		}
+		String dateString = db2SdfPart1.format(tms);
+		return (dateString + "." + fillWithTrailingZeros(tms.getNanos()+"", 6));
+	}
+
+	/** return true if db2ts is a valid db2 time stamp, false otherwise. */
+	public static boolean isValidDb2Timestamp(String db2ts) {
+		if (db2ts == null) {
+			return false;
+		}
+		String db2Regex = "^(\\d{4})([-])(\\d{2})(\\2)(\\d{2})([-])(\\d{2})([.])(\\d{2})(\\8)(\\d{2})([.])(\\d{6})$";
+		Pattern db2Pattern = Pattern.compile(db2Regex);
+		Matcher m = db2Pattern.matcher(db2ts);
+		return m.find();
 	}
 
 	/** convert db2 time stamp to oracle time stamp: MM/dd/yyyy HH:mm:ss */
@@ -139,149 +153,32 @@ public class TimestampUtil implements java.io.Serializable {
 		 * yyyy-MM-dd-HH.mm.ss.ssssss => MM/dd/yyyy HH:mm:ss
 		 */
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-		Date date = db2ToDate(ts);
-		String dateString = formatter.format(date);
-
+		java.sql.Timestamp tms = db2ToTimestamp(ts);
+		String dateString = formatter.format(tms);
 		return dateString;
 	}
 
-	/** convert db2 time stamp to java Date object */
-	public static Date db2ToDate(String ts) throws NumberFormatException {
-		/*
-		 * convert a db2 time stamp to a java date object for example:
-		 * yyyy-MM-dd-hh.mi.ss.ssssss => MM/dd/yyyy hh:mi:ss:SSS
-		 */
-		Date date = null;
-		int years, months, days, hours, minutes, seconds, millis;
-		StringTokenizer st = new StringTokenizer(ts, " -.:");
-		if (st.countTokens() != 7) {
-			throw new NumberFormatException("Time Stamp format error! " + ts);
+	private static String fillWithLeadingZeros(String str, int len) {
+		if (str.length() > len) {
+			return str.substring(0, len);
 		}
 		else {
-			years = Integer.parseInt(st.nextToken());
-			months = Integer.parseInt(st.nextToken());
-			days = Integer.parseInt(st.nextToken());
-			hours = Integer.parseInt(st.nextToken());
-			minutes = Integer.parseInt(st.nextToken());
-			seconds = Integer.parseInt(st.nextToken());
-
-			String millis_str = st.nextToken();
-			if (millis_str.length() > 3)
-				millis_str = millis_str.substring(0, 3);
-			millis = Integer.parseInt(millis_str);
-
-			Calendar cal = Calendar.getInstance();
-			cal.set(years, --months, days, hours, minutes, seconds);
-			cal.set(Calendar.MILLISECOND, millis);
-			date = cal.getTime();
+			return StringUtils.leftPad(str, len, '0');
 		}
-		return date;
 	}
 
-	/**
-	 * create a db2 time stamp using current system time, the last three digits
-	 * will be filled with a random number.
-	 */
-	public static String getDb2Timestamp() {
-		return getDb2Timestamp(new Date(), true);
-	}
-
-	/**
-	 * create a db2 time stamp from a java Date, the last three digits will be
-	 * filled with a random number.
-	 */
-	public static String getDb2Timestamp(Date date) {
-		return getDb2Timestamp(date, true);
-	}
-
-	/**
-	 * create a db2 time stamp from a java Date. And if "random_ms" is true,
-	 * fill the last three digits with a random number, otherwise filled with
-	 * zeros.
-	 */
-	public static String getDb2Timestamp(Date date, boolean random_ms) {
-		if (date == null) {
-			date = new Date();
-		}
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
-		String dateString = formatter.format(date);
-
-		String millis;
-		if (random_ms) {
-			millis = Integer.toString(RANDOM.nextInt(1000));
-		}
-		else {
-			millis = "000";
-		}
-		return dateString + fillWithTrailingZeros(millis, 3);
-	}
-
-	/**
-	 * convert a string in "MM/dd/yyyy HH:mm:ss" format to a java Date object.<br>
-	 * A null will be returned if the date represented by the string is invalid.
-	 */
-	public static Date oracleToDate(String dateStr) {
-		return stringToDate(dateStr, "MM/dd/yyyy HH:mm:ss");
-	}
-
-	/**
-	 * convert a string to a java Date object using the supplied "pattern".<br>
-	 * A null will be returned if the date represented by the string is invalid.
-	 */
-	public static Date stringToDate(String dateStr, String pattern) {
-		SimpleDateFormat formatter = new SimpleDateFormat(pattern);
-		ParsePosition pos = new ParsePosition(0);
-		return formatter.parse(dateStr, pos);
+	private static String fillWithLeadingZeros(int num, int len) {
+		String str = Integer.valueOf(num).toString();
+		return fillWithLeadingZeros(str, len);
 	}
 
 	private static String fillWithTrailingZeros(String str, int len) {
-		String zeros = "00000000";
-		if (str.length() > len) // this shouldn't happen
-		{
-			return str.substring(0, len);
-		}
-		else if (str.length() < len) {
-			return zeros.substring(0, len - str.length()) + str;
+		if (str.length()>len) {
+			return str.substring(0,len);
 		}
 		else {
-			return str;
+			return StringUtils.rightPad(str, len, '0');
 		}
-	}
-
-	private static String fillWithTrailingZeros(int num, int len) {
-		String str = Integer.valueOf(num).toString();
-		return fillWithTrailingZeros(str, len);
-	}
-
-	/** return true if db2ts is a valid db2 time stamp, false otherwise. */
-	public static boolean isValidDb2Timestamp(String db2ts) {
-		if (db2ts == null || db2ts.length() != 26) {
-			return false;
-		}
-		StringTokenizer st = new StringTokenizer(db2ts, "-.");
-		if (st.countTokens() != 7) {
-			return false;
-		}
-		String token;
-		for (int i = 0; i < 7; i++) {
-			token = st.nextToken();
-			if (i == 0 && token.length() != 4) {
-				return false;
-			}
-			if ((i >= 1 && i <= 5) && token.length() != 2) {
-				return false;
-			}
-			if (i == 6 && token.length() != 6) {
-				return false;
-			}
-			try {
-				Integer.parseInt(token);
-			}
-			catch (NumberFormatException e) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/* methods added to generate Message Reference Id */
@@ -322,10 +219,10 @@ public class TimestampUtil implements java.io.Serializable {
 		String first3 = nanosStr.substring(0, 3);
 		String last3 = nanosStr.substring(3);
 
-		String Millis = fillWithTrailingZeros(years, 4) + fillWithTrailingZeros(months, 2)
-				+ fillWithTrailingZeros(days, 2) + fillWithTrailingZeros(hours, 2)
-				+ fillWithTrailingZeros(minutes, 2) + fillWithTrailingZeros(seconds, 2)
-				+ fillWithTrailingZeros(first3, 3);
+		String Millis = fillWithLeadingZeros(years, 4) + fillWithLeadingZeros(months, 2)
+				+ fillWithLeadingZeros(days, 2) + fillWithLeadingZeros(hours, 2)
+				+ fillWithLeadingZeros(minutes, 2) + fillWithLeadingZeros(seconds, 2)
+				+ fillWithLeadingZeros(first3, 3);
 
 		int checkdigit = getCheckDigit(Millis + last3);
 
@@ -336,7 +233,7 @@ public class TimestampUtil implements java.io.Serializable {
 
 	// restore db2 time stamp from an Email_ID
 	private static String restore(String refid) throws NumberFormatException {
-		//SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
+		//SimpleDateFormat formatter = new SimpleDateFormat(db2FormatPart1 + ".SSS");
 		try {
 			String oldCheckDigit = refid.substring(refid.length() - 1);
 			String tmpstr = refid.substring(0, refid.length() - 1);
@@ -380,6 +277,9 @@ public class TimestampUtil implements java.io.Serializable {
 		}
 	}
 
+	/*
+	 * @deprecated replaced by convert(db2ts).
+	 */
 	static String convert_old(String db2ts) throws NumberFormatException {
 		StringTokenizer st = new StringTokenizer(db2ts, " -.:");
 
@@ -435,9 +335,10 @@ public class TimestampUtil implements java.io.Serializable {
 		return shuffled + checkdigit;
 	}
 
+	/*
+	 * @deprecated replaced by restore(refid).
+	 */
 	static String restore_old(String refid) throws NumberFormatException {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
-
 		try {
 			String oldCheckDigit = refid.substring(refid.length() - 1);
 			String tmpstr = refid.substring(0, refid.length() - 1);
@@ -460,7 +361,7 @@ public class TimestampUtil implements java.io.Serializable {
 			myGregCal cal = new myGregCal();
 			cal.setTimeInMillis(totalMillis);
 
-			String dateString = formatter.format(cal.getTime());
+			String dateString = db2SdfPart1.format(cal.getTime());
 
 			return dateString + "." + Nanos;
 		}
@@ -474,10 +375,10 @@ public class TimestampUtil implements java.io.Serializable {
 		}
 	}
 
-	/**
+	/*
 	 * returns the check digit number of the given string.
 	 */
-	public static int getCheckDigit(String nbrstr) {
+	private static int getCheckDigit(String nbrstr) {
 		// Calculate the check digit
 		char multiplier[] = { 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1,
 				3, 7, 1, 3, 7, 1, 3 };
@@ -512,44 +413,6 @@ public class TimestampUtil implements java.io.Serializable {
 	private static String reverse(String str) {
 		StringBuffer sb = new StringBuffer(str);
 		return sb.reverse().toString();
-	}
-
-	/**
-	 * This method will create a random java Date, and use it to create a db2
-	 * time stamp.
-	 * 
-	 * @return a db2 time stamp
-	 */
-	public static String getRandomDb2Ts() {
-		int years, months, days, hours, minutes, seconds, micros;
-
-		years = RANDOM.nextInt(9999) + 1;
-		// years = random.nextInt(86)+1970; // from 1970 to 2056
-		months = RANDOM.nextInt(12) + 1;
-
-		GregorianCalendar gcal = new GregorianCalendar();
-
-		int[] daysArray = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
-		int maxDays;
-		if (months == 2 && gcal.isLeapYear(years)) {
-			maxDays = 29;
-		}
-		else {
-			maxDays = daysArray[months - 1];
-		}
-		days = RANDOM.nextInt(maxDays) + 1;
-		hours = RANDOM.nextInt(24);
-		minutes = RANDOM.nextInt(60);
-		seconds = RANDOM.nextInt(60);
-		micros = RANDOM.nextInt(999999 + 1);
-
-		return fillWithTrailingZeros("" + years, 4) + "-" + fillWithTrailingZeros("" + months, 2)
-				+ "-" + fillWithTrailingZeros("" + days, 2) + "-"
-				+ fillWithTrailingZeros("" + hours, 2) + "."
-				+ fillWithTrailingZeros("" + minutes, 2) + "."
-				+ fillWithTrailingZeros("" + seconds, 2) + "."
-				+ fillWithTrailingZeros("" + micros, 6);
 	}
 
 	private static class myGregCal extends GregorianCalendar {

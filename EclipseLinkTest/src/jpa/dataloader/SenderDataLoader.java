@@ -1,7 +1,6 @@
 package jpa.dataloader;
 
 import java.sql.SQLException;
-import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 
@@ -65,8 +64,7 @@ public class SenderDataLoader extends AbstractDataLoader {
 		data.setVerpSubDomain(null); // VERP sub-domain
 		data.setVerpInboxName("bounce"); // VERP bounce mailbox
 		data.setVerpRemoveInbox("remove"); // VERP un-subscribe mailbox
-		Calendar cal = Calendar.getInstance();
-		String systemId = TimestampUtil.db2ToDecimalString(TimestampUtil.getDb2Timestamp(cal.getTime()));
+		String systemId = TimestampUtil.db2ToDecimalString(TimestampUtil.getCurrentDb2Tms());
 		data.setSystemId(systemId);
 		data.setSystemKey(ProductUtil.getProductKeyFromFile());
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);

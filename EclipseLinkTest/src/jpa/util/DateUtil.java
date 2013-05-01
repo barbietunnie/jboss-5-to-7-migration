@@ -3,6 +3,8 @@ package jpa.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -33,7 +35,8 @@ public class DateUtil {
 	
 	public static void main(String[] args) {
 		String oldDate = "2006-12-15-12:56:18.095856";
-		//oldDate = "2003-04-03.09.04.47.123562";
+		oldDate = "2003-04-03.09.04.47.123562";
+		oldDate = "2003/04/03.09.04.47:123562";
 		String newDate = correctDB2Date(oldDate);
 		logger.info(oldDate);
 		logger.info(newDate);
@@ -71,10 +74,52 @@ public class DateUtil {
 				return dateStr;
 			}
 		}
+		logger.warn("Received a non-standard DB2 Timestamp: "+dateStr);
+		return correctDB2Date2(dateStr);
+	}
+
+	private static String db2Regex = "^(\\d{4})([ -\\/])(\\d{2})(\\2)(\\d{2})([ -:.])(\\d{2})([ -:.])(\\d{2})(\\8)(\\d{2})([:.])(\\d{6})$";
+	private static Pattern db2Pattern = Pattern.compile(db2Regex);
+
+	/*
+	 * provide a method that is more tolerant to the format of the date.
+	 * For example it will accept:
+	 * 	"yyyy MM dd-hh.mm.ss:SSSSSS"
+	 * 	"yyyy/MM/dd:hh.mm.ss.SSSSSS"
+	 * 	"yyyy-MM-dd.hh:mm:ss.SSSSSS"
+	 */
+	private static String correctDB2Date2(String dateStr) {
+		if (dateStr!=null) {
+			Matcher m = db2Pattern.matcher(dateStr);
+			if (m.find() && m.groupCount()==13) {
+				StringBuffer sb = new StringBuffer();
+				for (int i=0; i<=m.groupCount(); i++) {
+					if (isDebugEnabled) {
+						//logger.debug("[" + i + "]: " + m.group(i));
+					}
+					if (i==1 || i==3) {
+						sb.append(m.group(i) + "-");
+					}
+					else if (i==5) {
+						sb.append(m.group(i) + " ");
+					}
+					else if (i==7 || i==9) {
+						sb.append(m.group(i) + ":");
+					}
+					else if (i==11) {
+						sb.append(m.group(i) + ".");
+					}
+					else if (i==13) {
+						sb.append(m.group(i));
+					}
+				}
+				return sb.toString();
+			}
+		}
 		logger.error("Received a non DB2 Timestamp: "+dateStr);
 		return dateStr;
 	}
-	
+
 	/**
 	 * check if this is a valid db2 date
 	 * @param dateStr
@@ -126,7 +171,6 @@ public class DateUtil {
 			return true;
 		}
 		catch (ParseException pe) {
-			//pe.printStackTrace();
 			return false;
 		}
 	}
@@ -147,7 +191,6 @@ public class DateUtil {
 			return true;
 		}
 		catch (ParseException pe) {
-			//pe.printStackTrace();
 			return false;
 		}
 	}
@@ -180,6 +223,7 @@ public class DateUtil {
 		
 		return sdf;
 	}
+
 	/**
 	 * convert date string from one format to another format
 	 * @param dateStr - original date string
