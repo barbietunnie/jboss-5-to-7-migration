@@ -17,23 +17,29 @@ public final class BlobUtil {
 		// utility class
 	}
 
-	public static byte[] objectToBytes(Object obj) throws IOException {
+	public static byte[] objectToBytes(Object obj) {
 		if (obj == null) return null;
 		// convert java object to a output stream
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream objos = new ObjectOutputStream(baos);
 		// write the object to the output stream
-		objos.writeObject(obj);
-		objos.flush();
-		objos.reset();
-		objos.close();
-		// get byte array
-		byte[] baosarray = baos.toByteArray();
-		baos.close();
-		return baosarray;
+		try {
+			ObjectOutputStream objos = new ObjectOutputStream(baos);
+			objos.writeObject(obj);
+			objos.flush();
+			objos.reset();
+			objos.close();
+			// get byte array
+			byte[] baosarray = baos.toByteArray();
+			baos.close();
+			return baosarray;
+		}
+		catch (IOException e) {
+			logger.error("IOException caught",e);
+			throw new RuntimeException("IOException caught", e);
+		}
 	}
 
-	public static byte[] beanToXmlBytes(Object obj) throws IOException {
+	public static byte[] beanToXmlBytes(Object obj) {
 		if (obj == null) return null;
 		// convert java object to a output stream using XMLEncoder
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -43,21 +49,36 @@ public final class BlobUtil {
 		encoder.close();
 		// get byte array
 		byte[] baosarray = baos.toByteArray();
-		baos.close();
+		try {
+			baos.close();
+		}
+		catch (IOException e) {
+			logger.error("IOException caught",e);
+		}
 		return baosarray;
 	}
 
-	public static Object bytesToObject(byte[] bytes) throws IOException, ClassNotFoundException {
+	public static Object bytesToObject(byte[] bytes) {
 		if (bytes == null) return null;
 		// wrap the bytes into an object input stream
-		ObjectInputStream objis = new ObjectInputStream(new ByteArrayInputStream(bytes));
-		// get object from the input stream
-		Object obj = objis.readObject();
-		objis.close();
-		return obj;
+		try {
+			ObjectInputStream objis = new ObjectInputStream(new ByteArrayInputStream(bytes));
+			// get object from the input stream
+			Object obj = objis.readObject();
+			objis.close();
+			return obj;
+		}
+		catch (ClassNotFoundException e) {
+			logger.error("ClassNotFoundException caught",e);
+			throw new RuntimeException("ClassNotFoundException caught", e);
+		}
+		catch (IOException e) {
+			logger.error("IOException caught",e);
+			throw new RuntimeException("IOException caught", e);
+		}
 	}
 
-	public static Object xmlBytesToBean(byte[] bytes) throws IOException, ClassNotFoundException {
+	public static Object xmlBytesToBean(byte[] bytes) {
 		if (bytes == null) return null;
 		// wrap the bytes into an XMLDecoder
 		XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(bytes));
@@ -104,11 +125,18 @@ public final class BlobUtil {
     		Calendar cal1 = Calendar.getInstance();
 			cal1.set(Calendar.DAY_OF_MONTH, cal1.getActualMaximum(Calendar.DAY_OF_MONTH));
 			Calendar cal2 = (Calendar) deepCopy(cal1);
+			System.err.println("Is deepCopy a success? " + cal2.equals(cal1));
 			logger.info("Calendar 1: " + cal1.getTime());
 			cal1.roll(Calendar.MONTH, false);
 			logger.info("Calendar 2: " + cal1.getTime());
 			cal2.roll(Calendar.MONTH, false);
 			logger.info("Calendar 3: " + cal2.getTime());
+			byte[] cal1bytes = objectToBytes(cal1);
+			Calendar cal1Restored = (Calendar)bytesToObject(cal1bytes);
+			System.err.println("Is Object<->Bytes conversion a success? " + cal1.equals(cal1Restored));
+			byte[] cal2xmlbytes = beanToXmlBytes(cal2);
+			Calendar cal2Restored = (Calendar)xmlBytesToBean(cal2xmlbytes);
+			System.err.println("Is Object<->XmlBytes conversion a success? " + cal2.equals(cal2Restored));
     	}
     	catch (Exception e) {
     		logger.error("Exceeption", e);
