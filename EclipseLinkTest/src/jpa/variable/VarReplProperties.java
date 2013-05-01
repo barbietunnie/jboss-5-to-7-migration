@@ -36,7 +36,7 @@ public class VarReplProperties extends Properties {
 		return template;
 	}
 
-	private static String fileName = "META-INF/eclipselink.dev.properties";
+	private static String fileName = "META-INF/eclipselink.derby.properties";
 	public static void main(String[] args) {
 		VarReplProperties props = loadMyProperties(fileName);
 		props.list(System.out);
