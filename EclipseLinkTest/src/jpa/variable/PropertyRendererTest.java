@@ -89,7 +89,7 @@ public final class PropertyRendererTest {
 	}
 
 	private Map<Object, Object> loadVariableMap() {
-		String fileName = "META-INF/eclipselink.dev.properties";
+		String fileName = "META-INF/eclipselink.mysql.properties";
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		URL url = loader.getResource(fileName);
 		if (url == null) {
