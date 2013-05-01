@@ -23,6 +23,7 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Session;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -614,16 +615,50 @@ public final class MessageBeanUtil {
 				result = obj.toString();
 			}
 			if (isDebugEnabled) {
-				logger.debug("method: " + name + "() = " + obj);
+				prettyPrint(obj, name);
 			}
 			return result;
 		}
+		catch (NoSuchMethodException e) {
+			logger.error("invokeMethod() - " + name + ", NoSuchMethodException caught: " + e.getMessage());
+		}
 		catch (Exception e) {
-			logger.error("invokeMethod() - Exception caught: " + e.getMessage());
+			logger.error("invokeMethod() - " + name + ", Exception caught: " + e.getMessage());
+			//logger.error("Exception", e);
 		}
 		return null;
 	}
 	
+	private static void prettyPrint(Object obj, String name) {
+		if (obj == null || isWrapperType(obj.getClass())) {
+			logger.debug("method: " + name + "() = " + obj);
+		}
+		else if (obj.getClass().isArray()) {
+			Object[] objs = (Object[])obj;
+			for (Object _obj : objs) {
+				prettyPrint(_obj, name);
+			}
+		}
+		else {
+			logger.debug("method: " + name + "() = " + StringUtil.prettyPrint(obj));
+		}
+	}
+	
+	private static boolean isWrapperType(Class<?> clazz) {
+		return (clazz.equals(String.class) || 
+			clazz.equals(Boolean.class) || 
+			clazz.equals(Integer.class) ||
+			clazz.equals(Character.class) ||
+			clazz.equals(Byte.class) ||
+			clazz.equals(Short.class) ||
+			clazz.equals(Double.class) ||
+			clazz.equals(Long.class) ||
+			clazz.equals(Float.class) ||
+			clazz.equals(Character.TYPE) ||
+			clazz.equals(Integer.TYPE) ||
+			clazz.equals(InternetAddress.class));
+	}
+
 	public static void main(String[] args) {
 		List<String> methodNameList = getMessageBeanMethodNames();
 		StringBuffer sb = new StringBuffer();
@@ -637,8 +672,18 @@ public final class MessageBeanUtil {
 		MessageBean msgBean = new MessageBean();
 		msgBean.setBody("test body text");
 		msgBean.setMsgId(Integer.valueOf(100));
-		for (RuleDataName name : RuleDataName.values()) {
-			invokeMethod(msgBean, name.getValue());
+		try {
+			msgBean.setFrom(InternetAddress.parse("testfrom@test.com"));
+			msgBean.setTo(InternetAddress.parse("testto@test.com"));
+			msgBean.setCc(InternetAddress.parse("testcc@test.com"));
+			msgBean.setBcc(InternetAddress.parse("testbcc@test.com"));
+			logger.info("Invoking methods defined in RuleDataName enum class...");
+			for (RuleDataName name : RuleDataName.values()) {
+				invokeMethod(msgBean, name.getValue());
+			}
+		}
+		catch (AddressException e) {
+			logger.error("AddressException caught", e);
 		}
 		
 		SpringUtil.beginTransaction();
