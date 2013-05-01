@@ -5,18 +5,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 public class TestRunner {
+	static final Logger logger = Logger.getLogger(TestRunner.class);
 
 	static final String TestPackageName = "jpa.test";
 	public static void main(String[] args) {
 		Result result = JUnitCore.runClasses(getAllJpaTestClasses(TestPackageName));
 		if (!result.getFailures().isEmpty()) {
 			for (Failure failure : result.getFailures()) {
-				System.err.println(failure.toString());
+				System.err.println(failure.getDescription());
+				logger.error("############### Failure: " + failure.getDescription());
+				if (failure.getMessage()!=null) {
+					logger.error("Failure Message: " + failure.getMessage());
+				}
+				logger.error(failure.getTrace());
 			}
 			System.err.println("!!!!! JPA test stopped with error !!!!!");
 		}

@@ -134,15 +134,15 @@ public final class StringUtil {
 			}
 		}
 		catch (Exception e) {
+			logger.error("Exception caught", e);
 			System.err.println("ERROR: Exception caught during reflection - " + e);
-			e.printStackTrace();
 		}
 	}
 
 	final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 	public static String prettyPrint(Object obj) {
-		return prettyPrint(obj, 12);
+		return prettyPrint(obj, 12); // default to maximum 12 levels
 	}
 
 	public static String prettyPrint(Object obj, int levels) {
@@ -220,7 +220,6 @@ public final class StringUtil {
 							|| (method.getReturnType().equals(Class.forName("java.lang.Float")))
 							|| (method.getReturnType().equals(Class.forName("java.lang.Double")))
 							|| (method.getReturnType().equals(Class.forName("java.lang.Boolean")))
-							|| (method.getReturnType().equals(java.lang.Character.TYPE))
 							|| (method.getReturnType().equals(java.lang.Integer.TYPE))
 							|| (method.getReturnType().equals(java.lang.Character.TYPE))) {
 						Object rtnObj = method.invoke(obj, params);
@@ -284,11 +283,13 @@ public final class StringUtil {
 					}
 					else if (method.getReturnType().equals(Class.forName("java.lang.Class"))) {
 						Object rtnObj = method.invoke(obj, params);
-						if (rtnObj.getClass().getName().startsWith(pkgName)) {
-							sb.append(prettyPrint(rtnObj, stack, level + 1, pkgName, levels));
-						}
-						else {
-							sb.append((((Class<?>) rtnObj)).getName());
+						if (rtnObj!=null) {
+							if (rtnObj.getClass().getName().startsWith(pkgName)) {
+								sb.append(prettyPrint(rtnObj, stack, level + 1, pkgName, levels));
+							}
+							else {
+								sb.append((((Class<?>) rtnObj)).getName());
+							}
 						}
 					}
 					else if (method.getReturnType().equals(Class.forName("java.util.ArrayList"))
@@ -355,7 +356,7 @@ public final class StringUtil {
 					//sb.append(LF + " ");
 				}
 				catch (Exception e) {
-					e.printStackTrace();
+					logger.error("Exception caught", e);
 					System.err.println("error getting values in toString, method name: " + methodName + ", " + e.getMessage());
 				}
 			}
@@ -379,7 +380,7 @@ public final class StringUtil {
 					}
 				}
 				catch (Exception e) {
-					//e.printStackTrace();
+					//logger.error("Exception caught", e);
 					System.err.println("error getting values in toString, method name: " + methodName + ", " + e.getMessage());
 				}
 			}

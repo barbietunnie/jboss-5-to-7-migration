@@ -29,6 +29,7 @@ import jpa.message.MessageContext;
 import jpa.model.MailInbox;
 import jpa.model.MailInboxPK;
 import jpa.util.SpringUtil;
+import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 
@@ -107,7 +108,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	 */
 	public MailReaderBo(MailInbox mailInbox) {
 		this.mInbox = mailInbox;
-		logger.info("in Constructor - MailBox Properties:" + LF + mInbox);
+		logger.info("in Constructor - MailBox Properties:" + LF + StringUtil.prettyPrint(mInbox));
 		MESSAGE_COUNT = mInbox.getMessageCount();
 
 		MAX_SENDERS = mInbox.getNumberOfThreads();
