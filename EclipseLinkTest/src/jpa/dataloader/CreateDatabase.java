@@ -178,7 +178,7 @@ public class CreateDatabase {
 		stmt.executeUpdate("CREATE DATABASE " + DB_NAME);
 		stmt.executeUpdate(
 				"GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,CREATE ROUTINE,DROP," +
-				" REFERENCES,INDEX,ALTER,ALTER ROUTINE,EXECUTE " +
+				" CREATE TEMPORARY TABLES,REFERENCES,INDEX,ALTER,ALTER ROUTINE,EXECUTE " +
 				" ON " + DB_NAME + ".* TO 'email'@'%' " +
 				" IDENTIFIED BY 'email';");
 		stmt.executeUpdate(
