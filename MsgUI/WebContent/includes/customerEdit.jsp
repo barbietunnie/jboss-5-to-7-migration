@@ -165,13 +165,11 @@
 		</h:inputText>
 		<h:message for="mobile" styleClass="errorMessage"/>
 
-		<h:outputText value="#{msgs.faxNumberPrompt}"/>
-		<h:inputText id="faxnbr" value="#{customers.customer.faxNumber}"
-			label="#{msgs.faxNumberPrompt}" maxlength="18" size="18"
-			binding="#{customers.faxNumberInput}"
-			validator="#{customers.validatePhoneNumber}">
-	       <f:converter converterId="NullableStringConverter"/>
-		</h:inputText>
+		<h:outputText value="#{msgs.mobileCarrierPrompt}"/>
+		<h:selectOneMenu id="faxnbr" value="#{customers.customer.mobileCarrier}"
+			required="true" label="#{msgs.mobileCarrierPrompt}">
+			<f:selectItems value="#{codes.mobileCarrierItems}"/>
+		</h:selectOneMenu>
 		<h:message for="faxnbr" styleClass="errorMessage"/>
 
 		<h:outputText value="#{msgs.statusIdPrompt}"/>
