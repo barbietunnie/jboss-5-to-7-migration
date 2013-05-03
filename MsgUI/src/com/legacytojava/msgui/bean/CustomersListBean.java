@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 
 import com.legacytojava.message.bo.customer.CustomerBo;
 import com.legacytojava.message.constant.Constants;
+import com.legacytojava.message.constant.MobileCarrier;
 import com.legacytojava.message.dao.customer.CustomerDao;
 import com.legacytojava.message.exception.DataValidationException;
 import com.legacytojava.message.util.EmailAddrUtil;
@@ -54,7 +55,7 @@ public class CustomersListBean {
 	private UIInput mobilePhoneInput = null;
 	private UIInput birthDateInput = null;
 	private UIInput endDateInput = null;
-	private UIInput faxNumberInput = null;
+	private UIInput mobileCarrierInput = null;
 	
 	private final CustomerVo custMeta = new CustomerVo();
 	
@@ -223,7 +224,7 @@ public class CustomersListBean {
 		mobilePhoneInput = null;
 		birthDateInput = null;
 		endDateInput = null;
-		faxNumberInput = null;
+		mobileCarrierInput = null;
 	}
 	
 	public String deleteCustomers() {
@@ -441,6 +442,23 @@ public class CustomersListBean {
 			throw new ValidatorException(message);
 		}
 	}
+
+	public void validateMibileCarrier(FacesContext context, UIComponent component, Object value) {
+		String carrier = (String) value;
+		if (isDebugEnabled)
+			logger.debug("validateMibileCarrier() - Phone Number: " + carrier);
+		if (!StringUtil.isEmpty(carrier)) {
+			try {
+				MobileCarrier.getByValue(carrier);
+			}
+			catch (IllegalArgumentException e) {
+		        FacesMessage message = com.legacytojava.msgui.util.Messages.getMessage(
+						"com.legacytojava.msgui.messages", "invalidMobileCarrier", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
+		}
+	}
 	
 	public void validateZipCode5(FacesContext context, UIComponent component, Object value) {
 		String zip5 = (String) value;
@@ -606,12 +624,12 @@ public class CustomersListBean {
 		this.endDateInput = endDateInput;
 	}
 
-	public UIInput getFaxNumberInput() {
-		return faxNumberInput;
+	public UIInput getMobileCarrierInput() {
+		return mobileCarrierInput;
 	}
 
-	public void setFaxNumberInput(UIInput faxNumberInput) {
-		this.faxNumberInput = faxNumberInput;
+	public void setMobileCarrierInput(UIInput mobileCarrierInput) {
+		this.mobileCarrierInput = mobileCarrierInput;
 	}
 
 	public CustomerVo getCustMeta() {
