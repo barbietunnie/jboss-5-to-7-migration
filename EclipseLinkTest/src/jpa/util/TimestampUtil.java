@@ -49,7 +49,7 @@ public class TimestampUtil implements java.io.Serializable {
 			if (!db2tm.equals(restored)) {
 				System.err.println("Failed to restore Email_Id: " + db2tm + " - " + restored);
 			}
-			String db2tm_1 = DateUtil.correctDB2Date(db2tm); // to "yyyy-MM-dd HH:mm:ss.SSSSSS"
+			String db2tm_1 = DB2DateUtil.correctDB2Date(db2tm); // to "yyyy-MM-dd HH:mm:ss.SSSSSS"
 			String db2tm_2 = fillWithTrailingZeros(db2ToTimestamp(db2tm).toString(),26);
 			if (!db2tm_1.equals(db2tm_2)) {
 				System.err.println("Failed to convert to sql Timestamp: " + db2tm_1 + " - " + db2tm_2);
