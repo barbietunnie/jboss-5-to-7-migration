@@ -31,13 +31,30 @@ public class TimestampUtil implements java.io.Serializable {
 		db2tm = "0697-10-13-22.29.59.972003";
 		db2tm = getCurrentDb2Tms();
 		String converted = db2ToDecimalString(db2tm);
+		//converted = convert_old(db2tm);
 		String restored = decimalStringToDb2(converted);
 		logger.info("Date: " + db2tm + ", converted: " + converted + ", restored: " + restored);
 		System.err.println("Is conversion a success? " + (db2tm.equals(restored)));
 		logger.info("Is (" + restored + ") valid? " + isValidDb2Timestamp(restored));
-		db2tm = timestampToDb2(null);
+		db2tm = getCurrentDb2Tms();
 		logger.info(db2tm);
 		logger.info(fillWithTrailingZeros(db2ToTimestamp(db2tm).toString(),26));
+		// perform some brutal force tests
+		java.util.Random random = new java.util.Random(System.currentTimeMillis());
+		for (int i=0; i<20000; i++) {
+			db2tm = getCurrentDb2Tms();
+			db2tm = db2tm.substring(0,20) + fillWithLeadingZeros(random.nextInt(999999), 6);
+			converted = db2ToDecimalString(db2tm);
+			restored = decimalStringToDb2(converted);
+			if (!db2tm.equals(restored)) {
+				System.err.println("Failed to restore Email_Id: " + db2tm + " - " + restored);
+			}
+			String db2tm_1 = DateUtil.correctDB2Date(db2tm); // to "yyyy-MM-dd HH:mm:ss.SSSSSS"
+			String db2tm_2 = fillWithTrailingZeros(db2ToTimestamp(db2tm).toString(),26);
+			if (!db2tm_1.equals(db2tm_2)) {
+				System.err.println("Failed to convert to sql Timestamp: " + db2tm_1 + " - " + db2tm_2);
+			}
+		}
 	}
 
 	//
@@ -264,7 +281,7 @@ public class TimestampUtil implements java.io.Serializable {
 				return dateStr + last3;
 			}
 			else {
-				return restore_old(refid);
+				return restore_v0(refid);
 			}
 		}
 		catch (IndexOutOfBoundsException e) {
@@ -280,7 +297,7 @@ public class TimestampUtil implements java.io.Serializable {
 	/*
 	 * @deprecated replaced by convert(db2ts).
 	 */
-	static String convert_old(String db2ts) throws NumberFormatException {
+	static String convert_v0(String db2ts) throws NumberFormatException {
 		StringTokenizer st = new StringTokenizer(db2ts, " -.:");
 
 		long totalSeconds, totalMillis;
@@ -338,7 +355,7 @@ public class TimestampUtil implements java.io.Serializable {
 	/*
 	 * @deprecated replaced by restore(refid).
 	 */
-	static String restore_old(String refid) throws NumberFormatException {
+	static String restore_v0(String refid) throws NumberFormatException {
 		try {
 			String oldCheckDigit = refid.substring(refid.length() - 1);
 			String tmpstr = refid.substring(0, refid.length() - 1);
