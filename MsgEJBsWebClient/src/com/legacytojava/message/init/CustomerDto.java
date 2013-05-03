@@ -26,7 +26,7 @@ public class CustomerDto  implements java.io.Serializable {
 
     private java.lang.String eveningPhone;
 
-    private java.lang.String faxNumber;
+    private java.lang.String mobileCarrier;
 
     private java.lang.String firstName;
 
@@ -89,7 +89,7 @@ public class CustomerDto  implements java.io.Serializable {
            java.lang.String dayPhone,
            java.lang.String emailAddr,
            java.lang.String eveningPhone,
-           java.lang.String faxNumber,
+           java.lang.String mobileCarrier,
            java.lang.String firstName,
            java.lang.String lastName,
            java.lang.String memoText,
@@ -123,7 +123,7 @@ public class CustomerDto  implements java.io.Serializable {
            this.dayPhone = dayPhone;
            this.emailAddr = emailAddr;
            this.eveningPhone = eveningPhone;
-           this.faxNumber = faxNumber;
+           this.mobileCarrier = mobileCarrier;
            this.firstName = firstName;
            this.lastName = lastName;
            this.memoText = memoText;
@@ -332,22 +332,22 @@ public class CustomerDto  implements java.io.Serializable {
 
 
     /**
-     * Gets the faxNumber value for this CustomerDto.
+     * Gets the mobileCarrier value for this CustomerDto.
      * 
-     * @return faxNumber
+     * @return mobileCarrier
      */
-    public java.lang.String getFaxNumber() {
-        return faxNumber;
+    public java.lang.String getMobileCarrier() {
+        return mobileCarrier;
     }
 
 
     /**
-     * Sets the faxNumber value for this CustomerDto.
+     * Sets the mobileCarrier value for this CustomerDto.
      * 
-     * @param faxNumber
+     * @param mobileCarrier
      */
-    public void setFaxNumber(java.lang.String faxNumber) {
-        this.faxNumber = faxNumber;
+    public void setMobileCarrier(java.lang.String mobileCarrier) {
+        this.mobileCarrier = mobileCarrier;
     }
 
 
@@ -869,9 +869,9 @@ public class CustomerDto  implements java.io.Serializable {
             ((this.eveningPhone==null && other.getEveningPhone()==null) || 
              (this.eveningPhone!=null &&
               this.eveningPhone.equals(other.getEveningPhone()))) &&
-            ((this.faxNumber==null && other.getFaxNumber()==null) || 
-             (this.faxNumber!=null &&
-              this.faxNumber.equals(other.getFaxNumber()))) &&
+            ((this.mobileCarrier==null && other.getMobileCarrier()==null) || 
+             (this.mobileCarrier!=null &&
+              this.mobileCarrier.equals(other.getMobileCarrier()))) &&
             ((this.firstName==null && other.getFirstName()==null) || 
              (this.firstName!=null &&
               this.firstName.equals(other.getFirstName()))) &&
@@ -982,8 +982,8 @@ public class CustomerDto  implements java.io.Serializable {
         if (getEveningPhone() != null) {
             _hashCode += getEveningPhone().hashCode();
         }
-        if (getFaxNumber() != null) {
-            _hashCode += getFaxNumber().hashCode();
+        if (getMobileCarrier() != null) {
+            _hashCode += getMobileCarrier().hashCode();
         }
         if (getFirstName() != null) {
             _hashCode += getFirstName().hashCode();
@@ -1122,8 +1122,8 @@ public class CustomerDto  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("faxNumber");
-        elemField.setXmlName(new javax.xml.namespace.QName("http://init.message.legacytojava.com", "faxNumber"));
+        elemField.setFieldName("mobileCarrier");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://init.message.legacytojava.com", "mobileCarrier"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
