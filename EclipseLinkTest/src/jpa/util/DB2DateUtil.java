@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-public class DateUtil {
-	protected static Logger logger = Logger.getLogger(DateUtil.class);
+public class DB2DateUtil {
+	protected static Logger logger = Logger.getLogger(DB2DateUtil.class);
 	static boolean isDebugEnabled = logger.isDebugEnabled();
 	static boolean isInfoEnabled = logger.isInfoEnabled();
 	
