@@ -25,6 +25,7 @@ import com.legacytojava.message.constant.MailProtocol;
 import com.legacytojava.message.constant.MailServerType;
 import com.legacytojava.message.constant.MailingListDeliveryOption;
 import com.legacytojava.message.constant.MailingListType;
+import com.legacytojava.message.constant.MobileCarrier;
 import com.legacytojava.message.constant.MsgStatusCode;
 import com.legacytojava.message.constant.StatusIdCode;
 import com.legacytojava.message.constant.VariableName;
@@ -980,5 +981,14 @@ public class StaticCodes {
 			countryItems[i++] = new SelectItem(key,countrys.get(key));
 		}
 		return countryItems;
+	};
+
+	public SelectItem[] getMobileCarrierItems() {
+		SelectItem[] carrierItems = new SelectItem[MobileCarrier.values().length];
+		int i=0;
+		for (MobileCarrier carrier : MobileCarrier.values()) {
+			carrierItems[i++] = new SelectItem(carrier.getValue());
+		}
+		return carrierItems;
 	};
 }
