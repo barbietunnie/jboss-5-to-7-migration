@@ -28,7 +28,7 @@ public class CustomerDto implements Serializable {
 	private String eveningPhone = null;
 	private String mobilePhone = null;
 	private Date birthDate = null;
-	private String faxNumber = null;
+	private String mobileCarrier = null;
 	private String msgHeader = null;
 	private String msgDetail = null;
 	private String msgOptional = null;
@@ -105,11 +105,11 @@ public class CustomerDto implements Serializable {
 	public void setEveningPhone(String eveningPhone) {
 		this.eveningPhone = eveningPhone;
 	}
-	public String getFaxNumber() {
-		return faxNumber;
+	public String getMobileCarrier() {
+		return mobileCarrier;
 	}
-	public void setFaxNumber(String faxNumber) {
-		this.faxNumber = faxNumber;
+	public void setMobileCarrier(String mobileCarrier) {
+		this.mobileCarrier = mobileCarrier;
 	}
 	public String getFirstName() {
 		return firstName;
