@@ -11,8 +11,7 @@ public class MsgIdCipherJUnit {
 	static final Logger logger = Logger.getLogger(MsgIdCipherJUnit.class);
 	@Test 
 	public void testMsgIdCipher() {
-		long startTime =System.currentTimeMillis();
-		Random random = new Random(startTime);
+		Random random = new Random(System.currentTimeMillis());
 		msgIdCipher(random);
 		random = new Random();
 		msgIdCipher(random);
