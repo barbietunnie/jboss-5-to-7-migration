@@ -91,16 +91,9 @@
 	</h:panelGrid>
 	</h:form>
 	</div></body>
+<script type="text/javascript" src="includes/msguiCommon.js"></script>
 <script type="text/javascript">
 // <!--
-function confirmDelete() {
-	varText = "<h:outputText value='#{msgs.confirmDeleteText}'/>";
-	return confirm(varText);
-}
-function confirmSubmit() {
-	varText = "<h:outputText value='#{msgs.confirmSubmitText}'/>";
-	return confirm(varText);
-}
 // set cursor position to the beginning of the textarea
 function setSelRange(inputEl, selStart, selEnd) { 
  if (inputEl.setSelectionRange) {

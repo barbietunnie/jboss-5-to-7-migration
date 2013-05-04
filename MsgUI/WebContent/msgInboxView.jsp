@@ -213,24 +213,9 @@
 	</h:panelGrid>
 	</h:form>
 	</div></body>
+<script type="text/javascript" src="includes/msguiCommon.js"></script>
 <script type="text/javascript">
 // <!--
-function confirmDelete() {
-	varText = "<h:outputText value='#{msgs.confirmDeleteText}'/>";
-	return confirm(varText);
-}
-function confirmSubmit() {
-	varText = "<h:outputText value='#{msgs.confirmSubmitText}'/>";
-	return confirm(varText);
-}
-function confirmClose() {
-	varText = "<h:outputText value='#{msgs.confirmCloseText}'/>";
-	return confirm(varText);
-}
-function confirmOpen() {
-	varText = "<h:outputText value='#{msgs.confirmOpenText}'/>";
-	return confirm(varText);
-}
 function confirmReassignRule(oldRuleName) {
 	var newRuleName = document.getElementById('inboxview:newrulename').value;
 	if (oldRuleName == newRuleName) {

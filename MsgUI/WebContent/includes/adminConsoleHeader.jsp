@@ -19,16 +19,5 @@
 
 <f:verbatim>
 <!-- verbatim tag is used to prevent JSF from rendering tr/td tags to javascript -->
-<script type="text/javascript">
-// <!--
-function confirmDelete() {
-	varText = "<h:outputText value='#{msgs.confirmDeleteAdminText}'/>";
-	return confirm(varText);
-}
-function confirmSubmit() {
-	varText = "<h:outputText value='#{msgs.confirmSubmitAdminText}'/>";
-	return confirm(varText);
-}
-// -->
-</script>
+<script type="text/javascript" src="includes/msguiCommon.js"></script>
 </f:verbatim>
