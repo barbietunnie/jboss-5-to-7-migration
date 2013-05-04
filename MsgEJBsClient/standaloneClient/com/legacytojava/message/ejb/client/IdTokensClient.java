@@ -33,6 +33,7 @@ public class IdTokensClient {
 			IdTokensVo idTokensVo = (IdTokensVo)it.next();
 			System.out.println("IdTokensDao: "+idTokensVo);
 		}
+		idTokens.getByClientId(Constants.DEFAULT_CLIENTID);
 	}
 	
 	private void update(IdTokensRemote idTokens) throws RemoteException {
