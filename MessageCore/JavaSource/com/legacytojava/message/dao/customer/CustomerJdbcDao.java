@@ -70,7 +70,7 @@ public class CustomerJdbcDao implements CustomerDao {
 			customerVo.setBirthDate(rs.getDate("BirthDate"));
 			customerVo.setStartDate(rs.getDate("StartDate"));
 			customerVo.setEndDate(rs.getDate("EndDate"));
-			customerVo.setMobileCarrier(rs.getString("FaxNumber"));
+			customerVo.setMobileCarrier(rs.getString("MobileCarrier"));
 			customerVo.setMsgHeader(rs.getString("MsgHeader"));
 			customerVo.setMsgDetail(rs.getString("MsgDetail"));
 			customerVo.setMsgOptional(rs.getString("MsgOptional"));
@@ -352,7 +352,7 @@ public class CustomerJdbcDao implements CustomerDao {
 			+ "BirthDate=?, "
 			+ "StartDate=?, "
 			+ "EndDate=?, "
-			+ "FaxNumber=?, " // 25
+			+ "MobileCarrier=?, " // 25
 			+ "MsgHeader=?, "
 			+ "MsgDetail=?, "
 			+ "MsgOptional=?, "
@@ -473,7 +473,7 @@ public class CustomerJdbcDao implements CustomerDao {
 			+ "BirthDate, "
 			+ "StartDate, "
 			+ "EndDate, "
-			+ "FaxNumber, " // 25
+			+ "MobileCarrier, " // 25
 			+ "MsgHeader, "
 			+ "MsgDetail, "
 			+ "MsgOptional, "
