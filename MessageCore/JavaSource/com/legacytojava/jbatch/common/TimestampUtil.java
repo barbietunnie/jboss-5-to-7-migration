@@ -20,7 +20,7 @@ public class TimestampUtil implements java.io.Serializable {
 	protected static final Logger logger = Logger.getLogger(TimestampUtil.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	final SimpleDateFormat sdf;
+	//private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	static final int RADIX = 36;
 	static final Random RANDOM = new Random(System.currentTimeMillis());
 
@@ -33,34 +33,6 @@ public class TimestampUtil implements java.io.Serializable {
 		String restored = decStrToDb2(converted);
 		System.out.println("Date: " + db2tm + ", converted: " + converted + ", restored: "
 				+ restored);
-	}
-
-	/** constructor, using provided date pattern */
-	public TimestampUtil(String pattern) {
-		sdf = new SimpleDateFormat(pattern);
-	}
-
-	/** constructor, using default pattern: yyyy-MM-dd HH:mm:ss.SSS */
-	public TimestampUtil() {
-		this("yyyy-MM-dd HH:mm:ss.SSS");
-	}
-
-	/* Instance Methods */
-
-	/** convert the formatted time stamp to a java long */
-	public long timestampToLong(String ts) {
-		// convert a standard time stamp to a long number
-		ParsePosition pos = new ParsePosition(0);
-		Date date = sdf.parse(ts, pos);
-		return date.getTime();
-	}
-
-	/** convert the long to the formatted time stamp */
-	public String longToTimestamp(long tm) {
-		// convert a long number to a standard time stamp
-		Date date = new Date();
-		date.setTime(tm);
-		return sdf.format(date);
 	}
 
 	//
@@ -103,11 +75,11 @@ public class TimestampUtil implements java.io.Serializable {
 			String ssssss;
 			if (Long.toString(millis).length() >= 6) {
 				// current year is prepended to the milliseconds, remove it.
-				ssssss = fillWithTrailingZeros(Long.toString(millis).substring(4), 6);
+				ssssss = fillWithLeadingZeros(Long.toString(millis).substring(4), 6);
 			}
 			else {
 				// make it compatible to old hex string.
-				ssssss = fillWithTrailingZeros(Long.toString(millis), 6);
+				ssssss = fillWithLeadingZeros(Long.toString(millis), 6);
 			}
 			db2ts = dateString + "." + ssssss;
 		}
@@ -212,7 +184,7 @@ public class TimestampUtil implements java.io.Serializable {
 		else {
 			millis = "000";
 		}
-		return dateString + fillWithTrailingZeros(millis, 3);
+		return dateString + fillWithLeadingZeros(millis, 3);
 	}
 
 	/**
@@ -233,8 +205,8 @@ public class TimestampUtil implements java.io.Serializable {
 		return formatter.parse(dateStr, pos);
 	}
 
-	static String fillWithTrailingZeros(String str, int len) {
-		String zeros = "00000000";
+	static String fillWithLeadingZeros(String str, int len) {
+		String zeros = "00000000000000000000";
 		if (str.length() > len) // this shouldn't happen
 		{
 			return str.substring(0, len);
@@ -247,9 +219,9 @@ public class TimestampUtil implements java.io.Serializable {
 		}
 	}
 
-	static String fillWithTrailingZeros(int num, int len) {
+	static String fillWithLeadingZeros(int num, int len) {
 		String str = Integer.valueOf(num).toString();
-		return fillWithTrailingZeros(str, len);
+		return fillWithLeadingZeros(str, len);
 	}
 
 	/** return true if db2ts is a valid db2 time stamp, false otherwise. */
@@ -321,10 +293,10 @@ public class TimestampUtil implements java.io.Serializable {
 		String first3 = nanosStr.substring(0, 3);
 		String last3 = nanosStr.substring(3);
 
-		String Millis = fillWithTrailingZeros(years, 4) + fillWithTrailingZeros(months, 2)
-				+ fillWithTrailingZeros(days, 2) + fillWithTrailingZeros(hours, 2)
-				+ fillWithTrailingZeros(minutes, 2) + fillWithTrailingZeros(seconds, 2)
-				+ fillWithTrailingZeros(first3, 3);
+		String Millis = fillWithLeadingZeros(years, 4) + fillWithLeadingZeros(months, 2)
+				+ fillWithLeadingZeros(days, 2) + fillWithLeadingZeros(hours, 2)
+				+ fillWithLeadingZeros(minutes, 2) + fillWithLeadingZeros(seconds, 2)
+				+ fillWithLeadingZeros(first3, 3);
 
 		int checkdigit = getCheckDigit(Millis + last3);
 
@@ -366,7 +338,7 @@ public class TimestampUtil implements java.io.Serializable {
 				return dateStr + last3;
 			}
 			else {
-				return restore_old(refid);
+				return restore_v0(refid);
 			}
 		}
 		catch (IndexOutOfBoundsException e) {
@@ -379,7 +351,7 @@ public class TimestampUtil implements java.io.Serializable {
 		}
 	}
 
-	static String convert_old(String db2ts) throws NumberFormatException {
+	static String convert_v0(String db2ts) throws NumberFormatException {
 		StringTokenizer st = new StringTokenizer(db2ts, " -.:");
 
 		long totalSeconds, totalMillis;
@@ -434,7 +406,7 @@ public class TimestampUtil implements java.io.Serializable {
 		return shuffled + checkdigit;
 	}
 
-	static String restore_old(String refid) throws NumberFormatException {
+	static String restore_v0(String refid) throws NumberFormatException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
 
 		try {
@@ -557,12 +529,12 @@ public class TimestampUtil implements java.io.Serializable {
 		seconds = RANDOM.nextInt(60);
 		micros = RANDOM.nextInt(999999 + 1);
 
-		return fillWithTrailingZeros("" + years, 4) + "-" + fillWithTrailingZeros("" + months, 2)
-				+ "-" + fillWithTrailingZeros("" + days, 2) + "-"
-				+ fillWithTrailingZeros("" + hours, 2) + "."
-				+ fillWithTrailingZeros("" + minutes, 2) + "."
-				+ fillWithTrailingZeros("" + seconds, 2) + "."
-				+ fillWithTrailingZeros("" + micros, 6);
+		return fillWithLeadingZeros("" + years, 4) + "-" + fillWithLeadingZeros("" + months, 2)
+				+ "-" + fillWithLeadingZeros("" + days, 2) + "-"
+				+ fillWithLeadingZeros("" + hours, 2) + "."
+				+ fillWithLeadingZeros("" + minutes, 2) + "."
+				+ fillWithLeadingZeros("" + seconds, 2) + "."
+				+ fillWithLeadingZeros("" + micros, 6);
 	}
 
 	static class myGregCal extends GregorianCalendar {
