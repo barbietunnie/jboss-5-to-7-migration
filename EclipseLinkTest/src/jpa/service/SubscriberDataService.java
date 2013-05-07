@@ -1,5 +1,7 @@
 package jpa.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -9,6 +11,8 @@ import javax.persistence.Query;
 import jpa.constant.MobileCarrierEnum;
 import jpa.exception.DataValidationException;
 import jpa.model.SubscriberData;
+import jpa.msgui.vo.PagingSubscriberData;
+import jpa.msgui.vo.PagingVo;
 import jpa.util.EmailSender;
 import jpa.util.PhoneNumberUtil;
 
@@ -159,5 +163,107 @@ public class SubscriberDataService {
 			}
 		}
 	}
+
+	public List<SubscriberData> getSubscribersWithPaging(PagingSubscriberData vo) {
+		List<Object> parms = new ArrayList<Object>();
+		String whereSql = buildWhereClause(vo, parms);
+		/*
+		 * paging logic
+		 */
+		String fetchOrder = "asc";
+		if (vo.getPageAction().equals(PagingVo.PageAction.FIRST)) {
+			// do nothing
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.NEXT)) {
+			if (vo.getIdLast() > 0) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id > ? ";
+				parms.add(vo.getStrIdLast());
+			}
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
+			if (vo.getIdFirst() > 0) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id < ? ";
+				parms.add(vo.getStrIdFirst());
+				fetchOrder = "desc";
+			}
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.LAST)) {
+			List<SubscriberData> lastList = new ArrayList<SubscriberData>();
+			vo.setPageAction(PagingVo.PageAction.NEXT);
+			while (true) {
+				List<SubscriberData> nextList = getSubscribersWithPaging(vo);
+				if (!nextList.isEmpty()) {
+					lastList = nextList;
+					vo.setIdLast(nextList.get(nextList.size() - 1).getRowId());
+				}
+				else {
+					break;
+				}
+			}
+			return lastList;
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.CURRENT)) {
+			if (vo.getIdFirst() > 0) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id >= ? ";
+				parms.add(vo.getStrIdFirst());
+			}
+		}
+		String sql = 
+			"select a.* " +
+			" from Subscriber_Data a " +
+				" JOIN Sender_Data s on s.Row_Id = a.SenderDataRowId " +
+				" LEFT JOIN Email_Address b on a.EmailAddrRowId=b.Row_Id ";
+		// search by email address
+		if (StringUtils.isNotBlank(vo.getEmailAddr())) {
+			String addr = vo.getEmailAddr().trim();
+			sql += " and b.Address LIKE '%" + addr + "%' ";
+		}
+		sql += whereSql +
+			" order by a.Row_Id " + fetchOrder +
+			" limit " + vo.getPageSize();
+		Query query = em.createNativeQuery(sql, SubscriberData.MAPPING_SUBSCRIBER_DATA_ENTITY);
+		for (int i=0; i<parms.size(); i++) {
+			query.setParameter(i+1, parms.get(i));
+		}
+		@SuppressWarnings("unchecked")
+		List<SubscriberData> list = query.setMaxResults(vo.getPageSize()).getResultList();
+		if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
+			// reverse the list
+			Collections.reverse(list);
+		}
+		return list;
+	}
+
+	static String[] CRIT = { " where ", " and ", " and ", " and ", " and ", " and ", " and ",
+		" and ", " and ", " and ", " and " };
 	
+	private String buildWhereClause(PagingSubscriberData vo, List<Object> parms) {
+		String whereSql = "";
+		if (StringUtils.isNotBlank(vo.getSenderId())) {
+			whereSql += CRIT[parms.size()] + " (s.SenderId = ?) ";
+			parms.add(vo.getSenderId());
+		}
+		if (StringUtils.isNotBlank(vo.getSsnNumber())) {
+			whereSql += CRIT[parms.size()] + " a.SsnNumber = ? ";
+			parms.add(vo.getSsnNumber());
+		}
+		if (StringUtils.isNotBlank(vo.getLastName())) {
+			whereSql += CRIT[parms.size()] + " a.LastName = ? ";
+			parms.add(vo.getLastName());
+		}
+		if (StringUtils.isNotBlank(vo.getFirstName())) {
+			whereSql += CRIT[parms.size()] + " a.FirstName = ? ";
+			parms.add(vo.getFirstName());
+		}
+		if (StringUtils.isNotBlank(vo.getDayPhone())) {
+			whereSql += CRIT[parms.size()] + " a.DayPhone = ? ";
+			parms.add(vo.getDayPhone());
+		}
+		if (StringUtils.isNotBlank(vo.getStatusId())) {
+			whereSql += CRIT[parms.size()] + " a.StatusId = ? ";
+			parms.add(vo.getStatusId());
+		}
+		return whereSql;
+	}
+
 }

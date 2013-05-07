@@ -73,6 +73,9 @@ public class EmailAddressTest {
 		System.out.println(StringUtil.prettyPrint(obj[0]));
 		System.out.println(obj[1] + "," + obj[2] + "," + obj[3]);
 		
+		int rowId = service.getRowIdForPreview();
+		assertTrue(rowId>0);
+		
 		// test update
 		rcd2.setUpdtUserId("JpaTest");
 		service.update(rcd2);

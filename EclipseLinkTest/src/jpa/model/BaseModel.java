@@ -9,6 +9,13 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.SqlDateConverter;
+import org.apache.commons.beanutils.converters.SqlTimeConverter;
+import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
@@ -30,6 +37,41 @@ public abstract class BaseModel implements java.io.Serializable {
 	protected Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 	@Column(name="UpdtUserId", length=10, nullable=false)
 	protected String updtUserId = Constants.DEFAULT_USER_ID;
+	
+	/* Define transient fields for UI application */
+	@Transient
+	protected boolean markedForDeletion = false;
+	@Transient
+	protected boolean markedForEdition = false;
+
+	public boolean isMarkedForDeletion() {
+		return markedForDeletion;
+	}
+	public void setMarkedForDeletion(boolean markedForDeletion) {
+		this.markedForDeletion = markedForDeletion;
+	}
+	public boolean isMarkedForEdition() {
+		return markedForEdition;
+	}
+	public void setMarkedForEdition(boolean markedForEdition) {
+		this.markedForEdition = markedForEdition;
+	}
+	
+	public void copyPropertiesTo(BaseModel dest) {
+		SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
+		ConvertUtils.register(converter1, java.sql.Timestamp.class);
+		SqlDateConverter converter2 = new SqlDateConverter(null);
+		ConvertUtils.register(converter2, java.sql.Date.class);
+		SqlTimeConverter converter3 = new SqlTimeConverter(null);
+		ConvertUtils.register(converter3, java.sql.Time.class);
+		try {
+			BeanUtils.copyProperties(dest, this);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	/* end of UI */
 
 	public String getStatusId() {
 		return statusId;
