@@ -37,6 +37,25 @@ public class SessionUploadService {
 		}
 	}
 	
+	/**
+	 * SessionValue (blob) is not returned from this method. But
+	 * SessionUploadVo.fileSize is populated with file size.
+	 */
+	public List<SessionUpload> getBySessionId4Web(String sessionId) {
+		List<SessionUpload> list = getBySessionId(sessionId);
+		for (int i = 0; i < list.size(); i++) {
+			SessionUpload vo = list.get(i);
+			if (vo.getSessionValue() != null) {
+				vo.setFileSize(vo.getSessionValue().length);
+				vo.setSessionValue(null);
+			}
+			else {
+				vo.setFileSize(0);
+			}
+		}
+		return list;
+	}
+	
 	public SessionUpload getByRowId(int rowId) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from SessionUpload t where t.rowId = :rowId");
@@ -110,7 +129,18 @@ public class SessionUploadService {
 		}
 	}
 
-	public int deleteByUserId(String sessionId) {
+//	public int deleteByUserId(String userId) {
+//		try {
+//			Query query = em.createQuery("delete from SessionUpload t where t.sessionUploadPK.sessionId=:sessionId");
+//			query.setParameter("sessionId", userId);
+//			int rows = query.executeUpdate();
+//			return rows;
+//		}
+//		finally {
+//		}
+//	}
+
+	public int deleteBySessionId(String sessionId) {
 		try {
 			Query query = em.createQuery("delete from SessionUpload t where t.sessionUploadPK.sessionId=:sessionId");
 			query.setParameter("sessionId", sessionId);

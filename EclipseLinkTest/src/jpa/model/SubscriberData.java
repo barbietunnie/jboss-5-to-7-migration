@@ -5,10 +5,13 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -16,8 +19,17 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name="subscriber_data")
+@SqlResultSetMappings({ // used by native queries
+	  @SqlResultSetMapping(name="SubscriberDataEntiry",
+		entities={
+		 @EntityResult(entityClass=SubscriberData.class),
+	  	}),
+	})
 public class SubscriberData extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -2242214285799087578L;
+
+	@Transient
+	public static final String MAPPING_SUBSCRIBER_DATA_ENTITY = "SubscriberDataEntiry";
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=SenderData.class)
 	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)

@@ -13,9 +13,6 @@ import jpa.model.UserData;
 import jpa.service.UserDataService;
 import jpa.util.SpringUtil;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,14 +74,7 @@ public class UserDataTest {
 		
 		// test insert
 		UserData tkn2 = new UserData();
-		try {
-			SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
-			ConvertUtils.register(converter1, java.sql.Timestamp.class);
-			BeanUtils.copyProperties(tkn2, tkn1);
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		tkn1.copyPropertiesTo(tkn2);
 		tkn2.setUserId(tkn1.getUserId()+"_v2");
 		service.insert(tkn2);
 		

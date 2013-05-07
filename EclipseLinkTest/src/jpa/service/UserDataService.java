@@ -34,6 +34,18 @@ public class UserDataService {
 		}
 	}
 	
+	public UserData getForLogin(String userId, String password) throws NoResultException {
+		try {
+			Query query = em.createQuery("select t from UserData t where t.userId = :userId and t.password=:password");
+			query.setParameter("userId", userId);
+			query.setParameter("password", password);
+			UserData user = (UserData) query.getSingleResult();
+			return user;
+		}
+		finally {
+		}
+	}
+	
 	public UserData getByRowId(int rowId) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from UserData t where t.rowId = :rowId");

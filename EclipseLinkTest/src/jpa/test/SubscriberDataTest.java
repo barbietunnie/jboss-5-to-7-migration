@@ -10,14 +10,17 @@ import javax.persistence.EntityManager;
 
 import jpa.model.SenderData;
 import jpa.model.SubscriberData;
+import jpa.msgui.vo.PagingSubscriberData;
+import jpa.service.EmailAddressService;
 import jpa.service.SenderDataService;
 import jpa.service.SubscriberDataService;
-import jpa.service.EmailAddressService;
+import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.beanutils.converters.SqlTimestampConverter;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,6 +62,26 @@ public class SubscriberDataTest {
 		
 		service.getByEmailAddress(rcd0.getEmailAddr().getAddress());
 		
+		// test paging for UI application
+		PagingSubscriberData vo = new PagingSubscriberData();
+		vo.setSenderId(rcd0.getSenderData().getSenderId());
+		vo.setEmailAddr(rcd0.getEmailAddr().getAddress());
+		if (StringUtils.isNotBlank(rcd0.getSsnNumber())) {
+			vo.setSsnNumber(rcd0.getSsnNumber());
+		}
+		if (StringUtils.isNotBlank(rcd0.getDayPhone())) {
+			vo.setDayPhone(rcd0.getDayPhone());
+		}
+		if (StringUtils.isNotBlank(vo.getFirstName())) {
+			vo.setFirstName(rcd0.getFirstName());
+		}
+		if (StringUtils.isNotBlank(rcd0.getLastName())) {
+			vo.setLastName(rcd0.getLastName());
+		}
+		List<SubscriberData> listPg = service.getSubscribersWithPaging(vo);
+		assertTrue(listPg.size()>0);
+		System.out.println(StringUtil.prettyPrint(listPg.get(0)));
+
 		// test update
 		rcd0.setUpdtUserId("JpaTest");
 		service.update(rcd0);

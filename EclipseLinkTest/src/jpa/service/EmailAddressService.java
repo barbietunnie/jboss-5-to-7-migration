@@ -190,6 +190,28 @@ public class EmailAddressService {
 		}
 	}
 
+	/**
+	 * get the first email address from EmailAddress table
+	 * @return rowId of the record found
+	 */
+	public int getRowIdForPreview() {
+		String sql = "SELECT min(e.Row_Id) "
+				+ " FROM Email_Address e, Subscriber_Data c "
+				+ " where e.Row_Id = c.emailAddrRowId ";
+		Query query = em.createNativeQuery(sql);
+		try {
+			Integer rowId = (Integer) query.getSingleResult();
+			return rowId;
+		}
+		catch (NoResultException e) {
+			sql = "SELECT min(e.Row_Id) "
+					+ " FROM email_address e ";
+			query = em.createNativeQuery(sql);
+			Integer rowId = (Integer) query.getSingleResult();
+			return rowId;
+		}
+	}
+
 	public void delete(EmailAddress emailAddr) {
 		if (emailAddr==null) return;
 		try {
