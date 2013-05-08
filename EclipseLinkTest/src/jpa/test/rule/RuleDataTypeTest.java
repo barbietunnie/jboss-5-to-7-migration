@@ -86,6 +86,9 @@ public class RuleDataTypeTest {
 		List<RuleDataType> list1 = typeService.getAll();
 		assertFalse(list1.isEmpty());
 		
+		List<String> listweb = typeService.getDataTypeList();
+		assertTrue(listweb.size()>0);
+		
 		// test insert
 		RuleDataType var3 = createNewInstance(list1.get(0));
 		var3.setDataType(var3.getDataType()+"_v2");

@@ -90,6 +90,17 @@ public class EmailTemplateService {
 		}
 	}
 
+	public int deleteByTemplateId(String templateId) {
+		try {
+			Query query = em.createQuery("delete from EmailTemplate t where t.templateId = :templateId");
+			query.setParameter("templateId", templateId);
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
+
 	public void insert(EmailTemplate template) {
 		try {
 			em.persist(template);

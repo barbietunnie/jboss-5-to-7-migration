@@ -175,13 +175,13 @@ public class SubscriberDataService {
 			// do nothing
 		}
 		else if (vo.getPageAction().equals(PagingVo.PageAction.NEXT)) {
-			if (vo.getIdLast() > 0) {
+			if (vo.getIdLast() > -1) {
 				whereSql += CRIT[parms.size()] + " a.Row_Id > ? ";
 				parms.add(vo.getStrIdLast());
 			}
 		}
 		else if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
-			if (vo.getIdFirst() > 0) {
+			if (vo.getIdFirst() > -1) {
 				whereSql += CRIT[parms.size()] + " a.Row_Id < ? ";
 				parms.add(vo.getStrIdFirst());
 				fetchOrder = "desc";
@@ -203,7 +203,7 @@ public class SubscriberDataService {
 			return lastList;
 		}
 		else if (vo.getPageAction().equals(PagingVo.PageAction.CURRENT)) {
-			if (vo.getIdFirst() > 0) {
+			if (vo.getIdFirst() > -1) {
 				whereSql += CRIT[parms.size()] + " a.Row_Id >= ? ";
 				parms.add(vo.getStrIdFirst());
 			}
@@ -264,6 +264,21 @@ public class SubscriberDataService {
 			parms.add(vo.getStatusId());
 		}
 		return whereSql;
+	}
+
+	public int getSubscriberCount(PagingSubscriberData vo) {
+		List<Object> parms = new ArrayList<Object>();
+		String whereSql = buildWhereClause(vo, parms);
+		String sql = 
+			"select count(*) as subr_count from Subscriber_Data a " +
+				" JOIN Sender_Data s on s.Row_Id = a.SenderDataRowId " +
+			whereSql;
+		Query query = em.createNativeQuery(sql);
+		for (int i=0; i<parms.size(); i++) {
+			query.setParameter(i+1, parms.get(i));
+		}
+		Number count = (Number) query.getSingleResult();
+		return count.intValue();
 	}
 
 }

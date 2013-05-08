@@ -1,5 +1,7 @@
 package jpa.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -11,8 +13,10 @@ import javax.persistence.Query;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.model.EmailAddress;
+import jpa.msgui.vo.PagingVo;
 import jpa.util.EmailAddrUtil;
 import jpa.util.JpaUtil;
+import jpa.util.StringUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -310,4 +314,102 @@ public class EmailAddressService {
 		}
 		update(emailAddr);
 	}
+
+	static String[] CRIT = { " where ", " and ", " and ", " and ", " and ",
+		" and ", " and ", " and ", " and ", " and ", " and " };
+
+	public List<EmailAddress> getEmailAddrsWithPaging(PagingVo vo) {
+		List<Object> parms = new ArrayList<Object>();
+		String whereSql = buildWhereClause(vo, parms);
+		/*
+		 * paging logic, sort by Email Address
+		 */
+		String fetchOrder = "asc";
+		if (vo.getPageAction().equals(PagingVo.PageAction.FIRST)) {
+			// do nothing
+		} else if (vo.getPageAction().equals(PagingVo.PageAction.NEXT)) {
+			if (vo.getStrIdLast() != null) {
+				whereSql += CRIT[parms.size()] + " a.Address > ? ";
+				parms.add(vo.getStrIdLast());
+			}
+		} else if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
+			if (vo.getStrIdFirst() != null) {
+				whereSql += CRIT[parms.size()] + " a.Address < ? ";
+				parms.add(vo.getStrIdFirst());
+				fetchOrder = "desc";
+			}
+		} else if (vo.getPageAction().equals(PagingVo.PageAction.LAST)) {
+			List<EmailAddress> lastList = new ArrayList<EmailAddress>();
+			vo.setPageAction(PagingVo.PageAction.NEXT);
+			while (true) {
+				List<EmailAddress> nextList = getEmailAddrsWithPaging(vo);
+				if (!nextList.isEmpty()) {
+					lastList = nextList;
+					vo.setStrIdLast(nextList.get(nextList.size() - 1).getAddress());
+				} else {
+					break;
+				}
+			}
+			return lastList;
+		} else if (vo.getPageAction().equals(PagingVo.PageAction.CURRENT)) {
+			if (vo.getStrIdFirst() != null) {
+				whereSql += CRIT[parms.size()] + " a.Address >= ? ";
+				parms.add(vo.getIdFirst());
+			}
+		}
+		String sql = "select a.* "
+				+ "from Email_Address a "
+				//+ " LEFT JOIN Subscriber_Data b on a.Row_Id=b.EmailAddrRowId "
+				//+ " LEFT JOIN Subscription c on a.Row_Id=c.EmailAddrRowId "
+				+ whereSql
+				+ " order by a.Address "
+				+ fetchOrder
+				+ " limit "
+				+ vo.getPageSize();
+		Query query = em.createNativeQuery(sql, EmailAddress.MAPPING_EMAIL_ADDR_ENTITY);
+		for (int i=0; i<parms.size(); i++) {
+			query.setParameter(i+1, parms.get(i));
+		}
+		@SuppressWarnings("unchecked")
+		List<EmailAddress> list = query.setMaxResults(vo.getPageSize()).getResultList();
+		if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
+			// reverse the list
+			Collections.reverse(list);
+		}
+		return list;
+	}
+
+	private String buildWhereClause(PagingVo vo, List<Object> parms) {
+		String whereSql = "";
+		if (StringUtils.isNotBlank(vo.getStatusId())) {
+			whereSql += CRIT[parms.size()] + " a.StatusId = ? ";
+			parms.add(vo.getStatusId());
+		} 
+		// search by address
+		if (StringUtils.isNotBlank(vo.getSearchString())) {
+			String addr = vo.getSearchString().trim();
+			if (addr.indexOf(" ") < 0) {
+				whereSql += CRIT[parms.size()] + " a.OrigAddress LIKE ? "; 
+				parms.add("%" + addr + "%");
+			} else {
+				String regex = StringUtil.replaceAll(addr, " ", ".+");
+				whereSql += CRIT[parms.size()] + " a.OrigAddress REGEXP '"
+						+ regex + "' ";
+			}
+		}
+		return whereSql;
+	}
+
+	public int getEmailAddressCount(PagingVo vo) {
+		List<Object> parms = new ArrayList<Object>();
+		String whereSql = buildWhereClause(vo, parms);
+		String sql = "select count(*) from Email_Address a " + whereSql;
+		Query query = em.createNativeQuery(sql);
+		for (int i=0; i<parms.size(); i++) {
+			query.setParameter(i+1, parms.get(i));
+		}
+		Number count = (Number) query.getSingleResult();
+		return count.intValue();
+	}
+
 }

@@ -4,10 +4,14 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import jpa.constant.CodeType;
@@ -15,8 +19,17 @@ import jpa.util.StringUtil;
 
 @Entity
 @Table(name="subscription", uniqueConstraints=@UniqueConstraint(columnNames = {"EmailAddrRowId", "MailingListRowId"}))
+@SqlResultSetMappings({ // used by native queries
+	  @SqlResultSetMapping(name="SubscriptionEntiry",
+		entities={
+		 @EntityResult(entityClass=Subscription.class),
+	  	}),
+	})
 public class Subscription extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 5306761711116978942L;
+
+	@Transient
+	public static final String MAPPING_SUBSCRIPTION_ENTITY = "SubscriptionEntiry";
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)

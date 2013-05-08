@@ -1,10 +1,15 @@
 package jpa.service.message;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import jpa.model.message.MessageClickCount;
+import jpa.msgui.vo.PagingVo;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,4 +149,83 @@ public class MessageClickCountService {
 		}
 	}
 
+	static String[] CRIT = { " where ", " and ", " and ", " and ", " and ", " and " };
+
+	public List<MessageClickCount> getBroadcastsWithPaging(PagingVo vo) {
+		List<Object> parms = new ArrayList<Object>();
+		String whereSql = "";
+		/*
+		 * paging logic
+		 */
+		String fetchOrder = "desc";
+		if (vo.getPageAction().equals(PagingVo.PageAction.FIRST)) {
+			// do nothing
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.NEXT)) {
+			if (vo.getIdLast() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id < ? ";
+				parms.add(vo.getIdLast());
+			}
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
+			if (vo.getIdFirst() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id > ? ";
+				parms.add(vo.getIdFirst());
+				fetchOrder = "asc";
+			}
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.LAST)) {
+			List<MessageClickCount> lastList = new ArrayList<MessageClickCount>();
+			vo.setPageAction(PagingVo.PageAction.NEXT);
+			while (true) {
+				List<MessageClickCount> nextList = getBroadcastsWithPaging(vo);
+				if (!nextList.isEmpty()) {
+					lastList = nextList;
+					vo.setIdLast(nextList.get(nextList.size() - 1).getRowId());
+				}
+				else {
+					break;
+				}
+			}
+			return lastList;
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.CURRENT)) {
+			if (vo.getIdFirst() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id <= ? ";
+				parms.add(vo.getIdFirst());
+			}
+		}
+		whereSql += CRIT[parms.size()] + " a.SentCount > ? ";
+		parms.add(0);
+		
+		String sql = 
+			"select a.* " +
+			" from Message_Click_Count a " +
+			whereSql +
+			" and a.StartTime is not null " +
+			" order by a.Row_Id " + fetchOrder +
+			" limit " + vo.getPageSize();
+		Query query = em.createNativeQuery(sql, MessageClickCount.MAPPING_MSG_CLICK_COUNT_ENTITY);
+		for (int i=0; i<parms.size(); i++) {
+			query.setParameter(i+1, parms.get(i));
+		}
+		@SuppressWarnings("unchecked")
+		List<MessageClickCount> list = query.setMaxResults(vo.getPageSize()).getResultList();
+		if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
+			// reverse the list
+			Collections.reverse(list);
+		}
+		return list;
+	}
+
+	public int getMessageCountForWeb() {
+		String sql = 
+			"select count(*) " +
+			"from " +
+				"Message_Click_Count where SentCount > 0 and StartTime is not null ";
+		Query query = em.createNativeQuery(sql);
+		Number count = (Number) query.getSingleResult();
+		return count.intValue();
+	}
+	
 }

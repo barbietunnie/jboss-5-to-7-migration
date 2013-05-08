@@ -111,4 +111,15 @@ public class RuleActionDetailService {
 		}
 	}
 	
+	public List<String> getActionIdList() {
+		String sql = 
+			"select distinct(ActionId) as actionId from Rule_Action_Detail " +
+			" order by ActionId";
+
+		Query query = em.createNativeQuery(sql);
+		@SuppressWarnings("unchecked")
+		List<String> list = query.getResultList();
+		return list;
+	}
+
 }

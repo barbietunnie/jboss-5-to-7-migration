@@ -53,6 +53,21 @@ public class MailingListService {
 		}
 	}
 
+	public List<MailingList> getByEmailAddress(String address) throws NoResultException {
+		String sql =
+			"select t from MailingList t, Subscription sub, EmailAddress ea " +
+				" where sub=t.subscriptions and sub.emailAddr=ea and ea.address=:address ";
+		try {
+			Query query = em.createQuery(sql);
+			query.setParameter("address", address);
+			@SuppressWarnings("unchecked")
+			List<MailingList> list = query.getResultList();
+			return list;
+		}
+		finally {
+		}
+	}
+
 	/*
 	 * return an array with 4 elements:
 	 * 1) MailingList

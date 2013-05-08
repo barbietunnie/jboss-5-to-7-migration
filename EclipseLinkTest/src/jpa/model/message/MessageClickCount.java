@@ -5,10 +5,14 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import jpa.constant.MailingListDeliveryType;
@@ -16,9 +20,17 @@ import jpa.model.BaseModel;
 
 @Entity
 @Table(name="message_click_count", uniqueConstraints=@UniqueConstraint(columnNames = {"MessageInboxRowId"}))
-public class MessageClickCount extends BaseModel implements Serializable
-{
+@SqlResultSetMappings({ // used by native queries
+	  @SqlResultSetMapping(name="MessageClickCountEntiry",
+		entities={
+		 @EntityResult(entityClass=MessageClickCount.class),
+	  	}),
+	})
+public class MessageClickCount extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 6478186312095503162L;
+
+	@Transient
+	public static final String MAPPING_MSG_CLICK_COUNT_ENTITY = "MessageClickCountEntiry";
 
 	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)

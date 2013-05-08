@@ -15,4 +15,14 @@ public enum StatusId {
 	public String getValue() {
 		return value;
 	}
+	
+	public static StatusId getByValue(String value) {
+		for (StatusId cc : StatusId.values()) {
+			if (cc.getValue().equalsIgnoreCase(value)) {
+				return cc;
+			}
+		}
+		return StatusId.ACTIVE; // default to ACTIVE
+	}
+
 }
