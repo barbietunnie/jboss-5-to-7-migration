@@ -64,6 +64,11 @@ public class RuleLogicTest {
 		assertNotNull(objs2);
 		System.out.println(StringUtil.prettyPrint(objs2));
 		
+		List<String> listweb1 = service.getBuiltinRuleNames4Web();
+		assertTrue(listweb1.size()>0);
+		List<String> listweb2 = service.getCustomRuleNames4Web();
+		assertTrue(listweb2.size()>0);
+		
 		// test update
 		RuleLogic obj2 = objs2;
 		obj2.setUpdtUserId("JpaTest");

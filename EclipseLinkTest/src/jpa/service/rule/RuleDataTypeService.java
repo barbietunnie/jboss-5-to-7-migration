@@ -110,4 +110,17 @@ public class RuleDataTypeService {
 		}
 	}
 	
+	public List<String> getDataTypeList() {
+		String sql = 
+			"select distinct(DataType) as dataType " +
+			"from " +
+				"Rule_Data_Type " +
+			" order by DataType asc ";
+		
+		Query query = em.createNativeQuery(sql);
+		@SuppressWarnings("unchecked")
+		List<String> list = query.getResultList();
+		return list;
+	}
+	
 }

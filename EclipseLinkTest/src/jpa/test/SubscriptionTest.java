@@ -11,6 +11,7 @@ import jpa.constant.StatusId;
 import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
+import jpa.msgui.vo.PagingVo;
 import jpa.service.EmailAddressService;
 import jpa.service.EntityManagerService;
 import jpa.service.MailingListService;
@@ -102,6 +103,8 @@ public class SubscriptionTest {
 			String listId = rcd7.getMailingList().getListId();
 			Subscription rcd8 = service.getByAddressAndListId(address, listId);
 			System.out.println("RCD8: " + StringUtil.prettyPrint(rcd8,1));
+			
+			service.getByUniqueKey(rcd7.getEmailAddr().getRowId(), rcd7.getMailingList().getListId());
 		}
 
 		// test insert
@@ -114,6 +117,15 @@ public class SubscriptionTest {
 		
 		Subscription rcd2 = service.getByAddressAndListId(emailAddr1.getAddress(), list.get(0).getListId());
 		assertNotNull(rcd2);
+		
+		// test paging for UI application
+		PagingVo vo = new PagingVo();
+		vo.setStatusId(StatusId.ACTIVE.getValue());
+		vo.setSearchString("test.com");
+		List<Subscription> listpg = service.getSubscriptionsWithPaging(list.get(0).getListId(), vo);
+		assertTrue(listpg.size()>0);
+		int count = service.getSubscriptionCount(list.get(0).getListId(), vo);
+		assertTrue(count==listpg.size());
 		
 		Subscription rcd6 = new Subscription();
 		rcd6.setCreateTime(new java.sql.Timestamp(System.currentTimeMillis()));

@@ -20,6 +20,7 @@ import jpa.model.MailingList;
 import jpa.model.message.MessageClickCount;
 import jpa.model.message.MessageInbox;
 import jpa.model.rule.RuleLogic;
+import jpa.msgui.vo.PagingVo;
 import jpa.service.EntityManagerService;
 import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
@@ -122,6 +123,13 @@ public class MessageClickCountTest {
 		MessageClickCount mcc12 = service.getByMsgInboxId(inbox1.getRowId());
 		assertTrue(mcc11.equals(mcc12));
 		
+		// test paging for UI application
+		PagingVo vo = new PagingVo();
+		List<MessageClickCount> listpg = service.getBroadcastsWithPaging(vo);
+		assertTrue(listpg.size()>0);
+		int count = service.getMessageCountForWeb();
+		assertTrue(count==listpg.size());
+		
 		// test update
 		mcc2.setUpdtUserId("jpa test");
 		service.update(mcc2);
@@ -159,6 +167,8 @@ public class MessageClickCountTest {
 		mcc1.setClickCount(3);
 		mcc1.setOpenCount(2);
 		mcc1.setComplaintCount(0);
+		mcc1.setSentCount(1);
+		mcc1.setStartTime(clickTime);
 		mcc1.setLastClickTime(clickTime);
 		mcc1.setLastOpenTime(clickTime);
 		mcc1.setDeliveryType(MailingListDeliveryType.ALL_ON_LIST.getValue());

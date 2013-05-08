@@ -39,6 +39,6 @@ public class MailInboxPK implements Serializable {
 
 	@Override
 	public String toString() {
-		return (hostName+":"+userId);
+		return (userId+ "@" +hostName);
 	}
 }

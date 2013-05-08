@@ -1,5 +1,7 @@
 package jpa.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -7,6 +9,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +21,8 @@ import jpa.constant.StatusId;
 import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
+import jpa.msgui.vo.PagingVo;
+import jpa.util.StringUtil;
 
 @Component("subscriptionService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -91,19 +96,18 @@ public class SubscriptionService {
 		}
 	}
 	
-//	public Subscription getByPrimaryKey(int emailAddrRowId, int mailingListRowId) throws NoResultException {
-//		try {
-//			Query query = em.createQuery("select t from Subscription t, EmailAddress e, MailingList m " +
-//					" where e=t.emailAddr and m=t.mailingList and e.rowId=:emailAddrRowId and m.rowId=:mailingListRowId");
-//			query.setParameter("emailAddrRowId", emailAddrRowId);
-//			query.setParameter("mailingListRowId", mailingListRowId);
-//			Subscription subscription = (Subscription) query.getSingleResult();
-//			em.lock(subscription, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-//			return subscription;
-//		}
-//		finally {
-//		}
-//	}
+	public Subscription getByUniqueKey(int emailAddrRowId, String listId) throws NoResultException {
+		try {
+			Query query = em.createQuery("select t from Subscription t, EmailAddress e, MailingList m " +
+					" where e=t.emailAddr and m=t.mailingList and e.rowId=:emailAddrRowId and m.listId=:listId");
+			query.setParameter("emailAddrRowId", emailAddrRowId);
+			query.setParameter("listId", listId);
+			Subscription subscription = (Subscription) query.getSingleResult();
+			return subscription;
+		}
+		finally {
+		}
+	}
 	
 	public Subscription getByAddressAndListId(String address, String listId) throws NoResultException {
 		try {
@@ -305,19 +309,19 @@ public class SubscriptionService {
 		}
 	}
 
-//	public int deleteByPrimaryKey(int emailAddrRowId, int mailingListRowId) {
-//		try {
-//			Query query = em.createNativeQuery("delete from Subscription where " +
-//					" emailAddrRowId = (select row_id from email_address ea where ea.row_Id=?1) " +
-//					" and mailingListRowid = (select row_id from mailing_list ml where ml.row_Id=?2 )");
-//			query.setParameter(1, emailAddrRowId);
-//			query.setParameter(2, mailingListRowId);
-//			int rows = query.executeUpdate();
-//			return rows;
-//		}
-//		finally {
-//		}
-//	}
+	public int deleteByUniqueKey(int emailAddrRowId, String listId) {
+		try {
+			Query query = em.createNativeQuery("delete from Subscription where " +
+					" emailAddrRowId = (select row_id from email_address ea where ea.row_Id=?1) " +
+					" and mailingListRowid = (select row_id from mailing_list ml where ml.listId=?2 )");
+			query.setParameter(1, emailAddrRowId);
+			query.setParameter(2, listId);
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
 
 	public int deleteByAddressAndListId(String address, String listId) {
 		try {
@@ -391,5 +395,112 @@ public class SubscriptionService {
 		}
 	}
 
+	static String[] CRIT = { " where ", " and ", " and ", " and ", " and ", " and ", " and ",
+		" and ", " and ", " and ", " and " };
+
+	public List<Subscription> getSubscriptionsWithPaging(String listId, PagingVo vo) {
+		List<Object> parms = new ArrayList<Object>();
+		String whereSql = buildWhereClause(listId, vo, parms);
+		/*
+		 * paging logic
+		 */
+		String fetchOrder = "asc";
+		if (vo.getPageAction().equals(PagingVo.PageAction.FIRST)) {
+			// do nothing
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.NEXT)) {
+			if (vo.getIdLast() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id > ? ";
+				parms.add(vo.getIdLast());
+			}
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
+			if (vo.getIdFirst() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id < ? ";
+				parms.add(vo.getIdFirst());
+				fetchOrder = "desc";
+			}
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.LAST)) {
+			List<Subscription> lastList = new ArrayList<Subscription>();
+			vo.setPageAction(PagingVo.PageAction.NEXT);
+			while (true) {
+				List<Subscription> nextList = getSubscriptionsWithPaging(listId, vo);
+				if (!nextList.isEmpty()) {
+					lastList = nextList;
+					vo.setIdLast(nextList.get(nextList.size() - 1).getRowId());
+				}
+				else {
+					break;
+				}
+			}
+			return lastList;
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.CURRENT)) {
+			if (vo.getIdFirst() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id >= ? ";
+				parms.add(vo.getIdFirst());
+			}
+		}
+		String sql = 
+			"select a.* " +
+			" from Subscription a" +
+				" JOIN Email_Address b ON a.EmailAddrRowId=b.Row_Id " +
+				" JOIN Mailing_List m ON a.MailingListRowId=m.Row_Id " +
+				" LEFT JOIN Subscriber_Data c on a.EmailAddrRowId=c.EmailAddrRowId " +
+			whereSql +
+			" order by a.Row_Id " + fetchOrder +
+			" limit " + vo.getPageSize();
+		Query query = em.createNativeQuery(sql, Subscription.MAPPING_SUBSCRIPTION_ENTITY);
+		for (int i=0; i<parms.size(); i++) {
+			query.setParameter(i+1, parms.get(i));
+		}
+		@SuppressWarnings("unchecked")
+		List<Subscription> list = query.setMaxResults(vo.getPageSize()).getResultList();
+		if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
+			// reverse the list
+			Collections.reverse(list);
+		}
+		return list;
+	}
+
+	private String buildWhereClause(String listId, PagingVo vo, List<Object> parms) {
+		String whereSql = CRIT[parms.size()] + " m.ListId = ? ";
+		parms.add(listId);
+		if (StringUtils.isNotBlank(vo.getStatusId())) {
+			whereSql += CRIT[parms.size()] + " b.StatusId = ? ";
+			parms.add(vo.getStatusId());
+		}
+		// search by address
+		if (StringUtils.isNotBlank(vo.getSearchString())) {
+			String addr = vo.getSearchString().trim();
+			if (addr.indexOf(" ") < 0) {
+				whereSql += CRIT[parms.size()] + " b.OrigAddress LIKE ? ";
+				parms.add("%" + addr + "%");
+			}
+			else {
+				String regex = StringUtil.replaceAll(addr, " ", ".+");
+				whereSql += CRIT[parms.size()] + " b.OrigAddress REGEXP '" + regex + "' ";
+			}
+		}
+		return whereSql;
+	}
+
+	public int getSubscriptionCount(String listId, PagingVo vo) {
+		List<Object> parms = new ArrayList<Object>();
+		String whereSql = buildWhereClause(listId, vo, parms);
+		String sql = 
+			"select count(*) as subp_count " +
+			" from Subscription a " +
+				" JOIN Email_Address b ON a.EmailAddrRowId=b.Row_Id " +
+				" JOIN Mailing_List m ON a.MailingListRowId=m.Row_Id " +
+			whereSql;
+		Query query = em.createNativeQuery(sql);
+		for (int i=0; i<parms.size(); i++) {
+			query.setParameter(i+1, parms.get(i));
+		}
+		Number count = (Number) query.getSingleResult();
+		return count.intValue();
+	}
 
 }

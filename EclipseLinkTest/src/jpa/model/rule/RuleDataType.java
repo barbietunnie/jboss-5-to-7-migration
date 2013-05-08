@@ -1,7 +1,12 @@
 package jpa.model.rule;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import jpa.model.BaseModel;
@@ -10,6 +15,9 @@ import jpa.model.BaseModel;
 @Table(name="rule_data_type")
 public class RuleDataType extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -8077139332207748775L;
+
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ruleDataValuePK.ruleDataType", orphanRemoval=true)
+	private List<RuleDataValue> ruleDataValues;
 
 	@Column(nullable=false, length=26, unique=true)
 	private String dataType = "";
@@ -27,6 +35,14 @@ public class RuleDataType extends BaseModel implements java.io.Serializable {
 
 	public RuleDataType(String dataType) {
 		this.dataType = dataType;
+	}
+
+	public List<RuleDataValue> getRuleDataValues() {
+		return ruleDataValues;
+	}
+
+	public void setRuleDataValues(List<RuleDataValue> ruleDataValues) {
+		this.ruleDataValues = ruleDataValues;
 	}
 
 	public String getDataType() {

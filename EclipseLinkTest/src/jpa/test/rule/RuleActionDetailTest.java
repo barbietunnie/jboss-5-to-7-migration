@@ -67,6 +67,9 @@ public class RuleActionDetailTest {
 		List<RuleActionDetail> list1 = service.getAll();
 		assertFalse(list1.isEmpty());
 		
+		List<String> listweb = service.getActionIdList();
+		assertTrue(listweb.size()>0);
+		
 		// test insert
 		RuleActionDetail var3 = createNewInstance(list1.get(0));
 		var3.setActionId(var3.getActionId()+"_v2");

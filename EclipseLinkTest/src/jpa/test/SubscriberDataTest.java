@@ -81,6 +81,8 @@ public class SubscriberDataTest {
 		List<SubscriberData> listPg = service.getSubscribersWithPaging(vo);
 		assertTrue(listPg.size()>0);
 		System.out.println(StringUtil.prettyPrint(listPg.get(0)));
+		int count = service.getSubscriberCount(vo);
+		assertTrue(count==listPg.size());
 
 		// test update
 		rcd0.setUpdtUserId("JpaTest");

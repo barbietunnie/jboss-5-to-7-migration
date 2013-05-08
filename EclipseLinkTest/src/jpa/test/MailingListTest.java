@@ -83,6 +83,9 @@ public class MailingListTest {
 		MailingList ml02 = service.getByListAddress(ml01.getAcctUserName() + "@" + ml01.getSenderData().getDomainName());
 		assertTrue(ml01.equals(ml02));
 
+		List<MailingList> list2 = service.getByEmailAddress("jsmith@test.com");
+		assertTrue(list2.size()>0);
+		
 		// test insert
 		MailingList rcd1 = new MailingList();
 		try {

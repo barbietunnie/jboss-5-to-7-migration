@@ -8,6 +8,7 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import jpa.constant.RuleCategory;
 import jpa.constant.StatusId;
 import jpa.model.rule.RuleLogic;
 import jpa.service.ReloadFlagsService;
@@ -178,4 +179,34 @@ public class RuleLogicService {
 		finally {
 		}
 	}
+
+	public List<String> getBuiltinRuleNames4Web() {
+		String sql = 
+			"select RuleName " +
+			" from Rule_Logic " +
+			" where IsBuiltInRule=1 and IsSubRule!=1 and RuleCategory=?1 " +
+			" group by RuleName " +
+			" order by RuleName ";
+
+		Query query = em.createNativeQuery(sql);
+		query.setParameter(1, RuleCategory.MAIN_RULE.getValue());
+		@SuppressWarnings("unchecked")
+		List<String> list = query.getResultList();
+		return list;
+	}
+	
+	public List<String> getCustomRuleNames4Web() {
+		String sql = 
+			"select distinct(RuleName) as ruleName " +
+			" from Rule_Logic " +
+			" where IsBuiltInRule!=1 and IsSubRule!=1 and RuleCategory=?1 " +
+			" order by RuleName ";
+
+		Query query = em.createNativeQuery(sql);
+		query.setParameter(1, RuleCategory.MAIN_RULE.getValue());
+		@SuppressWarnings("unchecked")
+		List<String> list = query.getResultList();
+		return list;
+	}
+
 }

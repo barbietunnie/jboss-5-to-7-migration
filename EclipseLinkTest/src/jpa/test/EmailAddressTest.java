@@ -10,6 +10,7 @@ import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.model.SubscriberData;
 import jpa.model.EmailAddress;
+import jpa.msgui.vo.PagingVo;
 import jpa.service.SubscriberDataService;
 import jpa.service.EmailAddressService;
 import jpa.util.StringUtil;
@@ -73,8 +74,16 @@ public class EmailAddressTest {
 		System.out.println(StringUtil.prettyPrint(obj[0]));
 		System.out.println(obj[1] + "," + obj[2] + "," + obj[3]);
 		
+		// test paging for UI application
 		int rowId = service.getRowIdForPreview();
 		assertTrue(rowId>0);
+		PagingVo vo = new PagingVo();
+		vo.setStatusId(StatusId.ACTIVE.getValue());
+		vo.setSearchString("test.com");
+		List<EmailAddress> listpg = service.getEmailAddrsWithPaging(vo);
+		assertTrue(listpg.size()>0);
+		int count = service.getEmailAddressCount(vo);
+		assertTrue(count==listpg.size());
 		
 		// test update
 		rcd2.setUpdtUserId("JpaTest");
