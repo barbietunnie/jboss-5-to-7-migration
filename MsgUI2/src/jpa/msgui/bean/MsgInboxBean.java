@@ -27,31 +27,19 @@ import javax.mail.Part;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
-import org.apache.log4j.Logger;
+import jpa.model.SessionUpload;
+import jpa.model.message.MessageAttachment;
+import jpa.model.message.MessageInbox;
+import jpa.model.message.MessageRfcField;
+import jpa.msgui.util.FacesUtil;
+import jpa.msgui.util.SpringUtil;
+import jpa.msgui.vo.SearchFieldsVo;
+import jpa.msgui.vo.SearchFieldsVo.PageAction;
+import jpa.service.SessionUploadService;
+import jpa.service.message.MessageInboxService;
+import jpa.service.msgin.MessageInboxBo;
 
-import com.legacytojava.message.bean.BodypartBean;
-import com.legacytojava.message.bean.MessageBean;
-import com.legacytojava.message.bean.MessageBeanBuilder;
-import com.legacytojava.message.bo.TaskBaseBo;
-import com.legacytojava.message.bo.inbox.MsgInboxBo;
-import com.legacytojava.message.bo.mailsender.MessageBodyBuilder;
-import com.legacytojava.message.constant.EmailAddressType;
-import com.legacytojava.message.constant.MsgStatusCode;
-import com.legacytojava.message.dao.inbox.MsgInboxDao;
-import com.legacytojava.message.dao.user.SessionUploadDao;
-import com.legacytojava.message.exception.DataValidationException;
-import com.legacytojava.message.util.EmailAddrUtil;
-import com.legacytojava.message.util.StringUtil;
-import com.legacytojava.message.vo.SessionUploadVo;
-import com.legacytojava.message.vo.inbox.AttachmentsVo;
-import com.legacytojava.message.vo.inbox.MsgInboxVo;
-import com.legacytojava.message.vo.inbox.MsgInboxWebVo;
-import com.legacytojava.message.vo.inbox.RfcFieldsVo;
-import com.legacytojava.message.vo.inbox.SearchFieldsVo;
-import com.legacytojava.message.vo.inbox.SearchFieldsVo.PageAction;
-import com.legacytojava.msgui.util.FacesUtil;
-import com.legacytojava.msgui.util.MessageThreadsBuilder;
-import com.legacytojava.msgui.util.SpringUtil;
+import org.apache.log4j.Logger;
 
 public class MsgInboxBean {
 	static final Logger logger = Logger.getLogger(MsgInboxBean.class);
@@ -60,23 +48,23 @@ public class MsgInboxBean {
 	final static String LF = System.getProperty("line.separator","\n");
 	final static boolean DisplaySearchVo = false;
 	
-	private MsgInboxDao msgInboxDao = null;
-	private MsgInboxBo msgInboxBo = null;
-	private SessionUploadDao sessionUploadDao = null;
+	private MessageInboxService msgInboxDao = null;
+	private MessageInboxBo msgInboxBo = null;
+	private SessionUploadService sessionUploadDao = null;
 	private DataModel folder = null;
-	private MsgInboxVo message = null;
+	private MessageInbox message = null;
 	private boolean editMode = true;
 	private boolean isHtml = false;
 	private boolean checkAll = false;
 
 	private HtmlDataTable dataTable;
-	private MsgInboxVo replyMessageVo = null;
+	private MessageInbox replyMessageVo = null;
 	private List<MsgInboxWebVo> messageThreads = null;
-	private List<SessionUploadVo> uploads = null;
+	private List<SessionUpload> uploads = null;
 	private UIInput fromAddrInput = null;
 	private UIInput toAddrInput = null;
 
-	private RfcFieldsVo rfcFields = null;
+	private MessageRfcField rfcFields = null;
 	
 	private final SearchFieldsVo searchVo = new SearchFieldsVo();
 	private boolean pagingButtonPushed = false;
@@ -92,24 +80,24 @@ public class MsgInboxBean {
 	private static String TO_PAGING = "message.paging";
 	private static String TO_SELF = "message.toself";
 	
-	public MsgInboxDao getMsgInboxDao() {
+	public MessageInboxService getMessageInboxService() {
 		if (msgInboxDao == null) {
-			msgInboxDao = (MsgInboxDao) SpringUtil.getWebAppContext().getBean("msgInboxDao");
+			msgInboxDao = (MessageInboxService) SpringUtil.getWebAppContext().getBean("messageInboxService");
 		}
 		return msgInboxDao;
 	}
 
-	public MsgInboxBo getMsgInboxBo() {
+	public MessageInboxBo getMessageInboxBo() {
 		if (msgInboxBo == null) {
-			msgInboxBo = (MsgInboxBo) SpringUtil.getWebAppContext().getBean("msgInboxBo");
+			msgInboxBo = (MessageInboxBo) SpringUtil.getWebAppContext().getBean("messageInboxBo");
 		}
 		return msgInboxBo;
 	}
 
-	public SessionUploadDao getSessionUploadDao() {
+	public SessionUploadService getSessionUploadService() {
 		if (sessionUploadDao == null) {
-			sessionUploadDao = (SessionUploadDao) SpringUtil.getWebAppContext().getBean(
-					"sessionUploadDao");
+			sessionUploadDao = (SessionUploadService) SpringUtil.getWebAppContext().getBean(
+					"sessionUploadService");
 		}
 		return sessionUploadDao;
 	}
@@ -182,7 +170,7 @@ public class MsgInboxBean {
 		}
 		// retrieve total number of rows
 		if (searchVo.getRowCount() < 0) {
-			int rowCount = getMsgInboxDao().getRowCountForWeb(searchVo);
+			int rowCount = getMessageInboxService().getRowCountForWeb(searchVo);
 			searchVo.setRowCount(rowCount);
 		}
 		/* This block DOES NOT resolve browser "refresh" issue as the "refresh" button
@@ -198,7 +186,7 @@ public class MsgInboxBean {
 		if (folder == null || !searchVo.getPageAction().equals(PageAction.CURRENT)) {
 			//logger.info("SearchVo Before: " + searchVo);
 			// retrieve rows based on page action
-			List<MsgInboxWebVo> msgInboxList = getMsgInboxDao().getListForWeb(searchVo);
+			List<MsgInboxWebVo> msgInboxList = getMessageInboxService().getListForWeb(searchVo);
 			/* set search keys for paging */
 			if (!msgInboxList.isEmpty()) {
 				MsgInboxWebVo firstRow = (MsgInboxWebVo) msgInboxList.get(0);
@@ -296,7 +284,7 @@ public class MsgInboxBean {
 		if (uploads != null) {
 			uploads.clear();
 		}
-		int rowsDeleted = getSessionUploadDao().deleteBySessionId(sessionId);
+		int rowsDeleted = getSessionUploadService().deleteBySessionId(sessionId);
 		logger.info("clearUploads() - SessionId: " + sessionId + ", rows deleted: " + rowsDeleted);
 		uploads = null;
 	}
@@ -315,34 +303,34 @@ public class MsgInboxBean {
 		clearUploads(); // clear session upload records
 		MsgInboxWebVo webVo = (MsgInboxWebVo) folder.getRowData();
 		// retrieve other message properties including attachments
-		message = getMsgInboxBo().getMessageByPK(webVo.getMsgId());
+		message = getMessageInboxBo().getMessageByPK(webVo.getMsgId());
 		
 		return viewMessage(message);
 	}
 	
-	private String viewMessage(MsgInboxVo message) {
+	private String viewMessage(MessageInbox message) {
 		String contentType = message.getBodyContentType();
 		if (contentType != null && contentType.toLowerCase().startsWith("text/html")) {
 			// set default value for HTML check box
 			setHtml(true);
 		}
-		if (message.getAttachments() != null) {
+		if (message.getMessageAttachmentList() != null) {
 			// empty attachment bodies to reduce HTTP session size
-			for (int i = 0; i < message.getAttachments().size(); i++) {
-				AttachmentsVo vo = message.getAttachments().get(i);
-				if (vo.getAttchmntValue() != null) {
-					vo.setAttachmentSize(vo.getAttchmntValue().length);
-					vo.setAttchmntValue(null);
+			for (int i = 0; i < message.getMessageAttachmentList().size(); i++) {
+				MessageAttachment vo = message.getMessageAttachmentList().get(i);
+				if (vo.getAttachmentValue() != null) {
+					vo.setAttachmentSize(vo.getAttachmentValue().length);
+					vo.setAttachmentValue(null);
 				}
 			}
 		}
 		if (isInfoEnabled) {
 			logger.info("viewMessage() - Message to be viewed: " + message.getMsgSubject() + ","
-					+ message.getMsgId());
+					+ message.getRowId());
 		}
 		
-		if (!message.getRfcFields().isEmpty()) {
-			rfcFields = message.getRfcFields().get(0);
+		if (!message.getMessageRfcFieldList().isEmpty()) {
+			rfcFields = message.getMessageRfcFieldList().get(0);
 		}
 		else {
 			rfcFields = null;
@@ -352,12 +340,12 @@ public class MsgInboxBean {
 		editMode = true;
 		message.setReadCount(message.getReadCount() + 1);
 		// update ReadCount
-		int rowsUpdated = getMsgInboxDao().updateCounts(message);
+		int rowsUpdated = getMessageInboxService().updateCounts(message);
 		if (rowsUpdated > 0) {
-			logger.info("viewMessage() - Message updated: " + message.getMsgId());
+			logger.info("viewMessage() - Message updated: " + message.getRowId());
 		}
 		// fetch message threads
-		List<MsgInboxWebVo> threads = getMsgInboxDao().getByLeadMsgId(message.getLeadMsgId());
+		List<MessageInbox> threads = getMessageInboxService().getByLeadMsgId(message.getLeadMessageRowId());
 		if (threads != null && threads.size() > 1) {
 			messageThreads = MessageThreadsBuilder.buildThreads(threads);
 		}
@@ -365,9 +353,9 @@ public class MsgInboxBean {
 			messageThreads = null;
 		}
 		if (isDebugEnabled) {
-			//logger.debug("viewMessage() - MsgInboxVo to be passed to jsp: " + message);
-			logger.debug("viewMessage() - MsgInboxVo to be passed to jsp: " + LF + "MsgId: "
-					+ message.getMsgId() + LF + "Number of Attachments: "
+			//logger.debug("viewMessage() - MessageInbox to be passed to jsp: " + message);
+			logger.debug("viewMessage() - MessageInbox to be passed to jsp: " + LF + "Msg RowId: "
+					+ message.getRowId() + LF + "Number of Attachments: "
 					+ message.getAttachmentCount() + LF + "Subject: " + message.getMsgSubject()
 					+ LF + "Message Body: " + LF + message.getMsgBody());
 		}
@@ -378,7 +366,7 @@ public class MsgInboxBean {
 		String msgId = FacesUtil.getRequestParameter("msgThreadId");
 		logger.info("viewThread() - msgId: " + msgId);
 		if (msgId == null) return null;
-		message = getMsgInboxDao().getByPrimaryKey(Long.parseLong(msgId));
+		message = getMessageInboxService().getByPrimaryKey(Integer.parseInt(msgId));
 		
 		return viewMessage(message);
 	}
@@ -394,7 +382,7 @@ public class MsgInboxBean {
 		for (int i=0; i<list.size(); i++) {
 			MsgInboxWebVo vo = list.get(i);
 			if (vo.isMarkedForDeletion()) {
-				int rowsDeleted = getMsgInboxDao().deleteByPrimaryKey(vo.getMsgId());
+				int rowsDeleted = getMessageInboxService().deleteByRowId(vo.getMsgId());
 				if (rowsDeleted > 0) {
 					logger.info("deleteMessages() - Mailbox message deleted: " + vo.getMsgId());
 					searchVo.setRowCount(searchVo.getRowCount() - rowsDeleted);
@@ -407,12 +395,12 @@ public class MsgInboxBean {
 	
 	public String deleteMessage() {
 		if (message == null) {
-			logger.error("deleteMessage() - MsgInboxVo is null");
+			logger.error("deleteMessage() - MessageInbox is null");
 			return TO_FAILED;
 		}
-		int rowsDeleted = getMsgInboxDao().deleteByPrimaryKey(message.getMsgId());
+		int rowsDeleted = getMessageInboxService().deleteByRowId(message.getRowId());
 		if (rowsDeleted > 0) {
-			logger.info("deleteMessage() - Mailbox message deleted: " + message.getMsgId());
+			logger.info("deleteMessage() - Mailbox message deleted: " + message.getRowId());
 			searchVo.setRowCount(searchVo.getRowCount() - rowsDeleted);
 		}
 		getMessageList().remove(message);
@@ -450,7 +438,7 @@ public class MsgInboxBean {
 				if (vo.getReadCount() <= 0) {
 					vo.setReadCount(1);
 					vo.setUpdtUserId(FacesUtil.getLoginUserId());
-					int rowsUpdated = getMsgInboxDao().updateCounts(vo);
+					int rowsUpdated = getMessageInboxService().updateCounts(vo);
 					if (rowsUpdated > 0) {
 						logger.info("markAsRead() - Message updated: " + vo.getMsgId());
 					}
@@ -476,7 +464,7 @@ public class MsgInboxBean {
 				if (vo.getReadCount() > 0) {
 					vo.setReadCount(0);
 					vo.setUpdtUserId(FacesUtil.getLoginUserId());
-					int rowsUpdated = getMsgInboxDao().updateCounts(vo);
+					int rowsUpdated = getMessageInboxService().updateCounts(vo);
 					if (rowsUpdated > 0) {
 						logger.info("markAsUnread() - Message updated: " + vo.getMsgId());
 					}
@@ -502,7 +490,7 @@ public class MsgInboxBean {
 				if (!YES_CODE.equalsIgnoreCase(vo.getFlagged())) {
 					vo.setFlagged(YES_CODE);
 					vo.setUpdtUserId(FacesUtil.getLoginUserId());
-					int rowsUpdated = getMsgInboxDao().updateCounts(vo);
+					int rowsUpdated = getMessageInboxService().updateCounts(vo);
 					if (rowsUpdated > 0) {
 						logger.info("markAsFlagged() - Message updated: " + vo.getMsgId());
 					}
@@ -528,7 +516,7 @@ public class MsgInboxBean {
 				if (!NO_CODE.equalsIgnoreCase(vo.getFlagged())) {
 					vo.setFlagged(NO_CODE);
 					vo.setUpdtUserId(FacesUtil.getLoginUserId());
-					int rowsUpdated = getMsgInboxDao().updateCounts(vo);
+					int rowsUpdated = getMessageInboxService().updateCounts(vo);
 					if (rowsUpdated > 0) {
 						logger.info("markAsUnflagged() - Message updated: " + vo.getMsgId());
 					}
@@ -540,11 +528,11 @@ public class MsgInboxBean {
 	
 	public String replyMessage() {
 		if (message == null) {
-			logger.error("replyMessage() - MsgInboxVo is null");
+			logger.error("replyMessage() - MessageInbox is null");
 			return TO_FAILED;
 		}
 		try {
-			replyMessageVo = (MsgInboxVo) message.getClone();
+			replyMessageVo = (MessageInbox) message.getClone();
 		}
 		catch (CloneNotSupportedException e) {
 			logger.error("CloneNotSupportedException caught", e);
@@ -564,12 +552,12 @@ public class MsgInboxBean {
 	
 	public String closeMessage() {
 		if (message == null) {
-			logger.error("closeMessage() - MsgInboxVo is null");
+			logger.error("closeMessage() - MessageInbox is null");
 			return TO_FAILED;
 		}
 		message.setStatusId(MsgStatusCode.CLOSED);
 		message.setUpdtUserId(FacesUtil.getLoginUserId());
-		int rowsUpdated = getMsgInboxDao().updateStatusId(message);
+		int rowsUpdated = getMessageInboxService().updateStatusId(message);
 		if (rowsUpdated > 0) {
 			logger.info("closeMessage() - Mailbox message closed: " + message.getMsgId());
 			searchVo.setRowCount(searchVo.getRowCount() - rowsUpdated);
@@ -580,12 +568,12 @@ public class MsgInboxBean {
 	
 	public String closeThread() {
 		if (message == null) {
-			logger.error("closeThread() - MsgInboxVo is null");
+			logger.error("closeThread() - MessageInbox is null");
 			return TO_FAILED;
 		}
 		message.setStatusId(MsgStatusCode.CLOSED);
 		message.setUpdtUserId(FacesUtil.getLoginUserId());
-		int rowsUpdated = getMsgInboxDao().updateStatusIdByLeadMsgId(message);
+		int rowsUpdated = getMessageInboxService().updateStatusIdByLeadMsgId(message);
 		if (rowsUpdated > 0) {
 			logger.info("closeThread() - messages closed (LeadMsgId): " + message.getLeadMsgId());
 			searchVo.setRowCount(searchVo.getRowCount() - rowsUpdated);
@@ -596,12 +584,12 @@ public class MsgInboxBean {
 	
 	public String openMessage() {
 		if (message == null) {
-			logger.error("closeMessage() - MsgInboxVo is null");
+			logger.error("closeMessage() - MessageInbox is null");
 			return TO_FAILED;
 		}
 		message.setStatusId(MsgStatusCode.OPENED);
 		message.setUpdtUserId(FacesUtil.getLoginUserId());
-		int rowsUpdated = getMsgInboxDao().updateStatusId(message);
+		int rowsUpdated = getMessageInboxService().updateStatusId(message);
 		if (rowsUpdated > 0) {
 			logger.info("openMessage() - Mailbox message opened: " + message.getMsgId());
 			searchVo.setRowCount(searchVo.getRowCount() + rowsUpdated);
@@ -612,11 +600,11 @@ public class MsgInboxBean {
 	
 	public String reassignRule() {
 		if (message == null) {
-			logger.error("reassignRule() - MsgInboxVo is null");
+			logger.error("reassignRule() - MessageInbox is null");
 			return TO_FAILED;
 		}
 		// retrieve the original message
-		MsgInboxVo msgData = getMsgInboxBo().getMessageByPK(message.getMsgId());
+		MessageInbox msgData = getMessageInboxBo().getMessageByPK(message.getMsgId());
 		if (msgData == null) {
 			logger.error("reassignRule() - Original message has been deleted, msgId: "
 					+ message.getMsgId());
@@ -648,11 +636,11 @@ public class MsgInboxBean {
 		return closeMessage();
 	}
 	
-	public List<SessionUploadVo> retrieveUploadFiles() {
+	public List<SessionUpload> retrieveUploadFiles() {
 		String sessionId = FacesUtil.getSessionId();
 		boolean valid = FacesUtil.isSessionIdValid();
 		logger.info("retrieveUploadFiles() - SessionId: " + sessionId + ", Valid? " + valid);
-		uploads = getSessionUploadDao().getBySessionId4Web(sessionId);
+		uploads = getSessionUploadService().getBySessionId4Web(sessionId);
 		if (isDebugEnabled && uploads != null)
 			logger.debug("retrieveUploadFiles() - files retrieved: " + uploads.size());
 		return uploads;
@@ -670,11 +658,11 @@ public class MsgInboxBean {
 	
 	public String forwardMessage() {
 		if (message == null) {
-			logger.error("forwardMessage() - MsgInboxVo is null");
+			logger.error("forwardMessage() - MessageInbox is null");
 			return TO_FAILED;
 		}
 		try {
-			replyMessageVo = (MsgInboxVo) message.getClone();
+			replyMessageVo = (MessageInbox) message.getClone();
 		}
 		catch (CloneNotSupportedException e) {
 			logger.error("CloneNotSupportedException caught", e);
@@ -712,13 +700,13 @@ public class MsgInboxBean {
 		try {
 			int sessionSeq = Integer.parseInt(seq);
 			for (int i = 0; uploads != null && i < uploads.size(); i++) {
-				SessionUploadVo vo = uploads.get(i);
+				SessionUpload vo = uploads.get(i);
 				if (sessionSeq == vo.getSessionSeq()) {
 					uploads.remove(i);
 					break;
 				}
 			}
-			int rowsDeleted = getSessionUploadDao().deleteByPrimaryKey(id, sessionSeq);
+			int rowsDeleted = getSessionUploadService().deleteByPrimaryKey(id, sessionSeq);
 			logger.info("removeUploadFile() - rows deleted: " + rowsDeleted + ", file name: "
 					+ name);
 		}
@@ -730,7 +718,7 @@ public class MsgInboxBean {
 	
 	public String sendMessage() {
 		if (message == null) {
-			logger.error("sendMessage() - MsgInboxVo is null");
+			logger.error("sendMessage() - MessageInbox is null");
 			return TO_FAILED;
 		}
 		if (replyMessageVo == null) {
@@ -739,7 +727,7 @@ public class MsgInboxBean {
 		}
 		// make sure we have all the data to rebuild a message bean
 		// retrieve original message
-		MsgInboxVo msgData = getMsgInboxBo().getMessageByPK(message.getMsgId());
+		MessageInbox msgData = getMessageInboxBo().getMessageByPK(message.getMsgId());
 		if (msgData == null) {
 			logger.error("sendMessage() - Original message has been deleted, msgId: "
 					+ message.getMsgId());
@@ -814,7 +802,7 @@ public class MsgInboxBean {
 				}
 				// retrieve upload files
 				String sessionId = FacesUtil.getSessionId();
-				List<SessionUploadVo> list = getSessionUploadDao().getBySessionId(sessionId);
+				List<SessionUpload> list = getSessionUploadService().getBySessionId(sessionId);
 				if (list != null && list.size() > 0) {
 					// construct multipart
 					mBean.setContentType("multipart/mixed");
@@ -826,7 +814,7 @@ public class MsgInboxBean {
 					mBean.put(aNode);
 					// message attachments
 					for (int i = 0; i < list.size(); i++) {
-						SessionUploadVo vo = list.get(i);
+						SessionUpload vo = list.get(i);
 						BodypartBean subNode = new BodypartBean();
 						subNode.setContentType(vo.getContentType());
 						subNode.setDisposition(Part.ATTACHMENT);
@@ -880,7 +868,7 @@ public class MsgInboxBean {
 				message.setReplyCount(message.getReplyCount() + 1);
 			if (replyMessageVo.getIsForward())
 				message.setForwardCount(message.getForwardCount() + 1);
-			int rowsUpdated = getMsgInboxDao().updateCounts(message);
+			int rowsUpdated = getMessageInboxService().updateCounts(message);
 			if (rowsUpdated > 0) {
 				logger.info("sendMessage() - Message updated: " + message.getMsgId());
 			}
@@ -978,19 +966,19 @@ public class MsgInboxBean {
 		}
 	}
 	
-	public MsgInboxVo getMessage() {
+	public MessageInbox getMessage() {
 		return message;
 	}
 
-	public void setMessage(MsgInboxVo message) {
+	public void setMessage(MessageInbox message) {
 		this.message = message;
 	}
 
-	public MsgInboxVo getReplyMessageVo() {
+	public MessageInbox getReplyMessageVo() {
 		return replyMessageVo;
 	}
 
-	public void setReplyMessageVo(MsgInboxVo replyMessageVo) {
+	public void setReplyMessageVo(MessageInbox replyMessageVo) {
 		this.replyMessageVo = replyMessageVo;
 	}
 
@@ -1002,11 +990,11 @@ public class MsgInboxBean {
 		this.messageThreads = messageThreads;
 	}
 	
-	public List<SessionUploadVo> getUploads() {
+	public List<SessionUpload> getUploads() {
 		return uploads;
 	}
 
-	public void setUploads(List<SessionUploadVo> uploads) {
+	public void setUploads(List<SessionUpload> uploads) {
 		this.uploads = uploads;
 	}
 	
@@ -1058,11 +1046,11 @@ public class MsgInboxBean {
 		this.toAddrInput = toAddrInput;
 	}
 
-	public RfcFieldsVo getRfcFields() {
+	public MessageRfcField getRfcFields() {
 		return rfcFields;
 	}
 
-	public void setRfcFields(RfcFieldsVo rfcFields) {
+	public void setRfcFields(MessageRfcField rfcFields) {
 		this.rfcFields = rfcFields;
 	}
 }
