@@ -1,11 +1,5 @@
 package jpa.msgui.bean;
 
-import static com.legacytojava.message.constant.Constants.DASHES_OF_33;
-import static com.legacytojava.message.constant.Constants.MSG_DELIMITER_BEGIN;
-import static com.legacytojava.message.constant.Constants.MSG_DELIMITER_END;
-import static com.legacytojava.message.constant.Constants.NO_CODE;
-import static com.legacytojava.message.constant.Constants.YES_CODE;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,18 +21,32 @@ import javax.mail.Part;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
+import jpa.constant.Constants;
+import jpa.constant.EmailAddrType;
+import jpa.constant.MsgStatusCode;
+import jpa.exception.DataValidationException;
+import jpa.message.BodypartBean;
+import jpa.message.MessageBean;
+import jpa.message.MessageBodyBuilder;
+import jpa.message.MessageContext;
 import jpa.model.SessionUpload;
+import jpa.model.SessionUploadPK;
 import jpa.model.message.MessageAttachment;
 import jpa.model.message.MessageInbox;
 import jpa.model.message.MessageRfcField;
 import jpa.msgui.util.FacesUtil;
+import jpa.msgui.util.MessageThreadsBuilder;
 import jpa.msgui.util.SpringUtil;
 import jpa.msgui.vo.SearchFieldsVo;
 import jpa.msgui.vo.SearchFieldsVo.PageAction;
 import jpa.service.SessionUploadService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.msgin.MessageInboxBo;
+import jpa.service.msgout.MessageBeanBo;
+import jpa.service.task.TaskBaseBo;
+import jpa.util.EmailAddrUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public class MsgInboxBean {
@@ -51,7 +59,8 @@ public class MsgInboxBean {
 	private MessageInboxService msgInboxDao = null;
 	private MessageInboxBo msgInboxBo = null;
 	private SessionUploadService sessionUploadDao = null;
-	private DataModel folder = null;
+	private MessageBeanBo msgBeanBo = null;
+	private DataModel<MessageInbox> folder = null;
 	private MessageInbox message = null;
 	private boolean editMode = true;
 	private boolean isHtml = false;
@@ -59,7 +68,7 @@ public class MsgInboxBean {
 
 	private HtmlDataTable dataTable;
 	private MessageInbox replyMessageVo = null;
-	private List<MsgInboxWebVo> messageThreads = null;
+	private List<MessageInbox> messageThreads = null;
 	private List<SessionUpload> uploads = null;
 	private UIInput fromAddrInput = null;
 	private UIInput toAddrInput = null;
@@ -100,6 +109,14 @@ public class MsgInboxBean {
 					"sessionUploadService");
 		}
 		return sessionUploadDao;
+	}
+
+	public MessageBeanBo getMessageBeanBo() {
+		if (msgBeanBo == null) {
+			msgBeanBo = (MessageBeanBo) SpringUtil.getWebAppContext().getBean(
+					"messageBeanBo");
+		}
+		return msgBeanBo;
 	}
 
 	public String pageFirst() {
@@ -149,7 +166,7 @@ public class MsgInboxBean {
 		return searchVo;
 	}
 	
-	public DataModel getAll() {
+	public DataModel<MessageInbox> getAll() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
 		if (fromPage != null && fromPage.equals("main")) {
 			resetSearchVo();
@@ -186,15 +203,15 @@ public class MsgInboxBean {
 		if (folder == null || !searchVo.getPageAction().equals(PageAction.CURRENT)) {
 			//logger.info("SearchVo Before: " + searchVo);
 			// retrieve rows based on page action
-			List<MsgInboxWebVo> msgInboxList = getMessageInboxService().getListForWeb(searchVo);
+			List<MessageInbox> msgInboxList = getMessageInboxService().getListForWeb(searchVo);
 			/* set search keys for paging */
 			if (!msgInboxList.isEmpty()) {
-				MsgInboxWebVo firstRow = (MsgInboxWebVo) msgInboxList.get(0);
+				MessageInbox firstRow = (MessageInbox) msgInboxList.get(0);
 				searchVo.setReceivedTimeFirst(firstRow.getReceivedTime());
-				searchVo.setMsgIdFirst(firstRow.getMsgId());
-				MsgInboxWebVo lastRow = (MsgInboxWebVo) msgInboxList.get(msgInboxList.size() - 1);
+				searchVo.setMsgIdFirst(firstRow.getRowId());
+				MessageInbox lastRow = (MessageInbox) msgInboxList.get(msgInboxList.size() - 1);
 				searchVo.setReceivedTimeLast(lastRow.getReceivedTime());
-				searchVo.setMsgIdLast(lastRow.getMsgId());
+				searchVo.setMsgIdLast(lastRow.getRowId());
 			}
 			else {
 				searchVo.setReceivedTimeFirst(null);
@@ -301,9 +318,9 @@ public class MsgInboxBean {
 			return TO_FAILED;
 		}
 		clearUploads(); // clear session upload records
-		MsgInboxWebVo webVo = (MsgInboxWebVo) folder.getRowData();
+		MessageInbox webVo = (MessageInbox) folder.getRowData();
 		// retrieve other message properties including attachments
-		message = getMessageInboxBo().getMessageByPK(webVo.getMsgId());
+		message = getMessageInboxBo().getMessageByPK(webVo.getRowId());
 		
 		return viewMessage(message);
 	}
@@ -340,10 +357,8 @@ public class MsgInboxBean {
 		editMode = true;
 		message.setReadCount(message.getReadCount() + 1);
 		// update ReadCount
-		int rowsUpdated = getMessageInboxService().updateCounts(message);
-		if (rowsUpdated > 0) {
-			logger.info("viewMessage() - Message updated: " + message.getRowId());
-		}
+		getMessageInboxService().update(message);
+		logger.info("viewMessage() - Message updated: " + message.getRowId());
 		// fetch message threads
 		List<MessageInbox> threads = getMessageInboxService().getByLeadMsgId(message.getLeadMessageRowId());
 		if (threads != null && threads.size() > 1) {
@@ -378,13 +393,13 @@ public class MsgInboxBean {
 			logger.warn("deleteMessages() - MsgInbox is null.");
 			return TO_FAILED;
 		}
-		List<MsgInboxWebVo> list = getMessageList();
+		List<MessageInbox> list = getMessageList();
 		for (int i=0; i<list.size(); i++) {
-			MsgInboxWebVo vo = list.get(i);
+			MessageInbox vo = list.get(i);
 			if (vo.isMarkedForDeletion()) {
-				int rowsDeleted = getMessageInboxService().deleteByRowId(vo.getMsgId());
+				int rowsDeleted = getMessageInboxService().deleteByRowId(vo.getRowId());
 				if (rowsDeleted > 0) {
-					logger.info("deleteMessages() - Mailbox message deleted: " + vo.getMsgId());
+					logger.info("deleteMessages() - Mailbox message deleted: " + vo.getRowId());
 					searchVo.setRowCount(searchVo.getRowCount() - rowsDeleted);
 				}
 			}
@@ -429,19 +444,17 @@ public class MsgInboxBean {
 			logger.warn("markAsRead() - Inbox folder is null.");
 			return TO_FAILED;
 		}
-		List<MsgInboxWebVo> list = getMessageList();
+		List<MessageInbox> list = getMessageList();
 		// update Read Count
-		for (Iterator<MsgInboxWebVo> it=list.iterator(); it.hasNext();) {
-			MsgInboxWebVo vo = it.next();
+		for (Iterator<MessageInbox> it=list.iterator(); it.hasNext();) {
+			MessageInbox vo = it.next();
 			if (vo.isMarkedForDeletion()) {
 				vo.setMarkedForDeletion(false);
 				if (vo.getReadCount() <= 0) {
 					vo.setReadCount(1);
 					vo.setUpdtUserId(FacesUtil.getLoginUserId());
-					int rowsUpdated = getMessageInboxService().updateCounts(vo);
-					if (rowsUpdated > 0) {
-						logger.info("markAsRead() - Message updated: " + vo.getMsgId());
-					}
+					getMessageInboxService().update(vo);
+					logger.info("markAsRead() - Message updated: " + vo.getRowId());
 				}
 			}
 		}
@@ -455,19 +468,17 @@ public class MsgInboxBean {
 			logger.warn("markAsUnread() - MsgInbox is null.");
 			return TO_FAILED;
 		}
-		List<MsgInboxWebVo> list = getMessageList();
+		List<MessageInbox> list = getMessageList();
 		// update Read Count
-		for (Iterator<MsgInboxWebVo> it=list.iterator(); it.hasNext();) {
-			MsgInboxWebVo vo = it.next();
+		for (Iterator<MessageInbox> it=list.iterator(); it.hasNext();) {
+			MessageInbox vo = it.next();
 			if (vo.isMarkedForDeletion()) {
 				vo.setMarkedForDeletion(false);
 				if (vo.getReadCount() > 0) {
 					vo.setReadCount(0);
 					vo.setUpdtUserId(FacesUtil.getLoginUserId());
-					int rowsUpdated = getMessageInboxService().updateCounts(vo);
-					if (rowsUpdated > 0) {
-						logger.info("markAsUnread() - Message updated: " + vo.getMsgId());
-					}
+					getMessageInboxService().update(vo);
+					logger.info("markAsUnread() - Message updated: " + vo.getRowId());
 				}
 			}
 		}
@@ -481,19 +492,17 @@ public class MsgInboxBean {
 			logger.warn("markAsFlagged() - MsgInbox is null.");
 			return TO_FAILED;
 		}
-		List<MsgInboxWebVo> list = getMessageList();
+		List<MessageInbox> list = getMessageList();
 		// update Flagged
-		for (Iterator<MsgInboxWebVo> it=list.iterator(); it.hasNext();) {
-			MsgInboxWebVo vo = it.next();
+		for (Iterator<MessageInbox> it=list.iterator(); it.hasNext();) {
+			MessageInbox vo = it.next();
 			if (vo.isMarkedForDeletion()) {
 				vo.setMarkedForDeletion(false);
-				if (!YES_CODE.equalsIgnoreCase(vo.getFlagged())) {
-					vo.setFlagged(YES_CODE);
+				if (!vo.isFlagged()) {
+					vo.setFlagged(true);
 					vo.setUpdtUserId(FacesUtil.getLoginUserId());
-					int rowsUpdated = getMessageInboxService().updateCounts(vo);
-					if (rowsUpdated > 0) {
-						logger.info("markAsFlagged() - Message updated: " + vo.getMsgId());
-					}
+					getMessageInboxService().update(vo);
+					logger.info("markAsFlagged() - Message updated: " + vo.getRowId());
 				}
 			}
 		}
@@ -507,19 +516,17 @@ public class MsgInboxBean {
 			logger.warn("markAsUnflagged() - MsgInbox is null.");
 			return TO_FAILED;
 		}
-		List<MsgInboxWebVo> list = getMessageList();
+		List<MessageInbox> list = getMessageList();
 		// update Flagged
-		for (Iterator<MsgInboxWebVo> it=list.iterator(); it.hasNext();) {
-			MsgInboxWebVo vo = it.next();
+		for (Iterator<MessageInbox> it=list.iterator(); it.hasNext();) {
+			MessageInbox vo = it.next();
 			if (vo.isMarkedForDeletion()) {
 				vo.setMarkedForDeletion(false);
-				if (!NO_CODE.equalsIgnoreCase(vo.getFlagged())) {
-					vo.setFlagged(NO_CODE);
+				if (vo.isFlagged()) {
+					vo.setFlagged(false);
 					vo.setUpdtUserId(FacesUtil.getLoginUserId());
-					int rowsUpdated = getMessageInboxService().updateCounts(vo);
-					if (rowsUpdated > 0) {
-						logger.info("markAsUnflagged() - Message updated: " + vo.getMsgId());
-					}
+					getMessageInboxService().update(vo);
+					logger.info("markAsUnflagged() - Message updated: " + vo.getRowId());
 				}
 			}
 		}
@@ -532,15 +539,16 @@ public class MsgInboxBean {
 			return TO_FAILED;
 		}
 		try {
-			replyMessageVo = (MessageInbox) message.getClone();
+			replyMessageVo = new MessageInbox();
+			message.copyPropertiesTo(replyMessageVo);
 		}
-		catch (CloneNotSupportedException e) {
-			logger.error("CloneNotSupportedException caught", e);
+		catch (Exception e) {
+			logger.error("BeanUtils.copyProperties() failed: ", e);
 			return TO_FAILED;
 		}
-		replyMessageVo.setIsReply(true);
-		replyMessageVo.setComposeFromAddress(message.getToAddress());
-		replyMessageVo.setComposeToAddress(message.getFromAddress());
+		replyMessageVo.setReply(true);
+		replyMessageVo.setComposeFromAddress(message.getToAddress().getAddress());
+		replyMessageVo.setComposeToAddress(message.getFromAddress().getAddress());
 		replyMessageVo.setMsgSubject("Re:"+message.getMsgSubject());
 		replyMessageVo.setMsgBody(getReplyEnvelope() + message.getMsgBody());
 		reset(); // avoid carrying over the current bound value
@@ -555,13 +563,11 @@ public class MsgInboxBean {
 			logger.error("closeMessage() - MessageInbox is null");
 			return TO_FAILED;
 		}
-		message.setStatusId(MsgStatusCode.CLOSED);
+		message.setStatusId(MsgStatusCode.CLOSED.getValue());
 		message.setUpdtUserId(FacesUtil.getLoginUserId());
-		int rowsUpdated = getMessageInboxService().updateStatusId(message);
-		if (rowsUpdated > 0) {
-			logger.info("closeMessage() - Mailbox message closed: " + message.getMsgId());
-			searchVo.setRowCount(searchVo.getRowCount() - rowsUpdated);
-		}
+		getMessageInboxService().update(message);
+		logger.info("closeMessage() - Mailbox message closed: " + message.getRowId());
+		searchVo.setRowCount(searchVo.getRowCount() - 1);
 		refresh();
 		return TO_CLOSED;
 	}
@@ -571,11 +577,11 @@ public class MsgInboxBean {
 			logger.error("closeThread() - MessageInbox is null");
 			return TO_FAILED;
 		}
-		message.setStatusId(MsgStatusCode.CLOSED);
+		message.setStatusId(MsgStatusCode.CLOSED.getValue());
 		message.setUpdtUserId(FacesUtil.getLoginUserId());
 		int rowsUpdated = getMessageInboxService().updateStatusIdByLeadMsgId(message);
 		if (rowsUpdated > 0) {
-			logger.info("closeThread() - messages closed (LeadMsgId): " + message.getLeadMsgId());
+			logger.info("closeThread() - messages closed (LeadMsgId): " + message.getLeadMessageRowId());
 			searchVo.setRowCount(searchVo.getRowCount() - rowsUpdated);
 		}
 		refresh();
@@ -587,13 +593,11 @@ public class MsgInboxBean {
 			logger.error("closeMessage() - MessageInbox is null");
 			return TO_FAILED;
 		}
-		message.setStatusId(MsgStatusCode.OPENED);
+		message.setStatusId(MsgStatusCode.OPENED.getValue());
 		message.setUpdtUserId(FacesUtil.getLoginUserId());
-		int rowsUpdated = getMessageInboxService().updateStatusId(message);
-		if (rowsUpdated > 0) {
-			logger.info("openMessage() - Mailbox message opened: " + message.getMsgId());
-			searchVo.setRowCount(searchVo.getRowCount() + rowsUpdated);
-		}
+		getMessageInboxService().update(message);
+		logger.info("openMessage() - Mailbox message opened: " + message.getRowId());
+		searchVo.setRowCount(searchVo.getRowCount() + 1);
 		refresh();
 		return TO_CLOSED;
 	}
@@ -604,25 +608,25 @@ public class MsgInboxBean {
 			return TO_FAILED;
 		}
 		// retrieve the original message
-		MessageInbox msgData = getMessageInboxBo().getMessageByPK(message.getMsgId());
+		MessageInbox msgData = getMessageInboxBo().getMessageByPK(message.getRowId());
 		if (msgData == null) {
 			logger.error("reassignRule() - Original message has been deleted, msgId: "
-					+ message.getMsgId());
+					+ message.getRowId());
 			return TO_FAILED;
 		}
-		if (message.getRuleName().equals(msgData.getRuleName())) {
+		if (message.getRuleLogic().getRuleName().equals(msgData.getRuleLogic().getRuleName())) {
 			return null;
 		}
 		// 1) send the message to rule-engine queue with new rule name
 		try {
-			MessageBean msgBean  = MessageBeanBuilder.createMessageBean(msgData);
+			MessageBean msgBean  = getMessageBeanBo().createMessageBean(msgData);
 			TaskBaseBo assignRuleBo = (TaskBaseBo) SpringUtil.getWebAppContext().getBean(
-					"assignRuleNameBo");
-			assignRuleBo.setTaskArguments(message.getRuleName());
+					"assignRuleName");
+			MessageContext ctx = new MessageContext(msgBean);
+			ctx.setTaskArguments(message.getRuleLogic().getRuleName());
 			msgBean.setSendDate(new java.util.Date());
-			String jmsMsgId = (String) assignRuleBo.process(msgBean);
-			logger.info("reassignRule() - assign rule to: " + message.getRuleName()
-					+ ", jmsMsgId: " + jmsMsgId);
+			assignRuleBo.process(ctx);
+			logger.info("reassignRule() - assign rule to: " + message.getRuleLogic().getRuleName());
 		}
 		catch (DataValidationException e) {
 			logger.error("DataValidationException caught", e);
@@ -649,10 +653,10 @@ public class MsgInboxBean {
 	private String getReplyEnvelope() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(LF + LF);
-		sb.append(MSG_DELIMITER_BEGIN + message.getFromAddress()
-				+ MSG_DELIMITER_END);
+		sb.append(Constants.MSG_DELIMITER_BEGIN + message.getFromAddress()
+				+ Constants.MSG_DELIMITER_END);
 		sb.append(LF + LF);
-		sb.append(DASHES_OF_33 + LF);
+		sb.append(Constants.DASHES_OF_33 + LF);
 		return sb.toString();
 	}
 	
@@ -662,14 +666,15 @@ public class MsgInboxBean {
 			return TO_FAILED;
 		}
 		try {
-			replyMessageVo = (MessageInbox) message.getClone();
+			replyMessageVo = new MessageInbox();
+			message.copyPropertiesTo(replyMessageVo);
 		}
-		catch (CloneNotSupportedException e) {
-			logger.error("CloneNotSupportedException caught", e);
+		catch (Exception e) {
+			logger.error("BeanUtils.copyProperties() failed: ", e);
 			return TO_FAILED;
 		}
-		replyMessageVo.setIsForward(true);
-		replyMessageVo.setComposeFromAddress(message.getToAddress());
+		replyMessageVo.setForward(true);
+		replyMessageVo.setComposeFromAddress(message.getToAddress().getAddress());
 		replyMessageVo.setComposeToAddress("");
 		replyMessageVo.setMsgSubject("Fwd:" + message.getMsgSubject());
 		replyMessageVo.setMsgBody(getForwardEnvelope() + message.getMsgBody());
@@ -680,15 +685,15 @@ public class MsgInboxBean {
 	private String getForwardEnvelope() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(LF + LF);
-		sb.append(MSG_DELIMITER_BEGIN + message.getFromAddress()
-				+ MSG_DELIMITER_END + LF);
+		sb.append(Constants.MSG_DELIMITER_BEGIN + message.getFromAddress()
+				+ Constants.MSG_DELIMITER_END + LF);
 		sb.append(LF);
 		sb.append("> From: " + message.getFromAddress() + LF);
 		sb.append("> To: " + message.getToAddress() + LF);
 		sb.append("> Date: " + message.getReceivedTime() + LF);
 		sb.append("> Subject: " + message.getMsgSubject() + LF);
 		sb.append(">" + LF + LF);
-		sb.append(DASHES_OF_33 + LF);
+		sb.append(Constants.DASHES_OF_33 + LF);
 		return sb.toString();
 	}
 	
@@ -701,12 +706,13 @@ public class MsgInboxBean {
 			int sessionSeq = Integer.parseInt(seq);
 			for (int i = 0; uploads != null && i < uploads.size(); i++) {
 				SessionUpload vo = uploads.get(i);
-				if (sessionSeq == vo.getSessionSeq()) {
+				if (sessionSeq == vo.getSessionUploadPK().getSessionSequence()) {
 					uploads.remove(i);
 					break;
 				}
 			}
-			int rowsDeleted = getSessionUploadService().deleteByPrimaryKey(id, sessionSeq);
+			SessionUploadPK pk = new SessionUploadPK(id, sessionSeq);
+			int rowsDeleted = getSessionUploadService().deleteByPrimaryKey(pk);
 			logger.info("removeUploadFile() - rows deleted: " + rowsDeleted + ", file name: "
 					+ name);
 		}
@@ -727,16 +733,16 @@ public class MsgInboxBean {
 		}
 		// make sure we have all the data to rebuild a message bean
 		// retrieve original message
-		MessageInbox msgData = getMessageInboxBo().getMessageByPK(message.getMsgId());
+		MessageInbox msgData = getMessageInboxBo().getMessageByPK(message.getRowId());
 		if (msgData == null) {
 			logger.error("sendMessage() - Original message has been deleted, msgId: "
-					+ message.getMsgId());
+					+ message.getRowId());
 			return TO_FAILED;
 		}
-		Long msgsSent = null;
+		Integer msgsSent = null;
 		try {
 			// retrieve original message
-			MessageBean messageBean  = MessageBeanBuilder.createMessageBean(msgData);
+			MessageBean messageBean  = getMessageBeanBo().createMessageBean(msgData);
 			// retrieve new addresses
 			Address[] from = InternetAddress.parse(replyMessageVo.getComposeFromAddress());
 			Address[] to = InternetAddress.parse(replyMessageVo.getComposeToAddress());
@@ -749,17 +755,17 @@ public class MsgInboxBean {
 			}
 			String replyMsg = null;
 			// remove original message from message body
-			int pos1 = wholeMsgText.indexOf(MSG_DELIMITER_BEGIN);
-			int pos2 = wholeMsgText.indexOf(MSG_DELIMITER_END, pos1 + 1);
+			int pos1 = wholeMsgText.indexOf(Constants.MSG_DELIMITER_BEGIN);
+			int pos2 = wholeMsgText.indexOf(Constants.MSG_DELIMITER_END, pos1 + 1);
 			if (pos1 >= 0 && pos2 > pos1) {
 				replyMsg = wholeMsgText.substring(0, pos1);
-				int pos3 = wholeMsgText.indexOf(DASHES_OF_33, pos2 + 1);
+				int pos3 = wholeMsgText.indexOf(Constants.DASHES_OF_33, pos2 + 1);
 				if (pos3 > pos2) {
-					String origMsg = wholeMsgText.substring(pos3 + DASHES_OF_33.length());
+					String origMsg = wholeMsgText.substring(pos3 + Constants.DASHES_OF_33.length());
 					logger.info("Orig Msg: " + origMsg);
 				}
 				else {
-					String origMsg = wholeMsgText.substring(pos2 + MSG_DELIMITER_END.length());
+					String origMsg = wholeMsgText.substring(pos2 + Constants.MSG_DELIMITER_END.length());
 					logger.info("Orig Msg: " + origMsg);
 				}
 			}
@@ -767,7 +773,7 @@ public class MsgInboxBean {
 				replyMsg = wholeMsgText;
 			}
 			// construct messageBean for new message
-			if (replyMessageVo.getIsForward()) { // forward
+			if (replyMessageVo.isForward()) { // forward
 				// leave body content type unchanged
 				byte[] bytes = messageBean.getBodyNode().getValue();
 				if (replyMsg.trim().length() > 0) {
@@ -782,14 +788,15 @@ public class MsgInboxBean {
 				messageBean.setTo(to);
 				// use new subject
 				messageBean.setSubject(replyMessageVo.getMsgSubject());
-				if (StringUtil.isEmpty(messageBean.getSenderId())) {
+				if (StringUtils.isBlank(messageBean.getSenderId())) {
 					messageBean.setSenderId(FacesUtil.getLoginUserSenderId());
 				}
 				// process the message
 				TaskBaseBo forwardBo = (TaskBaseBo) SpringUtil.getWebAppContext().getBean(
-						"forwardBo");
-				forwardBo.setTaskArguments("$" + EmailAddressType.TO_ADDR);
-				msgsSent = (Long) forwardBo.process(messageBean);
+						"forwardMessage");
+				MessageContext ctx = new MessageContext(messageBean);
+				ctx.setTaskArguments("$" + EmailAddrType.TO_ADDR.getValue());
+				msgsSent = (Integer) forwardBo.process(ctx);
 				logger.info("sendMessage() - Message to send:\n" + messageBean);
 			}
 			else { // reply
@@ -845,8 +852,9 @@ public class MsgInboxBean {
 				mBean.setSenderId(FacesUtil.getLoginUserSenderId());
 				// process the message
 				TaskBaseBo csrReplyBo = (TaskBaseBo) SpringUtil.getWebAppContext().getBean(
-						"csrReplyBo");
-				msgsSent = (Long) csrReplyBo.process(mBean);
+						"csrReplyMessage");
+				MessageContext ctx = new MessageContext(mBean);
+				msgsSent = (Integer) csrReplyBo.process(ctx);
 				logger.info("sendMessage() - Message to send:" + LF + mBean);
 			}
 		}
@@ -864,14 +872,12 @@ public class MsgInboxBean {
 		}
 		// update replyCount or forwardCount
 		if (msgsSent != null && msgsSent.intValue() > 0) {
-			if (replyMessageVo.getIsReply())
+			if (replyMessageVo.isReply())
 				message.setReplyCount(message.getReplyCount() + 1);
-			if (replyMessageVo.getIsForward())
+			if (replyMessageVo.isForward())
 				message.setForwardCount(message.getForwardCount() + 1);
-			int rowsUpdated = getMessageInboxService().updateCounts(message);
-			if (rowsUpdated > 0) {
-				logger.info("sendMessage() - Message updated: " + message.getMsgId());
-			}
+			getMessageInboxService().update(message);
+			logger.info("sendMessage() - Message updated: " + message.getRowId());
 		}
 		return TO_SENT;
 	}
@@ -888,9 +894,9 @@ public class MsgInboxBean {
 			logger.warn("getAnyMessagesMarkedForDeletion() - MsgInbox is null.");
 			return false;
 		}
-		List<MsgInboxWebVo> list = getMessageList();
-		for (Iterator<MsgInboxWebVo> it=list.iterator(); it.hasNext();) {
-			MsgInboxWebVo vo = it.next();
+		List<MessageInbox> list = getMessageList();
+		for (Iterator<MessageInbox> it=list.iterator(); it.hasNext();) {
+			MessageInbox vo = it.next();
 			if (vo.isMarkedForDeletion()) {
 				return true;
 			}
@@ -910,7 +916,7 @@ public class MsgInboxBean {
 		String fromAddr = (String) value;
 		if (!isValidEmailAddress(fromAddr)) {
 			// invalid email address
-	        FacesMessage message = com.legacytojava.msgui.util.MessageUtil.getMessage(
+	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
 					"com.legacytojava.msgui.messages", "invalidEmailAddress", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
@@ -929,7 +935,7 @@ public class MsgInboxBean {
 		String toAddr = (String) value;
 		if (!isValidEmailAddress(toAddr)) {
 			// invalid email address
-	        FacesMessage message = com.legacytojava.msgui.util.MessageUtil.getMessage(
+	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
 					"com.legacytojava.msgui.messages", "invalidEmailAddress", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
@@ -957,12 +963,12 @@ public class MsgInboxBean {
 	}
 	
 	@SuppressWarnings({ "unchecked" })
-	private List<MsgInboxWebVo> getMessageList() {
+	private List<MessageInbox> getMessageList() {
 		if (folder == null) {
-			return new ArrayList<MsgInboxWebVo>();
+			return new ArrayList<MessageInbox>();
 		}
 		else {
-			return (List<MsgInboxWebVo>)folder.getWrappedData();
+			return (List<MessageInbox>)folder.getWrappedData();
 		}
 	}
 	
@@ -982,11 +988,11 @@ public class MsgInboxBean {
 		this.replyMessageVo = replyMessageVo;
 	}
 
-	public List<MsgInboxWebVo> getMessageThreads() {
+	public List<MessageInbox> getMessageThreads() {
 		return messageThreads;
 	}
 
-	public void setMessageThreads(List<MsgInboxWebVo> messageThreads) {
+	public void setMessageThreads(List<MessageInbox> messageThreads) {
 		this.messageThreads = messageThreads;
 	}
 	

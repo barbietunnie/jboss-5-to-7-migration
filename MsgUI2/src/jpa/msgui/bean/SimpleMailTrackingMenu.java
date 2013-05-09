@@ -5,18 +5,21 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.validator.ValidatorException;
+import javax.persistence.NoResultException;
 
+import jpa.constant.RuleType;
+import jpa.data.preload.RuleNameEnum;
+import jpa.model.EmailAddress;
+import jpa.model.UserData;
+import jpa.msgui.util.FacesUtil;
+import jpa.msgui.util.SpringUtil;
+import jpa.msgui.vo.SearchFieldsVo;
+import jpa.msgui.vo.SearchFieldsVo.RuleName;
+import jpa.service.EmailAddressService;
+import jpa.service.message.MessageInboxService;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
-import com.legacytojava.message.dao.emailaddr.EmailAddrDao;
-import com.legacytojava.message.dao.inbox.MsgInboxDao;
-import com.legacytojava.message.util.StringUtil;
-import com.legacytojava.message.vo.UserVo;
-import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
-import com.legacytojava.message.vo.inbox.SearchFieldsVo;
-import com.legacytojava.message.vo.inbox.SearchFieldsVo.RuleName;
-import com.legacytojava.msgui.util.FacesUtil;
-import com.legacytojava.msgui.util.SpringUtil;
 
 /**
  * This is a request scoped bean that holds search fields from HTTP request.
@@ -33,18 +36,18 @@ public class SimpleMailTrackingMenu {
 	
 	private String titleKey;
 	private String functionKey = null;
-	private String ruleName = RuleName.All.toString();
+	private String ruleName = RuleName.All.name();
 	private String fromAddress = null;
 	private String toAddress = null;
 	private String subject = null;
 	private String body = null;
 
-	private String defaultFolder = SearchFieldsVo.MsgType.Received.toString();
-	private String defaultRuleName = RuleName.All.toString();
+	private String defaultFolder = SearchFieldsVo.MsgType.Received.name();
+	private String defaultRuleName = RuleName.All.name();
 	private String defaultToAddr = null;
 	
-	private EmailAddrDao emailAddrDao;
-	private MsgInboxDao msgInboxDao;
+	private EmailAddressService emailAddrDao;
+	private MessageInboxService msgInboxDao;
 	private static String TO_SELF = "message.search";
 	
 	public SimpleMailTrackingMenu() {
@@ -55,26 +58,26 @@ public class SimpleMailTrackingMenu {
 	
 	void setDefaultSearchFields() {
 		// initialize search fields from user's default settings.
-		UserVo userVo = FacesUtil.getLoginUserVo();
+		UserData userVo = FacesUtil.getLoginUserData();
 		if (userVo != null) {
 			defaultFolder = userVo.getDefaultFolder();
-			if (StringUtil.isEmpty(defaultFolder)) {
-				defaultFolder = SearchFieldsVo.MsgType.Received.toString();
+			if (StringUtils.isBlank(defaultFolder)) {
+				defaultFolder = SearchFieldsVo.MsgType.Received.name();
 			}
 			defaultRuleName = userVo.getDefaultRuleName();
-			if (StringUtil.isEmpty(defaultRuleName)) {
-				defaultRuleName = RuleName.All.toString();
+			if (StringUtils.isBlank(defaultRuleName)) {
+				defaultRuleName = RuleType.ALL.getValue();
 			}
 			defaultToAddr = userVo.getDefaultToAddr();
-			if (StringUtil.isEmpty(defaultToAddr)) {
+			if (StringUtils.isBlank(defaultToAddr)) {
 				defaultToAddr = null;
 			}
 			else {
-				getEmailAddrDao().findByAddress(defaultToAddr);
+				getEmailAddressService().findSertAddress(defaultToAddr);
 			}
 		}
 		else {
-			logger.error("constructor - UserVo not found in HTTP session.");
+			logger.error("constructor - UserData not found in HTTP session.");
 		}
 	}
 	
@@ -154,9 +157,9 @@ public class SimpleMailTrackingMenu {
 		String addr = (String) value;
 		if (addr.trim().length() == 0) return;
 		
-		EmailAddrVo vo = getEmailAddrDao().getByAddress(addr);
+		EmailAddress vo = getEmailAddressService().getByAddress(addr);
 		if (vo == null) {
-	        FacesMessage message = com.legacytojava.msgui.util.MessageUtil.getMessage(
+	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
 					"com.legacytojava.msgui.messages", "emailAddressNotFound", null);
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 	        throw new ValidatorException(message);
@@ -183,17 +186,19 @@ public class SimpleMailTrackingMenu {
 		vo.setRuleName(ruleName);
 		vo.setFromAddr(fromAddress);
 		if (fromAddress != null && fromAddress.trim().length() > 0) {
-			EmailAddrVo vo2 = getEmailAddrDao().getByAddress(fromAddress);
-			if (vo2 != null) {
-				vo.setFromAddrId(vo2.getEmailAddrId());
+			try {
+				EmailAddress vo2 = getEmailAddressService().getByAddress(fromAddress);
+				vo.setFromAddrId(vo2.getRowId());
 			}
+			catch (NoResultException e) {}
 		}
 		vo.setToAddr(toAddress);
 		if (toAddress != null && toAddress.trim().length() > 0) {
-			EmailAddrVo vo3 = getEmailAddrDao().getByAddress(toAddress);
-			if (vo3 != null) {
-				vo.setToAddrId(vo3.getEmailAddrId());
+			try {
+				EmailAddress vo3 = getEmailAddressService().getByAddress(toAddress);
+				vo.setToAddrId(vo3.getRowId());
 			}
+			catch (NoResultException e) {}
 		}
 		vo.setSubject(subject);
 		vo.setBody(body);
@@ -202,15 +207,15 @@ public class SimpleMailTrackingMenu {
 	}
 	
 	public int getInboxUnreadCount() {
-		return getMsgInboxDao().getInboxUnreadCount();
+		return getMessageInboxService().getInboxUnreadCount();
 	}
 
 	public int getSentUnreadCount() {
-		return getMsgInboxDao().getSentUnreadCount();
+		return getMessageInboxService().getSentUnreadCount();
 	}
 
 	public int getAllUnreadCount() {
-		return getMsgInboxDao().getAllUnreadCount();
+		return getMessageInboxService().getAllUnreadCount();
 	}
 
 	// PROPERTY: titleKey
@@ -270,25 +275,25 @@ public class SimpleMailTrackingMenu {
 		this.body = body;
 	}
 
-	public EmailAddrDao getEmailAddrDao() {
+	public EmailAddressService getEmailAddressService() {
 		if (emailAddrDao == null) {
-			emailAddrDao = (EmailAddrDao) SpringUtil.getWebAppContext().getBean("emailAddrDao");
+			emailAddrDao = (EmailAddressService) SpringUtil.getWebAppContext().getBean("emailAddressService");
 		}
 		return emailAddrDao;
 	}
 
-	public void setEmailAddrDao(EmailAddrDao emailAddrDao) {
+	public void setEmailAddressService(EmailAddressService emailAddrDao) {
 		this.emailAddrDao = emailAddrDao;
 	}
 
-	public MsgInboxDao getMsgInboxDao() {
+	public MessageInboxService getMessageInboxService() {
 		if (msgInboxDao == null) {
-			msgInboxDao = (MsgInboxDao) SpringUtil.getWebAppContext().getBean("msgInboxDao");
+			msgInboxDao = (MessageInboxService) SpringUtil.getWebAppContext().getBean("messageInboxService");
 		}
 		return msgInboxDao;
 	}
 
-	public void setMsgInboxDao(MsgInboxDao msgInboxDao) {
+	public void setMessageInboxService(MessageInboxService msgInboxDao) {
 		this.msgInboxDao = msgInboxDao;
 	}
 
