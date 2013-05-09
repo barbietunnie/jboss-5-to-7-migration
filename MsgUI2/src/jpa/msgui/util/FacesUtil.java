@@ -259,7 +259,7 @@ public class FacesUtil {
      * get login UserVo from current HTTP session
      * @return a UserVo
      */
-	public static UserData getLoginUserVo() {
+	public static UserData getLoginUserData() {
 		UserData userVo = (UserData) getSessionMapValue(SessionTimeoutFilter.USER_DATA_ID);
 		return userVo;
 	}
@@ -269,7 +269,7 @@ public class FacesUtil {
      * @return a UserId
      */
 	public static String getLoginUserId() {
-		UserData userVo = getLoginUserVo();
+		UserData userVo = getLoginUserData();
 		if (userVo != null)
 			return userVo.getUserId();
 		else
@@ -281,7 +281,7 @@ public class FacesUtil {
      * @return a ClientId
      */
 	public static String getLoginUserSenderId() {
-		UserData userVo = getLoginUserVo();
+		UserData userVo = getLoginUserData();
 		if (userVo != null)
 			return userVo.getSenderData().getSenderId();
 		else
