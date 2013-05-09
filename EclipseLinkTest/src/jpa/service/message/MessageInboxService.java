@@ -1,7 +1,9 @@
 package jpa.service.message;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityExistsException;
@@ -11,14 +13,19 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import jpa.constant.Constants;
+import jpa.constant.MsgDirectionCode;
+import jpa.constant.MsgStatusCode;
 import jpa.model.message.MessageIdDuplicate;
 import jpa.model.message.MessageInbox;
+import jpa.msgui.vo.SearchFieldsVo;
 import jpa.service.EmailAddressService;
 import jpa.service.SenderDataService;
 import jpa.service.SubscriberDataService;
 import jpa.service.rule.RuleLogicService;
 import jpa.util.JpaUtil;
+import jpa.util.StringUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -400,4 +407,239 @@ public class MessageInboxService {
 		}
 	}
 
+	public int getReceivedUnreadCount() {
+		return getUnreadCount(MsgDirectionCode.RECEIVED);
+	}
+
+	public int getSentUnreadCount() {
+		return getUnreadCount(MsgDirectionCode.SENT);
+	}
+
+	private int getUnreadCount(MsgDirectionCode msgDirection) {
+		String sql = 
+			"select count(*) from Message_Inbox where MsgDirection=?1 and ReadCount=?2 ";
+		try {
+			Query query = em.createNativeQuery(sql);
+			query.setParameter(1, msgDirection.getValue());
+			query.setParameter(2, 0);
+			Number count = (Number) query.getSingleResult();
+			return count.intValue();
+		}
+		finally {
+		}
+	}
+
+	public int updateStatusIdByLeadMsgId(MessageInbox msgInbox) {
+		msgInbox.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		String sql =
+			"update Message_Inbox a set " +
+				"a.updtTime=?1, " +
+				"a.updtUserId=?2, " +
+				"a.statusId=?3 " +
+			" where " +
+				" a.LeadMsgRowId=?4 ";
+
+		try {
+			Query query = em.createNativeQuery(sql);
+			query.setParameter(1, msgInbox.getUpdtTime());
+			query.setParameter(2, msgInbox.getUpdtUserId());
+			query.setParameter(3, msgInbox.getStatusId());
+			query.setParameter(4, msgInbox.getLeadMessageRowId());
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
+
+	static String[] CRIT = { " where ", " and ", " and ", " and ", " and ", " and ", " and ",
+		" and ", " and ", " and ", " and " };
+
+	public int getRowCountForWeb(SearchFieldsVo vo) {
+		List<Object> parms = new ArrayList<Object>();
+		String whereSql = getWhereSqlForWeb(vo, parms);
+		String sql = 
+			"SELECT count(*) " +
+			" FROM Message_Inbox a " + 
+			" JOIN Email_Address b ON a.FromAddressRowId=b.Row_Id " +
+			" LEFT JOIN Rule_Logic c ON a.RuleLogicRowId=c.Row_Id " +
+			whereSql;
+		Query query = em.createNativeQuery(sql);
+		for (int i=0; i<parms.size(); i++) {
+			query.setParameter(i+1, parms.get(i));
+		}
+		Number count = (Number) query.getSingleResult();
+		return count.intValue();
+	}
+
+	public List<MessageInbox> getListForWeb(SearchFieldsVo vo) {
+		List<Object> parms = new ArrayList<Object>();
+		String whereSql = getWhereSqlForWeb(vo, parms);
+		/*
+		 * paging logic
+		 */
+		String fetchOrder = "desc";
+		if (vo.getPageAction().equals(SearchFieldsVo.PageAction.FIRST)) {
+			// do nothing
+		}
+		else if (vo.getPageAction().equals(SearchFieldsVo.PageAction.NEXT)) {
+			if (vo.getMsgIdLast() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id < ? ";
+				parms.add(vo.getMsgIdLast());
+			}
+		}
+		else if (vo.getPageAction().equals(SearchFieldsVo.PageAction.PREVIOUS)) {
+			if (vo.getMsgIdFirst() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id > ? ";
+				parms.add(vo.getMsgIdFirst());
+				fetchOrder = "asc";
+			}
+		}
+		else if (vo.getPageAction().equals(SearchFieldsVo.PageAction.LAST)) {
+			List<MessageInbox> lastList = new ArrayList<MessageInbox>();
+			vo.setPageAction(SearchFieldsVo.PageAction.NEXT);
+			while (true) {
+				List<MessageInbox> nextList = getListForWeb(vo);
+				if (!nextList.isEmpty()) {
+					lastList = nextList;
+					vo.setMsgIdLast(nextList.get(nextList.size() - 1).getRowId());
+				}
+				else {
+					break;
+				}
+			}
+			return lastList;
+		}
+		else if (vo.getPageAction().equals(SearchFieldsVo.PageAction.CURRENT)) {
+			if (vo.getMsgIdFirst() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id <= ? ";
+				parms.add(vo.getMsgIdFirst());
+			}
+		}
+		// build SQL
+		String sql = 
+			"SELECT a.* " +
+			" FROM " +
+				"Message_Inbox a " +
+				" JOIN Email_Address b ON a.FromAddressRowId=b.Row_Id " +
+				" LEFT JOIN Rule_Logic c ON a.RuleLogicRowId=c.Row_Id " +
+				whereSql +
+			" order by Row_Id " + fetchOrder +
+			" limit " + vo.getPageSize();
+		// set result set size
+		Query query = em.createNativeQuery(sql, MessageInbox.MAPPING_MESSAGE_INBOX);
+		for (int i=0; i<parms.size(); i++) {
+			query.setParameter(i+1, parms.get(i));
+		}
+		@SuppressWarnings("unchecked")
+		List<MessageInbox> list = query.setMaxResults(vo.getPageSize()).getResultList();
+		if (vo.getPageAction().equals(SearchFieldsVo.PageAction.PREVIOUS)) {
+			// reverse the list
+			Collections.reverse(list);
+		}
+		return list;
+	}
+	
+	private String getWhereSqlForWeb(SearchFieldsVo vo, List<Object> parms) {
+		String whereSql = "";
+		// Closed?
+		String closed = null;
+		if (vo.getMsgType() != null) {
+			if (vo.getMsgType().equals(SearchFieldsVo.MsgType.Closed)) {
+				closed = MsgStatusCode.CLOSED.getValue();
+			}
+		}
+		if (closed != null) {
+			whereSql += CRIT[parms.size()] + " a.StatusId = ? ";
+			parms.add(MsgStatusCode.CLOSED.getValue());
+		}
+		else {
+			whereSql += CRIT[parms.size()] + " a.StatusId != ? ";
+			parms.add(MsgStatusCode.CLOSED.getValue());
+		}
+		// msgDirection
+		String direction = null;
+		if (vo.getMsgType() != null) {
+			if (vo.getMsgType().equals(SearchFieldsVo.MsgType.Received)) {
+				direction = MsgDirectionCode.RECEIVED.getValue();
+			}
+			else if (vo.getMsgType().equals(SearchFieldsVo.MsgType.Sent)) {
+				direction = MsgDirectionCode.SENT.getValue();
+			}
+		}
+		if (direction != null && closed == null) { // and not closed
+			whereSql += CRIT[parms.size()] + " a.MsgDirection = ? ";
+			parms.add(direction);
+		}
+		// ruleName
+		if (StringUtils.isNotBlank(vo.getRuleName())) {
+			if (!SearchFieldsVo.RuleName.All.name().equals(vo.getRuleName())) {
+				whereSql += CRIT[parms.size()] + " c.RuleName = ? ";
+				parms.add(vo.getRuleName());
+			}
+		}
+		// toAddress
+		if (vo.getToAddrId() != null) {
+			whereSql += CRIT[parms.size()] + " a.ToAddressRowId = ? ";
+			parms.add(vo.getToAddrId());
+		}
+		// fromAddress
+		if (vo.getFromAddrId() != null) {
+			whereSql += CRIT[parms.size()] + " a.FromAddressRowId = ? ";
+			parms.add(vo.getFromAddrId());
+		}
+		// readCount
+		if (vo.getRead() != null) {
+			if (vo.getRead().booleanValue())
+				whereSql += CRIT[parms.size()] + " a.ReadCount > ? ";
+			else
+				whereSql += CRIT[parms.size()] + " a.ReadCount <= ? ";
+			parms.add(0);
+		}
+		// msgFlag
+		if (vo.getFlagged() != null) {
+			whereSql += CRIT[parms.size()] + " a.IsFlagged = ? ";
+			parms.add(Boolean.TRUE);
+		}
+		// subject
+		if (vo.getSubject() != null && vo.getSubject().trim().length() > 0) {
+			String subj = vo.getSubject().trim();
+			if (subj.indexOf(" ") < 0) { // a single word
+				whereSql += CRIT[parms.size()] + " a.MsgSubject LIKE ? ";
+				parms.add("%" + subj + "%");
+			}
+			else {
+				String regex = StringUtil.replaceAll(subj, " ", ".+");
+				whereSql += CRIT[parms.size()] + " a.MsgSubject REGEXP '" + regex + "' ";
+			}
+		}
+		// body
+		if (StringUtils.isNotBlank(vo.getBody())) {
+			String body = vo.getBody().trim();
+			if (body.indexOf(" ") < 0) { // a single word
+				whereSql += CRIT[parms.size()] + " a.MsgBody LIKE ? ";
+				parms.add("%" + vo.getBody().trim() + "%");
+			}
+			else {
+				// ".+" or "[[:space:]].*" or "([[:space:]]+|[[:space:]].+[[:space:]])"
+				String regex = StringUtil.replaceAll(body, " ", "[[:space:]].*");
+				whereSql += CRIT[parms.size()] + " a.MsgBody REGEXP '" + regex + "' ";
+			}
+		}
+		// from address
+		if (StringUtils.isNotBlank(vo.getFromAddr())) {
+			if (vo.getFromAddrId() == null) {
+				String from = vo.getFromAddr().trim();
+				if (from.indexOf(" ") < 0) {
+					whereSql += CRIT[parms.size()] + " b.OrigAddress LIKE ? ";
+					parms.add("%" + from + "%");
+				}
+				else {
+					String regex = StringUtil.replaceAll(from, " ", ".+");
+					whereSql += CRIT[parms.size()] + " b.OrigAddress REGEXP '" + regex + "' ";
+				}
+			}
+		}
+		return whereSql;
+	}
 }

@@ -191,6 +191,62 @@ public class MessageInbox extends BaseModel implements Serializable {
 	@Transient
 	private String origStatusId = null;
 
+	/*
+	 * define properties for UI components 
+	 */
+	@Transient
+	private boolean isReply = false;
+	@Transient
+	private boolean isForward = false;
+	@Transient
+	private String composeFromAddress = null;
+	@Transient
+	private String composeToAddress = null;
+	@Transient
+	private int threadLevel = -1; // don't change
+	
+	public boolean isReply() {
+		return isReply;
+	}
+
+	public void setReply(boolean isReply) {
+		this.isReply = isReply;
+	}
+
+	public boolean isForward() {
+		return isForward;
+	}
+
+	public void setForward(boolean isForward) {
+		this.isForward = isForward;
+	}
+
+	public String getComposeFromAddress() {
+		return composeFromAddress;
+	}
+
+	public void setComposeFromAddress(String composeFromAddress) {
+		this.composeFromAddress = composeFromAddress;
+	}
+
+	public String getComposeToAddress() {
+		return composeToAddress;
+	}
+
+	public void setComposeToAddress(String composeToAddress) {
+		this.composeToAddress = composeToAddress;
+	}
+
+	public int getThreadLevel() {
+		return threadLevel;
+	}
+
+	public void setThreadLevel(int threadLevel) {
+		this.threadLevel = threadLevel;
+	}
+
+	/* end of UI */
+
 	public MessageInbox() {
 		// must have a no-argument constructor
 	}

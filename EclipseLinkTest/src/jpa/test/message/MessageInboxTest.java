@@ -18,6 +18,7 @@ import jpa.model.SenderData;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageInbox;
 import jpa.model.rule.RuleLogic;
+import jpa.msgui.vo.SearchFieldsVo;
 import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
 import jpa.service.message.MessageInboxService;
@@ -130,6 +131,14 @@ public class MessageInboxTest {
 		catch (NoResultException e) {
 			assertTrue("MessageInbox table is empty", true);
 		}
+		
+		SearchFieldsVo vo = new SearchFieldsVo();
+		List<MessageInbox> listweb = service.getListForWeb(vo);
+		assertTrue(listweb.size()>0);
+		int count = service.getRowCountForWeb(vo);
+		assertTrue(count>=listweb.size());
+		assertTrue(0<service.updateStatusIdByLeadMsgId(listweb.get(0)));
+		assertTrue(0<service.getReceivedUnreadCount());
 		
 		// test delete
 		assertTrue(1==service.deleteByRowId(msg2.getRowId()));

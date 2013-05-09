@@ -12,9 +12,9 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	public static enum RuleName {All};
 	
 	private MsgType msgType = null;
-	private String ruleName = RuleName.All.toString();
-	private Long fromAddrId = null;
-	private Long toAddrId = null;
+	private String ruleName = RuleName.All.name();
+	private Integer fromAddrId = null;
+	private Integer toAddrId = null;
 	private String fromAddr = null;
 	private String toAddr = null;
 	private String subject = null;
@@ -28,8 +28,8 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	public static final int MSG_INBOX_PAGE_SIZE = 25;
 	private Timestamp receivedTimeFirst = null;
 	private Timestamp receivedTimeLast = null;
-	private long msgIdFirst = -1;
-	private long msgIdLast = -1;
+	private int msgIdFirst = -1;
+	private int msgIdLast = -1;
 	public static enum PageAction {FIRST, NEXT, PREVIOUS, CURRENT, LAST};
 	private PageAction pageAction = PageAction.CURRENT;
 	private int pageSize = MSG_INBOX_PAGE_SIZE;
@@ -45,10 +45,10 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 		vo.setSubject("auto-reply");
 		vo2.setRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
 		vo.setBody("test message");
-		vo2.setFromAddrId(10L);
+		vo2.setFromAddrId(10);
 		vo.setFromAddr("test@test.com");
 		vo2.setToAddr("to@to.com");
-		vo.setToAddrId(20L);
+		vo.setToAddrId(20);
 		System.out.println(vo.equalsLevel1(vo2));
 		System.out.println(vo.listChanges());
 	}
@@ -89,7 +89,7 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	}
 	
 	public void resetSearchFields() {
-		ruleName = RuleName.All.toString();
+		ruleName = RuleName.All.name();
 		fromAddrId = null;
 		toAddrId = null;
 		fromAddr = null;
@@ -216,16 +216,16 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	public void setMsgType(MsgType msgType) {
 		this.msgType = msgType;
 	}
-	public Long getFromAddrId() {
+	public Integer getFromAddrId() {
 		return fromAddrId;
 	}
-	public void setFromAddrId(Long fromAddr) {
+	public void setFromAddrId(Integer fromAddr) {
 		this.fromAddrId = fromAddr;
 	}
-	public Long getToAddrId() {
+	public Integer getToAddrId() {
 		return toAddrId;
 	}
-	public void setToAddrId(Long toAddr) {
+	public void setToAddrId(Integer toAddr) {
 		this.toAddrId = toAddr;
 	}
 	public Boolean getRead() {
@@ -306,16 +306,16 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	public void setRowCount(int rowCount) {
 		this.rowCount = rowCount;
 	}
-	public long getMsgIdFirst() {
+	public int getMsgIdFirst() {
 		return msgIdFirst;
 	}
-	public void setMsgIdFirst(long msgIdFirst) {
+	public void setMsgIdFirst(int msgIdFirst) {
 		this.msgIdFirst = msgIdFirst;
 	}
-	public long getMsgIdLast() {
+	public int getMsgIdLast() {
 		return msgIdLast;
 	}
-	public void setMsgIdLast(long msgIdLast) {
+	public void setMsgIdLast(int msgIdLast) {
 		this.msgIdLast = msgIdLast;
 	}
 }
