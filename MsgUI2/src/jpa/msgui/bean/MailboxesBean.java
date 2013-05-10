@@ -80,7 +80,7 @@ public class MailboxesBean {
 			else {
 				mailBoxList = getMailInboxService().getAll(false);
 			}
-			mailBoxes = new ListDataModel(mailBoxList);
+			mailBoxes = new ListDataModel<MailInbox>(mailBoxList);
 		}
 		return mailBoxes;
 	}

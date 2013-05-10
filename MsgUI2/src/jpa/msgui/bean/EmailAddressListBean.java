@@ -51,6 +51,7 @@ public class EmailAddressListBean {
 	private static String TO_PAGING = "emailAddrlist.paging";
 	private static String TO_SELF = "emailAddrlist.toself";
 	
+	@SuppressWarnings("unchecked")
 	public DataModel<EmailAddress> getEmailAddrs() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
 		if (fromPage != null && fromPage.equals("main")) {

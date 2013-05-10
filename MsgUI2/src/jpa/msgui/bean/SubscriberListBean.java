@@ -65,6 +65,7 @@ public class SubscriberListBean {
 	private static String TO_SELF = "subscriberlist.toself";
 	private static String TO_PAGING = "subscriberlist.paging";
 
+	@SuppressWarnings("unchecked")
 	public DataModel<SubscriberData> getSubscribers() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
 		if (fromPage != null && fromPage.equals("main")) {
@@ -91,8 +92,7 @@ public class SubscriberListBean {
 			logger.info("PagingVo After: " + pagingVo);
 			pagingVo.setPageAction(PagingVo.PageAction.CURRENT);
 			//subscribers = new ListDataModel(subscriberList);
-			subscribers = new PagedListDataModel(subscriberList, pagingVo.getRowCount(), pagingVo
-					.getPageSize());
+			subscribers = new PagedListDataModel(subscriberList, pagingVo.getRowCount(), pagingVo.getPageSize());
 		}
 		return subscribers;
 	}

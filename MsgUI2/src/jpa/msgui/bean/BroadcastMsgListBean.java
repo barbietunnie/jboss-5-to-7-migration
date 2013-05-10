@@ -44,6 +44,7 @@ public class BroadcastMsgListBean {
 	static final String TO_SAVED = "broadcastlist.saved";
 	static final String TO_CANCELED = "broadcastlist.canceled";
 
+	@SuppressWarnings("unchecked")
 	public DataModel<MessageClickCount> getBroadcasts() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
 		if (fromPage != null && fromPage.equals("main")) {
@@ -70,8 +71,7 @@ public class BroadcastMsgListBean {
 			}
 			//logger.info("PagingVo After: " + pagingVo);
 			pagingVo.setPageAction(PagingVo.PageAction.CURRENT);
-			broadcasts = new PagedListDataModel(brdList, pagingVo.getRowCount(), pagingVo
-					.getPageSize());
+			broadcasts = new PagedListDataModel(brdList, pagingVo.getRowCount(), pagingVo.getPageSize());
 		}
 		return broadcasts;
 	}
