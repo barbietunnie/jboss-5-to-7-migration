@@ -44,6 +44,7 @@ public class BroadcastMsgBean {
 	static final String TO_SAVED = "broadcastlist.saved";
 	static final String TO_CANCELED = "broadcastlist.canceled";
 
+	@SuppressWarnings("unchecked")
 	public DataModel<MessageClickCount> getBroadcasts() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
 		if (fromPage != null && fromPage.equals("main")) {
@@ -59,9 +60,9 @@ public class BroadcastMsgBean {
 					pagingVo);
 			/* set keys for paging */
 			if (!brdList.isEmpty()) {
-				MessageClickCount firstRow = (MessageClickCount) brdList.get(0);
+				MessageClickCount firstRow = brdList.get(0);
 				pagingVo.setIdFirst(firstRow.getRowId());
-				MessageClickCount lastRow = (MessageClickCount) brdList.get(brdList.size() - 1);
+				MessageClickCount lastRow = brdList.get(brdList.size() - 1);
 				pagingVo.setIdLast(lastRow.getRowId());
 			}
 			else {
@@ -167,7 +168,7 @@ public class BroadcastMsgBean {
 			return TO_FAILED;
 		}
 		reset();
-		this.broadcast = (MessageClickCount) broadcasts.getRowData();
+		this.broadcast = broadcasts.getRowData();
 		logger.info("viewBroadcastMsg() - Broadcast to be viewed: " + broadcast.getMessageInbox().getRowId());
 		broadcast.setMarkedForEdition(true);
 		editMode = true;
