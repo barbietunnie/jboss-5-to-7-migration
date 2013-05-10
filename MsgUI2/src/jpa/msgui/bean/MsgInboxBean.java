@@ -271,7 +271,7 @@ public class MsgInboxBean {
 	
 	public String viewUnread() {
 		searchVo.resetFlags();
-		searchVo.setRead(Boolean.valueOf(false));
+		searchVo.setIsRead(Boolean.valueOf(false));
 		refresh();
 		searchVo.resetPageContext();
 		pageFirst();
@@ -280,7 +280,7 @@ public class MsgInboxBean {
 	
 	public String viewRead() {
 		searchVo.resetFlags();
-		searchVo.setRead(Boolean.valueOf(true));
+		searchVo.setIsRead(Boolean.valueOf(true));
 		refresh();
 		searchVo.resetPageContext();
 		pageFirst();
@@ -289,7 +289,7 @@ public class MsgInboxBean {
 	
 	public String viewFlagged() {
 		searchVo.resetFlags();
-		searchVo.setFlagged(Boolean.valueOf(true));
+		searchVo.setIsFlagged(Boolean.valueOf(true));
 		refresh();
 		searchVo.resetPageContext();
 		pageFirst();
