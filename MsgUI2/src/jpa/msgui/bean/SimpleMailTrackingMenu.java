@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 
 /**
  * This is a request scoped bean that holds search fields from HTTP request.
- * Whenever MsgInboxBean.getAll() gets called, it retrieves search fields from
+ * Whenever MessageInboxBean.getAll() gets called, it retrieves search fields from
  * this bean and uses them to construct a query to retrieve mails from database.
  * By doing this, if a user clicks browser's back button followed by refresh
  * button, the email list returned will still be okay.
@@ -118,9 +118,9 @@ public class SimpleMailTrackingMenu {
 	 */
 	public void ruleNameChanged(ValueChangeEvent event) {
 		logger.info("Entering ruleNameChanged()...");
-		MsgInboxBean bean = (MsgInboxBean) FacesUtil.getSessionMapValue("msgfolder");
+		MessageInboxBean bean = (MessageInboxBean) FacesUtil.getSessionMapValue("msgfolder");
 		if (bean == null) {
-			logger.error("ruleNameChanged() - failed to retrieve MsgInboxBean from HTTP session");
+			logger.error("ruleNameChanged() - failed to retrieve MessageInboxBean from HTTP session");
 			return;
 		}
 		String newValue = (String) event.getNewValue();

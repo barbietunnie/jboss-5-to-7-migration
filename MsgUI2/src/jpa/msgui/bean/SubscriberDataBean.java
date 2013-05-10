@@ -29,8 +29,8 @@ import jpa.util.SsnNumberUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class SubscriberListBean {
-	static final Logger logger = Logger.getLogger(SubscriberListBean.class);
+public class SubscriberDataBean {
+	static final Logger logger = Logger.getLogger(SubscriberDataBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private SubscriberDataService subscriberDao = null;

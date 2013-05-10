@@ -23,8 +23,8 @@ import jpa.service.SubscriptionService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class SubscriptionListBean {
-	static final Logger logger = Logger.getLogger(SubscriptionListBean.class);
+public class SubscriptionBean {
+	static final Logger logger = Logger.getLogger(SubscriptionBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private SubscriptionService subscriberDao = null;

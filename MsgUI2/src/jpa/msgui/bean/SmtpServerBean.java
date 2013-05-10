@@ -30,8 +30,8 @@ import jpa.util.SenderUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class SmtpServersBean {
-	static final Logger logger = Logger.getLogger(SmtpServersBean.class);
+public class SmtpServerBean {
+	static final Logger logger = Logger.getLogger(SmtpServerBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private SmtpServerService smtpServerDao = null;

@@ -24,8 +24,8 @@ import jpa.util.EmailAddrUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class UserAccountsBean {
-	static final Logger logger = Logger.getLogger(UserAccountsBean.class);
+public class UserDataBean {
+	static final Logger logger = Logger.getLogger(UserDataBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private UserDataService userDao = null;
