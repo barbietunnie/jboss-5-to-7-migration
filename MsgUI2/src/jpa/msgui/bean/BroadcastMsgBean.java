@@ -19,8 +19,8 @@ import jpa.service.message.MessageInboxService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class BroadcastMsgListBean {
-	static final Logger logger = Logger.getLogger(BroadcastMsgListBean.class);
+public class BroadcastMsgBean {
+	static final Logger logger = Logger.getLogger(BroadcastMsgBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private MessageClickCountService msgClickCountsDao = null;
@@ -44,7 +44,6 @@ public class BroadcastMsgListBean {
 	static final String TO_SAVED = "broadcastlist.saved";
 	static final String TO_CANCELED = "broadcastlist.canceled";
 
-	@SuppressWarnings("unchecked")
 	public DataModel<MessageClickCount> getBroadcasts() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
 		if (fromPage != null && fromPage.equals("main")) {

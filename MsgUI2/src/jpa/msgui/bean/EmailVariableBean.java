@@ -26,8 +26,8 @@ import jpa.variable.RenderUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class EmailVariablesBean {
-	static final Logger logger = Logger.getLogger(EmailVariablesBean.class);
+public class EmailVariableBean {
+	static final Logger logger = Logger.getLogger(EmailVariableBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private EmailVariableService emailVariableDao = null;

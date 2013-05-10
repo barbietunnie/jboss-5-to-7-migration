@@ -30,8 +30,8 @@ import jpa.util.SenderUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class MailboxesBean {
-	static final Logger logger = Logger.getLogger(MailboxesBean.class);
+public class MailInboxBean {
+	static final Logger logger = Logger.getLogger(MailInboxBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	static final boolean isInfoEnabled = logger.isInfoEnabled();
 
