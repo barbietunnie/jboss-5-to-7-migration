@@ -8,7 +8,6 @@ import javax.faces.validator.ValidatorException;
 import javax.persistence.NoResultException;
 
 import jpa.constant.RuleType;
-import jpa.data.preload.RuleNameEnum;
 import jpa.model.EmailAddress;
 import jpa.model.UserData;
 import jpa.msgui.util.FacesUtil;
@@ -60,20 +59,18 @@ public class SimpleMailTrackingMenu {
 		// initialize search fields from user's default settings.
 		UserData userVo = FacesUtil.getLoginUserData();
 		if (userVo != null) {
-			defaultFolder = userVo.getDefaultFolder();
-			if (StringUtils.isBlank(defaultFolder)) {
-				defaultFolder = SearchFieldsVo.MsgType.Received.name();
-			}
 			defaultRuleName = userVo.getDefaultRuleName();
 			if (StringUtils.isBlank(defaultRuleName)) {
 				defaultRuleName = RuleType.ALL.getValue();
 			}
-			defaultToAddr = userVo.getDefaultToAddr();
-			if (StringUtils.isBlank(defaultToAddr)) {
-				defaultToAddr = null;
-			}
-			else {
-				getEmailAddressService().findSertAddress(defaultToAddr);
+			if (userVo.getEmailAddr()!=null) {
+				defaultToAddr = userVo.getEmailAddr().getAddress();
+				if (StringUtils.isBlank(defaultToAddr)) {
+					defaultToAddr = null;
+				}
+				else {
+					getEmailAddressService().findSertAddress(defaultToAddr);
+				}
 			}
 		}
 		else {
@@ -82,27 +79,27 @@ public class SimpleMailTrackingMenu {
 	}
 	
 	public String selectAll() {
-		functionKey = SearchFieldsVo.MsgType.All.toString();
+		functionKey = SearchFieldsVo.MsgType.All.name();
 		return TO_SELF;
 	}
 	
 	public String selectReceived() {
-		functionKey = SearchFieldsVo.MsgType.Received.toString();
+		functionKey = SearchFieldsVo.MsgType.Received.name();
 		return TO_SELF;
 	}
 	
 	public String selectSent() {
-		functionKey = SearchFieldsVo.MsgType.Sent.toString();
+		functionKey = SearchFieldsVo.MsgType.Sent.name();
 		return TO_SELF;
 	}
 	
 	public String selectDraft() {
-		functionKey = SearchFieldsVo.MsgType.Draft.toString();
+		functionKey = SearchFieldsVo.MsgType.Draft.name();
 		return TO_SELF;
 	}
 	
 	public String selectClosed() {
-		functionKey = SearchFieldsVo.MsgType.Closed.toString();
+		functionKey = SearchFieldsVo.MsgType.Closed.name();
 		return TO_SELF;
 	}
 	
@@ -169,17 +166,17 @@ public class SimpleMailTrackingMenu {
 	public SearchFieldsVo getSearchFieldVo() {
 		SearchFieldsVo vo = new SearchFieldsVo();
 		SearchFieldsVo.MsgType msgType = null;
-		if (SearchFieldsVo.MsgType.All.toString().equals(functionKey))
+		if (SearchFieldsVo.MsgType.All.name().equals(functionKey))
 			msgType = SearchFieldsVo.MsgType.All;
-		else if (SearchFieldsVo.MsgType.Received.toString().equals(functionKey))
+		else if (SearchFieldsVo.MsgType.Received.name().equals(functionKey))
 			msgType = SearchFieldsVo.MsgType.Received;
-		else if (SearchFieldsVo.MsgType.Sent.toString().equals(functionKey))
+		else if (SearchFieldsVo.MsgType.Sent.name().equals(functionKey))
 			msgType = SearchFieldsVo.MsgType.Sent;
-		else if (SearchFieldsVo.MsgType.Draft.toString().equals(functionKey))
+		else if (SearchFieldsVo.MsgType.Draft.name().equals(functionKey))
 			msgType = SearchFieldsVo.MsgType.Draft;
-		else if (SearchFieldsVo.MsgType.Closed.toString().equals(functionKey))
+		else if (SearchFieldsVo.MsgType.Closed.name().equals(functionKey))
 			msgType = SearchFieldsVo.MsgType.Closed;
-		else if (SearchFieldsVo.MsgType.Trash.toString().equals(functionKey))
+		else if (SearchFieldsVo.MsgType.Trash.name().equals(functionKey))
 			msgType = SearchFieldsVo.MsgType.Trash;
 		
 		vo.setMsgType(msgType);
@@ -192,14 +189,14 @@ public class SimpleMailTrackingMenu {
 			}
 			catch (NoResultException e) {}
 		}
-		vo.setToAddr(toAddress);
-		if (toAddress != null && toAddress.trim().length() > 0) {
-			try {
-				EmailAddress vo3 = getEmailAddressService().getByAddress(toAddress);
-				vo.setToAddrId(vo3.getRowId());
-			}
-			catch (NoResultException e) {}
-		}
+//		vo.setToAddr(toAddress);
+//		if (toAddress != null && toAddress.trim().length() > 0) {
+//			try {
+//				EmailAddress vo3 = getEmailAddressService().getByAddress(toAddress);
+//				vo.setToAddrId(vo3.getRowId());
+//			}
+//			catch (NoResultException e) {}
+//		}
 		vo.setSubject(subject);
 		vo.setBody(body);
 		
@@ -207,7 +204,7 @@ public class SimpleMailTrackingMenu {
 	}
 	
 	public int getInboxUnreadCount() {
-		return getMessageInboxService().getInboxUnreadCount();
+		return getMessageInboxService().getReceivedUnreadCount();
 	}
 
 	public int getSentUnreadCount() {
