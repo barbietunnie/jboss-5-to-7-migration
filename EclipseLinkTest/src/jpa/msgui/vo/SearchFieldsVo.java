@@ -16,12 +16,12 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	private Integer fromAddrId = null;
 	private Integer toAddrId = null;
 	private String fromAddr = null;
-	private String toAddr = null;
+//	private String toAddr = null;
 	private String subject = null;
 	private String body = null;
 	
-	private Boolean read = null;
-	private Boolean flagged = null;
+	private Boolean isRead = null;
+	private Boolean isFlagged = null;
 	private Date recent = null;
 	
 	// define paging context
@@ -47,7 +47,7 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 		vo.setBody("test message");
 		vo2.setFromAddrId(10);
 		vo.setFromAddr("test@test.com");
-		vo2.setToAddr("to@to.com");
+//		vo2.setToAddr("to@to.com");
 		vo.setToAddrId(20);
 		System.out.println(vo.equalsLevel1(vo2));
 		System.out.println(vo.listChanges());
@@ -74,8 +74,8 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	}
 	
 	public void resetFlags() {
-		read = null;
-		flagged = null;
+		isRead = null;
+		isFlagged = null;
 		recent = null;
 	}
 	
@@ -93,7 +93,7 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 		fromAddrId = null;
 		toAddrId = null;
 		fromAddr = null;
-		toAddr = null;
+//		toAddr = null;
 		subject = null;
 		body = null;
 	}
@@ -154,16 +154,16 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 				addChangeLog("FromAddrId", this.fromAddrId, vo.fromAddrId);
 			}
 		}
-		if (this.toAddr == null) {
-			if (vo.toAddr != null) {
-				addChangeLog("ToAddr", this.toAddr, vo.toAddr);
-			}
-		}
-		else {
-			if (!this.toAddr.equals(vo.toAddr)) {
-				addChangeLog("ToAddr", this.toAddr, vo.toAddr);
-			}
-		}
+//		if (this.toAddr == null) {
+//			if (vo.toAddr != null) {
+//				addChangeLog("ToAddr", this.toAddr, vo.toAddr);
+//			}
+//		}
+//		else {
+//			if (!this.toAddr.equals(vo.toAddr)) {
+//				addChangeLog("ToAddr", this.toAddr, vo.toAddr);
+//			}
+//		}
 		if (this.fromAddr == null) {
 			if (vo.fromAddr != null) {
 				addChangeLog("FromAddr", this.fromAddr, vo.fromAddr);
@@ -204,7 +204,7 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 		vo.setRuleName(this.ruleName);
 		vo.setToAddrId(this.toAddrId);
 		vo.setFromAddrId(this.fromAddrId);
-		vo.setToAddr(this.toAddr);
+//		vo.setToAddr(this.toAddr);
 		vo.setFromAddr(this.fromAddr);
 		vo.setSubject(this.subject);
 		vo.setBody(this.body);
@@ -228,17 +228,17 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	public void setToAddrId(Integer toAddr) {
 		this.toAddrId = toAddr;
 	}
-	public Boolean getRead() {
-		return read;
+	public Boolean getIsRead() {
+		return isRead;
 	}
-	public void setRead(Boolean read) {
-		this.read = read;
+	public void setIsRead(Boolean isRead) {
+		this.isRead = isRead;
 	}
-	public Boolean getFlagged() {
-		return flagged;
+	public Boolean getIsFlagged() {
+		return isFlagged;
 	}
-	public void setFlagged(Boolean flagged) {
-		this.flagged = flagged;
+	public void setIsFlagged(Boolean isFlagged) {
+		this.isFlagged = isFlagged;
 	}
 	public String getRuleName() {
 		return ruleName;
@@ -258,12 +258,12 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	public void setFromAddr(String fromEmailAddr) {
 		this.fromAddr = fromEmailAddr;
 	}
-	public String getToAddr() {
-		return toAddr;
-	}
-	public void setToAddr(String toEmailAddr) {
-		this.toAddr = toEmailAddr;
-	}
+//	public String getToAddr() {
+//		return toAddr;
+//	}
+//	public void setToAddr(String toEmailAddr) {
+//		this.toAddr = toEmailAddr;
+//	}
 	public String getSubject() {
 		return subject;
 	}

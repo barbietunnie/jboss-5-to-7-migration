@@ -132,13 +132,25 @@ public class MessageInboxTest {
 			assertTrue("MessageInbox table is empty", true);
 		}
 		
+		// test UI methods
 		SearchFieldsVo vo = new SearchFieldsVo();
+		vo.setIsRead(false);
+		vo.setIsFlagged(false);
+		//vo.setFromAddrId(27);
+		//vo.setRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
+		//vo.setSubject("System");
+		//vo.setBody("This");
+		//vo.setFromAddr("postmaster");
 		List<MessageInbox> listweb = service.getListForWeb(vo);
 		assertTrue(listweb.size()>0);
 		int count = service.getRowCountForWeb(vo);
 		assertTrue(count>=listweb.size());
 		assertTrue(0<service.updateStatusIdByLeadMsgId(listweb.get(0)));
-		assertTrue(0<service.getReceivedUnreadCount());
+		int receivedUnredCount = service.getReceivedUnreadCount();
+		assertTrue(0<receivedUnredCount);
+		int sentUnredCount = service.getSentUnreadCount();
+		assertTrue(0<sentUnredCount);
+		assertTrue((receivedUnredCount+sentUnredCount)==service.getAllUnreadCount());
 		
 		// test delete
 		assertTrue(1==service.deleteByRowId(msg2.getRowId()));
