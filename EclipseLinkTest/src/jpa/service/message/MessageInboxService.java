@@ -415,13 +415,22 @@ public class MessageInboxService {
 		return getUnreadCount(MsgDirectionCode.SENT);
 	}
 
+	public int getAllUnreadCount() {
+		return getUnreadCount(null);
+	}
+
 	private int getUnreadCount(MsgDirectionCode msgDirection) {
 		String sql = 
-			"select count(*) from Message_Inbox where MsgDirection=?1 and ReadCount=?2 ";
+			"select count(*) from Message_Inbox where ReadCount=?1 ";
+		if (msgDirection!=null) {
+			sql += " and MsgDirection=?2 "; 
+		}
 		try {
 			Query query = em.createNativeQuery(sql);
-			query.setParameter(1, msgDirection.getValue());
-			query.setParameter(2, 0);
+			query.setParameter(1, 0);
+			if (msgDirection!=null) {
+				query.setParameter(2, msgDirection.getValue());
+			}
 			Number count = (Number) query.getSingleResult();
 			return count.intValue();
 		}
@@ -578,31 +587,31 @@ public class MessageInboxService {
 				parms.add(vo.getRuleName());
 			}
 		}
-		// toAddress
+		// toAddress RowId
 		if (vo.getToAddrId() != null) {
 			whereSql += CRIT[parms.size()] + " a.ToAddressRowId = ? ";
 			parms.add(vo.getToAddrId());
 		}
-		// fromAddress
+		// fromAddress RowId
 		if (vo.getFromAddrId() != null) {
 			whereSql += CRIT[parms.size()] + " a.FromAddressRowId = ? ";
 			parms.add(vo.getFromAddrId());
 		}
 		// readCount
-		if (vo.getRead() != null) {
-			if (vo.getRead().booleanValue())
+		if (vo.getIsRead() != null) {
+			if (vo.getIsRead()==true)
 				whereSql += CRIT[parms.size()] + " a.ReadCount > ? ";
 			else
 				whereSql += CRIT[parms.size()] + " a.ReadCount <= ? ";
 			parms.add(0);
 		}
 		// msgFlag
-		if (vo.getFlagged() != null) {
+		if (vo.getIsFlagged() != null) {
 			whereSql += CRIT[parms.size()] + " a.IsFlagged = ? ";
-			parms.add(Boolean.TRUE);
+			parms.add(vo.getIsFlagged());
 		}
 		// subject
-		if (vo.getSubject() != null && vo.getSubject().trim().length() > 0) {
+		if (StringUtils.isNotBlank(vo.getSubject())) {
 			String subj = vo.getSubject().trim();
 			if (subj.indexOf(" ") < 0) { // a single word
 				whereSql += CRIT[parms.size()] + " a.MsgSubject LIKE ? ";
