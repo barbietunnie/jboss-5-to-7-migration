@@ -24,8 +24,8 @@ import jpa.service.MailingListService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class EmailAddressListBean {
-	static final Logger logger = Logger.getLogger(EmailAddressListBean.class);
+public class EmailAddressBean {
+	static final Logger logger = Logger.getLogger(EmailAddressBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private EmailAddressService emailAddrDao = null;

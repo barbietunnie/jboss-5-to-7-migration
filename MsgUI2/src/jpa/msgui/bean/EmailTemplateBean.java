@@ -34,8 +34,8 @@ import jpa.variable.RenderUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class EmailTemplatesBean {
-	static final Logger logger = Logger.getLogger(EmailTemplatesBean.class);
+public class EmailTemplateBean {
+	static final Logger logger = Logger.getLogger(EmailTemplateBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private EmailTemplateService emailTemplateDao = null;
