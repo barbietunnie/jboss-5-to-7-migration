@@ -49,6 +49,7 @@ public class SubscriptionListBean {
 	static final String TO_EDIT = "subscriberlist.edit";
 	static final String TO_CANCELED = "subscriberlist.canceled";
 
+	@SuppressWarnings("unchecked")
 	public DataModel<Subscription> getSubscribers() {
 		if (FacesUtil.getRequestParameter("listId") != null) {
 			listId = FacesUtil.getRequestParameter("listId");
@@ -76,8 +77,7 @@ public class SubscriptionListBean {
 			logger.info("PagingVo After: " + pagingVo);
 			pagingVo.setPageAction(PagingVo.PageAction.CURRENT);
 			//subscribers = new ListDataModel(subscriberList);
-			subscribers = new PagedListDataModel(subscriberList, pagingVo.getRowCount(), pagingVo
-					.getPageSize());
+			subscribers = new PagedListDataModel(subscriberList, pagingVo.getRowCount(), pagingVo.getPageSize());
 		}
 		return subscribers;
 	}

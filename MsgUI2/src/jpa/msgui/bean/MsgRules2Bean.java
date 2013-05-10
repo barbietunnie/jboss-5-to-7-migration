@@ -36,8 +36,8 @@ import jpa.util.BlobUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class MsgRulesBean {
-	protected static final Logger logger = Logger.getLogger(MsgRulesBean.class);
+public class MsgRules2Bean {
+	protected static final Logger logger = Logger.getLogger(MsgRules2Bean.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	protected RuleLogicService ruleLogicDao = null;
@@ -53,10 +53,11 @@ public class MsgRulesBean {
 	
 	protected RuleElementService ruleElementDao = null;
 	protected RuleSubruleMapService ruleSubRuleMapDao = null;
-	protected RuleActionService msgActionDao = null;
+	protected RuleActionService ruleActionDao = null;
+
 	protected DataModel<RuleElement> ruleElements = null;
 	protected DataModel<RuleSubruleMap> subRules = null;
-	protected DataModel<RuleActionUIVo> msgActions = null;
+	protected DataModel<RuleAction> ruleActions = null;
 	
 	protected RuleElement ruleElement = null;
 	protected RuleElement origRuleElement = null;
@@ -88,10 +89,10 @@ public class MsgRulesBean {
 	}
 
 	protected RuleActionService getRuleActionService() {
-		if (msgActionDao == null) {
-			msgActionDao = (RuleActionService) SpringUtil.getWebAppContext().getBean("ruleActionService");
+		if (ruleActionDao == null) {
+			ruleActionDao = (RuleActionService) SpringUtil.getWebAppContext().getBean("ruleActionService");
 		}
-		return msgActionDao;
+		return ruleActionDao;
 	}
 
 	/*
@@ -114,7 +115,7 @@ public class MsgRulesBean {
 		ruleLogics = null;
 		ruleElements = null;
 		subRules = null;
-		msgActions = null;
+		ruleActions = null;
 		return "";
 	}
 	
@@ -174,7 +175,7 @@ public class MsgRulesBean {
 			return TO_FAILED;
 		}
 		reset();
-		msgActions = null;
+		ruleActions = null;
 		this.ruleLogic = (RuleLogic) ruleLogics.getRowData();
 		ruleLogic.setMarkedForEdition(true);
 		return "msgrule.msgaction.edit";
@@ -757,53 +758,49 @@ public class MsgRulesBean {
 	 */
 	
 	public String refreshMsgActions() {
-		msgActions = null;
+		ruleActions = null;
 		getMsgActions();
 		return "";
 	}
 	
-	public DataModel<RuleActionUIVo> getMsgActions() {
+	public DataModel<RuleAction> getMsgActions() {
 		if (isDebugEnabled)
 			logger.debug("getMsgActions() - Entering...");
 		if (ruleLogic == null) {
 			logger.warn("getMsgActions() - RuleLogic is null.");
 			return null;
 		}
-		if (msgActions == null) {
+		if (ruleActions == null) {
 			String key = ruleLogic.getRuleName();
 			List<RuleAction> list = getRuleActionService().getByRuleName(key);
-			List<RuleActionUIVo> list2 = new ArrayList<RuleActionUIVo>();
-			for (int i=0; i<list.size(); i++) {
-				RuleActionUIVo vo2 = new RuleActionUIVo(list.get(i));
-				list2.add(vo2);
-			}
-			msgActions = new ListDataModel<RuleActionUIVo>(list2);
+			ruleActions = new ListDataModel<RuleAction>(list);
 		}
-		return msgActions;
+		return ruleActions;
 	}
 	
-	protected List<RuleActionUIVo> getMsgActionList() {
+	protected List<RuleAction> getMsgActionList() {
 		@SuppressWarnings("unchecked")
-		List<RuleActionUIVo> list = (List<RuleActionUIVo>) getMsgActions().getWrappedData();
+		List<RuleAction> list = (List<RuleAction>) getMsgActions().getWrappedData();
 		return list;
 	}
 	
 	public String deleteMsgActions() {
 		if (isDebugEnabled)
 			logger.debug("deleteMsgActions() - Entering...");
-		if (msgActions == null) {
+		if (ruleActions == null) {
 			logger.warn("deleteMsgActions() - MsgAction List is null.");
 			return TO_FAILED;
 		}
 		reset();
-		List<RuleActionUIVo> list = getMsgActionList();
+		List<RuleAction> list = getMsgActionList();
 		for (int i = 0; i < list.size(); i++) {
-			RuleActionUIVo vo = list.get(i);
+			RuleAction vo = list.get(i);
 			if (vo.isMarkedForDeletion()) {
-				int rowsDeleted = getRuleActionService().deleteByPrimaryKey(vo.getRuleAction().getRuleActionPK());
+				int rowsDeleted = getRuleActionService().deleteByPrimaryKey(vo.getRuleActionPK());
 				if (rowsDeleted > 0) {
-					logger.info("deleteMsgActions() - MsgAction deleted: " + vo.getRuleName() + "."
-							+ vo.getActionSeq() + "." + vo.getStartTime() + "." + vo.getSenderId());
+					logger.info("deleteMsgActions() - MsgAction deleted: " + vo.getRuleActionPK().getRuleLogic().getRuleName() + "."
+							+ vo.getRuleActionPK().getActionSequence() + "." + vo.getRuleActionPK().getStartTime() + "." 
+							+ vo.getRuleActionPK().getSenderData().getSenderId());
 				}
 				list.remove(vo);
 			}
@@ -814,26 +811,22 @@ public class MsgRulesBean {
 	public String copyMsgAction() {
 		if (isDebugEnabled)
 			logger.debug("copyMsgAction() - Entering...");
-		if (msgActions == null) {
+		if (ruleActions == null) {
 			logger.warn("copyMsgAction() - MsgAction List is null.");
 			return TO_FAILED;
 		}
 		reset();
-		List<RuleActionUIVo> list = getMsgActionList();
+		List<RuleAction> list = getMsgActionList();
 		for (int i=0; i<list.size(); i++) {
-			RuleActionUIVo vo = list.get(i);
+			RuleAction vo = list.get(i);
 			if (vo.isMarkedForDeletion()) {
-				RuleActionUIVo vo2 = null;
+				RuleAction vo2 = new RuleAction();
 				try {
-					vo2 = (RuleActionUIVo) vo.getClone();
+					vo.copyPropertiesTo(vo2);
 					vo2.setMarkedForDeletion(false);
 				}
-				catch (CloneNotSupportedException e) {
-					vo2 = new RuleActionUIVo(new RuleAction());
-					vo2.setRuleName(vo.getRuleName());
-					vo2.setActionSeq(vo.getActionSeq());
-					vo2.setStartTime(vo.getStartTime());
-					vo2.setActionId(vo.getActionId());
+				catch (Exception e) {
+					logger.error("BeanUtils.copyProperties() failed: ", e);
 				}
 				vo2.setMarkedForEdition(true);
 				list.add(vo2);
@@ -847,10 +840,10 @@ public class MsgRulesBean {
 		if (isDebugEnabled)
 			logger.debug("addMsgAction() - Entering...");
 		reset();
-		List<RuleActionUIVo> list = getMsgActionList();
-		RuleActionUIVo vo = new RuleActionUIVo(new RuleAction());
-		vo.setActionSeq(0);
-		vo.setStartTime(new Timestamp(new Date().getTime()));
+		List<RuleAction> list = getMsgActionList();
+		RuleAction vo = new RuleAction();
+		vo.getRuleActionPK().setActionSequence(0);
+		vo.getRuleActionPK().setStartTime(new Timestamp(System.currentTimeMillis()));
 		vo.setStatusId(CodeType.YES_CODE.getValue());
 		vo.setMarkedForEdition(true);
 		list.add(vo);
@@ -869,18 +862,16 @@ public class MsgRulesBean {
 		int rowsDeleted = getRuleActionService().deleteByRuleName(ruleLogic.getRuleName());
 		logger.info("saveMsgActions() - MsgAction Rows Deleted: " + rowsDeleted);
 		
-		List<RuleActionUIVo> list = getMsgActionList();
+		List<RuleAction> list = getMsgActionList();
 		for (int i=0; i<list.size(); i++) {
-			RuleActionUIVo msgActionUIVo = list.get(i);
-			msgActionUIVo.setRuleName(ruleLogic.getRuleName());
+			RuleAction msgAction = list.get(i);
+			msgAction.getRuleActionPK().setRuleLogic(ruleLogic);
 			// set startTime from startDate and startHour
 			Calendar cal = Calendar.getInstance();
-			cal.setTime(msgActionUIVo.getStartDate());
-			cal.set(Calendar.HOUR_OF_DAY, msgActionUIVo.getStartHour());
-			msgActionUIVo.setStartTime(new Timestamp(cal.getTimeInMillis()));
+			cal.setTime(msgAction.getRuleActionPK().getStartTime());
+			msgAction.getRuleActionPK().setStartTime(new Timestamp(cal.getTimeInMillis()));
 			// end of startTime
-			RuleAction msgActionVo = msgActionUIVo.getRuleAction();
-			getRuleActionService().insert(msgActionVo);
+			getRuleActionService().insert(msgAction);
 		}
 		logger.info("saveMsgActions() - MsgAction Rows Inserted: " + list.size());
 		return "msgrule.saved";
@@ -932,9 +923,9 @@ public class MsgRulesBean {
 	public boolean getAnyMsgActionsMarkedForDeletion() {
 		if (isDebugEnabled)
 			logger.debug("getAnyMsgActionsMarkedForDeletion() - Entering...");
-		List<RuleActionUIVo> list = getMsgActionList();
-		for (Iterator<RuleActionUIVo> it=list.iterator(); it.hasNext();) {
-			RuleActionUIVo vo = it.next();
+		List<RuleAction> list = getMsgActionList();
+		for (Iterator<RuleAction> it=list.iterator(); it.hasNext();) {
+			RuleAction vo = it.next();
 			if (vo.isMarkedForDeletion()) {
 				return true;
 			}

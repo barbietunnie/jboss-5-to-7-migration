@@ -56,7 +56,7 @@ public class EmailVariablesBean {
 			else {
 				emailVariableList = getEmailVariableService().getAll();
 			}
-			emailVariables = new ListDataModel(emailVariableList);
+			emailVariables = new ListDataModel<EmailVariable>(emailVariableList);
 		}
 		return emailVariables;
 	}

@@ -166,6 +166,7 @@ public class MsgInboxBean {
 		return searchVo;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public DataModel<MessageInbox> getAll() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
 		if (fromPage != null && fromPage.equals("main")) {

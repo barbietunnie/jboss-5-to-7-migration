@@ -71,7 +71,7 @@ public class EmailTemplatesBean {
 			else {
 				emailTemplateList = getEmailTemplateService().getAll();
 			}
-			emailTemplates = new ListDataModel(emailTemplateList);
+			emailTemplates = new ListDataModel<EmailTemplate>(emailTemplateList);
 		}
 		return emailTemplates;
 	}
@@ -180,7 +180,7 @@ public class EmailTemplatesBean {
 		if (isDebugEnabled)
 			logger.debug("editSchedules() - Entering...");
 		this.emailTemplate = (EmailTemplate) emailTemplates.getRowData();
-		dateList = new ArrayDataModel(emailTemplate.getSchedulesBlob().getDateList());
+		dateList = new ArrayDataModel<Object>(emailTemplate.getSchedulesBlob().getDateList());
 		return TO_SCHEDULE_EDIT;
 	}
 	

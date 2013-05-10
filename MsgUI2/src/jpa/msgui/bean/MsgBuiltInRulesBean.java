@@ -21,7 +21,7 @@ public class MsgBuiltInRulesBean extends MsgRulesBean {
 		}
 		if (ruleLogics == null) {
 			List<RuleLogic> ruleLogicList = getRuleLogicService().getAll(true);
-			ruleLogics = new ListDataModel(ruleLogicList);
+			ruleLogics = new ListDataModel<RuleLogic>(ruleLogicList);
 		}
 		return ruleLogics;
 	}

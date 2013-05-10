@@ -53,7 +53,7 @@ public class RuleActionDetailsBean {
 		}
 		if (actionDetails == null) {
 			List<RuleActionDetail> MsgActionDetailList = getRuleActionDetailService().getAll();
-			actionDetails = new ListDataModel(MsgActionDetailList);
+			actionDetails = new ListDataModel<RuleActionDetail>(MsgActionDetailList);
 		}
 		return actionDetails;
 	}
