@@ -22,6 +22,7 @@ import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
 import jpa.msgui.vo.PagingVo;
+import jpa.util.JpaUtil;
 import jpa.util.StringUtil;
 
 @Component("subscriptionService")
@@ -449,8 +450,10 @@ public class SubscriptionService {
 				" JOIN Mailing_List m ON a.MailingListRowId=m.Row_Id " +
 				" LEFT JOIN Subscriber_Data c on a.EmailAddrRowId=c.EmailAddrRowId " +
 			whereSql +
-			" order by a.Row_Id " + fetchOrder +
-			" limit " + vo.getPageSize();
+			" order by a.Row_Id " + fetchOrder;
+		if (Constants.DB_PRODNAME_MYSQL.equals(JpaUtil.getDBProductName())) {
+			sql += " limit " + vo.getPageSize();
+		}
 		Query query = em.createNativeQuery(sql, Subscription.MAPPING_SUBSCRIPTION_ENTITY);
 		for (int i=0; i<parms.size(); i++) {
 			query.setParameter(i+1, parms.get(i));

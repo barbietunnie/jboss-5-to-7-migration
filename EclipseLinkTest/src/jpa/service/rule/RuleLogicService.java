@@ -184,7 +184,7 @@ public class RuleLogicService {
 		String sql = 
 			"select RuleName " +
 			" from Rule_Logic " +
-			" where IsBuiltInRule=1 and IsSubRule!=1 and RuleCategory=?1 " +
+			" where IsBuiltInRule=true and IsSubRule=false and RuleCategory=?1 " +
 			" group by RuleName " +
 			" order by RuleName ";
 
@@ -199,7 +199,7 @@ public class RuleLogicService {
 		String sql = 
 			"select distinct(RuleName) as ruleName " +
 			" from Rule_Logic " +
-			" where IsBuiltInRule!=1 and IsSubRule!=1 and RuleCategory=?1 " +
+			" where IsBuiltInRule=false and IsSubRule=false and RuleCategory=?1 " +
 			" order by RuleName ";
 
 		Query query = em.createNativeQuery(sql);
