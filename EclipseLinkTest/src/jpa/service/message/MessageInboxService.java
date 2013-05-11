@@ -255,7 +255,11 @@ public class MessageInboxService {
 				" from " +
 					" MessageInbox t " +
 				" where t.receivedTime>=:date " +
-				" order by t.receivedTime desc " ; //limit 100";
+		
+				" order by t.receivedTime desc " ;
+		if (Constants.DB_PRODNAME_MYSQL.equals(JpaUtil.getDBProductName())) {
+			sql += " limit 100";
+		}
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("date", date);
@@ -533,8 +537,10 @@ public class MessageInboxService {
 				" JOIN Email_Address b ON a.FromAddressRowId=b.Row_Id " +
 				" LEFT JOIN Rule_Logic c ON a.RuleLogicRowId=c.Row_Id " +
 				whereSql +
-			" order by Row_Id " + fetchOrder +
-			" limit " + vo.getPageSize();
+			" order by a.Row_Id " + fetchOrder;
+		if (Constants.DB_PRODNAME_MYSQL.equals(JpaUtil.getDBProductName())) {
+			sql += " limit " + vo.getPageSize();
+		}
 		// set result set size
 		Query query = em.createNativeQuery(sql, MessageInbox.MAPPING_MESSAGE_INBOX);
 		for (int i=0; i<parms.size(); i++) {

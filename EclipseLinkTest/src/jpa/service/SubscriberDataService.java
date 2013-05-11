@@ -8,12 +8,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import jpa.constant.Constants;
 import jpa.constant.MobileCarrierEnum;
 import jpa.exception.DataValidationException;
 import jpa.model.SubscriberData;
 import jpa.msgui.vo.PagingSubscriberData;
 import jpa.msgui.vo.PagingVo;
 import jpa.util.EmailSender;
+import jpa.util.JpaUtil;
 import jpa.util.PhoneNumberUtil;
 
 import org.apache.commons.lang3.StringUtils;
@@ -219,8 +221,10 @@ public class SubscriberDataService {
 			sql += " and b.Address LIKE '%" + addr + "%' ";
 		}
 		sql += whereSql +
-			" order by a.Row_Id " + fetchOrder +
-			" limit " + vo.getPageSize();
+			" order by a.Row_Id " + fetchOrder;
+		if (Constants.DB_PRODNAME_MYSQL.equals(JpaUtil.getDBProductName())) {
+			sql += " limit " + vo.getPageSize();
+		}
 		Query query = em.createNativeQuery(sql, SubscriberData.MAPPING_SUBSCRIBER_DATA_ENTITY);
 		for (int i=0; i<parms.size(); i++) {
 			query.setParameter(i+1, parms.get(i));
