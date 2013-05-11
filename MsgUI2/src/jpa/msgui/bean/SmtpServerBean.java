@@ -71,7 +71,7 @@ public class SmtpServerBean {
 	
 	public SmtpServerService getSmtpServerService() {
 		if (smtpServerDao == null) {
-			smtpServerDao = (SmtpServerService) SpringUtil.getWebAppContext().getBean("smtpServerDao");
+			smtpServerDao = (SmtpServerService) SpringUtil.getWebAppContext().getBean("smtpServerService");
 		}
 		return smtpServerDao;
 	}
@@ -300,14 +300,14 @@ public class SmtpServerBean {
 		if (editMode == true && vo == null) {
 			// smtpServer does not exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "smtpServerDoesNotExist", null);
+					"jpa.msgui.messages", "smtpServerDoesNotExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 		else if (editMode == false && vo != null) {
 			// smtpServer already exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "smtpServerAlreadyExist", null);
+					"jpa.msgui.messages", "smtpServerAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}

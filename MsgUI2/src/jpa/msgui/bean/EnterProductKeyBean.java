@@ -14,7 +14,7 @@ public class EnterProductKeyBean {
 	private String productKey = null;
 	private String message = null;
 	
-	private SenderDataService clientDao = null;
+	private SenderDataService senderDataDao = null;
 	
 	public String enterProductKey() {
 		message = null;
@@ -30,9 +30,9 @@ public class EnterProductKeyBean {
 	}
 	
 	private SenderDataService getSenderDataService() {
-		if (clientDao == null)
-			clientDao = (SenderDataService) SpringUtil.getWebAppContext().getBean("senderDataService");
-		return clientDao;
+		if (senderDataDao == null)
+			senderDataDao = (SenderDataService) SpringUtil.getWebAppContext().getBean("senderDataService");
+		return senderDataDao;
 	}
     
 	public String getMessage() {

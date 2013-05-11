@@ -72,7 +72,8 @@ public class EmailVariableBean {
 			refresh();
 		}
 		if (emailVariableDao == null) {
-			emailVariableDao = (EmailVariableService) SpringUtil.getWebAppContext().getBean("emailVariableService");
+			emailVariableDao = (EmailVariableService) SpringUtil.getWebAppContext().getBean(
+					"emailVariableService");
 		}
 		return emailVariableDao;
 	}
@@ -301,14 +302,14 @@ public class EmailVariableBean {
 		if (editMode == true && vo == null) {
 			// emailVariable does not exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "emailVariableDoesNotExist", null);
+					"jpa.msgui.messages", "emailVariableDoesNotExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 		else if (editMode == false && vo != null) {
 			// emailVariable already exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "emailVariableAlreadyExist", null);
+					"jpa.msgui.messages", "emailVariableAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}

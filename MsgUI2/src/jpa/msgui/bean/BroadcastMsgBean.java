@@ -137,21 +137,21 @@ public class BroadcastMsgBean {
 	public MessageClickCountService getMessageClickCountService() {
 		if (msgClickCountsDao == null) {
 			msgClickCountsDao = (MessageClickCountService) SpringUtil.getWebAppContext().getBean(
-					"msgClickCountsDao");
+					"messageClickCountService");
 		}
 		return msgClickCountsDao;
 	}
 
 	public EmailAddressService getEmailAddressService() {
 		if (emailAddrDao == null) {
-			emailAddrDao = (EmailAddressService) SpringUtil.getWebAppContext().getBean("emailAddrDao");
+			emailAddrDao = (EmailAddressService) SpringUtil.getWebAppContext().getBean("emailAddressService");
 		}
 		return emailAddrDao;
 	}
 
 	public MessageInboxService getMessageInboxService() {
 		if (msgInboxDao == null) {
-			msgInboxDao = (MessageInboxService) SpringUtil.getWebAppContext().getBean("msgInboxDao");
+			msgInboxDao = (MessageInboxService) SpringUtil.getWebAppContext().getBean("messageInboxService");
 		}
 		return msgInboxDao;
 	}

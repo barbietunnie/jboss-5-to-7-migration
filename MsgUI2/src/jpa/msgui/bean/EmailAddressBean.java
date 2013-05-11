@@ -169,7 +169,8 @@ public class EmailAddressBean {
 	
 	public EmailAddressService getEmailAddressService() {
 		if (emailAddrDao == null) {
-			emailAddrDao = (EmailAddressService) SpringUtil.getWebAppContext().getBean("emailAddrDao");
+			emailAddrDao = (EmailAddressService) SpringUtil.getWebAppContext().getBean(
+					"emailAddressService");
 		}
 		return emailAddrDao;
 	}
@@ -180,7 +181,8 @@ public class EmailAddressBean {
 
 	public MailingListService getMailingListService() {
 		if (mailingListDao == null)
-			mailingListDao = (MailingListService) SpringUtil.getWebAppContext().getBean("mailingListDao");
+			mailingListDao = (MailingListService) SpringUtil.getWebAppContext().getBean(
+					"mailingListService");
 		return mailingListDao;
 	}
 
@@ -237,8 +239,8 @@ public class EmailAddressBean {
 		return TO_SAVED;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void addToList(EmailAddress vo) {
+		@SuppressWarnings("unchecked")
 		List<EmailAddress> list = (List<EmailAddress>) emailAddrs.getWrappedData();
 		list.add(vo);
 	}
@@ -347,15 +349,15 @@ public class EmailAddressBean {
 				&& vo.getRowId() != emailAddr.getRowId()) {
 			// emailAddr does not exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					//"com.legacytojava.msgui.messages", "emailAddrDoesNotExist", null);
-	        		"com.legacytojava.msgui.messages", "emailAddrAlreadyExist", null);
+					//"jpa.msgui.messages", "emailAddrDoesNotExist", null);
+	        		"jpa.msgui.messages", "emailAddrAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 		else if (editMode == false && vo != null) {
 			// emailAddr already exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "emailAddrAlreadyExist", null);
+					"jpa.msgui.messages", "emailAddrAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -367,7 +369,7 @@ public class EmailAddressBean {
 		actionFailure = null;
 	}
 
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings("unchecked")
 	private List<EmailAddress> getEmailAddrList() {
 		if (emailAddrs == null) {
 			return new ArrayList<EmailAddress>();

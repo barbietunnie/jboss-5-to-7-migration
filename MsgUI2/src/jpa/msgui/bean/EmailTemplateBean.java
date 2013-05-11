@@ -83,7 +83,8 @@ public class EmailTemplateBean {
 	
 	public EmailTemplateService getEmailTemplateService() {
 		if (emailTemplateDao == null) {
-			emailTemplateDao = (EmailTemplateService) SpringUtil.getWebAppContext().getBean("emailTemplateService");
+			emailTemplateDao = (EmailTemplateService) SpringUtil.getWebAppContext().getBean(
+					"emailTemplateService");
 		}
 		return emailTemplateDao;
 	}
@@ -295,15 +296,15 @@ public class EmailTemplateBean {
 				&& vo.getRowId() != emailTemplate.getRowId()) {
 			// emailTemplate does not exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					//"com.legacytojava.msgui.messages", "emailTemplateDoesNotExist", null);
-	        		"com.legacytojava.msgui.messages", "emailTemplateAlreadyExist", null);
+					//"jpa.msgui.messages", "emailTemplateDoesNotExist", null);
+	        		"jpa.msgui.messages", "emailTemplateAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 		else if (editMode == false && vo != null) {
 			// emailTemplate already exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "emailTemplateAlreadyExist", null);
+					"jpa.msgui.messages", "emailTemplateAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -320,7 +321,7 @@ public class EmailTemplateBean {
 		}
 		((UIInput)component).setValid(false);
 		FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-				"com.legacytojava.msgui.messages", "invalidDate", null);
+				"jpa.msgui.messages", "invalidDate", null);
 		message.setSeverity(FacesMessage.SEVERITY_ERROR);
 		context.addMessage(component.getClientId(context), message);
 	}

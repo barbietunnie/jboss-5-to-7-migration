@@ -224,7 +224,7 @@ public class UserDataBean {
 			if (editMode == false && vo != null) {
 				// user already exist
 		        FacesMessage message =jpa.msgui.util.MessageUtil.getMessage(
-						"com.legacytojava.msgui.messages", "userAlreadyExist", null);
+						"jpa.msgui.messages", "userAlreadyExist", null);
 				message.setSeverity(FacesMessage.SEVERITY_WARN);
 				throw new ValidatorException(message);
 			}
@@ -233,7 +233,7 @@ public class UserDataBean {
 			if (editMode == true) {
 				// user does not exist
 		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-						"com.legacytojava.msgui.messages", "userDoesNotExist", null);
+						"jpa.msgui.messages", "userDoesNotExist", null);
 				message.setSeverity(FacesMessage.SEVERITY_WARN);
 				throw new ValidatorException(message);
 			}

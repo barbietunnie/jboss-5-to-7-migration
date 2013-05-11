@@ -230,14 +230,14 @@ public class RuleActionDetailBean {
 		if (editMode && vo == null) {
 			// MsgActionDetail does not exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "MsgActionIdDoesNotExist", null);
+					"jpa.msgui.messages", "MsgActionIdDoesNotExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 		if (!editMode && vo != null) {
 			// MsgActionDetail already exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "MsgActionIdAlreadyExist", null);
+					"jpa.msgui.messages", "MsgActionIdAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}

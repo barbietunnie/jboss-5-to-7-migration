@@ -252,7 +252,7 @@ public class SenderDataBean {
 		if (!EmailAddrUtil.isRemoteEmailAddress(emailAddr)) {
 			// invalid email address
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "invalidEmailAddress", null);
+					"jpa.msgui.messages", "invalidEmailAddress", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -264,7 +264,7 @@ public class SenderDataBean {
 			logger.debug("validateEmailLocalPart() - local part: " + localPart);
 		if (!EmailAddrUtil.isValidEmailLocalPart(localPart)) {
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "invalidEmailLocalPart", null);
+					"jpa.msgui.messages", "invalidEmailLocalPart", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -277,14 +277,14 @@ public class SenderDataBean {
 		SenderData vo = getSenderDataService().getBySenderId(senderId);
 		if (editMode == true && vo != null && sender != null && vo.getRowId() != sender.getRowId()) {
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-	        		"com.legacytojava.msgui.messages", "siteProfileAlreadyExist", null);
+	        		"jpa.msgui.messages", "siteProfileAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 		else if (editMode == false && vo != null) {
 			// mailingList already exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "siteProfileAlreadyExist", null);
+					"jpa.msgui.messages", "siteProfileAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}

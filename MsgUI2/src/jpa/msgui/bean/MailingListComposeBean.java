@@ -89,7 +89,7 @@ public class MailingListComposeBean {
 	public SessionUploadService getSessionUploadService() {
 		if (sessionUploadDao == null) {
 			sessionUploadDao = (SessionUploadService) SpringUtil.getWebAppContext().getBean(
-					"sessionUploadDao");
+					"sessionUploadService");
 		}
 		return sessionUploadDao;
 	}
@@ -129,7 +129,8 @@ public class MailingListComposeBean {
 
 	public EmailAddressService getEmailAddressService() {
 		if (emailAddrDao == null) {
-			emailAddrDao = (EmailAddressService) SpringUtil.getWebAppContext().getBean("emailAddressService");
+			emailAddrDao = (EmailAddressService) SpringUtil.getWebAppContext().getBean(
+					"emailAddressService");
 		}
 		return emailAddrDao;
 	}
@@ -398,7 +399,7 @@ public class MailingListComposeBean {
 		if (!isValidEmailAddress(fromAddr)) {
 			// invalid email address
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "invalidEmailAddress", null);
+					"jpa.msgui.messages", "invalidEmailAddress", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}

@@ -157,7 +157,7 @@ public class SimpleMailTrackingMenu {
 		EmailAddress vo = getEmailAddressService().getByAddress(addr);
 		if (vo == null) {
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "emailAddressNotFound", null);
+					"jpa.msgui.messages", "emailAddressNotFound", null);
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 	        throw new ValidatorException(message);
 		}
