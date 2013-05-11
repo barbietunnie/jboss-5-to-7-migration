@@ -36,7 +36,7 @@ Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-shoule be bounced. ignore.
+should be bounced. ignore.
 
 
    ----- End of message -----
