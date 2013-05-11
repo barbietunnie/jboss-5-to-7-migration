@@ -244,15 +244,15 @@ public class MailingListBean {
 				&& vo.getRowId() != mailingList.getRowId()) {
 			// mailingList does not exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-	        		"com.legacytojava.msgui.messages", "mailingListAlreadyExist", null);
-					//"com.legacytojava.msgui.messages", "mailingListDoesNotExist", null);
+	        		"jpa.msgui.messages", "mailingListAlreadyExist", null);
+					//"jpa.msgui.messages", "mailingListDoesNotExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 		else if (editMode == false && vo != null) {
 			// mailingList already exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "mailingListAlreadyExist", null);
+					"jpa.msgui.messages", "mailingListAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -266,7 +266,7 @@ public class MailingListBean {
 			if (!EmailAddrUtil.isRemoteOrLocalEmailAddress(emailAddr)) {
 				// invalid email address
 		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-						"com.legacytojava.msgui.messages", "invalidEmailAddress", null);
+						"jpa.msgui.messages", "invalidEmailAddress", null);
 				message.setSeverity(FacesMessage.SEVERITY_WARN);
 				throw new ValidatorException(message);
 			}
@@ -281,7 +281,7 @@ public class MailingListBean {
 			if (!acctUserName.matches("^(?i)([a-z0-9\\.\\_\\%\\+\\-])+$")) {
 				// invalid email address
 		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-						"com.legacytojava.msgui.messages", "invalidAccountUserName", null);
+						"jpa.msgui.messages", "invalidAccountUserName", null);
 				message.setSeverity(FacesMessage.SEVERITY_WARN);
 				throw new ValidatorException(message);
 			}

@@ -97,24 +97,24 @@ public class SubscriberDataBean {
 		return subscribers;
 	}
 
-	public String viewCustomer() {
+	public String viewSubscriber() {
 		if (isDebugEnabled)
-			logger.debug("viewCustomer() - Entering...");
+			logger.debug("viewSubscriber() - Entering...");
 		if (subscribers == null) {
-			logger.warn("viewCustomer() - Customer List is null.");
+			logger.warn("viewSubscriber() - Subscriber List is null.");
 			return TO_FAILED;
 		}
 		if (!subscribers.isRowAvailable()) {
-			logger.warn("viewCustomer() - Customer Row not available.");
+			logger.warn("viewSubscriber() - Subscriber Row not available.");
 			return TO_FAILED;
 		}
 		reset();
 		this.subscriber = (SubscriberData) subscribers.getRowData();
-		logger.info("viewCustomer() - Customer to be edited: " + subscriber.getSubscriberId());
+		logger.info("viewSubscriber() - Subscriber to be edited: " + subscriber.getSubscriberId());
 		subscriber.setMarkedForEdition(true);
 		editMode = true;
 		if (isDebugEnabled) {
-			logger.debug("viewCustomer() - SubscriberData to be passed to jsp: " + subscriber);
+			logger.debug("viewSubscriber() - SubscriberData to be passed to jsp: " + subscriber);
 		}
 		return TO_EDIT;
 	}
@@ -199,7 +199,7 @@ public class SubscriberDataBean {
 		return subscriber;
 	}
 	
-	public String refreshCustomer() {
+	public String refreshSubscriber() {
 		getData();
 		FacesUtil.refreshCurrentJSFPage();
 		return TO_SELF;
@@ -225,21 +225,21 @@ public class SubscriberDataBean {
 		mobileCarrierInput = null;
 	}
 	
-	public String deleteCustomers() {
+	public String deleteSubscribers() {
 		if (isDebugEnabled)
-			logger.debug("deleteCustomers() - Entering...");
+			logger.debug("deleteSubscribers() - Entering...");
 		if (subscribers == null) {
-			logger.warn("deleteCustomers() - Customer List is null.");
+			logger.warn("deleteSubscribers() - Subscriber List is null.");
 			return TO_FAILED;
 		}
 		reset();
-		List<SubscriberData> addrList = getCustomerList();
+		List<SubscriberData> addrList = getSubscriberList();
 		for (int i=0; i<addrList.size(); i++) {
 			SubscriberData vo = addrList.get(i);
 			if (vo.isMarkedForDeletion()) {
 				int rowsDeleted = getSubscriberDataService().deleteBySubscriberId(vo.getSubscriberId());
 				if (rowsDeleted > 0) {
-					logger.info("deleteCustomers() - Customer deleted: " + vo.getSubscriberId());
+					logger.info("deleteSubscribers() - Subscriber deleted: " + vo.getSubscriberId());
 					pagingVo.setRowCount(pagingVo.getRowCount() - rowsDeleted);
 				}
 			}
@@ -248,11 +248,11 @@ public class SubscriberDataBean {
 		return TO_DELETED;
 	}
 
-	public String saveCustomer() {
+	public String saveSubscriber() {
 		if (isDebugEnabled)
-			logger.debug("saveCustomer() - Entering...");
+			logger.debug("saveSubscriber() - Entering...");
 		if (subscriber == null) {
-			logger.warn("saveCustomer() - Customer Vo is null.");
+			logger.warn("saveSubscriber() - Subscriber Vo is null.");
 			return TO_FAILED;
 		}
 		reset();
@@ -263,14 +263,14 @@ public class SubscriberDataBean {
 		try {
 			if (editMode == true) {
 				getSubscriberDataService().update(subscriber);
-				logger.info("saveCustomer() - Rows Updated: " + 1);
+				logger.info("saveSubscriber() - Rows Updated: " + 1);
 			}
 			else {
 				getSubscriberDataService().insert(subscriber);
 				addToList(subscriber);
 				pagingVo.setRowCount(pagingVo.getRowCount() + 1);
 				refresh();
-				logger.info("saveCustomer() - Rows Inserted: " + 1);
+				logger.info("saveSubscriber() - Rows Inserted: " + 1);
 			}
 		}
 		catch (DataValidationException e) {
@@ -287,15 +287,15 @@ public class SubscriberDataBean {
 		list.add(vo);
 	}
 
-	public String copyCustomer() {
+	public String copySubscriber() {
 		if (isDebugEnabled)
-			logger.debug("copyCustomer() - Entering...");
+			logger.debug("copySubscriber() - Entering...");
 		if (subscribers == null) {
-			logger.warn("copyCustomer() - Customer List is null.");
+			logger.warn("copySubscriber() - Subscriber List is null.");
 			return TO_FAILED;
 		}
 		reset();
-		List<SubscriberData> custList = getCustomerList();
+		List<SubscriberData> custList = getSubscriberList();
 		for (int i=0; i<custList.size(); i++) {
 			SubscriberData vo = custList.get(i);
 			if (vo.isMarkedForDeletion()) {
@@ -320,9 +320,9 @@ public class SubscriberDataBean {
 		return TO_SELF;
 	}
 	
-	public String addCustomer() {
+	public String addSubscriber() {
 		if (isDebugEnabled)
-			logger.debug("addCustomer() - Entering...");
+			logger.debug("addSubscriber() - Entering...");
 		reset();
 		this.subscriber = new SubscriberData();
 		subscriber.setMarkedForEdition(true);
@@ -336,14 +336,14 @@ public class SubscriberDataBean {
 		return TO_CANCELED;
 	}
 
-	public boolean getAnyCustomersMarkedForDeletion() {
+	public boolean getSubscribersMarkedForDeletion() {
 		if (isDebugEnabled)
-			logger.debug("getAnyCustomersMarkedForDeletion() - Entering...");
+			logger.debug("getSubscribersMarkedForDeletion() - Entering...");
 		if (subscribers == null) {
-			logger.warn("getAnyCustomersMarkedForDeletion() - Customer List is null.");
+			logger.warn("getSubscribersMarkedForDeletion() - Subscriber List is null.");
 			return false;
 		}
-		List<SubscriberData> addrList = getCustomerList();
+		List<SubscriberData> addrList = getSubscriberList();
 		for (Iterator<SubscriberData> it=addrList.iterator(); it.hasNext();) {
 			SubscriberData vo = it.next();
 			if (vo.isMarkedForDeletion()) {
@@ -367,15 +367,15 @@ public class SubscriberDataBean {
 		if (editMode == true && vo != null && subscriber != null
 				&& vo.getRowId() != subscriber.getRowId()) {
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					//"com.legacytojava.msgui.messages", "subscriberDoesNotExist", null);
-	        		"com.legacytojava.msgui.messages", "subscriberAlreadyExist", null);
+					//"jpa.msgui.messages", "subscriberDoesNotExist", null);
+	        		"jpa.msgui.messages", "subscriberAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 		else if (editMode == false && vo != null) {
 			// subscriber already exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "subscriberAlreadyExist", null);
+					"jpa.msgui.messages", "subscriberAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -389,7 +389,7 @@ public class SubscriberDataBean {
 			if (!EmailAddrUtil.isRemoteEmailAddress(emailAddr)) {
 				// invalid email address
 		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-						"com.legacytojava.msgui.messages", "invalidEmailAddress", null);
+						"jpa.msgui.messages", "invalidEmailAddress", null);
 				message.setSeverity(FacesMessage.SEVERITY_WARN);
 				throw new ValidatorException(message);
 			}
@@ -397,7 +397,7 @@ public class SubscriberDataBean {
 				SubscriberData vo = getSubscriberDataService().getByEmailAddress(emailAddr);
 				if (vo != null && subscriber != null && !vo.getSubscriberId().equals(subscriber.getSubscriberId())) {
 					FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-							"com.legacytojava.msgui.messages", "emailAddressAlreadyUsed", null);
+							"jpa.msgui.messages", "emailAddressAlreadyUsed", null);
 					message.setSeverity(FacesMessage.SEVERITY_WARN);
 					throw new ValidatorException(message);
 				}
@@ -411,7 +411,7 @@ public class SubscriberDataBean {
 			logger.debug("validateSsnNumber() - SSN: " + ssn);
 		if (StringUtils.isNotBlank(ssn) && !SsnNumberUtil.isValidSSN(ssn)) {
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "invalidSsnNumber", null);
+					"jpa.msgui.messages", "invalidSsnNumber", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -422,7 +422,7 @@ public class SubscriberDataBean {
 			logger.debug("validateDate() - date = " + value);
 		if (value != null && !(value instanceof Date)) {
 			FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "invalidDate", null);
+					"jpa.msgui.messages", "invalidDate", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -434,7 +434,7 @@ public class SubscriberDataBean {
 			logger.debug("validatePhoneNumber() - Phone Number: " + phone);
 		if (StringUtils.isNotBlank(phone) && !PhoneNumberUtil.isValidPhoneNumber(phone)) {
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "invalidPhoneNumber", null);
+					"jpa.msgui.messages", "invalidPhoneNumber", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -450,7 +450,7 @@ public class SubscriberDataBean {
 			}
 			catch (IllegalArgumentException e) {
 		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-						"com.legacytojava.msgui.messages", "invalidMobileCarrier", null);
+						"jpa.msgui.messages", "invalidMobileCarrier", null);
 				message.setSeverity(FacesMessage.SEVERITY_WARN);
 				throw new ValidatorException(message);
 			}
@@ -463,7 +463,7 @@ public class SubscriberDataBean {
 			logger.debug("validateZipCode5() - Zip Code: " + zip5);
 		if (StringUtils.isNotBlank(zip5) && !zip5.matches("\\d{5}")) {
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-	        		"com.legacytojava.msgui.messages", "invalideZipCode", null);
+	        		"jpa.msgui.messages", "invalideZipCode", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -475,14 +475,14 @@ public class SubscriberDataBean {
 			logger.debug("validateZipCode4() - Zip Code: " + zip4);
 		if (StringUtils.isNotBlank(zip4) && !zip4.matches("\\d{4}")) {
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-	        		"com.legacytojava.msgui.messages", "invalideZipCode", null);
+	        		"jpa.msgui.messages", "invalideZipCode", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	private List<SubscriberData> getCustomerList() {
+	private List<SubscriberData> getSubscriberList() {
 		if (subscribers == null) {
 			return new ArrayList<SubscriberData>();
 		}
@@ -493,7 +493,8 @@ public class SubscriberDataBean {
 
 	public SubscriberDataService getSubscriberDataService() {
 		if (subscriberDao == null) {
-			subscriberDao = (SubscriberDataService) SpringUtil.getWebAppContext().getBean("subscriberDataService");
+			subscriberDao = (SubscriberDataService) SpringUtil.getWebAppContext().getBean(
+					"subscriberDataService");
 		}
 		return subscriberDao;
 	}
@@ -502,11 +503,11 @@ public class SubscriberDataBean {
 		this.subscriberDao = subscriberDao;
 	}
 
-	public SubscriberData getCustomer() {
+	public SubscriberData getSubscriber() {
 		return subscriber;
 	}
 
-	public void setCustomer(SubscriberData subscriber) {
+	public void setSubscriber(SubscriberData subscriber) {
 		this.subscriber = subscriber;
 	}
 

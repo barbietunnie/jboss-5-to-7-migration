@@ -27,11 +27,11 @@ public class SubscriptionBean {
 	static final Logger logger = Logger.getLogger(SubscriptionBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	private SubscriptionService subscriberDao = null;
+	private SubscriptionService subscriptionDao = null;
 	private EmailAddressService emailAddrDao = null;
 	private MailingListService mailingListDao = null;
-	private DataModel<Subscription> subscribers = null;
-	private Subscription subscriber = null;
+	private DataModel<Subscription> subscriptions = null;
+	private Subscription subscription = null;
 	private boolean editMode = true;
 	private String listId = null;
 
@@ -42,15 +42,15 @@ public class SubscriptionBean {
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	static final String TO_FAILED = "subscriberlist.failed";
-	static final String TO_PAGING = "subscriberlist.paging";
-	static final String TO_DELETED = "subscriberlist.deleted";
-	static final String TO_SAVED = "subscriberlist.saved";
-	static final String TO_EDIT = "subscriberlist.edit";
-	static final String TO_CANCELED = "subscriberlist.canceled";
+	static final String TO_FAILED = "subscription.failed";
+	static final String TO_PAGING = "subscription.paging";
+	static final String TO_DELETED = "subscription.deleted";
+	static final String TO_SAVED = "subscription.saved";
+	static final String TO_EDIT = "subscription.edit";
+	static final String TO_CANCELED = "subscription.canceled";
 
 	@SuppressWarnings("unchecked")
-	public DataModel<Subscription> getSubscribers() {
+	public DataModel<Subscription> getSubscriptions() {
 		if (FacesUtil.getRequestParameter("listId") != null) {
 			listId = FacesUtil.getRequestParameter("listId");
 			resetPagingVo();
@@ -60,14 +60,14 @@ public class SubscriptionBean {
 			int rowCount = getSubscriptionService().getSubscriptionCount(listId, pagingVo);
 			pagingVo.setRowCount(rowCount);
 		}
-		if (subscribers == null || !pagingVo.getPageAction().equals(PagingVo.PageAction.CURRENT)) {
-			List<Subscription> subscriberList = getSubscriptionService().getSubscriptionsWithPaging(
+		if (subscriptions == null || !pagingVo.getPageAction().equals(PagingVo.PageAction.CURRENT)) {
+			List<Subscription> subscriptionList = getSubscriptionService().getSubscriptionsWithPaging(
 					listId, pagingVo);
 			/* set keys for paging */
-			if (!subscriberList.isEmpty()) {
-				Subscription firstRow = (Subscription) subscriberList.get(0);
+			if (!subscriptionList.isEmpty()) {
+				Subscription firstRow = (Subscription) subscriptionList.get(0);
 				pagingVo.setIdFirst(firstRow.getEmailAddr().getRowId());
-				Subscription lastRow = (Subscription) subscriberList.get(subscriberList.size() - 1);
+				Subscription lastRow = (Subscription) subscriptionList.get(subscriptionList.size() - 1);
 				pagingVo.setIdLast(lastRow.getEmailAddr().getRowId());
 			}
 			else {
@@ -76,10 +76,10 @@ public class SubscriptionBean {
 			}
 			logger.info("PagingVo After: " + pagingVo);
 			pagingVo.setPageAction(PagingVo.PageAction.CURRENT);
-			//subscribers = new ListDataModel(subscriberList);
-			subscribers = new PagedListDataModel(subscriberList, pagingVo.getRowCount(), pagingVo.getPageSize());
+			//subscriptions = new ListDataModel(subscriptionList);
+			subscriptions = new PagedListDataModel(subscriptionList, pagingVo.getRowCount(), pagingVo.getPageSize());
 		}
-		return subscribers;
+		return subscriptions;
 	}
 
 	public String searchByAddress() {
@@ -147,7 +147,7 @@ public class SubscriptionBean {
 	}
 	
 	public void refresh() {
-		subscribers = null;
+		subscriptions = null;
 	}
 
 	public String refreshPage() {
@@ -163,15 +163,15 @@ public class SubscriptionBean {
 	}
 	
 	public SubscriptionService getSubscriptionService() {
-		if (subscriberDao == null) {
-			subscriberDao = (SubscriptionService) SpringUtil.getWebAppContext().getBean(
+		if (subscriptionDao == null) {
+			subscriptionDao = (SubscriptionService) SpringUtil.getWebAppContext().getBean(
 					"subscriptionService");
 		}
-		return subscriberDao;
+		return subscriptionDao;
 	}
 
-	public void setSubscriptionService(SubscriptionService subscriberDao) {
-		this.subscriberDao = subscriberDao;
+	public void setSubscriptionService(SubscriptionService subscriptionDao) {
+		this.subscriptionDao = subscriptionDao;
 	}
 
 	public EmailAddressService getEmailAddressService() {
@@ -192,25 +192,25 @@ public class SubscriptionBean {
 		return mailingListDao;
 	}
 
-	public String deleteSubscribers() {
+	public String deleteSubscriptions() {
 		if (isDebugEnabled)
-			logger.debug("deleteSubscribers() - Entering...");
-		if (subscribers == null) {
-			logger.warn("deleteSubscribers() - Subscriber List is null.");
+			logger.debug("deleteSubscriptions() - Entering...");
+		if (subscriptions == null) {
+			logger.warn("deleteSubscriptions() - Subscription List is null.");
 			return TO_FAILED;
 		}
 		if (listId == null) {
-			logger.warn("deleteSubscribers() - ListId is null.");
+			logger.warn("deleteSubscriptions() - ListId is null.");
 			return TO_FAILED;
 		}
 		reset();
-		List<Subscription> subrList = getSubscriberList();
+		List<Subscription> subrList = getSubscriptionList();
 		for (int i=0; i<subrList.size(); i++) {
 			Subscription vo = subrList.get(i);
 			if (vo.isMarkedForDeletion()) {
 				int rowsDeleted = getSubscriptionService().deleteByAddressAndListId(vo.getEmailAddr().getAddress(), listId);
 				if (rowsDeleted > 0) {
-					logger.info("deleteSubscribers() - Subscriber deleted: " + vo.getEmailAddr());
+					logger.info("deleteSubscriptions() - Subscription deleted: " + vo.getEmailAddr());
 					pagingVo.setRowCount(pagingVo.getRowCount() - rowsDeleted);
 				}
 			}
@@ -219,15 +219,15 @@ public class SubscriptionBean {
 		return TO_DELETED;
 	}
 
-	public String saveSubscribers() {
+	public String saveSubscriptions() {
 		if (isDebugEnabled)
-			logger.debug("saveSubscribers() - Entering...");
-		if (subscribers == null) {
-			logger.warn("saveSubscribers() - Subscriber List is null.");
+			logger.debug("saveSubscriptions() - Entering...");
+		if (subscriptions == null) {
+			logger.warn("saveSubscriptions() - Subscription List is null.");
 			return TO_FAILED;
 		}
 		reset();
-		List<Subscription> subrList = getSubscriberList();
+		List<Subscription> subrList = getSubscriptionList();
 		for (int i=0; i<subrList.size(); i++) {
 			Subscription vo = subrList.get(i);
 			if (vo.isMarkedForDeletion()) {
@@ -241,22 +241,22 @@ public class SubscriptionBean {
 //					emailAddr.setAcceptHtml(acceptHtml);
 //					getEmailAddressService().update(emailAddr);
 //				}
-				logger.info("saveSubscribers() - Subscriber updated: " + vo.getEmailAddr().getAddress());
+				logger.info("saveSubscriptions() - Subscription updated: " + vo.getEmailAddr().getAddress());
 			}
 		}
 		refresh();
 		return TO_SAVED;
 	}
 
-	public String addSubscriber() {
+	public String addSubscription() {
 		if (isDebugEnabled)
-			logger.debug("addSubscriber() - Entering...");
+			logger.debug("addSubscription() - Entering...");
 		reset();
-		this.subscriber = new Subscription();
+		this.subscription = new Subscription();
 		MailingList list = getMailingListDao().getByListId(listId);
-		subscriber.setMailingList(list);
-		subscriber.setSubscribed(true);
-		subscriber.setMarkedForEdition(true);
+		subscription.setMailingList(list);
+		subscription.setSubscribed(true);
+		subscription.setMarkedForEdition(true);
 		editMode = false;
 		return TO_EDIT;
 	}
@@ -266,14 +266,14 @@ public class SubscriptionBean {
 		return TO_CANCELED;
 	}
 
-	public boolean getAnySubscribersMarkedForDeletion() {
+	public boolean getSubscriptionsMarkedForDeletion() {
 		if (isDebugEnabled)
-			logger.debug("getAnySubscribersMarkedForDeletion() - Entering...");
-		if (subscribers == null) {
-			logger.warn("getAnySubscribersMarkedForDeletion() - Subscriber List is null.");
+			logger.debug("getSubscriptionsMarkedForDeletion() - Entering...");
+		if (subscriptions == null) {
+			logger.warn("getSubscriptionsMarkedForDeletion() - Subscription List is null.");
 			return false;
 		}
-		List<Subscription> subrList = getSubscriberList();
+		List<Subscription> subrList = getSubscriptionList();
 		for (Iterator<Subscription> it=subrList.iterator(); it.hasNext();) {
 			Subscription vo = it.next();
 			if (vo.isMarkedForDeletion()) {
@@ -292,19 +292,19 @@ public class SubscriptionBean {
 	public void validatePrimaryKey(FacesContext context, UIComponent component, Object value) {
 		String subId = (String) value;
 		if (isDebugEnabled)
-			logger.debug("validatePrimaryKey() - subscriberId: " + subId);
+			logger.debug("validatePrimaryKey() - subscriptionId: " + subId);
 		Subscription vo = getSubscriptionService().getByAddressAndListId(subId, listId);
 		if (editMode == true && vo == null) {
-			// subscriber does not exist
+			// subscription does not exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "subscriberDoesNotExist", null);
+					"jpa.msgui.messages", "subscriptionDoesNotExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 		else if (editMode == false && vo != null) {
-			// subscriber already exist
+			// subscription already exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "subscriberAlreadyExist", null);
+					"jpa.msgui.messages", "subscriptionAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -316,21 +316,21 @@ public class SubscriptionBean {
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	private List<Subscription> getSubscriberList() {
-		if (subscribers == null) {
+	private List<Subscription> getSubscriptionList() {
+		if (subscriptions == null) {
 			return new ArrayList<Subscription>();
 		}
 		else {
-			return (List<Subscription>)subscribers.getWrappedData();
+			return (List<Subscription>)subscriptions.getWrappedData();
 		}
 	}
 
 	public Subscription getSubscription() {
-		return subscriber;
+		return subscription;
 	}
 
-	public void setSubscription(Subscription subscriber) {
-		this.subscriber = subscriber;
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
 	}
 
 	public boolean isEditMode() {

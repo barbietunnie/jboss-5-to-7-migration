@@ -209,7 +209,7 @@ public class MailInboxBean {
 		}
 		/* Add to Face message queue. Not working. */
         FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-				"com.legacytojava.msgui.messages", testResult, null);
+				"jpa.msgui.messages", testResult, null);
 		FacesContext.getCurrentInstance().addMessage(null, message);
 		
 		return null;
@@ -301,13 +301,13 @@ public class MailInboxBean {
 		if (editMode == true && vo != null && mailbox != null
 				&& vo.getRowId() != mailbox.getRowId()) {
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "mailboxAlreadyExist", null);
+					"jpa.msgui.messages", "mailboxAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 		else if (editMode == false && vo != null) {
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "mailboxAlreadyExist", null);
+					"jpa.msgui.messages", "mailboxAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}

@@ -918,7 +918,7 @@ public class MessageInboxBean {
 		if (!isValidEmailAddress(fromAddr)) {
 			// invalid email address
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "invalidEmailAddress", null);
+					"jpa.msgui.messages", "invalidEmailAddress", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -937,7 +937,7 @@ public class MessageInboxBean {
 		if (!isValidEmailAddress(toAddr)) {
 			// invalid email address
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "invalidEmailAddress", null);
+					"jpa.msgui.messages", "invalidEmailAddress", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}

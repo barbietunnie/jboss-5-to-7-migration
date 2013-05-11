@@ -66,7 +66,8 @@ public class RuleLogicBean {
 	
 	protected RuleLogicService getRuleLogicService() {
 		if (ruleLogicDao == null) {
-			ruleLogicDao = (RuleLogicService) SpringUtil.getWebAppContext().getBean("ruleLogicService");
+			ruleLogicDao = (RuleLogicService) SpringUtil.getWebAppContext().getBean(
+					"ruleLogicService");
 		}
 		return ruleLogicDao;
 	}
@@ -89,7 +90,8 @@ public class RuleLogicBean {
 
 	protected RuleActionService getRuleActionService() {
 		if (msgActionDao == null) {
-			msgActionDao = (RuleActionService) SpringUtil.getWebAppContext().getBean("ruleActionService");
+			msgActionDao = (RuleActionService) SpringUtil.getWebAppContext().getBean(
+					"ruleActionService");
 		}
 		return msgActionDao;
 	}
@@ -688,7 +690,7 @@ public class RuleLogicBean {
 			testResult = "duplicateSubRuleFound";
 			/* Add to Face message queue. Not working. */
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", testResult, null);
+					"jpa.msgui.messages", testResult, null);
 			FacesContext.getCurrentInstance().addMessage(null, message);
 			return null;
 		}
@@ -982,14 +984,14 @@ public class RuleLogicBean {
 		if (editMode == true && vo == null) {
 			// ruleLogic does not exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "ruleLogicDoesNotExist", null);
+					"jpa.msgui.messages", "ruleLogicDoesNotExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
 		else if (editMode == false && vo != null) {
 			// ruleLogic already exist
 	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "ruleLogicAlreadyExist", null);
+					"jpa.msgui.messages", "ruleLogicAlreadyExist", null);
 			message.setSeverity(FacesMessage.SEVERITY_WARN);
 			throw new ValidatorException(message);
 		}
@@ -1010,7 +1012,7 @@ public class RuleLogicBean {
 		}
 		catch (PatternSyntaxException e) {
 			FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"com.legacytojava.msgui.messages", "invalidRegex", null);
+					"jpa.msgui.messages", "invalidRegex", null);
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			//context.addMessage(component.getClientId(context), message);
 			throw new ValidatorException(message);
@@ -1034,7 +1036,7 @@ public class RuleLogicBean {
 		}
 		((UIInput)component).setValid(false);
 		FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-				"com.legacytojava.msgui.messages", "invalidDate", null);
+				"jpa.msgui.messages", "invalidDate", null);
 		message.setSeverity(FacesMessage.SEVERITY_ERROR);
 		context.addMessage(component.getClientId(context), message);
 	}
