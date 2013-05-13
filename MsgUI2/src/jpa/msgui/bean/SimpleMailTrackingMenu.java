@@ -1,6 +1,8 @@
 package jpa.msgui.bean;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -29,6 +31,8 @@ import org.apache.log4j.Logger;
  * 
  * Note: request scoped did not work as expected, changed to session scoped.
  */
+@ManagedBean(name="mailTracking")
+@SessionScoped
 public class SimpleMailTrackingMenu {
 	static final Logger logger = Logger.getLogger(SimpleMailTrackingMenu.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

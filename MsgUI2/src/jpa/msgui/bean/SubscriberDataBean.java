@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.component.html.HtmlDataTable;
@@ -29,6 +31,8 @@ import jpa.util.SsnNumberUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+@ManagedBean(name="subscriber")
+@SessionScoped
 public class SubscriberDataBean {
 	static final Logger logger = Logger.getLogger(SubscriberDataBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

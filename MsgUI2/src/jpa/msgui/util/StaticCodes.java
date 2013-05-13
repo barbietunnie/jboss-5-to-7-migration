@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import javax.faces.bean.ApplicationScoped;
+import javax.faces.bean.ManagedBean;
 import javax.faces.model.SelectItem;
 
 import jpa.constant.CarrierCode;
@@ -37,6 +39,8 @@ import jpa.msgui.vo.SearchFieldsVo;
 import jpa.service.external.TargetTextProc;
 import jpa.service.external.VariableResolver;
 
+@ManagedBean
+@ApplicationScoped
 public class StaticCodes {
 
 	public static void main(String[] args) {

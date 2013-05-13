@@ -1,6 +1,8 @@
 package jpa.msgui.bean;
 
 import javax.faces.FactoryFinder;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseListener;
 import javax.faces.event.ValueChangeEvent;
@@ -8,6 +10,8 @@ import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
 import javax.faces.model.SelectItem;
 
+@ManagedBean
+@SessionScoped
 public class PhaseTrackerSetterBean {
    private SelectItem[] phases = {
       new SelectItem("RESTORE_VIEW"),

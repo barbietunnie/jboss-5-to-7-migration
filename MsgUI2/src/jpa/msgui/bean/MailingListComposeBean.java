@@ -7,6 +7,8 @@ import java.util.StringTokenizer;
 
 import javax.faces.FacesException;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.ExternalContext;
@@ -49,6 +51,8 @@ import jpa.variable.RenderUtil;
 
 import org.apache.log4j.Logger;
 
+@ManagedBean(name="mailingListCompose")
+@SessionScoped
 public class MailingListComposeBean {
 	static final Logger logger = Logger.getLogger(MailingListComposeBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

@@ -8,6 +8,8 @@ import java.util.StringTokenizer;
 
 import javax.faces.FacesException;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.component.html.HtmlDataTable;
@@ -49,6 +51,8 @@ import jpa.util.EmailAddrUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+@ManagedBean(name="messageInbox")
+@SessionScoped
 public class MessageInboxBean {
 	static final Logger logger = Logger.getLogger(MessageInboxBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

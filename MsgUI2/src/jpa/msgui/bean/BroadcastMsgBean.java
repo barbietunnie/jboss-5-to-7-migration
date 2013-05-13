@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.html.HtmlDataTable;
 import javax.faces.model.DataModel;
 
@@ -19,6 +21,8 @@ import jpa.service.message.MessageInboxService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+@ManagedBean(name="broadcastMsg")
+@SessionScoped
 public class BroadcastMsgBean {
 	static final Logger logger = Logger.getLogger(BroadcastMsgBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

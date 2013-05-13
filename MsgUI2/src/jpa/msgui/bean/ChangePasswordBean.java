@@ -1,5 +1,7 @@
 package jpa.msgui.bean;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -11,6 +13,8 @@ import jpa.service.UserDataService;
 
 import org.apache.log4j.Logger;
 
+@ManagedBean(name="changePassword")
+@RequestScoped
 public class ChangePasswordBean {
 	static final Logger logger = Logger.getLogger(ChangePasswordBean.class);
 	private String currPassword = null;

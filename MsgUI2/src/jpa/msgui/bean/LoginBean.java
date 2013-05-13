@@ -1,5 +1,7 @@
 package jpa.msgui.bean;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.persistence.NoResultException;
@@ -15,6 +17,8 @@ import jpa.util.SenderUtil;
 
 import org.apache.log4j.Logger;
 
+@ManagedBean(name="login")
+@RequestScoped
 public class LoginBean {
 	static final Logger logger = Logger.getLogger(LoginBean.class);
 	private String userId = null;

@@ -3,11 +3,15 @@ package jpa.msgui.bean;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.log4j.Logger;
 
+@ManagedBean(name="gettingStarted")
+@SessionScoped
 public class GettingStarted {
 	static final Logger logger = Logger.getLogger(GettingStarted.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

@@ -2,6 +2,8 @@ package jpa.msgui.bean;
 
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
@@ -10,6 +12,8 @@ import jpa.msgui.util.FacesUtil;
 
 import org.apache.log4j.Logger;
 
+@ManagedBean(name="builtinRule")
+@SessionScoped
 public class RuleLogicBuiltinRuleBean extends RuleLogicBean {
 	protected static final Logger logger = Logger.getLogger(RuleLogicBuiltinRuleBean.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
