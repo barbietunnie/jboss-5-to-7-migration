@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.faces.FacesException;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.ExternalContext;
@@ -27,6 +29,8 @@ import jpa.util.SenderUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+@ManagedBean(name="mailingList")
+@SessionScoped
 public class MailingListBean {
 	static final Logger logger = Logger.getLogger(MailingListBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

@@ -6,4 +6,20 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd"
     version="2.1">
 
+    <!-- define locales -->
+	<application>
+		<locale-config>
+			<default-locale>en</default-locale>
+			<supported-locale>de</supported-locale>
+		</locale-config>
+	</application>
+
+   <!-- define messages resource bundle -->
+	<application>
+		<resource-bundle>
+			<base-name>jpa.msgui.messages</base-name>
+			<var>msgs</var>
+		</resource-bundle>
+	</application>
+
 </faces-config>

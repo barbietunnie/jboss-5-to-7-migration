@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
@@ -25,6 +27,8 @@ import org.apache.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+@ManagedBean(name="ruleAction")
+@SessionScoped
 public class RuleActionDetailBean {
 	static final Logger logger = Logger.getLogger(RuleActionDetailBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

@@ -1,5 +1,8 @@
 package jpa.msgui.bean;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+
 import jpa.constant.Constants;
 import jpa.model.SenderData;
 import jpa.msgui.util.SpringUtil;
@@ -8,6 +11,8 @@ import jpa.util.ProductKey;
 
 import org.apache.log4j.Logger;
 
+@ManagedBean(name="enterProductKey")
+@RequestScoped
 public class EnterProductKeyBean {
 	static final Logger logger = Logger.getLogger(EnterProductKeyBean.class);
 	private String name = null;

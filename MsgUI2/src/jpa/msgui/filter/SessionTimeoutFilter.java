@@ -8,6 +8,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,13 +20,14 @@ import jpa.util.StringUtil;
 import org.apache.log4j.Logger;
 
 /**
- * The UserData filter.
+ * The Session Timeout filter.
  */
+@WebFilter(filterName="SessionTimeoutFilter", urlPatterns="/*")
 public class SessionTimeoutFilter implements Filter {
 	static final Logger logger = Logger.getLogger(SessionTimeoutFilter.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
-	private String timeoutPage = "/login.faces";
-	private String loginPage = "/login.faces";
+	private String timeoutPage = "/login.xhtml";
+	private String loginPage = "/login.xhtml";
 	private String noPermissionPage = "/noPermission.faces";
 	/** The unique ID to set and get the UserData from the HttpSession. */
 	public static final String USER_DATA_ID = "SessionTimeoutFilter.UserData";

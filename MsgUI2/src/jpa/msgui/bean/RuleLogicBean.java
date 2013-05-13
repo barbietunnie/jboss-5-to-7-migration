@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
@@ -36,6 +38,8 @@ import jpa.util.BlobUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+@ManagedBean(name="ruleLogic")
+@SessionScoped
 public class RuleLogicBean {
 	protected static final Logger logger = Logger.getLogger(RuleLogicBean.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
