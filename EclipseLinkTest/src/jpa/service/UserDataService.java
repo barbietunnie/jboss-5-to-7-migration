@@ -120,5 +120,25 @@ public class UserDataService {
 		finally {
 		}
 	}
+
+	public int update4Web(UserData user) {
+		try {
+			String sql = "update UserData t set " +
+				"t.sessionId=:sessionId, " +
+				"t.lastVisitTime=:lastVisitTime, " +
+				"t.hits=:hits " +
+				"where t.rowId=:rowId";
 	
+			Query query = em.createQuery(sql);
+			query.setParameter("sessionId", user.getSessionId());
+			query.setParameter("lastVisitTime", user.getLastVisitTime());
+			query.setParameter("hits", user.getHits());
+			query.setParameter("rowId", user.getRowId());
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
+
 }
