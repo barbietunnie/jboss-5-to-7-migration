@@ -38,7 +38,7 @@ public class LoginBean {
 			}
 			vo.setPassword(null); // for security
 			setSessionUserData(vo);
-			//logger.info("login() - user logged in: " + userId);
+			logger.info("login() - user logged in: " + userId);
 			if (Constants.ADMIN_ROLE.equals(vo.getRole())) {
 				return Constants.ADMIN_ROLE;
 			}
@@ -93,7 +93,7 @@ public class LoginBean {
     
     public boolean isCurrentPageMainPage() {
     	String viewId = FacesUtil.getCurrentViewId();
-    	return "/main.jsp".equals(viewId);
+    	return ("/main.xhtml".equals(viewId) || "/main.faces".equals(viewId));
     }
     
 	public boolean getIsProductKeyValid() {
@@ -106,7 +106,7 @@ public class LoginBean {
 	}
 
     public String getMainPage() {
-    	return getHttpSession().getServletContext().getContextPath() + "/main.faces";
+    	return getHttpSession().getServletContext().getContextPath() + "/main.xhtml";
     }
     
 	public String getUserId() {

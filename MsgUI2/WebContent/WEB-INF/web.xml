@@ -10,7 +10,7 @@
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			classpath*:spring-spa-config.xml
+			classpath*:spring-jpa-config.xml
 		</param-value>
 	</context-param>
   <welcome-file-list>
@@ -29,7 +29,13 @@
   <servlet-mapping>
     <servlet-name>Faces Servlet</servlet-name>
     <url-pattern>/faces/*</url-pattern>
+    <url-pattern>*.xhtml</url-pattern>
+    <url-pattern>*.fases</url-pattern>
   </servlet-mapping>
+	<context-param>
+		<param-name>javax.faces.PROJECT_STAGE</param-name>
+		<param-value>Development</param-value>
+	</context-param>
   <context-param>
     <description>State saving method: 'client' or 'server' (=default). See JSF Specification 2.5.2</description>
     <param-name>javax.faces.STATE_SAVING_METHOD</param-name>

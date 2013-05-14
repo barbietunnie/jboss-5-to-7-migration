@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 /**
  * The File Servlet that serves files from database.
  */
-//@WebServlet(name="File Servlet", urlPatterns="/file/*", loadOnStartup=9)
+@WebServlet(name="File Servlet", urlPatterns="/file/*", loadOnStartup=9)
 public class FileServlet extends HttpServlet {
 	private static final long serialVersionUID = -8129545604805974235L;
 	static final Logger logger = Logger.getLogger(FileServlet.class);
