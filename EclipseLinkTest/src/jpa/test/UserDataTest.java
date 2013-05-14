@@ -67,6 +67,7 @@ public class UserDataTest {
 		// test update
 		tkn0.setUpdtUserId("JpaTest");
 		service.update(tkn0);
+		service.update4Web(tkn0);
 		
 		UserData tkn1 = service.getByRowId(tkn0.getRowId());
 		assertTrue("JpaTest".equals(tkn1.getUpdtUserId()));
