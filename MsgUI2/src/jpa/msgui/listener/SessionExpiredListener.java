@@ -60,8 +60,8 @@ public class SessionExpiredListener implements HttpSessionListener {
 		// update users table with "hits" and "last access time"
 		UserData userVo = (UserData) httpSession.getAttribute(SessionTimeoutFilter.USER_DATA_ID);
 		if (userVo != null) {
-			getUserDataservice(httpSession).update(userVo);
-			logger.info("sessionExpired() - Users table - rows updated: " + 1);
+			getUserDataservice(httpSession).update4Web(userVo);
+			logger.info("sessionExpired() - UserData table - rows updated: " + 1);
 		}
 		else {
 			logger.warn("sessionExpired() - UserData is null, user info not updated.");
@@ -73,10 +73,10 @@ public class SessionExpiredListener implements HttpSessionListener {
 		// clean up user session tables
 		if (sessionId != null) {
 			int rowsDeleted = getSessionUploadService(httpSession).deleteBySessionId(sessionId);
-			logger.info("sessionExpired() - rows deleted from SessionUploads: " + rowsDeleted);
+			logger.info("sessionExpired() - rows deleted from SessionUpload: " + rowsDeleted);
 		}
 		else {
-			logger.warn("sessionExpired() - SessionId is null, SessionUploads not cleaned.");
+			logger.warn("sessionExpired() - SessionId is null, SessionUpload not cleaned.");
 		}
 	}
 

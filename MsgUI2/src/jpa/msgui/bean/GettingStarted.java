@@ -12,7 +12,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="gettingStarted")
 @SessionScoped
-public class GettingStarted {
+public class GettingStarted implements java.io.Serializable {
+	private static final long serialVersionUID = -7733276722871469541L;
 	static final Logger logger = Logger.getLogger(GettingStarted.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

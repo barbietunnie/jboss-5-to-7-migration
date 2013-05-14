@@ -39,7 +39,7 @@ import jpa.msgui.vo.SearchFieldsVo;
 import jpa.service.external.TargetTextProc;
 import jpa.service.external.VariableResolver;
 
-@ManagedBean
+@ManagedBean(name="codes")
 @ApplicationScoped
 public class StaticCodes {
 
