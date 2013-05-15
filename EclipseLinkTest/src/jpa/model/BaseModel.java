@@ -1,5 +1,6 @@
 package jpa.model;
 
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -40,10 +41,18 @@ public abstract class BaseModel implements java.io.Serializable {
 	
 	/* Define transient fields for UI application */
 	@Transient
+	protected boolean editable = true;
+	@Transient
 	protected boolean markedForDeletion = false;
 	@Transient
 	protected boolean markedForEdition = false;
 
+	public boolean isEditable() {
+		return editable;
+	}
+	public void setEditable(boolean editable) {
+		this.editable = editable;
+	}
 	public boolean isMarkedForDeletion() {
 		return markedForDeletion;
 	}
@@ -57,6 +66,24 @@ public abstract class BaseModel implements java.io.Serializable {
 		this.markedForEdition = markedForEdition;
 	}
 	
+	public String getStatusIdDesc() {
+		try {
+			Method method = this.getClass().getMethod("getStatusId", (Class[])null);
+			String desc = (String) method.invoke(this, (Object[])null);
+			if (StatusId.ACTIVE.getValue().equals(desc))
+				desc = "Active";
+			else if (StatusId.INACTIVE.getValue().equals(desc))
+				desc = "Inactive";
+			else if (StatusId.SUSPENDED.getValue().equals(desc))
+				desc = "Suspended";
+			return desc;
+		}
+		catch (Exception e) {
+			// ignored
+			return null;
+		}
+	}
+
 	public void copyPropertiesTo(BaseModel dest) {
 		SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
 		ConvertUtils.register(converter1, java.sql.Timestamp.class);

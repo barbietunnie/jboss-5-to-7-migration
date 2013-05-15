@@ -139,7 +139,15 @@ public class SenderDataService {
 	
 	public void update(SenderData sender) {
 		try {
-			insert(sender);
+			validateSender(sender);
+			if (em.contains(sender)) {
+				em.persist(sender);
+			}
+			else {
+				em.merge(sender);
+			}
+			reloadFlagsService.updateSenderReloadFlag();
+			em.flush();
 		}
 		finally {
 		}
