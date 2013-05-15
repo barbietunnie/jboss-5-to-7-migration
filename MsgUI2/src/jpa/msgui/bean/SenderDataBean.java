@@ -28,7 +28,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="senderData")
 @SessionScoped
-public class SenderDataBean {
+public class SenderDataBean implements java.io.Serializable {
+	private static final long serialVersionUID = 1121882547043576165L;
 	static final Logger logger = Logger.getLogger(SenderDataBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
@@ -43,6 +44,12 @@ public class SenderDataBean {
 	private UIInput useTestAddrInput = null;
 	private String testResult = null;
 	private String actionFailure = null;
+	
+	private static String TO_EDIT = "emailProfileEdit.xhtml";
+	private static String TO_SAVED = "configureSiteProfiles.xhtml";
+	private static String TO_FAILED = null;
+	private static String TO_DELETED = TO_SAVED;
+	private static String TO_CANCELED = TO_SAVED;
 	
 	private final SenderData siteMeta = new SenderData();
 	
@@ -119,11 +126,11 @@ public class SenderDataBean {
 			logger.debug("viewSiteProfile() - Entering...");
 		if (siteProfiles == null) {
 			logger.warn("viewSiteProfile() - SiteProfile List is null.");
-			return "siteprofile.failed";
+			return TO_FAILED;
 		}
 		if (!siteProfiles.isRowAvailable()) {
 			logger.warn("viewMailingList() - SiteProfile Row not available.");
-			return "siteprofile.failed";
+			return TO_FAILED;
 		}
 		reset();
 		this.sender = (SenderData) siteProfiles.getRowData();
@@ -133,7 +140,7 @@ public class SenderDataBean {
 		if (isDebugEnabled)
 			logger.debug("viewSiteProfile() - SenderData to be passed to jsp: " + sender);
 		
-		return "siteprofile.edit";
+		return TO_EDIT;
 	}
 	
 	public String saveSender() {
@@ -141,7 +148,7 @@ public class SenderDataBean {
 			logger.debug("saveSender() - Entering...");
 		if (sender == null) {
 			logger.warn("saveSender() - SenderData is null.");
-			return "siteprofile.failed";
+			return TO_FAILED;
 		}
 		reset();
 		// update database
@@ -157,7 +164,7 @@ public class SenderDataBean {
 			addToList(sender);
 			logger.info("saveSender() - Rows Inserted: " + 1);
 		}
-		return "siteprofile.saved";
+		return TO_SAVED;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -171,7 +178,7 @@ public class SenderDataBean {
 			logger.debug("deleteSiteProfiles() - Entering...");
 		if (siteProfiles == null) {
 			logger.warn("deleteSiteProfiles - SiteProfile List is null.");
-			return "siteprofile.failed";
+			return TO_FAILED;
 		}
 		reset();
 		List<SenderData> list = getSiteProfilesList();
@@ -185,7 +192,7 @@ public class SenderDataBean {
 				list.remove(vo);
 			}
 		}
-		return "siteprofile.deleted";
+		return TO_DELETED;
 	}
 	
 	public String copySiteProfile() {
@@ -193,7 +200,7 @@ public class SenderDataBean {
 			logger.debug("copySiteProfile() - Entering...");
 		if (siteProfiles == null) {
 			logger.warn("copySiteProfile() - Sender List is null.");
-			return "siteprofile.failed";
+			return TO_FAILED;
 		}
 		reset();
 		List<SenderData> mailList = getSiteProfilesList();
@@ -211,7 +218,7 @@ public class SenderDataBean {
 				sender.setSenderId(null);
 				sender.setMarkedForEdition(true);
 				editMode = false;
-				return "siteprofile.edit";
+				return TO_EDIT;
 			}
 		}
 		return null;
@@ -224,12 +231,12 @@ public class SenderDataBean {
 		this.sender = new SenderData();
 		sender.setMarkedForEdition(true);
 		editMode = false;
-		return "siteprofile.edit";
+		return TO_EDIT;
 	}
 	
 	public String cancelEdit() {
 		refresh();
-		return "siteprofile.canceled";
+		return TO_CANCELED;
 	}
 	
 	public boolean getAnySitesMarkedForDeletion() {
@@ -332,8 +339,8 @@ public class SenderDataBean {
 		return sender;
 	}
 
-	public void setSender(SenderData client) {
-		this.sender = client;
+	public void setSender(SenderData sender) {
+		this.sender = sender;
 	}
 
 	public boolean isEditMode() {
@@ -372,8 +379,8 @@ public class SenderDataBean {
 		return senderIdInput;
 	}
 
-	public void setSenderIdInput(UIInput clientIdInput) {
-		this.senderIdInput = clientIdInput;
+	public void setSenderIdInput(UIInput senderIdInput) {
+		this.senderIdInput = senderIdInput;
 	}
 
 	public UIInput getVerpEnabledInput() {

@@ -26,7 +26,7 @@ import jpa.service.rule.RuleLogicService;
 
 import org.springframework.web.context.WebApplicationContext;
 
-@ManagedBean
+@ManagedBean(name="dynacodes")
 @ApplicationScoped
 public class DynamicCodes {
 	static WebApplicationContext webContext = null;
@@ -149,7 +149,7 @@ public class DynamicCodes {
 		return dataTypes;
 	}
 
-	// PROPERTY: ClientId Items 
+	// PROPERTY: SenderId Items 
 	public SelectItem[] getSenderIdItems() {
 		List<SenderData> list = getSenderDataService().getAll();
 		SelectItem[] dataTypes = new SelectItem[list.size()];

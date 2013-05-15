@@ -32,13 +32,13 @@
 			columnClasses="loginLabelColumn, loginInputColumn, loginMessageColumn">
 
 			<h:outputText value="#{msgs.userIdPrompt}"/>
-			<h:inputText value="#{login.userId}" id="userid"
+			<h:inputText value="#{login.userId}" id="userid" tabindex="0"
 				label="#{msgs.userIdPrompt}" required="true" maxlength="10">
 			</h:inputText>
 			<h:message for="userid" styleClass="errorMessage"/>
 
 			<h:outputText value="#{msgs.passwordPrompt}" />
-			<h:inputSecret value="#{login.password}" id="password"
+			<h:inputSecret value="#{login.password}" id="password" tabindex="1"
 				label="#{msgs.passwordPrompt}" required="true" maxlength="30">
 			</h:inputSecret>
 			<h:message for="password" styleClass="errorMessage"/>

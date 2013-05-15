@@ -34,6 +34,7 @@ public class FileServlet extends HttpServlet {
 	private MessageAttachmentService attachmentsDao = null;
 	private String fileNotFoundPage = "/FileNotFoundError.xhtml";
 	
+	@Override
 	public void init() throws ServletException {
 		ServletContext ctx = getServletContext();
 		logger.info("init() - ServerInfo: " + ctx.getServerInfo() + ", Context Path: "

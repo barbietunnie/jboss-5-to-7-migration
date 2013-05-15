@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -17,6 +18,7 @@ public class GettingStarted implements java.io.Serializable {
 	static final Logger logger = Logger.getLogger(GettingStarted.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@ManagedProperty(value="gettingStartedHeaderText")
 	private String titleKey;
 	private DataModel<?> functionKeys = null;
 	private String functionKey = null;

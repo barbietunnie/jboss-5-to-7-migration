@@ -34,7 +34,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="smtpServer")
 @SessionScoped
-public class SmtpServerBean {
+public class SmtpServerBean implements java.io.Serializable {
+	private static final long serialVersionUID = -2610108607170535587L;
 	static final Logger logger = Logger.getLogger(SmtpServerBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
@@ -49,7 +50,13 @@ public class SmtpServerBean {
 
 	private String testResult = null;
 	private String actionFailure = null;
-	
+
+	private static String TO_EDIT = "smtpServerEdit.xhtml";
+	private static String TO_FAILED = null;
+	private static String TO_SAVED = "configureSmtpServers.xhtml";
+	private static String TO_DELETED = TO_SAVED;
+	private static String TO_CANCELED = TO_SAVED;
+
 	public DataModel<SmtpServer> getAll() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
 		if (fromPage != null && fromPage.equals("main")) {
@@ -89,11 +96,11 @@ public class SmtpServerBean {
 			logger.debug("viewSmtpServer() - Entering...");
 		if (smtpServers == null) {
 			logger.warn("viewSmtpServer() - SmtpServer List is null.");
-			return "smtpserver.failed";
+			return TO_SAVED;
 		}
 		if (!smtpServers.isRowAvailable()) {
 			logger.warn("viewSmtpServer() - SmtpServer Row not available.");
-			return "smtpserver.failed";
+			return TO_FAILED;
 		}
 		reset();
 		this.smtpServer = (SmtpServer) smtpServers.getRowData();
@@ -103,7 +110,7 @@ public class SmtpServerBean {
 		if (isDebugEnabled)
 			logger.debug("viewSmtpServer() - SmtpServer to be passed to jsp: " + smtpServer);
 		
-		return "smtpserver.edit";
+		return TO_EDIT;
 	}
 	
 	public String saveSmtpServer() {
@@ -111,7 +118,7 @@ public class SmtpServerBean {
 			logger.debug("saveSmtpServer() - Entering...");
 		if (smtpServer == null) {
 			logger.warn("saveSmtpServer() - SmtpServer is null.");
-			return "smtpserver.failed";
+			return TO_FAILED;
 		}
 		reset();
 		// update database
@@ -127,7 +134,7 @@ public class SmtpServerBean {
 			addToList(smtpServer);
 			logger.info("saveSmtpServer() - Rows Inserted: " + 1);
 		}
-		return "smtpserver.saved";
+		return TO_SAVED;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -141,7 +148,7 @@ public class SmtpServerBean {
 			logger.debug("deleteSmtpServers() - Entering...");
 		if (smtpServers == null) {
 			logger.warn("deleteSmtpServers() - SmtpServer List is null.");
-			return "smtpserver.failed";
+			return TO_FAILED;
 		}
 		reset();
 		List<SmtpServer> smtpList = getSmtpServerList();
@@ -155,7 +162,7 @@ public class SmtpServerBean {
 				smtpList.remove(vo);
 			}
 		}
-		return "smtpserver.deleted";
+		return TO_DELETED;
 	}
 	
 	public String testSmtpServer() {
@@ -163,7 +170,7 @@ public class SmtpServerBean {
 			logger.debug("testSmtpServer() - Entering...");
 		if (smtpServer == null) {
 			logger.warn("testSmtpServer() - SmtpServer is null.");
-			return "smtpserver.failed";
+			return TO_FAILED;
 		}
 		String smtpHost = smtpServer.getSmtpHostName();
 		int smtpPort = smtpServer.getSmtpPortNumber();
@@ -223,7 +230,7 @@ public class SmtpServerBean {
 			logger.debug("copySmtpServer() - Entering...");
 		if (smtpServers == null) {
 			logger.warn("copySmtpServer() - SmtpServer List is null.");
-			return "smtpserver.failed";
+			return TO_FAILED;
 		}
 		reset();
 		List<SmtpServer> smtpList = getSmtpServerList();
@@ -242,7 +249,7 @@ public class SmtpServerBean {
 				smtpServer.setMarkedForEdition(true);
 				setDefaultValues(smtpServer);
 				editMode = false;
-				return "smtpserver.edit";
+				return TO_EDIT;
 			}
 		}
 		return null;
@@ -258,7 +265,7 @@ public class SmtpServerBean {
 		smtpServer.setUseSsl(false);
 		setDefaultValues(smtpServer);
 		editMode = false;
-		return "smtpserver.edit";
+		return TO_EDIT;
 	}
 	
 	void setDefaultValues(SmtpServer smtpServer) {
@@ -270,7 +277,7 @@ public class SmtpServerBean {
 	
 	public String cancelEdit() {
 		refresh();
-		return "smtpserver.canceled";
+		return TO_CANCELED;
 	}
 	
 	public boolean getAnyServersMarkedForDeletion() {

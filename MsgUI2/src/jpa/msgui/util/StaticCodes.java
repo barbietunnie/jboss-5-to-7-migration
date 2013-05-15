@@ -20,7 +20,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.model.SelectItem;
 
 import jpa.constant.CarrierCode;
-import jpa.constant.CodeType;
 import jpa.constant.Constants;
 import jpa.constant.EmailVariableType;
 import jpa.constant.MailProtocol;
@@ -267,8 +266,8 @@ public class StaticCodes {
 	}
 
 	private static SelectItem[] yesNoItems = {
-		new SelectItem(CodeType.YES.getValue(), "Yes"),
-		new SelectItem(CodeType.NO.getValue(), "No")
+		new SelectItem(true, "Yes"),
+		new SelectItem(false, "No")
 	};
 	
 	// PROPERTY: Y/N Items
@@ -277,8 +276,8 @@ public class StaticCodes {
 	}
 
 	private static SelectItem[] yorNItems = {
-		new SelectItem(CodeType.YES_CODE.getValue(), "Yes"),
-		new SelectItem(CodeType.NO_CODE.getValue(), "No")
+		new SelectItem(true, "Yes"),
+		new SelectItem(false, "No")
 	};
 	
 	// PROPERTY: true/false Items

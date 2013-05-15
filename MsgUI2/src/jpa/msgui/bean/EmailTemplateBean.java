@@ -38,7 +38,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="emailTemplate")
 @SessionScoped
-public class EmailTemplateBean {
+public class EmailTemplateBean implements java.io.Serializable {
+	private static final long serialVersionUID = -4812680785383460662L;
 	static final Logger logger = Logger.getLogger(EmailTemplateBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 

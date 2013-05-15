@@ -53,7 +53,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="messageInbox")
 @SessionScoped
-public class MessageInboxBean {
+public class MessageInboxBean implements java.io.Serializable {
+	private static final long serialVersionUID = -1682128466807436660L;
 	static final Logger logger = Logger.getLogger(MessageInboxBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	static final boolean isInfoEnabled = logger.isInfoEnabled();

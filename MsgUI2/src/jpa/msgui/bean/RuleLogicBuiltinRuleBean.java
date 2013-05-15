@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 @ManagedBean(name="builtinRule")
 @SessionScoped
 public class RuleLogicBuiltinRuleBean extends RuleLogicBean {
+	private static final long serialVersionUID = -498930141487046944L;
 	protected static final Logger logger = Logger.getLogger(RuleLogicBuiltinRuleBean.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 

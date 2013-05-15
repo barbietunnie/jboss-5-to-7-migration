@@ -33,7 +33,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="subscriber")
 @SessionScoped
-public class SubscriberDataBean {
+public class SubscriberDataBean implements java.io.Serializable {
+	private static final long serialVersionUID = 7927665483948452101L;
 	static final Logger logger = Logger.getLogger(SubscriberDataBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
