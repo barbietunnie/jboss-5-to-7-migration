@@ -21,7 +21,7 @@ import jpa.constant.Constants;
 public class UserData extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 14989739185873317L;
 
-	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL, optional=false)
+	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="SenderDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
 	@OnDelete( action = OnDeleteAction.CASCADE )
 	private SenderData senderData; // sender user is associated to
