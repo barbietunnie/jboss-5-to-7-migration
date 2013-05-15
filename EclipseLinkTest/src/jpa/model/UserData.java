@@ -2,6 +2,7 @@ package jpa.model;
 
 import java.sql.Timestamp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,12 +21,12 @@ import jpa.constant.Constants;
 public class UserData extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 14989739185873317L;
 
-	@ManyToOne(fetch=FetchType.LAZY, optional=false)
+	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL, optional=false)
 	@JoinColumn(name="SenderDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
 	@OnDelete( action = OnDeleteAction.CASCADE )
 	private SenderData senderData; // sender user is associated to
 
-	@OneToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddress.class)
+	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL, optional=true, targetEntity=EmailAddress.class)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
 	private EmailAddress emailAddr; // user email address - optional
 	
@@ -64,7 +65,7 @@ public class UserData extends BaseModel implements java.io.Serializable {
 	}
 	
 	public boolean getIsAdmin() {
-		return Constants.ADMIN_ROLE.equals(role);
+		return Constants.ADMIN_ROLE.equalsIgnoreCase(role);
 	}
 	/** end of UI components */
 

@@ -64,6 +64,8 @@ public class UserDataTest {
 		tkn0 = service.getByRowId(list.get(0).getRowId());
 		assertNotNull(tkn0);
 		
+		service.getForLogin(list.get(0).getUserId(), list.get(0).getPassword());
+		
 		// test update
 		tkn0.setUpdtUserId("JpaTest");
 		service.update(tkn0);

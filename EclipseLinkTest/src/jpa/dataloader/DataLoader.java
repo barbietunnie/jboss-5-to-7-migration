@@ -19,7 +19,7 @@ public class DataLoader {
 		SpringUtil.getAppContext().refresh();
 	}
 	
-	void loadAllTables() {
+	public void loadAllTables() {
 		new SenderDataLoader().loadData();
 		new IdTokensDataLoader().loadData();
 		new EmailAddressLoader().loadData();
