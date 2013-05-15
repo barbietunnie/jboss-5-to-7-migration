@@ -32,9 +32,10 @@ import jpa.util.SenderUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-@ManagedBean(name="mainInbox")
+@ManagedBean(name="mailInbox")
 @SessionScoped
-public class MailInboxBean {
+public class MailInboxBean implements java.io.Serializable {
+	private static final long serialVersionUID = 2069189605831996367L;
 	static final Logger logger = Logger.getLogger(MailInboxBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	static final boolean isInfoEnabled = logger.isInfoEnabled();
@@ -49,11 +50,11 @@ public class MailInboxBean {
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	private static String TO_EDIT = "mailbox.edit";
-	private static String TO_FAILED = "mailbox.failed";
-	private static String TO_SAVED = "mailbox.saved";
-	private static String TO_DELETED = "mailbox.deleted";
-	private static String TO_CANCELED = "mailbox.canceled";
+	private static String TO_EDIT = "mailboxEdit.xhtml";
+	private static String TO_FAILED = null;
+	private static String TO_SAVED = "configureMailboxes.xhtml";
+	private static String TO_DELETED = TO_SAVED;
+	private static String TO_CANCELED = TO_SAVED;
 
 	public String refresh() {
 		mailBoxes = null;

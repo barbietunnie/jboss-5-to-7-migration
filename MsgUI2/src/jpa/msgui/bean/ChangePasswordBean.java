@@ -15,7 +15,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="changePassword")
 @RequestScoped
-public class ChangePasswordBean {
+public class ChangePasswordBean implements java.io.Serializable {
+	private static final long serialVersionUID = -7332671123699551896L;
 	static final Logger logger = Logger.getLogger(ChangePasswordBean.class);
 	private String currPassword = null;
 	private String password = null;

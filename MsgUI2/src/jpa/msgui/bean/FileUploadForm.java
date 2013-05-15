@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class FileUploadForm {
-    // Init
+public class FileUploadForm implements java.io.Serializable {
+	private static final long serialVersionUID = -841769703445641393L;
+	// Init
     private File file1;
     private File file2;
     private File file3;

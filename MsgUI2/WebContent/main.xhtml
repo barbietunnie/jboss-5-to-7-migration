@@ -24,29 +24,29 @@
 			<h:panelGrid columns="1" styleClass="menuCell" columnClasses="menuCellColumn"
 				 rendered="#{login.isAdmin}">
 				<h:panelGroup styleClass="menuLinkText">
-					<c:if test="${loginBean.isAdmin == true}">
+					<c:if test="${login.isAdmin == true}">
 						#{linenbr}
 						<c:set var="linenbr" value="${linenbr + 1}"/>
 					</c:if>
-					<h:outputLink value="admin/configureSiteProfiles.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="admin/configureSiteProfiles.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.configureSiteProfiles}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
-					<c:if test="${loginBean.isAdmin == true}">
+					<c:if test="${login.isAdmin == true}">
 						#{linenbr}
 						<c:set var="linenbr" value="${linenbr + 1}"/>
 					</c:if>
-					<h:outputLink value="admin/configureMailboxes.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="admin/configureMailboxes.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.configureMailboxes}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
-					<c:if test="${loginBean.isAdmin == true}">
+					<c:if test="${login.isAdmin == true}">
 						#{linenbr}
 						<c:set var="linenbr" value="${linenbr + 1}"/>
 					</c:if>
-					<h:outputLink value="admin/configureSmtpServers.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="admin/configureSmtpServers.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.configureSmtpServers}"/>
 					</h:outputLink>
 				</h:panelGroup>
@@ -58,21 +58,21 @@
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="customizeBuiltInRules.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="customizeBuiltInRules.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.customizeBuiltInRules}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="configureCustomRules.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="configureCustomRules.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.configureCustomRules}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="maintainActionDetails.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="maintainActionDetails.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.maintainActionDetails}"/>
 					</h:outputLink>
 				</h:panelGroup>
@@ -84,14 +84,14 @@
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="configureMailingLists.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="configureMailingLists.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.configureMailingLists}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="upload/emailAddrAttachFile.faces" styleClass="menuLinkText">
+					<h:outputLink value="upload/emailAddrAttachFile.xhtml" styleClass="menuLinkText">
 						<f:param name="frompage" value="uploademails"/>
 						<h:outputText value="#{msgs.uploadEmailAddrsToList}"/>
 					</h:outputLink>
@@ -99,14 +99,14 @@
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="configureEmailVariables.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="configureEmailVariables.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.configureEmailVariables}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="configureEmailTemplates.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="configureEmailTemplates.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.configureEmailTemplates}"/>
 					</h:outputLink>
 				</h:panelGroup>
@@ -119,35 +119,35 @@
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="msgInboxList.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="msgInboxList.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.manageEmailCorrespondence}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="mailingListCompose.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="mailingListCompose.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.composeForListLink}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="emailAddressList.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="emailAddressList.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.manageEmailAddresses}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="customersList.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="customersList.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.manageSubscriberInformation}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="broadcastsList.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="broadcastsList.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.viewBroadcastMessages}"/>
 					</h:outputLink>
 				</h:panelGroup>
@@ -157,18 +157,18 @@
 				styleClass="menuGroupTitle"/>
 			<h:panelGrid columns="1" styleClass="menuCell" columnClasses="menuCellColumn">
 				<h:panelGroup styleClass="menuLinkText" rendered="#{login.isAdmin}">
-					<c:if test="${loginBean.isAdmin == true}">
+					<c:if test="${login.isAdmin == true}">
 						#{linenbr}
 						<c:set var="linenbr" value="${linenbr + 1}"/>
 					</c:if>
-					<h:outputLink value="admin/manageUserAccounts.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="admin/manageUserAccounts.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.manageUserAccounts}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="changePassword.faces?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="changePassword.xhtml?frompage=main" styleClass="menuLinkText">
 						<h:outputText value="#{msgs.changePassword}"/>
 					</h:outputLink>
 				</h:panelGroup>
@@ -176,11 +176,11 @@
 					rendered="#{!login.isProductKeyValid}">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="enterProductKey.faces?frompage=main" styleClass="menuLinkText"
+					<h:outputLink value="enterProductKey.xhtml?frompage=main" styleClass="menuLinkText"
 						rendered="#{login.isTrialPeriodExpired}">
 						<h:outputText value="#{msgs.trialPeriodExpiredPrompt}" style="color: red;"/>
 					</h:outputLink>
-					<h:outputLink value="enterProductKey.faces?frompage=main" styleClass="menuLinkText"
+					<h:outputLink value="enterProductKey.xhtml?frompage=main" styleClass="menuLinkText"
 						rendered="#{!login.isTrialPeriodExpired}">
 						<h:outputText value="#{msgs.enterProductKey}"/>
 					</h:outputLink>

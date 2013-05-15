@@ -29,7 +29,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @ManagedBean(name="ruleAction")
 @SessionScoped
-public class RuleActionDetailBean {
+public class RuleActionDetailBean implements java.io.Serializable {
+	private static final long serialVersionUID = -1479694457663800603L;
 	static final Logger logger = Logger.getLogger(RuleActionDetailBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	static final boolean isInfoEnabled = logger.isInfoEnabled();

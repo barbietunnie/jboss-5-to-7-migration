@@ -1,6 +1,7 @@
 package jpa.msgui.bean;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -19,11 +20,13 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="login")
 @RequestScoped
-public class LoginBean {
+public class LoginBean implements java.io.Serializable {
+	private static final long serialVersionUID = -5547672142490601294L;
 	static final Logger logger = Logger.getLogger(LoginBean.class);
 	private String userId = null;
 	private String password = null;
 	private String message = null;
+	@ManagedProperty(value="#{param.source}")
 	private String source = null; // login or timeout
 	
 	private UserDataService userDao = null;

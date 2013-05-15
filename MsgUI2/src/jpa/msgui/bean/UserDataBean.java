@@ -17,9 +17,13 @@ import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
 import javax.persistence.NoResultException;
 
+import jpa.model.EmailAddress;
+import jpa.model.SenderData;
 import jpa.model.UserData;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
+import jpa.service.EmailAddressService;
+import jpa.service.SenderDataService;
 import jpa.service.UserDataService;
 import jpa.util.EmailAddrUtil;
 
@@ -28,20 +32,31 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="userData")
 @SessionScoped
-public class UserDataBean {
+public class UserDataBean implements java.io.Serializable {
+	private static final long serialVersionUID = 2276036390316734499L;
 	static final Logger logger = Logger.getLogger(UserDataBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private UserDataService userDao = null;
+	private EmailAddressService emailAddrDao = null;
+	private SenderDataService senderDao = null;
 	private DataModel<UserData> users = null;
 	private UserData user = null;
 	private boolean editMode = true;
 	
 	private UIInput userIdInput = null;
-
+	private String userEmailAddr = null;
+	private String userSenderId = null;
+	
 	private String testResult = null;
 	private String actionFailure = null;
-	
+
+	private static String TO_EDIT = "userAccountEdit.xhtml";
+	private static String TO_FAILED = null;
+	private static String TO_SAVED = "manageUserAccounts.xhtml";
+	private static String TO_DELETED = TO_SAVED;
+	private static String TO_CANCELED = TO_SAVED;
+
 	public DataModel<UserData> getAll() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
 		if (fromPage != null && fromPage.equals("main")) {
@@ -70,26 +85,45 @@ public class UserDataBean {
 		this.userDao = userDao;
 	}
 	
+	public EmailAddressService getEmailAddressService() {
+		if (emailAddrDao == null) {
+			emailAddrDao = (EmailAddressService) SpringUtil.getWebAppContext().getBean("emailAddressService");
+		}
+		return emailAddrDao;
+	}
+	public SenderDataService getSenderDataService() {
+		if (senderDao == null) {
+			senderDao = (SenderDataService) SpringUtil.getWebAppContext().getBean("senderDataService");
+		}
+		return senderDao;
+	}
+
 	public String viewUser() {
 		if (isDebugEnabled)
 			logger.debug("viewUser() - Entering...");
 		if (users == null) {
 			logger.warn("viewUser() - User List is null.");
-			return "useraccount.failed";
+			return TO_FAILED;
 		}
 		if (!users.isRowAvailable()) {
 			logger.warn("viewUser() - User Row not available.");
-			return "useraccount.failed";
+			return TO_FAILED;
 		}
 		reset();
 		this.user = (UserData) users.getRowData();
 		logger.info("viewUser() - User to be edited: " + user.getUserId());
 		user.setMarkedForEdition(true);
 		editMode = true;
+		if (user.getEmailAddr()!=null) {
+			setUserEmailAddr(user.getEmailAddr().getAddress());
+		}
+		if (user.getSenderData()!=null) {
+			setUserSenderId(user.getSenderData().getSenderId());
+		}
 		if (isDebugEnabled)
 			logger.debug("viewUser() - UserData to be passed to jsp: " + user);
 		
-		return "useraccount.edit";
+		return TO_EDIT;
 	}
 	
 	public String saveUser() {
@@ -97,13 +131,36 @@ public class UserDataBean {
 			logger.debug("saveUser() - Entering...");
 		if (user == null) {
 			logger.warn("saveUser() - UserData is null.");
-			return "useraccount.failed";
+			return TO_FAILED;
 		}
 		reset();
-		if (user.getEmailAddr() != null && StringUtils.isNotBlank(user.getEmailAddr().getAddress())) {
-			if (!EmailAddrUtil.isRemoteEmailAddress(user.getEmailAddr().getAddress())) {
+		if (StringUtils.isNotBlank(getUserEmailAddr())) {
+			if (!EmailAddrUtil.isRemoteEmailAddress(getUserEmailAddr())) {
 				testResult = "invalidEmailAddress";
 				return null;
+			}
+			if (user.getEmailAddr()!=null) {
+				if (EmailAddrUtil.compareEmailAddrs(user.getEmailAddr().getAddress(), getUserEmailAddr())!=0) {
+					EmailAddress newAddr = getEmailAddressService().findSertAddress(getUserEmailAddr());
+					user.setEmailAddr(newAddr);
+				}
+			}
+			else {
+				EmailAddress newAddr = getEmailAddressService().findSertAddress(getUserEmailAddr());
+				user.setEmailAddr(newAddr);
+			}
+		}
+		else {
+			if (user.getEmailAddr()!=null) {
+				user.setEmailAddr(null);
+			}
+		}
+		if (StringUtils.isNotBlank(getUserSenderId())) {
+			if (user.getSenderData()!=null) {
+				if (!getUserSenderId().equals(user.getSenderData().getSenderId())) {
+					SenderData sender = getSenderDataService().getBySenderId(getUserSenderId());
+					user.setSenderData(sender);
+				}
 			}
 		}
 		// update database
@@ -119,7 +176,7 @@ public class UserDataBean {
 			addToList(user);
 			logger.info("saveUser() - Rows Inserted: " + 1);
 		}
-		return "useraccount.saved";
+		return TO_SAVED;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -133,7 +190,7 @@ public class UserDataBean {
 			logger.debug("deleteUsers() - Entering...");
 		if (users == null) {
 			logger.warn("deleteUsers() - User List is null.");
-			return "useraccount.failed";
+			return TO_FAILED;
 		}
 		reset();
 		List<UserData> smtpList = getUserList();
@@ -147,7 +204,7 @@ public class UserDataBean {
 				smtpList.remove(vo);
 			}
 		}
-		return "useraccount.deleted";
+		return TO_DELETED;
 	}
 	
 	public String copyUser() {
@@ -155,7 +212,7 @@ public class UserDataBean {
 			logger.debug("copyUser() - Entering...");
 		if (users == null) {
 			logger.warn("copyUser() - User List is null.");
-			return "useraccount.failed";
+			return TO_FAILED;
 		}
 		reset();
 		List<UserData> smtpList = getUserList();
@@ -175,7 +232,7 @@ public class UserDataBean {
 				user.setUserId(null);
 				user.setMarkedForEdition(true);
 				editMode = false;
-				return "useraccount.edit";
+				return TO_EDIT;
 			}
 		}
 		return null;
@@ -188,12 +245,12 @@ public class UserDataBean {
 		this.user = new UserData();
 		user.setMarkedForEdition(true);
 		editMode = false;
-		return "useraccount.edit";
+		return TO_EDIT;
 	}
 	
 	public String cancelEdit() {
 		refresh();
-		return "useraccount.canceled";
+		return TO_CANCELED;
 	}
 	
 	public boolean getAnyUsersMarkedForDeletion() {
@@ -292,6 +349,22 @@ public class UserDataBean {
 
 	public void setEditMode(boolean editMode) {
 		this.editMode = editMode;
+	}
+
+	public String getUserEmailAddr() {
+		return userEmailAddr;
+	}
+
+	public void setUserEmailAddr(String userEmailAddr) {
+		this.userEmailAddr = userEmailAddr;
+	}
+
+	public String getUserSenderId() {
+		return userSenderId;
+	}
+
+	public void setUserSenderId(String userSenderId) {
+		this.userSenderId = userSenderId;
 	}
 
 	public UIInput getUserIdInput() {

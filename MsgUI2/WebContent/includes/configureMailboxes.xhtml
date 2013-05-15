@@ -1,11 +1,16 @@
-<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
-<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
-
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
-<h:outputFormat value="#{msgs.configureSmtpServers}" styleClass="gridHeader">
+<h:outputFormat value="#{msgs.configureMailboxes}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable value="#{smtpsvrs.all}" var="smtp" 
+<h:dataTable value="#{mailInbox.all}" var="mbox" 
    styleClass="jsfDataTable" 
    headerClass="dataTableHeader" columnClasses="oddColumns, evenColumns">
    
@@ -13,63 +18,58 @@
       <f:facet name="header">
          <h:outputText value="#{msgs.deleteColumnHeader}"/>
       </f:facet>
-      <h:selectBooleanCheckbox value="#{smtp.markedForDeletion}" 
-         disabled="#{not smtp.editable}" onchange="submit()"/>
-   </h:column>
-   <h:column>
-      <f:facet name="header">
-         <h:outputText value="#{msgs.serverNameHeader}"/>
-      </f:facet>
-      <div class="cellHeight">
-      <h:commandLink action="#{smtpsvrs.viewSmtpServer}">
-      	<h:outputText value="#{smtp.serverName}" title="Click to Edit"/>
-      	<f:param name="serverName" value="#{smtp.serverName}"/>
-      </h:commandLink>
-      </div>
+      <h:selectBooleanCheckbox value="#{mbox.markedForDeletion}" 
+         disabled="#{not mbox.editable}" onchange="submit()"/>
    </h:column>
    <h:column>
       <f:facet name="header">
          <h:outputText value="#{msgs.hostNameHeader}"/>
       </f:facet>
       <div class="cellHeight">
-      <h:outputText value="#{smtp.smtpHost}"/>
+      <h:commandLink action="#{mailInbox.viewMailBox}">
+      	<h:outputText value="#{mbox.mailInboxPK.hostName}" title="Click to Edit"/>
+      	<f:param name="hostName" value="#{mbox.mailInboxPK.hostName}"/>
+      	<f:param name="userId" value="#{mbox.mailInboxPK.userId}"/>
+      </h:commandLink>
       </div>
    </h:column>
    <h:column>
       <f:facet name="header">
          <h:outputText value="#{msgs.portNumberHeader}"/>
       </f:facet>
-      <h:outputText value="#{smtp.smtpPort}"/>
+      <h:outputText value="#{mbox.portNumber}"/>
+   </h:column>
+   <h:column>
+      <f:facet name="header">
+         <h:outputText value="#{msgs.protocolHeader}"/>
+      </f:facet>
+      <h:outputText value="#{mbox.protocol}"/>
    </h:column>
    <h:column>
       <f:facet name="header">
          <h:outputText value="#{msgs.userIdHeader}"/>
       </f:facet>
-      <h:outputText value="#{smtp.userId}"/>
+      <h:outputText value="#{mbox.mailInboxPK.userId}"/>
+   </h:column>
+   <h:column>
+      <f:facet name="header">
+         <h:outputText value="#{msgs.descriptionHeader}"/>
+      </f:facet>
+      <div class="cellHeight">
+      <h:outputText value="#{mbox.description}"/>
+      </div>
    </h:column>
    <h:column>
       <f:facet name="header">
          <h:outputText value="#{msgs.useSslHeader}"/>
       </f:facet>
-      <h:outputText value="#{smtp.useSsl}"/>
-   </h:column>
-   <h:column>
-      <f:facet name="header">
-         <h:outputText value="#{msgs.persistenceHeader}"/>
-      </f:facet>
-      <h:outputText value="#{smtp.persistence}"/>
-   </h:column>
-   <h:column>
-      <f:facet name="header">
-         <h:outputText value="#{msgs.serverTypeHeader}"/>
-      </f:facet>
-      <h:outputText value="#{smtp.serverType}"/>
+      <h:outputText value="#{mbox.useSsl}"/>
    </h:column>
    <h:column>
       <f:facet name="header">
          <h:outputText value="#{msgs.statusIdHeader}"/>
       </f:facet>
-      <h:outputText value="#{smtp.statusIdDesc}"/>
+      <h:outputText value="#{mbox.statusIdDesc}"/>
    </h:column>
 </h:dataTable>
 <f:verbatim><p/></f:verbatim>
@@ -77,22 +77,23 @@
 	columnClasses="alignLeft70, alignRight30">
 	<h:panelGroup>
 		<h:commandButton value="#{msgs.deleteButtonText}"
-			title="Delete selected rows" action="#{smtpsvrs.deleteSmtpServers}"
-			disabled="#{not smtpsvrs.anyServersMarkedForDeletion}"
+			title="Delete selected rows" action="#{mailInbox.deleteMailBoxes}"
+			disabled="#{not mailInbox.anyMailBoxsMarkedForDeletion}"
 			onclick="javascript:return confirmDelete();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"
-			title="Refresh from database" action="#{smtpsvrs.refresh}" />
+			title="Refresh from database" action="#{mailInbox.refresh}" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.copyToNewButtonText}"
 			title="Create a new row from selected"
-			action="#{smtpsvrs.copySmtpServer}"
-			disabled="#{not smtpsvrs.anyServersMarkedForDeletion}" />
+			action="#{mailInbox.copyMailbox}"
+			disabled="#{not mailInbox.anyMailBoxsMarkedForDeletion}" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.addNewButtonText}"
-			title="Add a new row" action="#{smtpsvrs.addSmtpServer}" />
+			title="Add a new row" action="#{mailInbox.addMailbox}" />
 	</h:panelGroup>
 	<h:panelGroup>
 		<f:verbatim>&nbsp;</f:verbatim>
 	</h:panelGroup>
 </h:panelGrid>
+</html>

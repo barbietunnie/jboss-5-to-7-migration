@@ -53,7 +53,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="mailingListCompose")
 @SessionScoped
-public class MailingListComposeBean {
+public class MailingListComposeBean implements java.io.Serializable {
+	private static final long serialVersionUID = -2015576038292544848L;
 	static final Logger logger = Logger.getLogger(MailingListComposeBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	static final boolean isInfoEnabled = logger.isInfoEnabled();

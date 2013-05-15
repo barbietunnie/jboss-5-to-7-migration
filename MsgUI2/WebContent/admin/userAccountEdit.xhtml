@@ -8,7 +8,6 @@
 	<link href="../styles.css" rel="stylesheet" type="text/css" />
 	<title><h:outputText value="#{msgs.editSiteUserPageTitle}" /></title>
 </h:head>
-
 <h:body
 	onLoad="document.getElementById('useracct:content:firstname').focus();">
 	<div align="center">
@@ -17,14 +16,14 @@
 				columnClasses="contentColumn">
 				<f:facet name="header">
 					<f:subview id="header">
-						<c:import url="/includes/gettingStartedHeader.jsp" />
+						<ui:include src="/includes/gettingStartedHeader.xhtml" />
 					</f:subview>
 				</f:facet>
 				<f:subview id="content">
-					<c:import url="/includes/userAccountEdit.jsp" />
+					<ui:include src="/includes/userAccountEdit.xhtml" />
 				</f:subview>
 				<f:subview id="footer">
-					<c:import url="/includes/gettingStartedFooter.jsp" />
+					<ui:include src="/includes/gettingStartedFooter.xhtml" />
 				</f:subview>
 			</h:panelGrid>
 		</h:form>

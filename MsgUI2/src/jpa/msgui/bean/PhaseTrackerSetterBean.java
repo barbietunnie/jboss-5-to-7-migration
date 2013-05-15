@@ -12,8 +12,9 @@ import javax.faces.model.SelectItem;
 
 @ManagedBean
 @SessionScoped
-public class PhaseTrackerSetterBean {
-   private SelectItem[] phases = {
+public class PhaseTrackerSetterBean implements java.io.Serializable {
+	private static final long serialVersionUID = 7075822787856496220L;
+	private SelectItem[] phases = {
       new SelectItem("RESTORE_VIEW"),
       new SelectItem("APPLY_REQUEST_VALUES"),
       new SelectItem("PROCESS_VALIDATIONS"),

@@ -15,14 +15,14 @@
 				columnClasses="contentColumn">
 				<f:facet name="header">
 					<f:subview id="header">
-						<c:import url="/includes/gettingStartedHeader.jsp" />
+						<ui:include src="/includes/gettingStartedHeader.xhtml" />
 					</f:subview>
 				</f:facet>
 				<f:subview id="content">
-					<c:import url="/includes/manageUserAccounts.jsp" />
+					<ui:include src="/includes/manageUserAccounts.xhtml" />
 				</f:subview>
 				<f:subview id="footer">
-					<c:import url="/includes/gettingStartedFooter.jsp" />
+					<ui:include src="/includes/gettingStartedFooter.xhtml" />
 				</f:subview>
 			</h:panelGrid>
 		</h:form>

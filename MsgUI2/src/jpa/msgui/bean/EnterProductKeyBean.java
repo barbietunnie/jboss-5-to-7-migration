@@ -13,7 +13,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="enterProductKey")
 @RequestScoped
-public class EnterProductKeyBean {
+public class EnterProductKeyBean implements java.io.Serializable {
+	private static final long serialVersionUID = 5162094104987950893L;
 	static final Logger logger = Logger.getLogger(EnterProductKeyBean.class);
 	private String name = null;
 	private String productKey = null;

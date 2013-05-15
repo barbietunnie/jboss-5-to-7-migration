@@ -23,7 +23,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="broadcastMsg")
 @SessionScoped
-public class BroadcastMsgBean {
+public class BroadcastMsgBean implements java.io.Serializable {
+	private static final long serialVersionUID = -5557435572452796392L;
 	static final Logger logger = Logger.getLogger(BroadcastMsgBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 

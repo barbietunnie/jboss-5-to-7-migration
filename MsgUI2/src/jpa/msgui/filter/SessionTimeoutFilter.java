@@ -108,7 +108,8 @@ public class SessionTimeoutFilter implements Filter {
 			// file name matches "/*.faces" or "/*.xhtml" or "/*.jsf"
 			if (!pathInfo.startsWith(loginPage) && !pathInfo.startsWith(timeoutPage)
 					&& !pathInfo.startsWith(noPermissionPage)
-					&& !pathInfo.startsWith("/publicsite")) {
+					&& !pathInfo.startsWith("/publicsite")
+					&& !pathInfo.startsWith("/javax.faces.resource")) {
 				// not login page and timeout page
 				pageSessioned = true;
 			}

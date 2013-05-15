@@ -28,7 +28,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="emailAddress")
 @SessionScoped
-public class EmailAddressBean {
+public class EmailAddressBean implements java.io.Serializable {
+	private static final long serialVersionUID = -1230662734764912082L;
 	static final Logger logger = Logger.getLogger(EmailAddressBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 

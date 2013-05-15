@@ -27,7 +27,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="subscription")
 @SessionScoped
-public class SubscriptionBean {
+public class SubscriptionBean implements java.io.Serializable {
+	private static final long serialVersionUID = 6216351042518651517L;
 	static final Logger logger = Logger.getLogger(SubscriptionBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 

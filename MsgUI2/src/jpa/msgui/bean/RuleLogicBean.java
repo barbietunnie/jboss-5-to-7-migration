@@ -40,7 +40,8 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="ruleLogic")
 @SessionScoped
-public class RuleLogicBean {
+public class RuleLogicBean implements java.io.Serializable {
+	private static final long serialVersionUID = 4143310214559095471L;
 	protected static final Logger logger = Logger.getLogger(RuleLogicBean.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 
