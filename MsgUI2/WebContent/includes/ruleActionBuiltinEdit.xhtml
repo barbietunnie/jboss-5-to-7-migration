@@ -115,7 +115,7 @@ function displayDP(rowIndex) {
 				<f:selectItems value="#{msgaction.ruleDataValueList}"/>
 			</h:selectManyListbox>
 	        <h:selectOneMenu id="datatypevalues2" value="#{msgaction.fieldValues}"
-	        	rendered="#{msgaction.hasDataTypeValues and !msgaction.isDataTypeEmailAddress}">
+	        	rendered="#{msgaction.hasDataTypeValues and msgaction.isDataTypeEmailAddress==false}">
 				<f:selectItems value="#{msgaction.ruleDataValueList}"/>
 			</h:selectOneMenu>
 	        <h:outputText value="#{msgaction.fieldValues}" 
