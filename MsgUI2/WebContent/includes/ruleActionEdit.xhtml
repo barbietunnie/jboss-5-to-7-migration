@@ -16,7 +16,7 @@ function displayDP(rowIndex) {
 
 <h:panelGrid columns="1" styleClass="gettingStartedContent">
 	<h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
-	<h:outputFormat value="#{msgs.msgActionEditLabel}" styleClass="gridHeader">
+	<h:outputFormat value="#{msgs.ruleActionEditLabel}" styleClass="gridHeader">
 	   <f:param value="#{ruleLogic.ruleLogic.ruleName}"/>
 	</h:outputFormat>
 	<h:panelGrid columns="2" styleClass="editPaneHeader" 
@@ -25,7 +25,7 @@ function displayDP(rowIndex) {
 		<h:outputText id="rulename" value="#{ruleLogic.ruleLogic.ruleName}"/>
 		
 		<h:outputText value="#{msgs.ruleSeqPrompt}"/>
-		<h:outputText id="ruleseq" value="#{ruleLogic.ruleLogic.ruleSeq}"/>
+		<h:outputText id="ruleseq" value="#{ruleLogic.ruleLogic.evalSequence}"/>
 		
 		<h:outputText value="#{msgs.statusIdPrompt}"/>
 		<h:outputText id="statusid" value="#{ruleLogic.ruleLogic.statusIdDesc}"/>
@@ -60,7 +60,7 @@ function displayDP(rowIndex) {
 			<f:facet name="header">
 				<h:outputText value="#{msgs.actionSeqHeader}"/> 
 			</f:facet>
-			<h:inputText id="actionseq" value="#{msgaction.actionSeq}"
+			<h:inputText id="actionseq" value="#{msgaction.ruleActionPK.actionSequence}"
 				required="true">
 				<f:validateLongRange minimum="0" maximum="100"/>
 			</h:inputText>
@@ -69,7 +69,7 @@ function displayDP(rowIndex) {
 			<f:facet name="header">
 				<h:outputText value="#{msgs.actionIdHeader}"/> 
 			</f:facet>
-			<h:selectOneMenu id="actionid" value="#{msgaction.actionId}"
+			<h:selectOneMenu id="actionid" value="#{msgaction.ruleActionDetail.actionId}"
 				onchange="submit()" required="true">
 				<f:selectItems value="#{dynacodes.actionIdItems}"/>
 			</h:selectOneMenu>
@@ -78,32 +78,24 @@ function displayDP(rowIndex) {
 			<f:facet name="header">
 				<h:outputText value="#{msgs.senderIdHeader}"/>
 			</f:facet>
-			<h:selectOneMenu id="clientid" value="#{msgaction.clientId}">
+			<h:selectOneMenu id="senderid" value="#{msgaction.senderId}">
 				<f:selectItem itemLabel="" itemValue=""/>
-				<f:selectItems value="#{dynacodes.clientIdItems}"/>
+				<f:selectItems value="#{dynacodes.senderIdItems}"/>
 				<f:converter converterId="NullableStringConverter"/>
 			</h:selectOneMenu>
         </h:column>
         
 		<h:column>
 			<f:facet name="header">
-				<h:outputText value="#{msgs.startDateHeader}"/> 
+				<h:outputText value="#{msgs.startTimeHeader}"/> 
 			</f:facet>
-       		<h:inputText id="startdate" value="#{msgaction.startDate}"
-				size="10" maxlength="10" required="true"
+       		<h:inputText id="starttime" value="#{msgaction.ruleActionPK.startTime}"
+				size="16" maxlength="16" required="true"
 				onclick="displayDP('#{ruleLogic.msgActions.rowIndex}');">
-				<f:convertDateTime pattern="MM/dd/yyyy" type="date"/>
+				<f:converter converterId="TimestampConverter"/>
 			</h:inputText>
         </h:column>
-		<h:column>
-			<f:facet name="header">
-				<h:outputText value="#{msgs.startHourHeader}"/>
-			</f:facet>
-			<h:selectOneMenu id="starthour" value="#{msgaction.startHour}">
-				<f:selectItems value="#{codes.hourAmPmItems}"/>
-			</h:selectOneMenu>
-        </h:column>
-        
+       
 		<h:column>
 			<f:facet name="header">
 				<h:outputText value="#{msgs.statusIdHeader}"/> 
@@ -117,16 +109,16 @@ function displayDP(rowIndex) {
 			<f:facet name="header">
 				<h:outputText value="#{msgs.dataTypeValuesHeader}"/> 
 			</f:facet>
-	        <h:selectManyListbox id="datatypevalues1" value="#{msgaction.dataTypeValuesUI}"
+	        <h:selectManyListbox id="datatypevalues1" value="#{msgaction.fieldValuesUI}"
 	        	size="2"
-	        	rendered="#{msgaction.hasDataTypeValues && msgaction.isDataTypeEmailAddress}">
-				<f:selectItems value="#{msgaction.dataTypeValuesList}"/>
+	        	rendered="#{msgaction.hasDataTypeValues and msgaction.isDataTypeEmailAddress}">
+				<f:selectItems value="#{msgaction.ruleDataTValueList}"/>
 			</h:selectManyListbox>
-	        <h:selectOneMenu id="datatypevalues2" value="#{msgaction.dataTypeValues}"
-	        	rendered="#{msgaction.hasDataTypeValues && msgaction.isDataTypeNotEmailAddress}">
-				<f:selectItems value="#{msgaction.dataTypeValuesList}"/>
+	        <h:selectOneMenu id="datatypevalues2" value="#{msgaction.fieldValues}"
+	        	rendered="#{msgaction.hasDataTypeValues and msgaction.isDataTypeEmailAddress==false}">
+				<f:selectItems value="#{msgaction.ruleDataValueList}"/>
 			</h:selectOneMenu>
-	        <h:outputText value="#{msgaction.dataTypeValues}" 
+	        <h:outputText value="#{msgaction.fieldValues}" 
 	        	rendered="#{!msgaction.hasDataTypeValues}"/>
 	    </h:column>
     </h:dataTable>
