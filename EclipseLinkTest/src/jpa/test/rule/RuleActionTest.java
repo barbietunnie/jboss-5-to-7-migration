@@ -104,6 +104,9 @@ public class RuleActionTest {
 		List<RuleAction> actions = service.getByBestMatch(RuleNameEnum.GENERIC.getValue(), null, null);
 		assertTrue(3==actions.size() || 4==actions.size());
 		
+		List<RuleAction> actlist = service.getByRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
+		assertTrue(actlist.size()==4);
+		
 		// test insert
 		RuleAction var1 = new RuleAction();
 		RuleActionPK pk1 = new RuleActionPK();
