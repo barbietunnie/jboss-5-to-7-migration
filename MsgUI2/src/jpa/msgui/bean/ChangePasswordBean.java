@@ -25,27 +25,30 @@ public class ChangePasswordBean implements java.io.Serializable {
 	
 	private UserDataService userDao = null;
 	
+	private static String TO_FAILED = null;
+	private static String TO_SAVED = "main.xhtml";
+
 	public String changePassword() {
 		message = null;
 		UserData vo = getSessionUserData();
 		if (vo == null) {
 			message = "User is not logged in!";
-			return "changepswd.failed";
+			return TO_FAILED;
 		}
 		UserData vo2 = getUserDataService().getByUserId(vo.getUserId());
 		if (vo2 == null) {
 			message = "Internal error, contact programming!";
-			return "changepswd.failed";
+			return TO_FAILED;
 		}
 		logger.info("changePassword() - UserId: " +  vo.getUserId());
 		if (!vo2.getPassword().equals(currPassword)) {
 			message = "Current password is invalied.";
-			return "changepswd.failed";
+			return TO_FAILED;
 		}
 		vo2.setPassword(password);
 		getUserDataService().update(vo2);
 		logger.info("changePassword() - rows updated: " + 1);
-		return "changepswd.saved";
+		return TO_SAVED;
 	}
 	
 	private UserDataService getUserDataService() {

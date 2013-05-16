@@ -1,11 +1,16 @@
-<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
-<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
-
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
-<h:outputFormat value="#{msgs.customizeBuiltInRules}" styleClass="gridHeader">
+<h:outputFormat value="#{msgs.customizeBuiltinRules}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable value="#{builtinrules.all}" var="rule" 
+<h:dataTable value="#{builtinRule.all}" var="rule" 
    styleClass="jsfDataTable" 
    headerClass="dataTableHeader" columnClasses="oddColumns, evenColumns">
    
@@ -17,14 +22,14 @@
    </h:column>
    <h:column>
       <f:facet name="header">
-         <h:outputText value="#{msgs.msgActionsHeader}"/>
+         <h:outputText value="#{msgs.ruleActionsHeader}"/>
       </f:facet>
       <div class="cellHeight">
-      <h:commandLink action="#{builtinrules.viewMsgActions}">
+      <h:commandLink action="#{builtinRule.viewMsgActions}">
       	<h:outputText value="Create" title="Click to Creat Actions"
-      		rendered="#{not builtinrules.hasMsgActions}"/>
+      		rendered="#{not builtinRule.hasMsgActions}"/>
       	<h:outputText value="Edit" title="Click to Edit Actions"
-      		rendered="#{builtinrules.hasMsgActions}"/>
+      		rendered="#{builtinRule.hasMsgActions}"/>
       </h:commandLink>
       </div>
    </h:column>
@@ -32,7 +37,7 @@
       <f:facet name="header">
          <h:outputText value="#{msgs.isSubRuleHeader}"/>
       </f:facet>
-      <h:outputText value="#{rule.isSubRuleDesc}"/>
+      <h:outputText value="#{rule.subrule}"/>
    </h:column>
    <h:column>
       <f:facet name="header">
@@ -45,7 +50,7 @@
          <h:outputText value="#{msgs.startTimeHeader}"/>
       </f:facet>
       <h:outputText value="#{rule.startTime}">
-      	<f:convertDateTime pattern="MM/dd/yyyy"/>
+      	<f:convertDateTime pattern="MM/dd/yyyy HH:mm"/>
       </h:outputText>
    </h:column>
    <h:column>
@@ -72,9 +77,10 @@
 	columnClasses="alignLeft70, alignRight30">
 	<h:panelGroup>
 		<h:commandButton value="#{msgs.refreshFromDB}"
-			title="Refresh from database" action="#{builtinrules.refresh}" />
+			title="Refresh from database" action="#{builtinRule.refresh}" />
 	</h:panelGroup>
 	<h:panelGroup>
 		<f:verbatim>&nbsp;</f:verbatim>
 	</h:panelGroup>
 </h:panelGrid>
+</html>

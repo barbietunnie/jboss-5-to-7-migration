@@ -10,7 +10,7 @@ import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.lang3.StringUtils;
 
-@FacesValidator("PasswordValidator")
+@FacesValidator("passwordValidator")
 public class PasswordValidator implements Validator {
 
 	@Override
