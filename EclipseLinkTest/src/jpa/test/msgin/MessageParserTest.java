@@ -2,10 +2,7 @@ package jpa.test.msgin;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
@@ -74,25 +71,8 @@ public class MessageParserTest {
 		TestUtil.verifyParsedMessageBean4BounceMail_1(msgBean);
 	}
 
-	byte[] getBouncedMail(int fileNbr) throws IOException {
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		InputStream is = loader.getResourceAsStream(
-				"jpa/test/bouncedmails/BouncedMail_" + fileNbr + ".txt");
-		BufferedInputStream bis = new BufferedInputStream(is);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] bytes = new byte[512];
-		int len = 0;
-		try { 
-			while ((len = bis.read(bytes, 0, bytes.length)) >= 0) {
-				baos.write(bytes, 0, len);
-			}
-			byte[] mailStream = baos.toByteArray();
-			baos.close();
-			bis.close();
-			return mailStream;
-		}
-		catch (IOException e) {
-			throw e;
-		}
+	private byte[] getBouncedMail(int fileNbr) throws IOException {
+		byte[] mailStream = TestUtil.loadFromFile("jpa/test/bouncedmails/", "BouncedMail_" + fileNbr + ".txt");
+		return mailStream;
 	}
 }

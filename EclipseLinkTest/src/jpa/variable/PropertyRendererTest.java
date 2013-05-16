@@ -4,11 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
@@ -90,21 +86,6 @@ public final class PropertyRendererTest {
 
 	private Map<Object, Object> loadVariableMap() {
 		String fileName = "META-INF/eclipselink.mysql.properties";
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		URL url = loader.getResource(fileName);
-		if (url == null) {
-			throw new RuntimeException("Could not find " + fileName + " file.");
-		}
-		logger.info("loading email properties file from: " + url.getPath());
-		Properties props = new Properties();
-		try {
-			InputStream is = url.openStream();
-			props.load(is);
-		}
-		catch (IOException e) {
-			throw new RuntimeException("IOException caught", e);
-		}
-		
-		return props;
+		return VarReplProperties.loadMyProperties(fileName);
 	}
 }

@@ -38,13 +38,15 @@ public class TestUtil {
 
 	public static byte[] loadFromFile(String filePath, String fileName) {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		if (!filePath.endsWith(File.separator)) {
+		//loader = TestUtil.class.getClassLoader(); // works too
+		if (!filePath.endsWith(File.separator) && !filePath.endsWith("/")) {
 			filePath += File.separator;
 		}
 		InputStream is = loader.getResourceAsStream(filePath + fileName);
 		if (is == null) {
 			throw new RuntimeException("File (" + filePath + fileName + ") not found!");
 		}
+		logger.info("Loading file from location: " + filePath + fileName);
 		BufferedInputStream bis = new BufferedInputStream(is);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		byte[] buffer = new byte[1024];

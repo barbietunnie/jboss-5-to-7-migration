@@ -227,7 +227,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		atc2.setAttachmentName("one.gif");
 		atc2.setAttachmentType("image/gif; name=one.gif");
 		atc2.setAttachmentValue(loadFromFile("one.gif"));
-		attchmntService.insert(atc2);		
+		attchmntService.insert(atc2);
 
 		MessageAttachment atc3 = new MessageAttachment();
 		MessageAttachmentPK pk3 = new MessageAttachmentPK(inbox,1,3);
