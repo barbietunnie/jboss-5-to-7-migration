@@ -70,6 +70,31 @@ public class RuleLogic extends BaseModel implements Serializable {
 	@Transient
 	private int origRuleSeq = -1;
 
+	/** Define properties for UI components */
+	public String getIsSubRuleDesc() {
+		if (isSubrule()) {
+			return "SubRule";
+		}
+		else if (getRuleSubruleMaps() != null && getRuleSubruleMaps().size() > 0) {
+			return "Edit";
+		}
+		else {
+			return "Add";
+		}
+	}
+	public String getRuleCategoryDesc() {
+		if (RuleCategory.PRE_RULE.getValue().equalsIgnoreCase(getRuleCategory())) {
+			return "Pre Scan";
+		}
+		else if (RuleCategory.POST_RULE.getValue().equalsIgnoreCase(getRuleCategory())) {
+			return "Post Scan";
+		}
+		else {
+			return "Main";
+		}
+	}
+	/** End of UI properties */
+
 	public RuleLogic() {
 		// must have a no-argument constructor
 	}

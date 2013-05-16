@@ -35,11 +35,34 @@ public class RuleActionService {
 	public List<RuleAction> getByRuleName(String ruleName) {
 		String sql = 
 				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, SenderData c " +
-				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al and r.ruleActionPK.senderData=c " +
+				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al " +
+				"and (r.ruleActionPK.senderData=c or r.ruleActionPK.senderData is null) " +
 				"and r.ruleActionPK.ruleLogic.ruleName=:ruleName " +
+				"group by r " + // to get rid of duplicates from result set
+				"order by r.ruleActionPK.actionSequence, r.ruleActionPK.startTime ";
+		try {
+			Query query = em.createQuery(sql);
+			query.setParameter("ruleName", ruleName);
+			@SuppressWarnings("unchecked")
+			List<RuleAction> list = query.getResultList();
+			return list;
+		}
+		finally {
+		}
+	}
+
+	public List<RuleAction> getByRuleName0(String ruleName) {
+		String sql = 
+				"select r from RuleAction r, RuleLogic rl, RuleActionDetail al, SenderData c " +
+				"where r.ruleActionPK.ruleLogic=rl and r.ruleActionDetail=al " +
+				"and c.senderId=:senderId " +
+				"and (r.ruleActionPK.senderData=c or r.ruleActionPK.senderData is null) " +
+				"and r.ruleActionPK.ruleLogic.ruleName=:ruleName " +
+				"group by r, c.senderId " + // to get rid of duplicates from result set
 				"order by r.ruleActionPK.actionSequence, c.senderId, r.ruleActionPK.startTime ";
 		try {
 			Query query = em.createQuery(sql);
+			query.setParameter("senderId", Constants.DEFAULT_SENDER_ID);
 			query.setParameter("ruleName", ruleName);
 			@SuppressWarnings("unchecked")
 			List<RuleAction> list = query.getResultList();
