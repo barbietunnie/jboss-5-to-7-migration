@@ -60,7 +60,7 @@
 		<h:outputText value="#{msgs.emailAddrPrompt}"/>
 		<h:inputText id="emailaddr" value="#{userData.userEmailAddr}"
 			label="#{msgs.emailAddrPrompt}" maxlength="255" size="50">
-			<f:validator validatorId="EmailAddressValidator"/>
+			<f:validator validatorId="emailAddressValidator"/>
 		</h:inputText>
 		<h:message for="emailaddr" styleClass="errorMessage"/>
 		

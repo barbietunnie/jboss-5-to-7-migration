@@ -26,7 +26,7 @@ public class GettingStarted implements java.io.Serializable {
 	
 	/* values must be defined in resource bundle - messages.properties */
 	private String[] menuTooltips = { "configureMailboxes", "configureSmtpServers",
-			"configureSiteProfiles", "customizeBuiltInRules", "configureCustomRules",
+			"configureSiteProfiles", "customizeBuiltinRules", "configureCustomRules",
 			"maintainActionDetails", "configureMailingLists", "configureEmailVariables",
 			"configureEmailTemplates", "manageUserAccounts" };
 
@@ -39,7 +39,7 @@ public class GettingStarted implements java.io.Serializable {
 
 	/* JSTL import attribute url does not accept any expressions. So this is not used.  */
 	private String[] jspPageLinks = { "configureMailboxes.jsp", "configureSmtpServers.jsp",
-			"configureSiteProfiles.jsp", "customizeBuiltInRules.jsp", "configureMsgRules.jsp",
+			"configureSiteProfiles.jsp", "customizeBuiltinRules.jsp", "configureMsgRules.jsp",
 			"msgActionDetailList.jsp", "configureMailingLists.jsp", "configureEmailVariables.jsp",
 			"configureEmailTemplates.jsp", "manageUserAccounts.jsp" };
 

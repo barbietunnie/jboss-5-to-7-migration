@@ -46,9 +46,9 @@
 		</h:selectOneMenu>
 		<h:message for="statusid" styleClass="errorMessage"/>
 		
-		<h:outputText value="#{msgs.clientIdPrompt}"/>
+		<h:outputText value="#{msgs.senderIdPrompt}"/>
 		<h:selectOneMenu id="clientid" value="#{maillsts.mailingList.clientId}"
-			required="true" label="#{msgs.clientIdPrompt}">
+			required="true" label="#{msgs.senderIdPrompt}">
 			<f:selectItems value="#{dynacodes.clientIdItems}"/>
 		</h:selectOneMenu>
 		<h:message for="clientid" styleClass="errorMessage"/>

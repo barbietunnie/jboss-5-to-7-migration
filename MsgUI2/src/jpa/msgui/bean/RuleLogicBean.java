@@ -66,8 +66,14 @@ public class RuleLogicBean implements java.io.Serializable {
 	protected RuleElement ruleElement = null;
 	protected RuleElement origRuleElement = null;
 	
-	protected static final String TO_FAILED = "msgrule.failed";
+	protected static final String TO_FAILED = null;
 	protected static final String TO_SELF = "msgrule.toself";
+	protected static final String TO_CANCELED = "cancel";
+	protected static final String TO_SAVED = "save";
+	protected static final String TO_EDIT_LOGIC = "edit_logic";
+	protected static final String TO_EDIT_ELEMENT = "edit_element";
+	protected static final String TO_EDIT_SUBRULE = "edit_subrule";
+	protected static final String TO_EDIT_ACTION = "edit_action";
 	
 	protected RuleLogicService getRuleLogicService() {
 		if (ruleLogicDao == null) {
@@ -148,7 +154,7 @@ public class RuleLogicBean implements java.io.Serializable {
 		if (isDebugEnabled)
 			logger.debug("viewRuleLogic() - RuleLogic to be passed to jsp: " + ruleLogic);
 		
-		return "msgrule.edit";
+		return TO_EDIT_LOGIC;
 	}
 	
 	public String viewSubRules() {
@@ -166,7 +172,7 @@ public class RuleLogicBean implements java.io.Serializable {
 		subRules = null;
 		this.ruleLogic = (RuleLogic) ruleLogics.getRowData();
 		ruleLogic.setMarkedForEdition(true);
-		return "msgrule.subrule.edit";
+		return TO_EDIT_SUBRULE;
 	}
 	
 	public String viewMsgActions() {
@@ -184,7 +190,7 @@ public class RuleLogicBean implements java.io.Serializable {
 		ruleActions = null;
 		this.ruleLogic = (RuleLogic) ruleLogics.getRowData();
 		ruleLogic.setMarkedForEdition(true);
-		return "msgrule.msgaction.edit";
+		return TO_EDIT_ACTION;
 	}
 	
 	public String viewRuleElement() {
@@ -202,7 +208,7 @@ public class RuleLogicBean implements java.io.Serializable {
 		origRuleElement = (RuleElement) ruleElements.getRowData();
 		ruleElement = (RuleElement) BlobUtil.deepCopy(origRuleElement);
 		ruleElement.setMarkedForEdition(true);
-		return "msgrule.ruleelement.edit";
+		return TO_EDIT_ELEMENT;
 	}
 	
 	public String doneRuleElementEdit() {
@@ -381,7 +387,7 @@ public class RuleLogicBean implements java.io.Serializable {
 				ruleLogic.setRuleType(RuleType.SIMPLE.getValue());
 				ruleLogic.setMarkedForEdition(true);
 				editMode = false;
-				return "msgrule.edit";
+				return TO_EDIT_LOGIC;
 			}
 		}
 		return TO_SELF;
@@ -400,14 +406,14 @@ public class RuleLogicBean implements java.io.Serializable {
 		ruleLogic.setRuleCategory(RuleCategory.MAIN_RULE.getValue());
 		ruleLogic.setStartTime(new Timestamp(new java.util.Date().getTime()));
 		editMode = false;
-		return "msgrule.edit";
+		return TO_EDIT_LOGIC;
 	}
 	
 	public String cancelEdit() {
 		if (isDebugEnabled)
 			logger.debug("cancelEdit() - Entering...");
 		refresh();
-		return "msgrule.canceled";
+		return TO_CANCELED;
 	}
 	
 	public boolean getCanMoveUp() {
@@ -880,7 +886,7 @@ public class RuleLogicBean implements java.io.Serializable {
 			getRuleActionService().insert(ruleAction);
 		}
 		logger.info("saveMsgActions() - MsgAction Rows Inserted: " + list.size());
-		return "msgrule.saved";
+		return TO_SAVED;
 	}
 
 	/*

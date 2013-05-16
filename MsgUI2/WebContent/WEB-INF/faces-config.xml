@@ -35,5 +35,37 @@
 			<to-view-id>/welcome.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<display-name>ruleActionBuiltinEdit.xhtml</display-name>
+		<from-view-id>/ruleActionBuiltinEdit.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>cancel</from-outcome>
+			<to-view-id>/customizeBuiltinRules.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>save</from-outcome>
+			<to-view-id>/customizeBuiltinRules.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>configureCustomRules.xhtml</display-name>
+		<from-view-id>/configureCustomRules.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>edit_logic</from-outcome>
+			<to-view-id>/ruleLogicEdit.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>edit_element</from-outcome>
+			<to-view-id>/ruleElementEdit.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>edit_subrule</from-outcome>
+			<to-view-id>/ruleSubruleEdit.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>edit_action</from-outcome>
+			<to-view-id>/ruleActionEdit.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>

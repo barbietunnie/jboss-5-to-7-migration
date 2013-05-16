@@ -1,33 +1,38 @@
-<%@ taglib uri="http://java.sun.com/jsf/core"  prefix="f" %>
-<%@ taglib uri="http://java.sun.com/jsf/html"  prefix="h" %>
-
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:panelGrid columns="1" styleClass="gettingStartedContent">
 	<h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
-	<h:outputFormat value="#{msgs.msgRuleEditLabel}" styleClass="gridHeader">
-	   <f:param value="#{msgrules.ruleLogic.ruleName}"/>
+	<h:outputFormat value="#{msgs.ruleLogicEditLabel}" styleClass="gridHeader">
+	   <f:param value="#{ruleLogic.ruleLogic.ruleName}"/>
 	</h:outputFormat>
 	<h:panelGrid columns="3" styleClass="editPaneHeader" 
 		columnClasses="promptColumn, inputColumn, messageColumn">
 		<h:outputText value="#{msgs.ruleNamePrompt}"/>
-		<h:inputText id="rulename" value="#{msgrules.ruleLogic.ruleName}"
-			required="true" binding="#{msgrules.ruleNameInput}" 
+		<h:inputText id="rulename" value="#{ruleLogic.ruleLogic.ruleName}"
+			required="true" binding="#{ruleLogic.ruleNameInput}" 
 			label="#{msgs.ruleNamePrompt}" maxlength="26" size="30">
 			<f:validateLength minimum="1" maximum="26"/>
 		</h:inputText>
 		<h:message for="rulename" styleClass="errorMessage"/>
 		
 		<h:outputText value="#{msgs.ruleSeqPrompt}"/>
-		<h:outputText id="ruleseq" value="#{msgrules.ruleLogic.ruleSeq}"/>
+		<h:outputText id="ruleseq" value="#{ruleLogic.ruleLogic.evalSequence}"/>
 		<f:verbatim>&nbsp;</f:verbatim>
 		
 		<h:outputText value="#{msgs.descriptionPrompt}"/>
-		<h:inputText id="desc" value="#{msgrules.ruleLogic.description}"
+		<h:inputText id="desc" value="#{ruleLogic.ruleLogic.description}"
 			required="true" label="#{msgs.descriptionPrompt}" size="80" maxlength="255">
 		</h:inputText>
 		<h:message for="desc" styleClass="errorMessage"/>
 		
 		<h:outputText value="#{msgs.statusIdPrompt}"/>
-		<h:selectOneMenu id="statusid" value="#{msgrules.ruleLogic.statusId}"
+		<h:selectOneMenu id="statusid" value="#{ruleLogic.ruleLogic.statusId}"
 			required="true" label="#{msgs.statusIdPrompt}">
 			<f:selectItems value="#{codes.simpleStatusIdItems}"/>
 		</h:selectOneMenu>
@@ -35,55 +40,49 @@
 		
 		<h:outputText value="#{msgs.startTimePrompt}(MM/dd/yyyy)"/>
 		<h:panelGroup>
-			<h:inputText id="starttime" value="#{msgrules.ruleLogic.startDate}"
-				binding="#{msgrules.startDateInput}" size="10" maxlength="10" 
+			<h:inputText id="starttime" value="#{ruleLogic.ruleLogic.startTime}"
+				binding="#{ruleLogic.startDateInput}" size="16" maxlength="16" 
 				required="true" label="#{msgs.startTimePrompt}"
-				validator="#{msgrules.checkStartDate}"
+				validator="#{ruleLogic.checkStartDate}"
 				onclick="displayDatePicker(this.name);">
-				<f:convertDateTime pattern="MM/dd/yyyy" type="date"/>
+				<f:converter converterId="TimestampConverter"/>
 			</h:inputText>
-			<h:selectOneMenu id="starthour" value="#{msgrules.ruleLogic.startHour}">
-				<f:selectItems value="#{codes.hourAmPmItems}"/>
-			</h:selectOneMenu>
-			<h:selectOneMenu id="startminute" value="#{msgrules.ruleLogic.startMinute}">
-				<f:selectItems value="#{codes.minuteItems}"/>
-			</h:selectOneMenu>
 		</h:panelGroup>
 		<h:message for="starttime" styleClass="errorMessage"/>
 		
 		<h:outputText value="#{msgs.mailTypePrompt}"/>
-		<h:selectOneMenu id="mailtype" value="#{msgrules.ruleLogic.mailType}"
+		<h:selectOneMenu id="mailtype" value="#{ruleLogic.ruleLogic.mailType}"
 			required="true" label="#{msgs.mailTypePrompt}">
 			<f:selectItems value="#{codes.mailTypeItems}"/>
 		</h:selectOneMenu>
 		<h:message for="mailtype" styleClass="errorMessage"/>
 		
 		<h:outputText value="#{msgs.ruleCategoryPrompt}"/>
-		<h:selectOneMenu id="rulecategory" value="#{msgrules.ruleLogic.ruleCategory}"
+		<h:selectOneMenu id="rulecategory" value="#{ruleLogic.ruleLogic.ruleCategory}"
 			label="#{msgs.ruleCategoryPrompt}">
 			<f:selectItems value="#{codes.ruleCategoryItems}"/>
 		</h:selectOneMenu>
 		<h:message for="rulecategory" styleClass="errorMessage"/>
 		
 		<h:outputText value="#{msgs.subRulePrompt}"/>
-		<h:selectOneMenu id="subrule" value="#{msgrules.ruleLogic.isSubRule}"
+		<h:selectOneMenu id="subrule" value="#{ruleLogic.ruleLogic.subrule}"
 			required="true" label="#{msgs.subRulePrompt}">
 			<f:selectItems value="#{codes.yorNItems}"/>
 		</h:selectOneMenu>
 		<h:message for="subrule" styleClass="errorMessage"/>
 		
 		<h:outputText value="#{msgs.hasSubRulePrompt}"/>
-		<h:outputText value="#{msgrules.hasSubRules}"/>
+		<h:outputText value="#{ruleLogic.hasSubRules}"/>
 		<f:verbatim>&nbsp;</f:verbatim>
 		
 		<h:outputText value="#{msgs.ruleTypePrompt}"/>
-		<h:selectOneRadio id="ruletype" value="#{msgrules.ruleLogic.ruleType}"
+		<h:selectOneRadio id="ruletype" value="#{ruleLogic.ruleLogic.ruleType}"
 			required="true" label="#{msgs.ruleTypePrompt}" layout="lineDirection">
 			<f:selectItems value="#{codes.ruleTypeItems}"/>
 		</h:selectOneRadio>
 		<h:message for="ruletype" styleClass="errorMessage"/>
 	</h:panelGrid>
-	<h:dataTable value="#{msgrules.ruleElements}" var="element"
+	<h:dataTable value="#{ruleLogic.ruleElements}" var="element"
 			styleClass="jsfDataTable"
             headerClass="dataTableHeader"
             footerClass="dataTableFooter"
@@ -132,36 +131,27 @@
 				<f:selectItems value="#{dynacodes.builtinRuleNameItems}"/>
 			</h:selectOneMenu>
 			<h:inputText value="#{element.targetText}" maxlength="2000" title="#{element.targetText}"
-				rendered="#{element.dataName != 'CarrierCode' && element.dataName != 'RuleName'
-					&& element.criteria != 'reg_ex'}"/>
+				rendered="#{element.dataName != 'CarrierCode' and element.dataName != 'RuleName'
+					and element.criteria != 'reg_ex'}"/>
 			<h:inputText value="#{element.targetText}" maxlength="2000" title="#{element.targetText}"
-				rendered="#{element.dataName != 'CarrierCode' && element.dataName != 'RuleName'
-					&& element.criteria == 'reg_ex'}"
-				validator="#{msgrules.validateRegex}"/>
+				rendered="#{element.dataName != 'CarrierCode' and element.dataName != 'RuleName'
+					and element.criteria == 'reg_ex'}"
+				validator="#{ruleLogic.validateRegex}"/>
         </h:column>
-		<%-- h:column>
-			<f:facet name="header">
-				<h:outputText value="#{msgs.targetProcColumn}"/> 
-			</f:facet>
-			<h:selectOneMenu value="#{element.targetProc}">
-				<f:selectItem itemValue="" itemLabel="Not Selected"/>
-				<f:selectItems value="#{codes.targetProcItems}"/>
-			</h:selectOneMenu>
-        </h:column --%>
 		<h:column>
 			<f:facet name="header">
 				<h:outputText value="#{msgs.caseSensitiveColumn}"/> 
 			</f:facet>
-			<h:selectBooleanCheckbox value="#{element.textCaseSensitive}"/>
+			<h:selectBooleanCheckbox value="#{element.caseSensitive}"/>
         </h:column>
 		<h:column>
 			<f:facet name="header">
 				<h:outputText value="#{msgs.advancedColumn}"/>
 			</f:facet>
-			<h:commandLink action="#{msgrules.viewRuleElement}" 
+			<h:commandLink action="#{ruleLogic.viewRuleElement}" 
 				style="color: darkblue; font-size: 1em; font-weight: bold;">
-				<f:param name="rulename" value="#{element.ruleName}"/>
-				<f:param name="seq" value="#{element.elementSeq}"/>
+				<f:param name="rulename" value="#{element.ruleElementPK.ruleLogic.ruleName}"/>
+				<f:param name="seq" value="#{element.ruleElementPK.elementSequence}"/>
 				<h:outputText value="#{msgs.editButtonText}" title="Click to Edit Rule Element"/>
 			</h:commandLink>
         </h:column>
@@ -169,39 +159,40 @@
     <f:verbatim><p/></f:verbatim>
     <h:panelGroup>
 	    <h:commandButton value="#{msgs.deleteButtonText}" title="Delete selected rows"
-	   		action="#{msgrules.deleteRuleElements}" 
-	   		disabled="#{not msgrules.anyElementsMarkedForDeletion}"
+	   		action="#{ruleLogic.deleteRuleElements}" 
+	   		disabled="#{not ruleLogic.anyElementsMarkedForDeletion}"
 	   		onclick="javascript:return confirmDelete();"/>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database"
-		   action="#{msgrules.refreshElements}"/>
+		   action="#{ruleLogic.refreshElements}"/>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.copyToNewButtonText}" title="Create a new row from selected"
-		   action="#{msgrules.copyRuleElement}"
-		   disabled="#{not msgrules.anyElementsMarkedForDeletion}"/>
+		   action="#{ruleLogic.copyRuleElement}"
+		   disabled="#{not ruleLogic.anyElementsMarkedForDeletion}"/>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row"
-		   action="#{msgrules.addRuleElement}"/>
+		   action="#{ruleLogic.addRuleElement}"/>
 	</h:panelGroup>
     <f:verbatim><p/></f:verbatim>
-	<h:outputText value="#{msgs[msgrules.testResult]}" rendered="#{msgrules.testResult != null}"
+	<h:outputText value="#{msgs[ruleLogic.testResult]}" rendered="#{ruleLogic.testResult != null}"
 		styleClass="errorMessage" id="testResult"/>
 	<f:verbatim><p/></f:verbatim>
 	<h:panelGrid columns="2" styleClass="commandBar"
 		columnClasses="alignLeft70, alignRight30">
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit Changes"
-				action="#{msgrules.saveRuleLogic}"
+				action="#{ruleLogic.saveRuleLogic}"
 				onclick="javascript:return confirmSubmit();" />
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton value="#{msgs.cancelButtonText}" title="Cancel Changes"
-				immediate="true" action="#{msgrules.cancelEdit}" />
+				immediate="true" action="#{ruleLogic.cancelEdit}" />
 		</h:panelGroup>
 		<h:panelGroup>
 			<f:verbatim>&nbsp;</f:verbatim>
 		</h:panelGroup>
 	</h:panelGrid>
 </h:panelGrid>
+</html>

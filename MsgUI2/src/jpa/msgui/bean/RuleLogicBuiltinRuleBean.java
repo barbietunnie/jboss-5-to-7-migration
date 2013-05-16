@@ -19,6 +19,10 @@ public class RuleLogicBuiltinRuleBean extends RuleLogicBean {
 	protected static final Logger logger = Logger.getLogger(RuleLogicBuiltinRuleBean.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 
+	private static String TO_EDIT = "ruleActionBuiltinEdit.xhtml";
+	private static String TO_FAILED = null;
+	
+	@Override
 	public DataModel<RuleLogic> getAll() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
 		if (fromPage != null && fromPage.equals("main")) {
@@ -31,21 +35,22 @@ public class RuleLogicBuiltinRuleBean extends RuleLogicBean {
 		return ruleLogics;
 	}
 	
+	@Override
 	public String viewMsgActions() {
 		if (isDebugEnabled)
 			logger.debug("viewMsgActions() - Entering...");
 		if (ruleLogics == null) {
 			logger.warn("viewMsgActions() - RuleLogic List is null.");
-			return "msgrule.failed";
+			return TO_FAILED;
 		}
 		if (!ruleLogics.isRowAvailable()) {
 			logger.warn("viewMsgActions() - RuleLogic Row not available.");
-			return "msgrule.failed";
+			return TO_FAILED;
 		}
 		reset();
 		ruleActions = null;
 		this.ruleLogic = (RuleLogic) ruleLogics.getRowData();
 		ruleLogic.setMarkedForEdition(true);
-		return "msgrule.msgaction.builtin.edit";
+		return TO_EDIT;
 	}
 }

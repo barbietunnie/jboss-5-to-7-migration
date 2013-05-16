@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import jpa.util.EmailAddrUtil;
 
-@FacesValidator("EmailAddressValidator")
+@FacesValidator("emailAddressValidator")
 public class EmailAddressValidator implements Validator {
 	@Override
 	public void validate(FacesContext context, UIComponent component, Object value) {
