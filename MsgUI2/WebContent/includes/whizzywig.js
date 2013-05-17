@@ -57,11 +57,11 @@ function makeWhizzyWig(txtArea, controls){ // make a WhizzyWig from the textarea
    }
    else if (gizmos[i] == '|') w('&nbsp;<big style="padding-bottom:2em">|</big>&nbsp;');
    else if (gizmos[i] == 'newline') w('<br>');
-   else if ((dsels+sels).indexOf(gizmos[i]) != -1) makeSelect(gizmos[i])
+   else if ((dsels+sels).indexOf(gizmos[i]) != -1) makeSelect(gizmos[i]);
    else if ((dbuts+buts+tbuts).indexOf(gizmos[i]) != -1) makeButton(gizmos[i]);
   }
  }
- w(t_end) //table controls end
+ w(t_end); //table controls end
  w('<a href="http://www.unverse.net" style="color:buttonface" title="'+whizzywig_version+'">.</a> ');
  w(fGo('LINK'));
  if (linkBrowse) w('<input type="button" onclick=doWin("'+linkBrowse+'"); value="'+t("Browse")+'"> ');
@@ -71,11 +71,11 @@ function makeWhizzyWig(txtArea, controls){ // make a WhizzyWig from the textarea
  w(t('Image address (URL)')+': <input type="text" id="if_url'+idTa+'" size="50"> <label title='+t("to display if image unavailable")+'><br>'+t("Alternate text")+':<input id="if_alt'+idTa+'" type="text" size="50"></label><br>'+t("Align")+':<select id="if_side'+idTa+'"><option value="none">_&hearts;_ '+t("normal")+'</option><option value="left">&hearts;= &nbsp;'+t("left")+'</option><option value="right">=&hearts; &nbsp;'+t("right")+'</option></select> '+t("Border")+':<input type="text" id="if_border'+idTa+'" size="20" value="0" title="'+t("number or CSS e.g. 3px maroon outset")+'"> '+t("Margin")+':<input type="text" id="if_margin'+idTa+'" size="20" value="0" title="'+t("number or CSS e.g. 5px 1em")+'">'+fNo(t("Insert Image"),"insertImage()"));//IMAGE_FORM end
  w(fGo('TABLE')+t("Rows")+':<input type="text" id="tf_rows'+idTa+'" size="2" value="3"> <select id="tf_head'+idTa+'"><option value="0">'+t("No header row")+'</option><option value="1">'+t("Include header row")+'</option></select> '+t("Columns")+':<input type="text" id="tf_cols'+idTa+'" size="2" value="3"> '+t("Border width")+':<input type="text" id="tf_border'+idTa+'" size="2" value="1"> '+fNo(t("Insert Table"),"makeTable()"));//TABLE_FORM end
  w(fGo('COLOR')+'<input type="hidden" id="cf_cmd'+idTa+'"><div style="background:#000;padding:1px;height:22px;width:125px;float:left"><div id="cPrvw'+idTa+'" style="background-color:red; height:100%; width:100%"></div></div> <input type=text id="cf_color'+idTa+'" value="red" size=17 onpaste=vC(value) onblur=vC(value)> <input type="button" onmouseover=vC() onclick=sC() value="'+t("OK")+'">  <input type="button" onclick="hideDialogs();" value="'+t("Cancel")+'"><br> '+t("click below or enter a")+' <a href="http://www.unverse.net/colortable.htm" target="_blank">'+t("color name")+'</a><br clear=all> <table border=0 cellspacing=1 cellpadding=0 width=480 bgcolor="#000000">'+"\n");
- var wC = new Array("00","33","66","99","CC","FF")  //color table
+ var wC = new Array("00","33","66","99","CC","FF");  //color table
  for (i=0; i<wC.length; i++){
   w("<tr>");
-  for (j=0; j<wC.length; j++){
-   for (k=0; k<wC.length; k++){
+  for (var j=0; j<wC.length; j++) {
+   for (var k=0; k<wC.length; k++){
     var clr = wC[i]+wC[j]+wC[k];
     w(' <td style="background:#'+clr+';height:12px;width:12px" onmouseover=vC("#'+clr+'") onclick=sC("#'+clr+'")></td>'+"\n");
    }
@@ -124,20 +124,20 @@ function fGo(id){ return '<div id="'+id+'_FORM'+idTa+'" unselectable="on" style=
 function fNo(txt,go){ //form do it/cancel buttons
  return ' <input type="button" onclick="'+go+'" value="'+txt+'"> <input type="button" onclick="hideDialogs();" value='+t("Cancel")+"></div>\n";
 }
-function makeSelect(select){ // assemble the <select> requested
- if (select == 'formatblock') {
+function makeSelect(select) { // assemble the <select> requested var values; var options;
+ if (select == 'formatblock') {
   var h = "Heading";
- var values = ["<p>", "<p>", "<h1>", "<h2>", "<h3>", "<h4>", "<h5>", "<h6>", "<address>",  "<pre>"];
- var options = [t("Choose style")+":", t("Paragraph"), t(h)+" 1 ", t(h)+" 2 ", t(h)+" 3 ", t(h)+" 4 ", t(h)+" 5 ", t(h)+" 6", t("Address"), t("Fixed width<pre>")];
+  values = ["<p>", "<p>", "<h1>", "<h2>", "<h3>", "<h4>", "<h5>", "<h6>", "<address>",  "<pre>"];
+  options = [t("Choose style")+":", t("Paragraph"), t(h)+" 1 ", t(h)+" 2 ", t(h)+" 3 ", t(h)+" 4 ", t(h)+" 5 ", t(h)+" 6", t("Address"), t("Fixed width<pre>")];
  } else if (select == 'fontname') {
-var values = ["Arial, Helvetica, sans-serif", "Arial, Helvetica, sans-serif","'Arial Black', Helvetica, sans-serif", "'Comic Sans MS' fantasy", "Courier New, Courier, monospace", "Georgia, serif", "Impact,sans-serif","'Times New Roman', Times, serif", "'Trebuchet MS',sans-serif", "Verdana, Arial, Helvetica, sans-serif"];
- var options = [t("Font")+":", "Arial","Arial Black", "Comic", "Courier", "Georgia", "Impact","Times New Roman", "Trebuchet","Verdana"];
+  values = ["Arial, Helvetica, sans-serif", "Arial, Helvetica, sans-serif","'Arial Black', Helvetica, sans-serif", "'Comic Sans MS' fantasy", "Courier New, Courier, monospace", "Georgia, serif", "Impact,sans-serif","'Times New Roman', Times, serif", "'Trebuchet MS',sans-serif", "Verdana, Arial, Helvetica, sans-serif"];
+  options = [t("Font")+":", "Arial","Arial Black", "Comic", "Courier", "Georgia", "Impact","Times New Roman", "Trebuchet","Verdana"];
  } else if (select == 'fontsize') {
-  var values = ["3", "1", "2", "3", "4", "5", "6", "7"];
-  var options = [t("Font size")+":", "1 "+t("Small"), "2", "3", "4", "5", "6", "7 "+t("Big")];
+  values = ["3", "1", "2", "3", "4", "5", "6", "7"];
+  options = [t("Font size")+":", "1 "+t("Small"), "2", "3", "4", "5", "6", "7 "+t("Big")];
  } else { 
-  var values = vals[select];
-  var options = opts[select];
+  values = vals[select];
+  options = opts[select];
  }
  w('<select id="'+select+idTa+'" onchange="doSelect(this.id);">'+"\n");
  for (var i = 0; i < values.length; i++) {
@@ -256,7 +256,7 @@ function doRow(toDo,below) { //insert or delete a table row
  if (toDo == "delete") paNode.deleteRow(tRow);
  else {
   var newRow=paNode.insertRow(tRow+parseInt(below)); //1=below  0=above
-   for (i=0; i < tCols; i++){
+   for (var i=0; i < tCols; i++){
     var newCell=newRow.insertCell(i);
     newCell.innerHTML="#";
    }
@@ -268,7 +268,7 @@ function doCol(toDo,after) { //insert or delete a column
  var tCol=paNode.cellIndex;
  while (paNode.tagName != "TABLE") paNode=paNode.parentNode;
  var tRows=paNode.rows.length;
- for (i=0; i < tRows; i++){
+ for (var i=0; i < tRows; i++){
   if (toDo == "delete") paNode.rows[i].deleteCell(tCol);
   else {
    var newCell=paNode.rows[i].insertCell(tCol+parseInt(after)); //if after=0 then before
@@ -434,7 +434,7 @@ function doTag(html) { // insert HTML into text area
 function insHTML(html) { //insert HTML at current selection
  if (!html) html=prompt("Enter some HTML or text to insert:", "");
  if (html.indexOf('js:') == 0) {
-  try{eval(html.replace(/^js:/,''))} catch(e){};
+  try{eval(html.replace(/^js:/,''));} catch(e){};
   return;
  }
  try { 	 
@@ -449,8 +449,8 @@ function insHTML(html) { //insert HTML at current selection
  }
  whereAmI();
 }
-function whereAmI(e){//070322
- if (!e) var e=window.event;
+function whereAmI(et) { //070322 var e = et; 
+ if (!et) e=window.event;
  if (window.getSelection){
   sel=oW.getSelection();
   papa=(e && e.type=='mouseup') ? e.target : (sel.anchorNode.nodeName == '#text') ? sel.anchorNode.parentNode : sel.anchorNode;

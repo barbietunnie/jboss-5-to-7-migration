@@ -22,9 +22,9 @@ function insertIntoBody_DoNotUse() {
   //targetField.focus();
 }
 //
-function insertIntoBody(targetField, varblField) {
-  var targetField = document.getElementById(targetField);
-  var insertField = document.getElementById(varblField);
+function insertIntoBody(target_field, varbl_field) {
+  var targetField = document.getElementById(target_field);
+  var insertField = document.getElementById(varbl_field);
   var myValue = '\${' + insertField.value + '}';
   insertAtCursor(targetField, myValue);
   //targetField.focus();
@@ -32,7 +32,7 @@ function insertIntoBody(targetField, varblField) {
 // insert text at the cursor position
 function insertAtCursor(myField, myValue) {
 	// Save scroll position
-	var scrollPos = myField.scrollTop 
+	var scrollPos = myField.scrollTop;
 	//IE support
 	if (document.selection) {
 		myField.focus();

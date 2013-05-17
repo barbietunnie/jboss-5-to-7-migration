@@ -71,7 +71,7 @@ var monthArrayLong = new Array('January', 'February', 'March', 'April', 'May', '
 // If you want to use a different format by default, change the defaultDateSeparator
 // and defaultDateFormat variables either here or on your HTML page.
 var defaultDateSeparator = "/";        // common values would be "/" or "."
-var defaultDateFormat = "mdy"    // valid values are "mdy", "dmy", and "ymd"
+var defaultDateFormat = "mdy";   // valid values are "mdy", "dmy", and "ymd"
 var dateSeparator = defaultDateSeparator;
 var dateFormat = defaultDateFormat;
 
@@ -232,6 +232,7 @@ function refreshDatePicker(dateFieldName, year, month, day)
  
   // this is the row that indicates which day of the week we're on
   html += TR_days;
+  var i;
   for(i = 0; i < dayArrayShort.length; i++)
     html += TD_days + dayArrayShort[i] + xTD;
   html += xTR;
@@ -269,8 +270,8 @@ function refreshDatePicker(dateFieldName, year, month, day)
   html += xTR;
  
   // add a button to allow the user to easily return to today, or close the calendar
-  var today = new Date();
-  var todayString = "Today is " + dayArrayMed[today.getDay()] + ", " + monthArrayMed[ today.getMonth()] + " " + today.getDate();
+//  var today = new Date();
+//  var todayString = "Today is " + dayArrayMed[today.getDay()] + ", " + monthArrayMed[ today.getMonth()] + " " + today.getDate();
   html += TR_todaybutton + TD_todaybutton;
   html += "<button class='dpTodayButton' onClick='refreshDatePicker(\"" + dateFieldName + "\");'>this month</button> ";
   html += "<button class='dpTodayButton' onClick='updateDateField(\"" + dateFieldName + "\");'>close</button>";
