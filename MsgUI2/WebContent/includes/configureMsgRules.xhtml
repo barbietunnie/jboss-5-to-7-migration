@@ -100,7 +100,7 @@
          <h:outputText value="#{msgs.moveDownHeader}"/>
       </f:facet>
       <h:commandLink action="#{ruleLogic.moveDown}" immediate="true"
-      	rendered="#{ruleLogic.ruleLogics.rowIndex &lt; (ruleLogic.ruleLogics.rowCount-1)
+      	rendered="#{ruleLogic.ruleLogics.rowIndex lt (ruleLogic.ruleLogics.rowCount-1)
       		and ruleLogic.canMoveDown}">
       	<h:graphicImage value="/images/greenDown.gif" title="Move Down" style="border: 0"/>
       </h:commandLink>
