@@ -1,11 +1,16 @@
-<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
-<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
-
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
 <h:outputFormat value="#{msgs.configureEmailVariables}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable value="#{emailvariables.all}" var="varbl" 
+<h:dataTable value="#{emailVariable.all}" var="varbl" 
    styleClass="jsfDataTable" 
    headerClass="dataTableHeader" columnClasses="oddColumns, evenColumns">
    
@@ -14,13 +19,13 @@
          <h:outputText value="#{msgs.deleteColumnHeader}"/>
       </f:facet>
       <h:selectBooleanCheckbox value="#{varbl.markedForDeletion}" 
-         disabled="#{not varbl.editable || varbl.isBuiltInVariable}" onchange="submit()"/>
+         disabled="#{not varbl.editable or varbl.builtin}" onchange="submit()"/>
    </h:column>
    <h:column>
       <f:facet name="header">
          <h:outputText value="#{msgs.variableNameHeader}"/>
       </f:facet>
-      <h:commandLink action="#{emailvariables.viewEmailVariable}">
+      <h:commandLink action="#{emailVariable.viewEmailVariable}">
       	<h:outputText value="#{varbl.variableName}" title="Click to Edit"/>
       	<f:param name="variableName" value="#{varbl.variableName}"/>
       </h:commandLink>
@@ -59,22 +64,23 @@
 	columnClasses="alignLeft70, alignRight30">
 	<h:panelGroup>
 		<h:commandButton value="#{msgs.deleteButtonText}"
-			title="Delete selected rows" action="#{emailvariables.deleteEmailVariables}"
-			disabled="#{not emailvariables.anyListsMarkedForDeletion}"
+			title="Delete selected rows" action="#{emailVariable.deleteEmailVariables}"
+			disabled="#{not emailVariable.anyListsMarkedForDeletion}"
 			onclick="javascript:return confirmDelete();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"
-			title="Refresh from database" action="#{emailvariables.refresh}" />
+			title="Refresh from database" action="#{emailVariable.refresh}" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.copyToNewButtonText}"
 			title="Create a new row from selected"
-			action="#{emailvariables.copyEmailVariable}"
-			disabled="#{not emailvariables.anyListsMarkedForDeletion}" />
+			action="#{emailVariable.copyEmailVariable}"
+			disabled="#{not emailVariable.anyListsMarkedForDeletion}" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.addNewButtonText}"
-			title="Add a new row" action="#{emailvariables.addEmailVariable}" />
+			title="Add a new row" action="#{emailVariable.addEmailVariable}" />
 	</h:panelGroup>
 	<h:panelGroup>
 		<f:verbatim>&nbsp;</f:verbatim>
 	</h:panelGroup>
 </h:panelGrid>
+</html>
