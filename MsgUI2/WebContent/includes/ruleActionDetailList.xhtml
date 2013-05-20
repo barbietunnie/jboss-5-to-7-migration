@@ -1,11 +1,16 @@
-<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
-<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
-
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
 <h:outputFormat value="#{msgs.maintainActionDetails}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable value="#{actiondetails.all}" var="actiondetail" 
+<h:dataTable value="#{ruleAction.all}" var="actiondetail" 
    styleClass="jsfDataTable" headerClass="dataTableHeader"
    rowClasses="oddRows, evenRows">
    
@@ -14,13 +19,13 @@
          <h:outputText value="#{msgs.deleteColumnHeader}"/>
       </f:facet>
       <h:selectBooleanCheckbox value="#{actiondetail.markedForDeletion}" 
-         disabled="#{not actiondetail.editable}" onchange="submit()"/>
+         disabled="#{not actiondetail.editable}" onclick="submit()"/>
    </h:column>
    <h:column>
       <f:facet name="header">
          <h:outputText value="#{msgs.actionIdHeader}"/>
       </f:facet>
-      <h:commandLink action="#{actiondetails.viewMsgActionDetail}">
+      <h:commandLink action="#{ruleAction.viewMsgActionDetail}">
       	<h:outputText value="#{actiondetail.actionId}" title="Click to Edit"/>
       	<f:param name="actionDetailId" value="#{actiondetail.actionId}"/>
       </h:commandLink>
@@ -38,20 +43,20 @@
          <h:outputText value="#{msgs.processBeanIdHeader}"/>
       </f:facet>
       <div class="cellHeight">
-      <h:outputText value="#{actiondetail.processBeanId}"/>
+      <h:outputText value="#{actiondetail.serviceName}"/>
       </div>
    </h:column>
-   <%-- h:column>
+   <![CDATA[h:column>
       <f:facet name="header">
          <h:outputText value="#{msgs.processClassNameHeader}"/>
       </f:facet>
       <h:outputText value="#{actiondetail.processClassName}"/>
-   </h:column --%>
+   </h:column]]>
    <h:column>
       <f:facet name="header">
          <h:outputText value="#{msgs.dataTypeHeader}"/>
       </f:facet>
-      <h:outputText value="#{actiondetail.dataType}"/>
+      <h:outputText value="#{actiondetail.ruleDataType.dataType}"/>
    </h:column>
 </h:dataTable>
 <f:verbatim><p/></f:verbatim>
@@ -60,22 +65,23 @@
 	<h:panelGroup>
 		<h:commandButton value="#{msgs.deleteButtonText}"
 			title="Delete selected rows"
-			action="#{actiondetails.deleteMsgActionDetails}"
-			disabled="#{not actiondetails.anyActionDetailsMarkedForDeletion}"
+			action="#{ruleAction.deleteMsgActionDetails}"
+			disabled="#{not ruleAction.anyActionDetailsMarkedForDeletion}"
 			onclick="javascript:return confirmDelete();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"
-			title="Refresh from database" action="#{actiondetails.refresh}" />
+			title="Refresh from database" action="#{ruleAction.refresh}" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.copyToNewButtonText}"
 			title="Create a new row from selected"
-			action="#{actiondetails.copyMsgActionDetail}"
-			disabled="#{not actiondetails.anyActionDetailsMarkedForDeletion}" />
+			action="#{ruleAction.copyMsgActionDetail}"
+			disabled="#{not ruleAction.anyActionDetailsMarkedForDeletion}" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.addNewButtonText}"
-			title="Add a new row" action="#{actiondetails.addMsgActionDetail}" />
+			title="Add a new row" action="#{ruleAction.addMsgActionDetail}" />
 	</h:panelGroup>
 	<h:panelGroup>
 		<f:verbatim>&nbsp;</f:verbatim>
 	</h:panelGroup>
 </h:panelGrid>
+</html>

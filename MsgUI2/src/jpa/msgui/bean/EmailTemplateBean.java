@@ -19,6 +19,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
+import javax.persistence.NoResultException;
 
 import jpa.exception.DataValidationException;
 import jpa.model.EmailTemplate;
@@ -54,14 +55,14 @@ public class EmailTemplateBean implements java.io.Serializable {
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	final static String TO_FAILED = "emailtemplate.failed";
-	final static String TO_EDIT = "emailtemplate.edit";
-	final static String TO_SAVED = "emailtemplate.saved";
-	final static String TO_DELETED = "emailtemplate.deleted";
-	final static String TO_CANCELED = "emailtemplate.canceled";
-	final static String TO_SELF = "emailtemplate.self";
-	final static String TO_SCHEDULE_EDIT = "emailschedules.edit";
-	final static String TO_SCHEDULE_SAVED = "emailschedules.saved";
+	final static String TO_EDIT = "emailTemplateEdit.xhtml";
+	final static String TO_SAVED = "configureEmailTemplates.xhtml";
+	final static String TO_DELETED = TO_SAVED;
+	final static String TO_CANCELED = TO_SAVED;
+	final static String TO_SELF = TO_EDIT;
+	final static String TO_FAILED = null;
+	final static String TO_SCHEDULE_EDIT = "emailSchedulesEdit.xhtml";
+	final static String TO_SCHEDULE_SAVED = TO_SAVED;
 	
 	public DataModel<EmailTemplate> getAll() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
@@ -133,10 +134,11 @@ public class EmailTemplateBean implements java.io.Serializable {
 	private void checkVariableLoop(String text) throws DataValidationException {
 		List<String> varNames = RenderUtil.retrieveVariableNames(text);
 		for (String loopName : varNames) {
-			EmailVariable vo = getEmailVariableService().getByVariableName(loopName);
-			if (vo != null) {
+			try {
+				EmailVariable vo = getEmailVariableService().getByVariableName(loopName);
 				RenderUtil.checkVariableLoop(vo.getDefaultValue(), loopName);
 			}
+			catch (NoResultException e) {}
 		}
 	}
 
@@ -296,22 +298,32 @@ public class EmailTemplateBean implements java.io.Serializable {
 		String templateId = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validatePrimaryKey() - templateId: " + templateId);
-		EmailTemplate vo = getEmailTemplateService().getByTemplateId(templateId);
-		if (editMode == true && vo != null && emailTemplate != null
-				&& vo.getRowId() != emailTemplate.getRowId()) {
-			// emailTemplate does not exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					//"jpa.msgui.messages", "emailTemplateDoesNotExist", null);
-	        		"jpa.msgui.messages", "emailTemplateAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		try {
+			EmailTemplate vo = getEmailTemplateService().getByTemplateId(templateId);
+			if (editMode == true && emailTemplate != null
+					&& vo.getRowId() != emailTemplate.getRowId()) {
+				// emailTemplate already exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+		        		"jpa.msgui.messages", "emailTemplateAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
+			else if (editMode == false) {
+				// emailTemplate already exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "emailTemplateAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
-		else if (editMode == false && vo != null) {
-			// emailTemplate already exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "emailTemplateAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		catch (NoResultException e) {
+			if (editMode == true) {
+				// emailTemplate does not exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "emailTemplateDoesNotExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
 	}
 	

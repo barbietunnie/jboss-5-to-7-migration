@@ -110,7 +110,7 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 	
 	/**
 	 * This method is designed to go along with following JSF tag:
-	 * <h:selectOneMenu value="#{mailtracking.ruleName}" onchange="submit()"
+	 * <h:selectOneMenu value="#{mailtracking.ruleName}" onclick="submit()"
 	 * valueChangeListener="#{mailtracking.ruleNameChanged}"/>
 	 * 
 	 * @param event

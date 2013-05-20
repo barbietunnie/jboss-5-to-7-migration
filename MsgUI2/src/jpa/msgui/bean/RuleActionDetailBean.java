@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
+import javax.persistence.NoResultException;
 import javax.servlet.ServletContext;
 
 import jpa.constant.Constants;
@@ -45,11 +46,11 @@ public class RuleActionDetailBean implements java.io.Serializable {
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	private static String TO_EDIT = "actiondetail.edit";
-	private static String TO_FAILED = "actiondetail.failed";
-	private static String TO_SAVED = "actiondetail.saved";
-	private static String TO_DELETED = "actiondetail.deleted";
-	private static String TO_CANCELED = "actiondetail.canceled";
+	private static String TO_EDIT = "ruleActionDetailEdit.xhtml";
+	private static String TO_FAILED = null;
+	private static String TO_SAVED = "maintainActionDetails.xhtml";
+	private static String TO_DELETED = TO_SAVED;
+	private static String TO_CANCELED = TO_SAVED;
 
 	public DataModel<RuleActionDetail> getAll() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
@@ -231,20 +232,24 @@ public class RuleActionDetailBean implements java.io.Serializable {
 		String actionDetailId = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validatePrimaryKey() - MsgActionDetailKey: " + actionDetailId);
-		RuleActionDetail vo = getRuleActionDetailService().getByActionId(actionDetailId);
-		if (editMode && vo == null) {
-			// MsgActionDetail does not exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "MsgActionIdDoesNotExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		try {
+			RuleActionDetail vo = getRuleActionDetailService().getByActionId(actionDetailId);
+			if (!editMode && vo != null) {
+				// MsgActionDetail already exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "MsgActionIdAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
-		if (!editMode && vo != null) {
-			// MsgActionDetail already exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "MsgActionIdAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		catch (NoResultException e) {
+			if (editMode) {
+				// MsgActionDetail does not exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "MsgActionIdDoesNotExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
 	}
 	

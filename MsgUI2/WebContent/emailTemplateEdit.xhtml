@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+   <link href="styles.css" rel="stylesheet" type="text/css"/>
+   <script type="text/javascript" src="includes/insertAtCursor.js"></script>
+   <script type="text/javascript" src="includes/whizzywig.js"></script>
+   <title><h:outputText value="#{msgs.editEmailTemplatePageTitle}"/></title>
+</h:head>
+<noscript><p><b>Javascript must be enabled to use this form.</b></p></noscript>
+
+<h:body onLoad="document.getElementById('emailtmplt:content:templateid').focus();">
+<div align="center">
+   <h:form id="emailtmplt">
+      <h:panelGrid columns="1" styleClass="headerMenuContent"
+             columnClasses="contentColumn">
+         <f:facet name="header">
+            <f:subview id="header">
+               <ui:include src="/includes/gettingStartedHeader.xhtml"/>
+            </f:subview>
+         </f:facet>
+		 <f:subview id="content">
+         	<ui:include src="/includes/emailTemplateEdit.xhtml"/>
+         </f:subview>
+         <f:subview id="footer">
+        	<ui:include src="includes/gettingStartedFooter.xhtml"/>
+         </f:subview>
+      </h:panelGrid>
+   </h:form>
+</div>
+</h:body>
+</html>

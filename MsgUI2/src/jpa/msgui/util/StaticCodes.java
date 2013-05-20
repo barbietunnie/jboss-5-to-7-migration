@@ -20,6 +20,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.model.SelectItem;
 
 import jpa.constant.CarrierCode;
+import jpa.constant.CodeType;
 import jpa.constant.Constants;
 import jpa.constant.EmailVariableType;
 import jpa.constant.MailProtocol;
@@ -266,8 +267,8 @@ public class StaticCodes {
 	}
 
 	private static SelectItem[] yesNoItems = {
-		new SelectItem(true, "Yes"),
-		new SelectItem(false, "No")
+		new SelectItem(true, CodeType.YES.getValue()),
+		new SelectItem(false, CodeType.NO.getValue())
 	};
 	
 	// PROPERTY: Y/N Items
@@ -276,8 +277,8 @@ public class StaticCodes {
 	}
 
 	private static SelectItem[] yorNItems = {
-		new SelectItem(true, "Yes"),
-		new SelectItem(false, "No")
+		new SelectItem(true, "Y"),
+		new SelectItem(false, "N")
 	};
 	
 	// PROPERTY: true/false Items
@@ -295,10 +296,9 @@ public class StaticCodes {
 		return yesNoEnumItems;
 	}
 
-	enum YesNo { YES, NO };
 	private static SelectItem[] yesNoEnumItems = {
-		new SelectItem(YesNo.YES, "Yes"),
-		new SelectItem(YesNo.NO, "No")
+		new SelectItem(CodeType.YES, "Yes"),
+		new SelectItem(CodeType.NO, "No")
 	};
 
 	// PROPERTY: Mail Protocol Items
@@ -397,10 +397,10 @@ public class StaticCodes {
 	}
 	
 	private static SelectItem[] ruleTypeItems = {
-		new SelectItem(RuleType.SIMPLE.getValue(), "Simple"),
-		new SelectItem(RuleType.ALL.getValue(), "All"),
-		new SelectItem(RuleType.ANY.getValue(), "Any"),
-		new SelectItem(RuleType.NONE.getValue(), "None")
+		new SelectItem(RuleType.SIMPLE.getValue()),
+		new SelectItem(RuleType.ALL.getValue()),
+		new SelectItem(RuleType.ANY.getValue()),
+		new SelectItem(RuleType.NONE.getValue())
 	};
 
 	// PROPERTY: Mail Type Items
@@ -429,9 +429,9 @@ public class StaticCodes {
 	}
 	
 	private static SelectItem[] mailingListDeliveryOptionItems = {
-		new SelectItem(MailingListDeliveryType.ALL_ON_LIST.getValue(), "All on list"),
-		new SelectItem(MailingListDeliveryType.SUBSCRIBERS_ONLY.getValue(), "Customers only"),
-		new SelectItem(MailingListDeliveryType.PROSPECTS_ONLY.getValue(), "Prospects only")
+		new SelectItem(MailingListDeliveryType.ALL_ON_LIST.getValue()),
+		new SelectItem(MailingListDeliveryType.SUBSCRIBERS_ONLY.getValue()),
+		new SelectItem(MailingListDeliveryType.PROSPECTS_ONLY.getValue())
 	};
 
 	// PROPERTY: Days of Week Items
