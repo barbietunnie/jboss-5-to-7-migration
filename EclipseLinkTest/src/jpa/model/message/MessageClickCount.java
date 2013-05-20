@@ -39,7 +39,7 @@ public class MessageClickCount extends BaseModel implements Serializable {
 	@Column(name="MailingListRowId", nullable=false)
 	private int mailingListRowId;
 
-	@Column(length=10, nullable=false)
+	@Column(length=20, nullable=false)
 	private String deliveryType = MailingListDeliveryType.ALL_ON_LIST.getValue();
 	@Column(nullable=false, columnDefinition="smallint")
 	private int sentCount = 0;

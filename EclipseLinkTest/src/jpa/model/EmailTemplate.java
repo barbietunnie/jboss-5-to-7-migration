@@ -36,7 +36,7 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 	private boolean isHtml = true;
 	@Column(nullable=false, length=12)
 	private String listType = MailingListType.TRADITIONAL.getValue();
-	@Column(nullable=false, length=10)
+	@Column(nullable=false, length=20)
 	private String deliveryOption = MailingListDeliveryType.ALL_ON_LIST.getValue();
 	@Column(nullable=true, length=100)
 	private String selectCriteria = null;
