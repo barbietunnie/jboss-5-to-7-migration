@@ -66,10 +66,10 @@ public class RuleLogicBean implements java.io.Serializable {
 	protected RuleElement ruleElement = null;
 	protected RuleElement origRuleElement = null;
 	
-	protected static final String TO_FAILED = null;
 	protected static final String TO_SELF = "msgrule.toself";
 	protected static final String TO_CANCELED = "cancel";
 	protected static final String TO_SAVED = "save";
+	protected static final String TO_FAILED = null;
 	protected static final String TO_EDIT_LOGIC = "edit_logic";
 	protected static final String TO_EDIT_ELEMENT = "edit_element";
 	protected static final String TO_EDIT_SUBRULE = "edit_subrule";

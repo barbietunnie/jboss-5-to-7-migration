@@ -15,6 +15,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
+import javax.persistence.NoResultException;
 
 import jpa.exception.DataValidationException;
 import jpa.model.EmailVariable;
@@ -45,12 +46,12 @@ public class EmailVariableBean implements java.io.Serializable {
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	final static String TO_EDIT = "emailvariable.edit";
-	final static String TO_SELF = "emailvariable.delf";
-	final static String TO_SAVED = "emailvariable.saved";
-	final static String TO_FAILED = "emailvariable.failed";
-	final static String TO_DELETED = "emailvariable.deleted";
-	final static String TO_CANCELED = "emailvariable.canceled";
+	final static String TO_EDIT = "emailVariableEdit.xhtml";
+	final static String TO_SELF = TO_EDIT;
+	final static String TO_SAVED = "configureEmailVariables.xhtml";
+	final static String TO_FAILED = null;
+	final static String TO_DELETED = TO_SAVED;
+	final static String TO_CANCELED = TO_SAVED;
 	
 	public DataModel<EmailVariable> getAll() {
 		if (emailVariables == null) {
@@ -303,20 +304,24 @@ public class EmailVariableBean implements java.io.Serializable {
 		String variableName = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validatePrimaryKey() - variableName: " + variableName);
-		EmailVariable vo = getEmailVariableService().getByVariableName(variableName);
-		if (editMode == true && vo == null) {
-			// emailVariable does not exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "emailVariableDoesNotExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		try {
+			getEmailVariableService().getByVariableName(variableName);
+			if (editMode == false) {
+				// emailVariable already exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "emailVariableAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
-		else if (editMode == false && vo != null) {
-			// emailVariable already exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "emailVariableAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		catch (NoResultException e) {
+			if (editMode == true) {
+				// emailVariable does not exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "emailVariableDoesNotExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
 	}
 	

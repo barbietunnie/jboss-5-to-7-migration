@@ -18,8 +18,8 @@
       <f:facet name="header">
          <h:outputText value="#{msgs.deleteColumnHeader}"/>
       </f:facet>
-      <h:selectBooleanCheckbox value="#{varbl.markedForDeletion}" 
-         disabled="#{not varbl.editable or varbl.builtin}" onchange="submit()"/>
+      <h:selectBooleanCheckbox value="#{varbl.markedForDeletion}" immediate="true"
+         disabled="#{(not varbl.editable) or varbl.builtin}" onclick="submit()"/>
    </h:column>
    <h:column>
       <f:facet name="header">

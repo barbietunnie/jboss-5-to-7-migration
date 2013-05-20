@@ -39,8 +39,8 @@
 	<h:outputText value="#{msgs.listByPrompt}" styleClass="menuLinkLables"/>
 	
 	<h:outputText value="#{msgs.ruleNamePrompt}" style="font-weight: bold;"/>
-	<%-- h:selectOneMenu value="#{mailtracking.ruleName}" onchange="submit()"
-		valueChangeListener="#{mailtracking.ruleNameChanged}"/ --%>
+	<![CDATA[h:selectOneMenu value="#{mailtracking.ruleName}" onclick="submit()"
+		valueChangeListener="#{mailtracking.ruleNameChanged}"/]]>
 	<h:selectOneMenu value="#{mailtracking.ruleName}">
 		<f:selectItem itemValue="All" itemLabel="All Rule Names"/>
 		<f:selectItems value="#{dynacodes.builtinRuleNameItems}"/>

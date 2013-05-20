@@ -431,55 +431,10 @@ function doTag(html) { // insert HTML into text area
  }
  o(idTa).focus(); 
 }//// Added by jwang//function insertFieldToBody(varblField) { // insert value of a field at current selection  var insertField = document.getElementById(varblField);  var myValue = '\${' + insertField.value + '}';  insHTML(myValue);  oW.focus();}function focusContentWindow() {  oW.focus();}// end of addition
-function insHTML(html) { //insert HTML at current selection
- if (!html) html=prompt("Enter some HTML or text to insert:", "");
- if (html.indexOf('js:') == 0) {
-  try{eval(html.replace(/^js:/,''));} catch(e){};
-  return;
- }
- try { 	 
-  if(sel.type && sel.type!="Text") sel="";
-  oW.document.execCommand("inserthtml", false, html + sel); 
- }
- catch (e) { 
-  if (document.selection) { 
-   if(papa && papa.nodeName == 'IMG') {papa.outerHTML=html;}
-   else if(rng) {rng.select(); rng.pasteHTML(html+rng.htmlText);}
-  } 
- }
- whereAmI();
-}
-function whereAmI(et) { //070322 var e = et; 
- if (!et) e=window.event;
- if (window.getSelection){
-  sel=oW.getSelection();
-  papa=(e && e.type=='mouseup') ? e.target : (sel.anchorNode.nodeName == '#text') ? sel.anchorNode.parentNode : sel.anchorNode;
- } else { 
-  sel=oW.document.selection;
-  rng=sel.createRange();
-  papa=(e && e.type=='mouseup')? e.srcElement : (sel.type == "Control") ? rng.item(0) : rng.parentElement();
- }
- var paNode=papa;
- trail=papa.nodeName; 
- while (!paNode.nodeName.match(/^(HTML|BODY)/) && paNode.className!="wzCtrl") {
-  paNode=paNode.parentNode;
-  trail=paNode.nodeName + '>' + trail;
- }
- if (paNode.className=="wzCtrl") trail=sel=rng=null;
- var id=paNode.nodeName=="HTML" ? paNode.getElementsByTagName("BODY")[0].id : paNode.id.replace("CONTROL","");
- c(id); 
- window.status=id+":"+trail;
- if (trail.indexOf('TABLE') > 0) s('TABLE_CONTROLS'+idTa); else h('TABLE_CONTROLS'+idTa);
-}
-function c(id) {//set current whizzy
- if (id=="" || whizzies.join().indexOf(id)=='-1') return;
- if (id!=idTa){
-  idTa=id;
-  try {oW=o("whizzy"+id).contentWindow;} catch(e){alert('set current: '+id);}
-  if (oW) {oW.focus();window.status=oW.document.body.id; }
- }
-} 
-function textSel() { if (sel  && sel.type != "None") return true;  else {alert(t("Select some text first")); return false;}}
+function insHTML(html) { // insert HTML at current selection	if (!html)		html = prompt("Enter some HTML or text to insert:", "");	if (html.indexOf('js:') == 0) {		try {			eval(html.replace(/^js:/, ''));		} catch (e) {		}		;		return;	}	try {		if (sel.type && sel.type != "Text")			sel = "";		if (document.selection) { // IE Support			html.focus();			sel = document.selection.createRange();			sel.text = html;		} else { // Firefox/Chrome			oW.document.execCommand("inserthtml", false, html + sel);		}	}	catch (e) {		if (document.selection) {			if (papa && papa.nodeName == 'IMG') {				papa.outerHTML = html;			}			else if (rng) {				rng.select();				rng.pasteHTML(html + rng.htmlText);			}		}	}	whereAmI();}
+function whereAmI(et) { // 070322	var e = et;	if (!et)		e = window.event;	if (window.getSelection) {		sel = oW.getSelection();		papa = (e && e.type == 'mouseup') ? e.target				: (sel.anchorNode.nodeName == '#text') ? sel.anchorNode.parentNode						: sel.anchorNode;	} else {		sel = oW.document.selection;		rng = sel.createRange();		papa = (e && e.type == 'mouseup') ? e.srcElement				: (sel.type == "Control") ? rng.item(0) : rng.parentElement();	}	var paNode = papa;	trail = papa.nodeName;	while (!paNode.nodeName.match(/^(HTML|BODY)/)			&& paNode.className != "wzCtrl") {		paNode = paNode.parentNode;		trail = paNode.nodeName + '>' + trail;	}	if (paNode.className == "wzCtrl")		trail = sel = rng = null;	var id = paNode.nodeName == "HTML" ? paNode.getElementsByTagName("BODY")[0].id			: paNode.id.replace("CONTROL", "");	c(id);	window.status = id + ":" + trail;	if (trail.indexOf('TABLE') > 0)		s('TABLE_CONTROLS' + idTa);	else		h('TABLE_CONTROLS' + idTa);}
+function c(id) {// set current whizzy	if (id == "" || whizzies.join().indexOf(id) == '-1')		return;	if (id != idTa) {		idTa = id;		try {			oW = o("whizzy" + id).contentWindow;		} catch (e) {			alert('set current: ' + id);		}		if (oW) {			oW.focus();			window.status = oW.document.body.id;		}	}} 
+function textSel() {	if (sel && sel.type != "None")		return true;	else {		alert(t("Select some text first"));		return false;	}}
 function s(id) {o(id).style.display='block';} //show element
 function h(id) {o(id).style.display='none';} //hide element
 function o(id) { return document.getElementById(id); } //get element by ID
