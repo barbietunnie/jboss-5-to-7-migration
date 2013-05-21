@@ -6,7 +6,10 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+
+import org.apache.commons.lang3.StringUtils;
 
 import jpa.model.BaseModel;
 
@@ -22,23 +25,26 @@ public class RuleSubruleMap extends BaseModel implements Serializable {
 	private int subruleSequence = -1;
 
 	/** define methods for UI */
+	@Transient
+	private String subruleName;
+
 	public String getSubruleName() {
-		if (ruleSubruleMapPK!=null) {
-			return ruleSubruleMapPK.getSubruleLogic().getRuleName();
+		if (StringUtils.isNotBlank(subruleName)) {
+			return subruleName;
 		}
 		else {
-			return "";
+			if (ruleSubruleMapPK!=null && ruleSubruleMapPK.getSubruleLogic()!=null) {
+				subruleName = ruleSubruleMapPK.getSubruleLogic().getRuleName();
+			}
 		}
+		return subruleName;
 	}
 	
 	public void setSubruleName(String subruleName) {
-		if (ruleSubruleMapPK==null) {
-		}
-		else {
-			
-		}
+		this.subruleName = subruleName;
 	}
-		/** end of UI */
+
+	/** end of UI */
 
 	public RuleSubruleMap() {
 		// must have a no-argument constructor

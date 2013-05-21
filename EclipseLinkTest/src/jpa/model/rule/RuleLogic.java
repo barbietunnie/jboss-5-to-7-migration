@@ -18,6 +18,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.eclipse.persistence.annotations.CascadeOnDelete;
+
 import jpa.constant.RuleCategory;
 import jpa.model.BaseModel;
 
@@ -40,9 +42,11 @@ public class RuleLogic extends BaseModel implements Serializable {
 
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ruleElementPK.ruleLogic", orphanRemoval=true)
 	@OrderBy
+	@CascadeOnDelete
 	private List<RuleElement> ruleElements;
 	
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="ruleSubruleMapPK.ruleLogic", orphanRemoval=true)
+	@CascadeOnDelete
 	private List<RuleSubruleMap> ruleSubruleMaps;
 	
 	@Column(nullable=false, length=26)
@@ -75,7 +79,7 @@ public class RuleLogic extends BaseModel implements Serializable {
 		if (isSubrule()) {
 			return "SubRule";
 		}
-		else if (getRuleSubruleMaps() != null && getRuleSubruleMaps().size() > 0) {
+		else if (ruleSubruleMaps != null && ruleSubruleMaps.size() > 0) {
 			return "Edit";
 		}
 		else {

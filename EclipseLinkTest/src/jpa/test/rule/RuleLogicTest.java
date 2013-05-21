@@ -106,9 +106,9 @@ public class RuleLogicTest {
 		RuleLogic logic = service.getByRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
 		System.out.println(StringUtil.prettyPrint(logic));
 		
-		List<RuleLogic> lst2 = service.getSubRules(false);
+		List<RuleLogic> lst2 = service.getSubrules(false);
 		assertFalse(lst2.isEmpty());
-		List<RuleLogic> lst3 = service.getSubRules(true);
+		List<RuleLogic> lst3 = service.getSubrules(true);
 		assertTrue(lst2.size()>lst3.size());
 
 		// test delete

@@ -77,7 +77,7 @@ public class RuleLogicService {
 		}
 	}
 
-	public List<RuleLogic> getSubRules(boolean excludeBuiltin) throws NoResultException {
+	public List<RuleLogic> getSubrules(boolean excludeBuiltin) throws NoResultException {
 		String sql = 
 				"select r from RuleLogic r where r.isSubrule=:isSubrule ";
 		if (excludeBuiltin) {
@@ -157,6 +157,7 @@ public class RuleLogicService {
 		try {
 			em.persist(logic);
 			reloadFlagsService.updateRuleReloadFlag();
+			em.flush();
 		}
 		finally {
 		}
@@ -171,6 +172,7 @@ public class RuleLogicService {
 				em.merge(logic);
 			}
 			reloadFlagsService.updateRuleReloadFlag();
+			em.flush();
 		}
 		catch (OptimisticLockException e) {
 			logger.error("OptimisticLockException caught", e);
