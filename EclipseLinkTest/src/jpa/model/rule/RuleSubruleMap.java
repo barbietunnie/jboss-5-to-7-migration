@@ -21,6 +21,25 @@ public class RuleSubruleMap extends BaseModel implements Serializable {
 	@Column(nullable=false)
 	private int subruleSequence = -1;
 
+	/** define methods for UI */
+	public String getSubruleName() {
+		if (ruleSubruleMapPK!=null) {
+			return ruleSubruleMapPK.getSubruleLogic().getRuleName();
+		}
+		else {
+			return "";
+		}
+	}
+	
+	public void setSubruleName(String subruleName) {
+		if (ruleSubruleMapPK==null) {
+		}
+		else {
+			
+		}
+	}
+		/** end of UI */
+
 	public RuleSubruleMap() {
 		// must have a no-argument constructor
 	}
