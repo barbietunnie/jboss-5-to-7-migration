@@ -50,10 +50,10 @@
         </h:column>
 		<h:column>
 			<f:facet name="header">
-				<h:outputText value="#{msgs.subRuleNameHeader}"/> 
+				<h:outputText value="#{msgs.subruleNameHeader}"/> 
 			</f:facet>
 			<h:selectOneMenu value="#{subrule.subruleName}">
-				<f:selectItems value="#{dynacodes.subRuleItems}"/>
+				<f:selectItems value="#{dynacodes.subruleItems}"/>
 			</h:selectOneMenu>
         </h:column>
 	   <h:column>
@@ -61,7 +61,7 @@
 	         <h:outputText value="#{msgs.moveUpHeader}"/>
 	      </f:facet>
 	      <h:commandLink action="#{ruleLogic.moveUpSubRule}" immediate="true"
-	      	rendered="#{ruleLogic.subRules.rowIndex > 0}">
+	      	rendered="#{ruleLogic.subRules.rowIndex gt 0}">
 	      	<h:graphicImage value="/images/greenUp.gif" title="Move Up" style="border: 0"/>
 	      </h:commandLink>
 	   </h:column>

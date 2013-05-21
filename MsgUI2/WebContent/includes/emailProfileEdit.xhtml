@@ -141,7 +141,7 @@
 		<h:outputText value="#{msgs.useTestAddressPrompt}"/>
 		<h:selectOneMenu id="usetest" value="#{senderData.sender.useTestAddr}"
 			binding="#{senderData.useTestAddrInput}"
-			required="true" label="#{msgs.useTestAddressPrompt}" onclick="submit()">
+			required="true" label="#{msgs.useTestAddressPrompt}" onchange="submit()">
 			<f:selectItems value="#{codes.yesNoItems}"/>
 		</h:selectOneMenu>
 		<h:message for="usetest" styleClass="errorMessage"/>
@@ -176,7 +176,7 @@
 		<h:outputText value="#{msgs.isVerpEnabledPrompt}"/>
 		<h:selectOneMenu id="useverp" value="#{senderData.sender.verpEnabled}"
 			binding="#{senderData.verpEnabledInput}"
-			required="true" label="#{msgs.isVerpEnabledPrompt}" onclick="submit()">
+			required="true" label="#{msgs.isVerpEnabledPrompt}" onchange="submit()">
 			<f:selectItems value="#{codes.yesNoItems}"/>
 		</h:selectOneMenu>
 		<h:message for="useverp" styleClass="errorMessage"/>

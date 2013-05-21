@@ -31,7 +31,7 @@
 		
 		<h:outputText value="#{msgs.dataNamePrompt}"/>
 		<h:selectOneMenu id="dataname" value="#{msgrules.ruleElement.dataName}"
-			required="true" label="#{msgs.dataNamePrompt}" onclick="submit()">
+			required="true" label="#{msgs.dataNamePrompt}" onchange="submit()">
 			<f:selectItems value="#{codes.ruleDataNameItems}"/>
 		</h:selectOneMenu>
 		<h:message for="dataname" styleClass="errorMessage"/>
@@ -48,7 +48,7 @@
 		
 		<h:outputText value="#{msgs.criteriaPrompt}"/>
 		<h:selectOneMenu id="criteria" value="#{msgrules.ruleElement.criteria}"
-			required="true" label="#{msgs.criteriaPrompt}" onclick="submit()">
+			required="true" label="#{msgs.criteriaPrompt}" onchange="submit()">
 			<f:selectItems value="#{codes.ruleCriteriaItems}"/>
 		</h:selectOneMenu>
 		<h:message for="criteria" styleClass="errorMessage"/>

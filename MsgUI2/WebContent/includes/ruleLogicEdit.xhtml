@@ -98,7 +98,7 @@
 			<f:facet name="header">
 				<h:outputText value="#{msgs.dataNameColumn}"/> 
 			</f:facet>
-			<h:selectOneMenu value="#{element.dataName}" onclick="submit()">
+			<h:selectOneMenu value="#{element.dataName}" onchange="submit()">
 				<f:selectItems value="#{codes.ruleDataNameItems}"/>
 			</h:selectOneMenu>
         </h:column>
@@ -114,7 +114,7 @@
 			<f:facet name="header">
 				<h:outputText value="#{msgs.criteriaColumn}"/> 
 			</f:facet>
-			<h:selectOneMenu value="#{element.criteria}" onclick="submit()">
+			<h:selectOneMenu value="#{element.criteria}" onchange="submit()">
 				<f:selectItems value="#{codes.ruleCriteriaItems}"/>
 			</h:selectOneMenu>
         </h:column>

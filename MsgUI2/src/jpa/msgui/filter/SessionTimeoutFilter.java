@@ -35,6 +35,7 @@ public class SessionTimeoutFilter implements Filter {
 	/**
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
+	@Override
 	public void init(FilterConfig filterConfig) {
 		// Nothing to do here.
 	}
@@ -43,6 +44,7 @@ public class SessionTimeoutFilter implements Filter {
 	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
 	 *      javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
@@ -77,12 +79,19 @@ public class SessionTimeoutFilter implements Filter {
 		// Add hit count and update UserData
 		userVo.addHit();
 		// Continue filtering
-		chain.doFilter(request, response);
+		try { // we've been getting random IndexOutOfBoundsException
+			// did not work
+			chain.doFilter(request, response);
+		}
+		catch (IndexOutOfBoundsException e) {
+			logger.error("IndexOutOfBoundsException caught", e);
+		}
 	}
 
 	/**
 	 * @see javax.servlet.Filter#destroy()
 	 */
+	@Override
 	public void destroy() {
 		// Apparently there's nothing to destroy?
 	}
