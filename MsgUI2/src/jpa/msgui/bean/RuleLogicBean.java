@@ -18,6 +18,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
+import javax.persistence.NoResultException;
 
 import jpa.constant.CodeType;
 import jpa.constant.RuleCategory;
@@ -66,7 +67,8 @@ public class RuleLogicBean implements java.io.Serializable {
 	protected RuleElement ruleElement = null;
 	protected RuleElement origRuleElement = null;
 	
-	protected static final String TO_SELF = "msgrule.toself";
+	/* use navigation rules in faces-config.xml */
+	protected static final String TO_SELF = null;
 	protected static final String TO_CANCELED = "cancel";
 	protected static final String TO_SAVED = "save";
 	protected static final String TO_FAILED = null;
@@ -991,20 +993,24 @@ public class RuleLogicBean implements java.io.Serializable {
 			logger.error("validatePrimaryKey(() - RuleLogic is null");
 			return;
 		}
-		RuleLogic vo = getRuleLogicService().getByRuleName(ruleName);
-		if (editMode == true && vo == null) {
-			// ruleLogic does not exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "ruleLogicDoesNotExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		try {
+			RuleLogic vo = getRuleLogicService().getByRuleName(ruleName);
+			if (editMode == false && vo != null) {
+				// ruleLogic already exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "ruleLogicAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
-		else if (editMode == false && vo != null) {
-			// ruleLogic already exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "ruleLogicAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		catch (NoResultException e) {
+			if (editMode == true) {
+				// ruleLogic does not exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "ruleLogicDoesNotExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
 	}
 	
