@@ -49,7 +49,7 @@
          <h:outputText value="#{msgs.isSubRuleHeader}"/>
       </f:facet>
       <h:commandLink action="#{ruleLogic.viewSubRules}" rendered="#{not rule.subrule}">
-      	<h:outputText value="#{rule.isSubRuleDesc}" title="Click to Add/Edit Sub-Rules"/>
+      	<h:outputText value="#{rule.isSubRuleDesc}" title="Click to Add/Edit Subrules"/>
       </h:commandLink>
       <h:outputText value="#{rule.isSubRuleDesc}" style="font-style: italic; font-size: 0.8em;"
       	rendered="#{rule.subrule}"/>

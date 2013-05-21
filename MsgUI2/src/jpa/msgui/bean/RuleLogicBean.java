@@ -28,6 +28,7 @@ import jpa.model.rule.RuleElement;
 import jpa.model.rule.RuleElementPK;
 import jpa.model.rule.RuleLogic;
 import jpa.model.rule.RuleSubruleMap;
+import jpa.model.rule.RuleSubruleMapPK;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
 import jpa.service.rule.RuleActionService;
@@ -291,11 +292,17 @@ public class RuleLogicBean implements java.io.Serializable {
 			logger.info("saveRuleLogic() - Element Rows Inserted: " + rowsInserted);
 		}
 		else {
+			List<RuleElement> elements = ruleLogic.getRuleElements();
+			if (elements!=null) {
+				for (RuleElement element : elements) {
+					element.getRuleElementPK().setRuleLogic(ruleLogic);
+				}
+			}
 			getRuleLogicService().insert(ruleLogic);
 			logger.info("saveRuleLogic() - Rows Inserted: " + 1);
 			addToRuleList(ruleLogic);
-			int elementsInserted = insertRuleElements(ruleLogic.getRuleName());
-			logger.info("saveRuleLogic() - Element Rows Inserted: " + elementsInserted);
+//			int elementsInserted = insertRuleElements(ruleLogic.getRuleName());
+//			logger.info("saveRuleLogic() - Element Rows Inserted: " + elementsInserted);
 		}
 		return "msgrule.saved";
 	}
@@ -572,6 +579,9 @@ public class RuleLogicBean implements java.io.Serializable {
 		reset();
 		List<RuleElement> list = getRuleElementList();
 		RuleElement vo = new RuleElement();
+		RuleElementPK pk = new RuleElementPK();
+		vo.setRuleElementPK(pk);
+		pk.setRuleLogic(ruleLogic);
 		vo.getRuleElementPK().setElementSequence(getNextRuleElementSeq());
 		vo.setMarkedForEdition(true);
 		list.add(vo);
@@ -681,6 +691,9 @@ public class RuleLogicBean implements java.io.Serializable {
 		reset();
 		List<RuleSubruleMap> list = getSubRuleList();
 		RuleSubruleMap vo = new RuleSubruleMap();
+		RuleSubruleMapPK pk = new RuleSubruleMapPK();
+		pk.setRuleLogic(ruleLogic);
+		vo.setRuleSubruleMapPK(pk);
 		vo.setMarkedForEdition(true);
 		list.add(vo);
 		return TO_SELF;
@@ -709,7 +722,8 @@ public class RuleLogicBean implements java.io.Serializable {
 		}
 		for (int i=0; i<list.size(); i++) {
 			RuleSubruleMap ruleSubRuleMapVo = list.get(i);
-			ruleSubRuleMapVo.getRuleSubruleMapPK().setRuleLogic(ruleLogic);
+			RuleLogic subrule = getRuleLogicService().getByRuleName(ruleSubRuleMapVo.getSubruleName());
+			ruleSubRuleMapVo.getRuleSubruleMapPK().setSubruleLogic(subrule);
 			ruleSubRuleMapVo.setSubruleSequence(i);
 			getRuleSubruleMapService().insert(ruleSubRuleMapVo);
 		}

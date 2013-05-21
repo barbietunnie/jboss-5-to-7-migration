@@ -41,7 +41,7 @@
 		<h:outputText value="#{msgs.useSslPrompt}"/>
 		<h:selectOneMenu id="ssl" value="#{smtpServer.smtpServer.useSsl}"
 			binding="#{smtpServer.useSslInput}"
-			required="true" label="#{msgs.useSslPrompt}" onclick="submit()">
+			required="true" label="#{msgs.useSslPrompt}" onchange="submit()">
 			<f:selectItems value="#{codes.yesNoItems}"/>
 		</h:selectOneMenu>
 		<h:message for="ssl" styleClass="errorMessage"/>
@@ -49,7 +49,7 @@
 		<h:outputText value="#{msgs.useAuthPrompt}"/>
 		<h:selectOneMenu id="auth" value="#{smtpServer.smtpServer.isUseAuth}"
 			binding="#{smtpServer.useAuthInput}"
-			label="#{msgs.useAuthPrompt}" onclick="submit()">
+			label="#{msgs.useAuthPrompt}" onchange="submit()">
 			<f:selectItems value="#{codes.yesNoItems}"/>
 		</h:selectOneMenu>
 		<h:message for="auth" styleClass="errorMessage"/>
