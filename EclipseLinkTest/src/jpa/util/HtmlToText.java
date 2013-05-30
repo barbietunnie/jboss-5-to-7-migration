@@ -10,11 +10,14 @@ import java.io.StringReader;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
 
+import org.apache.log4j.Logger;
+
 /**
  * Use HTMLEditorKit swing component to convert html text to plain text
  */
 public class HtmlToText extends HTMLEditorKit.ParserCallback implements Serializable {
 	private static final long serialVersionUID = -8389006976316629513L;
+	static final Logger logger = Logger.getLogger(HtmlToText.class);
 	private StringBuffer sb;
 	static final String LF = System.getProperty("line.separator", "\n");
 	
@@ -42,6 +45,11 @@ public class HtmlToText extends HTMLEditorKit.ParserCallback implements Serializ
 	@Override
 	public void handleText(char[] text, int pos) {
 		sb.append(text).append(LF);
+	}
+	
+	@Override
+	public void handleError(String errorMsg, int pos){
+		logger.error("Error caught from parser: " + errorMsg);
 	}
 
 	public static void main(String[] args) {
