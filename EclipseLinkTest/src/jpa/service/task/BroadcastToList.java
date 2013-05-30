@@ -15,7 +15,6 @@ import jpa.constant.VariableName;
 import jpa.data.preload.RuleNameEnum;
 import jpa.exception.DataValidationException;
 import jpa.exception.TemplateException;
-import jpa.message.HtmlConverter;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.message.util.EmailIdParser;
@@ -31,6 +30,7 @@ import jpa.service.msgin.TemplateRenderVo;
 import jpa.service.msgout.MailSenderBo;
 import jpa.service.msgout.SmtpException;
 import jpa.util.EmailSender;
+import jpa.util.HtmlConverter;
 import jpa.util.PhoneNumberUtil;
 import jpa.variable.RenderUtil;
 

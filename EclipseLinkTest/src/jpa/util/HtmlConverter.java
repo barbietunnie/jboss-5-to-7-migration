@@ -1,4 +1,5 @@
-package jpa.message;
+package jpa.util;
+
 
 import org.apache.log4j.Logger;
 import org.htmlparser.Parser;
@@ -52,9 +53,10 @@ public final class HtmlConverter implements java.io.Serializable {
 		sb.setCollapse(false); // true if sequences of whitespace are to be replaced with a single space.
 		sb.setLinks(showUrl); // default is false, true to show URL links
 		sb.setReplaceNonBreakingSpaces(true); // default is true
-		parser.visitAllNodesWith(sb); // TODO: fix it
-		if (logger.isDebugEnabled())
+		parser.visitAllNodesWith(sb);
+		if (logger.isDebugEnabled()) {
 			logger.debug("Html to Plain text conversion completed.");
+		}
 		return sb.getStrings();
 	}
 
@@ -64,5 +66,17 @@ public final class HtmlConverter implements java.io.Serializable {
 
 	public boolean getShowURL() {
 		return showUrl;
+	}
+
+	public static void main(String[] args) {
+		try {
+			// the HTML to convert
+			byte[] bytes = TestUtil.loadFromFile("HtmlSample.html");
+			HtmlConverter parser = HtmlConverter.getInstance();
+			String text = parser.convertToText(new String(bytes));
+			System.out.println(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
