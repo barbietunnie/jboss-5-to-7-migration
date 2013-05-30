@@ -20,7 +20,7 @@ public class HtmlUtil extends LinkedHashMap<String, Boolean> {
 	private Pattern pattern = Pattern.compile("<([a-zA-Z]{1,10}|H[1-6])\\s?(\\.{3})?>");
 	private static boolean debug = false;
 	
-	public HtmlUtil() {
+	private HtmlUtil() {
 		super();
 		InputStream is = getClass().getResourceAsStream(fileName);
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
