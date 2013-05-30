@@ -105,5 +105,6 @@ public class MsgHeaderUtil {
 		
 		List<MsgHeader> list = parseRfc822Headers(rfc822Headers);
 		logger.info(LF+printHeaders(list));
+		logger.info("Number of headers: " + list.size());
 	}
 }
