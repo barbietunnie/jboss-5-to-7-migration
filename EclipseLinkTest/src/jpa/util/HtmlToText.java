@@ -13,12 +13,12 @@ import javax.swing.text.html.parser.ParserDelegator;
 /**
  * Use HTMLEditorKit swing component to convert html text to plain text
  */
-public class Html2Text extends HTMLEditorKit.ParserCallback implements Serializable {
+public class HtmlToText extends HTMLEditorKit.ParserCallback implements Serializable {
 	private static final long serialVersionUID = -8389006976316629513L;
 	private StringBuffer sb;
 	static final String LF = System.getProperty("line.separator", "\n");
 	
-	public Html2Text() {
+	public HtmlToText() {
 	}
 
 	public String parse(Reader in) throws IOException {
@@ -51,7 +51,7 @@ public class Html2Text extends HTMLEditorKit.ParserCallback implements Serializa
 			java.net.URL url = loader.getResource("jpa/test/data/HtmlSample.html");
 			File file = new File(url.getFile());
 			FileReader in = new FileReader(file);
-			Html2Text parser = new Html2Text();
+			HtmlToText parser = new HtmlToText();
 			parser.parse(in);
 			in.close();
 			
