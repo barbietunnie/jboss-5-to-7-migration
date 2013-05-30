@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 import javax.mail.Address;
 
 import jpa.constant.CarrierCode;
+import jpa.util.HtmlConverter;
 
 import org.apache.log4j.Logger;
 import org.htmlparser.util.ParserException;

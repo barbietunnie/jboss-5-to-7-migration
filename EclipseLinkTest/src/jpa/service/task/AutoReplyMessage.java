@@ -9,7 +9,6 @@ import javax.mail.internet.AddressException;
 import jpa.exception.DataValidationException;
 import jpa.exception.TemplateException;
 import jpa.exception.TemplateNotFoundException;
-import jpa.message.HtmlConverter;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
@@ -20,6 +19,7 @@ import jpa.service.msgin.EmailTemplateBo;
 import jpa.service.msgin.TemplateRenderVo;
 import jpa.service.msgout.MailSenderBo;
 import jpa.service.msgout.SmtpException;
+import jpa.util.HtmlConverter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
