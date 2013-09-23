@@ -85,7 +85,7 @@ public final class PropertyRendererTest {
 	}
 
 	private Map<Object, Object> loadVariableMap() {
-		String fileName = "META-INF/eclipselink.mysql.properties";
+		String fileName = "META-INF/msgstore.mysql.properties";
 		return VarReplProperties.loadMyProperties(fileName);
 	}
 }
