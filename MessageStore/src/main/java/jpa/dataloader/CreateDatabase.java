@@ -11,6 +11,8 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
+import jpa.constant.Constants;
+import jpa.util.JpaUtil;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
@@ -42,6 +44,10 @@ public class CreateDatabase {
 	 */
 	public void createDatabase() throws ClassNotFoundException, SQLException {
 		logger.info("createDatabase() - Entering...");
+		if (isDerby()) {
+			logger.info("Running with Derby database, Please run DataLoader instead...");
+			return;
+		}
 		boolean dropDb = false;
 		if (isEmailDatabaseExist()) {
 			if (overrideCurrentDB() == false) {
@@ -151,6 +157,14 @@ public class CreateDatabase {
 		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("initDataSource");
 		Connection con = ds.getConnection("root", rootPassword);
 		return con;
+	}
+
+	private boolean isDerby() {
+		String dbProdName = JpaUtil.getDBProductName();
+		if (Constants.DB_PRODNAME_DERBY.equals(dbProdName)) {
+			return true;
+		}
+		return false;
 	}
 
 	private boolean isEmailDatabaseExist() {
