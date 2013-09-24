@@ -21,11 +21,15 @@ import javax.persistence.Transient;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.MsgDirectionCode;
+import jpa.message.MessageBodyBuilder;
 import jpa.model.BaseModel;
 import jpa.model.EmailAddress;
 import jpa.model.SenderData;
 import jpa.model.SubscriberData;
 import jpa.model.rule.RuleLogic;
+import jpa.service.message.MessageStreamService;
+import jpa.util.SpringUtil;
+import jpa.util.StringUtil;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
@@ -204,6 +208,10 @@ public class MessageInbox extends BaseModel implements Serializable {
 	private String composeToAddress = null;
 	@Transient
 	private int threadLevel = -1; // don't change
+	@Transient
+	private boolean showAllHeaders = false;
+	@Transient
+	private boolean showRawMessage = false;
 	
 	public boolean isReply() {
 		return isReply;
@@ -245,6 +253,68 @@ public class MessageInbox extends BaseModel implements Serializable {
 		this.threadLevel = threadLevel;
 	}
 
+	public boolean isShowAllHeaders() {
+		return showAllHeaders;
+	}
+
+	public void setShowAllHeaders(boolean showAllHeaders) {
+		this.showAllHeaders = showAllHeaders;
+	}
+
+	public boolean isShowRawMessage() {
+		return showRawMessage;
+	}
+
+	public void setShowRawMessage(boolean showRawMessage) {
+		this.showRawMessage = showRawMessage;
+	}
+
+	/**
+	 * Email body is displayed in an HTML TextArea field. So HTML tags need to
+	 * be removed for HTML message, and PRE tags need to be added for plain text
+	 * message.
+	 * 
+	 * <pre>
+	 * check body content type. if text/plain, surround the body text by PRE
+	 * tag. if text/html, remove HTML and BODY tags from email body text.
+	 * otherwise, return the body text unchanged.
+	 * </pre>
+	 * 
+	 * @return body text
+	 */
+	public String getDisplayBody() {
+		if (bodyContentType == null) bodyContentType = "text/plain";
+		if (bodyContentType.toLowerCase().startsWith("text/plain")
+				|| bodyContentType.toLowerCase().startsWith("message")) {
+			return StringUtil.getHtmlDisplayText(msgBody);
+		}
+		else if (bodyContentType.toLowerCase().startsWith("text/html")) {
+			return MessageBodyBuilder.removeHtmlBodyTags(msgBody);
+		}
+		else { // unknown type
+			return msgBody;
+		}
+	}
+
+	/**
+	 * Always surround raw text by PRE tag as it is displayed in an HTML
+	 * TextArea field.
+	 * 
+	 * @return message raw text
+	 */
+	public String getRawMessage() {
+		MessageStreamService msDao = SpringUtil.getAppContext().getBean(MessageStreamService.class);
+		MessageStream vo = msDao.getByMsgInboxId(rowId);
+		if (vo == null || vo.getMsgStream() == null) {
+			// just for safety
+			return getDisplayBody();
+		}
+		else {
+			String txt = new String(vo.getMsgStream());
+			return StringUtil.getHtmlDisplayText(txt);
+		}
+	}
+	
 	/* end of UI */
 
 	public MessageInbox() {
