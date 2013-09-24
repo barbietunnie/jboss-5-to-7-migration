@@ -8,10 +8,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import jpa.constant.Constants;
 import jpa.model.message.MessageClickCount;
 import jpa.msgui.vo.PagingVo;
-import jpa.util.JpaUtil;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,9 +204,9 @@ public class MessageClickCountService {
 			whereSql +
 			" and a.StartTime is not null " +
 			" order by a.Row_Id " + fetchOrder;
-		if (Constants.DB_PRODNAME_MYSQL.equals(JpaUtil.getDBProductName())) {
-			sql += " limit " + vo.getPageSize();
-		}
+		//if (Constants.DB_PRODNAME_MYSQL.equals(JpaUtil.getDBProductName())) {
+		//	sql += " limit " + vo.getPageSize();
+		//}
 		Query query = em.createNativeQuery(sql, MessageClickCount.MAPPING_MSG_CLICK_COUNT_ENTITY);
 		for (int i=0; i<parms.size(); i++) {
 			query.setParameter(i+1, parms.get(i));

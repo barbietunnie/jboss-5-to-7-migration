@@ -364,10 +364,9 @@ public class EmailAddressService {
 				+ whereSql
 				+ " order by a.Address "
 				+ fetchOrder;
-		if (Constants.DB_PRODNAME_MYSQL.equals(JpaUtil.getDBProductName())) {
-				sql += " limit "
-				+ vo.getPageSize();
-		}
+		//if (Constants.DB_PRODNAME_MYSQL.equals(JpaUtil.getDBProductName())) {
+		//		sql += " limit " + vo.getPageSize();
+		//}
 		Query query = em.createNativeQuery(sql, EmailAddress.MAPPING_EMAIL_ADDR_ENTITY);
 		for (int i=0; i<parms.size(); i++) {
 			query.setParameter(i+1, parms.get(i));
