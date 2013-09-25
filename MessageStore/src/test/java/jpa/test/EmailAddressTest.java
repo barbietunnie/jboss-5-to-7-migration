@@ -18,6 +18,7 @@ import jpa.util.StringUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.SqlTimestampConverter;
+import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +34,14 @@ import org.springframework.transaction.annotation.Transactional;
 @TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
 public class EmailAddressTest {
+	static final Logger logger = Logger.getLogger(EmailAddressTest.class);
 
 	@Autowired
 	private EntityManager entityManager;
 
 	@BeforeClass
 	public static void EmailAddrPrepare() {
+		logger.info("########## EmailAddressTest");
 	}
 
 	@Autowired
