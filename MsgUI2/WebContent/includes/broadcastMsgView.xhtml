@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
@@ -11,35 +13,35 @@
 	columnClasses="smtpLabelColumn, smtpTextColumn">
 	
 	<h:outputText value="#{msgs.fromAddressPrompt}" />
-	<h:outputText value="#{broadcastsListBean.broadcastMsg.fromAddress}"/>
+	<h:outputText value="#{broadcastMsg.broadcastMsg.fromAddress}"/>
 
 	<h:outputText value="#{msgs.toAddressPrompt}" />
-	<h:outputText value="#{broadcastsListBean.broadcastMsg.toAddress}"/>
+	<h:outputText value="#{broadcastMsg.broadcastMsg.toAddress}"/>
 
 	<h:outputText value="#{msgs.msgSubjectPrompt}" />
-	<h:outputText value="#{broadcastsListBean.broadcastMsg.msgSubject}" />
+	<h:outputText value="#{broadcastMsg.broadcastMsg.msgSubject}" />
 
 	<h:outputText value="#{msgs.receivedDatePrompt}" />
-	<h:outputText value="#{broadcastsListBean.broadcastMsg.receivedDate}">
+	<h:outputText value="#{broadcastMsg.broadcastMsg.receivedTime}">
 		<f:convertDateTime dateStyle="default"/>
 	</h:outputText>
 
 	<h:outputText value="#{msgs.siteIdPrompt}" 
-		rendered="#{broadcastsListBean.broadcastMsg.clientId != null}" />
-	<h:outputText value="#{broadcastsListBean.broadcastMsg.clientId}" 
-		rendered="#{broadcastsListBean.broadcastMsg.clientId != null}" />
+		rendered="#{broadcastMsg.broadcastMsg.senderData != null}" />
+	<h:outputText value="#{broadcastMsg.broadcastMsg.senderData.senderId}" 
+		rendered="#{broadcastMsg.broadcastMsg.senderData != null}" />
 	
 	<h:outputText value="#{msgs.ruleNamePrompt}" />
-	<h:outputText value="#{broadcastsListBean.broadcastMsg.ruleName}" />
+	<h:outputText value="#{broadcastMsg.broadcastMsg.ruleLogic.ruleName}" />
 
 	<h:outputText value="#{msgs.bodyContentTypePrompt}" />
-	<h:outputText value="#{broadcastsListBean.broadcastMsg.bodyContentType}" />
+	<h:outputText value="#{broadcastMsg.broadcastMsg.bodyContentType}" />
 </h:panelGrid>
 
-<h:dataTable value="#{broadcastsListBean.broadcastMsg.msgHeaders}" var="hdr" 
+<h:dataTable value="#{broadcastMsg.broadcastMsg.messageHeaderList}" var="hdr" 
  			styleClass="smtpHeaders"
  			columnClasses="smtpLabelColumn, smtpTextColumn"
- 			rendered="#{broadcastsListBean.broadcastMsg.showAllHeaders}">
+ 			rendered="#{broadcastMsg.broadcastMsg.showAllHeaders}">
    <h:column>
       <h:outputText value="#{hdr.headerName}:"/>
    </h:column>
@@ -50,19 +52,17 @@
 
 <f:verbatim><br/></f:verbatim>
 <h:panelGrid columns="1" styleClass="smtpBody">
-	<h:outputText value="#{broadcastsListBean.broadcastMsg.displayBody}" escape="false" 
-		rendered="#{not broadcastsListBean.broadcastMsg.showRawMessage}"/>
-	<h:outputText value="#{broadcastsListBean.broadcastMsg.rawMessage}" escape="false" 
-		rendered="#{broadcastsListBean.broadcastMsg.showRawMessage}"/>
+	<h:outputText value="#{broadcastMsg.broadcastMsg.displayBody}" escape="false" 
+		rendered="#{not broadcastMsg.broadcastMsg.showRawMessage}"/>
+	<h:outputText value="#{broadcastMsg.broadcastMsg.rawMessage}" escape="false" 
+		rendered="#{broadcastMsg.broadcastMsg.showRawMessage}"/>
 </h:panelGrid>
 
 <h:panelGrid columns="2"
 	styleClass="commandBar" columnClasses="alignLeft30, alignRight70">
 	<h:panelGroup style="text-align: left;">
 		<h:commandButton value="#{msgs.backButtonText}" title="Go back to List"
-			action="#{broadcastsListBean.cancelEdit}"/>
-	<%-- h:commandButton type="reset" value="#{msgs.backButtonText}"
-			onclick="javascript:history.back()"/ --%>
+			action="#{broadcastMsg.cancelEdit}"/>
 	</h:panelGroup>
 	<h:panelGroup style="text-align: right;">
 		<f:verbatim>&nbsp;</f:verbatim>
