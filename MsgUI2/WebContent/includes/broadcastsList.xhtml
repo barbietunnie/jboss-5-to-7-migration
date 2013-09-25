@@ -1,13 +1,18 @@
-<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
-<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
-
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
 <h:outputFormat value="#{msgs.broadcastsListLabel}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable binding="#{broadcastsListBean.dataTable}" 
-   value="#{broadcastsListBean.broadcasts}" var="list" 
-   rows="#{broadcastsListBean.pagingVo.pageSize}"
+<h:dataTable binding="#{broadcastMsg.dataTable}" 
+   value="#{broadcastMsg.broadcasts}" var="list" 
+   rows="#{broadcastMsg.pagingVo.pageSize}"
    styleClass="jsfDataTable" rowClasses="oddRows, evenRows"
    headerClass="dataTableHeader" footerClass="dataTableFooter">
    
@@ -22,7 +27,7 @@
       <f:facet name="header">
          <h:outputText value="#{msgs.timeStartedHeader}"/>
       </f:facet>
-      <h:commandLink action="#{broadcastsListBean.viewBroadcastMsg}">
+      <h:commandLink action="#{broadcastMsg.viewBroadcastMsg}">
 	      <h:outputText value="#{list.startTime}" title="Click to view broadcast message">
 	      	<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"/>
 	      </h:outputText>
@@ -97,27 +102,27 @@
 			<f:verbatim>&nbsp;</f:verbatim>
 		</h:panelGroup>
 		<h:panelGroup>
-          	<h:outputText value="#{broadcastsListBean.dataTable.first + 1}"
+          	<h:outputText value="#{broadcastMsg.dataTable.first + 1}"
           		style="font-weight: bold;"/>
           	<h:outputText value=" - "/>
-			<h:outputText value="#{broadcastsListBean.lastPageRow}"
+			<h:outputText value="#{broadcastMsg.lastPageRow}"
 				style="font-weight: bold;" />
-			<h:outputText value=" of #{broadcastsListBean.dataTable.rowCount}" 
+			<h:outputText value=" of #{broadcastMsg.dataTable.rowCount}" 
           		style="font-weight: bold;"/>
           	<f:verbatim>&nbsp;&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.firstLinkText}" action="#{broadcastsListBean.pageFirst}"
-                disabled="#{broadcastsListBean.dataTable.first == 0}" />
+            <h:commandLink value="#{msgs.firstLinkText}" action="#{broadcastMsg.pageFirst}"
+                disabled="#{broadcastMsg.dataTable.first == 0}" />
             <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.prevLinkText}" action="#{broadcastsListBean.pagePrevious}"
-                disabled="#{broadcastsListBean.dataTable.first == 0}" />
+            <h:commandLink value="#{msgs.prevLinkText}" action="#{broadcastMsg.pagePrevious}"
+                disabled="#{broadcastMsg.dataTable.first == 0}" />
             <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.nextLinkText}" action="#{broadcastsListBean.pageNext}"
-                disabled="#{broadcastsListBean.dataTable.first + broadcastsListBean.dataTable.rows
-                    >= broadcastsListBean.dataTable.rowCount}" />
+            <h:commandLink value="#{msgs.nextLinkText}" action="#{broadcastMsg.pageNext}"
+                disabled="#{broadcastMsg.dataTable.first + broadcastMsg.dataTable.rows
+                    >= broadcastMsg.dataTable.rowCount}" />
             <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.lastLinkText}" action="#{broadcastsListBean.pageLast}"
-                disabled="#{broadcastsListBean.dataTable.first + broadcastsListBean.dataTable.rows
-                    >= broadcastsListBean.dataTable.rowCount}" />
+            <h:commandLink value="#{msgs.lastLinkText}" action="#{broadcastMsg.pageLast}"
+                disabled="#{broadcastMsg.dataTable.first + broadcastMsg.dataTable.rows
+                    >= broadcastMsg.dataTable.rowCount}" />
         </h:panelGroup>
     </h:panelGrid>
     </h:panelGroup>
@@ -128,21 +133,22 @@
 	columnClasses="alignLeft70, alignRight30">
 	<h:panelGroup>
 		<h:commandButton value="#{msgs.deleteButtonText}"
-			title="Delete selected rows" action="#{broadcastsListBean.deleteBroadcasts}"
-			disabled="#{not broadcastsListBean.anyBroadcastsMarkedForDeletion}"
+			title="Delete selected rows" action="#{broadcastMsg.deleteBroadcasts}"
+			disabled="#{not broadcastMsg.anyBroadcastsMarkedForDeletion}"
 			onclick="javascript:return confirmDelete();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.saveSelectedButtonText}"
-			title="Delete selected rows" action="#{broadcastsListBean.saveBroadcasts}"
-			disabled="#{not broadcastsListBean.anyBroadcastsMarkedForDeletion}"
+			title="Delete selected rows" action="#{broadcastMsg.saveBroadcasts}"
+			disabled="#{not broadcastMsg.anyBroadcastsMarkedForDeletion}"
 			onclick="javascript:return confirmSubmit();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshLinkText}"
-			title="Refresh from database" action="#{broadcastsListBean.refreshPage}" />
+			title="Refresh from database" action="#{broadcastMsg.refreshPage}" />
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.backButtonText}" action="#{broadcastsListBean.cancelEdit}"/>
+		<h:commandButton value="#{msgs.backButtonText}" action="#{broadcastMsg.cancelEdit}"/>
 	</h:panelGroup>
 	<h:panelGroup>
 		<f:verbatim>&nbsp;</f:verbatim>
 	</h:panelGroup>
 </h:panelGrid>
+</html>
