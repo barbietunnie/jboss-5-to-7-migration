@@ -31,7 +31,7 @@ import jpa.util.SsnNumberUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-@ManagedBean(name="subscriber")
+@ManagedBean(name="subscriberData")
 @SessionScoped
 public class SubscriberDataBean implements java.io.Serializable {
 	private static final long serialVersionUID = 7927665483948452101L;
