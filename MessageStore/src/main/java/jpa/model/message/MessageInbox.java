@@ -27,8 +27,6 @@ import jpa.model.EmailAddress;
 import jpa.model.SenderData;
 import jpa.model.SubscriberData;
 import jpa.model.rule.RuleLogic;
-import jpa.service.message.MessageStreamService;
-import jpa.util.SpringUtil;
 import jpa.util.StringUtil;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -303,14 +301,12 @@ public class MessageInbox extends BaseModel implements Serializable {
 	 * @return message raw text
 	 */
 	public String getRawMessage() {
-		MessageStreamService msDao = SpringUtil.getAppContext().getBean(MessageStreamService.class);
-		MessageStream vo = msDao.getByMsgInboxId(rowId);
-		if (vo == null || vo.getMsgStream() == null) {
+		if (messageStream == null) {
 			// just for safety
 			return getDisplayBody();
 		}
 		else {
-			String txt = new String(vo.getMsgStream());
+			String txt = new String(messageStream.getMsgStream());
 			return StringUtil.getHtmlDisplayText(txt);
 		}
 	}
