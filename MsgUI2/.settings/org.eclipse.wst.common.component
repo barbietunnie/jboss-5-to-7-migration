@@ -3,9 +3,6 @@
     <wb-module deploy-name="MsgUI2">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module archiveName="EclipseLinkTest.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/EclipseLinkTest/EclipseLinkTest">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="derby.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/EclipseLinkTest/lib/derby.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
@@ -22,6 +19,9 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="commons-pool-1.6.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/EclipseLinkTest/lib/commons-pool-1.6.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="message-store-1.0.0-SNAPSHOT-jar-with-dependencies.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/MessageStore/target/message-store-1.0.0-SNAPSHOT-jar-with-dependencies.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="MsgUI2"/>
