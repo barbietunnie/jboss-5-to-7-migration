@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import jpa.constant.RuleCategory;
@@ -24,8 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class RuleLogicService {
 	static Logger logger = Logger.getLogger(RuleLogicService.class);
 	
-	@PersistenceContext(unitName="MessageDB")
-	//@Autowired
+	//@PersistenceContext(unitName="MessageDB")
+	@Autowired
 	EntityManager em;
 	
 	@Autowired
