@@ -35,6 +35,7 @@ public class DataLoader {
 		new MessageInboxLoader().loadData();
 		new MobileCarrierLoader().loadData();
 		new MessageRenderedLoader().loadData();
+		new MessageClickCountLoader().loadData();
 		new MailInboxLoader().loadData();
 		new SmtpServerLoader().loadData();
 	}
