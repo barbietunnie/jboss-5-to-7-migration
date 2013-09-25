@@ -44,7 +44,7 @@ public class TestRunner {
 		}
 		catch (Exception e) {
 			logger.warn("Failed to load classes from (" + homeDir + ")!");
-			homeDir = System.getProperty("user.dir") + PS + "target" + PS + "classes" + PS;
+			homeDir = System.getProperty("user.dir") + PS + "target" + PS + "test-classes" + PS;
 			logger.warn("Trying loading from (" + homeDir + ")...");
 			files = getClassesFromDirTree(new File(homeDir), "Test.class");
 		}
@@ -57,7 +57,7 @@ public class TestRunner {
 				clsName = StringUtils.removeEnd(clsName,".class");
 				Class<?> testCls = loader.loadClass(clsName);
 				if (clsName.startsWith(pkgName) && testCls.getDeclaredAnnotations().length>=4) {
-					if (clsName.startsWith("com.legacytojava.message.bo.test")) {
+					if (clsName.contains("bo.test")) {
 						continue;
 					}
 					clsList.add(testCls);
