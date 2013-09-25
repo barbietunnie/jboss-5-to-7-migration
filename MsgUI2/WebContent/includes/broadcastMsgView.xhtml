@@ -13,10 +13,10 @@
 	columnClasses="smtpLabelColumn, smtpTextColumn">
 	
 	<h:outputText value="#{msgs.fromAddressPrompt}" />
-	<h:outputText value="#{broadcastMsg.broadcastMsg.fromAddress}"/>
+	<h:outputText value="#{emailAddress.findAddressByRowId(broadcastMsg.broadcastMsg.fromAddrRowId)}"/>
 
 	<h:outputText value="#{msgs.toAddressPrompt}" />
-	<h:outputText value="#{broadcastMsg.broadcastMsg.toAddress}"/>
+	<h:outputText value="#{emailAddress.findAddressByRowId(broadcastMsg.broadcastMsg.toAddrRowId)}"/>
 
 	<h:outputText value="#{msgs.msgSubjectPrompt}" />
 	<h:outputText value="#{broadcastMsg.broadcastMsg.msgSubject}" />
@@ -32,7 +32,7 @@
 		rendered="#{broadcastMsg.broadcastMsg.senderData != null}" />
 	
 	<h:outputText value="#{msgs.ruleNamePrompt}" />
-	<h:outputText value="#{broadcastMsg.broadcastMsg.ruleLogic.ruleName}" />
+	<h:outputText value="#{ruleLogic.findRuleNameByRowId(broadcastMsg.broadcastMsg.ruleLogicRowId)}" />
 
 	<h:outputText value="#{msgs.bodyContentTypePrompt}" />
 	<h:outputText value="#{broadcastMsg.broadcastMsg.bodyContentType}" />

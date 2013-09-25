@@ -3,25 +3,7 @@
     <wb-module deploy-name="MsgUI2">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module archiveName="derby.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/EclipseLinkTest/lib/derby.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="cglib-nodep-2.2.2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/EclipseLinkTest/lib/cglib/cglib-nodep-2.2.2.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="eclipselink.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/EclipseLinkTest/lib/eclipselink.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="mysql-connector-java-5.1.22-bin.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/EclipseLinkTest/lib/mysql-connector-java-5.1.22-bin.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="commons-dbcp-1.4.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/EclipseLinkTest/lib/commons-dbcp-1.4.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="commons-pool-1.6.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/EclipseLinkTest/lib/commons-pool-1.6.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="message-store-1.0.0-SNAPSHOT-jar-with-dependencies.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/MessageStore/target/message-store-1.0.0-SNAPSHOT-jar-with-dependencies.jar">
+        <dependent-module archiveName="message-store-1.0.0-SNAPSHOT-jar-with-dependencies.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/pra/eclipse/pkgs_as71/workspace/MessageStore/target/message-store-1.0.0-SNAPSHOT-jar-with-dependencies.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="MsgUI2"/>

@@ -125,6 +125,19 @@ public class RuleLogicBean implements java.io.Serializable {
 		}
 		return ruleLogics;
 	}
+	
+	/*
+	 * Use String signature for rowId to support JSF script.
+	 */
+	public String findRuleNameByRowId(String rowId) {
+		try {
+			RuleLogic rl = getRuleLogicService().getByRowId(Integer.parseInt(rowId));
+			return rl.getRuleName();
+		}
+		catch (NoResultException e) {
+			return "";
+		}
+	}
 
 	public String refresh() {
 		ruleLogics = null;
