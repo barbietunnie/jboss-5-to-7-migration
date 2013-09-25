@@ -48,7 +48,7 @@ public class TaskSchedulerBo {
 		
 		MessageBean msgBean = ctx.getMessageBean();
 		RuleActionService ruleActionDao = (RuleActionService) SpringUtil.getAppContext().getBean("ruleActionService");
-		List<RuleAction> actions = ruleActionDao.getByBestMatch(msgBean.getRuleName(), null,	msgBean.getSenderId());
+		List<RuleAction> actions = ruleActionDao.getByBestMatch(msgBean.getRuleName(), null, msgBean.getSenderId());
 		if (actions == null || actions.isEmpty()) {
 			// actions not defined, save the message.
 			String processBeanId = "saveMessage";
