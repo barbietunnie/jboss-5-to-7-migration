@@ -87,7 +87,7 @@ public class IdTokens2Test {
 		}
 	}
 
-	@Ignore
+	@Ignore // ignored due to dead lock when running pom test using derby.
 	public void idTokensService1() {
 		IdTokensService service = (IdTokensService) SpringUtil.getAppContext().getBean("idTokensService");
 		SenderDataService cdService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");;
