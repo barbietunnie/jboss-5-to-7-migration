@@ -1,5 +1,6 @@
 package jpa.service;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -16,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("userDataService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class UserDataService {
+public class UserDataService implements Serializable {
+	private static final long serialVersionUID = 6193420138194185032L;
+
 	static Logger logger = Logger.getLogger(UserDataService.class);
 	
 	@Autowired

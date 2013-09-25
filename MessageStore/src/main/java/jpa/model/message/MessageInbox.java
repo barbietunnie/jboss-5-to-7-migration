@@ -207,7 +207,7 @@ public class MessageInbox extends BaseModel implements Serializable {
 	@Transient
 	private int threadLevel = -1; // don't change
 	@Transient
-	private boolean showAllHeaders = false;
+	private boolean showAllHeaders = true;
 	@Transient
 	private boolean showRawMessage = false;
 	

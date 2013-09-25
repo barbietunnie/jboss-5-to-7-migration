@@ -55,6 +55,21 @@ public class MessageClickCountService {
 		}
 	}
 
+	public MessageClickCount getLastRecord() throws NoResultException {
+		String sql = 
+				"select t.* " +
+				"from " +
+					"Message_Click_Count t " +
+				" where t.Row_Id = (select max(t2.Row_Id) from Message_Click_Count t2) ";
+		try {
+			Query query = em.createNativeQuery(sql, MessageClickCount.MAPPING_MSG_CLICK_COUNT_ENTITY);
+			MessageClickCount record = (MessageClickCount) query.getSingleResult();
+			return record;
+		}
+		finally {
+		}
+	}
+
 	public void delete(MessageClickCount clickCount) {
 		if (clickCount == null) return;
 		try {
