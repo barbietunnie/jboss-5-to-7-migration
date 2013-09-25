@@ -67,5 +67,29 @@
 			<to-view-id>/ruleActionEdit.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<display-name>broadcastsList.xhtml</display-name>
+		<from-view-id>/broadcastsList.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>broadcastlist.view</from-outcome>
+			<to-view-id>/broadcastMsgView.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>broadcastMsgView.xhtml</display-name>
+		<from-view-id>/broadcastMsgView.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>broadcastlist.canceled</from-outcome>
+			<to-view-id>/broadcastsList.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>broadcastsList.xhtml</display-name>
+		<from-view-id>/broadcastsList.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>broadcastlist.canceled</from-outcome>
+			<to-view-id>/main.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>

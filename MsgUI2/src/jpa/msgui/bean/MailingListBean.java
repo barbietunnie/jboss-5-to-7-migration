@@ -18,6 +18,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
+import javax.persistence.NoResultException;
 
 import jpa.model.MailingList;
 import jpa.msgui.util.FacesUtil;
@@ -79,6 +80,19 @@ public class MailingListBean implements java.io.Serializable {
 		this.mailingListDao = mailingListDao;
 	}
 	
+	/*
+	 * Use String signature for rowId to support JSF script.
+	 */
+	public String findListIdByRowId(String rowId) {
+		try {
+			MailingList mlist = getMailingListService().getByRowId(Integer.parseInt(rowId));
+			return mlist.getListId();
+		}
+		catch (NoResultException e) {
+			return "";
+		}
+	}
+
 	public String viewMailingList() {
 		if (isDebugEnabled)
 			logger.debug("viewMailingList() - Entering...");

@@ -13,6 +13,7 @@ import javax.faces.component.html.HtmlDataTable;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.validator.ValidatorException;
+import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
 import jpa.model.EmailAddress;
@@ -90,6 +91,19 @@ public class EmailAddressBean implements java.io.Serializable {
 			emailAddrs = new PagedListDataModel(emailAddrList, pagingVo.getRowCount(), pagingVo.getPageSize());
 		}
 		return emailAddrs;
+	}
+
+	/*
+	 * Use String signature for rowId to support JSF script.
+	 */
+	public String findAddressByRowId(String rowId) {
+		try {
+			EmailAddress addr = getEmailAddressService().getByRowId(Integer.parseInt(rowId));
+			return addr.getAddress();
+		}
+		catch (NoResultException e) {
+			return "";
+		}
 	}
 
 	public String searchByAddress() {

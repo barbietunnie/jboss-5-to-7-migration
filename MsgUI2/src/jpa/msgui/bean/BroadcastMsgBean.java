@@ -10,6 +10,7 @@ import javax.faces.component.html.HtmlDataTable;
 import javax.faces.model.DataModel;
 
 import jpa.model.message.MessageClickCount;
+import jpa.model.message.MessageHeader;
 import jpa.model.message.MessageInbox;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
@@ -176,12 +177,28 @@ public class BroadcastMsgBean implements java.io.Serializable {
 		this.broadcast = broadcasts.getRowData();
 		logger.info("viewBroadcastMsg() - Broadcast to be viewed: " + broadcast.getMessageInbox().getRowId());
 		broadcast.setMarkedForEdition(true);
+		broadcast.getMessageInbox().setShowAllHeaders(true);
 		editMode = true;
 		broadcastMsg = broadcast.getMessageInbox();
 		if (isDebugEnabled) {
 			logger.debug("viewBroadcastMsg() - MessageClickCount to be passed to jsp: " + broadcast);
 		}
 		return TO_VIEW;
+	}
+
+	public DataModel<MessageHeader> getMsgHeaderList() {
+		if (broadcasts == null) {
+			logger.warn("getMsgHeaderList() - Broadcast List is null!");
+			return null;
+		}
+		if (broadcastMsg == null) {
+			logger.warn("getMsgHeaderList() - BroadcastMsg is not available!");
+			return null;
+		}
+		List<MessageHeader> headerList = broadcastMsg.getMessageHeaderList();
+		@SuppressWarnings("unchecked")
+		DataModel<MessageHeader> dm = new PagedListDataModel(headerList, headerList.size(), Math.max(1, headerList.size()+1));
+		return dm;
 	}
 
 	public String deleteBroadcasts() {

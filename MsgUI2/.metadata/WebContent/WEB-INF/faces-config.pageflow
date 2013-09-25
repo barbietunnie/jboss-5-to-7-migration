@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" name="unnamed" comment="" id="pf13678507194990" configfile="/MsgUI2/WebContent/WEB-INF/faces-config.xml">
-  <nodes xsi:type="pageflow:PFPage" name="login" id="pf13685573340030" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf13685573340031 pf13685573340032" path="/login.xhtml"/>
-  <nodes xsi:type="pageflow:PFPage" name="main.xhtml" x="108" y="113" id="pf13685573340033" referenceLink="//@navigationRule.0/@navigationCase.0/@toViewId|" inlinks="pf13685573340031" path="/main.xhtml"/>
-  <nodes xsi:type="pageflow:PFPage" name="welcome.xhtml" x="240" y="48" id="pf13685573340044" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" inlinks="pf13685573340032" path="/welcome.xhtml"/>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" comment="" id="pf13678507194990" configfile="/MsgUI2/WebContent/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="login" y="65" id="pf13685573340030" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf13685573340031 pf13685573340032" path="/login.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="main.xhtml" x="108" y="199" id="pf13685573340033" referenceLink="//@navigationRule.0/@navigationCase.0/@toViewId|" inlinks="pf13685573340031 pf13801359414054" path="/main.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="welcome.xhtml" x="204" y="96" id="pf13685573340044" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" inlinks="pf13685573340032" path="/welcome.xhtml"/>
   <nodes xsi:type="pageflow:PFPage" name="ruleActionBuiltinEdit.xhtml" x="252" y="288" id="pf136872954484910" referenceLink="//@navigationRule.1/@fromViewId|" outlinks="pf13687306761182 pf13687307452693" path="/ruleActionBuiltinEdit.xhtml"/>
-  <nodes xsi:type="pageflow:PFPage" name="customizeBuiltinRules.xhtml" x="562" y="372" id="pf136872954484911" referenceLink="//@navigationRule.1/@navigationCase.0/@toViewId|" inlinks="pf13687306761182 pf13687307452693" path="/customizeBuiltinRules.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="customizeBuiltinRules.xhtml" x="562" y="372" id="pf136872954484911" referenceLink="//@navigationRule.1/@navigationCase.1/@toViewId|" inlinks="pf13687306761182 pf13687307452693" path="/customizeBuiltinRules.xhtml"/>
   <nodes xsi:type="pageflow:PFPage" name="configureCustomRules.xhtml" x="435" y="34" id="pf13687329264094" referenceLink="//@navigationRule.2/@fromViewId|" outlinks="pf13687329264095 pf136873311744111 pf136873311744112 pf136873490824417" path="/configureCustomRules.xhtml"/>
-  <nodes xsi:type="pageflow:PFPage" name="ruleLogicEdit.xhtml" x="567" y="192" id="pf13687329264098" inlinks="pf13687329264095" path="/ruleLogicEdit.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="ruleLogicEdit.xhtml" x="567" y="192" id="pf13687329264098" referenceLink="//@navigationRule.2/@navigationCase.0/@toViewId|" inlinks="pf13687329264095" path="/ruleLogicEdit.xhtml"/>
   <nodes xsi:type="pageflow:PFPage" name="ruleElementEdit.xhtml" x="300" y="168" id="pf136873311744113" referenceLink="//@navigationRule.2/@navigationCase.1/@toViewId|" inlinks="pf136873311744111" path="/ruleElementEdit.xhtml"/>
   <nodes xsi:type="pageflow:PFPage" name="ruleSubruleEdit.xhtml" x="420" y="192" id="pf136873311744114" referenceLink="//@navigationRule.2/@navigationCase.2/@toViewId|" inlinks="pf136873311744112" path="/ruleSubruleEdit.xhtml"/>
-  <nodes xsi:type="pageflow:PFPage" name="ruleActionEdit.xhtml" id="pf136873490824518" referenceLink="//@navigationRule.2/@navigationCase.3/@toViewId|" inlinks="pf136873490824417" path="/ruleActionEdit.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="ruleActionEdit.xhtml" x="167" id="pf136873490824518" referenceLink="//@navigationRule.2/@navigationCase.3/@toViewId|" inlinks="pf136873490824417" path="/ruleActionEdit.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="broadcastsList.xhtml" x="744" y="72" id="pf13801335073390" referenceLink="//@navigationRule.3/@fromViewId|" outlinks="pf13801335073391 pf13801359414054" inlinks="pf13801357774683" path="/broadcastsList.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="broadcastMsgView.xhtml" x="710" y="264" id="pf13801335073392" referenceLink="//@navigationRule.3/@navigationCase.0/@toViewId|" outlinks="pf13801357774683" inlinks="pf13801335073391" path="/broadcastMsgView.xhtml"/>
   <links id="pf13685573340031" target="pf13685573340033" source="pf13685573340030" outcome="admin" redirect="true"/>
   <links id="pf13685573340032" target="pf13685573340044" source="pf13685573340030" outcome="user"/>
-  <links id="pf13687306761182" target="pf136872954484911" source="pf136872954484910" outcome="save"/>
-  <links id="pf13687307452693" target="pf136872954484911" source="pf136872954484910" outcome="cancel"/>
+  <links id="pf13687306761182" target="pf136872954484911" source="pf136872954484910" outcome="cancel"/>
+  <links id="pf13687307452693" target="pf136872954484911" source="pf136872954484910" outcome="save"/>
   <links id="pf13687329264095" target="pf13687329264098" source="pf13687329264094" outcome="edit_logic"/>
   <links id="pf136873311744111" target="pf136873311744113" source="pf13687329264094" outcome="edit_element"/>
   <links id="pf136873311744112" target="pf136873311744114" source="pf13687329264094" outcome="edit_subrule"/>
   <links id="pf136873490824417" target="pf136873490824518" source="pf13687329264094" outcome="edit_action"/>
+  <links id="pf13801335073391" target="pf13801335073392" source="pf13801335073390" outcome="broadcastlist.view"/>
+  <links id="pf13801357774683" target="pf13801335073390" source="pf13801335073392" outcome="broadcastlist.canceled">
+    <bendPoints d1Width="112" d1Height="-30" d2Width="90" d2Height="162"/>
+  </links>
+  <links id="pf13801359414054" target="pf13685573340033" source="pf13801335073390" outcome="broadcastlist.canceled"/>
 </pageflow:Pageflow>
