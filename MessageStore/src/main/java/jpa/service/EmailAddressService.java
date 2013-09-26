@@ -28,7 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("emailAddressService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class EmailAddressService {
+public class EmailAddressService implements java.io.Serializable {
+	private static final long serialVersionUID = 4726327397885138151L;
+
 	static Logger logger = Logger.getLogger(EmailAddressService.class);
 	
 	@Autowired

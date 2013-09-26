@@ -71,6 +71,7 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 
 	public MailingList() {
 		// must have a no-argument constructor
+		createTime = new Timestamp(System.currentTimeMillis());
 	}
 
 	/** define components for UI */
