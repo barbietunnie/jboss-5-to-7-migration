@@ -26,7 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("subscriberDataService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class SubscriberDataService {
+public class SubscriberDataService implements java.io.Serializable {
+	private static final long serialVersionUID = 744183660636136777L;
+
 	static Logger logger = Logger.getLogger(SubscriberDataService.class);
 	
 	@Autowired

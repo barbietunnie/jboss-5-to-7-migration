@@ -19,7 +19,9 @@ import jpa.model.SenderVariablePK;
 
 @Component("senderVariableService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class SenderVariableService {
+public class SenderVariableService implements java.io.Serializable {
+	private static final long serialVersionUID = -2936730931671540437L;
+
 	static Logger logger = Logger.getLogger(SenderVariableService.class);
 	
 	@Autowired

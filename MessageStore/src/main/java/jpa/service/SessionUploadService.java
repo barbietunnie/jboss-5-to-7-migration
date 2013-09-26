@@ -19,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("sessionUploadService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class SessionUploadService {
+public class SessionUploadService implements java.io.Serializable {
+	private static final long serialVersionUID = -2378096938090291686L;
+
 	static Logger logger = Logger.getLogger(SessionUploadService.class);
 	
 	@Autowired

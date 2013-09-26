@@ -16,7 +16,9 @@ import jpa.model.ReloadFlags;
 
 @Component("reloadFlagsService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class ReloadFlagsService {
+public class ReloadFlagsService implements java.io.Serializable {
+	private static final long serialVersionUID = -5202558657747103262L;
+
 	static Logger logger = Logger.getLogger(ReloadFlagsService.class);
 	
 	@Autowired
