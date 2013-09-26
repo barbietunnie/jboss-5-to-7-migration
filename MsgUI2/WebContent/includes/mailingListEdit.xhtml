@@ -17,7 +17,7 @@
 		<h:inputText id="listid" value="#{mailingList.mailingList.listId}"
 			required="true" binding="#{mailingList.listIdInput}" 
 			label="#{msgs.listIdPrompt}" maxlength="8" size="10"
-			disabled="#{mailingList.mailingList.isBuiltin}"
+			disabled="#{mailingList.mailingList.builtin}"
 			validator="#{mailingList.validatePrimaryKey}">
 			<f:validateLength minimum="1" maximum="8"/>
 		</h:inputText>
@@ -93,10 +93,10 @@
 		</h:panelGroup>
 	</h:panelGrid>
 	<f:verbatim><p/></f:verbatim>
-	<%  // always disable the next panel regardless the value of "editMode"
-		boolean renderNextPanel = false; %>
+	<!-- always disable the next panel regardless the value of "editMode" -->
+	<ui:param name="renderNextPanel" value="false"/>
 	<h:panelGrid columns="1" styleClass="editPaneHeader"
-		rendered="#{mailingList.editMode && renderNextPanel}">
+		rendered="#{mailingList.editMode and renderNextPanel}">
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:outputText value="#{msgs.uploadEmailAddrsToList}" 
 			style="color: blue; font-size: 1.4em;"/>

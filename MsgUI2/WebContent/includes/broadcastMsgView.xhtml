@@ -38,10 +38,10 @@
 	<h:outputText value="#{broadcastMsg.broadcastMsg.bodyContentType}" />
 </h:panelGrid>
 
-<h:dataTable value="#{broadcastMsg.broadcastMsg.messageHeaderList}" var="hdr" 
+<h:dataTable value="#{broadcastMsg.msgHeaderList}" var="hdr" 
  			styleClass="smtpHeaders"
  			columnClasses="smtpLabelColumn, smtpTextColumn"
- 			rendered="#{broadcastMsg.broadcastMsg.showAllHeaders}">
+ 			rendered="#{broadcastMsg.broadcastMsg.showAllHeaders and (broadcastMsg.msgHeaderList !=null and broadcastMsg.msgHeaderList.rowCount > 0)}">
    <h:column>
       <h:outputText value="#{hdr.headerName}:"/>
    </h:column>
