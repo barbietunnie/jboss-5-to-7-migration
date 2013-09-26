@@ -182,6 +182,7 @@ public class MailingListService {
 	public void insert(MailingList mailingList) {
 		try {
 			em.persist(mailingList);
+			em.flush();
 		}
 		finally {
 		}
