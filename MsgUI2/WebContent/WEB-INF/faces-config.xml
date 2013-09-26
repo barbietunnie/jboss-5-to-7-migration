@@ -68,27 +68,35 @@
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<display-name>broadcastsList.xhtml</display-name>
-		<from-view-id>/broadcastsList.xhtml</from-view-id>
+		<display-name>ruleLogicEdit.xhtml</display-name>
+		<from-view-id>/ruleLogicEdit.xhtml</from-view-id>
 		<navigation-case>
-			<from-outcome>broadcastlist.view</from-outcome>
-			<to-view-id>/broadcastMsgView.xhtml</to-view-id>
+			<from-outcome>cancel</from-outcome>
+			<to-view-id>/configureCustomRules.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<display-name>broadcastMsgView.xhtml</display-name>
-		<from-view-id>/broadcastMsgView.xhtml</from-view-id>
+		<display-name>ruleSubruleEdit.xhtml</display-name>
+		<from-view-id>/ruleSubruleEdit.xhtml</from-view-id>
 		<navigation-case>
-			<from-outcome>broadcastlist.canceled</from-outcome>
-			<to-view-id>/broadcastsList.xhtml</to-view-id>
+			<from-outcome>cancel</from-outcome>
+			<to-view-id>/configureCustomRules.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<display-name>broadcastsList.xhtml</display-name>
-		<from-view-id>/broadcastsList.xhtml</from-view-id>
+		<display-name>ruleElementEdit.xhtml</display-name>
+		<from-view-id>/ruleElementEdit.xhtml</from-view-id>
 		<navigation-case>
-			<from-outcome>broadcastlist.canceled</from-outcome>
-			<to-view-id>/main.xhtml</to-view-id>
+			<from-outcome>cancel</from-outcome>
+			<to-view-id>/configureCustomRules.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>ruleActionEdit.xhtml</display-name>
+		<from-view-id>/ruleActionEdit.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>cancel</from-outcome>
+			<to-view-id>/configureCustomRules.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

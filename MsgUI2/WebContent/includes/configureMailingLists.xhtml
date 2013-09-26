@@ -19,7 +19,7 @@
          <h:outputText value="#{msgs.deleteColumnHeader}"/>
       </f:facet>
       <h:selectBooleanCheckbox value="#{list.markedForDeletion}" 
-         disabled="#{not list.editable or list.isBuiltInList}" onchange="submit()"/>
+         disabled="#{not list.editable or list.builtin}" onchange="submit()"/>
    </h:column>
    <h:column>
       <f:facet name="header">
@@ -43,7 +43,7 @@
          <h:outputText value="#{msgs.emailAddrHeader}"/>
       </f:facet>
       <div class="cellHeight">
-      <h:outputText value="#{list.emailAddr}"/>
+      <h:outputText value="#{list.listEmailAddr}"/>
       </div>
    </h:column>
    <h:column>
@@ -62,7 +62,7 @@
       <f:facet name="header">
          <h:outputText value="#{msgs.subscriptionsHeader}"/>
       </f:facet>
-      <h:outputLink value="subscribersList.faces" styleClass="cellLink">
+      <h:outputLink value="subscriptions.xhtml" styleClass="cellLink">
 		<h:outputText value="View list" title="Click to View"/>
       	<f:param name="listId" value="#{list.listId}"/>
 	  </h:outputLink>

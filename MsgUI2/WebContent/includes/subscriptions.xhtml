@@ -10,9 +10,9 @@
 <h:outputFormat value="#{msgs.subscriptionsListLabel}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable binding="#{subscriberData.dataTable}" 
-   value="#{subscriberData.subscribers}" var="list" 
-   rows="#{subscriberData.pagingVo.pageSize}"
+<h:dataTable binding="#{subscription.dataTable}" 
+   value="#{subscription.subscriptions}" var="list" 
+   rows="#{subscription.pagingVo.pageSize}"
    styleClass="jsfDataTable" rowClasses="oddRows, evenRows"
    headerClass="dataTableHeader" footerClass="dataTableFooter">
    
@@ -50,9 +50,7 @@
       <f:facet name="header">
          <h:outputText value="#{msgs.acceptHtmlHeader}"/>
       </f:facet>
-		<h:selectOneMenu value="#{list.acceptHtml}">
-			<f:selectItems value="#{codes.yorNItems}"/>
-		</h:selectOneMenu>
+		<h:outputText value="#{list.acceptHtmlDesc}"/>
    </h:column>
    <h:column>
       <f:facet name="header">
@@ -92,44 +90,44 @@
       <f:facet name="header">
          <h:outputText value="#{msgs.subscriberNameHeader}"/>
       </f:facet>
-	  <h:outputText value="#{list.customerName}"/>
+	  <h:outputText value="#{list.subscriberName}"/>
    </h:column>
 	<f:facet name="footer">
     <h:panelGroup>
 	<h:panelGrid columns="2" styleClass="fullWidth"
 		columnClasses="alignLeft50, alignRight50">
 		<h:panelGroup>
-			<h:inputText value="#{subscriberData.searchString}" size="40"
+			<h:inputText value="#{subscription.searchString}" size="40"
 				maxlength="100"/>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton value="#{msgs.searchByEmailButtonText}" title="Search"
-				action="#{subscriberData.searchByAddress}" />
+				action="#{subscription.searchByAddress}" />
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton value="#{msgs.resetButtonText}" title="Reset"
-				action="#{subscriberData.resetSearch}" />
+				action="#{subscription.resetSearch}" />
 		</h:panelGroup>
 		<h:panelGroup>
-          	<h:outputText value="#{subscriberData.dataTable.first + 1}"
+          	<h:outputText value="#{subscription.dataTable.first + 1}"
           		style="font-weight: bold;"/>
           	<h:outputText value=" - "/>
-			<h:outputText value="#{subscriberData.lastPageRow}"
+			<h:outputText value="#{subscription.lastPageRow}"
 				style="font-weight: bold;" />
-			<h:outputText value=" of #{subscriberData.dataTable.rowCount}" 
+			<h:outputText value=" of #{subscription.dataTable.rowCount}" 
           		style="font-weight: bold;"/>
           	<f:verbatim>&nbsp;&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.firstLinkText}" action="#{subscriberData.pageFirst}"
-                disabled="#{subscriberData.dataTable.first == 0}" />
+            <h:commandLink value="#{msgs.firstLinkText}" action="#{subscription.pageFirst}"
+                disabled="#{subscription.dataTable.first == 0}" />
             <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.prevLinkText}" action="#{subscriberData.pagePrevious}"
-                disabled="#{subscriberData.dataTable.first == 0}" />
+            <h:commandLink value="#{msgs.prevLinkText}" action="#{subscription.pagePrevious}"
+                disabled="#{subscription.dataTable.first == 0}" />
             <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.nextLinkText}" action="#{subscriberData.pageNext}"
-                disabled="#{subscriberData.dataTable.first + subscriberData.dataTable.rows
-                    >= subscriberData.dataTable.rowCount}" />
+            <h:commandLink value="#{msgs.nextLinkText}" action="#{subscription.pageNext}"
+                disabled="#{subscription.dataTable.first + subscription.dataTable.rows
+                    >= subscription.dataTable.rowCount}" />
             <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.lastLinkText}" action="#{subscriberData.pageLast}"
-                disabled="#{subscriberData.dataTable.first + subscriberData.dataTable.rows
-                    >= subscriberData.dataTable.rowCount}" />
+            <h:commandLink value="#{msgs.lastLinkText}" action="#{subscription.pageLast}"
+                disabled="#{subscription.dataTable.first + subscription.dataTable.rows
+                    >= subscription.dataTable.rowCount}" />
         </h:panelGroup>
     </h:panelGrid>
     </h:panelGroup>
@@ -140,19 +138,19 @@
 	columnClasses="alignLeft70, alignRight30">
 	<h:panelGroup>
 		<h:commandButton value="#{msgs.deleteButtonText}"
-			title="Delete selected rows" action="#{subscriberData.deleteSubscribers}"
-			disabled="#{not subscriberData.subscribersMarkedForDeletion}"
+			title="Delete selected rows" action="#{subscription.deleteSubscriptions}"
+			disabled="#{not subscription.subscriptionsMarkedForDeletion}"
 			onclick="javascript:return confirmDelete();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.saveSelectedButtonText}"
-			title="Delete selected rows" action="#{subscriberData.saveSubscriber}"
-			disabled="#{not subscriberData.subscribersMarkedForDeletion}"
+			title="Delete selected rows" action="#{subscription.saveSubscriptions}"
+			disabled="#{not subscription.subscriptionsMarkedForDeletion}"
 			onclick="javascript:return confirmSubmit();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshLinkText}"
-			title="Refresh from database" action="#{subscriberData.refreshPage}" />
+			title="Refresh from database" action="#{subscription.refreshPage}" />
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.backButtonText}" action="#{subscriberData.cancelEdit}"/>
+		<h:commandButton value="#{msgs.backButtonText}" action="#{subscription.cancelEdit}"/>
 	</h:panelGroup>
 	<h:panelGroup>
 		<f:verbatim>&nbsp;</f:verbatim>
