@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
+import javax.persistence.NoResultException;
 
 import jpa.constant.CodeType;
 import jpa.constant.Constants;
@@ -285,19 +286,24 @@ public class SenderDataBean implements java.io.Serializable {
 		String senderId = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validatePrimaryKey() - senderId: " + senderId);
-		SenderData vo = getSenderDataService().getBySenderId(senderId);
-		if (editMode == true && vo != null && sender != null && vo.getRowId() != sender.getRowId()) {
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-	        		"jpa.msgui.messages", "siteProfileAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		try {
+			SenderData vo = getSenderDataService().getBySenderId(senderId);
+			if (editMode == true && sender != null && vo.getRowId() != sender.getRowId()) {
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+		        		"jpa.msgui.messages", "siteProfileAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
+			else if (editMode == false) {
+				// mailingList already exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "siteProfileAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
-		else if (editMode == false && vo != null) {
-			// mailingList already exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "siteProfileAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		catch (NoResultException e) {
+			// ignore
 		}
 	}
 	

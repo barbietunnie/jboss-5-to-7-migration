@@ -47,6 +47,7 @@ public class RuleActionDetailBean implements java.io.Serializable {
 	private String actionFailure = null;
 	
 	private static String TO_EDIT = "ruleActionDetailEdit.xhtml";
+	private static String TO_SELF = "";
 	private static String TO_FAILED = null;
 	private static String TO_SAVED = "maintainActionDetails.xhtml";
 	private static String TO_DELETED = TO_SAVED;
@@ -66,7 +67,7 @@ public class RuleActionDetailBean implements java.io.Serializable {
 
 	public String refresh() {
 		actionDetails = null;
-		return "";
+		return TO_SELF;
 	}
 	
 	public RuleActionDetailService getRuleActionDetailService() {
@@ -186,7 +187,7 @@ public class RuleActionDetailBean implements java.io.Serializable {
 				return TO_EDIT;
 			}
 		}
-		return null;
+		return TO_SELF;
 	}
 	
 	public String addMsgActionDetail() {
@@ -297,7 +298,7 @@ public class RuleActionDetailBean implements java.io.Serializable {
 				testResult = "actionDetailBeanIdTestFailure";
 			}
 		}
-		return null;
+		return TO_SELF;
 	}
 	
 	void reset() {
