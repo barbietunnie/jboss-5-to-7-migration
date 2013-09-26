@@ -3,7 +3,7 @@
     <wb-module deploy-name="MsgUI2">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module archiveName="message-store-1.0.0-SNAPSHOT-jar-with-dependencies.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/pra/eclipse/pkgs_as71/workspace/MessageStore/target/message-store-1.0.0-SNAPSHOT-jar-with-dependencies.jar">
+        <dependent-module archiveName="message-store-1.0.0-SNAPSHOT-jar-with-dependencies.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/MessageStore/target/message-store-1.0.0-SNAPSHOT-jar-with-dependencies.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="MsgUI2"/>
