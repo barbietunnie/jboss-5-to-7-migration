@@ -26,7 +26,9 @@ import jpa.util.StringUtil;
 
 @Component("subscriptionService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class SubscriptionService {
+public class SubscriptionService implements java.io.Serializable {
+	private static final long serialVersionUID = 2020862404406193032L;
+
 	static Logger logger = Logger.getLogger(SubscriptionService.class);
 	
 	@Autowired

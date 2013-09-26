@@ -21,7 +21,9 @@ import jpa.model.GlobalVariablePK;
 
 @Component("globalVariableService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class GlobalVariableService {
+public class GlobalVariableService implements java.io.Serializable {
+	private static final long serialVersionUID = 6628495287347386534L;
+
 	static Logger logger = Logger.getLogger(GlobalVariableService.class);
 	
 	@Autowired

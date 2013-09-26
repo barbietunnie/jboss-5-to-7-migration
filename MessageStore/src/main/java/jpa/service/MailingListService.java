@@ -19,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("mailingListService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MailingListService {
+public class MailingListService implements java.io.Serializable {
+	private static final long serialVersionUID = 8375902506904904765L;
+
 	static Logger logger = Logger.getLogger(MailingListService.class);
 	
 	@Autowired

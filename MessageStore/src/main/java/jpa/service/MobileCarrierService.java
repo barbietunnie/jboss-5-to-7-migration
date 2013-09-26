@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("mobileCarrierService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MobileCarrierService {
+public class MobileCarrierService implements java.io.Serializable {
+	private static final long serialVersionUID = -2043525245286817626L;
+
 	static Logger logger = Logger.getLogger(MobileCarrierService.class);
 	
 	@Autowired

@@ -16,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("emailTemplateService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class EmailTemplateService {
+public class EmailTemplateService implements java.io.Serializable {
+	private static final long serialVersionUID = 248665617609102612L;
+
 	static Logger logger = Logger.getLogger(EmailTemplateService.class);
 	
 	@Autowired

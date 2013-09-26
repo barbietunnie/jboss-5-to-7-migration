@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("entityManagerService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class EntityManagerService {
+public class EntityManagerService implements java.io.Serializable {
+	private static final long serialVersionUID = -2718125813478203516L;
+
 	static Logger logger = Logger.getLogger(EntityManagerService.class);
 	
 	@Autowired

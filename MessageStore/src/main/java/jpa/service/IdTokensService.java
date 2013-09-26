@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("idTokensService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class IdTokensService {
+public class IdTokensService implements java.io.Serializable {
+	private static final long serialVersionUID = 322132246530329818L;
+
 	static Logger logger = Logger.getLogger(IdTokensService.class);
 	
 	//@PersistenceContext(unitName="MessageDB")
