@@ -71,7 +71,7 @@ public class MessageInboxBean implements java.io.Serializable {
 	private boolean isHtml = false;
 	private boolean checkAll = false;
 
-	private HtmlDataTable dataTable;
+	private transient HtmlDataTable dataTable;
 	private MessageInbox replyMessageVo = null;
 	private List<MessageInbox> messageThreads = null;
 	private List<SessionUpload> uploads = null;

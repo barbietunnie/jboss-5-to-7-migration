@@ -43,7 +43,7 @@ public class SubscriberDataBean implements java.io.Serializable {
 	private SubscriberData subscriber = null;
 	private boolean editMode = true;
 
-	private HtmlDataTable dataTable;
+	private transient HtmlDataTable dataTable;
 	private final PagingSubscriberData pagingVo =  new PagingSubscriberData();;
 	private String searchString = null;
 	

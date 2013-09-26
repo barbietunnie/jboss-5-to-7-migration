@@ -40,7 +40,7 @@ public class EmailAddressBean implements java.io.Serializable {
 	private EmailAddress emailAddr = null;
 	private boolean editMode = true;
 
-	private HtmlDataTable dataTable;
+	private transient HtmlDataTable dataTable;
 	private final PagingVo pagingVo =  new PagingVo();;
 	private String searchString = null;
 	

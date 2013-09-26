@@ -8,6 +8,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.html.HtmlDataTable;
 import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import jpa.model.message.MessageClickCount;
 import jpa.model.message.MessageHeader;
@@ -37,7 +38,7 @@ public class BroadcastMsgBean implements java.io.Serializable {
 	private boolean editMode = true;
 	private MessageInbox broadcastMsg = null;
 
-	private HtmlDataTable dataTable;
+	private transient HtmlDataTable dataTable;
 	private final PagingVo pagingVo =  new PagingVo();;
 	
 	private String testResult = null;
@@ -196,8 +197,7 @@ public class BroadcastMsgBean implements java.io.Serializable {
 			return null;
 		}
 		List<MessageHeader> headerList = broadcastMsg.getMessageHeaderList();
-		@SuppressWarnings("unchecked")
-		DataModel<MessageHeader> dm = new PagedListDataModel(headerList, headerList.size(), Math.max(1, headerList.size()+1));
+		DataModel<MessageHeader> dm = new ListDataModel<MessageHeader>(headerList);
 		return dm;
 	}
 
