@@ -19,6 +19,7 @@ import javax.faces.validator.ValidatorException;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.persistence.NoResultException;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
@@ -50,9 +51,9 @@ public class MailInboxBean implements java.io.Serializable {
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	private static String TO_EDIT = "mailboxEdit.xhtml";
+	private static String TO_EDIT = "mailboxEdit";
 	private static String TO_FAILED = null;
-	private static String TO_SAVED = "configureMailboxes.xhtml";
+	private static String TO_SAVED = "configureMailboxes";
 	private static String TO_DELETED = TO_SAVED;
 	private static String TO_CANCELED = TO_SAVED;
 
@@ -256,11 +257,14 @@ public class MailInboxBean implements java.io.Serializable {
 			logger.debug("addMailbox() - Entering...");
 		reset();
 		this.mailbox = new MailInbox();
+		MailInboxPK pk = new MailInboxPK();
+		mailbox.setMailInboxPK(pk);
 		mailbox.setMarkedForEdition(true);
 		mailbox.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		mailbox.setUseSsl(false);
 		mailbox.setIsToPlainText(false);
 		mailbox.setReadPerPass(5);
+		mailbox.setNumberOfThreads(4);
 		setDefaultValues(mailbox);
 		editMode = false;
 		return TO_EDIT;
@@ -302,33 +306,43 @@ public class MailInboxBean implements java.io.Serializable {
 		String userId = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validatePrimaryKey() - UserId: " + userId);
-		MailInbox vo = (MailInbox) getMailInboxService().getByPrimaryKey(mailbox.getMailInboxPK());
-		if (editMode == true && vo != null && mailbox != null
-				&& vo.getRowId() != mailbox.getRowId()) {
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "mailboxAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		try {
+			MailInbox vo = (MailInbox) getMailInboxService().getByPrimaryKey(mailbox.getMailInboxPK());
+			if (editMode == true && mailbox != null
+					&& vo.getRowId() != mailbox.getRowId()) {
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "mailboxAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
+			else if (editMode == false) {
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "mailboxAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
-		else if (editMode == false && vo != null) {
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "mailboxAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		catch (NoResultException e) {
+			// ignore
 		}
 	}
 	
 	private String validatePrimaryKey(MailInboxPK pk) {
 		if (isDebugEnabled)
 			logger.debug("validatePrimaryKey() - hostName/userId: " + pk.getHostName()+ "/" + pk.getUserId());
-		MailInbox vo = (MailInbox) getMailInboxService().getByPrimaryKey(pk);
-		if (editMode == true && vo != null && vo.getRowId() != mailbox.getRowId()) {
-			// mailbox does not exist
-			testResult = "mailboxAlreadyExist"; //"mailboxDoesNotExist";
+		testResult = null;
+		try {
+			MailInbox vo = (MailInbox) getMailInboxService().getByPrimaryKey(pk);
+			if (editMode == true && vo.getRowId() != mailbox.getRowId()) {
+				// mailbox does not exist
+				testResult = "mailboxAlreadyExist";
+			}
+			else if (editMode == false) {
+				// mailbox already exist
+				testResult = "mailboxAlreadyExist";
+			}
 		}
-		else if (editMode == false && vo != null) {
-			// mailbox already exist
-			testResult = "mailboxAlreadyExist";
+		catch (NoResultException e) {
 		}
 		return testResult;
 	}

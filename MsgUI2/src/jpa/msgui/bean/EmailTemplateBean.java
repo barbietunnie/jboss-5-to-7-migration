@@ -55,13 +55,13 @@ public class EmailTemplateBean implements java.io.Serializable {
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	final static String TO_EDIT = "emailTemplateEdit.xhtml";
-	final static String TO_SAVED = "configureEmailTemplates.xhtml";
+	final static String TO_EDIT = "emailTemplateEdit";
+	final static String TO_SAVED = "configureEmailTemplates";
 	final static String TO_DELETED = TO_SAVED;
 	final static String TO_CANCELED = TO_SAVED;
 	final static String TO_SELF = TO_EDIT;
 	final static String TO_FAILED = null;
-	final static String TO_SCHEDULE_EDIT = "emailSchedulesEdit.xhtml";
+	final static String TO_SCHEDULE_EDIT = "emailSchedulesEdit";
 	final static String TO_SCHEDULE_SAVED = TO_SAVED;
 	
 	public DataModel<EmailTemplate> getAll() {
@@ -84,7 +84,7 @@ public class EmailTemplateBean implements java.io.Serializable {
 
 	public String refresh() {
 		emailTemplates = null;
-		return "";
+		return TO_SELF;
 	}
 	
 	public EmailTemplateService getEmailTemplateService() {

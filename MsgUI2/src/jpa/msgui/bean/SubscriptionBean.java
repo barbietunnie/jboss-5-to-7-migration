@@ -12,6 +12,7 @@ import javax.faces.component.html.HtmlDataTable;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.validator.ValidatorException;
+import javax.persistence.NoResultException;
 
 import jpa.model.MailingList;
 import jpa.model.Subscription;
@@ -47,12 +48,13 @@ public class SubscriptionBean implements java.io.Serializable {
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	static final String TO_FAILED = "subscription.failed";
-	static final String TO_PAGING = "subscription.paging";
-	static final String TO_DELETED = "subscription.deleted";
-	static final String TO_SAVED = "subscription.saved";
-	static final String TO_EDIT = "subscription.edit";
-	static final String TO_CANCELED = "subscription.canceled";
+	static final String TO_SELF = "";
+	static final String TO_FAILED = null;
+	static final String TO_PAGING = TO_SELF;
+	static final String TO_DELETED = TO_SELF;
+	static final String TO_SAVED = TO_SELF;
+	static final String TO_EDIT = "subscriptions";
+	static final String TO_CANCELED = "configureMailingLists";
 
 	@SuppressWarnings("unchecked")
 	public DataModel<Subscription> getSubscriptions() {
@@ -298,20 +300,24 @@ public class SubscriptionBean implements java.io.Serializable {
 		String subId = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validatePrimaryKey() - subscriptionId: " + subId);
-		Subscription vo = getSubscriptionService().getByAddressAndListId(subId, listId);
-		if (editMode == true && vo == null) {
-			// subscription does not exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "subscriptionDoesNotExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		try {
+			Subscription vo = getSubscriptionService().getByAddressAndListId(subId, listId);
+			if (editMode == false && vo != null) {
+				// subscription already exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "subscriptionAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
-		else if (editMode == false && vo != null) {
-			// subscription already exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "subscriptionAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		catch (NoResultException e) {
+			if (editMode == true) {
+				// subscription does not exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "subscriptionDoesNotExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
 	}
 

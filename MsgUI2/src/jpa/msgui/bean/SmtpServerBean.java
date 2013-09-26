@@ -19,6 +19,7 @@ import javax.faces.validator.ValidatorException;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.persistence.NoResultException;
 
 import jpa.constant.CodeType;
 import jpa.constant.Constants;
@@ -307,20 +308,24 @@ public class SmtpServerBean implements java.io.Serializable {
 		String serverName = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validatePrimaryKey() - serverName: " + serverName);
-		SmtpServer vo = getSmtpServerService().getByServerName(serverName);
-		if (editMode == true && vo == null) {
-			// smtpServer does not exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "smtpServerDoesNotExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		try {
+			SmtpServer vo = getSmtpServerService().getByServerName(serverName);
+			if (editMode == false && vo != null) {
+				// smtpServer already exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "smtpServerAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
-		else if (editMode == false && vo != null) {
-			// smtpServer already exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "smtpServerAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		catch (NoResultException e) {
+			if (editMode == true) {
+				// smtpServer does not exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "smtpServerDoesNotExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
 	}
 	

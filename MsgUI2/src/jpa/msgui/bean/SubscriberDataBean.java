@@ -14,6 +14,7 @@ import javax.faces.component.html.HtmlDataTable;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.validator.ValidatorException;
+import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
 import jpa.constant.MobileCarrierEnum;
@@ -368,21 +369,26 @@ public class SubscriberDataBean implements java.io.Serializable {
 		String subrId = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validatePrimaryKey() - CustId: " + subrId);
-		SubscriberData vo = getSubscriberDataService().getBySubscriberId(subrId);
-		if (editMode == true && vo != null && subscriber != null
-				&& vo.getRowId() != subscriber.getRowId()) {
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					//"jpa.msgui.messages", "subscriberDoesNotExist", null);
-	        		"jpa.msgui.messages", "subscriberAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		try {
+			SubscriberData vo = getSubscriberDataService().getBySubscriberId(subrId);
+			if (editMode == true && subscriber != null
+					&& vo.getRowId() != subscriber.getRowId()) {
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						//"jpa.msgui.messages", "subscriberDoesNotExist", null);
+		        		"jpa.msgui.messages", "subscriberAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
+			else if (editMode == false) {
+				// subscriber already exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "subscriberAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
-		else if (editMode == false && vo != null) {
-			// subscriber already exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "subscriberAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		catch (NoResultException e) {
+			// ignore
 		}
 	}
 	

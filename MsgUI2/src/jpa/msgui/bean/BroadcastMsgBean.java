@@ -7,6 +7,7 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.html.HtmlDataTable;
+import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
@@ -39,17 +40,19 @@ public class BroadcastMsgBean implements java.io.Serializable {
 	private MessageInbox broadcastMsg = null;
 
 	private transient HtmlDataTable dataTable;
-	private final PagingVo pagingVo =  new PagingVo();;
+	private final PagingVo pagingVo =  new PagingVo();
 	
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	static final String TO_VIEW = "broadcastlist.view";
-	static final String TO_PAGING = "broadcastlist.paging";
-	static final String TO_FAILED = "broadcastlist.failed";
-	static final String TO_DELETED = "broadcastlist.deleted";
-	static final String TO_SAVED = "broadcastlist.saved";
-	static final String TO_CANCELED = "broadcastlist.canceled";
+	static final String TO_VIEW = "broadcastMsgView";
+	static final String TO_SELF = "";
+	static final String TO_PAGING = TO_SELF;
+	static final String TO_FAILED = null;
+	static final String TO_DELETED = TO_SELF;
+	static final String TO_SAVED = "broadcastsList";
+	static final String TO_CANCELED = "main";
+	static final String TO_CANCELED_FROM_VIEW = TO_SAVED;
 
 	@SuppressWarnings("unchecked")
 	public DataModel<MessageClickCount> getBroadcasts() {
@@ -249,7 +252,13 @@ public class BroadcastMsgBean implements java.io.Serializable {
 
 	public String cancelEdit() {
 		refresh();
-		return TO_CANCELED;
+		String viewId = FacesContext.getCurrentInstance().getViewRoot().getViewId();
+		if (StringUtils.contains(viewId, "broadcastMsgView")) {
+			return TO_CANCELED_FROM_VIEW;
+		}
+		else {
+			return TO_CANCELED;
+		}
 	}
 
 	public boolean getAnyBroadcastsMarkedForDeletion() {

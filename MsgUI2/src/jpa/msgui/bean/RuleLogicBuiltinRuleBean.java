@@ -19,7 +19,7 @@ public class RuleLogicBuiltinRuleBean extends RuleLogicBean {
 	protected static final Logger logger = Logger.getLogger(RuleLogicBuiltinRuleBean.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	private static String TO_EDIT = "ruleActionBuiltinEdit.xhtml";
+	private static String TO_EDIT = "ruleActionBuiltinEdit";
 	private static String TO_FAILED = null;
 	
 	@Override

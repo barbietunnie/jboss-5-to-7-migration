@@ -20,10 +20,13 @@ import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
 import javax.persistence.NoResultException;
 
+import jpa.constant.Constants;
 import jpa.model.MailingList;
+import jpa.model.SenderData;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
 import jpa.service.MailingListService;
+import jpa.service.SenderDataService;
 import jpa.util.EmailAddrUtil;
 import jpa.util.SenderUtil;
 
@@ -46,6 +49,13 @@ public class MailingListBean implements java.io.Serializable {
 	private String testResult = null;
 	private String actionFailure = null;
 	
+	private static String TO_EDIT = "mailingListEdit";
+	private static String TO_SELF = "";
+	private static String TO_SAVED = "configureMailingLists";
+	private static String TO_FAILED = null;
+	private static String TO_DELETED = TO_SAVED;
+	private static String TO_CANCELED = TO_SAVED;
+
 	public DataModel<MailingList> getAll() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
 		if (fromPage != null && fromPage.equals("main")) {
@@ -66,7 +76,7 @@ public class MailingListBean implements java.io.Serializable {
 
 	public String refresh() {
 		mailingLists = null;
-		return "";
+		return TO_SELF;
 	}
 	
 	public MailingListService getMailingListService() {
@@ -112,7 +122,7 @@ public class MailingListBean implements java.io.Serializable {
 		if (isDebugEnabled)
 			logger.debug("viewMailingList() - MailingList to be passed to jsp: " + mailingList);
 		
-		return "mailinglist.edit";
+		return TO_EDIT;
 	}
 	
 	public String saveMailingList() {
@@ -125,7 +135,7 @@ public class MailingListBean implements java.io.Serializable {
 		reset();
 		if (!EmailAddrUtil.isRemoteEmailAddress(mailingList.getListEmailAddr())) {
 			testResult = "invalidEmailAddress";
-			return null;
+			return TO_FAILED;
 		}
 		// update database
 		if (StringUtils.isNotBlank(FacesUtil.getLoginUserId())) {
@@ -140,7 +150,7 @@ public class MailingListBean implements java.io.Serializable {
 			addToList(mailingList);
 			logger.info("saveMailingList() - Rows Inserted: " + 1);
 		}
-		return "mailinglist.saved";
+		return TO_SAVED;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -168,7 +178,7 @@ public class MailingListBean implements java.io.Serializable {
 				mailList.remove(vo);
 			}
 		}
-		return "mailinglist.deleted";
+		return TO_DELETED;
 	}
 	
 	public String copyMailingList() {
@@ -176,7 +186,7 @@ public class MailingListBean implements java.io.Serializable {
 			logger.debug("copyMailingList() - Entering...");
 		if (mailingLists == null) {
 			logger.warn("copyMailingList() - MailingList List is null.");
-			return "mailinglist.failed";
+			return TO_FAILED;
 		}
 		reset();
 		List<MailingList> mailList = getMailingListList();
@@ -194,25 +204,28 @@ public class MailingListBean implements java.io.Serializable {
 				mailingList.setListId(null);
 				mailingList.setMarkedForEdition(true);
 				editMode = false;
-				return "mailinglist.edit";
+				return TO_EDIT;
 			}
 		}
-		return null;
+		return TO_SELF;
 	}
 	
 	public String addMailingList() {
 		if (isDebugEnabled)
 			logger.debug("addMailingList() - Entering...");
 		reset();
+		SenderDataService senderService = (SenderDataService) SpringUtil.getWebAppContext().getBean("senderDataService");
+		SenderData sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		this.mailingList = new MailingList();
+		mailingList.setSenderData(sender);
 		mailingList.setMarkedForEdition(true);
 		editMode = false;
-		return "mailinglist.edit";
+		return TO_EDIT;
 	}
 	
 	public String cancelEdit() {
 		refresh();
-		return "mailinglist.canceled";
+		return TO_CANCELED;
 	}
 	
 	public String uploadFiles() {
@@ -228,7 +241,7 @@ public class MailingListBean implements java.io.Serializable {
 			logger.error("uploadFiles() - IOException caught", e);
 			throw new FacesException("Cannot redirect to " + pageUrl + " due to IO exception.", e);
 		}
-		return null;
+		return TO_SELF;
 	}
 	
 	public boolean getAnyListsMarkedForDeletion() {
@@ -258,22 +271,27 @@ public class MailingListBean implements java.io.Serializable {
 		String listId = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validatePrimaryKey() - listId: " + listId);
-		MailingList vo = getMailingListService().getByListId(listId);
-		if (editMode == true && vo != null && mailingList != null
-				&& vo.getRowId() != mailingList.getRowId()) {
-			// mailingList does not exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-	        		"jpa.msgui.messages", "mailingListAlreadyExist", null);
-					//"jpa.msgui.messages", "mailingListDoesNotExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		try {
+			MailingList vo = getMailingListService().getByListId(listId);
+			if (editMode == true && mailingList != null
+					&& vo.getRowId() != mailingList.getRowId()) {
+				// mailingList does not exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+		        		"jpa.msgui.messages", "mailingListAlreadyExist", null);
+						//"jpa.msgui.messages", "mailingListDoesNotExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
+			else if (editMode == false) {
+				// mailingList already exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "mailingListAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
-		else if (editMode == false && vo != null) {
-			// mailingList already exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "mailingListAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		catch (NoResultException e) {
+			// ignore
 		}
 	}
 	

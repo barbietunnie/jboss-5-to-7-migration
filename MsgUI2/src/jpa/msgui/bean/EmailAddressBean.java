@@ -363,22 +363,27 @@ public class EmailAddressBean implements java.io.Serializable {
 		String address = (String) value;
 		if (isDebugEnabled)
 			logger.debug("validatePrimaryKey() - address: " + address);
-		EmailAddress vo = getEmailAddressService().getByAddress(address);
-		if (editMode == true && vo != null && emailAddr != null
-				&& vo.getRowId() != emailAddr.getRowId()) {
-			// emailAddr does not exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					//"jpa.msgui.messages", "emailAddrDoesNotExist", null);
-	        		"jpa.msgui.messages", "emailAddrAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		try {
+			EmailAddress vo = getEmailAddressService().getByAddress(address);
+			if (editMode == true && emailAddr != null
+					&& vo.getRowId() != emailAddr.getRowId()) {
+				// emailAddr does not exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						//"jpa.msgui.messages", "emailAddrDoesNotExist", null);
+		        		"jpa.msgui.messages", "emailAddrAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
+			else if (editMode == false) {
+				// emailAddr already exist
+		        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+						"jpa.msgui.messages", "emailAddrAlreadyExist", null);
+				message.setSeverity(FacesMessage.SEVERITY_WARN);
+				throw new ValidatorException(message);
+			}
 		}
-		else if (editMode == false && vo != null) {
-			// emailAddr already exist
-	        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-					"jpa.msgui.messages", "emailAddrAlreadyExist", null);
-			message.setSeverity(FacesMessage.SEVERITY_WARN);
-			throw new ValidatorException(message);
+		catch (NoResultException e) {
+			// ignore
 		}
 	}
 

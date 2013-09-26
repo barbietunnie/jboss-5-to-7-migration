@@ -24,6 +24,7 @@ import jpa.constant.CodeType;
 import jpa.constant.RuleCategory;
 import jpa.constant.RuleType;
 import jpa.model.rule.RuleAction;
+import jpa.model.rule.RuleActionPK;
 import jpa.model.rule.RuleElement;
 import jpa.model.rule.RuleElementPK;
 import jpa.model.rule.RuleLogic;
@@ -69,7 +70,7 @@ public class RuleLogicBean implements java.io.Serializable {
 	protected RuleElement origRuleElement = null;
 	
 	/* use navigation rules in faces-config.xml */
-	protected static final String TO_SELF = null;
+	protected static final String TO_SELF = "";
 	protected static final String TO_CANCELED = "cancel";
 	protected static final String TO_SAVED = "save";
 	protected static final String TO_FAILED = null;
@@ -883,6 +884,8 @@ public class RuleLogicBean implements java.io.Serializable {
 		reset();
 		List<RuleAction> list = getMsgActionList();
 		RuleAction vo = new RuleAction();
+		RuleActionPK pk = new RuleActionPK();
+		vo.setRuleActionPK(pk);
 		vo.getRuleActionPK().setActionSequence(0);
 		vo.getRuleActionPK().setStartTime(new Timestamp(System.currentTimeMillis()));
 		vo.setStatusId(CodeType.YES_CODE.getValue());
@@ -902,7 +905,7 @@ public class RuleLogicBean implements java.io.Serializable {
 		// update database
 		int rowsDeleted = getRuleActionService().deleteByRuleName(ruleLogic.getRuleName());
 		logger.info("saveMsgActions() - MsgAction Rows Deleted: " + rowsDeleted);
-		
+		// TODO
 		List<RuleAction> list = getMsgActionList();
 		for (int i=0; i<list.size(); i++) {
 			RuleAction ruleAction = list.get(i);
