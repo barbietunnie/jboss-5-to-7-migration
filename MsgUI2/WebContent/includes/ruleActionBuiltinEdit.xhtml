@@ -70,7 +70,7 @@ function displayDP(rowIndex) {
 				<h:outputText value="#{msgs.actionIdHeader}"/> 
 			</f:facet>
 			<h:selectOneMenu id="actionid" value="#{msgaction.ruleActionDetail.actionId}"
-				onclick="submit()" required="true">
+				onchange="submit()" required="true" valueChangeListener="#{builtinRule.actionIdChanged}">
 				<f:selectItems value="#{dynacodes.actionIdItems}"/>
 			</h:selectOneMenu>
         </h:column>
@@ -79,6 +79,7 @@ function displayDP(rowIndex) {
 				<h:outputText value="#{msgs.senderIdHeader}"/>
 			</f:facet>
 			<h:selectOneMenu id="senderid" value="#{msgaction.senderId}">
+				<f:ajax listener="#{builtinRule.changeSenderId}" />
 				<f:selectItem itemLabel="" itemValue=""/>
 				<f:selectItems value="#{dynacodes.senderIdItems}"/>
 				<f:converter converterId="NullableStringConverter"/>
