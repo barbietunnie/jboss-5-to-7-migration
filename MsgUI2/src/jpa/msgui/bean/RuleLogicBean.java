@@ -14,7 +14,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
+import javax.faces.component.UISelectOne;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
@@ -905,7 +908,7 @@ public class RuleLogicBean implements java.io.Serializable {
 		// update database
 		int rowsDeleted = getRuleActionService().deleteByRuleName(ruleLogic.getRuleName());
 		logger.info("saveMsgActions() - MsgAction Rows Deleted: " + rowsDeleted);
-		// TODO
+		// TODO - action changes not saved
 		List<RuleAction> list = getMsgActionList();
 		for (int i=0; i<list.size(); i++) {
 			RuleAction ruleAction = list.get(i);
@@ -920,6 +923,43 @@ public class RuleLogicBean implements java.io.Serializable {
 		logger.info("saveMsgActions() - MsgAction Rows Inserted: " + list.size());
 		return TO_SAVED;
 	}
+
+	/*
+	 * define value change listener
+	 */
+	public void actionIdChanged(ValueChangeEvent event) {
+		if (ruleLogic == null) {
+			logger.warn("actionIdChanged() - RuleLogic is null.");
+		}
+		logger.info("actionIdChanged() - " + event.getOldValue() + " -> " + event.getNewValue());
+		for (Iterator<RuleAction> it=ruleActions.iterator(); it.hasNext();) {
+			RuleAction ra = it.next();
+			logger.info("actionIdChanged() - RuleAction Id: " + ra.getRuleActionDetail().getActionId());
+		}
+	}
+
+	/*
+	 * define ajax listener for ruleActionBuiltinEdit.xhtml
+	 */
+	public void changeSenderId(AjaxBehaviorEvent event) {
+		if (ruleLogic == null) {
+			logger.warn("changeSenderId() - RuleLogic is null.");
+		}
+		for (Iterator<RuleAction> it=ruleActions.iterator(); it.hasNext();) {
+			RuleAction ra = it.next();
+			logger.info("changeSenderId() - Sender Id: " + ra.getSenderId());
+		}
+		if (event == null) return;
+		UISelectOne select = (UISelectOne) event.getSource();
+        if (select.getSubmittedValue() == null || select.getSubmittedValue().toString().isEmpty()) {
+            logger.info("Submitted value is blank");
+        }
+        else {
+            String value = select.getSubmittedValue().toString();
+            logger.info("Submitted value: " + value);
+        }
+	}
+
 
 	/*
 	 * Logic Evaluation Section 
