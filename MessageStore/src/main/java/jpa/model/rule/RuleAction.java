@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import jpa.data.preload.RuleDataTypeEnum;
 import jpa.model.BaseModel;
@@ -29,6 +30,7 @@ import jpa.util.SpringUtil;
 	uniqueConstraints=@UniqueConstraint(columnNames = {"RuleLogicRowId", "actionSequence", "startTime", "SenderDataRowId"}))
 public class RuleAction extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 6097614369008930898L;
+	protected static final Logger logger = Logger.getLogger(RuleAction.class);
 
 	@Embedded
 	private RuleActionPK ruleActionPK;
@@ -157,6 +159,13 @@ public class RuleAction extends BaseModel implements java.io.Serializable {
 		else {
 			return null;
 		}
+	}
+	
+	/*
+	 * define ajax listener for ruleActionBuiltinEdit.xhtml
+	 */
+	public void changeActionId() {
+		logger.info("changeActionId() - Sender Id: " + getRuleActionDetail().getActionId());
 	}
 	
 	@Transient
