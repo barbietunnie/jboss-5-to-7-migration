@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.faces.component.UISelectOne;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NoResultException;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -22,6 +25,7 @@ import jpa.data.preload.RuleDataTypeEnum;
 import jpa.model.BaseModel;
 import jpa.model.SenderData;
 import jpa.service.SenderDataService;
+import jpa.service.rule.RuleActionDetailService;
 import jpa.service.rule.RuleDataValueService;
 import jpa.util.SpringUtil;
 
@@ -83,10 +87,10 @@ public class RuleAction extends BaseModel implements java.io.Serializable {
 	}
 	
 	/** Define methods for UI */
-	public boolean getHasDataTypeValues() {
-		return (ruleActionDetail.getRuleDataType()!=null);
+	public boolean isHasDataTypeValues() {
+		return (ruleActionDetail!=null && ruleActionDetail.getRuleDataType()!=null);
 	}
-	public boolean getIsDataTypeEmailAddress() {
+	public boolean isDataTypeEmailAddress() {
 		return (RuleDataTypeEnum.EMAIL_ADDRESS.name().equals(getCurrentDataType()));
 	}
 	public String[] getFieldValuesUI() {
@@ -152,6 +156,7 @@ public class RuleAction extends BaseModel implements java.io.Serializable {
 	}
 
 	private String getCurrentDataType() {
+		if (ruleActionDetail == null) return null;
 		RuleDataType vo = ruleActionDetail.getRuleDataType();
 		if (vo != null) {
 			return vo.getDataType();
@@ -164,8 +169,22 @@ public class RuleAction extends BaseModel implements java.io.Serializable {
 	/*
 	 * define ajax listener for ruleActionBuiltinEdit.xhtml
 	 */
-	public void changeActionId() {
-		logger.info("changeActionId() - Sender Id: " + getRuleActionDetail().getActionId());
+	public void changedActionId(AjaxBehaviorEvent event) {
+		logger.info("changeActionId() - Action Id: " + getRuleActionDetail().getActionId());
+		UISelectOne select = (UISelectOne) event.getSource();
+        if (select.getValue() == null || select.getValue().toString().isEmpty()) {
+            logger.info("Selected value is blank");
+            return;
+        }
+        String actionId = select.getValue().toString();
+        logger.info("ActionID selected: " + actionId);
+        try {
+        	RuleActionDetail detail = getRuleActionDetailService().getByActionId(actionId);
+        	setRuleActionDetail(detail);
+        }
+        catch (NoResultException e) {
+        	logger.error("ActionDetail not found by ActionId (" + actionId + ").");
+        } 
 	}
 	
 	@Transient
@@ -186,6 +205,16 @@ public class RuleAction extends BaseModel implements java.io.Serializable {
 			senderDataService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
 		}
 		return senderDataService;
+	}
+	
+	@Transient
+	private RuleActionDetailService actionDetailService;
+	
+	private RuleActionDetailService getRuleActionDetailService() {
+		if (actionDetailService == null) {
+			actionDetailService = (RuleActionDetailService) SpringUtil.getAppContext().getBean("ruleActionDetailService");
+		}
+		return actionDetailService;
 	}
 	/** End of UI */
 	
