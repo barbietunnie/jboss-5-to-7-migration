@@ -44,7 +44,7 @@ function displayDP(rowIndex) {
 		<h:outputText value="#{msgs.ruleTypePrompt}"/>
 		<h:outputText id="ruletype" value="#{builtinRule.ruleLogic.ruleType}"/>
 	</h:panelGrid>
-	<h:dataTable value="#{builtinRule.msgActions}" var="msgaction" id="builtin"
+	<h:dataTable value="#{builtinRule.msgActions}" var="rule_action" id="builtin"
 			styleClass="jsfDataTable"
             headerClass="dataTableHeader"
             footerClass="dataTableFooter"
@@ -53,14 +53,14 @@ function displayDP(rowIndex) {
            <f:facet name="header">
               <h:outputText value="#{msgs.deleteColumnHeader}"/>
            </f:facet>
-           <h:selectBooleanCheckbox value="#{msgaction.markedForDeletion}" 
+           <h:selectBooleanCheckbox value="#{rule_action.markedForDeletion}" 
               onclick="submit()"/>
         </h:column>
 		<h:column>
 			<f:facet name="header">
 				<h:outputText value="#{msgs.actionSeqHeader}"/> 
 			</f:facet>
-			<h:inputText id="actionseq" value="#{msgaction.ruleActionPK.actionSequence}"
+			<h:inputText id="actionseq" value="#{rule_action.ruleActionPK.actionSequence}"
 				required="true">
 				<f:validateLongRange minimum="0" maximum="100"/>
 			</h:inputText>
@@ -69,8 +69,9 @@ function displayDP(rowIndex) {
 			<f:facet name="header">
 				<h:outputText value="#{msgs.actionIdHeader}"/> 
 			</f:facet>
-			<h:selectOneMenu id="actionid" value="#{msgaction.ruleActionDetail.actionId}"
-				onchange="submit()" required="true" valueChangeListener="#{builtinRule.actionIdChanged}">
+			<h:selectOneMenu id="actionid" value="#{rule_action.ruleActionDetail.actionId}"
+				required="true">
+				<f:ajax event="change" listener="#{rule_action.changedActionId}"/>
 				<f:selectItems value="#{dynacodes.actionIdItems}"/>
 			</h:selectOneMenu>
         </h:column>
@@ -78,8 +79,8 @@ function displayDP(rowIndex) {
 			<f:facet name="header">
 				<h:outputText value="#{msgs.senderIdHeader}"/>
 			</f:facet>
-			<h:selectOneMenu id="senderid" value="#{msgaction.senderId}">
-				<f:ajax listener="#{builtinRule.changeSenderId}" />
+			<h:selectOneMenu id="senderid" value="#{rule_action.senderId}">
+				<f:ajax event="change" listener="#{builtinRule.changedSenderId}"/>
 				<f:selectItem itemLabel="" itemValue=""/>
 				<f:selectItems value="#{dynacodes.senderIdItems}"/>
 				<f:converter converterId="NullableStringConverter"/>
@@ -90,7 +91,7 @@ function displayDP(rowIndex) {
 			<f:facet name="header">
 				<h:outputText value="#{msgs.startTimeHeader}"/> 
 			</f:facet>
-       		<h:inputText id="starttime" value="#{msgaction.ruleActionPK.startTime}"
+       		<h:inputText id="starttime" value="#{rule_action.ruleActionPK.startTime}"
 				size="16" maxlength="16" required="true"
 				onclick="displayDP('#{builtinRule.msgActions.rowIndex}');">
 				<f:converter converterId="TimestampConverter"/>
@@ -101,7 +102,7 @@ function displayDP(rowIndex) {
 			<f:facet name="header">
 				<h:outputText value="#{msgs.statusIdHeader}"/> 
 			</f:facet>
-	        <h:selectOneMenu id="statusid" value="#{msgaction.statusId}"
+	        <h:selectOneMenu id="statusid" value="#{rule_action.statusId}"
 	        	required="true">
 				<f:selectItems value="#{codes.simpleStatusIdItems}"/>
 			</h:selectOneMenu>
@@ -110,17 +111,17 @@ function displayDP(rowIndex) {
 			<f:facet name="header">
 				<h:outputText value="#{msgs.dataTypeValuesHeader}"/> 
 			</f:facet>
-	        <h:selectManyListbox id="datatypevalues1" value="#{msgaction.fieldValuesUI}"
+	        <h:selectManyListbox id="datatypevalues1" value="#{rule_action.fieldValuesUI}"
 	        	size="2"
-	        	rendered="#{msgaction.hasDataTypeValues and msgaction.isDataTypeEmailAddress}">
-				<f:selectItems value="#{msgaction.ruleDataValueList}"/>
+	        	rendered="#{rule_action.hasDataTypeValues and rule_action.dataTypeEmailAddress}">
+				<f:selectItems value="#{rule_action.ruleDataValueList}"/>
 			</h:selectManyListbox>
-	        <h:selectOneMenu id="datatypevalues2" value="#{msgaction.fieldValues}"
-	        	rendered="#{msgaction.hasDataTypeValues and msgaction.isDataTypeEmailAddress==false}">
-				<f:selectItems value="#{msgaction.ruleDataValueList}"/>
+	        <h:selectOneMenu id="datatypevalues2" value="#{rule_action.fieldValues}"
+	        	rendered="#{rule_action.hasDataTypeValues and rule_action.dataTypeEmailAddress==false}">
+				<f:selectItems value="#{rule_action.ruleDataValueList}"/>
 			</h:selectOneMenu>
-	        <h:outputText value="#{msgaction.fieldValues}" 
-	        	rendered="#{!msgaction.hasDataTypeValues}"/>
+	        <h:outputText value="#{rule_action.fieldValues}" 
+	        	rendered="#{!rule_action.hasDataTypeValues}"/>
 	    </h:column>
     </h:dataTable>
     <f:verbatim><p/></f:verbatim>
