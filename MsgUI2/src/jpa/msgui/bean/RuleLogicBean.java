@@ -27,6 +27,7 @@ import jpa.constant.CodeType;
 import jpa.constant.RuleCategory;
 import jpa.constant.RuleType;
 import jpa.model.rule.RuleAction;
+import jpa.model.rule.RuleActionDetail;
 import jpa.model.rule.RuleActionPK;
 import jpa.model.rule.RuleElement;
 import jpa.model.rule.RuleElementPK;
@@ -35,6 +36,7 @@ import jpa.model.rule.RuleSubruleMap;
 import jpa.model.rule.RuleSubruleMapPK;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
+import jpa.service.rule.RuleActionDetailService;
 import jpa.service.rule.RuleActionService;
 import jpa.service.rule.RuleElementService;
 import jpa.service.rule.RuleLogicService;
@@ -65,6 +67,7 @@ public class RuleLogicBean implements java.io.Serializable {
 	protected RuleElementService ruleElementDao = null;
 	protected RuleSubruleMapService ruleSubRuleMapDao = null;
 	protected RuleActionService msgActionDao = null;
+	protected RuleActionDetailService actionDetailDao = null;
 	protected DataModel<RuleElement> ruleElements = null;
 	protected DataModel<RuleSubruleMap> subRules = null;
 	protected DataModel<RuleAction> ruleActions = null;
@@ -112,6 +115,13 @@ public class RuleLogicBean implements java.io.Serializable {
 					"ruleActionService");
 		}
 		return msgActionDao;
+	}
+
+	private RuleActionDetailService getRuleActionDetailService() {
+		if (actionDetailDao == null) {
+			actionDetailDao = (RuleActionDetailService) SpringUtil.getWebAppContext().getBean("ruleActionDetailService");
+		}
+		return actionDetailDao;
 	}
 
 	/*
@@ -845,7 +855,7 @@ public class RuleLogicBean implements java.io.Serializable {
 				if (rowsDeleted > 0) {
 					logger.info("deleteMsgActions() - MsgAction deleted: " + vo.getRuleActionPK().getRuleLogic().getRuleName() + "."
 							+ vo.getRuleActionPK().getActionSequence() + "." + vo.getRuleActionPK().getStartTime() +
-							"." + vo.getRuleActionPK().getSenderData().getSenderId());
+							"." + (vo.getRuleActionPK().getSenderData()==null?"":vo.getRuleActionPK().getSenderData().getSenderId()));
 				}
 				list.remove(vo);
 			}
@@ -889,10 +899,13 @@ public class RuleLogicBean implements java.io.Serializable {
 		RuleAction vo = new RuleAction();
 		RuleActionPK pk = new RuleActionPK();
 		vo.setRuleActionPK(pk);
-		vo.getRuleActionPK().setActionSequence(0);
+		vo.getRuleActionPK().setActionSequence(list.size() + 1);
 		vo.getRuleActionPK().setStartTime(new Timestamp(System.currentTimeMillis()));
 		vo.setStatusId(CodeType.YES_CODE.getValue());
 		vo.setMarkedForEdition(true);
+		List<String> actionIdList = getRuleActionDetailService().getActionIdList();
+		RuleActionDetail detail = getRuleActionDetailService().getByActionId(actionIdList.get(0));
+		vo.setRuleActionDetail(detail);
 		list.add(vo);
 		return TO_SELF;
 	}
@@ -938,10 +951,45 @@ public class RuleLogicBean implements java.io.Serializable {
 		}
 	}
 
+	public void changedActionId(AjaxBehaviorEvent event) {
+		if (ruleLogic == null) {
+			logger.warn("changedActionId() - RuleLogic is null.");
+		}
+		logger.info("changedActionId() - " + event);
+		for (Iterator<RuleAction> it=ruleActions.iterator(); it.hasNext();) {
+			RuleAction ra = it.next();
+			logger.info("changedActionId() - RuleAction Id: " + ra.getRuleActionDetail().getActionId());
+		}
+		if (event == null) return;
+		UISelectOne select = (UISelectOne) event.getSource();
+        if (select.getValue() == null || select.getValue().toString().isEmpty()) {
+            logger.info("Selected value is blank");
+        }
+        else {
+            String value = select.getValue().toString();
+            logger.info("Selected value: " + value);
+        }
+	}
+
 	/*
 	 * define ajax listener for ruleActionBuiltinEdit.xhtml
+	 * jsf2 ajax event list:
+	  	blur
+		change
+		click
+		dblclick
+		focus
+		keydown
+		keypress
+		keyup
+		mousedown
+		mousemove
+		mouseout
+		mouseover
+		mouseup
+		select
 	 */
-	public void changeSenderId(AjaxBehaviorEvent event) {
+	public void changedSenderId(AjaxBehaviorEvent event) {
 		if (ruleLogic == null) {
 			logger.warn("changeSenderId() - RuleLogic is null.");
 		}
@@ -951,12 +999,13 @@ public class RuleLogicBean implements java.io.Serializable {
 		}
 		if (event == null) return;
 		UISelectOne select = (UISelectOne) event.getSource();
-        if (select.getSubmittedValue() == null || select.getSubmittedValue().toString().isEmpty()) {
-            logger.info("Submitted value is blank");
+		//UIComponent component = event.getComponent();
+        if (select.getValue() == null || select.getValue().toString().isEmpty()) {
+            logger.info("Selected value is blank");
         }
         else {
-            String value = select.getSubmittedValue().toString();
-            logger.info("Submitted value: " + value);
+            String value = select.getValue().toString();
+            logger.info("Selected value: " + value);
         }
 	}
 
