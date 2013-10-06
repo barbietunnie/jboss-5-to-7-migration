@@ -39,7 +39,7 @@ public class GettingStarted implements java.io.Serializable {
 
 	/* JSTL import attribute url does not accept any expressions. So this is not used.  */
 	private String[] jspPageLinks = { "configureMailboxes.jsp", "configureSmtpServers.jsp",
-			"configureSiteProfiles.jsp", "customizeBuiltinRules.jsp", "configureMsgRules.jsp",
+			"configureSiteProfiles.jsp", "customizeBuiltinRules.jsp", "configureCustomRules.jsp",
 			"msgActionDetailList.jsp", "configureMailingLists.jsp", "configureEmailVariables.jsp",
 			"configureEmailTemplates.jsp", "manageUserAccounts.jsp" };
 

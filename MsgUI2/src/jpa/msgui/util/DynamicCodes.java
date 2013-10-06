@@ -99,7 +99,7 @@ public class DynamicCodes {
 	
 	// PROPERTY: SubRule Items 
 	public SelectItem[] getSubruleItems() {
-		List<RuleLogic> list = getRuleLogicService().getSubrules(true);
+		List<RuleLogic> list = getRuleLogicService().getSubrules(false); // XXX true);
 		SelectItem[] subRules = new SelectItem[list.size()];
 		for (int i=0; i<list.size(); i++) {
 			subRules[i] = new SelectItem(list.get(i).getRuleName());

@@ -81,13 +81,13 @@ public class RuleLogicBean implements java.io.Serializable {
 	protected static final String TO_SELF = "";
 	protected static final String TO_CANCELED = "cancel";
 	protected static final String TO_FAILED = null;
-	protected static final String TO_EDIT_LOGIC = "edit_logic";
-	protected static final String TO_EDIT_ELEMENT = "edit_element";
-	protected static final String TO_EDIT_SUBRULE = "edit_subrule";
-	protected static final String TO_EDIT_ACTION = "edit_action";
+	protected static final String TO_EDIT_LOGIC = "ruleLogicEdit";
+	protected static final String TO_EDIT_ELEMENT = "ruleElementEdit";
+	protected static final String TO_EDIT_SUBRULE = "ruleSubruleEdit";
+	protected static final String TO_EDIT_ACTION = "ruleActionEdit";
 	
-	protected static final String RULE_LOGIC_SAVED = "configureCustomRules";
-	protected static final String RULE_ACTION_SAVED = RULE_LOGIC_SAVED;
+	protected static final String TO_CONFIG_RULES = "configureCustomRules";
+	protected static final String RULE_ACTION_SAVED = TO_CONFIG_RULES;
 	
 	protected RuleLogicService getRuleLogicService() {
 		if (ruleLogicDao == null) {
@@ -258,7 +258,7 @@ public class RuleLogicBean implements java.io.Serializable {
 				origRuleElement.setDelimiter(",");
 			}
 		}
-		return "msgrule.ruleelement.done";
+		return TO_EDIT_LOGIC;
 	}
 
 	private void copyProperties(RuleElement dest, RuleElement src) {
@@ -335,7 +335,7 @@ public class RuleLogicBean implements java.io.Serializable {
 //			int elementsInserted = insertRuleElements(ruleLogic.getRuleName());
 //			logger.info("saveRuleLogic() - Element Rows Inserted: " + elementsInserted);
 		}
-		return RULE_LOGIC_SAVED;
+		return TO_CONFIG_RULES;
 	}
 
 	protected int insertRuleElements(String _ruleName) {
@@ -453,6 +453,16 @@ public class RuleLogicBean implements java.io.Serializable {
 		if (isDebugEnabled)
 			logger.debug("cancelEdit() - Entering...");
 		refresh();
+		String viewId = FacesUtil.getCurrentViewId();
+		if (StringUtils.contains(viewId, TO_EDIT_ELEMENT)) {
+			return TO_EDIT_LOGIC;
+		}
+		else if (StringUtils.contains(viewId, TO_EDIT_ACTION)) {
+			return TO_CONFIG_RULES;
+		}
+		else if (StringUtils.contains(viewId, TO_EDIT_SUBRULE)) {
+			return TO_CONFIG_RULES;
+		}
 		return TO_CANCELED;
 	}
 	
@@ -761,7 +771,7 @@ public class RuleLogicBean implements java.io.Serializable {
 			getRuleSubruleMapService().insert(ruleSubRuleMapVo);
 		}
 		logger.info("saveSubRules() - SubRule Rows Inserted: " + list.size());
-		return "msgrule.saved";
+		return TO_CONFIG_RULES;
 	}
 
 	public String moveUpSubRule() {
@@ -1072,12 +1082,24 @@ public class RuleLogicBean implements java.io.Serializable {
 		return false;
 	}
 
-	public boolean getHasSubRules() {
+	public boolean getHasSubrules() {
 		if (isDebugEnabled)
-			logger.debug("getHasSubRules() - Entering...");
+			logger.debug("getHasSubrules() - Entering...");
 		if (ruleLogic != null) {
 			List<RuleSubruleMap> list = getRuleSubruleMapService().getByRuleName(
 					ruleLogic.getRuleName());
+			if (list.size() > 0)
+				return true;
+		}
+		return false;
+	}
+
+	public boolean isHasSubrule(String ruleName) {
+		if (isDebugEnabled)
+			logger.debug("isHasSubrule() - Entering...");
+		if (ruleLogic != null) {
+			List<RuleSubruleMap> list = getRuleSubruleMapService().getByRuleName(
+					ruleName);
 			if (list.size() > 0)
 				return true;
 		}
