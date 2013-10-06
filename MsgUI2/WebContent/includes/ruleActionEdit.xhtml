@@ -111,7 +111,7 @@ function displayDP(rowIndex) {
 			</f:facet>
 	        <h:selectManyListbox id="datatypevalues1" value="#{msgaction.fieldValuesUI}"
 	        	size="2"
-	        	rendered="#{msgaction.hasDataTypeValues and msgaction.isDataTypeEmailAddress}">
+	        	rendered="#{msgaction.hasDataTypeValues and msgaction.dataTypeEmailAddress}">
 				<f:selectItems value="#{msgaction.ruleDataTValueList}"/>
 			</h:selectManyListbox>
 	        <h:selectOneMenu id="datatypevalues2" value="#{msgaction.fieldValues}"
