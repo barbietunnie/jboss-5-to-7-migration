@@ -25,6 +25,8 @@ import javax.persistence.NoResultException;
 
 import jpa.constant.CodeType;
 import jpa.constant.RuleCategory;
+import jpa.constant.RuleCriteria;
+import jpa.constant.RuleDataName;
 import jpa.constant.RuleType;
 import jpa.model.rule.RuleAction;
 import jpa.model.rule.RuleActionDetail;
@@ -78,12 +80,14 @@ public class RuleLogicBean implements java.io.Serializable {
 	/* use navigation rules in faces-config.xml */
 	protected static final String TO_SELF = "";
 	protected static final String TO_CANCELED = "cancel";
-	protected static final String TO_SAVED = "save";
 	protected static final String TO_FAILED = null;
 	protected static final String TO_EDIT_LOGIC = "edit_logic";
 	protected static final String TO_EDIT_ELEMENT = "edit_element";
 	protected static final String TO_EDIT_SUBRULE = "edit_subrule";
 	protected static final String TO_EDIT_ACTION = "edit_action";
+	
+	protected static final String RULE_LOGIC_SAVED = "configureCustomRules";
+	protected static final String RULE_ACTION_SAVED = RULE_LOGIC_SAVED;
 	
 	protected RuleLogicService getRuleLogicService() {
 		if (ruleLogicDao == null) {
@@ -149,7 +153,7 @@ public class RuleLogicBean implements java.io.Serializable {
 			return rl.getRuleName();
 		}
 		catch (NoResultException e) {
-			return "";
+			return TO_SELF;
 		}
 	}
 
@@ -158,7 +162,7 @@ public class RuleLogicBean implements java.io.Serializable {
 		ruleElements = null;
 		subRules = null;
 		ruleActions = null;
-		return "";
+		return TO_SELF;
 	}
 	
 	public String viewRuleLogic() {
@@ -331,7 +335,7 @@ public class RuleLogicBean implements java.io.Serializable {
 //			int elementsInserted = insertRuleElements(ruleLogic.getRuleName());
 //			logger.info("saveRuleLogic() - Element Rows Inserted: " + elementsInserted);
 		}
-		return "msgrule.saved";
+		return RULE_LOGIC_SAVED;
 	}
 
 	protected int insertRuleElements(String _ruleName) {
@@ -525,7 +529,7 @@ public class RuleLogicBean implements java.io.Serializable {
 	public String refreshElements() {
 		ruleElements = null;
 		getRuleElements();
-		return "";
+		return TO_SELF;
 	}
 	
 	public DataModel<RuleElement> getRuleElements() {
@@ -610,6 +614,8 @@ public class RuleLogicBean implements java.io.Serializable {
 		vo.setRuleElementPK(pk);
 		pk.setRuleLogic(ruleLogic);
 		vo.getRuleElementPK().setElementSequence(getNextRuleElementSeq());
+		vo.setDataName(RuleDataName.BCC_ADDR.getValue());
+		vo.setCriteria(RuleCriteria.STARTS_WITH.getValue());
 		vo.setMarkedForEdition(true);
 		list.add(vo);
 		return TO_SELF;
@@ -638,7 +644,7 @@ public class RuleLogicBean implements java.io.Serializable {
 	public String refreshSubRules() {
 		subRules = null;
 		getSubRules();
-		return "";
+		return TO_SELF;
 	}
 	
 	public DataModel<RuleSubruleMap> getSubRules() {
@@ -815,7 +821,7 @@ public class RuleLogicBean implements java.io.Serializable {
 	public String refreshMsgActions() {
 		ruleActions = null;
 		getMsgActions();
-		return "";
+		return TO_SELF;
 	}
 	
 	public DataModel<RuleAction> getMsgActions() {
@@ -934,7 +940,7 @@ public class RuleLogicBean implements java.io.Serializable {
 			getRuleActionService().insert(ruleAction);
 		}
 		logger.info("saveMsgActions() - MsgAction Rows Inserted: " + list.size());
-		return TO_SAVED;
+		return RULE_ACTION_SAVED;
 	}
 
 	/*
