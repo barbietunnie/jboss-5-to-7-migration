@@ -123,12 +123,19 @@ public class TestUtil {
 	public static MessageInbox verifyDeliveryStatus4BounceMail_2(int inboxRowId, MessageInboxService inboxService) {
 		MessageInbox inbox = inboxService.getAllDataByPrimaryKey(inboxRowId);
 		assertFalse(inbox.getMessageDeliveryStatusList().isEmpty());
-		MessageDeliveryStatus status = inbox.getMessageDeliveryStatusList().get(0);
-		assertTrue(status.getDeliveryStatus().indexOf("Final-Recipient: RFC822; <unknown.useraddress@aim.com>")>0);
-		assertTrue(status.getDsnReason().indexOf("smtp; 550 MAILBOX NOT FOUND")>=0);
-		assertTrue("5.1.1".equals(status.getDsnStatus()));
-		//assertTrue("failed".equals(status.getDsnReason()));
-		assertTrue("<unknown.useraddress@aim.com>".equals(status.getFinalRecipientAddress()));
+		boolean verified = false;
+		for (MessageDeliveryStatus status : inbox.getMessageDeliveryStatusList()) {
+			if ("<unknown.useraddress@aim.com>".equals(status.getFinalRecipientAddress())) {
+				assertTrue(status.getDeliveryStatus().indexOf("Final-Recipient: RFC822; <unknown.useraddress@aim.com>")>0);
+				assertTrue(status.getDsnReason().indexOf("smtp; 550 MAILBOX NOT FOUND")>=0);
+				assertTrue("5.1.1".equals(status.getDsnStatus()));
+				//assertTrue("failed".equals(status.getDsnReason()));
+				assertTrue("<unknown.useraddress@aim.com>".equals(status.getFinalRecipientAddress()));
+				verified = true;
+				break;
+			}
+		}
+		assertTrue(verified);
 		return inbox;
 	}
 	
@@ -214,7 +221,7 @@ public class TestUtil {
 		assertTrue(msgBean.getDsnRfc822().indexOf("from asp-6.reflexion.net ([205.237.99.181]) by MELMX.synnex.com.au")>=0);
 		assertTrue(msgBean.getDsnRfc822().indexOf("Received: by asp-6.reflexion.net")>0);
 		assertTrue(msgBean.getDsnRfc822().indexOf("Received: (qmail 22418 invoked from network); 13 May 2008 22:47:48 -0000")>0);
-		//assertTrue(msgBean.getDsnRfc822().indexOf("From: Viagra ® Official Site <jackwnn@synnex.com.au>")>=0);
+		//assertTrue(msgBean.getDsnRfc822().indexOf("From: Viagra ï¿½ Official Site <jackwnn@synnex.com.au>")>=0);
 		assertTrue(msgBean.getDsnRfc822().indexOf("Official Site <jackwnn@synnex.com.au>")>=0);
 		assertTrue(msgBean.getDsnRfc822().indexOf("X-Rfx-Unknown-Address: Address <jackwnn@synnex.com.au> is not protected by Reflexion.")>0);
 		assertTrue(msgBean.getDsnRfc822().indexOf("Date: 14 May 2008 08:50:31 +1000")>0);

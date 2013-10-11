@@ -22,13 +22,14 @@ import jpa.util.StringUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.SqlTimestampConverter;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.AfterTransaction;
+import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,23 +53,33 @@ public class MailingListTest {
 	private EmailAddress emailAddr = null;
 	private EmailAddress emailAddr2 = null;
 	
-	@Before
+	@BeforeTransaction
 	public void prepare() {
 		String testEmailAddr1 = "jpatest1@localhost";
-		emailAddr = new EmailAddress();
-		emailAddr.setAddress(testEmailAddr1);
-		emailAddr.setOrigAddress(testEmailAddr1);
-		emailAddr.setStatusId(StatusId.ACTIVE.getValue());
-		emailAddr.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		eaService.insert(emailAddr);
+		try {
+			emailAddr = eaService.getByAddress(testEmailAddr1);
+		}
+		catch (NoResultException e) {
+			emailAddr = new EmailAddress();
+			emailAddr.setAddress(testEmailAddr1);
+			emailAddr.setOrigAddress(testEmailAddr1);
+			emailAddr.setStatusId(StatusId.ACTIVE.getValue());
+			emailAddr.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			eaService.insert(emailAddr);
+		}
 		
 		String testEmailAddr2 = "jpatest2@localhost";
-		emailAddr2 = new EmailAddress();
-		emailAddr2.setAddress(testEmailAddr2);
-		emailAddr2.setOrigAddress(testEmailAddr2);
-		emailAddr2.setStatusId(StatusId.ACTIVE.getValue());
-		emailAddr2.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		eaService.insert(emailAddr2);
+		try {
+			emailAddr2 = eaService.getByAddress(testEmailAddr2);
+		}
+		catch (NoResultException e) {
+			emailAddr2 = new EmailAddress();
+			emailAddr2.setAddress(testEmailAddr2);
+			emailAddr2.setOrigAddress(testEmailAddr2);
+			emailAddr2.setStatusId(StatusId.ACTIVE.getValue());
+			emailAddr2.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			eaService.insert(emailAddr2);
+		}
 	}
 	
 	private String testListId1 = "TestList1";
@@ -162,5 +173,11 @@ public class MailingListTest {
 		System.out.println(StringUtil.prettyPrint(rcd5,1));
 		int rowsDeleted = service.deleteByListId(testListId2);
 		assertTrue(1==rowsDeleted);
+	}
+	
+	@AfterTransaction
+	public void cleanup() {
+		eaService.deleteByAddress(emailAddr.getAddress());
+		eaService.deleteByRowId(emailAddr2.getRowId());
 	}
 }

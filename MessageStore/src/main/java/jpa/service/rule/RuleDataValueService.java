@@ -86,7 +86,10 @@ public class RuleDataValueService {
 		}
 	}
 
-	public int deleteByPrimaryKey(RuleDataValuePK pk) {
+	/*
+	 * @deprecated - works with EclipseLink, but not Hibernate (causes MySQLSyntaxErrorException)
+	 */
+	public int deleteByPrimaryKey_v0(RuleDataValuePK pk) {
 		if (pk.getRuleDataType()==null) {
 			throw new IllegalArgumentException("A RuleDataType instance must be provided in Primary Key object.");
 		}
@@ -103,11 +106,28 @@ public class RuleDataValueService {
 		}
 	}
 
+	public int deleteByPrimaryKey(RuleDataValuePK pk) {
+		if (pk.getRuleDataType()==null) {
+			throw new IllegalArgumentException("A RuleDataType instance must be provided in Primary Key object.");
+		}
+		try {
+			Query query = em.createNativeQuery("delete from Rule_Data_Value where " +
+					"RuleDataTypeRowId in (select Row_Id from Rule_Data_Type where DataType = ?) " +
+					"and DataValue=? ");
+			query.setParameter(1, pk.getRuleDataType().getDataType());
+			query.setParameter(2, pk.getDataValue());
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
+
 	public int deleteByDataType(String dataType) {
 		try {
-			Query query = em.createQuery("delete from RuleDataValue t where " +
-					"t.ruleDataValuePK.ruleDataType.dataType=:dataType");
-			query.setParameter("dataType", dataType);
+			Query query = em.createNativeQuery("delete from Rule_Data_Value where " +
+					"RuleDataTypeRowId in (select Row_Id from Rule_Data_Type where DataType = ?)");
+			query.setParameter(1, dataType);
 			int rows = query.executeUpdate();
 			return rows;
 		}

@@ -34,12 +34,18 @@ import jpa.constant.StatusId;
 		 @ColumnResult(name="openCount"),
 		 @ColumnResult(name="clickCount"),
 	  	}),
+	  	 @SqlResultSetMapping(name="MailingListMapping",
+			entities={
+			 @EntityResult(entityClass=MailingList.class),
+		  }),
 	})
 public class MailingList extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -1314842144892847007L;
 
 	@Transient
 	public static final String MAPPING_MAILING_LIST_WITH_COUNTS = "MailingListWithCounts";
+	@Transient
+	public static final String MAPPING_MAILING_LIST = "MailingListMapping";
 
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true, mappedBy="mailingList")
 	@CascadeOnDelete
