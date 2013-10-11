@@ -6,11 +6,11 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<spring.version>3.2.0.RELEASE</spring.version>
-	<aspectjweaver.version>1.6.11</aspectjweaver.version>
+	<spring.version>3.2.4.RELEASE</spring.version>
+	<aspectjweaver.version>1.7.3</aspectjweaver.version>
 	<cglib.version>3.0</cglib.version>
-	<hibernate.version>4.2.0.Final</hibernate.version>
-	<eclipselink.version>2.4.2</eclipselink.version>
+	<hibernate.version>4.2.6.Final</hibernate.version>
+	<eclipselink.version>2.5.1</eclipselink.version>
 	<derby.version>10.9.1.0</derby.version>
 	<mysql.connector.version>5.1.26</mysql.connector.version>
 	<postgresql.jdbc.version>9.1-901.jdbc4</postgresql.jdbc.version>
