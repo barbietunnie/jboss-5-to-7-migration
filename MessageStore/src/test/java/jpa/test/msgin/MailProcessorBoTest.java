@@ -109,10 +109,12 @@ public class MailProcessorBoTest {
 	private void testBouncedMail(List<Integer> rowIds, int fileNbr) throws MessagingException, IOException {
 		try {
 			if (fileNbr == 1) {
+				logger.info("Row_Id_1 = " + rowIds.get(0));
 				MessageInbox inbox = TestUtil.verifyBouncedMail_1(rowIds.get(0), inboxService, emailService);
 				assertTrue(MsgStatusCode.CLOSED.getValue().equals(inbox.getStatusId()));
 			}
 			else if (fileNbr == 2) {
+				logger.info("Row_Id_1 = " + rowIds.get(0));
 				MessageInbox inbox = TestUtil.verifyBouncedMail_2(rowIds.get(0), inboxService, emailService);
 				assertTrue(MsgStatusCode.CLOSED.getValue().equals(inbox.getStatusId()));
 				if (rowIds.size()==2) { // Message Delivery Status
