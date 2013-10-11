@@ -15,7 +15,7 @@
 	<context:property-placeholder ignore-resource-not-found="false" 
 		location="classpath:/META-INF/msgstore.${dbtype:mysql}.properties"/>
 
-	<context:component-scan base-package="jpa.service" />
+	<context:component-scan base-package="jpa.service, jpa.dao" />
 	<context:annotation-config/>
 
 	<!-- Spring JPA transaction manager -->
@@ -81,6 +81,16 @@
 	    <property name="loadTimeWeaver">
 	        <bean class="jpa.model.ClassCastClassloaderWeaver" />
 	    </property>
+	</bean>
+
+	<bean id="searchProcessor" class="com.googlecode.genericdao.search.jpa.JPASearchProcessor">
+		<constructor-arg ref="metadataUtil" />
+	</bean>
+
+	<bean id="metadataUtil"
+		class="com.googlecode.genericdao.search.jpa.hibernate.HibernateMetadataUtil"
+		factory-method="getInstanceForEntityManagerFactory">
+		<constructor-arg ref="entityManagerFactory" />
 	</bean>
 
 	<bean id="jpaDialect" class="${spring.jpa.vender.dialect}" />

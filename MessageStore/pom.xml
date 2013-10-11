@@ -104,6 +104,18 @@
 		<artifactId>hibernate-entitymanager</artifactId>
 		<version>${hibernate.version}</version>
 	</dependency>
+	<!-- This first dependency includes all the JPA implementations for the DAOs -->
+	<dependency>
+	        <groupId>com.googlecode.genericdao</groupId>
+	        <artifactId>dao</artifactId>
+	        <version>1.2.0</version> <!-- use current version -->
+	</dependency>
+	<!-- This second one includes the Hibernate Entity Manager plugin for the framework -->
+	<dependency>
+	        <groupId>com.googlecode.genericdao</groupId>
+	        <artifactId>search-jpa-hibernate</artifactId>
+	        <version>1.2.0</version> <!-- use current version -->
+	</dependency>
 
 	<dependency>
 			<groupId>org.eclipse.persistence</groupId>
