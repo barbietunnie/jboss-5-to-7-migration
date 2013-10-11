@@ -25,13 +25,13 @@ import jpa.service.msgin.MessageParserBo;
 import jpa.util.TestUtil;
 
 import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.AfterTransaction;
+import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,8 +59,7 @@ public class MailProcessorBoTest {
 	private List<Integer> rowIds_1 = null;
 	private List<Integer> rowIds_2 = null;
 	
-	@Before
-	@Rollback(false)
+	@BeforeTransaction
 	public void prepare() {
 		try {
 			List<Integer> rowids = persistRecord("BouncedMail_1.txt");
@@ -106,6 +105,10 @@ public class MailProcessorBoTest {
 		testBouncedMail(rowIds_2, 2);
 	}
 
+	@AfterTransaction
+	public void cleanup() {
+	}
+
 	private void testBouncedMail(List<Integer> rowIds, int fileNbr) throws MessagingException, IOException {
 		try {
 			if (fileNbr == 1) {
@@ -114,10 +117,11 @@ public class MailProcessorBoTest {
 				assertTrue(MsgStatusCode.CLOSED.getValue().equals(inbox.getStatusId()));
 			}
 			else if (fileNbr == 2) {
-				logger.info("Row_Id_1 = " + rowIds.get(0));
+				logger.info("Row_Id_2 = " + rowIds.get(0));
 				MessageInbox inbox = TestUtil.verifyBouncedMail_2(rowIds.get(0), inboxService, emailService);
 				assertTrue(MsgStatusCode.CLOSED.getValue().equals(inbox.getStatusId()));
 				if (rowIds.size()==2) { // Message Delivery Status
+					logger.info("Row_Id_2 for DeliveryStatus = " + rowIds.get(1));
 					TestUtil.verifyDeliveryStatus4BounceMail_2(rowIds.get(1), inboxService);
 				}
 			}

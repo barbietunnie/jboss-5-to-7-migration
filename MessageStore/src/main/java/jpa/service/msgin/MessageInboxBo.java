@@ -461,7 +461,7 @@ public class MessageInboxBo {
 		msgInboxDao.update(msgVo);
 
 		if (isDebugEnabled) {
-			logger.debug("saveMessage() - Message has been saved to database, MsgId: "
+			logger.debug("saveMessage() - Message has been saved to database, RowId: "
 					+ msgVo.getRowId());
 		}
 		return msgVo.getRowId();

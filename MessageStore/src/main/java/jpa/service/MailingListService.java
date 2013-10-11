@@ -55,13 +55,34 @@ public class MailingListService implements java.io.Serializable {
 		}
 	}
 
-	public List<MailingList> getByEmailAddress(String address) throws NoResultException {
+	/*
+	 * @deprecated - works with EclipseLink, but causes TypeMismatchException with Hibernate
+	 */
+	public List<MailingList> getByEmailAddress_v0(String address) throws NoResultException {
 		String sql =
 			"select t from MailingList t, Subscription sub, EmailAddress ea " +
 				" where sub=t.subscriptions and sub.emailAddr=ea and ea.address=:address ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("address", address);
+			@SuppressWarnings("unchecked")
+			List<MailingList> list = query.getResultList();
+			return list;
+		}
+		finally {
+		}
+	}
+
+	public List<MailingList> getByEmailAddress(String address) throws NoResultException {
+		String sql =
+			"select a.* " +
+			"from Mailing_List a " +
+			"left outer join Subscription b on a.Row_Id = b.MailingListRowId " +
+			"join Email_Address e on e.Row_Id = b.EmailAddrRowId " +
+				" where e.address=? ";
+		try {
+			Query query = em.createNativeQuery(sql,MailingList.MAPPING_MAILING_LIST);
+			query.setParameter(1, address);
 			@SuppressWarnings("unchecked")
 			List<MailingList> list = query.getResultList();
 			return list;

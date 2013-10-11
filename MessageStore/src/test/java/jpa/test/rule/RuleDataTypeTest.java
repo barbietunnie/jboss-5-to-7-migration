@@ -2,20 +2,21 @@ package jpa.test.rule;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.NoResultException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.AfterTransaction;
+import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import jpa.constant.Constants;
 import jpa.constant.EmailAddrType;
 import jpa.constant.StatusId;
 import jpa.model.rule.RuleDataType;
+import jpa.model.rule.RuleDataValue;
 import jpa.service.rule.RuleDataTypeService;
 import jpa.service.rule.RuleDataValueService;
 import jpa.util.StringUtil;
@@ -35,7 +37,7 @@ import jpa.util.StringUtil;
 public class RuleDataTypeTest {
 	static Logger logger = Logger.getLogger(RuleDataTypeTest.class);
 	
-	final String testDataType1 = "CarbonCopyAddress";
+	final String testDataType1 = "CarbonCopyAddress1";
 	final String testDataType2 = "CarbonCopyAddress2";
 	final String testDataValue = EmailAddrType.TO_ADDR.getValue();
 	
@@ -51,29 +53,39 @@ public class RuleDataTypeTest {
 	RuleDataType typ1= null;
 	RuleDataType typ2= null;
 	
-	@Before
+	@BeforeTransaction
 	public void prepare() {
 		// test insert
-		typ1 = new RuleDataType();
-		typ1.setDataType(testDataType1);
-		typ1.setStatusId(StatusId.ACTIVE.getValue());
-		typ1.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		typeService.insert(typ1);
+		try {
+			typ1 = typeService.getByDataType(testDataType1);
+		}
+		catch (NoResultException e) {
+			typ1 = new RuleDataType();
+			typ1.setDataType(testDataType1);
+			typ1.setStatusId(StatusId.ACTIVE.getValue());
+			typ1.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			typeService.insert(typ1);
+		}
 
-		typ2 = new RuleDataType();
-		typ2.setDataType(testDataType2);
-		typ2.setStatusId(StatusId.ACTIVE.getValue());
-		typ2.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		typeService.insert(typ2);
+		try {
+			typ2 = typeService.getByDataType(testDataType2);
+		}
+		catch (NoResultException e) {
+			typ2 = new RuleDataType();
+			typ2.setDataType(testDataType2);
+			typ2.setStatusId(StatusId.ACTIVE.getValue());
+			typ2.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			typeService.insert(typ2);
+		}
 	}
 	
-	@After
+	@AfterTransaction
 	public void tearDown() {
 		if (typ1!=null) {
-			typeService.delete(typ1);
+			typeService.deleteByDataType(testDataType1);
 		}
 		if (typ2!=null) {
-			typeService.delete(typ2);
+			typeService.deleteByRowId(typ2.getRowId());
 		}
 	}
 
@@ -119,6 +131,11 @@ public class RuleDataTypeTest {
 		RuleDataType dest = new RuleDataType();
 		try {
 			BeanUtils.copyProperties(dest, orig);
+			/*
+			 * XXX Added next line of code to resolves: 
+			 * HibernateException: Found shared references to a collection: jpa.model.rule.RuleDataType.ruleDataValues
+			 */
+			dest.setRuleDataValues(new ArrayList<RuleDataValue>());
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
