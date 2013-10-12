@@ -83,16 +83,6 @@
 	    </property>
 	</bean>
 
-	<bean id="searchProcessor" class="com.googlecode.genericdao.search.jpa.JPASearchProcessor">
-		<constructor-arg ref="metadataUtil" />
-	</bean>
-
-	<bean id="metadataUtil"
-		class="com.googlecode.genericdao.search.jpa.hibernate.HibernateMetadataUtil"
-		factory-method="getInstanceForEntityManagerFactory">
-		<constructor-arg ref="entityManagerFactory" />
-	</bean>
-
 	<bean id="jpaDialect" class="${spring.jpa.vender.dialect}" />
 	
 	<bean id="jpaVendorAdapter" class="${spring.jpa.vender.adapter}"
