@@ -1082,9 +1082,9 @@ public class RuleLogicBean implements java.io.Serializable {
 		return false;
 	}
 
-	public boolean getHasSubrules() {
+	public boolean isHasSubrules() {
 		if (isDebugEnabled)
-			logger.debug("getHasSubrules() - Entering...");
+			logger.debug("isHasSubrules() - Entering...");
 		if (ruleLogic != null) {
 			List<RuleSubruleMap> list = getRuleSubruleMapService().getByRuleName(
 					ruleLogic.getRuleName());
@@ -1097,12 +1097,10 @@ public class RuleLogicBean implements java.io.Serializable {
 	public boolean isHasSubrule(String ruleName) {
 		if (isDebugEnabled)
 			logger.debug("isHasSubrule() - Entering...");
-		if (ruleLogic != null) {
-			List<RuleSubruleMap> list = getRuleSubruleMapService().getByRuleName(
-					ruleName);
-			if (list.size() > 0)
-				return true;
-		}
+		List<RuleSubruleMap> list = getRuleSubruleMapService().getByRuleName(
+				ruleName);
+		if (list.size() > 0)
+			return true;
 		return false;
 	}
 
@@ -1115,6 +1113,15 @@ public class RuleLogicBean implements java.io.Serializable {
 			if (list.size() > 0)
 				return true;
 		}
+		return false;
+	}
+
+	public boolean isHasMsgAction(String ruleName) {
+		if (isDebugEnabled)
+			logger.debug("isHasMsgAction() - Entering...");
+		List<RuleAction> list = getRuleActionService().getByRuleName(ruleName);
+		if (list.size() > 0)
+			return true;
 		return false;
 	}
 
