@@ -38,9 +38,9 @@
       </f:facet>
       <h:commandLink action="#{ruleLogic.viewMsgActions}" rendered="#{not rule.subrule}">
       	<h:outputText value="Add" title="Click to Add Actions"
-      		rendered="#{not ruleLogic.hasMsgActions}"/>
+      		rendered="#{ruleLogic.isHasMsgAction(rule.ruleName)==false}"/>
       	<h:outputText value="Edit" title="Click to Edit Actions"
-      		rendered="#{ruleLogic.hasMsgActions}"/>
+      		rendered="#{ruleLogic.isHasMsgAction(rule.ruleName)}"/>
       </h:commandLink>
       <h:outputText value="n/a" rendered="#{rule.subrule}"/>
    </h:column>
@@ -49,7 +49,10 @@
          <h:outputText value="#{msgs.isSubRuleHeader}"/>
       </f:facet>
       <h:commandLink action="#{ruleLogic.viewSubRules}" rendered="#{not rule.subrule}">
-      	<h:outputText value="#{rule.isSubRuleDesc}" title="Click to Add/Edit Subrules"/>
+      	<h:outputText value="Add" title="Click to Add Subrules"
+      		rendered="#{ruleLogic.isHasSubrule(rule.ruleName)==false}"/>
+      	<h:outputText value="Edit" title="Click to Edit Subrules"
+      		rendered="#{ruleLogic.isHasSubrule(rule.ruleName)}"/>
       </h:commandLink>
       <h:outputText value="#{rule.isSubRuleDesc}" style="font-style: italic; font-size: 0.8em;"
       	rendered="#{rule.subrule}"/>
