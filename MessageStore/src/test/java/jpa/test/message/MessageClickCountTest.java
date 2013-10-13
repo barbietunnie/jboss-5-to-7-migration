@@ -30,13 +30,14 @@ import jpa.service.message.MessageInboxService;
 import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.AfterTransaction;
+import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,7 +72,7 @@ public class MessageClickCountTest {
 	private EmailAddress to;
 	private MailingList mlist;
 
-	@Before
+	@BeforeTransaction
 	public void prepare() {
 		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 		
@@ -110,6 +111,11 @@ public class MessageClickCountTest {
 		mlist=mlists.get(0);
 	}
 	
+	@AfterTransaction
+	public void cleanup() {
+		inboxService.deleteByRowId(inbox1.getRowId());
+	}
+
 	private MessageClickCount mcc1;
 	private MessageClickCount mcc2;
 
