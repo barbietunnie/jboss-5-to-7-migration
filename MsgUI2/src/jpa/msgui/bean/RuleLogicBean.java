@@ -1082,6 +1082,9 @@ public class RuleLogicBean implements java.io.Serializable {
 		return false;
 	}
 
+	/*
+	 * used by ruleLogicEdit.xhtml, where ruleLogic instance has been instantiated.
+	 */
 	public boolean isHasSubrules() {
 		if (isDebugEnabled)
 			logger.debug("isHasSubrules() - Entering...");
@@ -1104,6 +1107,9 @@ public class RuleLogicBean implements java.io.Serializable {
 		return false;
 	}
 
+	/*
+	 * used by customizeBuiltinRules.xhtml, inside DataTable loop where RowData is available.
+	 */
 	public boolean getHasMsgActions() {
 		if (isDebugEnabled)
 			logger.debug("getHasMsgActions() - Entering...");
