@@ -10,7 +10,7 @@
 <h:outputFormat value="#{msgs.configureEmailTemplates}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable value="#{emailTemplate.all}" var="tmplt" 
+<h:dataTable id="data_table" value="#{emailTemplate.all}" var="tmplt" 
    styleClass="jsfDataTable" 
    headerClass="dataTableHeader" columnClasses="oddColumns, evenColumns">
    
@@ -19,7 +19,9 @@
          <h:outputText value="#{msgs.deleteColumnHeader}"/>
       </f:facet>
       <h:selectBooleanCheckbox value="#{tmplt.markedForDeletion}" immediate="true"
-         disabled="#{(not tmplt.editable) or tmplt.builtin}" onclick="submit()"/>
+         disabled="#{(not tmplt.editable) or tmplt.builtin}">
+         <f:ajax event="click" render="@form" />
+      </h:selectBooleanCheckbox>
    </h:column>
    <h:column>
       <f:facet name="header">
@@ -76,7 +78,9 @@
 			onclick="javascript:return confirmDelete();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"
-			title="Refresh from database" action="#{emailTemplate.refresh}" />
+			title="Refresh from database" >
+			<f:ajax event="click" render="data_table" />
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.copyToNewButtonText}"
 			title="Create a new row from selected"

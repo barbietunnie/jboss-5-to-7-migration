@@ -86,9 +86,21 @@ public class RuleLogicBean implements java.io.Serializable {
 	protected static final String TO_EDIT_SUBRULE = "ruleSubruleEdit";
 	protected static final String TO_EDIT_ACTION = "ruleActionEdit";
 	
-	protected static final String TO_CONFIG_RULES = "configureCustomRules";
-	protected static final String RULE_ACTION_SAVED = TO_CONFIG_RULES;
+	protected static final String TO_CONFIG_CUSTOM_RULES = "configureCustomRules";
+	protected static final String TO_CUSTOMIZE_BUILTIN_RULES = "customizeBuiltinRules";
+	protected static final String RULE_ACTION_SAVED = TO_CONFIG_CUSTOM_RULES;
 	
+	//@ManagedProperty("#{param.sourcePage}") // has to change the bean to RequestScope
+	protected String sourcePage; // f:param tag
+	
+	public String getSourcePage() {
+		return sourcePage;
+	}
+
+	public void setSourcePage(String sourcePage) {
+		this.sourcePage = sourcePage;
+	}
+
 	protected RuleLogicService getRuleLogicService() {
 		if (ruleLogicDao == null) {
 			ruleLogicDao = (RuleLogicService) SpringUtil.getWebAppContext().getBean(
@@ -335,7 +347,7 @@ public class RuleLogicBean implements java.io.Serializable {
 //			int elementsInserted = insertRuleElements(ruleLogic.getRuleName());
 //			logger.info("saveRuleLogic() - Element Rows Inserted: " + elementsInserted);
 		}
-		return TO_CONFIG_RULES;
+		return TO_CONFIG_CUSTOM_RULES;
 	}
 
 	protected int insertRuleElements(String _ruleName) {
@@ -359,7 +371,12 @@ public class RuleLogicBean implements java.io.Serializable {
 		List<RuleLogic> list = (List<RuleLogic>) ruleLogics.getWrappedData();
 		list.add(vo);
 	}
-	
+
+	public void deleteRuleLogicsListener(AjaxBehaviorEvent event) {
+		logger.info("deleteRuleLogicsListener() - Event Source: " + event.getSource());
+		deleteRuleLogics();
+	}
+
 	public String deleteRuleLogics() {
 		if (isDebugEnabled)
 			logger.debug("deleteRuleLogics() - Entering...");
@@ -458,10 +475,10 @@ public class RuleLogicBean implements java.io.Serializable {
 			return TO_EDIT_LOGIC;
 		}
 		else if (StringUtils.contains(viewId, TO_EDIT_ACTION)) {
-			return TO_CONFIG_RULES;
+			return TO_CONFIG_CUSTOM_RULES;
 		}
 		else if (StringUtils.contains(viewId, TO_EDIT_SUBRULE)) {
-			return TO_CONFIG_RULES;
+			return TO_CONFIG_CUSTOM_RULES;
 		}
 		return TO_CANCELED;
 	}
@@ -510,6 +527,11 @@ public class RuleLogicBean implements java.io.Serializable {
 		return TO_SELF;
 	}
 	
+	public void moveUpListener(AjaxBehaviorEvent event) {
+		logger.info("moveUpListener() - Event Source: " + event.getSource());
+		moveUp();
+	}
+
 	/*
 	 * @param updown - move current rule up or down:
 	 * 		-1 -> move up
@@ -771,7 +793,7 @@ public class RuleLogicBean implements java.io.Serializable {
 			getRuleSubruleMapService().insert(ruleSubRuleMapVo);
 		}
 		logger.info("saveSubRules() - SubRule Rows Inserted: " + list.size());
-		return TO_CONFIG_RULES;
+		return TO_CONFIG_CUSTOM_RULES;
 	}
 
 	public String moveUpSubRule() {
@@ -855,6 +877,11 @@ public class RuleLogicBean implements java.io.Serializable {
 		return list;
 	}
 	
+	public void deleteMsgActionsListener(AjaxBehaviorEvent event) {
+		logger.info("deleteMsgActionsListener() - Event source: " + event.getSource());
+		deleteMsgActions();
+	}
+
 	public String deleteMsgActions() {
 		if (isDebugEnabled)
 			logger.debug("deleteMsgActions() - Entering...");
@@ -907,6 +934,11 @@ public class RuleLogicBean implements java.io.Serializable {
 		return TO_SELF;
 	}
 	
+	public void addMsgActionListener(AjaxBehaviorEvent event) {
+		logger.info("addMsgActionListener() - event source: " + event.getSource());
+		addMsgAction();
+	}
+
 	public String addMsgAction() {
 		if (isDebugEnabled)
 			logger.debug("addMsgAction() - Entering...");
@@ -950,6 +982,10 @@ public class RuleLogicBean implements java.io.Serializable {
 			getRuleActionService().insert(ruleAction);
 		}
 		logger.info("saveMsgActions() - MsgAction Rows Inserted: " + list.size());
+		logger.info("saveMsgActions() - View Id: " + FacesUtil.getCurrentViewId());
+		if ("rule-action-built-in".equals(sourcePage)) {
+			return TO_CUSTOMIZE_BUILTIN_RULES;
+		}
 		return RULE_ACTION_SAVED;
 	}
 

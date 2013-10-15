@@ -10,7 +10,7 @@
 <h:outputFormat value="#{msgs.subscriptionsListLabel}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable binding="#{subscription.dataTable}" 
+<h:dataTable id="data_table" binding="#{subscription.dataTable}" 
    value="#{subscription.subscriptions}" var="list" 
    rows="#{subscription.pagingVo.pageSize}"
    styleClass="jsfDataTable" rowClasses="oddRows, evenRows"
@@ -21,7 +21,9 @@
          <h:outputText value=""/>
       </f:facet>
       <h:selectBooleanCheckbox value="#{list.markedForDeletion}" 
-         disabled="#{not list.editable}" onchange="submit()"/>
+         disabled="#{not list.editable}">
+         <f:ajax event="click" render="@form" />
+      </h:selectBooleanCheckbox>
    </h:column>
    <h:column>
       <f:facet name="header">
@@ -148,7 +150,9 @@
 			onclick="javascript:return confirmSubmit();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshLinkText}"
-			title="Refresh from database" action="#{subscription.refreshPage}" />
+			title="Refresh from database" >
+			<f:ajax event="click" render="data_table" />
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.backButtonText}" action="#{subscription.cancelEdit}"/>
 	</h:panelGroup>

@@ -14,12 +14,12 @@ function displayDP(rowIndex) {
 }
 </script>
 
-<h:panelGrid columns="1" styleClass="gettingStartedContent">
+<h:panelGrid id="panel_grid_1" columns="1" styleClass="gettingStartedContent">
 	<h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
 	<h:outputFormat value="#{msgs.ruleActionEditLabel}" styleClass="gridHeader">
 	   <f:param value="#{builtinRule.ruleLogic.ruleName}"/>
 	</h:outputFormat>
-	<h:panelGrid columns="2" styleClass="editPaneHeader" 
+	<h:panelGrid id="panel_grid_2" columns="2" styleClass="editPaneHeader" 
 		columnClasses="labelColumn, textColumn">
 		<h:outputText value="#{msgs.ruleNamePrompt}"/>
 		<h:outputText id="rulename" value="#{builtinRule.ruleLogic.ruleName}"/>
@@ -44,7 +44,7 @@ function displayDP(rowIndex) {
 		<h:outputText value="#{msgs.ruleTypePrompt}"/>
 		<h:outputText id="ruletype" value="#{builtinRule.ruleLogic.ruleType}"/>
 	</h:panelGrid>
-	<h:dataTable value="#{builtinRule.msgActions}" var="rule_action" id="builtin"
+	<h:dataTable id="builtin" value="#{builtinRule.msgActions}" var="rule_action"
 			styleClass="jsfDataTable"
             headerClass="dataTableHeader"
             footerClass="dataTableFooter"
@@ -53,8 +53,9 @@ function displayDP(rowIndex) {
            <f:facet name="header">
               <h:outputText value="#{msgs.deleteColumnHeader}"/>
            </f:facet>
-           <h:selectBooleanCheckbox value="#{rule_action.markedForDeletion}" 
-              onclick="submit()"/>
+           <h:selectBooleanCheckbox value="#{rule_action.markedForDeletion}" >
+              <f:ajax event="click" render="@form" />
+           </h:selectBooleanCheckbox>
         </h:column>
 		<h:column>
 			<f:facet name="header">
@@ -127,15 +128,18 @@ function displayDP(rowIndex) {
     <f:verbatim><p/></f:verbatim>
     <h:panelGroup>
 	    <h:commandButton value="#{msgs.deleteButtonText}" title="Delete selected rows"
-	   		action="#{builtinRule.deleteMsgActions}" 
 	   		disabled="#{not builtinRule.anyMsgActionsMarkedForDeletion}"
-	   		onclick="javascript:return confirmDelete();"/>
+	   		onclick="javascript:return confirmDelete();">
+	   		<f:ajax event="click" listener="#{builtinRule.deleteMsgActionsListener}" render="builtin" />
+	   	</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database"
-		   action="#{builtinRule.refreshMsgActions}"/>
+		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database" >
+		   <f:ajax event="click" render="builtin" />
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row"
-		   action="#{builtinRule.addMsgAction}"/>
+		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row">
+		   <f:ajax event="click" listener="#{builtinRule.addMsgActionListener}" render="builtin"/>
+		</h:commandButton>
     </h:panelGroup>
     <f:verbatim><p/></f:verbatim>
 	<h:outputText value="#{msgs[builtinRule.testResult]}" rendered="#{builtinRule.testResult != null}"
@@ -146,7 +150,9 @@ function displayDP(rowIndex) {
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
 				action="#{builtinRule.saveMsgActions}"
-				onclick="javascript:return confirmSubmit();" />
+				onclick="javascript:return confirmSubmit();" >
+				<f:setPropertyActionListener target="#{builtinRule.sourcePage}" value="rule-action-built-in" />
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
