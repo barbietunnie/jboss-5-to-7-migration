@@ -10,7 +10,7 @@
 <h:outputFormat value="#{msgs.configureCustomRules}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable value="#{ruleLogic.all()}" var="rule" 
+<h:dataTable id="data_table" value="#{ruleLogic.all}" var="rule" 
    styleClass="jsfDataTable" 
    headerClass="dataTableHeader" columnClasses="oddColumns, evenColumns">
    
@@ -19,7 +19,9 @@
          <h:outputText value="#{msgs.deleteColumnHeader}"/>
       </f:facet>
       <h:selectBooleanCheckbox value="#{rule.markedForDeletion}" 
-         disabled="#{not rule.editable}" onclick="submit()"/>
+         disabled="#{not rule.editable}">
+         <f:ajax event="click" render="@form" />
+      </h:selectBooleanCheckbox>
    </h:column>
    <h:column>
       <f:facet name="header">
@@ -40,7 +42,7 @@
       	<h:outputText value="Add" title="Click to Add Actions"
       		rendered="#{ruleLogic.isHasMsgAction(rule.ruleName)==false}"/>
       	<h:outputText value="Edit" title="Click to Edit Actions"
-      		rendered="#{ruleLogic.isHasMsgAction(rule.ruleName)}"/>
+      		rendered="#{ruleLogic.isHasMsgAction(rule.ruleName)==true}"/>
       </h:commandLink>
       <h:outputText value="n/a" rendered="#{rule.subrule}"/>
    </h:column>
@@ -52,7 +54,7 @@
       	<h:outputText value="Add" title="Click to Add Subrules"
       		rendered="#{ruleLogic.isHasSubrule(rule.ruleName)==false}"/>
       	<h:outputText value="Edit" title="Click to Edit Subrules"
-      		rendered="#{ruleLogic.isHasSubrule(rule.ruleName)}"/>
+      		rendered="#{ruleLogic.isHasSubrule(rule.ruleName)==true}"/>
       </h:commandLink>
       <h:outputText value="#{rule.isSubRuleDesc}" style="font-style: italic; font-size: 0.8em;"
       	rendered="#{rule.subrule}"/>
@@ -94,7 +96,7 @@
          <h:outputText value="#{msgs.moveUpHeader}"/>
       </f:facet>
       <h:commandLink action="#{ruleLogic.moveUp}" immediate="true"
-      	rendered="#{ruleLogic.ruleLogics.rowIndex > 0 and ruleLogic.canMoveUp}">
+      	rendered="#{ruleLogic.ruleLogics.rowIndex gt 0 and ruleLogic.canMoveUp}">
       	<h:graphicImage value="/images/greenUp.gif" title="Move Up" style="border: 0"/>
       </h:commandLink>
    </h:column>
@@ -114,12 +116,16 @@
 	columnClasses="alignLeft70, alignRight30">
 	<h:panelGroup>
 		<h:commandButton value="#{msgs.deleteButtonText}"
-			title="Delete selected rules" action="#{ruleLogic.deleteRuleLogics}"
+			title="Delete selected rules" 
 			disabled="#{not ruleLogic.anyRulesMarkedForDeletion}"
-			onclick="javascript:return confirmDelete();" />
+			onclick="javascript:return confirmDelete();" >
+			<f:ajax event="click" listener="#{ruleLogic.deleteRuleLogicsListener}" render="data_table" />
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"
-			title="Refresh from database" action="#{ruleLogic.refresh}" />
+			title="Refresh from database" >
+			<f:ajax event="click" render="data_table" />
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.copyToNewButtonText}"
 			title="Create a new rule from selected"
@@ -127,7 +133,8 @@
 			disabled="#{not ruleLogic.anyRulesMarkedForDeletion}" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.addNewButtonText}"
-			title="Add a new rule" action="#{ruleLogic.addRuleLogic}" />
+			title="Add a new rule" action="#{ruleLogic.addRuleLogic}">
+		</h:commandButton>
 	</h:panelGroup>
 	<h:panelGroup>
 		<f:verbatim>&nbsp;</f:verbatim>

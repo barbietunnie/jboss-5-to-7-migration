@@ -14,12 +14,12 @@ function displayDP(rowIndex) {
 }
 </script>
 
-<h:panelGrid columns="1" styleClass="gettingStartedContent">
+<h:panelGrid id="panel_grid_1" columns="1" styleClass="gettingStartedContent">
 	<h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
 	<h:outputFormat value="#{msgs.ruleActionEditLabel}" styleClass="gridHeader">
 	   <f:param value="#{ruleLogic.ruleLogic.ruleName}"/>
 	</h:outputFormat>
-	<h:panelGrid columns="2" styleClass="editPaneHeader" 
+	<h:panelGrid id="panel_grid_2" columns="2" styleClass="editPaneHeader" 
 		columnClasses="labelColumn, textColumn">
 		<h:outputText value="#{msgs.ruleNamePrompt}"/>
 		<h:outputText id="rulename" value="#{ruleLogic.ruleLogic.ruleName}"/>
@@ -44,7 +44,7 @@ function displayDP(rowIndex) {
 		<h:outputText value="#{msgs.ruleTypePrompt}"/>
 		<h:outputText id="ruletype" value="#{ruleLogic.ruleLogic.ruleType}"/>
 	</h:panelGrid>
-	<h:dataTable value="#{ruleLogic.msgActions}" var="msgaction" id="jsftable"
+	<h:dataTable id="jsftable" value="#{ruleLogic.msgActions}" var="msgaction"
 			styleClass="jsfDataTable"
             headerClass="dataTableHeader"
             footerClass="dataTableFooter"
@@ -53,8 +53,9 @@ function displayDP(rowIndex) {
            <f:facet name="header">
               <h:outputText value="#{msgs.deleteColumnHeader}"/>
            </f:facet>
-           <h:selectBooleanCheckbox value="#{msgaction.markedForDeletion}" 
-              onclick="submit()"/>
+           <h:selectBooleanCheckbox value="#{msgaction.markedForDeletion}">
+              <f:ajax event="click" render="@form" />
+           </h:selectBooleanCheckbox>
         </h:column>
 		<h:column>
 			<f:facet name="header">
@@ -129,8 +130,9 @@ function displayDP(rowIndex) {
 	   		disabled="#{not ruleLogic.anyMsgActionsMarkedForDeletion}"
 	   		onclick="javascript:return confirmDelete();"/>
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database"
-		   action="#{ruleLogic.refreshMsgActions}"/>
+		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database">
+		   <f:ajax event="click" render="jsftable" />
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row"
 		   action="#{ruleLogic.addMsgAction}"/>
@@ -144,7 +146,9 @@ function displayDP(rowIndex) {
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
 				action="#{ruleLogic.saveMsgActions}"
-				onclick="javascript:return confirmSubmit();" />
+				onclick="javascript:return confirmSubmit();" >
+				<f:setPropertyActionListener target="#{ruleLogic.sourcePage}" value="rule-action" />
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />

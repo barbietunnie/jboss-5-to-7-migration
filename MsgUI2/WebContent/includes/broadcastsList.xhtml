@@ -10,7 +10,7 @@
 <h:outputFormat value="#{msgs.broadcastsListLabel}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable binding="#{broadcastMsg.dataTable}" 
+<h:dataTable id="data_table" binding="#{broadcastMsg.dataTable}" 
    value="#{broadcastMsg.broadcasts}" var="list" 
    rows="#{broadcastMsg.pagingVo.pageSize}"
    styleClass="jsfDataTable" rowClasses="oddRows, evenRows"
@@ -21,7 +21,9 @@
          <h:outputText value=""/>
       </f:facet>
       <h:selectBooleanCheckbox value="#{list.markedForDeletion}" 
-         disabled="#{not list.editable}" onchange="submit()"/>
+         disabled="#{not list.editable}">
+         <f:ajax event="click" render="@form" />
+      </h:selectBooleanCheckbox>
    </h:column>
    <h:column>
       <f:facet name="header">
@@ -143,7 +145,9 @@
 			onclick="javascript:return confirmSubmit();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshLinkText}"
-			title="Refresh from database" action="#{broadcastMsg.refreshPage}" />
+			title="Refresh from database" >
+			<f:ajax event="click" render="data_table" />
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.backButtonText}" action="#{broadcastMsg.cancelEdit}"/>
 	</h:panelGroup>

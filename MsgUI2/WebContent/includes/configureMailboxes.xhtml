@@ -10,7 +10,7 @@
 <h:outputFormat value="#{msgs.configureMailboxes}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable value="#{mailInbox.all}" var="mbox" 
+<h:dataTable id="data_table" value="#{mailInbox.all}" var="mbox" 
    styleClass="jsfDataTable" 
    headerClass="dataTableHeader" columnClasses="oddColumns, evenColumns">
    
@@ -19,7 +19,9 @@
          <h:outputText value="#{msgs.deleteColumnHeader}"/>
       </f:facet>
       <h:selectBooleanCheckbox value="#{mbox.markedForDeletion}" 
-         disabled="#{not mbox.editable}" onclick="submit()"/>
+         disabled="#{not mbox.editable}">
+         <f:ajax event="click" render="@form" />
+      </h:selectBooleanCheckbox>
    </h:column>
    <h:column>
       <f:facet name="header">
@@ -82,7 +84,9 @@
 			onclick="javascript:return confirmDelete();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"
-			title="Refresh from database" action="#{mailInbox.refresh}" />
+			title="Refresh from database" >
+			<f:ajax event="click" render="data_table" />
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.copyToNewButtonText}"
 			title="Create a new row from selected"

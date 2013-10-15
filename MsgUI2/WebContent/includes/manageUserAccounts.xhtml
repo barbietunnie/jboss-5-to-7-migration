@@ -10,7 +10,7 @@
 <h:outputFormat value="#{msgs.manageUserAccounts}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable value="#{userData.all}" var="list" 
+<h:dataTable id="data_table" value="#{userData.all}" var="list" 
    styleClass="jsfDataTable" 
    headerClass="dataTableHeader" columnClasses="oddColumns, evenColumns">
    
@@ -19,7 +19,9 @@
          <h:outputText value="#{msgs.deleteColumnHeader}"/>
       </f:facet>
       <h:selectBooleanCheckbox value="#{list.markedForDeletion}" 
-         disabled="#{not list.editable}" onclick="submit()"/>
+         disabled="#{not list.editable}">
+         <f:ajax event="click" render="@form" />
+      </h:selectBooleanCheckbox>
    </h:column>
    <h:column>
       <f:facet name="header">
@@ -73,7 +75,9 @@
 			onclick="javascript:return confirmDelete();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"
-			title="Refresh from database" action="#{userData.refresh}" />
+			title="Refresh from database" >
+			<f:ajax event="click" render="data_table" />
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.copyToNewButtonText}"
 			title="Create a new row from selected"

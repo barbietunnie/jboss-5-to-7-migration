@@ -10,7 +10,7 @@
 <h:outputFormat value="#{msgs.customizeBuiltinRules}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable value="#{builtinRule.all()}" var="rule" 
+<h:dataTable id="data_table" value="#{builtinRule.all}" var="rule" 
    styleClass="jsfDataTable" 
    headerClass="dataTableHeader" columnClasses="oddColumns, evenColumns">
    
@@ -77,7 +77,9 @@
 	columnClasses="alignLeft70, alignRight30">
 	<h:panelGroup>
 		<h:commandButton value="#{msgs.refreshFromDB}"
-			title="Refresh from database" action="#{builtinRule.refresh}" />
+			title="Refresh from database" >
+			<f:ajax event="click" render="data_table" />
+		</h:commandButton>
 	</h:panelGroup>
 	<h:panelGroup>
 		<f:verbatim>&nbsp;</f:verbatim>
