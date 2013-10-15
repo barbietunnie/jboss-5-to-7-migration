@@ -10,7 +10,7 @@
 <h:outputFormat value="#{msgs.configureCustomRules}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable value="#{ruleLogic.all}" var="rule" 
+<h:dataTable value="#{ruleLogic.all()}" var="rule" 
    styleClass="jsfDataTable" 
    headerClass="dataTableHeader" columnClasses="oddColumns, evenColumns">
    
