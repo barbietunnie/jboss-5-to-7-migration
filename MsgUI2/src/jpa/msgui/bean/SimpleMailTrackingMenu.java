@@ -52,7 +52,7 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 	
 	private EmailAddressService emailAddrDao;
 	private MessageInboxService msgInboxDao;
-	private static String TO_SELF = "message.search";
+	private static String TO_SELF = null;
 	
 	public SimpleMailTrackingMenu() {
 		setDefaultSearchFields();

@@ -50,7 +50,7 @@ public class MailingListBean implements java.io.Serializable {
 	private String actionFailure = null;
 	
 	private static String TO_EDIT = "mailingListEdit";
-	private static String TO_SELF = "";
+	private static String TO_SELF = null;
 	private static String TO_SAVED = "configureMailingLists";
 	private static String TO_FAILED = null;
 	private static String TO_DELETED = TO_SAVED;

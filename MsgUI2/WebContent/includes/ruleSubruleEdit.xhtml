@@ -36,7 +36,7 @@
 		<h:outputText value="#{msgs.ruleTypePrompt}"/>
 		<h:outputText id="ruletype" value="#{ruleLogic.ruleLogic.ruleType}"/>
 	</h:panelGrid>
-	<h:dataTable value="#{ruleLogic.subRules}" var="subrule"
+	<h:dataTable id="data_table" value="#{ruleLogic.subRules}" var="subrule"
 			styleClass="jsfDataTable"
             headerClass="dataTableHeader"
             footerClass="dataTableFooter"
@@ -45,8 +45,9 @@
            <f:facet name="header">
               <h:outputText value="#{msgs.deleteColumnHeader}"/>
            </f:facet>
-           <h:selectBooleanCheckbox value="#{subrule.markedForDeletion}" 
-              onclick="submit()"/>
+           <h:selectBooleanCheckbox value="#{subrule.markedForDeletion}">
+              <f:ajax event="click" render="@form" />
+            </h:selectBooleanCheckbox>
         </h:column>
 		<h:column>
 			<f:facet name="header">
@@ -78,15 +79,18 @@
     <f:verbatim><p/></f:verbatim>
     <h:panelGroup>
 	    <h:commandButton value="#{msgs.deleteButtonText}" title="Delete selected rows"
-	   		action="#{ruleLogic.deleteSubRules}" 
 	   		disabled="#{not ruleLogic.anySubRulesMarkedForDeletion}"
-	   		onclick="javascript:return confirmDelete();"/>
+	   		onclick="javascript:return confirmDelete();">
+	   		<f:ajax event="click" listener="#{ruleLogic.deleteSubRulesListener}" render="data_table"/>
+	   	</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database"
-		   action="#{ruleLogic.refreshSubRules}"/>
+		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database">
+		    <f:ajax event="click" render="data_table" />
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row"
-		   action="#{ruleLogic.addSubRule}"/>
+		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row">
+		   <f:ajax event="click" listener="#{ruleLogic.addSubRuleListener}" render="data_table"/>
+		</h:commandButton>
     </h:panelGroup>
     <f:verbatim><p/></f:verbatim>
 	<h:outputText value="#{msgs[ruleLogic.testResult]}"

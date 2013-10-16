@@ -95,8 +95,9 @@
       <f:facet name="header">
          <h:outputText value="#{msgs.moveUpHeader}"/>
       </f:facet>
-      <h:commandLink action="#{ruleLogic.moveUp}" immediate="true"
+      <h:commandLink immediate="true"
       	rendered="#{ruleLogic.ruleLogics.rowIndex gt 0 and ruleLogic.canMoveUp}">
+      	<f:ajax event="click" immediate="true" listener="#{ruleLogic.moveUpListener}" render="@form" />
       	<h:graphicImage value="/images/greenUp.gif" title="Move Up" style="border: 0"/>
       </h:commandLink>
    </h:column>
@@ -104,9 +105,10 @@
       <f:facet name="header">
          <h:outputText value="#{msgs.moveDownHeader}"/>
       </f:facet>
-      <h:commandLink action="#{ruleLogic.moveDown}" immediate="true"
+      <h:commandLink immediate="true"
       	rendered="#{ruleLogic.ruleLogics.rowIndex lt (ruleLogic.ruleLogics.rowCount-1)
       		and ruleLogic.canMoveDown}">
+      	<f:ajax event="click" immediate="true" listener="#{ruleLogic.moveDownListener}" render="@form" />
       	<h:graphicImage value="/images/greenDown.gif" title="Move Down" style="border: 0"/>
       </h:commandLink>
    </h:column>

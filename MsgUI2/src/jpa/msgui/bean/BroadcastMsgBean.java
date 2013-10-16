@@ -45,7 +45,7 @@ public class BroadcastMsgBean implements java.io.Serializable {
 	private String actionFailure = null;
 	
 	static final String TO_VIEW = "broadcastMsgView";
-	static final String TO_SELF = "";
+	static final String TO_SELF = null; // null -> remains in the same view
 	static final String TO_PAGING = TO_SELF;
 	static final String TO_FAILED = null;
 	static final String TO_DELETED = TO_SELF;

@@ -55,7 +55,7 @@ public class EmailAddressBean implements java.io.Serializable {
 	private static String TO_SAVED = "emailAddrlist.saved";
 	private static String TO_CANCELED = "emailAddrlist.canceled";
 	private static String TO_PAGING = "emailAddrlist.paging";
-	private static String TO_SELF = "emailAddrlist.toself";
+	private static String TO_SELF = null;
 	
 	@SuppressWarnings("unchecked")
 	public DataModel<EmailAddress> getEmailAddrs() {

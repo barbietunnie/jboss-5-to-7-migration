@@ -59,7 +59,7 @@ public class EmailTemplateBean implements java.io.Serializable {
 	final static String TO_SAVED = "configureEmailTemplates";
 	final static String TO_DELETED = TO_SAVED;
 	final static String TO_CANCELED = TO_SAVED;
-	final static String TO_SELF = TO_EDIT;
+	final static String TO_SELF = null;
 	final static String TO_FAILED = null;
 	final static String TO_SCHEDULE_EDIT = "emailSchedulesEdit";
 	final static String TO_SCHEDULE_SAVED = TO_SAVED;
