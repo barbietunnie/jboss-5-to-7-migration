@@ -149,15 +149,15 @@ function displayDP(rowIndex) {
 		columnClasses="alignLeft70, alignRight30">
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
-				action="#{builtinRule.saveMsgActions}"
 				onclick="javascript:return confirmSubmit();" >
 				<f:setPropertyActionListener target="#{builtinRule.sourcePage}" value="rule-action-built-in" />
+				<f:ajax event="click" listener="#{builtinRule.saveMsgActionsListener}" render="@form"/>
 			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
 			<f:verbatim>&nbsp;</f:verbatim>
-			<h:commandButton value="#{msgs.cancelButtonText}" title="Cancel changes"
+			<h:commandButton value="#{msgs.backButtonText}" title="Go Back"
 				immediate="true" action="#{builtinRule.cancelEdit}" />
 		</h:panelGroup>
 		<h:panelGroup>

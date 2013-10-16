@@ -6,12 +6,12 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
-<h:panelGrid columns="1" styleClass="gettingStartedContent">
+<h:panelGrid id="panel_grid_1" columns="1" styleClass="gettingStartedContent">
 	<h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
 	<h:outputFormat value="#{msgs.ruleLogicEditLabel}" styleClass="gridHeader">
 	   <f:param value="#{ruleLogic.ruleLogic.ruleName}"/>
 	</h:outputFormat>
-	<h:panelGrid columns="3" styleClass="editPaneHeader" 
+	<h:panelGrid id="panel_grid_2" columns="3" styleClass="editPaneHeader" 
 		columnClasses="promptColumn, inputColumn, messageColumn">
 		<h:outputText value="#{msgs.ruleNamePrompt}"/>
 		<h:inputText id="rulename" value="#{ruleLogic.ruleLogic.ruleName}"
@@ -82,7 +82,7 @@
 		</h:selectOneRadio>
 		<h:message for="ruletype" styleClass="errorMessage"/>
 	</h:panelGrid>
-	<h:dataTable value="#{ruleLogic.ruleElements}" var="element"
+	<h:dataTable id="data_table" value="#{ruleLogic.ruleElements}" var="element"
 			styleClass="jsfDataTable"
             headerClass="dataTableHeader"
             footerClass="dataTableFooter"
@@ -91,14 +91,16 @@
            <f:facet name="header">
               <h:outputText value=""/>
            </f:facet>
-           <h:selectBooleanCheckbox value="#{element.markedForDeletion}" 
-              onclick="submit()"/>
+           <h:selectBooleanCheckbox value="#{element.markedForDeletion}">
+              <f:ajax event="click" render="@form" />
+           </h:selectBooleanCheckbox>
         </h:column>
 		<h:column>
 			<f:facet name="header">
 				<h:outputText value="#{msgs.dataNameColumn}"/> 
 			</f:facet>
-			<h:selectOneMenu value="#{element.dataName}" onchange="submit()">
+			<h:selectOneMenu value="#{element.dataName}">
+				<f:ajax event="change" render="@form" />
 				<f:selectItems value="#{codes.ruleDataNameItems}"/>
 			</h:selectOneMenu>
         </h:column>
@@ -114,7 +116,8 @@
 			<f:facet name="header">
 				<h:outputText value="#{msgs.criteriaColumn}"/> 
 			</f:facet>
-			<h:selectOneMenu value="#{element.criteria}" onchange="submit()">
+			<h:selectOneMenu value="#{element.criteria}">
+				<f:ajax event="change" render="@form" />
 				<f:selectItems value="#{codes.ruleCriteriaItems}"/>
 			</h:selectOneMenu>
         </h:column>
@@ -159,19 +162,22 @@
     <f:verbatim><p/></f:verbatim>
     <h:panelGroup>
 	    <h:commandButton value="#{msgs.deleteButtonText}" title="Delete selected rows"
-	   		action="#{ruleLogic.deleteRuleElements}" 
 	   		disabled="#{not ruleLogic.anyElementsMarkedForDeletion}"
-	   		onclick="javascript:return confirmDelete();"/>
+	   		onclick="javascript:return confirmDelete();">
+	   		<f:ajax event="click" listener="#{ruleLogic.deleteRuleElementsListener}" render="data_table"/>
+	   	</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database"
-		   action="#{ruleLogic.refreshElements}"/>
+		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database">
+		   <f:ajax event="click" render="@form" />
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.copyToNewButtonText}" title="Create a new row from selected"
 		   action="#{ruleLogic.copyRuleElement}"
 		   disabled="#{not ruleLogic.anyElementsMarkedForDeletion}"/>
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row"
-		   action="#{ruleLogic.addRuleElement}"/>
+		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row">
+		   <f:ajax event="click" listener="#{ruleLogic.addRuleElementListener}" render="data_table"/>
+		</h:commandButton>
 	</h:panelGroup>
     <f:verbatim><p/></f:verbatim>
 	<h:outputText value="#{msgs[ruleLogic.testResult]}" rendered="#{ruleLogic.testResult != null}"
@@ -181,13 +187,14 @@
 		columnClasses="alignLeft70, alignRight30">
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit Changes"
-				action="#{ruleLogic.saveRuleLogic}"
-				onclick="javascript:return confirmSubmit();" />
+				onclick="javascript:return confirmSubmit();" >
+				 <f:ajax event="click" execute="@form" listener="#{ruleLogic.saveRuleLogicListener}" render="@form"/>
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
 			<f:verbatim>&nbsp;</f:verbatim>
-			<h:commandButton value="#{msgs.cancelButtonText}" title="Cancel Changes"
+			<h:commandButton value="#{msgs.backButtonText}" title="Go Back"
 				immediate="true" action="#{ruleLogic.cancelEdit}" />
 		</h:panelGroup>
 		<h:panelGroup>

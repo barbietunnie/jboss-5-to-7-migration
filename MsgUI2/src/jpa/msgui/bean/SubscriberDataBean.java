@@ -68,7 +68,7 @@ public class SubscriberDataBean implements java.io.Serializable {
 	private static String TO_DELETED = "subscriberlist.deleted";
 	private static String TO_SAVED = "subscriberlist.saved";
 	private static String TO_CANCELED = "subscriberlist.canceled";
-	private static String TO_SELF = "subscriberlist.toself";
+	private static String TO_SELF = null;
 	private static String TO_PAGING = "subscriberlist.paging";
 
 	@SuppressWarnings("unchecked")

@@ -126,16 +126,18 @@ function displayDP(rowIndex) {
     <f:verbatim><p/></f:verbatim>
     <h:panelGroup>
 	    <h:commandButton value="#{msgs.deleteButtonText}" title="Delete selected rows"
-	   		action="#{ruleLogic.deleteMsgActions}" 
 	   		disabled="#{not ruleLogic.anyMsgActionsMarkedForDeletion}"
-	   		onclick="javascript:return confirmDelete();"/>
+	   		onclick="javascript:return confirmDelete();">
+	   		<f:ajax event="click" listener="#{ruleLogic.deleteMsgActionsListener}" render="jsftable"/>
+	   	</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database">
 		   <f:ajax event="click" render="jsftable" />
 		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row"
-		   action="#{ruleLogic.addMsgAction}"/>
+		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row">
+		   <f:ajax event="click" listener="#{ruleLogic.addMsgActionListener}" render="jsftable"/>
+		</h:commandButton>
     </h:panelGroup>
     <f:verbatim><p/></f:verbatim>
 	<h:outputText value="#{msgs[ruleLogic.testResult]}" rendered="#{ruleLogic.testResult != null}"
@@ -145,15 +147,15 @@ function displayDP(rowIndex) {
 		columnClasses="alignLeft70, alignRight30">
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
-				action="#{ruleLogic.saveMsgActions}"
 				onclick="javascript:return confirmSubmit();" >
-				<f:setPropertyActionListener target="#{ruleLogic.sourcePage}" value="rule-action" />
+				<f:setPropertyActionListener target="#{ruleLogic.sourcePage}" value="rule-action"/>
+				<f:ajax event="click" listener="#{ruleLogic.saveMsgActionsListener}" render="@form"/>
 			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
 			<f:verbatim>&nbsp;</f:verbatim>
-			<h:commandButton value="#{msgs.cancelButtonText}" title="Cancel changes"
+			<h:commandButton value="#{msgs.backButtonText}" title="Go Back"
 				immediate="true" action="#{ruleLogic.cancelEdit}" />
 		</h:panelGroup>
 		<h:panelGroup>

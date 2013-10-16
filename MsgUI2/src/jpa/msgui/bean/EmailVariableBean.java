@@ -47,7 +47,7 @@ public class EmailVariableBean implements java.io.Serializable {
 	private String actionFailure = null;
 	
 	final static String TO_EDIT = "emailVariableEdit";
-	final static String TO_SELF = TO_EDIT;
+	final static String TO_SELF = null;
 	final static String TO_SAVED = "configureEmailVariables";
 	final static String TO_FAILED = null;
 	final static String TO_DELETED = TO_SAVED;

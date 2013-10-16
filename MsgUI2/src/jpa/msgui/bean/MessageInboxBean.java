@@ -92,7 +92,7 @@ public class MessageInboxBean implements java.io.Serializable {
 	private static String TO_REPLY = "message.reply";
 	private static String TO_CLOSED = "message.closed";
 	private static String TO_PAGING = "message.paging";
-	private static String TO_SELF = "message.toself";
+	private static String TO_SELF = null;
 	
 	public MessageInboxService getMessageInboxService() {
 		if (msgInboxDao == null) {

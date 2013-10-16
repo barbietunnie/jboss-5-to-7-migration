@@ -48,7 +48,7 @@ public class SubscriptionBean implements java.io.Serializable {
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	static final String TO_SELF = "";
+	static final String TO_SELF = null;
 	static final String TO_FAILED = null;
 	static final String TO_PAGING = TO_SELF;
 	static final String TO_DELETED = TO_SELF;

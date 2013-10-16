@@ -78,7 +78,7 @@ public class RuleLogicBean implements java.io.Serializable {
 	protected RuleElement origRuleElement = null;
 	
 	/* use navigation rules in faces-config.xml */
-	protected static final String TO_SELF = "";
+	protected static final String TO_SELF = null;
 	protected static final String TO_CANCELED = "cancel";
 	protected static final String TO_FAILED = null;
 	protected static final String TO_EDIT_LOGIC = "ruleLogicEdit";
@@ -90,8 +90,7 @@ public class RuleLogicBean implements java.io.Serializable {
 	protected static final String TO_CUSTOMIZE_BUILTIN_RULES = "customizeBuiltinRules";
 	protected static final String RULE_ACTION_SAVED = TO_CONFIG_CUSTOM_RULES;
 	
-	//@ManagedProperty("#{param.sourcePage}") // has to change the bean to RequestScope
-	protected String sourcePage; // f:param tag
+	protected String sourcePage; // f:setPropertyActionListener tag
 	
 	public String getSourcePage() {
 		return sourcePage;
@@ -149,6 +148,7 @@ public class RuleLogicBean implements java.io.Serializable {
 		if (fromPage != null && fromPage.equals("main")) {
 			refresh();
 		}
+		logger.info("getAll() - From page: " + fromPage + ", ruleLogics==null? " + (ruleLogics==null));
 		if (ruleLogics == null) {
 			List<RuleLogic> ruleLogicList = getRuleLogicService().getAll(false);
 			ruleLogics = new ListDataModel<RuleLogic>(ruleLogicList);
@@ -350,6 +350,11 @@ public class RuleLogicBean implements java.io.Serializable {
 		return TO_CONFIG_CUSTOM_RULES;
 	}
 
+	public void saveRuleLogicListener(AjaxBehaviorEvent event) {
+		logger.info("saveRuleLogicListener() - event source: " + event.getSource());
+		saveRuleLogic();
+	}
+
 	protected int insertRuleElements(String _ruleName) {
 		List<RuleElement> list = getRuleElementList();
 		int rowsInserted = 0;
@@ -532,6 +537,11 @@ public class RuleLogicBean implements java.io.Serializable {
 		moveUp();
 	}
 
+	public void moveDownListener(AjaxBehaviorEvent event) {
+		logger.info("moveDownListener() - Event Source: " + event.getSource());
+		moveDown();
+	}
+
 	/*
 	 * @param updown - move current rule up or down:
 	 * 		-1 -> move up
@@ -607,6 +617,11 @@ public class RuleLogicBean implements java.io.Serializable {
 		return TO_SELF;
 	}
 	
+	public void deleteRuleElementsListener(AjaxBehaviorEvent event) {
+		logger.info("deleteRuleElementsListener() - event source: " + event.getSource());
+		deleteRuleElements();
+	}
+
 	public String copyRuleElement() {
 		if (isDebugEnabled)
 			logger.debug("copyRuleElement() - Entering...");
@@ -653,6 +668,11 @@ public class RuleLogicBean implements java.io.Serializable {
 		return TO_SELF;
 	}
 	
+	public void addRuleElementListener(AjaxBehaviorEvent event) {
+		logger.info("addRuleElementListener() - event source: " + event.getSource());
+		addRuleElement();
+	}
+
 	private int getNextRuleElementSeq() {
 		List<RuleElement> list = getRuleElementList();
 		if (list == null || list.isEmpty()) {
@@ -722,6 +742,11 @@ public class RuleLogicBean implements java.io.Serializable {
 		return TO_SELF;
 	}
 
+	public void deleteSubRulesListener(AjaxBehaviorEvent event) {
+		logger.info("deleteSubRulesListener() - event source: " + event.getSource());
+		deleteSubRules();
+	}
+
 	public String copySubRule() {
 		if (isDebugEnabled)
 			logger.debug("copySubRule() - Entering...");
@@ -764,6 +789,11 @@ public class RuleLogicBean implements java.io.Serializable {
 		return TO_SELF;
 	}
 	
+	public void addSubRuleListener(AjaxBehaviorEvent event) {
+		logger.info("addSubRuleListener() - event source: " + event.getSource());
+		addSubRule();
+	}
+
 	public String saveSubRules() {
 		if (isDebugEnabled)
 			logger.debug("saveSubRules() - Entering...");
@@ -960,7 +990,7 @@ public class RuleLogicBean implements java.io.Serializable {
 	
 	public String saveMsgActions() {
 		if (isDebugEnabled)
-			logger.debug("saveMsgActions() - Entering...");
+			logger.debug("saveMsgActions() - Entering..., sourcePage = " + sourcePage);
 		if (ruleLogic == null) {
 			logger.warn("saveMsgActions() - RuleLogic is null.");
 			return TO_FAILED;
@@ -987,6 +1017,11 @@ public class RuleLogicBean implements java.io.Serializable {
 			return TO_CUSTOMIZE_BUILTIN_RULES;
 		}
 		return RULE_ACTION_SAVED;
+	}
+
+	public void saveMsgActionsListener(AjaxBehaviorEvent event) {
+		logger.info("saveMsgActionsListener() - event source: " + event.getSource());
+		saveMsgActions();
 	}
 
 	/*
