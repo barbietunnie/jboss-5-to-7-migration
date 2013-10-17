@@ -141,7 +141,8 @@
 		<h:outputText value="#{msgs.useTestAddressPrompt}"/>
 		<h:selectOneMenu id="usetest" value="#{senderData.sender.useTestAddr}"
 			binding="#{senderData.useTestAddrInput}"
-			required="true" label="#{msgs.useTestAddressPrompt}" onchange="submit()">
+			required="true" label="#{msgs.useTestAddressPrompt}">
+			<f:ajax event="change" render="@form"/>
 			<f:selectItems value="#{codes.yesNoItems}"/>
 		</h:selectOneMenu>
 		<h:message for="usetest" styleClass="errorMessage"/>
@@ -176,7 +177,8 @@
 		<h:outputText value="#{msgs.isVerpEnabledPrompt}"/>
 		<h:selectOneMenu id="useverp" value="#{senderData.sender.verpEnabled}"
 			binding="#{senderData.verpEnabledInput}"
-			required="true" label="#{msgs.isVerpEnabledPrompt}" onchange="submit()">
+			required="true" label="#{msgs.isVerpEnabledPrompt}">
+			<f:ajax event="change" render="@form"/>
 			<f:selectItems value="#{codes.yesNoItems}"/>
 		</h:selectOneMenu>
 		<h:message for="useverp" styleClass="errorMessage"/>
@@ -214,17 +216,19 @@
 		columnClasses="alignLeft70, alignRight30">
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
-				action="#{senderData.saveSender}"
-				onclick="javascript:return confirmSubmit();" />
+				onclick="javascript:return confirmSubmit();" >
+				<f:ajax event="click" execute="@form" listener="#{senderData.saveSenderListener}" render="@form"/>
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton value="#{msgs.refreshLinkText}" 
-				action="#{senderData.refreshSender}"
-				immediate="true" title="Refresh" />
+				immediate="true" title="Refresh" >
+				<f:ajax event="click" render="@form"/>
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
 			<f:verbatim>&nbsp;</f:verbatim>
-			<h:commandButton value="#{msgs.cancelButtonText}" title="Cancel changes"
+			<h:commandButton value="#{msgs.backButtonText}" title="Go Back"
 				immediate="true" action="#{senderData.cancelEdit}" />
 		</h:panelGroup>
 		<h:panelGroup>

@@ -79,9 +79,11 @@
 	columnClasses="alignLeft70, alignRight30">
 	<h:panelGroup>
 		<h:commandButton value="#{msgs.deleteButtonText}"
-			title="Delete selected rows" action="#{mailInbox.deleteMailBoxes}"
+			title="Delete selected rows"
 			disabled="#{not mailInbox.anyMailBoxsMarkedForDeletion}"
-			onclick="javascript:return confirmDelete();" />
+			onclick="javascript:return confirmDelete();" >
+			<f:ajax event="click" listener="#{mailInbox.deleteMailBoxesListener}" render="data_table"/>
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"
 			title="Refresh from database" >
