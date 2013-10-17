@@ -10,6 +10,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
@@ -168,6 +169,10 @@ public class SenderDataBean implements java.io.Serializable {
 		return TO_SAVED;
 	}
 
+	public void saveSenderListener(AjaxBehaviorEvent event) {
+		saveSender();
+	}
+
 	@SuppressWarnings("unchecked")
 	private void addToList(SenderData vo) {
 		List<SenderData> list = (List<SenderData>) siteProfiles.getWrappedData();
@@ -196,6 +201,11 @@ public class SenderDataBean implements java.io.Serializable {
 		return TO_DELETED;
 	}
 	
+	public void deleteSiteProfilesListener(AjaxBehaviorEvent event) {
+		logger.info("deleteSiteProfilesListener() - event source: " + event.getSource());
+		deleteSiteProfiles();
+	}
+
 	public String copySiteProfile() {
 		if (isDebugEnabled)
 			logger.debug("copySiteProfile() - Entering...");

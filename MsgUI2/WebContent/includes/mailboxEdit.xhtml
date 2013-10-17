@@ -170,17 +170,19 @@
 		columnClasses="alignLeft70, alignRight30">
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.testButtonText}"
-				title="Test mailbox configuration" action="#{mailInbox.testMailbox}"
-				id="testmbox" />
+				title="Test mailbox configuration" id="testmbox" >
+				<f:ajax event="click" listener="#{mailInbox.testMailboxListener}" render="testResult"/>
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
-				action="#{mailInbox.saveMailbox}"
-				onclick="javascript:return confirmSubmit();" />
+				onclick="javascript:return confirmSubmit();" >
+				<f:ajax event="click" execute="@form" listener="#{mailInbox.saveMailboxListener}" render="@form"/>
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
 			<f:verbatim>&nbsp;</f:verbatim>
-			<h:commandButton value="#{msgs.cancelButtonText}" title="Cancel changes"
+			<h:commandButton value="#{msgs.backButtonText}" title="Go Back"
 				immediate="true" action="#{mailInbox.cancelEdit}" />
 		</h:panelGroup>
 		<h:panelGroup>

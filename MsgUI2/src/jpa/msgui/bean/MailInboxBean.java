@@ -12,6 +12,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -142,6 +143,10 @@ public class MailInboxBean implements java.io.Serializable {
 		return TO_SAVED;
 	}
 
+	public void saveMailboxListener(AjaxBehaviorEvent event) {
+		saveMailbox();
+	}
+
 	@SuppressWarnings("unchecked")
 	private void addToList(MailInbox vo) {
 		List<MailInbox> list = (List<MailInbox>) mailBoxes.getWrappedData();
@@ -170,12 +175,15 @@ public class MailInboxBean implements java.io.Serializable {
 		return TO_DELETED;
 	}
 	
-	public String testMailbox() {
+	public void deleteMailBoxesListener(AjaxBehaviorEvent event) {
+		deleteMailBoxes();
+	}
+
+	public void testMailboxListener(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("testMailbox() - Entering...");
 		if (mailbox == null) {
 			logger.warn("testMailbox() - MailInbox is null.");
-			return TO_FAILED;
 		}
 		Properties m_props = (Properties) System.getProperties().clone();
 		Session session = null;
@@ -217,8 +225,6 @@ public class MailInboxBean implements java.io.Serializable {
         FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
 				"jpa.msgui.messages", testResult, null);
 		FacesContext.getCurrentInstance().addMessage(null, message);
-		
-		return null;
 	}
 	
 	public String copyMailbox() {
