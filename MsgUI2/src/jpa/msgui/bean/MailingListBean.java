@@ -45,7 +45,7 @@ public class MailingListBean implements java.io.Serializable {
 
 	private MailingListService mailingListDao = null;
 	private SubscriptionService subscriptionDao = null;
-	private DataModel<MailingList> mailingLists = null;
+	private transient DataModel<MailingList> mailingLists = null;
 	private MailingList mailingList = null;
 	private boolean editMode = true;
 	

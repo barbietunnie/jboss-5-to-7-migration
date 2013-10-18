@@ -22,14 +22,20 @@ import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.persistence.NoResultException;
 
+import jpa.constant.Constants;
 import jpa.exception.DataValidationException;
 import jpa.model.EmailTemplate;
 import jpa.model.EmailVariable;
+import jpa.model.MailingList;
+import jpa.model.SchedulesBlob;
+import jpa.model.SenderData;
 import jpa.msgui.util.DynamicCodes;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
 import jpa.service.EmailTemplateService;
 import jpa.service.EmailVariableService;
+import jpa.service.MailingListService;
+import jpa.service.SenderDataService;
 import jpa.util.BlobUtil;
 import jpa.util.HtmlUtil;
 import jpa.util.SenderUtil;
@@ -47,10 +53,12 @@ public class EmailTemplateBean implements java.io.Serializable {
 
 	private EmailTemplateService emailTemplateDao = null;
 	private EmailVariableService emailVariableDao = null;
-	private DataModel<EmailTemplate> emailTemplates = null;
+	private MailingListService mailingListDao = null;
+	private SenderDataService senderDataDao = null;
+	private transient DataModel<EmailTemplate> emailTemplates = null;
 	private EmailTemplate emailTemplate = null;
 	private boolean editMode = true;
-	private DataModel<Object> dateList = null;
+	private transient DataModel<Object> dateList = null;
 	
 	private UIInput templateIdInput = null;
 	private String testResult = null;
@@ -108,6 +116,20 @@ public class EmailTemplateBean implements java.io.Serializable {
 		return emailVariableDao;
 	}
 
+	public MailingListService getMailingListService() {
+		if (mailingListDao == null) {
+			mailingListDao = SpringUtil.getWebAppContext().getBean(MailingListService.class);
+		}
+		return mailingListDao;
+	}
+	
+	public SenderDataService getSenderDataService() {
+		if (senderDataDao == null) {
+			senderDataDao = SpringUtil.getWebAppContext().getBean(SenderDataService.class);
+		}
+		return senderDataDao;
+	}
+	
 	public String viewEmailTemplate() {
 		if (isDebugEnabled)
 			logger.debug("viewEmailTemplate() - Entering...");
@@ -177,7 +199,9 @@ public class EmailTemplateBean implements java.io.Serializable {
 			getEmailTemplateService().update(emailTemplate);
 			logger.info("saveEmailTemplate() - Rows Updated: " + 1);
 		}
-		else {
+		else { // insert
+			MailingList mlist = getMailingListService().getByListId(emailTemplate.getMailingList().getListId());
+			emailTemplate.setMailingList(mlist);
 			getEmailTemplateService().insert(emailTemplate);
 			addToList(emailTemplate);
 			logger.info("saveEmailTemplate() - Rows Inserted: " + 1);
@@ -246,7 +270,7 @@ public class EmailTemplateBean implements java.io.Serializable {
 		List<EmailTemplate> smtpList = getEmailTemplateList();
 		for (int i=0; i<smtpList.size(); i++) {
 			EmailTemplate vo = smtpList.get(i);
-			if (vo.isMarkedForDeletion()) {
+			if (vo.isMarkedForDeletion()) { // template to copy from
 				this.emailTemplate = (EmailTemplate) BlobUtil.deepCopy(vo);
 				emailTemplate.setMarkedForDeletion(false);
 				emailTemplate.setTemplateId(null);
@@ -264,6 +288,11 @@ public class EmailTemplateBean implements java.io.Serializable {
 			logger.debug("addEmailTemplate() - Entering...");
 		reset();
 		this.emailTemplate = new EmailTemplate();
+		MailingList mlist = new MailingList();
+		emailTemplate.setMailingList(mlist);
+		SenderData sender = getSenderDataService().getBySenderId(Constants.DEFAULT_SENDER_ID);
+		emailTemplate.setSenderData(sender);
+		emailTemplate.setSchedulesBlob(new SchedulesBlob());
 		emailTemplate.setMarkedForEdition(true);
 		emailTemplate.setSubject("");
 		emailTemplate.setBodyText("");

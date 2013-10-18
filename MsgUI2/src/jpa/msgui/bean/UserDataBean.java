@@ -40,7 +40,7 @@ public class UserDataBean implements java.io.Serializable {
 	private UserDataService userDao = null;
 	private EmailAddressService emailAddrDao = null;
 	private SenderDataService senderDao = null;
-	private DataModel<UserData> users = null;
+	private transient DataModel<UserData> users = null;
 	private UserData user = null;
 	private boolean editMode = true;
 	

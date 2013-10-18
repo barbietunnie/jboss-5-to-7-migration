@@ -37,8 +37,9 @@
 		
 		<h:outputText value="#{msgs.listTypePrompt}"/>
 		<h:selectOneMenu id="listtype" value="#{emailTemplate.emailTemplate.listType}"
-			required="true" label="#{msgs.listTypePrompt}" onchange="submit()"
+			required="true" label="#{msgs.listTypePrompt}"
 			valueChangeListener="#{emailTemplate.fieldValueChanged}">
+			<f:ajax event="change" render="@form"/>
 			<f:selectItems value="#{codes.mailingListTypeItems}"/>
 		</h:selectOneMenu>
 		<h:message for="listtype" styleClass="errorMessage"/>

@@ -36,7 +36,7 @@ public class SenderDataBean implements java.io.Serializable {
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private SenderDataService senderDao = null;
-	private DataModel<SenderData> siteProfiles = null;
+	private transient DataModel<SenderData> siteProfiles = null;
 	private SenderData sender = null;
 	private boolean editMode = true;
 	

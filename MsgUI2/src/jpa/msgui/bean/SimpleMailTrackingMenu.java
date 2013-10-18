@@ -5,6 +5,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.validator.ValidatorException;
 import javax.persistence.NoResultException;
@@ -52,7 +53,6 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 	
 	private EmailAddressService emailAddrDao;
 	private MessageInboxService msgInboxDao;
-	private static String TO_SELF = null;
 	
 	public SimpleMailTrackingMenu() {
 		setDefaultSearchFields();
@@ -83,29 +83,29 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 		}
 	}
 	
-	public String selectAll() {
+	public void selectAllListener(AjaxBehaviorEvent event) {
 		functionKey = SearchFieldsVo.MsgType.All.name();
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String selectReceived() {
+	public void selectReceivedListener(AjaxBehaviorEvent event) {
 		functionKey = SearchFieldsVo.MsgType.Received.name();
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String selectSent() {
+	public void selectSentListener(AjaxBehaviorEvent event) {
 		functionKey = SearchFieldsVo.MsgType.Sent.name();
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String selectDraft() {
+	public void selectDraftListener(AjaxBehaviorEvent event) {
 		functionKey = SearchFieldsVo.MsgType.Draft.name();
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String selectClosed() {
+	public void selectClosedListener(AjaxBehaviorEvent event) {
 		functionKey = SearchFieldsVo.MsgType.Closed.name();
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
 	/**
@@ -122,6 +122,10 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 	 *             methods that rely on "folder" to fail.
 	 */
 	public void ruleNameChanged(ValueChangeEvent event) {
+		/*
+		 * <h:selectOneMenu value="#{mailTracking.ruleName}" onchange="submit()"
+		 *	valueChangeListener="#{mailTracking.ruleNameChanged}"/>
+		 */
 		logger.info("Entering ruleNameChanged()...");
 		MessageInboxBean bean = (MessageInboxBean) FacesUtil.getSessionMapValue("msgfolder");
 		if (bean == null) {
@@ -136,12 +140,12 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 		}
 	}
 	
-	public String searchBySearchVo() {
+	public void searchBySearchVoListener(AjaxBehaviorEvent event) {
 		logger.info("Entering searchBySearchVo()...");
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String resetSearchFields() {
+	public void resetSearchFieldsListener(AjaxBehaviorEvent event) {
 		ruleName = defaultRuleName;
 		fromAddress = null;
 		toAddress = defaultToAddr;
@@ -149,7 +153,7 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 		body = null;
 		// the value should be used in navigation rules to point to self to
 		// refresh the page
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
 	public void checkEmailAddress(FacesContext context, UIComponent component, Object value) {

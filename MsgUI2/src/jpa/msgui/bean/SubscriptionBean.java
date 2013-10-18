@@ -36,7 +36,7 @@ public class SubscriptionBean implements java.io.Serializable {
 	private SubscriptionService subscriptionDao = null;
 	private EmailAddressService emailAddrDao = null;
 	private MailingListService mailingListDao = null;
-	private DataModel<Subscription> subscriptions = null;
+	private transient DataModel<Subscription> subscriptions = null;
 	private Subscription subscription = null;
 	private boolean editMode = true;
 	private String listId = null;
