@@ -5,7 +5,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 <h:panelGrid columns="1" styleClass="gettingStartedContent">
 	<h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
 	<h:outputFormat value="#{msgs.ruleLogicEditLabel}" styleClass="gridHeader">
@@ -54,6 +55,7 @@
 				<h:outputText value="#{msgs.subruleNameHeader}"/> 
 			</f:facet>
 			<h:selectOneMenu value="#{subrule.subruleName}">
+				<f:ajax execute="@this" />
 				<f:selectItems value="#{dynacodes.subruleItems}"/>
 			</h:selectOneMenu>
         </h:column>
@@ -61,8 +63,9 @@
 	      <f:facet name="header">
 	         <h:outputText value="#{msgs.moveUpHeader}"/>
 	      </f:facet>
-	      <h:commandLink action="#{ruleLogic.moveUpSubRule}" immediate="true"
+	      <h:commandLink immediate="true"
 	      	rendered="#{ruleLogic.subRules.rowIndex gt 0}">
+	      	<f:ajax event="click" immediate="true" listener="#{ruleLogic.moveUpSubRuleListener}" render="@form"/>
 	      	<h:graphicImage value="/images/greenUp.gif" title="Move Up" style="border: 0"/>
 	      </h:commandLink>
 	   </h:column>
@@ -70,8 +73,9 @@
 	      <f:facet name="header">
 	         <h:outputText value="#{msgs.moveDownHeader}"/>
 	      </f:facet>
-	      <h:commandLink action="#{ruleLogic.moveDownSubRule}" immediate="true"
+	      <h:commandLink immediate="true"
 	      	rendered="#{ruleLogic.subRules.rowIndex lt (ruleLogic.subRules.rowCount-1)}">
+	      	<f:ajax event="click" immediate="true" listener="#{ruleLogic.moveDownSubRuleListener}" render="@form"/>
 	      	<h:graphicImage value="/images/greenDown.gif" title="Move Down" style="border: 0"/>
 	      </h:commandLink>
 	   </h:column>
@@ -79,16 +83,17 @@
     <f:verbatim><p/></f:verbatim>
     <h:panelGroup>
 	    <h:commandButton value="#{msgs.deleteButtonText}" title="Delete selected rows"
-	   		disabled="#{not ruleLogic.anySubRulesMarkedForDeletion}"
+	   		disabled="#{not ruleLogic.anySubRulesMarkedForDeletion or not ruleLogic.hasSubrules}"
 	   		onclick="javascript:return confirmDelete();">
-	   		<f:ajax event="click" listener="#{ruleLogic.deleteSubRulesListener}" render="data_table"/>
+	   		<f:ajax event="click" listener="#{ruleLogic.deleteSubRulesListener}" render="data_table @this"/>
 	   	</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database">
 		    <f:ajax event="click" render="data_table" />
 		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row">
+		<h:commandButton value="#{msgs.addNewButtonText}" title="Add a new row"
+			rendered="#{fn:length(dynacodes.subruleItems) > 0}">
 		   <f:ajax event="click" listener="#{ruleLogic.addSubRuleListener}" render="data_table"/>
 		</h:commandButton>
     </h:panelGroup>
@@ -101,13 +106,14 @@
 		columnClasses="alignLeft70, alignRight30">
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
-				action="#{ruleLogic.saveSubRules}"
-				onclick="javascript:return confirmSubmit();" />
+				onclick="javascript:return confirmSubmit();" >
+				<f:ajax event="click" listener="#{ruleLogic.saveSubRulesListener}" render="@form"/>
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
 			<f:verbatim>&nbsp;</f:verbatim>
-			<h:commandButton value="#{msgs.cancelButtonText}" title="Cancel changes"
+			<h:commandButton value="#{msgs.backButtonText}" title="Go Back"
 				immediate="true" action="#{ruleLogic.cancelEdit}" />
 		</h:panelGroup>
 		<h:panelGroup>

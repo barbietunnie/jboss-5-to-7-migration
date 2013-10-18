@@ -75,7 +75,7 @@
 			title="Delete selected rows" 
 			disabled="#{not senderData.anySitesMarkedForDeletion}"
 			onclick="javascript:return confirmDelete();" >
-			<f:ajax event="click" listener="#{senderData.deleteSiteProfilesListener}" render="data_table"/>
+			<f:ajax event="click" listener="#{senderData.deleteSiteProfilesListener}" render="data_table @this"/>
 		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"

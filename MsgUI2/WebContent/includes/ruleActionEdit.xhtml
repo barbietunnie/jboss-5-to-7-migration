@@ -113,10 +113,12 @@ function displayDP(rowIndex) {
 	        <h:selectManyListbox id="datatypevalues1" value="#{msgaction.fieldValuesUI}"
 	        	size="2"
 	        	rendered="#{msgaction.hasDataTypeValues and msgaction.dataTypeEmailAddress}">
+	        	<f:ajax render="@none"/>
 				<f:selectItems value="#{msgaction.ruleDataValueList}"/>
 			</h:selectManyListbox>
 	        <h:selectOneMenu id="datatypevalues2" value="#{msgaction.fieldValues}"
 	        	rendered="#{msgaction.hasDataTypeValues and msgaction.dataTypeEmailAddress==false}">
+	        	<f:ajax render="@none"/>
 				<f:selectItems value="#{msgaction.ruleDataValueList}"/>
 			</h:selectOneMenu>
 	        <h:outputText value="#{msgaction.fieldValues}" 
@@ -128,7 +130,7 @@ function displayDP(rowIndex) {
 	    <h:commandButton value="#{msgs.deleteButtonText}" title="Delete selected rows"
 	   		disabled="#{not ruleLogic.anyMsgActionsMarkedForDeletion}"
 	   		onclick="javascript:return confirmDelete();">
-	   		<f:ajax event="click" listener="#{ruleLogic.deleteMsgActionsListener}" render="jsftable"/>
+	   		<f:ajax event="click" listener="#{ruleLogic.deleteMsgActionsListener}" render="jsftable @this"/>
 	   	</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database">

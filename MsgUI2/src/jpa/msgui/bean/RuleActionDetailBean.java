@@ -10,6 +10,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
@@ -18,9 +19,11 @@ import javax.servlet.ServletContext;
 
 import jpa.constant.Constants;
 import jpa.model.rule.RuleActionDetail;
+import jpa.model.rule.RuleDataType;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
 import jpa.service.rule.RuleActionDetailService;
+import jpa.service.rule.RuleDataTypeService;
 import jpa.service.task.TaskBaseBo;
 
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +40,7 @@ public class RuleActionDetailBean implements java.io.Serializable {
 	static final boolean isInfoEnabled = logger.isInfoEnabled();
 
 	private RuleActionDetailService msgActionDetailDao = null;
+	private RuleDataTypeService ruleDataTypeDao = null;
 	private DataModel<RuleActionDetail> actionDetails = null;
 	private RuleActionDetail actionDetail = null;
 	private boolean editMode = true;
@@ -82,6 +86,13 @@ public class RuleActionDetailBean implements java.io.Serializable {
 		this.msgActionDetailDao = msgActionDetailDao;
 	}
 	
+	public RuleDataTypeService getRuleDataTypeService() {
+		if (ruleDataTypeDao == null) {
+			ruleDataTypeDao = SpringUtil.getWebAppContext().getBean(RuleDataTypeService.class);
+		}
+		return ruleDataTypeDao;
+	}
+
 	public String viewMsgActionDetail() {
 		if (isDebugEnabled)
 			logger.debug("viewMsgActionDetail() - Entering...");
@@ -117,6 +128,8 @@ public class RuleActionDetailBean implements java.io.Serializable {
 		}
 		reset();
 		// update database
+		RuleDataType ruleDataType = getRuleDataTypeService().getByDataType(actionDetail.getRuleDataType().getDataType());
+		actionDetail.setRuleDataType(ruleDataType);
 		if (StringUtils.isNotBlank(FacesUtil.getLoginUserId())) {
 			actionDetail.setUpdtUserId(FacesUtil.getLoginUserId());
 		}
@@ -161,6 +174,10 @@ public class RuleActionDetailBean implements java.io.Serializable {
 		return TO_DELETED;
 	}
 	
+	public void deleteMsgActionDetailsListener(AjaxBehaviorEvent event) {
+		deleteMsgActionDetails();
+	}
+	
 	public String copyMsgActionDetail() {
 		if (isDebugEnabled)
 			logger.debug("copyMsgActionDetail() - Entering...");
@@ -195,6 +212,9 @@ public class RuleActionDetailBean implements java.io.Serializable {
 			logger.debug("addMsgActionDetail() - Entering...");
 		reset();
 		this.actionDetail = new RuleActionDetail();
+		RuleDataType ruleDataType = new RuleDataType();
+		ruleDataType.setMarkedForEdition(true);
+		actionDetail.setRuleDataType(ruleDataType);
 		actionDetail.setMarkedForEdition(true);
 		actionDetail.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		editMode = false;
@@ -254,12 +274,12 @@ public class RuleActionDetailBean implements java.io.Serializable {
 		}
 	}
 	
-	public String testActionDetail() {
+	public void testActionDetailListener(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("testActionDetail() - Entering...");
 		if (actionDetail == null) {
 			logger.warn("testActionDetail() - ActionDetailVo is null.");
-			return TO_FAILED;
+			return; // TO_FAILED;
 		}
 		testResult = null;
 		String className = actionDetail.getClassName();
@@ -298,7 +318,7 @@ public class RuleActionDetailBean implements java.io.Serializable {
 				testResult = "actionDetailBeanIdTestFailure";
 			}
 		}
-		return TO_SELF;
+		//return TO_SELF;
 	}
 	
 	void reset() {

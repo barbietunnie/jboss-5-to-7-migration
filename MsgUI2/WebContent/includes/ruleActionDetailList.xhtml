@@ -67,9 +67,10 @@
 	<h:panelGroup>
 		<h:commandButton value="#{msgs.deleteButtonText}"
 			title="Delete selected rows"
-			action="#{ruleAction.deleteMsgActionDetails}"
 			disabled="#{not ruleAction.anyActionDetailsMarkedForDeletion}"
-			onclick="javascript:return confirmDelete();" />
+			onclick="javascript:return confirmDelete();" >
+			<f:ajax event="click" listener="#{ruleAction.deleteMsgActionDetailsListener}" render="data_table @this"/>
+		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"
 			title="Refresh from database" >

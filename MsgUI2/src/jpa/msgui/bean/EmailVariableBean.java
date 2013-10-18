@@ -11,6 +11,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -112,15 +113,15 @@ public class EmailVariableBean implements java.io.Serializable {
 		return TO_EDIT;
 	}
 	
-	public String testEmailVariable() {
+	public void testEmailVariableListener(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("testEmailVariable() - Entering...");
 		if (emailVariable == null) {
 			logger.warn("testEmailVariable() - EmailVariable is null.");
-			return TO_FAILED;
+			return; // TO_FAILED;
 		}
 		isQueryValid();
-		return TO_SELF;
+		//return TO_SELF;
 	}
 	
 	private boolean isQueryValid() {
@@ -233,6 +234,10 @@ public class EmailVariableBean implements java.io.Serializable {
 		return TO_DELETED;
 	}
 	
+	public void deleteEmailVariablesListener(AjaxBehaviorEvent event) {
+		deleteEmailVariables();
+	}
+
 	public String copyEmailVariable() {
 		if (isDebugEnabled)
 			logger.debug("copyEmailVariable() - Entering...");

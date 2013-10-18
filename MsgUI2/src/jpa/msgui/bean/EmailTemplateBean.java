@@ -13,6 +13,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.ArrayDataModel;
 import javax.faces.model.DataModel;
@@ -228,6 +229,10 @@ public class EmailTemplateBean implements java.io.Serializable {
 			}
 		}
 		return TO_DELETED;
+	}
+	
+	public void deleteEmailTemplatesListener(AjaxBehaviorEvent event) {
+		deleteEmailTemplates();
 	}
 	
 	public String copyEmailTemplate() {

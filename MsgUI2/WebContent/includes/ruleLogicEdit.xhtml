@@ -164,7 +164,7 @@
 	    <h:commandButton value="#{msgs.deleteButtonText}" title="Delete selected rows"
 	   		disabled="#{not ruleLogic.anyElementsMarkedForDeletion}"
 	   		onclick="javascript:return confirmDelete();">
-	   		<f:ajax event="click" listener="#{ruleLogic.deleteRuleElementsListener}" render="data_table"/>
+	   		<f:ajax event="click" listener="#{ruleLogic.deleteRuleElementsListener}" render="data_table @this"/>
 	   	</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database">
