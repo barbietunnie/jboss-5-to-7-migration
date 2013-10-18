@@ -41,7 +41,7 @@ public class RuleActionDetailBean implements java.io.Serializable {
 
 	private RuleActionDetailService msgActionDetailDao = null;
 	private RuleDataTypeService ruleDataTypeDao = null;
-	private DataModel<RuleActionDetail> actionDetails = null;
+	private transient DataModel<RuleActionDetail> actionDetails = null;
 	private RuleActionDetail actionDetail = null;
 	private boolean editMode = true;
 	

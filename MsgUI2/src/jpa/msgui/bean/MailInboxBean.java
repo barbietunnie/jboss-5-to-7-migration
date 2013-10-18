@@ -43,7 +43,7 @@ public class MailInboxBean implements java.io.Serializable {
 	static final boolean isInfoEnabled = logger.isInfoEnabled();
 
 	private MailInboxService mailBoxDao = null;
-	private DataModel<MailInbox> mailBoxes = null;
+	private transient DataModel<MailInbox> mailBoxes = null;
 	private MailInbox mailbox = null;
 	private boolean editMode = true;
 	

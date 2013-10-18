@@ -41,7 +41,7 @@ public class SmtpServerBean implements java.io.Serializable {
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private SmtpServerService smtpServerDao = null;
-	private DataModel<SmtpServer> smtpServers = null;
+	private transient DataModel<SmtpServer> smtpServers = null;
 	private SmtpServer smtpServer = null;
 	private boolean editMode = true;
 	

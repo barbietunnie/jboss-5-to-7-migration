@@ -77,7 +77,8 @@
 			disabled="#{not emailTemplate.anyTemplatesMarkedForDeletion}"
 			onclick="javascript:return confirmDelete();" >
 			<f:ajax listener="#{emailTemplate.deleteEmailTemplatesListener}" render="@form"/>
-			<f:verbatim>&nbsp;</f:verbatim>
+		</h:commandButton>
+		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"
 			title="Refresh from database" >
 			<f:ajax event="click" render="data_table" />

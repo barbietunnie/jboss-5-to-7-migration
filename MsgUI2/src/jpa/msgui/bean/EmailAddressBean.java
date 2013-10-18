@@ -36,7 +36,7 @@ public class EmailAddressBean implements java.io.Serializable {
 
 	private EmailAddressService emailAddrDao = null;
 	private MailingListService mailingListDao = null;
-	private DataModel<EmailAddress> emailAddrs = null;
+	private transient DataModel<EmailAddress> emailAddrs = null;
 	private EmailAddress emailAddr = null;
 	private boolean editMode = true;
 

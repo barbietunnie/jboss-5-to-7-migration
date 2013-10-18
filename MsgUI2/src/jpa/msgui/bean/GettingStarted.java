@@ -20,7 +20,7 @@ public class GettingStarted implements java.io.Serializable {
 	
 	@ManagedProperty(value="gettingStartedHeaderText")
 	private String titleKey;
-	private DataModel<?> functionKeys = null;
+	private transient DataModel<?> functionKeys = null;
 	private String functionKey = null;
 	private String jspPageLink = null;
 	

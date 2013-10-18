@@ -16,12 +16,14 @@ import javax.faces.component.html.HtmlDataTable;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.DataModel;
 import javax.faces.validator.ValidatorException;
 import javax.mail.Address;
 import javax.mail.Part;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
 import jpa.constant.EmailAddrType;
@@ -31,20 +33,24 @@ import jpa.message.BodypartBean;
 import jpa.message.MessageBean;
 import jpa.message.MessageBodyBuilder;
 import jpa.message.MessageContext;
+import jpa.model.EmailAddress;
 import jpa.model.SessionUpload;
 import jpa.model.SessionUploadPK;
 import jpa.model.message.MessageAttachment;
 import jpa.model.message.MessageInbox;
 import jpa.model.message.MessageRfcField;
+import jpa.model.rule.RuleLogic;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.MessageThreadsBuilder;
 import jpa.msgui.util.SpringUtil;
 import jpa.msgui.vo.SearchFieldsVo;
 import jpa.msgui.vo.SearchFieldsVo.PageAction;
+import jpa.service.EmailAddressService;
 import jpa.service.SessionUploadService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.msgin.MessageInboxBo;
 import jpa.service.msgout.MessageBeanBo;
+import jpa.service.rule.RuleLogicService;
 import jpa.service.task.TaskBaseBo;
 import jpa.util.EmailAddrUtil;
 
@@ -62,10 +68,12 @@ public class MessageInboxBean implements java.io.Serializable {
 	final static boolean DisplaySearchVo = false;
 	
 	private MessageInboxService msgInboxDao = null;
+	private EmailAddressService emailAddrDao = null;
+	private RuleLogicService ruleLogicDao = null;
 	private MessageInboxBo msgInboxBo = null;
 	private SessionUploadService sessionUploadDao = null;
 	private MessageBeanBo msgBeanBo = null;
-	private DataModel<MessageInbox> folder = null;
+	private transient DataModel<MessageInbox> folder = null;
 	private MessageInbox message = null;
 	private boolean editMode = true;
 	private boolean isHtml = false;
@@ -83,7 +91,7 @@ public class MessageInboxBean implements java.io.Serializable {
 	private final SearchFieldsVo searchVo = new SearchFieldsVo();
 	private boolean pagingButtonPushed = false;
 	
-	private static String TO_EDIT = "message.edit";
+	private static String TO_EDIT = "msgInboxView";
 	private static String TO_FAILED = "message.failed";
 	private static String TO_DELETED = "message.deleted";
 	private static String TO_CANCELED = "message.canceled";
@@ -101,6 +109,20 @@ public class MessageInboxBean implements java.io.Serializable {
 		return msgInboxDao;
 	}
 
+	public EmailAddressService getEmailAddressService() {
+		if (emailAddrDao == null) {
+			emailAddrDao = SpringUtil.getWebAppContext().getBean(EmailAddressService.class);
+		}
+		return emailAddrDao;
+	}
+	
+	public RuleLogicService getRuleLogicService() {
+		if (ruleLogicDao == null) {
+			ruleLogicDao = SpringUtil.getWebAppContext().getBean(RuleLogicService.class);
+		}
+		return ruleLogicDao;
+	}
+	
 	public MessageInboxBo getMessageInboxBo() {
 		if (msgInboxBo == null) {
 			msgInboxBo = (MessageInboxBo) SpringUtil.getWebAppContext().getBean("messageInboxBo");
@@ -236,7 +258,46 @@ public class MessageInboxBean implements java.io.Serializable {
 		return folder;
 	}
 
-	private void reset() {
+	public String getFromDisplayName(String fromAddrRowId) {
+		try {
+			EmailAddress addr = getEmailAddressService().getByRowId(Integer.parseInt(fromAddrRowId));
+			return EmailAddrUtil.getDisplayName(addr.getAddress());
+		}
+		catch (NoResultException e) {
+			return "";
+		}
+	}
+	
+	public String getEmailAddress(String addressRowId) {
+		try {
+			EmailAddress addr = getEmailAddressService().getByRowId(Integer.parseInt(addressRowId));
+			return addr.getAddress();
+		}
+		catch (NoResultException e) {
+			return "";
+		}
+	}
+
+	public String getRuleName(String ruleLogicRowId) {
+		try {
+			RuleLogic rule = getRuleLogicService().getByRowId(Integer.parseInt(ruleLogicRowId));
+			return rule.getRuleName();
+		}
+		catch (NoResultException e) {
+			return "";
+		}
+	}
+
+	public String getLevelPrefix(String level) {
+		int threadLevel = Integer.parseInt(level);
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < threadLevel; i++) {
+			sb.append("&nbsp;&nbsp;"); //&bull;"); //&sdot;");
+		}
+		return sb.toString();
+	}
+
+	private void reset() { 
 		fromAddrInput = null;
 		toAddrInput = null;
 	}
@@ -259,12 +320,12 @@ public class MessageInboxBean implements java.io.Serializable {
 		refresh();
 	}
 	
-	public String refreshClicked() {
+	public void refreshClickedListener(AjaxBehaviorEvent event) {
 		refresh();
 		searchVo.resetPageContext();
 		// go back to the first page in order to display newly arrived messages
 		pageFirst();
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
 	public String viewAll() {
@@ -326,7 +387,7 @@ public class MessageInboxBean implements java.io.Serializable {
 		clearUploads(); // clear session upload records
 		MessageInbox webVo = (MessageInbox) folder.getRowData();
 		// retrieve other message properties including attachments
-		message = getMessageInboxBo().getMessageByPK(webVo.getRowId());
+		message = getMessageInboxService().getAllDataByPrimaryKey(webVo.getRowId());
 		
 		return viewMessage(message);
 	}
@@ -392,12 +453,12 @@ public class MessageInboxBean implements java.io.Serializable {
 		return viewMessage(message);
 	}
 	
-	public String deleteMessages() {
+	public void deleteMessagesListener(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("deleteMessages() - Entering...");
 		if (folder == null) {
 			logger.warn("deleteMessages() - MsgInbox is null.");
-			return TO_FAILED;
+			return; // TO_FAILED;
 		}
 		List<MessageInbox> list = getMessageList();
 		for (int i=0; i<list.size(); i++) {
@@ -411,7 +472,7 @@ public class MessageInboxBean implements java.io.Serializable {
 			}
 		}
 		refresh();
-		return TO_SELF;
+		//return TO_SELF;
 	}
 	
 	public String deleteMessage() {

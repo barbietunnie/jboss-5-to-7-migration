@@ -40,7 +40,7 @@ public class SubscriberDataBean implements java.io.Serializable {
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private SubscriberDataService subscriberDao = null;
-	private DataModel<SubscriberData> subscribers = null;
+	private transient DataModel<SubscriberData> subscribers = null;
 	private SubscriberData subscriber = null;
 	private boolean editMode = true;
 

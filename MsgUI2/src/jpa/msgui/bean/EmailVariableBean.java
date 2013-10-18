@@ -38,7 +38,7 @@ public class EmailVariableBean implements java.io.Serializable {
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private EmailVariableService emailVariableDao = null;
-	private DataModel<EmailVariable> emailVariables = null;
+	private transient DataModel<EmailVariable> emailVariables = null;
 	private EmailVariable emailVariable = null;
 	private boolean editMode = true;
 	

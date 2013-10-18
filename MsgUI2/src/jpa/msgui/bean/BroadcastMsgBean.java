@@ -33,7 +33,7 @@ public class BroadcastMsgBean implements java.io.Serializable {
 	private MessageClickCountService msgClickCountsDao = null;
 	private EmailAddressService emailAddrDao = null;
 	private MessageInboxService msgInboxDao = null;
-	private DataModel<MessageClickCount> broadcasts = null;
+	private transient DataModel<MessageClickCount> broadcasts = null;
 	private MessageClickCount broadcast = null;
 	private boolean editMode = true;
 	private MessageInbox broadcastMsg = null;
