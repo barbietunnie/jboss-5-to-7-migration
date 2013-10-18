@@ -151,6 +151,8 @@ public class MessageInboxTest {
 		int sentUnredCount = service.getSentUnreadCount();
 		assertTrue(0<sentUnredCount);
 		assertTrue((receivedUnredCount+sentUnredCount)==service.getAllUnreadCount());
+		System.out.println("Received unread count = " + receivedUnredCount + ", Sent unred count = " + sentUnredCount);
+		System.out.println("All unread count = " + service.getAllUnreadCount());
 		
 		// test delete
 		assertTrue(1==service.deleteByRowId(msg2.getRowId()));
