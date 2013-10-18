@@ -6,7 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
-<h:panelGrid columns="1" styleClass="gettingStartedContent">
+<h:panelGrid id="panel_grid_1" columns="1" styleClass="gettingStartedContent">
 	<h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
 	<h:outputFormat value="#{msgs.emailVariableEditLabel}" styleClass="gridHeader">
 	   <f:param value="#{emailVariable.emailVariable.variableName}"/>
@@ -79,8 +79,9 @@
 		columnClasses="alignLeft70, alignRight30">
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.testButtonText}"
-				title="Test Variable Query" id="testquery"
-				action="#{emailVariable.testEmailVariable}" />
+				title="Test Variable Query" id="testquery">
+				<f:ajax execute="@form" listener="#{emailVariable.testEmailVariableListener}" render="@form"/>
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
 				action="#{emailVariable.saveEmailVariable}"
@@ -89,7 +90,7 @@
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
 			<f:verbatim>&nbsp;</f:verbatim>
-			<h:commandButton value="#{msgs.cancelButtonText}" title="Cancel changes"
+			<h:commandButton value="#{msgs.backButtonText}" title="Go Back"
 				immediate="true" action="#{emailVariable.cancelEdit}" />
 		</h:panelGroup>
 		<h:panelGroup>

@@ -82,7 +82,7 @@
 			title="Delete selected rows"
 			disabled="#{not mailInbox.anyMailBoxsMarkedForDeletion}"
 			onclick="javascript:return confirmDelete();" >
-			<f:ajax event="click" listener="#{mailInbox.deleteMailBoxesListener}" render="data_table"/>
+			<f:ajax event="click" listener="#{mailInbox.deleteMailBoxesListener}" render="data_table @this"/>
 		</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}"

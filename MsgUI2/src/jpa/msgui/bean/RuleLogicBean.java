@@ -729,8 +729,8 @@ public class RuleLogicBean implements java.io.Serializable {
 		}
 		reset();
 		List<RuleSubruleMap> list = getSubRuleList();
-		for (int i = 0; i < list.size(); i++) {
-			RuleSubruleMap vo = list.get(i);
+		for (int i=0; i<list.size(); i++) {
+			RuleSubruleMap vo = list.get(i); 
 			if (vo.isMarkedForDeletion()) {
 				int rowsDeleted = getRuleSubruleMapService().deleteByPrimaryKey(vo.getRuleSubruleMapPK());
 				if (rowsDeleted > 0) {
@@ -739,6 +739,7 @@ public class RuleLogicBean implements java.io.Serializable {
 				list.remove(vo);
 			}
 		}
+		refreshSubRules();
 		return TO_SELF;
 	}
 
@@ -785,6 +786,10 @@ public class RuleLogicBean implements java.io.Serializable {
 		pk.setRuleLogic(ruleLogic);
 		vo.setRuleSubruleMapPK(pk);
 		vo.setMarkedForEdition(true);
+		List<RuleLogic> subrules = getRuleLogicService().getSubrules(false);
+		if (!subrules.isEmpty()) { // set a default rule name
+			vo.setSubruleName(subrules.get(0).getRuleName());
+		}
 		list.add(vo);
 		return TO_SELF;
 	}
@@ -826,31 +831,33 @@ public class RuleLogicBean implements java.io.Serializable {
 		return TO_CONFIG_CUSTOM_RULES;
 	}
 
-	public String moveUpSubRule() {
+	public void saveSubRulesListener(AjaxBehaviorEvent event) {
+		saveSubRules();
+	}
+
+	public void moveUpSubRuleListener(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("moveUpSubRule() - Entering...");
 		moveSubRule(-1);
-		return TO_SELF;
 	}
 	
-	public String moveDownSubRule() {
+	public void moveDownSubRuleListener(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("moveDownSubRule() - Entering...");
 		moveSubRule(1);
-		return TO_SELF;
 	}
 	
 	protected boolean hasDuplicateSubRules(List<RuleSubruleMap> list) {
-		if (list == null || list.size() <= 1)
+		if (list == null || list.size() <= 1) {
 			return false;
-		
+		}
 		for (int i=0; i<list.size(); i++) {
-			RuleSubruleMap vo = list.get(i);
+			RuleSubruleMap vo1 = list.get(i);
 			for (int j=i+1; j<list.size(); j++) {
 				RuleSubruleMap vo2 = list.get(j);
-				if (vo.getRuleSubruleMapPK().getSubruleLogic().getRuleName().equals(
-						vo2.getRuleSubruleMapPK().getSubruleLogic().getRuleName()))
+				if (StringUtils.equals(vo1.getSubruleName(), vo2.getSubruleName())) {
 					return true;
+				}
 			}
 		}
 		return false;

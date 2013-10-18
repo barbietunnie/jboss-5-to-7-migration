@@ -115,10 +115,12 @@ function displayDP(rowIndex) {
 	        <h:selectManyListbox id="datatypevalues1" value="#{rule_action.fieldValuesUI}"
 	        	size="2"
 	        	rendered="#{rule_action.hasDataTypeValues and rule_action.dataTypeEmailAddress}">
+	        	<f:ajax render="@none"/>
 				<f:selectItems value="#{rule_action.ruleDataValueList}"/>
 			</h:selectManyListbox>
 	        <h:selectOneMenu id="datatypevalues2" value="#{rule_action.fieldValues}"
 	        	rendered="#{rule_action.hasDataTypeValues and rule_action.dataTypeEmailAddress==false}">
+	        	<f:ajax render="@none"/>
 				<f:selectItems value="#{rule_action.ruleDataValueList}"/>
 			</h:selectOneMenu>
 	        <h:outputText value="#{rule_action.fieldValues}" 
@@ -130,7 +132,7 @@ function displayDP(rowIndex) {
 	    <h:commandButton value="#{msgs.deleteButtonText}" title="Delete selected rows"
 	   		disabled="#{not builtinRule.anyMsgActionsMarkedForDeletion}"
 	   		onclick="javascript:return confirmDelete();">
-	   		<f:ajax event="click" listener="#{builtinRule.deleteMsgActionsListener}" render="builtin" />
+	   		<f:ajax event="click" listener="#{builtinRule.deleteMsgActionsListener}" render="builtin @this" />
 	   	</h:commandButton>
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshFromDB}" title="Refresh from database" >

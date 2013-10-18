@@ -6,7 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
-<h:panelGrid columns="1" styleClass="gettingStartedContent">
+<h:panelGrid id="panel_grid_1" columns="1" styleClass="gettingStartedContent">
 	<h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
 	<h:outputFormat value="#{msgs.emailTemplateEditLabel}" styleClass="gridHeader">
 	   <f:param value="#{emailTemplate.emailTemplate.templateId}"/>
@@ -106,13 +106,13 @@
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
 				action="#{emailTemplate.saveEmailTemplate}"
-				onclick="javascript:return confirmSubmit();" />
+				onclick="javascript:return confirmSubmit();"/>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
 			<f:verbatim>&nbsp;</f:verbatim>
-			<h:commandButton value="#{msgs.cancelButtonText}" title="Cancel changes"
-				immediate="true" action="#{emailTemplate.cancelEdit}" />
+			<h:commandButton value="#{msgs.backButtonText}" title="Go Back"
+				immediate="true" action="#{emailTemplate.cancelEdit}"/>
 		</h:panelGroup>
 		<h:panelGroup>
 			<f:verbatim>&nbsp;</f:verbatim>

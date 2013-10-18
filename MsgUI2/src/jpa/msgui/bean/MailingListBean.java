@@ -14,6 +14,7 @@ import javax.faces.component.UIInput;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -23,10 +24,12 @@ import javax.persistence.NoResultException;
 import jpa.constant.Constants;
 import jpa.model.MailingList;
 import jpa.model.SenderData;
+import jpa.model.Subscription;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
 import jpa.service.MailingListService;
 import jpa.service.SenderDataService;
+import jpa.service.SubscriptionService;
 import jpa.util.EmailAddrUtil;
 import jpa.util.SenderUtil;
 
@@ -41,6 +44,7 @@ public class MailingListBean implements java.io.Serializable {
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private MailingListService mailingListDao = null;
+	private SubscriptionService subscriptionDao = null;
 	private DataModel<MailingList> mailingLists = null;
 	private MailingList mailingList = null;
 	private boolean editMode = true;
@@ -90,6 +94,13 @@ public class MailingListBean implements java.io.Serializable {
 		this.mailingListDao = mailingListDao;
 	}
 	
+	public SubscriptionService getSubscriptionService() {
+		if (subscriptionDao == null) {
+			subscriptionDao = SpringUtil.getWebAppContext().getBean(SubscriptionService.class);
+		}
+		return subscriptionDao;
+	}
+
 	/*
 	 * Use String signature for rowId to support JSF script.
 	 */
@@ -145,10 +156,26 @@ public class MailingListBean implements java.io.Serializable {
 			getMailingListService().update(mailingList);
 			logger.info("saveMailingList() - Rows Updated: " + 1);
 		}
-		else {
+		else { // a new list
+			List<Subscription> subs = mailingList.getSubscriptions();
+			List<Subscription> subsSaved = new ArrayList<Subscription>();
+			if (subs!=null && !subs.isEmpty()) {
+				// this list is copied from an existing list
+				// save subscribers to be added later
+				subsSaved.addAll(subs);
+				mailingList.setSubscriptions(new ArrayList<Subscription>());
+			}
 			getMailingListService().insert(mailingList);
 			addToList(mailingList);
-			logger.info("saveMailingList() - Rows Inserted: " + 1);
+			// copy saved subscribers to the new list
+			for (Subscription sub : subsSaved) {
+				sub.setMailingList(mailingList);
+				mailingList.getSubscriptions().add(sub);
+			}
+			if (!mailingList.getSubscriptions().isEmpty()) {
+				getMailingListService().update(mailingList);
+			}
+			logger.info("saveMailingList() - Rows Inserted: " + (1 + mailingList.getSubscriptions().size()));
 		}
 		return TO_SAVED;
 	}
@@ -181,6 +208,10 @@ public class MailingListBean implements java.io.Serializable {
 		return TO_DELETED;
 	}
 	
+	public void deleteMailingListsListener(AjaxBehaviorEvent event) {
+		deleteMailingLists();
+	}
+
 	public String copyMailingList() {
 		if (isDebugEnabled)
 			logger.debug("copyMailingList() - Entering...");
@@ -192,7 +223,7 @@ public class MailingListBean implements java.io.Serializable {
 		List<MailingList> mailList = getMailingListList();
 		for (int i=0; i<mailList.size(); i++) {
 			MailingList vo = mailList.get(i);
-			if (vo.isMarkedForDeletion()) {
+			if (vo.isMarkedForDeletion()) { // copy from 
 				this.mailingList = new MailingList();
 				try {
 					vo.copyPropertiesTo(this.mailingList);
@@ -202,6 +233,7 @@ public class MailingListBean implements java.io.Serializable {
 					logger.error("BeanUtils.copyProperties() failed: ", e);
 				}
 				mailingList.setListId(null);
+				mailingList.setAcctUserName(null);
 				mailingList.setMarkedForEdition(true);
 				editMode = false;
 				return TO_EDIT;
