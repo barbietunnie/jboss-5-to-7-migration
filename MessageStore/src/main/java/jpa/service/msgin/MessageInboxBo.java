@@ -528,7 +528,7 @@ public class MessageInboxBo {
 	 */
 	public MessageInbox getAllDataByMsgId(int msgId) {
 		try {
-			MessageInbox msgInboxVo = getAllDataByMsgId(msgId);
+			MessageInbox msgInboxVo = msgInboxDao.getAllDataByPrimaryKey(msgId);
 			return msgInboxVo;
 		}
 		catch (NoResultException e) {
