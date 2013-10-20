@@ -87,6 +87,7 @@ public class MessageInboxBean implements java.io.Serializable {
 	private UIInput toAddrInput = null;
 
 	private MessageRfcField rfcFields = null;
+	private transient HtmlDataTable htmlDataTable = null;
 	
 	private final SearchFieldsVo searchVo = new SearchFieldsVo();
 	private boolean pagingButtonPushed = false;
@@ -675,13 +676,13 @@ public class MessageInboxBean implements java.io.Serializable {
 			return TO_FAILED;
 		}
 		// retrieve the original message
-		MessageInbox msgData = getMessageInboxBo().getMessageByPK(message.getRowId());
+		MessageInbox msgData = getMessageInboxBo().getAllDataByMsgId(message.getRowId());
 		if (msgData == null) {
 			logger.error("reassignRule() - Original message has been deleted, msgId: "
 					+ message.getRowId());
 			return TO_FAILED;
 		}
-		if (message.getRuleLogic().getRuleName().equals(msgData.getRuleLogic().getRuleName())) {
+		if (StringUtils.equals(message.getRuleLogic().getRuleName(), msgData.getRuleLogic().getRuleName())) {
 			return null;
 		}
 		// 1) send the message to rule-engine queue with new rule name
@@ -705,6 +706,10 @@ public class MessageInboxBean implements java.io.Serializable {
 		}
 		// 2) close the current message
 		return closeMessage();
+	}
+	
+	public void reassignRuleListener(AjaxBehaviorEvent event) {
+		reassignRule();
 	}
 	
 	public List<SessionUpload> retrieveUploadFiles() {
@@ -1125,5 +1130,13 @@ public class MessageInboxBean implements java.io.Serializable {
 
 	public void setRfcFields(MessageRfcField rfcFields) {
 		this.rfcFields = rfcFields;
+	}
+
+	public HtmlDataTable getHtmlDataTable() {
+		return htmlDataTable;
+	}
+
+	public void setHtmlDataTable(HtmlDataTable htmlDataTable) {
+		this.htmlDataTable = htmlDataTable;
 	}
 }

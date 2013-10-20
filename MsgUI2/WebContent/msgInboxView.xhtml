@@ -17,7 +17,7 @@
 	<h:panelGroup>
 		<h:messages styleClass="errors" layout="list"
 			rendered="#{debug.showMessages}" />
-		<h:panelGrid columns="2" styleClass="commandBar" 
+		<h:panelGrid columns="2" styleClass="commandBar"
 			columnClasses="alignLeft50, alignRight50">
 			<h:panelGroup style="text-align: left;">
 				<h:commandButton value="#{msgs.deleteButton}" title="Delete message"
@@ -37,8 +37,9 @@
 			</h:panelGroup>
 			<h:panelGroup style="align: right; text-align: right;">
 				<h:outputText value="#{msgs.showFullHeaderPrompt}"/>
-				<h:selectBooleanCheckbox value="#{messageInbox.message.showAllHeaders}"
-					onchange="submit()"/>
+				<h:selectBooleanCheckbox value="#{messageInbox.message.showAllHeaders}">
+					<f:ajax event="change" execute="@form" render="@form"/>
+				</h:selectBooleanCheckbox>
 				<f:verbatim>&nbsp;&nbsp;&nbsp;</f:verbatim>
 				<h:outputText value="#{msgs.showRawMessagePrompt}"/>
 				<h:selectBooleanCheckbox value="#{messageInbox.message.showRawMessage}">
@@ -59,7 +60,6 @@
 			<h:outputText value="#{msgs.toAddressPrompt}" />
 			<h:outputText value="#{messageInbox.message.toAddress==null?'':messageInbox.message.toAddress.address}"/>
 
-			<!-- TODO cc address -->
 			<h:outputText value="#{msgs.msgSubjectPrompt}" />
 			<h:outputText value="#{messageInbox.message.msgSubject}" />
 
@@ -85,7 +85,8 @@
 			<h:outputText value="#{messageInbox.message.bodyContentType}" />
 		</h:panelGrid>
 		
-		<h:dataTable binding="#{messageInbox.message.messageHeaderList}" var="hdr" 
+		<h:dataTable value="#{messageInbox.message.messageHeaderList}" var="hdr" 
+			binding="#{messageInbox.htmlDataTable}"
    			styleClass="smtpHeaders"
    			columnClasses="smtpLabelColumn, smtpTextColumn"
    			rendered="#{messageInbox.message.showAllHeaders}">
@@ -98,20 +99,24 @@
 		</h:dataTable>
 		
 		<f:verbatim><br/></f:verbatim>
-		<h:panelGrid columns="1" styleClass="smtpBody">
-			<h:outputText value="#{messageInbox.message.displayBody}" escape="false" 
-				rendered="#{not messageInbox.message.showRawMessage}"/>
-			<h:outputText value="#{messageInbox.message.rawMessage}" escape="false" 
-				rendered="#{messageInbox.message.showRawMessage}"/>
+
+		<h:panelGrid columns="1" styleClass="smtpBody" >
+		<h:inputTextarea value="#{messageInbox.message.displayBody}" escape="false"
+			rendered="#{not messageInbox.message.showRawMessage}" disabled="true"
+			cols="122" rows="50"/>
+		<h:inputTextarea value="#{messageInbox.message.rawMessage}" escape="false" 
+				rendered="#{messageInbox.message.showRawMessage}" disabled="true"
+			cols="122" rows="50"/>
 		</h:panelGrid>
-		<h:panelGrid columns="1" styleClass="fullWidth">
+
+		<h:panelGrid columns="1" styleClass="fullWidth" >
 			<h:panelGroup rendered="#{messageInbox.message.attachmentCount gt 0}">
 				<f:verbatim><br/></f:verbatim>
 				<h:panelGrid columns="1" bgcolor="#D4EAF2" styleClass="fullWidth">
 					<h:outputText value="#{msgs.attachmentsPrompt}"
 						style="color: #2F4F4F; font-size: 1.2em;"/>
 				</h:panelGrid>
-				<h:dataTable binding="#{messageInbox.message.messageAttachmentList}" var="attch"
+				<h:dataTable value="#{messageInbox.message.messageAttachmentList}" var="attch"
 					style="width: 100%; background: white; border: thin solid LightGray;">
 					<h:column>
 						<h:graphicImage value="/images/clip_1.gif" style="border: 0px"
@@ -129,9 +134,10 @@
 					</h:column>
 				</h:dataTable>
 			</h:panelGroup>
+
 			<h:panelGroup rendered="#{messageInbox.messageThreads != null}">
 				<f:verbatim><br/></f:verbatim>
-				<h:panelGrid columns="1" bgcolor="#D4EAF2" styleClass="fullWidth">
+				<h:panelGrid columns="1" bgcolor="#D4EAF2" styleClass="fullWidth" >
 					<h:outputText value="#{msgs.messageThreadsPrompt}"
 						style="color: #2F4F4F; font-size: 1.2em;"/>
 				</h:panelGrid>
@@ -174,6 +180,7 @@
 				</h:dataTable>
 			</h:panelGroup>
 		</h:panelGrid>
+
 		<h:panelGrid columns="2" rendered="#{messageInbox.message.statusId!='C'}"
 			styleClass="commandBar" columnClasses="alignLeft30, alignRight70">
 			<h:panelGroup style="text-align: left;">
@@ -195,9 +202,10 @@
 				</h:selectOneMenu>
 				<f:verbatim>&nbsp;</f:verbatim>
 				<h:commandButton value="#{msgs.reassignRuleButton}" title="Reassign to a new Rule"
-					action="#{messageInbox.reassignRule}" 
-					disabled="#{messageInbox.message.ruleLogic.ruleName == 'SEND_MAIL' or messageInbox.message.ruleLogic.ruleName == 'BROADCAST'}"
-					onclick="javascript:return confirmReassignRule('#{messageInbox.message.ruleLogic.ruleName}');"/>
+					disabled="#{messageInbox.message.ruleLogic.ruleName=='SEND_MAIL' or messageInbox.message.ruleLogic.ruleName=='BROADCAST'}"
+					onclick="javascript:return confirmReassignRule('#{messageInbox.message.ruleLogic.ruleName}');">
+					<f:ajax execute="newrulename" listener="#{messageInbox.reassignRuleListener}" render="@form"/>
+				</h:commandButton>
 			</h:panelGroup>
 		</h:panelGrid>
 		<h:panelGrid columns="2" rendered="#{messageInbox.message.statusId=='C'}"
