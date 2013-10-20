@@ -101,12 +101,12 @@
 		<f:verbatim><br/></f:verbatim>
 
 		<h:panelGrid columns="1" styleClass="smtpBody" >
-		<h:inputTextarea value="#{messageInbox.message.displayBody}" escape="false"
-			rendered="#{not messageInbox.message.showRawMessage}" disabled="true"
-			cols="122" rows="50"/>
-		<h:inputTextarea value="#{messageInbox.message.rawMessage}" escape="false" 
-				rendered="#{messageInbox.message.showRawMessage}" disabled="true"
-			cols="122" rows="50"/>
+			<h:outputText value="#{messageInbox.message.displayBody}" escape="false"
+				rendered="#{not messageInbox.message.showRawMessage}"
+				style="width: 980px; overflow-x: scroll; display:block;"/>
+			<h:outputText value="#{messageInbox.message.rawMessage}" escape="false" 
+					rendered="#{messageInbox.message.showRawMessage}"
+				style="width: 980px!important; overflow-x: scroll!important; display:block!important;"/>
 		</h:panelGrid>
 
 		<h:panelGrid columns="1" styleClass="fullWidth" >
@@ -132,7 +132,7 @@
 						<h:outputText value="#{msgs.sizePrompt}"/>
 						<h:outputText value="(#{attch.sizeAsString})"/>
 					</h:column>
-				</h:dataTable>
+				</h:dataTable>.
 			</h:panelGroup>
 
 			<h:panelGroup rendered="#{messageInbox.messageThreads != null}">
