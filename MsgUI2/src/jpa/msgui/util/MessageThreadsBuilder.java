@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+
+import org.apache.log4j.Logger;
 
 import jpa.model.message.MessageInbox;
 import jpa.service.message.MessageInboxService;
 import jpa.util.StringUtil;
 
 public class MessageThreadsBuilder {
-
+	static final Logger logger = Logger.getLogger(MessageThreadsBuilder.class);
 	/**
 	 * Build a list of threaded messages from a message list.
 	 * 
@@ -25,10 +28,11 @@ public class MessageThreadsBuilder {
 			return threads;
 		}
 		Map<Integer, List<Reply>> map = buildMap(messages);
+		Stack<Integer> keyStack = new Stack<Integer>();
 		if (map.containsKey(null)) {
 			// originating message thread found
 			List<Reply> root = map.get(null);
-			buildTreeLevel(root, map, messages, threads, 0);
+			buildTreeLevel(root, map, messages, threads, 0, keyStack);
 		}
 		else {
 			// missing originating message, look for the oldest thread
@@ -37,7 +41,9 @@ public class MessageThreadsBuilder {
 				MessageInbox vo = messages.get(i);
 				if (map.containsKey(vo.getReferringMessageRowId())) {
 					List<Reply> root = map.get(vo.getReferringMessageRowId());
-					buildTreeLevel(root, map, messages, threads, 0);
+					keyStack.push(vo.getReferringMessageRowId());
+					buildTreeLevel(root, map, messages, threads, 0, keyStack);
+					keyStack.pop();
 					break;
 				}
 			}
@@ -46,7 +52,9 @@ public class MessageThreadsBuilder {
 		for (MessageInbox vo : messages) {
 			if (vo.getThreadLevel() < 0) {
 				List<Reply> root = map.get(vo.getReferringMessageRowId());
-				buildTreeLevel(root, map, messages, threads, 1);
+				keyStack.push(vo.getReferringMessageRowId());
+				buildTreeLevel(root, map, messages, threads, 1, keyStack);
+				keyStack.pop();
 			}
 		}
 		return threads;
@@ -68,15 +76,19 @@ public class MessageThreadsBuilder {
 	 *            starting offset from left
 	 */
 	private static void buildTreeLevel(List<Reply> root, Map<Integer, List<Reply>> map,
-			List<MessageInbox> messages, List<MessageInbox> threads, int level) {
-		if (root == null) {
-			return;
-		}
-		for (int i = 0; i < root.size(); i++) {
+			List<MessageInbox> messages, List<MessageInbox> threads, int level, Stack<Integer> keyStack) {
+		for (int i = 0; root != null && i < root.size(); i++) {
 			MessageInbox vo = messages.get(root.get(i).index);
 			vo.setThreadLevel(level);
 			threads.add(vo);
-			buildTreeLevel(map.get(root.get(i).msgId), map, messages, threads, level + 1);
+			if (keyStack.contains(root.get(i).msgId)) {
+				logger.error("!!!!! Loop on next push key: " + root.get(i).msgId + ", Current Stack: " + keyStack);
+			} 
+			else {
+				keyStack.push(root.get(i).msgId);
+				buildTreeLevel(map.get(root.get(i).msgId), map, messages, threads, level + 1, keyStack);
+				keyStack.pop();
+			}
 		}
 	}
 	
@@ -100,8 +112,7 @@ public class MessageThreadsBuilder {
 				replies.add(new Reply(vo.getRowId(), i));
 				map.put(vo.getReferringMessageRowId(), replies);
 			}
-		}
-		System.out.println(map);
+		}logger.info("Message Threads map: " + map);
 		return map;
 	}
 	
@@ -120,13 +131,14 @@ public class MessageThreadsBuilder {
 	public static void main(String[] args) {
 		try {
 			int threadId = 14;
-			MessageInboxService msgInboxDao = (MessageInboxService) jpa.util.SpringUtil.getAppContext().getBean("messageInboxService");
+			MessageInboxService msgInboxDao = jpa.util.SpringUtil.getAppContext().getBean(MessageInboxService.class);
 			List<MessageInbox> list = msgInboxDao.getByLeadMsgId(threadId);
+			System.out.println("Number of threads retrieved: " + list.size());
 			List<MessageInbox> threads = buildThreads(list);
 			for (int i = 0; i < threads.size(); i++) {
 				MessageInbox vo = threads.get(i);
-				System.out.println(StringUtil.getDots(vo.getThreadLevel()) + vo.getRowId() + " - "
-						+ vo.getMsgSubject());
+				String dispLevel = StringUtil.getDots(vo.getThreadLevel()) + vo.getRowId();
+				System.out.println(dispLevel + " - " + vo.getMsgSubject());
 			}
 		}
 		catch (Exception e) {

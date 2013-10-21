@@ -196,15 +196,17 @@
 					action="#{messageInbox.cancelSend}"/>
 			</h:panelGroup>
 			<h:panelGroup style="text-align: right;">
-				<h:selectOneMenu id="newrulename" value="#{messageInbox.message.ruleLogic.ruleName}">
+				<h:selectOneMenu id="newrulename" value="#{messageInbox.newRuleName}">
 					<f:selectItems value="#{dynacodes.builtinRuleNameItems}"/>
 					<f:selectItems value="#{dynacodes.customRuleNameItems}"/>
+					<f:ajax/>
 				</h:selectOneMenu>
 				<f:verbatim>&nbsp;</f:verbatim>
 				<h:commandButton value="#{msgs.reassignRuleButton}" title="Reassign to a new Rule"
-					disabled="#{messageInbox.message.ruleLogic.ruleName=='SEND_MAIL' or messageInbox.message.ruleLogic.ruleName=='BROADCAST'}"
+					disabled="#{messageInbox.message.ruleLogic != null and 
+						(messageInbox.message.ruleLogic.ruleName=='SEND_MAIL' or messageInbox.message.ruleLogic.ruleName=='BROADCAST')}"
 					onclick="javascript:return confirmReassignRule('#{messageInbox.message.ruleLogic.ruleName}');">
-					<f:ajax execute="newrulename" listener="#{messageInbox.reassignRuleListener}" render="@form"/>
+					<f:ajax execute="@form" listener="#{messageInbox.reassignRuleListener}" render="@form"/>
 				</h:commandButton>
 			</h:panelGroup>
 		</h:panelGrid>
