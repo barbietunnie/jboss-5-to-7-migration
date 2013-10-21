@@ -25,7 +25,7 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	private Date recent = null;
 	
 	// define paging context
-	public static final int MSG_INBOX_PAGE_SIZE = 25;
+	public static final int MSG_INBOX_PAGE_SIZE = 20;
 	private Timestamp receivedTimeFirst = null;
 	private Timestamp receivedTimeLast = null;
 	private int msgIdFirst = -1;
