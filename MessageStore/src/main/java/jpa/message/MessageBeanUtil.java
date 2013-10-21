@@ -371,8 +371,7 @@ public final class MessageBeanUtil {
 				// not sure why do this, consistency?
 				part.setDescription(MessageBeanBuilder.getFileName(aNode.getContentType()));
 			}
-			ByteArrayDataSource bads = new ByteArrayDataSource(aNode.getValue(), aNode
-					.getContentType());
+			ByteArrayDataSource bads = new ByteArrayDataSource(aNode.getValue(), aNode.getContentType());
 			part.setDataHandler(new DataHandler(bads));
 		}
 	}
