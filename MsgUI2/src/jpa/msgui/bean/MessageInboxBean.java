@@ -15,7 +15,6 @@ import javax.faces.component.UIInput;
 import javax.faces.component.html.HtmlDataTable;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.DataModel;
 import javax.faces.validator.ValidatorException;
@@ -91,7 +90,6 @@ public class MessageInboxBean implements java.io.Serializable {
 	private transient HtmlDataTable htmlDataTable = null;
 	
 	private final SearchFieldsVo searchVo = new SearchFieldsVo();
-	private boolean pagingButtonPushed = false;
 	
 	private String newRuleName = "";
 	
@@ -156,24 +154,28 @@ public class MessageInboxBean implements java.io.Serializable {
 		return TO_PAGING;
 	}
 
-	public String pagePrevious() {
+	public void pageFirstListener(AjaxBehaviorEvent event) {
+		pageFirst();
+	}
+
+	public void pagePreviousListener(AjaxBehaviorEvent event) {
 		dataTable.setFirst(dataTable.getFirst() - dataTable.getRows());
 		searchVo.setPageAction(PageAction.PREVIOUS);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
 
-	public String pageNext() {
+	public void pageNextListener(AjaxBehaviorEvent event) {
 		dataTable.setFirst(dataTable.getFirst() + dataTable.getRows());
 		searchVo.setPageAction(PageAction.NEXT);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
 
-	public String pageLast() {
+	public void pageLastListener(AjaxBehaviorEvent event) {
 		int count = dataTable.getRowCount();
 		int rows = dataTable.getRows();
 		dataTable.setFirst(count - ((count % rows != 0) ? count % rows : rows));
 		searchVo.setPageAction(PageAction.LAST);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
 
 	public int getLastPageRow() {
@@ -182,15 +184,6 @@ public class MessageInboxBean implements java.io.Serializable {
 			return dataTable.getRowCount();
 		else
 			return lastRow;
-	}
-	
-	/**
-	 * actionListener
-	 * @param e
-	 */
-	public void pagingActionFired(ActionEvent e) {
-		logger.info("pagingActionFired() - " + e.getComponent().getId());
-		pagingButtonPushed = true;
 	}
 	
 	public SearchFieldsVo getSearchFieldVo() {
@@ -206,8 +199,8 @@ public class MessageInboxBean implements java.io.Serializable {
 		SimpleMailTrackingMenu menu = (SimpleMailTrackingMenu) FacesUtil.getSessionMapValue("mailTracking");
 		if (menu != null) {
 			SearchFieldsVo menuSearchVo = menu.getSearchFieldVo();
-			//logger.info("Menu SearchFieldVo: " + menuSearchVo);
-			//logger.info("Inbox SearchFieldVo: " + searchVo);
+			logger.info("Menu SearchFieldVo: " + menuSearchVo);
+			logger.info("Inbox SearchFieldVo: " + searchVo);
 			if (!menuSearchVo.equalsLevel1(searchVo)) {
 				if (menuSearchVo.getLogList().size() > 0) {
 					logger.info("getAll() - " + menuSearchVo.listChanges());
@@ -221,16 +214,6 @@ public class MessageInboxBean implements java.io.Serializable {
 			int rowCount = getMessageInboxService().getRowCountForWeb(searchVo);
 			searchVo.setRowCount(rowCount);
 		}
-		/* This block DOES NOT resolve browser "refresh" issue as the "refresh" button
-		   still triggers the ActionListner which executes pagingActionFired() method.
-		   The SOLUTION found so far is to use <redirect/> in JSF navigation. */
-		if (pagingButtonPushed) {
-			pagingButtonPushed = false;
-		}
-		else {
-			searchVo.setPageAction(PageAction.CURRENT);
-		}
-		/* end of browser "refresh" */
 		if (folder == null || !searchVo.getPageAction().equals(PageAction.CURRENT)) {
 			//logger.info("SearchVo Before: " + searchVo);
 			// retrieve rows based on page action
@@ -262,9 +245,15 @@ public class MessageInboxBean implements java.io.Serializable {
 	}
 
 	public String getFromDisplayName(String fromAddrRowId) {
+		//logger.info("getFromDisplayName() - fromAddrRowId: " + fromAddrRowId);
 		try {
 			EmailAddress addr = getEmailAddressService().getByRowId(Integer.parseInt(fromAddrRowId));
-			return EmailAddrUtil.getDisplayName(addr.getAddress());
+			if (EmailAddrUtil.hasDisplayName(addr.getAddress())) {
+				return EmailAddrUtil.getDisplayName(addr.getAddress());
+			}
+			else {
+				return addr.getAddress();
+			}
 		}
 		catch (NoResultException e) {
 			return "";
@@ -339,31 +328,35 @@ public class MessageInboxBean implements java.io.Serializable {
 		return TO_SELF;
 	}
 	
-	public String viewUnread() {
+	public void viewAllListener(AjaxBehaviorEvent event) {
+		viewAll();
+	}
+	
+	public void viewUnreadListener(AjaxBehaviorEvent event) {
 		searchVo.resetFlags();
 		searchVo.setIsRead(Boolean.valueOf(false));
 		refresh();
 		searchVo.resetPageContext();
 		pageFirst();
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String viewRead() {
+	public void viewReadListener(AjaxBehaviorEvent event) {
 		searchVo.resetFlags();
 		searchVo.setIsRead(Boolean.valueOf(true));
 		refresh();
 		searchVo.resetPageContext();
 		pageFirst();
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String viewFlagged() {
+	public void viewFlaggedListener(AjaxBehaviorEvent event) {
 		searchVo.resetFlags();
 		searchVo.setIsFlagged(Boolean.valueOf(true));
 		refresh();
 		searchVo.resetPageContext();
 		pageFirst();
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
 	private void clearUploads() {
@@ -389,13 +382,14 @@ public class MessageInboxBean implements java.io.Serializable {
 		}
 		clearUploads(); // clear session upload records
 		MessageInbox webVo = (MessageInbox) folder.getRowData();
-		// retrieve other message properties including attachments
-		message = getMessageInboxService().getAllDataByPrimaryKey(webVo.getRowId());
 		
-		return viewMessage(message);
+		return viewMessage(webVo.getRowId());
 	}
 	
-	private String viewMessage(MessageInbox message) {
+	private String viewMessage(int rowId) {
+		// retrieve other message properties including attachments
+		message = getMessageInboxService().getAllDataByPrimaryKey(rowId);
+
 		String contentType = message.getBodyContentType();
 		if (contentType != null && contentType.toLowerCase().startsWith("text/html")) {
 			// set default value for HTML check box
@@ -451,9 +445,12 @@ public class MessageInboxBean implements java.io.Serializable {
 		String msgId = FacesUtil.getRequestParameter("msgThreadId");
 		logger.info("viewThread() - msgId: " + msgId);
 		if (msgId == null) return null;
-		message = getMessageInboxService().getByPrimaryKey(Integer.parseInt(msgId));
 		
-		return viewMessage(message);
+		return viewMessage(Integer.parseInt(msgId));
+	}
+	
+	public void viewThreadListener(AjaxBehaviorEvent event) {
+		viewThread();
 	}
 	
 	public void deleteMessagesListener(AjaxBehaviorEvent event) {
@@ -483,7 +480,9 @@ public class MessageInboxBean implements java.io.Serializable {
 			logger.error("deleteMessage() - MessageInbox is null");
 			return TO_FAILED;
 		}
-		int rowsDeleted = getMessageInboxService().deleteByRowId(message.getRowId());
+		int rowsDeleted = 1; //getMessageInboxService().deleteByRowId(message.getRowId());
+		message = getMessageInboxService().getAllDataByPrimaryKey(message.getRowId());
+		getMessageInboxService().delete(message);
 		if (rowsDeleted > 0) {
 			logger.info("deleteMessage() - Mailbox message deleted: " + message.getRowId());
 			searchVo.setRowCount(searchVo.getRowCount() - rowsDeleted);
@@ -507,12 +506,12 @@ public class MessageInboxBean implements java.io.Serializable {
 		return null;
 	}
 	
-	public String markAsRead() {
+	public void markAsRead(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("markAsRead() - Entering...");
 		if (folder == null) {
 			logger.warn("markAsRead() - Inbox folder is null.");
-			return TO_FAILED;
+			return; // TO_FAILED;
 		}
 		List<MessageInbox> list = getMessageList();
 		// update Read Count
@@ -528,15 +527,15 @@ public class MessageInboxBean implements java.io.Serializable {
 				}
 			}
 		}
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String markAsUnread() {
+	public void markAsUnread(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("markAsUnread() - Entering...");
 		if (folder == null) {
 			logger.warn("markAsUnread() - MsgInbox is null.");
-			return TO_FAILED;
+			return; // TO_FAILED;
 		}
 		List<MessageInbox> list = getMessageList();
 		// update Read Count
@@ -552,15 +551,15 @@ public class MessageInboxBean implements java.io.Serializable {
 				}
 			}
 		}
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String markAsFlagged() {
+	public void markAsFlagged(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("markAsFlagged() - Entering...");
 		if (folder == null) {
 			logger.warn("markAsFlagged() - MsgInbox is null.");
-			return TO_FAILED;
+			return; // TO_FAILED;
 		}
 		List<MessageInbox> list = getMessageList();
 		// update Flagged
@@ -576,15 +575,15 @@ public class MessageInboxBean implements java.io.Serializable {
 				}
 			}
 		}
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String markAsUnflagged() {
+	public void markAsUnflagged(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("markAsUnflagged() - Entering...");
 		if (folder == null) {
 			logger.warn("markAsUnflagged() - MsgInbox is null.");
-			return TO_FAILED;
+			return; // TO_FAILED;
 		}
 		List<MessageInbox> list = getMessageList();
 		// update Flagged
@@ -600,7 +599,7 @@ public class MessageInboxBean implements java.io.Serializable {
 				}
 			}
 		}
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
 	public String replyMessage() {
@@ -670,6 +669,10 @@ public class MessageInboxBean implements java.io.Serializable {
 		searchVo.setRowCount(searchVo.getRowCount() + 1);
 		refresh();
 		return TO_CLOSED;
+	}
+	
+	public void openMessageListener(AjaxBehaviorEvent event) {
+		openMessage();
 	}
 	
 	public String reassignRule() {

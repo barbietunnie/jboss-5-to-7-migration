@@ -39,17 +39,21 @@
 				<f:verbatim>&nbsp;&nbsp;&nbsp;</f:verbatim>
 				<h:outputText value="#{msgs.markAsPrompt}" style="color: darkblue; font-weight: bold;"/>
 				<f:verbatim>&nbsp;</f:verbatim>
-				<h:commandLink value="#{msgs.markAsReadLink}"
-					title="Mark as read" action="#{messageInbox.markAsRead}"/>
+				<h:commandLink value="#{msgs.markAsReadLink}" title="Mark as read">
+					<f:ajax execute="@form" listener="#{messageInbox.markAsRead}" render="@form"/>
+				</h:commandLink>
 				<f:verbatim>&nbsp;&nbsp;</f:verbatim>
-				<h:commandLink value="#{msgs.markAsUnreadLink}"
-					title="Mark as unread" action="#{messageInbox.markAsUnread}"/>
+				<h:commandLink value="#{msgs.markAsUnreadLink}" title="Mark as unread">
+					<f:ajax execute="@form" listener="#{messageInbox.markAsUnread}" render="@form"/>
+				</h:commandLink>
 				<f:verbatim>&nbsp;&nbsp;</f:verbatim>
-				<h:commandLink value="#{msgs.markAsFlaggedLink}"
-					title="Mark as flagged" action="#{messageInbox.markAsFlagged}"/>
+				<h:commandLink value="#{msgs.markAsFlaggedLink}" title="Mark as flagged">
+					<f:ajax execute="@form" listener="#{messageInbox.markAsFlagged}" render="@form"/>
+				</h:commandLink>
 				<f:verbatim>&nbsp;&nbsp;</f:verbatim>
-				<h:commandLink value="#{msgs.markAsUnflaggedLink}"
-					title="Mark as unflagged" action="#{messageInbox.markAsUnflagged}"/>
+				<h:commandLink value="#{msgs.markAsUnflaggedLink}" title="Mark as unflagged">
+					<f:ajax execute="@form" listener="#{messageInbox.markAsUnflagged}" render="@form"/>
+				</h:commandLink>
 			</h:panelGroup>
 			<h:panelGroup>
 				<h:commandLink value="#{msgs.refreshLinkText}"
@@ -71,21 +75,24 @@
 						onclick="javascript:changeAllCheckBoxes(this)"/>
 				</f:facet>
 				<h:selectBooleanCheckbox value="#{mail.markedForDeletion}"
-					disabled="#{not mail.editable}" id="lnchkbox"/>
+					disabled="#{not mail.editable}" id="lnchkbox">
+					<f:ajax />
+				</h:selectBooleanCheckbox>
 			</h:column>
 			<h:column>
 				<f:facet name="header">
 					<h:outputText value="#{msgs.fromAddressHeader}"/>
 				</f:facet>
 				<div class="cellHeight">
-				<h:graphicImage value="/images/flag.gif" style="border: 0px"
+				<h:graphicImage value="/images/flag.gif" style="border: 1px"
 					rendered="#{mail.flagged}" title="Message Flagged"/>
-				<h:graphicImage value="/images/replied.gif" style="border: 0px"
+				<h:graphicImage value="/images/replied.gif" style="border: 1px"
 					rendered="#{mail.replyCount gt 0}" title="Message Replied"/>
-				<h:graphicImage value="/images/forwarded.gif" style="border: 0px"
+				<h:graphicImage value="/images/forwarded.gif" style="border: 1px"
 					rendered="#{mail.replyCount le 0 and mail.forwardCount gt 0}" 
 					title="Message Forwarded"/>
-				<h:outputText value="#{messageInbox.getFromDisplayName(mail.fromAddrRowId)}"/>
+				<h:outputText value="#{messageInbox.getFromDisplayName(mail.fromAddrRowId)}"
+					style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"/>
 				</div>
 			</h:column>
 			<h:column>
@@ -141,13 +148,21 @@
 				columnClasses="alignLeft50, alignRight50">
 				<h:panelGroup>
 				<h:outputText value="#{msgs.footerViewText} "/>
-                <h:commandLink value="#{msgs.allLinkText}" action="#{messageInbox.viewAll}"/>
+                <h:commandLink value="#{msgs.allLinkText}">
+                	<f:ajax listener="#{messageInbox.viewAllListener}" render="@form"/>
+                </h:commandLink>
 				<f:verbatim>&nbsp;</f:verbatim>
-                <h:commandLink value="#{msgs.unreadLinkText}" action="#{messageInbox.viewUnread}"/>
+                <h:commandLink value="#{msgs.unreadLinkText}">
+                	<f:ajax listener="#{messageInbox.viewUnreadListener}" render="@form"/>
+                </h:commandLink>
                 <f:verbatim>&nbsp;</f:verbatim>
-                <h:commandLink value="#{msgs.readLinkText}" action="#{messageInbox.viewRead}"/>
+                <h:commandLink value="#{msgs.readLinkText}">
+                	<f:ajax listener="#{messageInbox.viewReadListener}" render="@form"/>
+                </h:commandLink>
                 <f:verbatim>&nbsp;</f:verbatim>
-                <h:commandLink value="#{msgs.flaggedLinkText}" action="#{messageInbox.viewFlagged}"/>
+                <h:commandLink value="#{msgs.flaggedLinkText}">
+                	<f:ajax listener="#{messageInbox.viewFlaggedListener}" render="@form"/>
+                </h:commandLink>
 				</h:panelGroup>
 				<h:panelGroup>
             	<h:outputText value="#{messageInbox.dataTable.first + 1}"
@@ -158,23 +173,27 @@
 				<h:outputText value=" of #{messageInbox.dataTable.rowCount}" 
             		style="font-weight: bold;"/>
             	<f:verbatim>&nbsp;&nbsp;</f:verbatim>
-                <h:commandLink value="#{msgs.firstLinkText}" action="#{messageInbox.pageFirst}"
-                	actionListener="#{messageInbox.pagingActionFired}"
-                    disabled="#{messageInbox.dataTable.first == 0}" id="pagefrst"/>
+                <h:commandLink value="#{msgs.firstLinkText}"
+                    disabled="#{messageInbox.dataTable.first == 0}" id="pagefrst">
+                    <f:ajax listener="#{messageInbox.pageFirstListener}" render="@form"/>
+                </h:commandLink>
                 <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-                <h:commandLink value="#{msgs.prevLinkText}" action="#{messageInbox.pagePrevious}"
-                	actionListener="#{messageInbox.pagingActionFired}"
-                    disabled="#{messageInbox.dataTable.first == 0}" id="pageprev"/>
+                <h:commandLink value="#{msgs.prevLinkText}"
+                    disabled="#{messageInbox.dataTable.first == 0}" id="pageprev">
+                    <f:ajax listener="#{messageInbox.pagePreviousListener}" render="@form"/>
+                </h:commandLink>
                 <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-                <h:commandLink value="#{msgs.nextLinkText}" action="#{messageInbox.pageNext}"
-                	actionListener="#{messageInbox.pagingActionFired}"
-                    disabled="#{messageInbox.dataTable.first + messageInbox.dataTable.rows
-                        >= messageInbox.dataTable.rowCount}" id="pagenext"/>
+                <h:commandLink value="#{msgs.nextLinkText}"
+                    disabled="#{(messageInbox.dataTable.first + messageInbox.dataTable.rows)
+                        ge messageInbox.dataTable.rowCount}" id="pagenext">
+                    <f:ajax listener="#{messageInbox.pageNextListener}" render="@form"/>
+                </h:commandLink>
                 <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-                <h:commandLink value="#{msgs.lastLinkText}" action="#{messageInbox.pageLast}"
-                	actionListener="#{messageInbox.pagingActionFired}"
-                    disabled="#{messageInbox.dataTable.first + messageInbox.dataTable.rows
-                        >= messageInbox.dataTable.rowCount}" id="pagelast"/>
+                <h:commandLink value="#{msgs.lastLinkText}"
+                    disabled="#{(messageInbox.dataTable.first + messageInbox.dataTable.rows)
+                        ge messageInbox.dataTable.rowCount}" id="pagelast">
+                    <f:ajax listener="#{messageInbox.pageLastListener}" render="@form"/>
+                </h:commandLink>
                 </h:panelGroup>
                 </h:panelGrid>
             </h:panelGroup>
