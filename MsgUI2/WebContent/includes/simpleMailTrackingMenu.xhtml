@@ -49,11 +49,11 @@
 	<h:outputText value="#{msgs.listByPrompt}" styleClass="menuLinkLables"/>
 	
 	<h:outputText value="#{msgs.ruleNamePrompt}" style="font-weight: bold;"/>
-	<!-- TODO ruleNameChanged -->
 	<h:selectOneMenu value="#{mailTracking.ruleName}">
 		<f:selectItem itemValue="All" itemLabel="All Rule Names"/>
 		<f:selectItems value="#{dynacodes.builtinRuleNameItems}"/>
 		<f:selectItems value="#{dynacodes.customRuleNameItems}"/>
+		<f:ajax event="change" render="@all"/>
 	</h:selectOneMenu>
 	
 	<h:outputText value="#{msgs.subjectPrompt}" style="font-weight: bold;"/>
@@ -86,12 +86,12 @@
 	
 	<h:panelGroup>
 	<h:commandButton value="#{msgs.searchButtonText}" title="Submit search request">
-		<f:ajax listener="#{mailTracking.searchBySearchVoListener}" render="@form"/>
+		<f:ajax execute="@form" listener="#{mailTracking.searchBySearchVoListener}" render="@all"/>
 	</h:commandButton>
 	<f:verbatim>&nbsp;</f:verbatim>
 	<h:commandButton value="#{msgs.resetButtonText}" title="Reset search fields"
 		immediate="true">
-		<f:ajax immediate="true" listener="#{mailTracking.resetSearchFieldsListener}" render="@form"/>
+		<f:ajax immediate="true" listener="#{mailTracking.resetSearchFieldsListener}" render="@all"/>
 	</h:commandButton>
 	</h:panelGroup>
 </h:panelGrid>

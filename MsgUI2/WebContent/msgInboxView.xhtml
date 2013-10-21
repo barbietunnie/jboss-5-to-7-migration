@@ -31,9 +31,10 @@
 					action="#{messageInbox.forwardMessage}" />
 				<f:verbatim rendered="#{messageInbox.message.statusId=='C'}">&nbsp;</f:verbatim>
 				<h:commandButton value="#{msgs.openButton}" title="Open this message"
-					action="#{messageInbox.openMessage}" 
 					rendered="#{messageInbox.message.statusId=='C'}"
-					onclick="javascript:return confirmOpen();"/>
+					onclick="javascript:return confirmOpen();">
+					<f:ajax listener="#{messageInbox.openMessageListener}" render="@form"/>
+				</h:commandButton>
 			</h:panelGroup>
 			<h:panelGroup style="align: right; text-align: right;">
 				<h:outputText value="#{msgs.showFullHeaderPrompt}"/>
@@ -103,10 +104,10 @@
 		<h:panelGrid columns="1" styleClass="smtpBody" >
 			<h:outputText value="#{messageInbox.message.displayBody}" escape="false"
 				rendered="#{not messageInbox.message.showRawMessage}"
-				style="width: 980px; overflow-x: scroll; display:block;"/>
+				style="width: 1024px; overflow-x: scroll; display:block;"/>
 			<h:outputText value="#{messageInbox.message.rawMessage}" escape="false" 
 					rendered="#{messageInbox.message.showRawMessage}"
-				style="width: 980px!important; overflow-x: scroll!important; display:block!important;"/>
+				style="width: 1024px!important; overflow-x: scroll!important; display:block!important;"/>
 		</h:panelGrid>
 
 		<h:panelGrid columns="1" styleClass="fullWidth" >
@@ -172,7 +173,7 @@
 							rendered="#{thread.readCount le 0}"/>
 					</h:column>
 					<h:column>
-					<h:outputText value="#{thread.ruleLogic.ruleName}"/>
+					<h:outputText value="#{messageInbox.getRuleName(thread.ruleLogicRowId)}"/>
 					</h:column>
 					<h:column>
 					<h:outputText value="#{thread.receivedTime}"/>

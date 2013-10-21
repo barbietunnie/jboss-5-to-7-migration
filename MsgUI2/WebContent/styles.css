@@ -81,7 +81,7 @@ body {
  */
 .headerMenuContent {
 	vertical-align: top;
-	width: 980px; /* 100%; */
+	width: 1024px; /* 100%; */
 	height: auto;
 	border: thin solid LightGray;
 }
