@@ -174,6 +174,10 @@ public class MessageInboxService {
 		}
 	}
 
+	/*
+	 * define methods primarily used by UI components. 
+	 */
+
 	public List<MessageInbox> getByLeadMsgId(int leadMsgId) throws NoResultException {
 		String sql = 
 			"select t " +
@@ -185,10 +189,21 @@ public class MessageInboxService {
 			query.setParameter("rowId", leadMsgId);
 			@SuppressWarnings("unchecked")
 			List<MessageInbox> list = query.getResultList();
-			return list;
+			return getAllForList(list);
 		}
 		finally {
 		}
+	}
+
+	private List<MessageInbox> getAllForList(List<MessageInbox> messages) {
+		// XXX revisit
+//		List<MessageInbox> msgs = new ArrayList<MessageInbox>();
+//		for (MessageInbox message : messages) {
+//			MessageInbox msg = getAllDataByPrimaryKey(message.getRowId());
+//			msgs.add(msg);
+//		}
+//		return msgs;
+		return messages;
 	}
 
 	public List<MessageInbox> getByReferringMsgId(int referredMsgId) throws NoResultException {
@@ -202,7 +217,7 @@ public class MessageInboxService {
 			query.setParameter("rowId", referredMsgId);
 			@SuppressWarnings("unchecked")
 			List<MessageInbox> list = query.getResultList();
-			return list;
+			return getAllForList(list);
 		}
 		finally {
 		}
@@ -219,7 +234,7 @@ public class MessageInboxService {
 			query.setParameter("address", address);
 			@SuppressWarnings("unchecked")
 			List<MessageInbox> list = query.getResultList();
-			return list;
+			return getAllForList(list);
 		}
 		finally {
 		}
@@ -236,7 +251,7 @@ public class MessageInboxService {
 			query.setParameter("address", address);
 			@SuppressWarnings("unchecked")
 			List<MessageInbox> list = query.getResultList();
-			return list;
+			return getAllForList(list);
 		}
 		finally {
 		}
@@ -261,7 +276,7 @@ public class MessageInboxService {
 			query.setParameter("date", date);
 			@SuppressWarnings("unchecked")
 			List<MessageInbox> list = query.setMaxResults(100).getResultList();
-			return list;
+			return getAllForList(list);
 		}
 		finally {
 		}
