@@ -51,6 +51,7 @@ import jpa.service.message.MessageInboxService;
 import jpa.service.msgin.MessageInboxBo;
 import jpa.service.msgout.MessageBeanBo;
 import jpa.service.rule.RuleLogicService;
+import jpa.service.task.AssignRuleName;
 import jpa.service.task.TaskBaseBo;
 import jpa.util.EmailAddrUtil;
 
@@ -91,6 +92,8 @@ public class MessageInboxBean implements java.io.Serializable {
 	
 	private final SearchFieldsVo searchVo = new SearchFieldsVo();
 	private boolean pagingButtonPushed = false;
+	
+	private String newRuleName = "";
 	
 	private static String TO_EDIT = "msgInboxView";
 	private static String TO_FAILED = "message.failed";
@@ -200,8 +203,7 @@ public class MessageInboxBean implements java.io.Serializable {
 		if (fromPage != null && fromPage.equals("main")) {
 			resetSearchVo();
 		}
-		SimpleMailTrackingMenu menu = (SimpleMailTrackingMenu) FacesUtil
-				.getSessionMapValue("mailtracking");
+		SimpleMailTrackingMenu menu = (SimpleMailTrackingMenu) FacesUtil.getSessionMapValue("mailTracking");
 		if (menu != null) {
 			SearchFieldsVo menuSearchVo = menu.getSearchFieldVo();
 			//logger.info("Menu SearchFieldVo: " + menuSearchVo);
@@ -676,25 +678,25 @@ public class MessageInboxBean implements java.io.Serializable {
 			return TO_FAILED;
 		}
 		// retrieve the original message
-		MessageInbox msgData = getMessageInboxBo().getAllDataByMsgId(message.getRowId());
-		if (msgData == null) {
-			logger.error("reassignRule() - Original message has been deleted, msgId: "
-					+ message.getRowId());
-			return TO_FAILED;
-		}
-		if (StringUtils.equals(message.getRuleLogic().getRuleName(), msgData.getRuleLogic().getRuleName())) {
+//		MessageInbox msgData = getMessageInboxBo().getAllDataByMsgId(message.getRowId());
+//		if (msgData == null) {
+//			logger.error("reassignRule() - Original message has been deleted, msgId: "
+//					+ message.getRowId());
+//			return TO_FAILED;
+//		}
+//		if (StringUtils.equals(message.getRuleLogic().getRuleName(), msgData.getRuleLogic().getRuleName())) {
+		if (StringUtils.equals(message.getRuleLogic().getRuleName(), newRuleName)) {
 			return null;
 		}
 		// 1) send the message to rule-engine queue with new rule name
 		try {
-			MessageBean msgBean  = getMessageBeanBo().createMessageBean(msgData);
-			TaskBaseBo assignRuleBo = (TaskBaseBo) SpringUtil.getWebAppContext().getBean(
-					"assignRuleName");
+			MessageBean msgBean  = getMessageBeanBo().createMessageBean(message); //msgData);
+			TaskBaseBo assignRuleBo = (TaskBaseBo) SpringUtil.getWebAppContext().getBean(AssignRuleName.class);
 			MessageContext ctx = new MessageContext(msgBean);
-			ctx.setTaskArguments(message.getRuleLogic().getRuleName());
+			ctx.setTaskArguments(newRuleName); //message.getRuleLogic().getRuleName());
 			msgBean.setSendDate(new java.util.Date());
 			assignRuleBo.process(ctx);
-			logger.info("reassignRule() - assign rule to: " + message.getRuleLogic().getRuleName());
+			logger.info("reassignRule() - assign rule to: " + newRuleName); //message.getRuleLogic().getRuleName());
 		}
 		catch (DataValidationException e) {
 			logger.error("DataValidationException caught", e);
@@ -1130,6 +1132,14 @@ public class MessageInboxBean implements java.io.Serializable {
 
 	public void setRfcFields(MessageRfcField rfcFields) {
 		this.rfcFields = rfcFields;
+	}
+
+	public String getNewRuleName() {
+		return newRuleName;
+	}
+
+	public void setNewRuleName(String newRuleName) {
+		this.newRuleName = newRuleName;
 	}
 
 	public HtmlDataTable getHtmlDataTable() {
