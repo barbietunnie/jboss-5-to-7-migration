@@ -133,7 +133,7 @@ public class MailProcessorBoTest {
 	}
 
 	private javax.mail.Message readFromFile(String fileName) throws MessagingException {
-		byte[] mailStream = TestUtil.loadFromFile(fileName);
+		byte[] mailStream = TestUtil.loadFromSamples(fileName);
 		javax.mail.Message message = MessageBeanUtil.createMimeMessage(mailStream);
 		return message;
 	}	

@@ -11,8 +11,8 @@ import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
 import jpa.message.MessageContext;
 import jpa.service.task.TaskSchedulerBo;
+import jpa.util.FileUtil;
 import jpa.util.SpringUtil;
-import jpa.util.TestUtil;
 
 import org.apache.log4j.Logger;
 
@@ -55,7 +55,7 @@ public class MailFileReader {
 
 	private MessageBean readIntoMessageBean(String filePath, String fileName)
 			throws MessagingException, IOException {
-		byte[] mailStream = TestUtil.loadFromFile(filePath, fileName);
+		byte[] mailStream = FileUtil.loadFromFile(filePath, fileName);
 		MessageBean msgBean = MessageBeanUtil.createBeanFromStream(mailStream);
 		return msgBean;
 	}

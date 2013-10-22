@@ -82,7 +82,7 @@ public class MessageBeanUtilTest {
 	}
 
 	private MessageBean testReadFromFile(String fileName) throws MessagingException, IOException {
-		byte[] mailStream = TestUtil.loadFromFile(fileName);
+		byte[] mailStream = TestUtil.loadFromSamples(fileName);
 		MessageBean msgBean = MessageBeanUtil.createBeanFromStream(mailStream);
 		return msgBean;
 	}

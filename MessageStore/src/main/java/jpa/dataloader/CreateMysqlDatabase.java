@@ -17,8 +17,8 @@ import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
 
-public class CreateDatabase {
-	static final Logger logger = Logger.getLogger(CreateDatabase.class);
+public class CreateMysqlDatabase {
+	static final Logger logger = Logger.getLogger(CreateMysqlDatabase.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private static String DB_NAME = "emaildb";
@@ -26,9 +26,12 @@ public class CreateDatabase {
 	private String rootPassword = null;
 	
 	public static void main(String[] args) {
-		CreateDatabase db = new CreateDatabase();
+		CreateMysqlDatabase db = new CreateMysqlDatabase();
+		AlterConstraints alter = new AlterConstraints();
 		try {
 			db.createDatabase();
+			new DataLoader().loadAllTables();
+			alter.executeQueries();
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);
@@ -70,7 +73,6 @@ public class CreateDatabase {
 		finally {
 			closeConnection(con);
 		}
-		createAndLoadTables();
 	}
 	
 	private String getHostName(String _url) {
@@ -226,10 +228,6 @@ public class CreateDatabase {
         stmt.executeUpdate("DROP DATABASE " + DB_NAME);
         stmt.close();
         logger.info("dropDB() - " + DB_NAME + " dropped from " + hostName);
-	}
-	
-	private void createAndLoadTables() {
-		new DataLoader().loadAllTables();
 	}
 	
 	private void closeConnection(Connection con) {

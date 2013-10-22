@@ -79,7 +79,7 @@ public class MessageInboxBoTest {
 	}
 	
 	private MessageBean testReadFromFile(String fileName) throws MessagingException, IOException {
-		byte[] mailStream = TestUtil.loadFromFile(fileName);
+		byte[] mailStream = TestUtil.loadFromSamples(fileName);
 		MessageBean msgBean = MessageBeanUtil.createBeanFromStream(mailStream);
 		return msgBean;
 	}
@@ -95,7 +95,7 @@ public class MessageInboxBoTest {
 			}
 			catch (NoResultException e2) {
 				String fileName = "BouncedMail_2.txt";
-				return TestUtil.loadFromFile(fileName);
+				return TestUtil.loadFromSamples(fileName);
 			}
 		}
 		logger.info("MsgStreamDao - getByPrimaryKey: "+LF+msgStreamVo);

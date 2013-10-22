@@ -64,7 +64,7 @@ public class HtmlToText extends HTMLEditorKit.ParserCallback implements Serializ
 			in.close();
 			
 			// 2, use StringReader
-			byte[] bytes = TestUtil.loadFromFile("HtmlSample.html");
+			byte[] bytes = FileUtil.loadFromFile("samples/","HtmlSample.html");
 			String text = parser.parse(new String(bytes));
 			System.out.println(text);
 		} catch (Exception e) {

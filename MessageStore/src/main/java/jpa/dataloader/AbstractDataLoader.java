@@ -1,8 +1,8 @@
 package jpa.dataloader;
 
 import jpa.util.EnvUtil;
+import jpa.util.FileUtil;
 import jpa.util.SpringUtil;
-import jpa.util.TestUtil;
 import jpa.variable.VarReplProperties;
 
 public abstract class AbstractDataLoader {
@@ -29,7 +29,7 @@ public abstract class AbstractDataLoader {
 	}
 
 
-	protected byte[] loadFromFile(String fileName) {
-		return TestUtil.loadFromFile(fileName);
+	protected byte[] loadFromSamples(String fileName) {
+		return FileUtil.loadFromFile("samples/", fileName);
 	}
 }

@@ -226,7 +226,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		atc2.setAttachmentDisp(Part.INLINE);
 		atc2.setAttachmentName("one.gif");
 		atc2.setAttachmentType("image/gif; name=one.gif");
-		atc2.setAttachmentValue(loadFromFile("one.gif"));
+		atc2.setAttachmentValue(loadFromSamples("one.gif"));
 		attchmntService.insert(atc2);
 
 		MessageAttachment atc3 = new MessageAttachment();
@@ -235,7 +235,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		atc3.setAttachmentDisp(Part.ATTACHMENT);
 		atc3.setAttachmentName("jndi.bin");
 		atc3.setAttachmentType("application/octet-stream; name=\"jndi.bin\"");
-		atc3.setAttachmentValue(loadFromFile("jndi.bin"));
+		atc3.setAttachmentValue(loadFromSamples("jndi.bin"));
 		attchmntService.insert(atc3);
 	}
 
@@ -246,7 +246,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		strm1.setMsgSubject(inbox.getMsgSubject());
 		strm1.setFromAddrRowId(inbox.getFromAddrRowId());
 		strm1.setToAddrRowId(inbox.getToAddrRowId());
-		strm1.setMsgStream(loadFromFile("BouncedMail_1.txt"));
+		strm1.setMsgStream(loadFromSamples("BouncedMail_1.txt"));
 		streamService.insert(strm1);
 	}
 	
@@ -284,7 +284,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 			"You are receiving this e-mail because you subscribed to MSN Featured Offers. Microsoft respects your privacy. If you do not wish to receive this MSN Featured Offers e-mail, please click the \"Unsubscribe\" link below. This will not unsubscribe" + LF +
 			"you from e-mail communications from third-party advertisers that may appear in MSN Feature Offers. This shall not constitute an offer by MSN. MSN shall not be responsible or liable for the advertisers' content nor any of the goods or service" + LF +
 			"advertised. Prices and item availability subject to change without notice.<br><br>" + LF +
-			"<center>©2008 Microsoft | <A href=\"http://aep.seemparty.com\" target=\"_blank\">Unsubscribe</a> | <A href=\"http://gil.seemparty.com\" target=\"_blank\">More Newsletters</a> | <A href=\"http://dqh.seemparty.com\" target=\"_blank\">Privacy</a><br><br>" + LF +
+			"<center>ï¿½2008 Microsoft | <A href=\"http://aep.seemparty.com\" target=\"_blank\">Unsubscribe</a> | <A href=\"http://gil.seemparty.com\" target=\"_blank\">More Newsletters</a> | <A href=\"http://dqh.seemparty.com\" target=\"_blank\">Privacy</a><br><br>" + LF +
 			"<center>Microsoft Corporation, One Microsoft Way, Redmond, iy 193" + LF +
 			"</td>" + LF +
 			" </div>" + LF +
@@ -306,7 +306,7 @@ public class MessageInboxLoader extends AbstractDataLoader {
 			"Message-Id: <03907644185382.773588432734.799319-7043@cimail571.msn.com>" + LF +
 			"To: <jackwnn@synnex.com.au>" + LF +
 			"Subject: May 74% OFF" + LF +
-			"From: Viagra ® Official Site <jackwnn@synnex.com.au>" + LF +
+			"From: Viagra ï¿½ Official Site <jackwnn@synnex.com.au>" + LF +
 			"MIME-Version: 1.0" + LF +
 			"Importance: High" + LF +
 			"Content-Type: text/html; charset=\"iso-8859-1\"" + LF +

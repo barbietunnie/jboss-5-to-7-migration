@@ -54,7 +54,7 @@ public class BodyPartUtilTest {
 	}
 
 	private MessageBean testReadFromFile(String fileName) throws MessagingException {
-		byte[] mailStream = TestUtil.loadFromFile(fileName);
+		byte[] mailStream = TestUtil.loadFromSamples(fileName);
 		MessageBean msgBean = MessageBeanUtil.createBeanFromStream(mailStream);
 		return msgBean;
 	}

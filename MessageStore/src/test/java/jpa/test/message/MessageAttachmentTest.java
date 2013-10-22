@@ -151,7 +151,7 @@ public class MessageAttachmentTest {
 		atc2.setAttachmentDisp(Part.INLINE);
 		atc2.setAttachmentName("one.gif");
 		atc2.setAttachmentType("image/gif; name=one.gif");
-		atc2.setAttachmentValue(TestUtil.loadFromFile("one.gif"));
+		atc2.setAttachmentValue(TestUtil.loadFromSamples("one.gif"));
 		service.insert(atc2);
 		
 		atc3 = new MessageAttachment();
@@ -160,7 +160,7 @@ public class MessageAttachmentTest {
 		atc3.setAttachmentDisp(Part.ATTACHMENT);
 		atc3.setAttachmentName("jndi.bin");
 		atc3.setAttachmentType("application/octet-stream; name=\"jndi.bin\"");
-		atc3.setAttachmentValue(TestUtil.loadFromFile("jndi.bin"));
+		atc3.setAttachmentValue(TestUtil.loadFromSamples("jndi.bin"));
 		service.insert(atc3);
 		
 		assertTrue(service.getByMsgInboxId(inbox1.getRowId()).size()==3);		

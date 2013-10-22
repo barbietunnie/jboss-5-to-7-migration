@@ -11,6 +11,7 @@ import jpa.data.preload.RuleNameEnum;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
 import jpa.service.msgin.MessageParserBo;
+import jpa.util.FileUtil;
 import jpa.util.TestUtil;
 
 import org.apache.log4j.Logger;
@@ -60,7 +61,7 @@ public class MessageParserTest {
 	@Test
 	public void testMessageParser() throws MessagingException {
 		String fileName = "BouncedMail_1.txt";
-		byte[] mailStream = TestUtil.loadFromFile(fileName);
+		byte[] mailStream = TestUtil.loadFromSamples(fileName);
 		MessageBean msgBean = MessageBeanUtil.createBeanFromStream(mailStream);
 		
 		TestUtil.verifyMessageBean4BounceMail_1(msgBean);
@@ -72,7 +73,7 @@ public class MessageParserTest {
 	}
 
 	private byte[] getBouncedMail(int fileNbr) throws IOException {
-		byte[] mailStream = TestUtil.loadFromFile("bouncedmails/", "BouncedMail_" + fileNbr + ".txt");
+		byte[] mailStream = FileUtil.loadFromFile("bouncedmails/", "BouncedMail_" + fileNbr + ".txt");
 		return mailStream;
 	}
 }
