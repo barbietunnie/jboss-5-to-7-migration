@@ -140,7 +140,7 @@ public class MessageStreamTest {
 		adr1.setMsgSubject("test jpa subject");
 		adr1.setFromAddrRowId(from.getRowId());
 		adr1.setToAddrRowId(to.getRowId());
-		adr1.setMsgStream(TestUtil.loadFromFile("BouncedMail_1.txt"));;
+		adr1.setMsgStream(TestUtil.loadFromSamples("BouncedMail_1.txt"));;
 		service.insert(adr1);
 		
 		MessageInbox inbox2 = inboxService.getPrevoiusRecord(inbox1);
@@ -152,7 +152,7 @@ public class MessageStreamTest {
 			adr2.setMessageInbox(inbox2);
 			adr2.setMsgSubject("jpa test");
 			adr2.setFromAddrRowId(from.getRowId());
-			adr2.setMsgStream(TestUtil.loadFromFile("BouncedMail_1.txt"));
+			adr2.setMsgStream(TestUtil.loadFromSamples("BouncedMail_1.txt"));
 			service.insert(adr2);
 		}
 	}

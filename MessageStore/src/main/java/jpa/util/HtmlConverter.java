@@ -71,7 +71,7 @@ public final class HtmlConverter implements java.io.Serializable {
 	public static void main(String[] args) {
 		try {
 			// the HTML to convert
-			byte[] bytes = TestUtil.loadFromFile("HtmlSample.html");
+			byte[] bytes = FileUtil.loadFromFile("samples/","HtmlSample.html");
 			HtmlConverter parser = HtmlConverter.getInstance();
 			String text = parser.convertToText(new String(bytes));
 			System.out.println(text);

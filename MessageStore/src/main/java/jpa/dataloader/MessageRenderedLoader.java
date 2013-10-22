@@ -99,7 +99,7 @@ public class MessageRenderedLoader extends AbstractDataLoader {
 		ra1.setAttachmentType("text/plain; charset=\"iso-8859-1\"; name=\"attachment1.txt\"");
 		ra1.setAttachmentName("attachment1.txt");
 		ra1.setAttachmentDisp(Part.INLINE);
-		ra1.setAttachmentValue(loadFromFile("jndi.bin"));
+		ra1.setAttachmentValue(loadFromSamples("jndi.bin"));
 		attachmentService.insert(ra1);
 
 		RenderAttachment ra2 = new RenderAttachment();
@@ -108,7 +108,7 @@ public class MessageRenderedLoader extends AbstractDataLoader {
 		ra2.setAttachmentType("image/gif; name=one.gif");
 		ra2.setAttachmentName("one.gif");
 		ra2.setAttachmentDisp(Part.ATTACHMENT);
-		ra2.setAttachmentValue(loadFromFile("one.gif"));
+		ra2.setAttachmentValue(loadFromSamples("one.gif"));
 		attachmentService.insert(ra2);
 
 		logger.info("EntityManager persisted the record.");

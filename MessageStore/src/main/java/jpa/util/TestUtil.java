@@ -5,11 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import jpa.constant.EmailAddrType;
@@ -32,36 +27,10 @@ import org.apache.log4j.Logger;
 public class TestUtil {
 	static final Logger logger = Logger.getLogger(TestUtil.class);
 	
-	public static byte[] loadFromFile(String fileName) {
-		return loadFromFile("samples/", fileName);
+	public static byte[] loadFromSamples(String fileName) {
+		return FileUtil.loadFromFile("samples/", fileName);
 	}
 
-	public static byte[] loadFromFile(String filePath, String fileName) {
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		//loader = TestUtil.class.getClassLoader(); // works too
-		if (!filePath.endsWith(File.separator) && !filePath.endsWith("/")) {
-			filePath += File.separator;
-		}
-		InputStream is = loader.getResourceAsStream(filePath + fileName);
-		if (is == null) {
-			throw new RuntimeException("File (" + filePath + fileName + ") not found!");
-		}
-		logger.info("Loading file from location: " + filePath + fileName);
-		BufferedInputStream bis = new BufferedInputStream(is);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buffer = new byte[1024];
-		int len = 0;
-		try {
-			while ((len=bis.read(buffer))>0) {
-				baos.write(buffer, 0, len);
-			}
-			return baos.toByteArray();
-		}
-		catch (IOException e) {
-			throw new RuntimeException("IOException caught: " + e.getMessage());
-		}
-	}
-	
 	public static MessageInbox verifyBouncedMail_1(int inboxRowId, MessageInboxService inboxService, EmailAddressService emailService) {
 		MessageInbox inbox = inboxService.getAllDataByPrimaryKey(inboxRowId);
 		assertTrue("support.hotline@jbatch.com".equals(inbox.getToAddress().getAddress()));
