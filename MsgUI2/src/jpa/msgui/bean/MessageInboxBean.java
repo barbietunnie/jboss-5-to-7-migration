@@ -93,16 +93,15 @@ public class MessageInboxBean implements java.io.Serializable {
 	
 	private String newRuleName = "";
 	
+	private static String TO_SELF = null;
 	private static String TO_EDIT = "msgInboxView";
-	private static String TO_FAILED = "message.failed";
-	private static String TO_DELETED = "message.deleted";
-	private static String TO_CANCELED = "message.canceled";
+	private static String TO_FAILED = TO_SELF;
+	private static String TO_DELETED = "msgInboxList";
+	private static String TO_CANCELED = "msgInboxList";
 	private static String TO_SENT = "message.sent";
 	private static String TO_FORWARD = "message.forward";
 	private static String TO_REPLY = "message.reply";
-	private static String TO_CLOSED = "message.closed";
-	private static String TO_PAGING = "message.paging";
-	private static String TO_SELF = null;
+	private static String TO_CLOSED = "msgInboxList";
 	
 	public MessageInboxService getMessageInboxService() {
 		if (msgInboxDao == null) {
@@ -148,10 +147,10 @@ public class MessageInboxBean implements java.io.Serializable {
 		return msgBeanBo;
 	}
 
-	public String pageFirst() {
+	public void pageFirst() {
 		dataTable.setFirst(0);
 		searchVo.setPageAction(PageAction.FIRST);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
 
 	public void pageFirstListener(AjaxBehaviorEvent event) {
@@ -433,9 +432,11 @@ public class MessageInboxBean implements java.io.Serializable {
 		}
 		if (isDebugEnabled) {
 			//logger.debug("viewMessage() - MessageInbox to be passed to jsp: " + message);
-			logger.debug("viewMessage() - MessageInbox to be passed to jsp: " + LF + "Msg RowId: "
-					+ message.getRowId() + LF + "Number of Attachments: "
-					+ message.getAttachmentCount() + LF + "Subject: " + message.getMsgSubject()
+			logger.debug("viewMessage() - MessageInbox to be passed to jsp: "
+					+ LF + "Msg RowId: "	+ message.getRowId()
+					+ LF + "Msg Status: " + message.getStatusId()
+					+ LF + "Number of Attachments: " + message.getAttachmentCount()
+					+ LF + "Subject: " + message.getMsgSubject()
 					+ LF + "Message Body: " + LF + message.getMsgBody());
 		}
 		return TO_EDIT;
@@ -480,9 +481,7 @@ public class MessageInboxBean implements java.io.Serializable {
 			logger.error("deleteMessage() - MessageInbox is null");
 			return TO_FAILED;
 		}
-		int rowsDeleted = 1; //getMessageInboxService().deleteByRowId(message.getRowId());
-		message = getMessageInboxService().getAllDataByPrimaryKey(message.getRowId());
-		getMessageInboxService().delete(message);
+		int rowsDeleted = getMessageInboxService().deleteByRowId(message.getRowId());
 		if (rowsDeleted > 0) {
 			logger.info("deleteMessage() - Mailbox message deleted: " + message.getRowId());
 			searchVo.setRowCount(searchVo.getRowCount() - rowsDeleted);
