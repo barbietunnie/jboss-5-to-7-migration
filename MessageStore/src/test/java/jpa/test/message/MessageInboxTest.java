@@ -13,14 +13,21 @@ import javax.persistence.NoResultException;
 import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
 import jpa.constant.MsgDirectionCode;
+import jpa.constant.XHeaderName;
 import jpa.data.preload.RuleNameEnum;
+import jpa.model.MailingList;
 import jpa.model.SenderData;
 import jpa.model.EmailAddress;
+import jpa.model.message.MessageHeader;
+import jpa.model.message.MessageHeaderPK;
 import jpa.model.message.MessageInbox;
+import jpa.model.message.MessageUnsubComment;
 import jpa.model.rule.RuleLogic;
 import jpa.msgui.vo.SearchFieldsVo;
+import jpa.service.MailingListService;
 import jpa.service.SenderDataService;
 import jpa.service.EmailAddressService;
+import jpa.service.message.MessageHeaderService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
@@ -53,6 +60,10 @@ public class MessageInboxTest {
 	SenderDataService senderService;
 	@Autowired
 	RuleLogicService logicService;
+	@Autowired
+	MessageHeaderService headerService;
+	@Autowired
+	MailingListService listService;
 
 	@Test
 	public void messageInboxService() {
@@ -87,6 +98,24 @@ public class MessageInboxTest {
 		in.setMsgContentType("multipart/mixed");
 		in.setBodyContentType("text/plain");
 		in.setMsgBody("Test Message Body");
+		
+		MessageHeader hdr1 = new MessageHeader();
+		MessageHeaderPK pk1 = new MessageHeaderPK(in,1);
+		hdr1.setMessageHeaderPK(pk1);
+		hdr1.setHeaderName(XHeaderName.MAILER.getValue());
+		hdr1.setHeaderValue("Mailserder");
+		in.getMessageHeaderList().add(hdr1);
+
+		List<MailingList> mlists=listService.getAll(true);
+		MailingList mlist=mlists.get(0);
+		
+		MessageUnsubComment cmt1 = new MessageUnsubComment();
+		cmt1.setMessageInbox(in);
+		cmt1.setComments("jpa test unsub comment 1");
+		cmt1.setEmailAddrRowId(from.getRowId());
+		cmt1.setMailingListRowId(mlist.getRowId());
+		in.setMessageUnsubComment(cmt1);
+
 		service.insert(in);
 		
 		MessageInbox msg1 = service.getByPrimaryKey(in.getRowId());
@@ -104,6 +133,9 @@ public class MessageInboxTest {
 			List<MessageInbox> lst4 = service.getByReferringMsgId(msg1.getReferringMessageRowId());
 			assertFalse(lst4.isEmpty());
 		}
+		
+		List<MessageHeader> headers = headerService.getByMsgInboxId(in.getRowId());
+		assertFalse(headers.isEmpty());
 
 		List<MessageInbox> lst5 = service.getRecent(10);
 		assertFalse(lst5.isEmpty());
