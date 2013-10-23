@@ -409,6 +409,24 @@ public class MessageInboxService {
 		}
 	}
 
+	public int updateCounts(MessageInbox msgInbox) {
+		String sql = "update Message_Inbox set ForwardCount=?, ReadCount=?, ReplyCount=? " +
+				"where Row_Id = ? ";
+		int rowsUpdated = 0;
+		try {
+			Query query = em.createNativeQuery(sql);
+			query.setParameter(1, msgInbox.getForwardCount());
+			query.setParameter(2, msgInbox.getReadCount());
+			query.setParameter(3, msgInbox.getReplyCount());
+			query.setParameter(4, msgInbox.getRowId());
+			rowsUpdated = query.executeUpdate();
+		}
+		finally {
+			em.flush();
+		}
+		return rowsUpdated;
+	}
+
 	public void insert(MessageInbox msgInbox) {
 		try {
 			em.persist(msgInbox);
