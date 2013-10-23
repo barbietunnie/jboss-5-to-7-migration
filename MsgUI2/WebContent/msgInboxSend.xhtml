@@ -62,7 +62,7 @@
 
 		<h:panelGrid columns="1" styleClass="fullWidth"
 			rendered="#{messageInbox.replyMessageVo!=null and messageInbox.replyMessageVo.reply}">
-			<f:verbatim><br></f:verbatim>
+			<f:verbatim><br/></f:verbatim>
 			<h:commandButton value="#{msgs.attachFileButtonText}" title="Attach files"
 				action="#{messageInbox.attachFiles}"/>
 			<h:dataTable value="#{messageInbox.uploads}" var="upload"
@@ -76,7 +76,7 @@
 					<h:outputText value="(#{upload.fileSize})"/>
 					<h:commandLink action="#{messageInbox.removeUploadFile}"
 						style="color: darkblue; font-size: 1em; font-weight: bold;">
-						<f:param name="seq" value="#{upload.sessionSeq}"/>
+						<f:param name="seq" value="#{upload.sessionUploadPK.sessionSequence}"/>
 						<f:param name="name" value="#{upload.fileName}"/>
 						<h:outputText value="[#{msgs.removeLinkText}]"/>
 					</h:commandLink>

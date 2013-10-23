@@ -157,11 +157,12 @@
 							style="font-size: 1.0em; font-weight: bold; font-family: monospace;"/>
 						<h:graphicImage value="/images/unopened.gif"
 							rendered="#{messageInbox.message.rowId ne thread.rowId}"/>
-						<h:commandLink action="#{messageInbox.viewThread}"
+						<h:commandLink 
 							rendered="#{messageInbox.message.rowId ne thread.rowId}"
 							value=" #{thread.msgSubject}"
 							style="color: darkblue; font-size: 1em; font-weight: bold;">
 							<f:param name="msgThreadId" value="#{thread.rowId}" />
+							<f:ajax listener="#{messageInbox.viewThreadListener}" render="@form"/>
 						</h:commandLink>
 						<h:graphicImage value="/images/opened.gif"
 							rendered="#{messageInbox.message.rowId == thread.rowId}"/>
@@ -170,7 +171,7 @@
 							style="color: darkgray; font-size: 1em; font-weight: bold;"/>
 						<h:outputText value=" #{msgs.newLabelText}" 
 							style="color: green; font-size: 1em; font-weight: bold;"
-							rendered="#{thread.readCount le 0}"/>
+							rendered="#{thread.readCount == 0}"/>
 					</h:column>
 					<h:column>
 					<h:outputText value="#{messageInbox.getRuleName(thread.ruleLogicRowId)}"/>

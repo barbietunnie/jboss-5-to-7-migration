@@ -94,14 +94,15 @@ public class MessageInboxBean implements java.io.Serializable {
 	private String newRuleName = "";
 	
 	private static String TO_SELF = null;
-	private static String TO_EDIT = "msgInboxView";
 	private static String TO_FAILED = TO_SELF;
-	private static String TO_DELETED = "msgInboxList";
-	private static String TO_CANCELED = "msgInboxList";
-	private static String TO_SENT = "message.sent";
-	private static String TO_FORWARD = "message.forward";
-	private static String TO_REPLY = "message.reply";
-	private static String TO_CLOSED = "msgInboxList";
+	private static String TO_EDIT = "msgInboxView";
+	private static String TO_LIST = "msgInboxList";
+	private static String TO_SEND = "msgInboxSend";
+	private static String TO_DELETED = TO_LIST;
+	private static String TO_CANCELED = TO_LIST;
+	private static String TO_FORWARD = TO_SEND;
+	private static String TO_REPLY = TO_SEND;
+	private static String TO_CLOSED = TO_LIST;
 	
 	public MessageInboxService getMessageInboxService() {
 		if (msgInboxDao == null) {
@@ -198,8 +199,8 @@ public class MessageInboxBean implements java.io.Serializable {
 		SimpleMailTrackingMenu menu = (SimpleMailTrackingMenu) FacesUtil.getSessionMapValue("mailTracking");
 		if (menu != null) {
 			SearchFieldsVo menuSearchVo = menu.getSearchFieldVo();
-			logger.info("Menu SearchFieldVo: " + menuSearchVo);
-			logger.info("Inbox SearchFieldVo: " + searchVo);
+			//logger.info("Menu SearchFieldVo: " + menuSearchVo);
+			//logger.info("Inbox SearchFieldVo: " + searchVo);
 			if (!menuSearchVo.equalsLevel1(searchVo)) {
 				if (menuSearchVo.getLogList().size() > 0) {
 					logger.info("getAll() - " + menuSearchVo.listChanges());
@@ -420,7 +421,7 @@ public class MessageInboxBean implements java.io.Serializable {
 		editMode = true;
 		message.setReadCount(message.getReadCount() + 1);
 		// update ReadCount
-		getMessageInboxService().update(message);
+		getMessageInboxService().updateCounts(message);
 		logger.info("viewMessage() - Message updated: " + message.getRowId());
 		// fetch message threads
 		List<MessageInbox> threads = getMessageInboxService().getByLeadMsgId(message.getLeadMessageRowId());
@@ -720,7 +721,7 @@ public class MessageInboxBean implements java.io.Serializable {
 		String sessionId = FacesUtil.getSessionId();
 		boolean valid = FacesUtil.isSessionIdValid();
 		logger.info("retrieveUploadFiles() - SessionId: " + sessionId + ", Valid? " + valid);
-		uploads = getSessionUploadService().getBySessionId4Web(sessionId);
+		uploads = getSessionUploadService().getBySessionId(sessionId);
 		if (isDebugEnabled && uploads != null)
 			logger.debug("retrieveUploadFiles() - files retrieved: " + uploads.size());
 		return uploads;
@@ -955,7 +956,7 @@ public class MessageInboxBean implements java.io.Serializable {
 			getMessageInboxService().update(message);
 			logger.info("sendMessage() - Message updated: " + message.getRowId());
 		}
-		return TO_SENT;
+		return TO_LIST;
 	}
 	
 	public String cancelSend() {

@@ -13,11 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import jpa.model.message.MessageAttachment;
-import jpa.model.message.MessageAttachmentPK;
-import jpa.model.message.MessageInbox;
 import jpa.msgui.util.SpringUtil;
 import jpa.service.message.MessageAttachmentService;
-import jpa.service.message.MessageInboxService;
 
 import org.apache.log4j.Logger;
 
@@ -30,7 +27,7 @@ public class FileServlet extends HttpServlet {
 	static final Logger logger = Logger.getLogger(FileServlet.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
-	private MessageInboxService messageDao = null;
+	//private MessageInboxService messageDao = null;
 	private MessageAttachmentService attachmentsDao = null;
 	private String fileNotFoundPage = "/FileNotFoundError.xhtml";
 	
@@ -39,8 +36,8 @@ public class FileServlet extends HttpServlet {
 		ServletContext ctx = getServletContext();
 		logger.info("init() - ServerInfo: " + ctx.getServerInfo() + ", Context Path: "
 				+ ctx.getContextPath());
-		messageDao = (MessageInboxService) SpringUtil.getWebAppContext(ctx)
-				.getBean("messageInboxService");
+		//messageDao = (MessageInboxService) SpringUtil.getWebAppContext(ctx)
+		//		.getBean("messageInboxService");
 		attachmentsDao = (MessageAttachmentService) SpringUtil.getWebAppContext(ctx)
 				.getBean("messageAttachmentService");
 	}
@@ -62,27 +59,27 @@ public class FileServlet extends HttpServlet {
         }
 
         // Lookup MessageAttachment by id/depth/seq in database.
-        int msgId = 0;
-        int attchmntDepth = 0;
-        int attchmntSeq = 0;
+        int attchRowId = 0;
+        //int attchmntDepth = 0;
+        //int attchmntSeq = 0;
         try {
-        	msgId = Integer.parseInt(id);
-        	attchmntDepth = Integer.parseInt(depth);
-        	attchmntSeq = Integer.parseInt(seq);
+        	attchRowId = Integer.parseInt(id);
+        	//attchmntDepth = Integer.parseInt(depth);
+        	//attchmntSeq = Integer.parseInt(seq);
         }
         catch (NumberFormatException e) {
         	logger.error("Failed to convert file ID or Depth or Seq to numeric values.");
             response.sendRedirect(fileNotFoundPage);
             return;
         }
-        MessageInbox msgInbox = messageDao.getByRowId(msgId);
+        //MessageInbox msgInbox = messageDao.getByRowId(attchRowId);
 		MessageAttachment fileData = null;
         try {
-        	MessageAttachmentPK pk = new MessageAttachmentPK();
-        	pk.setMessageInbox(msgInbox);
-        	pk.setAttachmentDepth(attchmntDepth);
-        	pk.setAttachmentSequence(attchmntSeq);
-        	fileData = attachmentsDao.getByPrimaryKey(pk);
+        	//MessageAttachmentPK pk = new MessageAttachmentPK();
+        	//pk.setMessageInbox(msgInbox);
+        	//pk.setAttachmentDepth(attchmntDepth);
+        	//pk.setAttachmentSequence(attchmntSeq);
+        	fileData = attachmentsDao.getByRowId(attchRowId); //getByPrimaryKey(pk);
         }
         catch (NoResultException e) {
             logger.error("NoResultException caught", e);

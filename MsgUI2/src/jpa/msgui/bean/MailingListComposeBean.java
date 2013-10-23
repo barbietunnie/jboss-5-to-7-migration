@@ -172,7 +172,7 @@ public class MailingListComposeBean implements java.io.Serializable {
 		String sessionId = FacesUtil.getSessionId();
 		boolean valid = FacesUtil.isSessionIdValid();
 		logger.info("retrieveUploadFiles() - SessionId: " + sessionId + ", Valid? " + valid);
-		uploads = getSessionUploadService().getBySessionId4Web(sessionId);
+		uploads = getSessionUploadService().getBySessionId(sessionId);
 		if (isDebugEnabled && uploads != null)
 			logger.debug("retrieveUploadFiles() - files retrieved: " + uploads.size());
 		return uploads;
