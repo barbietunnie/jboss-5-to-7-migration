@@ -120,6 +120,8 @@ public class MessageInboxTest {
 		
 		MessageInbox msg1 = service.getByPrimaryKey(in.getRowId());
 		assertNotNull(msg1.getLeadMessageRowId());
+		msg1.setReadCount(msg1.getReadCount()+1);
+		service.updateCounts(msg1);
 		System.out.println(StringUtil.prettyPrint(msg1,2));
 		
 		List<MessageInbox> lst1 = service.getByFromAddress(from.getAddress());
