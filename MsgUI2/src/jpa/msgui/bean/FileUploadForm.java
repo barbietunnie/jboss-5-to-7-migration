@@ -5,8 +5,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+
+@ManagedBean(name="uploadForm")
+@RequestScoped
 public class FileUploadForm implements java.io.Serializable {
 	private static final long serialVersionUID = -841769703445641393L;
+	private String fromPage;
 	// Init
     private File file1;
     private File file2;
@@ -22,7 +28,15 @@ public class FileUploadForm implements java.io.Serializable {
     private final Map<String, String> messages  = new LinkedHashMap<String, String>();
     private final Map<String, String> pathes = new HashMap<String, String>();
 
-    // Helpers
+    public String getFromPage() {
+		return fromPage;
+	}
+
+	public void setFromPage(String fromPage) {
+		this.fromPage = fromPage;
+	}
+
+	// Helpers
     public Map<String, String> getErrors() {
         return errors;
     }

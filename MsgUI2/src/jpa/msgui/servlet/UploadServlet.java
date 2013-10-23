@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import jpa.model.SessionUpload;
+import jpa.model.SessionUploadPK;
 import jpa.model.Subscription;
 import jpa.model.UserData;
 import jpa.msgui.bean.FileUploadForm;
@@ -114,15 +115,15 @@ public class UploadServlet extends HttpServlet {
 	
 	private void redirect(HttpServletRequest request, HttpServletResponse response, String action,
 			String fromPage) throws IOException {
-		String targetPage = "/msgInboxList.faces";
+		String targetPage = "/msgInboxList.xhtml";
 		if ("msgreply".equals(fromPage)) {
-			targetPage = "/msgInboxSend.faces";
+			targetPage = "/msgInboxSend.xhtml";
 		}
 		else if ("mailinglist".equals(fromPage)) {
-			targetPage = "/mailingListCompose.faces";
+			targetPage = "/mailingListCompose.xhtml";
 		}
 		else if ("uploademails".equals(fromPage)) {
-			targetPage = "/main.faces";
+			targetPage = "/main.xhtml";
 		}
 		
 		if ("uploademails".equals(fromPage) || "Cancel".equals(action)) {
@@ -214,6 +215,8 @@ public class UploadServlet extends HttpServlet {
         String contentType = fileItem.getContentType();
     	String sessionId = request.getRequestedSessionId();
     	SessionUpload sessVo = new SessionUpload();
+    	SessionUploadPK pk = new SessionUploadPK();
+    	sessVo.setSessionUploadPK(pk);
     	sessVo.getSessionUploadPK().setSessionSequence(fileSeq); // ignored by insertLast() method
     	sessVo.getSessionUploadPK().setSessionId(sessionId);
     	HttpSession session = request.getSession();
