@@ -311,6 +311,11 @@ public class MessageInbox extends BaseModel implements Serializable {
 		}
 	}
 	
+	public int getRows() {
+		int rows = msgBodySize / 120;
+		return (rows > 20 ? 40 : 20);
+	}
+
 	/* end of UI */
 
 	public MessageInbox() {
