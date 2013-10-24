@@ -17,6 +17,8 @@ public class SpringUtil {
 	
 	private static AbstractApplicationContext applContext = null;
 	
+	private SpringUtil() { /* static only */ }
+	
 	public static AbstractApplicationContext getAppContext() {
 		if (applContext == null) {
 			String[] fileNames = getSpringConfigXmlFiles();
