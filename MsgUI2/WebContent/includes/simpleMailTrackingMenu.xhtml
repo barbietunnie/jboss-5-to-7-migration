@@ -9,6 +9,7 @@
 <h:panelGrid columns="1" styleClass="gettingStartedMenu" 
 		columnClasses="gettingStartedMenuColumn">
 	
+	<f:event type="preRenderView" listener="#{mailTracking.resetFolderIfFromMain}"/>
 	<h:panelGroup>
 		<h:commandLink value="#{msgs.receivedLinkText}" immediate="false"
 			title="Received Messages"

@@ -28,7 +28,8 @@
 						#{linenbr}
 						<c:set var="linenbr" value="${linenbr + 1}"/>
 					</c:if>
-					<h:outputLink value="admin/configureSiteProfiles.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="admin/configureSiteProfiles.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.configureSiteProfiles}"/>
 					</h:outputLink>
 				</h:panelGroup>
@@ -37,7 +38,8 @@
 						#{linenbr}
 						<c:set var="linenbr" value="${linenbr + 1}"/>
 					</c:if>
-					<h:outputLink value="admin/configureMailboxes.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="admin/configureMailboxes.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.configureMailboxes}"/>
 					</h:outputLink>
 				</h:panelGroup>
@@ -46,7 +48,8 @@
 						#{linenbr}
 						<c:set var="linenbr" value="${linenbr + 1}"/>
 					</c:if>
-					<h:outputLink value="admin/configureSmtpServers.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="admin/configureSmtpServers.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.configureSmtpServers}"/>
 					</h:outputLink>
 				</h:panelGroup>
@@ -58,21 +61,24 @@
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="customizeBuiltinRules.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="customizeBuiltinRules.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.customizeBuiltinRules}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="configureCustomRules.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="configureCustomRules.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.configureCustomRules}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="maintainActionDetails.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="maintainActionDetails.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.maintainActionDetails}"/>
 					</h:outputLink>
 				</h:panelGroup>
@@ -84,14 +90,15 @@
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="configureMailingLists.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="configureMailingLists.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.configureMailingLists}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="upload/emailAddrAttachFile.xhtml" styleClass="menuLinkText">
+					<h:outputLink value="upload/emailAddrAttachFile.jsp" styleClass="menuLinkText">
 						<f:param name="frompage" value="uploademails"/>
 						<h:outputText value="#{msgs.uploadEmailAddrsToList}"/>
 					</h:outputLink>
@@ -99,14 +106,16 @@
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="configureEmailVariables.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="configureEmailVariables.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.configureEmailVariables}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="configureEmailTemplates.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="configureEmailTemplates.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.configureEmailTemplates}"/>
 					</h:outputLink>
 				</h:panelGroup>
@@ -119,35 +128,40 @@
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="msgInboxList.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="msgInboxList.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.manageEmailCorrespondence}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="mailingListCompose.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="mailingListCompose.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.composeForListLink}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="emailAddressList.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="emailAddressList.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.manageEmailAddresses}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="customersList.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="customersList.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.manageSubscriberInformation}"/>
 					</h:outputLink>
 				</h:panelGroup>
 				<h:panelGroup styleClass="menuLinkText">
 					#{linenbr}
 					<c:set var="linenbr" value="${linenbr + 1}"/>
-					<h:outputLink value="broadcastsList.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="broadcastsList.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.viewBroadcastMessages}"/>
 					</h:outputLink>
 				</h:panelGroup>
@@ -161,7 +175,8 @@
 						#{linenbr}
 						<c:set var="linenbr" value="${linenbr + 1}"/>
 					</c:if>
-					<h:outputLink value="admin/manageUserAccounts.xhtml?frompage=main" styleClass="menuLinkText">
+					<h:outputLink value="admin/manageUserAccounts.xhtml" styleClass="menuLinkText">
+						<f:param name="frompage" value="main"/>
 						<h:outputText value="#{msgs.manageUserAccounts}"/>
 					</h:outputLink>
 				</h:panelGroup>

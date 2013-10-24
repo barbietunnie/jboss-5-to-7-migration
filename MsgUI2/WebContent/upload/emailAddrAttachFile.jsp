@@ -1,23 +1,25 @@
-<!DOCTYPE html [
-    <!ENTITY nbsp "&#160;"> 
-]>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+<html>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fn:loadBundle basename="jpa.msgui.messages" var="bndl"/>
-<h:head>
+<fmt:setBundle basename="jpa.msgui.messages" var="bndl"/>
+<head>
 <link href="../styles.css" rel="stylesheet" type="text/css" />
-<title><h:outputText value="#{bndl.uploadEmailAddrsToList}" /></title>
-</h:head>
-<h:body>
+<title><fmt:message key="uploadEmailAddrsToList" bundle="${bndl}"/></title>
+</head>
+<body>
 <div align="center">
+<jsp:useBean id="uploadForm"
+	class="jpa.msgui.bean.FileUploadForm" scope="request" />
+<jsp:setProperty name="uploadForm" property="*" />
+<jsp:useBean id="dynamicCodes"
+	class="jpa.msgui.util.DynamicCodes" scope="page" />
+<jsp:useBean id="staticCodes"
+	class="jpa.msgui.util.StaticCodes" scope="page" />
 
-<h:form action="uploadServlet" method="post" enctype="multipart/form-data">
-<input type="hidden" name="frompage" value="<c:out value='${param.frompage}'/>"/>
+<form action="uploadServlet" method="post" enctype="multipart/form-data">
+<input type="hidden" name="frompage" value="<c:out value="${param.frompage}"/>"/>
 <table class="headerMenuContent">
 	<tr>
 		<td>
@@ -25,12 +27,11 @@
 			<tr>
 				<td width="15%">&nbsp;</td>
 				<td width="70%"><span class="gettingStartedTitle">
-					<h:outputText value="#{bndl.gettingStartedHeaderText}" />
-					</span>
+					<fmt:message key="gettingStartedHeaderText" bundle="${bndl}"/></span>
 				</td>
 				<td width="15%" style="text-align: right; vertical-align: bottom;">&nbsp;<br/>
 					<a style="color: blue;" class="headerLinkText" href="../main.faces">Main</a>
-					<img src="/MsgUI2/images/space.gif" height="1" style="border: 0px" width="40" />
+					<img src="/MsgUI/images/space.gif" height="1" style="border: 0px" width="40" />
 				</td>
 			</tr>
 		</table>
@@ -39,20 +40,20 @@
 	<tr>
 		<td>
 			<span style="text-align: left;">
-			<img src="/MsgUI2/images/space.gif" height="1" style="border: 0px" width="10" />
+			<img src="/MsgUI/images/space.gif" height="1" style="border: 0px" width="10" />
 			</span>
 			<span class="gridHeader">
-			<h:outputText value="#{bndl.uploadEmailAddressFile}" />
+			<fmt:message key="uploadEmailAddressFile" bundle="${bndl}"/>
 			</span><p/>
 		</td>
 	</tr>
 	<tr>
 		<td>
 			<span style="text-align: left;">
-			<img src="/MsgUI2/images/space.gif" height="1" style="border: 0px" width="10" />
+			<img src="/MsgUI/images/space.gif" height="1" style="border: 0px" width="10" />
 			</span>
 			<span style="color: black; font-size: 1.1em;">
-			<h:outputText value="#{bndl.uploadFileToListLabel}" />
+			<fmt:message key="uploadFileToListLabel" bundle="${bndl}"/>
 			</span><p/>
 	</tr>
 	<!-- import from file section -->
@@ -67,10 +68,8 @@
 					<td style="width: 10%; text-align: right; font-weight: bold;">Import to:</td>
 					<td style="width: 40%;">
 						<select name="listid">
-						<c:forEach items="${dynacodes.mailingListIdItems}" var="listId">
-							<c:set var="isSelected" value="<c:if test='${listId.value == param.listid}'>selected</c:if>"/>
-							<!-- TODO need to set selected in option tag -->
-							<option selected value="${listId.value}"><c:out value="${listId.label}"/></option>
+						<c:forEach items="${dynamicCodes.mailingListIdItems}" var="listId">
+							<option <c:if test="${listId.value == param.listid}">selected</c:if> value="${listId.value}"><c:out value="${listId.label}"/></option> 
 						</c:forEach>
 						</select>
 					</td>
@@ -78,22 +77,22 @@
 				</tr>
 				<tr>
 					<td colspan="3">
-					<img src="/MsgUI2/images/space.gif" height="10" style="border: 0px"/>
+					<img src="/MsgUI/images/space.gif" height="10" style="border: 0px"/>
 					</td>
 				</tr>
 				<tr>
 					<td colspan="3">
 						<span style="text-align: left;">
-						<img src="/MsgUI2/images/space.gif" height="1" style="border: 0px" width="10" />
+						<img src="/MsgUI/images/space.gif" height="1" style="border: 0px" width="10" />
 						</span>
 						<span style="font-size: large;">
-						<h:outputText value="#{bndl.browseAndSelectFileLabel}" />
+						<fmt:message key="browseAndSelectFileLabel" bundle="${bndl}"/>
 						</span><p/>
 					</td>
 				</tr>
 				<tr>
 					<td colspan="3">
-					<img src="/MsgUI2/images/space.gif" height="10" style="border: 0px"/>
+					<img src="/MsgUI/images/space.gif" height="10" style="border: 0px"/>
 					</td>
 				</tr>
 				<tr>
@@ -171,29 +170,29 @@
 		<table class="smtpBody" style="padding: 2px;">
 			<tr>
 				<td colspan="3">
-				<img src="/MsgUI2/images/space.gif" height="10" style="border: 0px"/>
+				<img src="/MsgUI/images/space.gif" height="10" style="border: 0px"/>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="3">
 					<span style="text-align: left;">
-					<img src="/MsgUI2/images/space.gif" height="1" style="border: 0px" width="10" />
+					<img src="/MsgUI/images/space.gif" height="1" style="border: 0px" width="10" />
 					</span>
 					<span style="font-size: large;">
-					<h:outputText value="#{bndl.importFromListLabel}" />
+					<fmt:message key="importFromListLabel" bundle="${bndl}"/>
 					</span><p/>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="3">
-				<img src="/MsgUI2/images/space.gif" height="10" style="border: 0px"/>
+				<img src="/MsgUI/images/space.gif" height="10" style="border: 0px"/>
 				</td>
 			</tr>
 			<tr>
 				<td style="width: 10%; text-align: right; font-weight: bold;">Import from:</td>
 				<td style="width: 60%;">
 					<select name="fromlistid">
-					<c:forEach items="${dynacodes.mailingListIdItems}" var="listId">
+					<c:forEach items="${dynamicCodes.mailingListIdItems}" var="listId">
 						<option value="${listId.value}"><c:out value="${listId.label}"/></option> 
 					</c:forEach>
 					</select>
@@ -202,7 +201,7 @@
 			</tr>
 			<tr>
 				<td colspan="3">
-				<img src="/MsgUI2/images/space.gif" height="10" style="border: 0px"/>
+				<img src="/MsgUI/images/space.gif" height="10" style="border: 0px"/>
 				</td>
 			</tr>
 			<c:if test="${fn:length(uploadForm.errors) > 0 and param.submit == 'Import From List'}">
@@ -262,14 +261,14 @@
 		<td>
 		<table class="gettingStartedFooter">
 			<tr>
-				<td style="width: 50%; text-align: left;" class="headerLinkText">&copy; <h:outputText value="#{bndl.copyrightText}" /></td>
-				<td style="width: 50%; text-align: right;" class="headerLinkText"><c:out value="${codes.poweredByHtmlTag}" escapeXml="false"/></td>
+				<td style="width: 50%; text-align: left;" class="headerLinkText">&copy; <fmt:message key="copyrightText" bundle="${bndl}"/></td>
+				<td style="width: 50%; text-align: right;" class="headerLinkText"><c:out value="${staticCodes.poweredByHtmlTag}" escapeXml="false"/></td>
 			</tr>
 		</table>
 		</td>
 	</tr>
 </table>
-</h:form>
+</form>
 </div>
-</h:body>
+</body>
 </html>

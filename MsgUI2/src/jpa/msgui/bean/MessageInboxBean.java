@@ -200,14 +200,11 @@ public class MessageInboxBean implements java.io.Serializable {
 	@SuppressWarnings("unchecked")
 	public DataModel<MessageInbox> getAll() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
-		if (fromPage != null && fromPage.equals("main")) {
+		if (StringUtils.equals(fromPage, "main")) {
 			resetSearchVo();
 		}
 		SimpleMailTrackingMenu menu = (SimpleMailTrackingMenu) FacesUtil.getSessionMapValue("mailTracking");
 		if (menu != null) {
-			if (fromPage != null && fromPage.equals("main")) {
-				menu.resetSearchFolder();
-			}
 			SearchFieldsVo menuSearchVo = menu.getSearchFieldVo();
 			//logger.info("Menu SearchFieldVo: " + menuSearchVo);
 			//logger.info("Inbox SearchFieldVo: " + searchVo);
