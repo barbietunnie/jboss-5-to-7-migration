@@ -46,7 +46,7 @@ public abstract class BasePagingVo extends BaseVo implements java.io.Serializabl
 							|| (returnType.equals(java.lang.Integer.TYPE))
 							|| (returnType.equals(java.lang.Long.TYPE))
 							|| (returnType.equals(java.lang.Character.TYPE))
-							|| (returnTypeName.endsWith("MsgType"))) {
+							|| (returnTypeName.endsWith("FolderType"))) {
 						Object thisValue = method.invoke((Object)this, (Object[])params);
 						Object voValue = voMethod.invoke((Object)vo, (Object[])params);
 						if (thisValue == null) {
