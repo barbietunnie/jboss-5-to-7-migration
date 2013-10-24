@@ -95,8 +95,15 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 		return TO_SELF;
 	}
 	
-	public void resetSearchFolder() {
-		functionKey = defaultFolder;
+	/*
+	 * used by SimpleMailTrackingMenu.xhtml to reset search folder when
+	 * navigated from main menu.
+	 */
+	public void resetFolderIfFromMain() {
+		String fromPage = FacesUtil.getRequestParameter("frompage");
+		if (StringUtils.equals(fromPage, "main")) {
+			functionKey = defaultFolder;
+		}
 	}
 
 	public void selectAllListener(AjaxBehaviorEvent event) {
@@ -185,7 +192,7 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 		SearchFieldsVo vo = new SearchFieldsVo();
 		FolderType msgType = null;
 		try {
-			msgType = FolderType.getByName(functionKey);	
+			msgType = FolderType.getByName(functionKey);
 		}
 		catch (IllegalArgumentException e) {
 			msgType = FolderType.Received;

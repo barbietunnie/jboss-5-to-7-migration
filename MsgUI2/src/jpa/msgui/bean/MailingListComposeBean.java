@@ -13,6 +13,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.validator.ValidatorException;
 import javax.mail.Address;
 import javax.mail.Part;
@@ -203,7 +204,7 @@ public class MailingListComposeBean implements java.io.Serializable {
 		return null;
 	}
 	
-	public String copyFromTemplate() {
+	public void copyFromTemplateListener(AjaxBehaviorEvent event) {
 		String id = (String) templateIdInput.getSubmittedValue();
 		EmailTemplate vo = getEmailTemplateService().getByTemplateId(id);
 		if (vo != null) {
@@ -218,7 +219,7 @@ public class MailingListComposeBean implements java.io.Serializable {
 		else {
 			logger.error("copyFromTemplate() - template not found by templateId: " + templateId);
 		}
-		return "mailinglist.copytemplate";
+		return; // "mailinglist.copytemplate";
 	}
 	
 	private void checkVariableLoop(String text) throws DataValidationException {
