@@ -120,9 +120,12 @@ public class MessageInboxTest {
 		
 		MessageInbox msg1 = service.getByPrimaryKey(in.getRowId());
 		assertNotNull(msg1.getLeadMessageRowId());
+		int readcount = msg1.getReadCount();
 		msg1.setReadCount(msg1.getReadCount()+1);
 		service.updateCounts(msg1);
 		System.out.println(StringUtil.prettyPrint(msg1,2));
+		msg1 = service.getByPrimaryKey(msg1.getRowId());
+		assertTrue(msg1.getReadCount()>readcount);
 		
 		List<MessageInbox> lst1 = service.getByFromAddress(from.getAddress());
 		assertFalse(lst1.isEmpty());
@@ -134,6 +137,11 @@ public class MessageInboxTest {
 		if (msg1.getReferringMessageRowId()!=null) {
 			List<MessageInbox> lst4 = service.getByReferringMsgId(msg1.getReferringMessageRowId());
 			assertFalse(lst4.isEmpty());
+		}
+		for (MessageInbox inbox : lst3) {
+			if (inbox.getRowId()==msg1.getRowId()) {
+				assertTrue(inbox.getReadCount()==msg1.getReadCount());
+			}
 		}
 		
 		List<MessageHeader> headers = headerService.getByMsgInboxId(in.getRowId());
