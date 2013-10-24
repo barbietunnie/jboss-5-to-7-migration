@@ -59,7 +59,6 @@ public class MessageInboxService implements java.io.Serializable {
 			"from " +
 				"MessageInbox t where t.rowId=:rowId";
 		try {
-			em.clear();
 			Query query = em.createQuery(sql);
 			query.setParameter("rowId", rowId);
 			MessageInbox record = (MessageInbox) query.getSingleResult();
@@ -74,6 +73,7 @@ public class MessageInboxService implements java.io.Serializable {
 	}
 
 	public MessageInbox getAllDataByPrimaryKey(int rowId) throws NoResultException {
+		em.clear(); // to force fetching from database
 		MessageInbox mi = getByRowId(rowId);
 		if (mi.getReferringMessageRowId()!=null) {
 			try {
@@ -417,7 +417,7 @@ public class MessageInboxService implements java.io.Serializable {
 	}
 
 	public int updateCounts(MessageInbox msgInbox) {
-		String sql = "update Message_Inbox set ForwardCount=?, ReadCount=?, ReplyCount=? " +
+		String sql = "update Message_Inbox set ForwardCount=?, ReadCount=?, ReplyCount=?, UpdtTime=CURRENT_TIMESTAMP " +
 				"where Row_Id = ? ";
 		try {
 			Query query = em.createNativeQuery(sql);
