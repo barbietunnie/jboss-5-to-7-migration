@@ -108,6 +108,15 @@ public class FacesUtil {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static <T> T getManagedBean(String beanName) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		if (context != null) {
+			return (T) context.getApplication().evaluateExpressionGet(context, "#{" + beanName + "}", Object.class);
+		}
+		return null;
+	}
+
 	/**
 	 * get a Face's actionListener attribute. An attribute could be defined in following
 	 * commandLink: <code>

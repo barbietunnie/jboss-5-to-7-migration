@@ -15,6 +15,7 @@ import jpa.model.EmailAddress;
 import jpa.model.UserData;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
+import jpa.msgui.vo.FolderType;
 import jpa.msgui.vo.SearchFieldsVo;
 import jpa.msgui.vo.SearchFieldsVo.RuleName;
 import jpa.service.EmailAddressService;
@@ -47,20 +48,22 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 	private String subject = null;
 	private String body = null;
 
-	private String defaultFolder = SearchFieldsVo.MsgType.Received.name();
+	private final String defaultFolder = FolderType.Received.name();
 	private String defaultRuleName = RuleName.All.name();
 	private String defaultToAddr = null;
+	
+	private final static String TO_SELF = null;
 	
 	private EmailAddressService emailAddrDao;
 	private MessageInboxService msgInboxDao;
 	
 	public SimpleMailTrackingMenu() {
-		setDefaultSearchFields();
+		initDefaultSearchValues();
 		functionKey = defaultFolder;
 		ruleName = defaultRuleName;
 	}
 	
-	void setDefaultSearchFields() {
+	void initDefaultSearchValues() {
 		// initialize search fields from user's default settings.
 		UserData userVo = FacesUtil.getLoginUserData();
 		if (userVo != null) {
@@ -83,28 +86,41 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 		}
 	}
 	
+	public String resetSearchFields() {
+		ruleName = defaultRuleName;
+		fromAddress = null;
+		toAddress = defaultToAddr;
+		subject = null;
+		body = null;
+		return TO_SELF;
+	}
+	
+	public void resetSearchFolder() {
+		functionKey = defaultFolder;
+	}
+
 	public void selectAllListener(AjaxBehaviorEvent event) {
-		functionKey = SearchFieldsVo.MsgType.All.name();
+		functionKey = FolderType.All.name();
 		return; // TO_SELF;
 	}
 	
 	public void selectReceivedListener(AjaxBehaviorEvent event) {
-		functionKey = SearchFieldsVo.MsgType.Received.name();
+		functionKey = FolderType.Received.name();
 		return; // TO_SELF;
 	}
 	
 	public void selectSentListener(AjaxBehaviorEvent event) {
-		functionKey = SearchFieldsVo.MsgType.Sent.name();
+		functionKey = FolderType.Sent.name();
 		return; // TO_SELF;
 	}
 	
 	public void selectDraftListener(AjaxBehaviorEvent event) {
-		functionKey = SearchFieldsVo.MsgType.Draft.name();
+		functionKey = FolderType.Draft.name();
 		return; // TO_SELF;
 	}
 	
 	public void selectClosedListener(AjaxBehaviorEvent event) {
-		functionKey = SearchFieldsVo.MsgType.Closed.name();
+		functionKey = FolderType.Closed.name();
 		return; // TO_SELF;
 	}
 	
@@ -146,14 +162,7 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 	}
 	
 	public void resetSearchFieldsListener(AjaxBehaviorEvent event) {
-		ruleName = defaultRuleName;
-		fromAddress = null;
-		toAddress = defaultToAddr;
-		subject = null;
-		body = null;
-		// the value should be used in navigation rules to point to self to
-		// refresh the page
-		return; // TO_SELF;
+		resetSearchFields();
 	}
 	
 	public void checkEmailAddress(FacesContext context, UIComponent component, Object value) {
@@ -174,38 +183,30 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 	
 	public SearchFieldsVo getSearchFieldVo() {
 		SearchFieldsVo vo = new SearchFieldsVo();
-		SearchFieldsVo.MsgType msgType = null;
-		if (SearchFieldsVo.MsgType.All.name().equals(functionKey))
-			msgType = SearchFieldsVo.MsgType.All;
-		else if (SearchFieldsVo.MsgType.Received.name().equals(functionKey))
-			msgType = SearchFieldsVo.MsgType.Received;
-		else if (SearchFieldsVo.MsgType.Sent.name().equals(functionKey))
-			msgType = SearchFieldsVo.MsgType.Sent;
-		else if (SearchFieldsVo.MsgType.Draft.name().equals(functionKey))
-			msgType = SearchFieldsVo.MsgType.Draft;
-		else if (SearchFieldsVo.MsgType.Closed.name().equals(functionKey))
-			msgType = SearchFieldsVo.MsgType.Closed;
-		else if (SearchFieldsVo.MsgType.Trash.name().equals(functionKey))
-			msgType = SearchFieldsVo.MsgType.Trash;
-		
-		vo.setMsgType(msgType);
+		FolderType msgType = null;
+		try {
+			msgType = FolderType.getByName(functionKey);	
+		}
+		catch (IllegalArgumentException e) {
+			msgType = FolderType.Received;
+		}
+		vo.setFolderType(msgType);
 		vo.setRuleName(ruleName);
 		vo.setFromAddr(fromAddress);
-		if (fromAddress != null && fromAddress.trim().length() > 0) {
+		if (StringUtils.isNotBlank(fromAddress)) {
 			try {
-				EmailAddress vo2 = getEmailAddressService().getByAddress(fromAddress);
-				vo.setFromAddrId(vo2.getRowId());
+				EmailAddress from = getEmailAddressService().getByAddress(fromAddress);
+				vo.setFromAddrId(from.getRowId());
 			}
 			catch (NoResultException e) {}
 		}
-//		vo.setToAddr(toAddress);
-//		if (toAddress != null && toAddress.trim().length() > 0) {
-//			try {
-//				EmailAddress vo3 = getEmailAddressService().getByAddress(toAddress);
-//				vo.setToAddrId(vo3.getRowId());
-//			}
-//			catch (NoResultException e) {}
-//		}
+		if (StringUtils.isNotBlank(toAddress)) {
+			try {
+				EmailAddress to = getEmailAddressService().getByAddress(toAddress);
+				vo.setToAddrId(to.getRowId());
+			}
+			catch (NoResultException e) {}
+		}
 		vo.setSubject(subject);
 		vo.setBody(body);
 		
@@ -283,7 +284,7 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 
 	public EmailAddressService getEmailAddressService() {
 		if (emailAddrDao == null) {
-			emailAddrDao = (EmailAddressService) SpringUtil.getWebAppContext().getBean("emailAddressService");
+			emailAddrDao = SpringUtil.getWebAppContext().getBean(EmailAddressService.class);
 		}
 		return emailAddrDao;
 	}
@@ -294,7 +295,7 @@ public class SimpleMailTrackingMenu implements java.io.Serializable {
 
 	public MessageInboxService getMessageInboxService() {
 		if (msgInboxDao == null) {
-			msgInboxDao = (MessageInboxService) SpringUtil.getWebAppContext().getBean("messageInboxService");
+			msgInboxDao = SpringUtil.getWebAppContext().getBean(MessageInboxService.class);
 		}
 		return msgInboxDao;
 	}
