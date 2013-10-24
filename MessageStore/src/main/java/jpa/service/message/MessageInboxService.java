@@ -422,6 +422,8 @@ public class MessageInboxService {
 			return rowsUpdated;
 		}
 		finally {
+			em.flush();
+			em.clear();
 		}
 	}
 
