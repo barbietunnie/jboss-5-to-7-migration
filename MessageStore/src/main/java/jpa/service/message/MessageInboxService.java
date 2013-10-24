@@ -17,6 +17,7 @@ import jpa.constant.MsgDirectionCode;
 import jpa.constant.MsgStatusCode;
 import jpa.model.message.MessageIdDuplicate;
 import jpa.model.message.MessageInbox;
+import jpa.msgui.vo.FolderType;
 import jpa.msgui.vo.SearchFieldsVo;
 import jpa.service.EmailAddressService;
 import jpa.service.SenderDataService;
@@ -577,8 +578,8 @@ public class MessageInboxService implements java.io.Serializable {
 		String whereSql = "";
 		// Closed?
 		String closed = null;
-		if (vo.getMsgType() != null) {
-			if (vo.getMsgType().equals(SearchFieldsVo.MsgType.Closed)) {
+		if (vo.getFolderType() != null) {
+			if (vo.getFolderType().equals(FolderType.Closed)) {
 				closed = MsgStatusCode.CLOSED.getValue();
 			}
 		}
@@ -592,11 +593,11 @@ public class MessageInboxService implements java.io.Serializable {
 		}
 		// msgDirection
 		String direction = null;
-		if (vo.getMsgType() != null) {
-			if (vo.getMsgType().equals(SearchFieldsVo.MsgType.Received)) {
+		if (vo.getFolderType() != null) {
+			if (vo.getFolderType().equals(FolderType.Received)) {
 				direction = MsgDirectionCode.RECEIVED.getValue();
 			}
-			else if (vo.getMsgType().equals(SearchFieldsVo.MsgType.Sent)) {
+			else if (vo.getFolderType().equals(FolderType.Sent)) {
 				direction = MsgDirectionCode.SENT.getValue();
 			}
 		}

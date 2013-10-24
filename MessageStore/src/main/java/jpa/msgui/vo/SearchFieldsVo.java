@@ -8,10 +8,9 @@ import jpa.data.preload.RuleNameEnum;
 
 public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	private static final long serialVersionUID = 8888455019361283024L;
-	public static enum MsgType {All, Received, Sent, Draft, Closed, Trash};
 	public static enum RuleName {All};
 	
-	private MsgType msgType = null;
+	private FolderType folderType = null;
 	private String ruleName = RuleName.All.name();
 	private Integer fromAddrId = null;
 	private Integer toAddrId = null;
@@ -41,7 +40,7 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 		vo.printMethodNames();
 		System.out.println(vo.toString());
 		SearchFieldsVo vo2 = new SearchFieldsVo();
-		vo2.setMsgType(MsgType.Closed);
+		vo2.setFolderType(FolderType.Closed);
 		vo.setSubject("auto-reply");
 		vo2.setRuleName(RuleNameEnum.HARD_BOUNCE.getValue());
 		vo.setBody("test message");
@@ -58,12 +57,12 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	}
 	
 	private void init() {
-		msgType = MsgType.Received;
+		folderType = FolderType.Received;
 		setSearchableFields();
 	}
 	
 	protected void setSearchableFields() {
-		searchFields.add("msgType");
+		searchFields.add("folderType");
 		searchFields.add("ruleName");
 		searchFields.add("fromAddrId");
 		searchFields.add("toAddrId");
@@ -114,14 +113,14 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 		getLogList().clear();
 		if (this == vo) return true;
 		if (vo == null) return false;
-		if (this.msgType == null) {
-			if (vo.msgType != null) {
-				addChangeLog("MsgType", this.msgType, vo.msgType);
+		if (this.folderType == null) {
+			if (vo.folderType != null) {
+				addChangeLog("FolderTypeype", this.folderType, vo.folderType);
 			}
 		}
 		else {
-			if (!this.msgType.equals(vo.msgType)) {
-				addChangeLog("MsgType", this.msgType, vo.msgType);
+			if (!this.folderType.equals(vo.folderType)) {
+				addChangeLog("FolderType", this.folderType, vo.folderType);
 			}
 		}
 		if (this.ruleName == null) {
@@ -200,7 +199,7 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 	
 	public void copyLevel1To(SearchFieldsVo vo) {
 		if (vo == null) return;
-		vo.setMsgType(this.msgType);
+		vo.setFolderType(this.folderType);
 		vo.setRuleName(this.ruleName);
 		vo.setToAddrId(this.toAddrId);
 		vo.setFromAddrId(this.fromAddrId);
@@ -210,11 +209,11 @@ public final class SearchFieldsVo extends BasePagingVo implements Serializable {
 		vo.setBody(this.body);
 	}
 	
-	public MsgType getMsgType() {
-		return msgType;
+	public FolderType getFolderType() {
+		return folderType;
 	}
-	public void setMsgType(MsgType msgType) {
-		this.msgType = msgType;
+	public void setFolderType(FolderType folderType) {
+		this.folderType = folderType;
 	}
 	public Integer getFromAddrId() {
 		return fromAddrId;
