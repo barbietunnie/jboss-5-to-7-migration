@@ -444,9 +444,10 @@ public class MessageInboxService implements java.io.Serializable {
 
 	private int getUnreadCount(MsgDirectionCode msgDirection) {
 		String sql = 
-			"select count(*) from Message_Inbox where ReadCount=?1 ";
+			"select count(Row_Id) from Message_Inbox where ReadCount=?1 and StatusId!='" + 
+					MsgStatusCode.CLOSED.getValue() + "' ";
 		if (msgDirection!=null) {
-			sql += " and MsgDirection=?2 "; 
+			sql += " and MsgDirection=?2 ";
 		}
 		try {
 			Query query = em.createNativeQuery(sql);
