@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("mailSenderBo")
 @Transactional(propagation=Propagation.REQUIRED)
 public class MailSenderBo extends MailSenderBase {
+	private static final long serialVersionUID = -851117269960155984L;
 	static final Logger logger = Logger.getLogger(MailSenderBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 

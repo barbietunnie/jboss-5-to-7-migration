@@ -21,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("messageDeliveryStatusService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageDeliveryStatusService {
+public class MessageDeliveryStatusService implements java.io.Serializable {
+	private static final long serialVersionUID = 5561974880688407087L;
+
 	static Logger logger = Logger.getLogger(MessageDeliveryStatusService.class);
 	
 	@Autowired

@@ -42,7 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("messageBeanBo")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageBeanBo {
+public class MessageBeanBo implements java.io.Serializable {
+	private static final long serialVersionUID = 6112004375703794740L;
 	static Logger logger = Logger.getLogger(MessageBeanBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

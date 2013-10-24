@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("activateAddress")
 @Transactional(propagation=Propagation.REQUIRED)
 public class ActivateAddress extends TaskBaseAdaptor {
+	private static final long serialVersionUID = 7272826841955633003L;
 	static final Logger logger = Logger.getLogger(ActivateAddress.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

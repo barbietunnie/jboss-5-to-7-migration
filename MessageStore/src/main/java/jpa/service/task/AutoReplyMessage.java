@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("autoReplyMessage")
 @Transactional(propagation=Propagation.REQUIRED)
 public class AutoReplyMessage extends TaskBaseAdaptor {
+	private static final long serialVersionUID = 6364742594226515121L;
 	static final Logger logger = Logger.getLogger(AutoReplyMessage.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

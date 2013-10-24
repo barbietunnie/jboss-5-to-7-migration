@@ -19,7 +19,9 @@ import jpa.model.message.TemplateVariablePK;
 
 @Component("templateVariableService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class TemplateVariableService {
+public class TemplateVariableService implements java.io.Serializable {
+	private static final long serialVersionUID = 9148726924654542371L;
+
 	static Logger logger = Logger.getLogger(TemplateVariableService.class);
 	
 	@Autowired

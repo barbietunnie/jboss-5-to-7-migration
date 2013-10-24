@@ -19,7 +19,9 @@ import jpa.model.message.TemplateDataPK;
 
 @Component("templateDataService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class TemplateDataService {
+public class TemplateDataService implements java.io.Serializable {
+	private static final long serialVersionUID = 8608904621919420136L;
+
 	static Logger logger = Logger.getLogger(TemplateDataService.class);
 	
 	@Autowired

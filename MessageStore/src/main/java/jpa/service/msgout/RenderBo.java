@@ -61,7 +61,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("renderBo")
 @Transactional(propagation=Propagation.REQUIRED)
-public class RenderBo {
+public class RenderBo implements java.io.Serializable {
+	private static final long serialVersionUID = -8967835234168609528L;
 	static final Logger logger = Logger.getLogger(RenderBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	static final String LF = System.getProperty("line.separator","\n");

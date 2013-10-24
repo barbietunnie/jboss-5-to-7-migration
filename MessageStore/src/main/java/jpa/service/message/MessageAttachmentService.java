@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("messageAttachmentService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageAttachmentService {
+public class MessageAttachmentService implements java.io.Serializable {
+	private static final long serialVersionUID = -844000059190931006L;
+
 	static Logger logger = Logger.getLogger(MessageAttachmentService.class);
 	
 	@Autowired

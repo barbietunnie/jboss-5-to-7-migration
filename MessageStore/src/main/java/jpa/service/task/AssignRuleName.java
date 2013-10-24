@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("assignRuleName")
 @Transactional(propagation=Propagation.REQUIRED)
 public class AssignRuleName extends TaskBaseAdaptor {
+	private static final long serialVersionUID = 2835514922267686344L;
 	static final Logger logger = Logger.getLogger(AssignRuleName.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

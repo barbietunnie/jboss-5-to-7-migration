@@ -16,7 +16,9 @@ import jpa.model.message.MessageSource;
 
 @Component("messageSourceService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageSourceService {
+public class MessageSourceService implements java.io.Serializable {
+	private static final long serialVersionUID = -7039424791259148458L;
+
 	static Logger logger = Logger.getLogger(MessageSourceService.class);
 	
 	@Autowired

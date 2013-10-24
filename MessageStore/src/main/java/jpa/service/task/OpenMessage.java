@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("openMessage")
 @Transactional(propagation=Propagation.REQUIRED)
 public class OpenMessage extends TaskBaseAdaptor {
+	private static final long serialVersionUID = 5058402748410505313L;
 	static final Logger logger = Logger.getLogger(OpenMessage.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

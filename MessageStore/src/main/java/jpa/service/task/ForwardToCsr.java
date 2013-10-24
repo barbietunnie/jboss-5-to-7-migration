@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("forwardToCsr")
 @Transactional(propagation=Propagation.REQUIRED)
 public class ForwardToCsr extends TaskBaseAdaptor {
+	private static final long serialVersionUID = 5057958462600056783L;
 	static final Logger logger = Logger.getLogger(ForwardToCsr.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

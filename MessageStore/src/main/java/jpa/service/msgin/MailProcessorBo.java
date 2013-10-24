@@ -36,7 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("mailProcessorBo")
 @Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MailProcessorBo {
+public class MailProcessorBo implements java.io.Serializable {
+	private static final long serialVersionUID = -2192214375199179774L;
 	static final Logger logger = Logger.getLogger(MailProcessorBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	static Logger duplicateReport = Logger.getLogger("jpa.message.report.duplicate");

@@ -34,7 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("messageInboxService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageInboxService {
+public class MessageInboxService implements java.io.Serializable {
+	private static final long serialVersionUID = -2776130351245699784L;
+
 	static Logger logger = Logger.getLogger(MessageInboxService.class);
 	
 	@Autowired
@@ -57,6 +59,7 @@ public class MessageInboxService {
 			"from " +
 				"MessageInbox t where t.rowId=:rowId";
 		try {
+			em.clear();
 			Query query = em.createQuery(sql);
 			query.setParameter("rowId", rowId);
 			MessageInbox record = (MessageInbox) query.getSingleResult();
@@ -184,6 +187,8 @@ public class MessageInboxService {
 			"from " +
 				"MessageInbox t, MessageInbox t2 " +
 				"where t2.rowId=t.leadMessageRowId and t2.rowId=:rowId order by t.rowId ";
+		sql = "select t from " +
+				"MessageInbox t where t.leadMessageRowId=:rowId order by t.rowId ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("rowId", leadMsgId);
@@ -212,6 +217,8 @@ public class MessageInboxService {
 			"from " +
 				"MessageInbox t, MessageInbox t2 " +
 				"where t2.rowId=t.referredMessageRowId and t2.rowId=:rowId order by t.rowId ";
+		sql = "select t from " +
+				"MessageInbox t where t.referredMessageRowId=:rowId order by t.rowId ";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("rowId", referredMsgId);

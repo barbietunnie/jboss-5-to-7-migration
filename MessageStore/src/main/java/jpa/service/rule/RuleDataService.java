@@ -16,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("ruleDataService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class RuleDataService {
+public class RuleDataService implements java.io.Serializable {
+	private static final long serialVersionUID = 143089225642571641L;
 	static final Logger logger = Logger.getLogger(RuleDataService.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

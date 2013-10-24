@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("renderAttachmentService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class RenderAttachmentService {
+public class RenderAttachmentService implements java.io.Serializable {
+	private static final long serialVersionUID = -4386433389528041498L;
+
 	static Logger logger = Logger.getLogger(RenderAttachmentService.class);
 	
 	@Autowired

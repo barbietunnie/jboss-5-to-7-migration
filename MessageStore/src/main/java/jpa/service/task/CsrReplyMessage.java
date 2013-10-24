@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("csrReplyMessage")
 @Transactional(propagation=Propagation.REQUIRED)
 public class CsrReplyMessage extends TaskBaseAdaptor {
+	private static final long serialVersionUID = 50896288572118819L;
 	static final Logger logger = Logger.getLogger(CsrReplyMessage.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

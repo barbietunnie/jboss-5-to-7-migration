@@ -20,7 +20,8 @@ import org.apache.log4j.Logger;
 /**
  * Scan input string for RFC1893/RFC2821 mail status code
  */
-final class RfcCodeScan {
+final class RfcCodeScan implements java.io.Serializable {
+	private static final long serialVersionUID = 7560466702245969864L;
 	static final Logger logger = Logger.getLogger(RfcCodeScan.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	final int maxLenToScan = 8192*4; // scan up to 32k

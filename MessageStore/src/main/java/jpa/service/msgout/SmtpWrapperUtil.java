@@ -8,7 +8,9 @@ import org.apache.log4j.Logger;
 import jpa.model.SmtpServer;
 import jpa.util.SpringUtil;
 
-public class SmtpWrapperUtil {
+public class SmtpWrapperUtil implements java.io.Serializable {
+	private static final long serialVersionUID = -5036775609137065316L;
+
 	static final Logger logger = Logger.getLogger(SmtpWrapperUtil.class);
 	
 	private static SmtpServerService smtpServerDao = null;

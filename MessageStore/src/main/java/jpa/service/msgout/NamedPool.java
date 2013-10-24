@@ -29,7 +29,8 @@ import org.apache.log4j.Logger;
  * sub-pool 2 : 60% of the load
  * </pre>
  */
-public final class NamedPool {
+public final class NamedPool implements java.io.Serializable {
+	private static final long serialVersionUID = -447731141642759939L;
 	static final Logger logger = Logger.getLogger(NamedPool.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 

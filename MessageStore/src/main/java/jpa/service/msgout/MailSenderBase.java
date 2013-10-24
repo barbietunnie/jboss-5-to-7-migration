@@ -51,7 +51,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 
  * @author Jack Wang
  */
-public abstract class MailSenderBase {
+public abstract class MailSenderBase implements java.io.Serializable {
+	private static final long serialVersionUID = 327892556529764255L;
 	protected static final Logger logger = Logger.getLogger(MailSenderBase.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

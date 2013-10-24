@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("messageRfcFieldService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageRfcFieldService {
+public class MessageRfcFieldService implements java.io.Serializable {
+	private static final long serialVersionUID = 4201242257880602396L;
+
 	static Logger logger = Logger.getLogger(MessageRfcFieldService.class);
 	
 	@Autowired

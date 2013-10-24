@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("sendMessage")
 @Transactional(propagation=Propagation.REQUIRED)
 public class SendMessage extends TaskBaseAdaptor {
+	private static final long serialVersionUID = 8844968654130851177L;
 	static final Logger logger = Logger.getLogger(SendMessage.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

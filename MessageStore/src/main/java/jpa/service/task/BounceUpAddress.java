@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("bounceUpAddress")
 @Transactional(propagation=Propagation.REQUIRED)
 public class BounceUpAddress extends TaskBaseAdaptor {
+	private static final long serialVersionUID = 8370212136984767775L;
 	static final Logger logger = Logger.getLogger(BounceUpAddress.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
