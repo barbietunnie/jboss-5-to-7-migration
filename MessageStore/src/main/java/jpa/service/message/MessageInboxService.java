@@ -416,24 +416,6 @@ public class MessageInboxService implements java.io.Serializable {
 		}
 	}
 
-	public int updateCounts(MessageInbox msgInbox) {
-		String sql = "update Message_Inbox set ForwardCount=?, ReadCount=?, ReplyCount=?, UpdtTime=CURRENT_TIMESTAMP " +
-				"where Row_Id = ? ";
-		try {
-			Query query = em.createNativeQuery(sql);
-			query.setParameter(1, msgInbox.getForwardCount());
-			query.setParameter(2, msgInbox.getReadCount());
-			query.setParameter(3, msgInbox.getReplyCount());
-			query.setParameter(4, msgInbox.getRowId());
-			int rowsUpdated = query.executeUpdate();
-			return rowsUpdated;
-		}
-		finally {
-			em.flush();
-			em.clear();
-		}
-	}
-
 	public void insert(MessageInbox msgInbox) {
 		try {
 			em.persist(msgInbox);
