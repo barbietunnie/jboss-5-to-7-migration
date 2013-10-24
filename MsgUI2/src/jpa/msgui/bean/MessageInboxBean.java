@@ -45,6 +45,7 @@ import jpa.msgui.util.SpringUtil;
 import jpa.msgui.vo.SearchFieldsVo;
 import jpa.msgui.vo.SearchFieldsVo.PageAction;
 import jpa.service.EmailAddressService;
+import jpa.service.EntityManagerService;
 import jpa.service.SessionUploadService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.msgin.MessageInboxBo;
@@ -72,6 +73,7 @@ public class MessageInboxBean implements java.io.Serializable {
 	private RuleLogicService ruleLogicDao = null;
 	private MessageInboxBo msgInboxBo = null;
 	private SessionUploadService sessionUploadDao = null;
+	private EntityManagerService entityDao = null;
 	private MessageBeanBo msgBeanBo = null;
 	private transient DataModel<MessageInbox> folder = null;
 	private MessageInbox message = null;
@@ -106,7 +108,7 @@ public class MessageInboxBean implements java.io.Serializable {
 	
 	public MessageInboxService getMessageInboxService() {
 		if (msgInboxDao == null) {
-			msgInboxDao = (MessageInboxService) SpringUtil.getWebAppContext().getBean("messageInboxService");
+			msgInboxDao = SpringUtil.getWebAppContext().getBean(MessageInboxService.class);
 		}
 		return msgInboxDao;
 	}
@@ -127,23 +129,28 @@ public class MessageInboxBean implements java.io.Serializable {
 	
 	public MessageInboxBo getMessageInboxBo() {
 		if (msgInboxBo == null) {
-			msgInboxBo = (MessageInboxBo) SpringUtil.getWebAppContext().getBean("messageInboxBo");
+			msgInboxBo = SpringUtil.getWebAppContext().getBean(MessageInboxBo.class);
 		}
 		return msgInboxBo;
 	}
 
 	public SessionUploadService getSessionUploadService() {
 		if (sessionUploadDao == null) {
-			sessionUploadDao = (SessionUploadService) SpringUtil.getWebAppContext().getBean(
-					"sessionUploadService");
+			sessionUploadDao = SpringUtil.getWebAppContext().getBean(SessionUploadService.class);
 		}
 		return sessionUploadDao;
 	}
 
+	public EntityManagerService getEntityManagerService() {
+		if (entityDao == null) {
+			entityDao = SpringUtil.getWebAppContext().getBean(EntityManagerService.class);
+		}
+		return entityDao;
+	}
+	
 	public MessageBeanBo getMessageBeanBo() {
 		if (msgBeanBo == null) {
-			msgBeanBo = (MessageBeanBo) SpringUtil.getWebAppContext().getBean(
-					"messageBeanBo");
+			msgBeanBo = SpringUtil.getWebAppContext().getBean(MessageBeanBo.class);
 		}
 		return msgBeanBo;
 	}
@@ -198,6 +205,9 @@ public class MessageInboxBean implements java.io.Serializable {
 		}
 		SimpleMailTrackingMenu menu = (SimpleMailTrackingMenu) FacesUtil.getSessionMapValue("mailTracking");
 		if (menu != null) {
+			if (fromPage != null && fromPage.equals("main")) {
+				menu.resetSearchFolder();
+			}
 			SearchFieldsVo menuSearchVo = menu.getSearchFieldVo();
 			//logger.info("Menu SearchFieldVo: " + menuSearchVo);
 			//logger.info("Inbox SearchFieldVo: " + searchVo);
@@ -389,6 +399,7 @@ public class MessageInboxBean implements java.io.Serializable {
 	private String viewMessage(int rowId) {
 		// retrieve other message properties including attachments
 		message = getMessageInboxService().getAllDataByPrimaryKey(rowId);
+		//logger.info(StringUtil.prettyPrint(message, 1));
 
 		String contentType = message.getBodyContentType();
 		if (contentType != null && contentType.toLowerCase().startsWith("text/html")) {
@@ -397,16 +408,15 @@ public class MessageInboxBean implements java.io.Serializable {
 		}
 		if (message.getMessageAttachmentList() != null) {
 			// empty attachment bodies to reduce HTTP session size
-			for (int i = 0; i < message.getMessageAttachmentList().size(); i++) {
-				MessageAttachment vo = message.getMessageAttachmentList().get(i);
+			for (MessageAttachment vo : message.getMessageAttachmentList()) {
 				if (vo.getAttachmentValue() != null) {
 					vo.setAttachmentSize(vo.getAttachmentValue().length);
-					vo.setAttachmentValue(null);
+					//vo.setAttachmentValue(null); // this updates the database
 				}
 			}
 		}
 		if (isInfoEnabled) {
-			logger.info("viewMessage() - Message to be viewed: " + message.getMsgSubject() + ","
+			logger.info("viewMessage() - Message to be viewed: " + message.getMsgSubject() + ", "
 					+ message.getRowId());
 		}
 		
@@ -421,7 +431,7 @@ public class MessageInboxBean implements java.io.Serializable {
 		editMode = true;
 		message.setReadCount(message.getReadCount() + 1);
 		// update ReadCount
-		getMessageInboxService().updateCounts(message);
+		getMessageInboxService().update(message);
 		logger.info("viewMessage() - Message updated: " + message.getRowId());
 		// fetch message threads
 		List<MessageInbox> threads = getMessageInboxService().getByLeadMsgId(message.getLeadMessageRowId());
@@ -445,7 +455,7 @@ public class MessageInboxBean implements java.io.Serializable {
 	
 	public String viewThread() {
 		String msgId = FacesUtil.getRequestParameter("msgThreadId");
-		logger.info("viewThread() - msgId: " + msgId);
+		logger.info("viewThread() - msgRowId: " + msgId);
 		if (msgId == null) return null;
 		
 		return viewMessage(Integer.parseInt(msgId));

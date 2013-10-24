@@ -35,7 +35,7 @@ import jpa.constant.RuleType;
 import jpa.constant.StatusId;
 import jpa.constant.VariableName;
 import jpa.message.MessageBeanUtil;
-import jpa.msgui.vo.SearchFieldsVo;
+import jpa.msgui.vo.FolderType;
 import jpa.service.external.TargetTextProc;
 import jpa.service.external.VariableResolver;
 
@@ -581,10 +581,10 @@ public class StaticCodes {
 	public synchronized SelectItem[] getFolderTypeItems() {
 		if (folderTypeItems == null) {
 			folderTypeItems = new SelectItem[4];
-			folderTypeItems[0] = new SelectItem(SearchFieldsVo.MsgType.All);
-			folderTypeItems[1] = new SelectItem(SearchFieldsVo.MsgType.Received);
-			folderTypeItems[2] = new SelectItem(SearchFieldsVo.MsgType.Sent);
-			folderTypeItems[3] = new SelectItem(SearchFieldsVo.MsgType.Closed);
+			folderTypeItems[0] = new SelectItem(FolderType.All);
+			folderTypeItems[1] = new SelectItem(FolderType.Received);
+			folderTypeItems[2] = new SelectItem(FolderType.Sent);
+			folderTypeItems[3] = new SelectItem(FolderType.Closed);
 		}
 		return folderTypeItems;
 	}
