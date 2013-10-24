@@ -20,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("ruleLogicService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class RuleLogicService {
+public class RuleLogicService implements java.io.Serializable {
+	private static final long serialVersionUID = 2402907648611630261L;
+
 	static Logger logger = Logger.getLogger(RuleLogicService.class);
 	
 	//@PersistenceContext(unitName="MessageDB")

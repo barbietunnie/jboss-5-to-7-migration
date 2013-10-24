@@ -12,7 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("subscriberNameResolver")
 @Transactional(propagation=Propagation.REQUIRED)
-public class SubscriberNameResolver implements VariableResolver {
+public class SubscriberNameResolver implements VariableResolver,java.io.Serializable {
+	private static final long serialVersionUID = 2958446223435763676L;
 	static final Logger logger = Logger.getLogger(SubscriberNameResolver.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

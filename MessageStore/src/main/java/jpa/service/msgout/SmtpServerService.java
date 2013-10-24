@@ -18,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("smtpServerService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class SmtpServerService {
+public class SmtpServerService implements java.io.Serializable {
+	private static final long serialVersionUID = 5535796998527412454L;
+
 	static Logger logger = Logger.getLogger(SmtpServerService.class);
 	
 	@Autowired

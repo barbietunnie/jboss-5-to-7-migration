@@ -57,7 +57,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("msgOutboxBo")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MsgOutboxBo {
+public class MsgOutboxBo implements java.io.Serializable {
+	private static final long serialVersionUID = 5437765992970766550L;
 	static final Logger logger = Logger.getLogger(MsgOutboxBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 

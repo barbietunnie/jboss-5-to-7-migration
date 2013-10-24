@@ -16,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("messageUnsubCommentService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageUnsubCommentService {
+public class MessageUnsubCommentService implements java.io.Serializable {
+	private static final long serialVersionUID = -4830933844969528333L;
+
 	static Logger logger = Logger.getLogger(MessageUnsubCommentService.class);
 	
 	@Autowired

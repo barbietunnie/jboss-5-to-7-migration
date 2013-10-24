@@ -19,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("ruleElementService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class RuleElementService {
+public class RuleElementService implements java.io.Serializable {
+	private static final long serialVersionUID = 627370172349152701L;
+
 	static Logger logger = Logger.getLogger(RuleElementService.class);
 	
 	@Autowired

@@ -45,6 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("broadcastToList")
 @Transactional(propagation=Propagation.REQUIRED)
 public class BroadcastToList extends TaskBaseAdaptor {
+	private static final long serialVersionUID = -7248771079550892321L;
 	static final Logger logger = Logger.getLogger(BroadcastToList.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

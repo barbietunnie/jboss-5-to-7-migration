@@ -18,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("ruleLogicWithCountService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class RuleLogicWithCountService {
+public class RuleLogicWithCountService implements java.io.Serializable {
+	private static final long serialVersionUID = 3967668920310431589L;
+
 	static Logger logger = Logger.getLogger(RuleLogicService.class);
 	
 	@Autowired

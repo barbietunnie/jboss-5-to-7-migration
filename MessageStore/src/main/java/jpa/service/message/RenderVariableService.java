@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("renderVariableService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class RenderVariableService {
+public class RenderVariableService implements java.io.Serializable {
+	private static final long serialVersionUID = -6918416726105688507L;
+
 	static Logger logger = Logger.getLogger(RenderVariableService.class);
 	
 	@Autowired

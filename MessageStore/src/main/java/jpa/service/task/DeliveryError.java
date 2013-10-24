@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("deliveryError")
 @Transactional(propagation=Propagation.REQUIRED)
 public class DeliveryError extends TaskBaseAdaptor {
+	private static final long serialVersionUID = -4372604755210330099L;
 	static final Logger logger = Logger.getLogger(DeliveryError.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

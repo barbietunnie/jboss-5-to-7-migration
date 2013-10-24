@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("messageHeaderService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageHeaderService {
+public class MessageHeaderService implements java.io.Serializable {
+	private static final long serialVersionUID = -8249120539861689753L;
+
 	static Logger logger = Logger.getLogger(MessageHeaderService.class);
 	
 	@Autowired

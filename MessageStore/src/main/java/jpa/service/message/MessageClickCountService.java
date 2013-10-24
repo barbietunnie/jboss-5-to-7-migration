@@ -19,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("messageClickCountService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MessageClickCountService {
+public class MessageClickCountService implements java.io.Serializable {
+	private static final long serialVersionUID = 4661330809191001050L;
+
 	static Logger logger = Logger.getLogger(MessageClickCountService.class);
 	
 	@Autowired

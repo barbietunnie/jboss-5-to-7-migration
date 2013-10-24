@@ -41,7 +41,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("emailTemplateBo")
 @Transactional(propagation=Propagation.REQUIRED)
-public class EmailTemplateBo {
+public class EmailTemplateBo implements java.io.Serializable {
+	private static final long serialVersionUID = -8878231823581557690L;
 	static final Logger logger = Logger.getLogger(EmailTemplateBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	static final String LF = System.getProperty("line.separator", "\n");

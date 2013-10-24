@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("suspendAddress")
 @Transactional(propagation=Propagation.REQUIRED)
 public class SuspendAddress extends TaskBaseAdaptor {
+	private static final long serialVersionUID = -1661554229653181139L;
 	static final Logger logger = Logger.getLogger(SuspendAddress.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

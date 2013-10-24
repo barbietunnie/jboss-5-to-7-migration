@@ -32,7 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("taskSchedulerBo")
 @Transactional(propagation=Propagation.REQUIRED)
-public class TaskSchedulerBo {
+public class TaskSchedulerBo implements java.io.Serializable {
+	private static final long serialVersionUID = 1665720401848374683L;
 	static final Logger logger = Logger.getLogger(TaskSchedulerBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 

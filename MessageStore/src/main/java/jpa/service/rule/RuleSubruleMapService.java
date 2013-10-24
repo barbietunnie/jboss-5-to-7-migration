@@ -19,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("ruleSubruleMapService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class RuleSubruleMapService {
+public class RuleSubruleMapService implements java.io.Serializable {
+	private static final long serialVersionUID = -7637699907075271606L;
+
 	static Logger logger = Logger.getLogger(RuleSubruleMapService.class);
 	
 	@Autowired

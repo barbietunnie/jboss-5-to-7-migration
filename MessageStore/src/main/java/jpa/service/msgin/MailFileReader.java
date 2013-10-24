@@ -16,7 +16,8 @@ import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
 
-public class MailFileReader {
+public class MailFileReader implements java.io.Serializable {
+	private static final long serialVersionUID = -7542897465313801472L;
 	final static String LF = System.getProperty("line.separator","\n");
 	static final Logger logger = Logger.getLogger(MailFileReader.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

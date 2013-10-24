@@ -24,7 +24,8 @@ import org.htmlparser.util.ParserException;
  * 
  * @author Jack Wang
  */
-public class MailReaderReply {
+public class MailReaderReply implements java.io.Serializable {
+	private static final long serialVersionUID = -4717336100946179241L;
 	static final Logger logger = Logger.getLogger(MailReaderReply.class);
 	/**
 	 * compose a reply message.

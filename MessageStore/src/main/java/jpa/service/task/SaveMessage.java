@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("saveMessage")
 @Transactional(propagation=Propagation.REQUIRED)
 public class SaveMessage extends TaskBaseAdaptor {
+	private static final long serialVersionUID = -5524706653539538026L;
 	static final Logger logger = Logger.getLogger(SaveMessage.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	

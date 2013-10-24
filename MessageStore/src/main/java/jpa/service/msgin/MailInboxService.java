@@ -18,7 +18,9 @@ import jpa.model.MailInboxPK;
 
 @Component("mailInboxService")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MailInboxService {
+public class MailInboxService implements java.io.Serializable {
+	private static final long serialVersionUID = -8850544651099338619L;
+
 	static Logger logger = Logger.getLogger(MailInboxService.class);
 	
 	@Autowired
