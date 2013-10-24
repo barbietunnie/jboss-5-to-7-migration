@@ -122,7 +122,7 @@ public class MessageInboxTest {
 		assertNotNull(msg1.getLeadMessageRowId());
 		int readcount = msg1.getReadCount();
 		msg1.setReadCount(msg1.getReadCount()+1);
-		service.updateCounts(msg1);
+		service.update(msg1);
 		System.out.println(StringUtil.prettyPrint(msg1,2));
 		msg1 = service.getByPrimaryKey(msg1.getRowId());
 		assertTrue(msg1.getReadCount()>readcount);
@@ -151,9 +151,9 @@ public class MessageInboxTest {
 		assertFalse(lst5.isEmpty());
 		
 		MessageInbox msg2  =service.getLastRecord();
-		System.out.println(StringUtil.prettyPrint(msg2,2));
+		System.out.println("Message with basic data:\n" + StringUtil.prettyPrint(msg2,2));
 		MessageInbox msg22  =service.getAllDataByPrimaryKey(msg2.getRowId());
-		System.out.println(StringUtil.prettyPrint(msg22,2));
+		System.out.println("Message with all data:\n" + StringUtil.prettyPrint(msg22,2));
 		
 		try {
 			service.getNextRecord(msg2);
@@ -168,7 +168,7 @@ public class MessageInboxTest {
 			assertFalse(msg1.equals(msg3));
 	
 			MessageInbox msg4  =service.getNextRecord(msg3);
-			assertTrue(msg2.equals(msg4));
+			assertTrue(msg22.equals(msg4));
 		}
 		catch (NoResultException e) {
 			assertTrue("MessageInbox table is empty", true);
