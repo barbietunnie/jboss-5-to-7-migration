@@ -52,8 +52,11 @@ public class EmailAddressService implements java.io.Serializable {
 	 * return an array with 4 elements:
 	 * 1) EmailAddress
 	 * 2) through 4) BigDecimal
+	 * 	MySQL 	  : BigDecimal
+	 * 	PostgreSQL: BigInteger
+	 * 	Derby 	  : Integer
 	 */
-	public Object[] getByAddressWithCounts(String addr) throws NoResultException {
+	public EmailAddress getByAddressWithCounts(String addr) throws NoResultException {
 		String sql = "select a.*, " +
 				" sum(b.SentCount) as sentCount, sum(b.OpenCount) as openCount," +
 				" sum(b.ClickCount) as clickCount " +
@@ -77,13 +80,24 @@ public class EmailAddressService implements java.io.Serializable {
 		try {
 			Query query = em.createNativeQuery(sql, EmailAddress.MAPPING_EMAIL_ADDR_WITH_COUNTS);
 			query.setParameter(1, EmailAddrUtil.removeDisplayName(addr));
-			Object[] emailAddr = (Object[]) query.getSingleResult();
+			Object[] addrObj = (Object[]) query.getSingleResult();
+			EmailAddress emailAddr = (EmailAddress) addrObj[0];
+			emailAddr.setSentCount(numberToInteger(addrObj[1]));
+			emailAddr.setOpenCount(numberToInteger(addrObj[2]));
+			emailAddr.setClickCount(numberToInteger(addrObj[3]));
 			return emailAddr;
 		}
 		finally {
 		}
 	}
 	
+	private Integer numberToInteger(Object number) {
+		if (number instanceof Number) {
+			return ((Number)number).intValue();
+		}
+		return null;
+	}
+
 	public EmailAddress findSertAddress(String addr) {
 		return findSertAddress(addr, 0);
 	}
@@ -359,22 +373,51 @@ public class EmailAddressService implements java.io.Serializable {
 				parms.add(vo.getIdFirst());
 			}
 		}
-		String sql = "select a.* "
+
+		String groupBy =
+				"group by " +
+				" a.Row_Id, " +
+				" a.Address, " +
+				" a.statusChangeTime, " +
+				" a.statusChangeUserId, " +
+				" a.bounceCount, " +
+				" a.StatusId, " +
+				" a.lastBounceTime, " +
+				" a.lastSentTime, " +
+				" a.lastRcptTime, " +
+				" a.isAcceptHtml, " +
+				" a.origAddress, " +
+				" a.UpdtUserid, " +
+				" a.UpdtTime ";
+		
+		String sql = "select a.*, "
+				+ " sum(b.SentCount) as sentCount, "
+				+ " sum(b.OpenCount) as openCount, " 
+				+ " sum(b.ClickCount) as clickCount " 
 				+ "from Email_Address a "
+				+ " LEFT OUTER JOIN Subscription b on a.Row_Id = b.EmailAddrRowId "
 				//+ " LEFT JOIN Subscriber_Data b on a.Row_Id=b.EmailAddrRowId "
-				//+ " LEFT JOIN Subscription c on a.Row_Id=c.EmailAddrRowId "
 				+ whereSql
+				+ groupBy
 				+ " order by a.Address "
 				+ fetchOrder;
 		//if (Constants.DB_PRODNAME_MYSQL.equals(JpaUtil.getDBProductName())) {
 		//		sql += " limit " + vo.getPageSize();
 		//}
-		Query query = em.createNativeQuery(sql, EmailAddress.MAPPING_EMAIL_ADDR_ENTITY);
+		Query query = em.createNativeQuery(sql, EmailAddress.MAPPING_EMAIL_ADDR_WITH_COUNTS);
 		for (int i=0; i<parms.size(); i++) {
 			query.setParameter(i+1, parms.get(i));
 		}
 		@SuppressWarnings("unchecked")
-		List<EmailAddress> list = query.setMaxResults(vo.getPageSize()).getResultList();
+		List<Object[]> objList = query.setMaxResults(vo.getPageSize()).getResultList();
+		List<EmailAddress> list = new ArrayList<EmailAddress>();
+		for (Object[] addrObj : objList) {
+			EmailAddress emailAddr = (EmailAddress) addrObj[0];
+			emailAddr.setSentCount(numberToInteger(addrObj[1]));
+			emailAddr.setOpenCount(numberToInteger(addrObj[2]));
+			emailAddr.setClickCount(numberToInteger(addrObj[3]));
+			list.add(emailAddr);
+		}
 		if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
 			// reverse the list
 			Collections.reverse(list);

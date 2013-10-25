@@ -69,16 +69,18 @@ public class EmailAddress extends BaseModel implements java.io.Serializable {
 	// used when join with MsgInbox table
 	@Transient
 	private String ruleName = null;
-	@Transient
-	private String firstName = null;
-	@Transient
-	private String lastName = null;
-	@Transient
-	private String middleName = null;
 
 	// As the table already has a column called OrigAddress, use currAddress to avoid confusion.
 	@Transient
 	private String currAddress = null;
+
+	@Transient
+	private Integer sentCount;
+	@Transient
+	private Integer openCount;
+	@Transient
+	private Integer clickCount;
+	
 
 	public EmailAddress() {
 		// must have a no-argument constructor
@@ -172,36 +174,36 @@ public class EmailAddress extends BaseModel implements java.io.Serializable {
 		this.ruleName = ruleName;
 	}
 
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getMiddleName() {
-		return middleName;
-	}
-
-	public void setMiddleName(String middleName) {
-		this.middleName = middleName;
-	}
-
 	public String getCurrAddress() {
 		return currAddress;
 	}
 
 	public void setCurrAddress(String currAddress) {
 		this.currAddress = currAddress;
+	}
+
+	public Integer getSentCount() {
+		return sentCount;
+	}
+
+	public void setSentCount(Integer sentCount) {
+		this.sentCount = sentCount;
+	}
+
+	public Integer getOpenCount() {
+		return openCount;
+	}
+
+	public void setOpenCount(Integer openCount) {
+		this.openCount = openCount;
+	}
+
+	public Integer getClickCount() {
+		return clickCount;
+	}
+
+	public void setClickCount(Integer clickCount) {
+		this.clickCount = clickCount;
 	}
 
 	public UserData getUserData() {

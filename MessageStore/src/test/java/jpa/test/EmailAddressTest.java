@@ -73,9 +73,8 @@ public class EmailAddressTest {
 		lst0 = service.getByAddressUser("testuser");
 		assertFalse(lst0.isEmpty());
 		
-		Object[] obj = service.getByAddressWithCounts(lst0.get(0).getAddress());
-		System.out.println(StringUtil.prettyPrint(obj[0]));
-		System.out.println(obj[1] + "," + obj[2] + "," + obj[3]);
+		EmailAddress obj = service.getByAddressWithCounts(lst0.get(0).getAddress());
+		System.out.println(StringUtil.prettyPrint(obj));
 		
 		// test paging for UI application
 		int rowId = service.getRowIdForPreview();
@@ -85,6 +84,11 @@ public class EmailAddressTest {
 		vo.setSearchString("test.com");
 		List<EmailAddress> listpg = service.getEmailAddrsWithPaging(vo);
 		assertTrue(listpg.size()>0);
+		EmailAddress addrObj = listpg.get(0);
+		assertNotNull(addrObj.getSentCount());
+		assertNotNull(addrObj.getOpenCount());
+		assertNotNull(addrObj.getClickCount());
+		logger.info("getEmailAddrsWithPaging() : " + StringUtil.prettyPrint(addrObj));
 		int count = service.getEmailAddressCount(vo);
 		assertTrue(count==listpg.size());
 		
