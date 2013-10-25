@@ -19,6 +19,7 @@ import javax.mail.Address;
 import javax.mail.Part;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.persistence.NoResultException;
 
 import jpa.constant.CodeType;
 import jpa.constant.MailingListDeliveryType;
@@ -70,7 +71,7 @@ public class MailingListComposeBean implements java.io.Serializable {
 	private String renderedSubj = null;
 	private String templateId =null;
 	
-	private UIInput templateIdInput = null;
+	private transient UIInput templateIdInput = null;
 
 	private MailingListService mailingListDao = null;
 	private SessionUploadService sessionUploadDao = null;
@@ -83,10 +84,11 @@ public class MailingListComposeBean implements java.io.Serializable {
 	
 	private String actionFailure = null;
 
-	private static String TO_FAILED = "mailinglist.failed";
-	private static String TO_CANCELED = "mailinglist.canceled";
-	private static String TO_SENT = "mailinglist.sent";
-	private static String TO_PREVIEW = "mailinglist.preview";
+	private static String TO_SELF = null;
+	private static String TO_FAILED = TO_SELF;
+	private static String TO_CANCELED = "main";
+	private static String TO_SENT = "main";
+	private static String TO_PREVIEW = "mailingListPreview";
 	
 	public MailingListComposeBean() {
 		//
@@ -203,9 +205,10 @@ public class MailingListComposeBean implements java.io.Serializable {
 		}
 		return null;
 	}
-	
-	public void copyFromTemplateListener(AjaxBehaviorEvent event) {
+
+	public String copyFromTemplate() {
 		String id = (String) templateIdInput.getSubmittedValue();
+		logger.info("copyFromTemplate() - templateId = " + id);
 		EmailTemplate vo = getEmailTemplateService().getByTemplateId(id);
 		if (vo != null) {
 			listId = vo.getMailingList().getListId();
@@ -219,16 +222,21 @@ public class MailingListComposeBean implements java.io.Serializable {
 		else {
 			logger.error("copyFromTemplate() - template not found by templateId: " + templateId);
 		}
-		return; // "mailinglist.copytemplate";
+		return TO_SELF;
+	}
+	
+	public void copyFromTemplateListener(AjaxBehaviorEvent event) {
+		copyFromTemplate();
 	}
 	
 	private void checkVariableLoop(String text) throws DataValidationException {
 		List<String> varNames = RenderUtil.retrieveVariableNames(text);
 		for (String loopName : varNames) {
-			EmailVariable vo = getEmailVariableService().getByVariableName(loopName);
-			if (vo != null) {
+			try {
+				EmailVariable vo = getEmailVariableService().getByVariableName(loopName);
 				RenderUtil.checkVariableLoop(vo.getDefaultValue(), loopName);
 			}
+			catch (NoResultException e) {}
 		}
 	}
 
@@ -252,10 +260,14 @@ public class MailingListComposeBean implements java.io.Serializable {
 		}
 		// make sure we have all the data to build a message bean
 		try {
-			MailingList listVo = getMailingListService().getByListId(listId);
-			if (listVo == null) {
-				logger.error("sendMessage() - Unexpected Internal Error occurred...");
-				throw new IllegalStateException("mailingList is null");
+			MailingList listVo = null;
+			try {
+				listVo = getMailingListService().getByListId(listId);
+			}
+			catch (NoResultException e){
+				String errmsg = "failed to get mailing list by ListId (" + listId + ")!";
+				logger.error("sendMessage() - " + errmsg);
+				throw new IllegalStateException(errmsg);
 			}
 			// retrieve new addresses
 			Address[] from = InternetAddress.parse(listVo.getListEmailAddr());
@@ -265,6 +277,7 @@ public class MailingListComposeBean implements java.io.Serializable {
 			// construct messageBean for new message
 			MessageBean mBean = new MessageBean();
 			mBean.setMailingListId(listId);
+			mBean.setSenderId(listVo.getSenderData().getSenderId());
 			mBean.setRuleName(RuleNameEnum.BROADCAST.getValue());
 			if (CodeType.YES_CODE.getValue().equals(embedEmailId)) {
 				mBean.setEmBedEmailId(Boolean.valueOf(true));
@@ -340,14 +353,17 @@ public class MailingListComposeBean implements java.io.Serializable {
 		}
 		catch (DataValidationException e) {
 			logger.error("DataValidationException caught", e);
+			actionFailure = e.getMessage();
 			return TO_FAILED;
 		}
 		catch (AddressException e) {
 			logger.error("AddressException caught", e);
+			actionFailure = e.getMessage();
 			return TO_FAILED;
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);
+			actionFailure = e.getMessage();
 			return TO_FAILED;
 		}
 		return TO_SENT;

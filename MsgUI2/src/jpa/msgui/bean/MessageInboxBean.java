@@ -85,8 +85,8 @@ public class MessageInboxBean implements java.io.Serializable {
 	private MessageInbox replyMessageVo = null;
 	private List<MessageInbox> messageThreads = null;
 	private List<SessionUpload> uploads = null;
-	private UIInput fromAddrInput = null;
-	private UIInput toAddrInput = null;
+	private transient UIInput fromAddrInput = null;
+	private transient UIInput toAddrInput = null;
 
 	private MessageRfcField rfcFields = null;
 	private transient HtmlDataTable htmlDataTable = null;

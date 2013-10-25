@@ -11,6 +11,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.component.html.HtmlDataTable;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.DataModel;
 import javax.faces.validator.ValidatorException;
 import javax.persistence.NoResultException;
@@ -45,17 +46,15 @@ public class EmailAddressBean implements java.io.Serializable {
 	private String searchString = null;
 	
 	private List<MailingList> mailingLists = null;
-	private UIInput emailAddrInput = null;
+	private transient UIInput emailAddrInput = null;
 	private String testResult = null;
 	private String actionFailure = null;
 
-	private static String TO_FAILED = "emailAddrlist.failed";
-	private static String TO_DELETED = "emailAddrlist.deleted";
-	private static String TO_EDIT = "emailAddrlist.edit";
-	private static String TO_SAVED = "emailAddrlist.saved";
-	private static String TO_CANCELED = "emailAddrlist.canceled";
-	private static String TO_PAGING = "emailAddrlist.paging";
 	private static String TO_SELF = null;
+	private static String TO_FAILED = TO_SELF;
+	private static String TO_EDIT = "emailAddressEdit";
+	private static String TO_SAVED = "emailAddressList";
+	private static String TO_CANCELED = "main";
 	
 	@SuppressWarnings("unchecked")
 	public DataModel<EmailAddress> getEmailAddrs() {
@@ -106,7 +105,7 @@ public class EmailAddressBean implements java.io.Serializable {
 		}
 	}
 
-	public String searchByAddress() {
+	public void searchByAddress(AjaxBehaviorEvent event) {
 		boolean changed = false;
 		if (this.searchString == null) {
 			if (pagingVo.getSearchString() != null) {
@@ -122,7 +121,7 @@ public class EmailAddressBean implements java.io.Serializable {
 			resetPagingVo();
 			pagingVo.setSearchString(searchString);
 		}
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
 	public String resetSearch() {
@@ -132,30 +131,34 @@ public class EmailAddressBean implements java.io.Serializable {
 		return TO_SELF;
 	}
 	
-	public String pageFirst() {
+	public void resetSearchListener(AjaxBehaviorEvent event) {
+		resetSearch();
+	}
+
+	public void pageFirst(AjaxBehaviorEvent event) {
 		dataTable.setFirst(0);
 		pagingVo.setPageAction(PagingVo.PageAction.FIRST);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
 
-	public String pagePrevious() {
+	public void pagePrevious(AjaxBehaviorEvent event) {
 		dataTable.setFirst(dataTable.getFirst() - dataTable.getRows());
 		pagingVo.setPageAction(PagingVo.PageAction.PREVIOUS);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
 
-	public String pageNext() {
+	public void pageNext(AjaxBehaviorEvent event) {
 		dataTable.setFirst(dataTable.getFirst() + dataTable.getRows());
 		pagingVo.setPageAction(PagingVo.PageAction.NEXT);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
 
-	public String pageLast() {
+	public void pageLast(AjaxBehaviorEvent event) {
 		int count = dataTable.getRowCount();
 		int rows = dataTable.getRows();
 		dataTable.setFirst(count - ((count % rows != 0) ? count % rows : rows));
 		pagingVo.setPageAction(PagingVo.PageAction.LAST);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
     
 	public int getLastPageRow() {
@@ -174,10 +177,10 @@ public class EmailAddressBean implements java.io.Serializable {
 		emailAddrs = null;
 	}
 
-	public String refreshPage() {
+	public void refreshPage(AjaxBehaviorEvent event) {
 		refresh();
 		pagingVo.setRowCount(-1);
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
 	private void resetPagingVo() {
@@ -214,10 +217,12 @@ public class EmailAddressBean implements java.io.Serializable {
 			logger.debug("viewEmailAddr() - Entering...");
 		if (emailAddrs == null) {
 			logger.warn("viewEmailAddr() - EmailAddr List is null.");
+			actionFailure = "EmailAddr List is null";
 			return TO_FAILED;
 		}
 		if (!emailAddrs.isRowAvailable()) {
 			logger.warn("viewEmailAddr() - EmailAddr Row not available.");
+			actionFailure = "EmailAddr Row not available.";
 			return TO_FAILED;
 		}
 		reset();
@@ -237,6 +242,7 @@ public class EmailAddressBean implements java.io.Serializable {
 			logger.debug("saveEmailAddr() - Entering...");
 		if (emailAddr == null) {
 			logger.warn("saveEmailAddr() - EmailAddress is null.");
+			actionFailure = "EmailAddress is null.";
 			return TO_FAILED;
 		}
 		reset();
@@ -264,12 +270,13 @@ public class EmailAddressBean implements java.io.Serializable {
 		list.add(vo);
 	}
 
-	public String deleteEmailAddrs() {
+	public void deleteEmailAddrs(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("deleteEmailAddrs() - Entering...");
 		if (emailAddrs == null) {
 			logger.warn("deleteEmailAddrs() - EmailAddr List is null.");
-			return TO_FAILED;
+			actionFailure = "EmailAddr List is null";
+			return; // TO_FAILED;
 		}
 		reset();
 		List<EmailAddress> addrList = getEmailAddrList();
@@ -284,7 +291,7 @@ public class EmailAddressBean implements java.io.Serializable {
 			}
 		}
 		refresh();
-		return TO_DELETED;
+		return; // TO_DELETED;
 	}
 
 	public String saveEmailAddrs() {
@@ -292,6 +299,7 @@ public class EmailAddressBean implements java.io.Serializable {
 			logger.debug("saveEmailAddrs() - Entering...");
 		if (emailAddrs == null) {
 			logger.warn("saveEmailAddrs() - EmailAddr List is null.");
+			actionFailure = "EmailAddr List is null";
 			return TO_FAILED;
 		}
 		reset();

@@ -45,7 +45,7 @@ public class RuleActionDetailBean implements java.io.Serializable {
 	private RuleActionDetail actionDetail = null;
 	private boolean editMode = true;
 	
-	private UIInput actionIdInput = null;
+	private transient UIInput actionIdInput = null;
 
 	private String testResult = null;
 	private String actionFailure = null;

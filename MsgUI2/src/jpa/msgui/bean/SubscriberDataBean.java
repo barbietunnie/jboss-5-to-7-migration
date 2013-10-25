@@ -48,18 +48,18 @@ public class SubscriberDataBean implements java.io.Serializable {
 	private final PagingSubscriberData pagingVo =  new PagingSubscriberData();;
 	private String searchString = null;
 	
-	private UIInput custIdInput = null;
+	private transient UIInput custIdInput = null;
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	private UIInput emailAddrInput = null;
-	private UIInput ssnNumberInput = null;
-	private UIInput dayPhoneInput = null;
-	private UIInput eveningPhoneInput = null;
-	private UIInput mobilePhoneInput = null;
-	private UIInput birthDateInput = null;
-	private UIInput endDateInput = null;
-	private UIInput mobileCarrierInput = null;
+	private transient UIInput emailAddrInput = null;
+	private transient UIInput ssnNumberInput = null;
+	private transient UIInput dayPhoneInput = null;
+	private transient UIInput eveningPhoneInput = null;
+	private transient UIInput mobilePhoneInput = null;
+	private transient UIInput birthDateInput = null;
+	private transient UIInput endDateInput = null;
+	private transient UIInput mobileCarrierInput = null;
 	
 	private final SubscriberData custMeta = new SubscriberData();
 	

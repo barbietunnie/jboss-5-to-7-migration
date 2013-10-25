@@ -47,8 +47,8 @@ public class MailInboxBean implements java.io.Serializable {
 	private MailInbox mailbox = null;
 	private boolean editMode = true;
 	
-	private UIInput userIdInput = null;
-	private UIInput hostNameInput = null;
+	private transient UIInput userIdInput = null;
+	private transient UIInput hostNameInput = null;
 	private String testResult = null;
 	private String actionFailure = null;
 	

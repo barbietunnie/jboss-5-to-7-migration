@@ -44,7 +44,7 @@ public class UserDataBean implements java.io.Serializable {
 	private UserData user = null;
 	private boolean editMode = true;
 	
-	private UIInput userIdInput = null;
+	private transient UIInput userIdInput = null;
 	private String userEmailAddr = null;
 	private String userSenderId = null;
 	

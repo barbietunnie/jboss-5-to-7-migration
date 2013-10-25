@@ -147,7 +147,7 @@ public class UploadServlet extends HttpServlet {
 		if ("mailinglist".equals(fromPage)) { // from mailing list compose
 			// 1) retrieve MailingListComposeBean instance from faces context
 			MailingListComposeBean bean = (MailingListComposeBean) facesContext.getELContext()
-					.getELResolver().getValue(facesContext.getELContext(), null, "maillistcomp");
+					.getELResolver().getValue(facesContext.getELContext(), null, "mailingListCompose");
 			// 2) populate "uploads" list that contains uploaded files
 			bean.retrieveUploadFiles();
 		}
