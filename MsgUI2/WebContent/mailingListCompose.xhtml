@@ -9,7 +9,7 @@
 <h:head>
 	<link href="styles.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="includes/insertAtCursor.js"></script>
-	<script type="text/javascript" src="includes/whizzywig.js"></script>
+	<script type="text/javascript" src="includes/whizzywig63.js"></script>
 	<title><h:outputText value="#{msgs.composeMailingListEmailPageTitle}" /></title>
 </h:head>
 <h:body onLoad="document.getElementById('mlstcomp:subject').focus();">
@@ -31,7 +31,7 @@
 				<h:commandButton value="#{msgs.sendButtonText}" title="Send message"
 					action="#{mailingListCompose.sendMessage}"/>
 				<f:verbatim>&nbsp;</f:verbatim>
-				<h:commandButton value="#{msgs.backButtonText}" title="Cancel"
+				<h:commandButton value="#{msgs.backButtonText}" title="Go Back"
 					immediate="true" action="#{mailingListCompose.cancelSend}" />
 			</h:panelGroup>
 			<h:panelGroup style="text-align: right;">
@@ -66,9 +66,8 @@
 		</h:panelGrid>
 
 		<h:panelGrid columns="1" styleClass="fullWidth">
-			<f:verbatim><br/></f:verbatim>
 			<h:commandButton value="#{msgs.attachFileButtonText}" title="Attach files"
-				action="#{mailingListCompose.attachFiles}"/>
+				immediate="true" action="#{mailingListCompose.attachFiles}"/>
 			<h:dataTable value="#{mailingListCompose.uploads}" var="upload"
 				style="width: auto; border: none;">
 				<h:column>
@@ -88,7 +87,6 @@
 			</h:dataTable>
 		</h:panelGrid>
 		
-		<f:verbatim><br/></f:verbatim>
 		<h:panelGrid columns="1" styleClass="smtpBody">
 			<h:panelGrid columns="1" styleClass="commandBar">
 				<h:panelGroup style="text-align: left;">
@@ -105,11 +103,13 @@
 			</h:panelGrid>
 			
 			<h:inputTextarea value="#{mailingListCompose.msgBody}"
-				id="bodytext" rows="25" style="width: 100%;"/>
+				id="bodytext" rows="20" style="width: 990px;"/>
 			<f:verbatim>
 			<script type="text/javascript">
+			//<!--
 				buttonPath = "images/whizzywigbuttons/";
 				makeWhizzyWig("mlstcomp:bodytext", "all");
+			// -->
 			</script>
 			</f:verbatim>
 			

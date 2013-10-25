@@ -40,10 +40,10 @@ public class SenderDataBean implements java.io.Serializable {
 	private SenderData sender = null;
 	private boolean editMode = true;
 	
-	private UIInput senderIdInput = null;
-	private UIInput returnPathLeftInput = null;
-	private UIInput verpEnabledInput = null;
-	private UIInput useTestAddrInput = null;
+	private transient UIInput senderIdInput = null;
+	private transient UIInput returnPathLeftInput = null;
+	private transient UIInput verpEnabledInput = null;
+	private transient UIInput useTestAddrInput = null;
 	private String testResult = null;
 	private String actionFailure = null;
 	

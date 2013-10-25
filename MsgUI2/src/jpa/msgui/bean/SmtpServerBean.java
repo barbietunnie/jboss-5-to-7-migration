@@ -45,9 +45,9 @@ public class SmtpServerBean implements java.io.Serializable {
 	private SmtpServer smtpServer = null;
 	private boolean editMode = true;
 	
-	private UIInput serverNameInput = null;
-	private UIInput useSslInput = null;
-	private UIInput useAuthInput = null;
+	private transient UIInput serverNameInput = null;
+	private transient UIInput useSslInput = null;
+	private transient UIInput useAuthInput = null;
 
 	private String testResult = null;
 	private String actionFailure = null;

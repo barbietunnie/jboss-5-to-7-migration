@@ -63,8 +63,8 @@ public class RuleLogicBean implements java.io.Serializable {
 	protected String testResult = null;
 	protected String actionFailure = null;
 	
-	protected UIInput ruleNameInput = null;
-	protected UIInput startDateInput = null;
+	protected transient UIInput ruleNameInput = null;
+	protected transient UIInput startDateInput = null;
 	
 	protected RuleElementService ruleElementDao = null;
 	protected RuleSubruleMapService ruleSubRuleMapDao = null;

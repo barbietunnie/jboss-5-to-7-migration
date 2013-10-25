@@ -60,7 +60,7 @@ public class EmailTemplateBean implements java.io.Serializable {
 	private boolean editMode = true;
 	private transient DataModel<Object> dateList = null;
 	
-	private UIInput templateIdInput = null;
+	private transient UIInput templateIdInput = null;
 	private String testResult = null;
 	private String actionFailure = null;
 	

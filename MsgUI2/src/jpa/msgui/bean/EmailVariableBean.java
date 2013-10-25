@@ -42,7 +42,7 @@ public class EmailVariableBean implements java.io.Serializable {
 	private EmailVariable emailVariable = null;
 	private boolean editMode = true;
 	
-	private UIInput variableNameInput = null;
+	private transient UIInput variableNameInput = null;
 
 	private String testResult = null;
 	private String actionFailure = null;
