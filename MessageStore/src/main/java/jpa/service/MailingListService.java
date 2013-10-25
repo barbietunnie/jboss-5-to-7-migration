@@ -1,5 +1,6 @@
 package jpa.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -26,6 +27,21 @@ public class MailingListService implements java.io.Serializable {
 	
 	@Autowired
 	EntityManager em;
+	
+	final static String GroupBy = "group by " +
+				" a.Row_Id, " +
+				" a.ListId, " +
+				" a.DisplayName, " +
+				" a.AcctUserName, " +
+				" a.Description, " +
+				" a.StatusId, " +
+				" a.IsBuiltin, " +
+				" a.IsSendText, " +
+				" a.CreateTime, " +
+				" a.UpdtUserid, " +
+				" a.UpdtTime, " +
+				" a.SenderDataRowId, " +
+				" a.ListMasterEmailAddr ";
 	
 	public MailingList getByListId(String listId) throws NoResultException {
 		try {
@@ -75,16 +91,28 @@ public class MailingListService implements java.io.Serializable {
 
 	public List<MailingList> getByEmailAddress(String address) throws NoResultException {
 		String sql =
-			"select a.* " +
+			"select a.*, " +
+			" sum(b.SentCount) as sentCount, " +
+			" sum(b.OpenCount) as openCount, " +
+			" sum(b.ClickCount) as clickCount " +
 			"from Mailing_List a " +
 			"left outer join Subscription b on a.Row_Id = b.MailingListRowId " +
 			"join Email_Address e on e.Row_Id = b.EmailAddrRowId " +
 				" where e.address=? ";
+		sql += GroupBy;
 		try {
-			Query query = em.createNativeQuery(sql,MailingList.MAPPING_MAILING_LIST);
+			Query query = em.createNativeQuery(sql,MailingList.MAPPING_MAILING_LIST_WITH_COUNTS);
 			query.setParameter(1, address);
 			@SuppressWarnings("unchecked")
-			List<MailingList> list = query.getResultList();
+			List<Object[]> objList = query.getResultList();
+			List<MailingList> list = new ArrayList<MailingList>();
+			for (Object[] listObj : objList) {
+				MailingList mlist = (MailingList) listObj[0];
+				mlist.setSentCount(numberToInteger(listObj[1]));
+				mlist.setOpenCount(numberToInteger(listObj[2]));
+				mlist.setClickCount(numberToInteger(listObj[3]));
+				list.add(mlist);
+			}
 			return list;
 		}
 		finally {
@@ -96,7 +124,7 @@ public class MailingListService implements java.io.Serializable {
 	 * 1) MailingList
 	 * 2) through 4) BigDecimal (MySQL) or BigInteger (PostgreSQL)
 	 */
-	public Object[] getByListIdWithCounts(String listId) throws NoResultException {
+	public MailingList getByListIdWithCounts(String listId) throws NoResultException {
 		String sql = "select a.*, " +
 				" sum(b.SentCount) as sentCount, sum(b.OpenCount) as openCount," +
 				" sum(b.ClickCount) as clickCount " +
@@ -104,30 +132,28 @@ public class MailingListService implements java.io.Serializable {
 				" LEFT OUTER JOIN Subscription b on a.Row_Id = b.MailingListRowId " +
 				" JOIN sender_data c on a.SenderDataRowId = c.Row_Id " +
 				" where a.ListId = ?1 " +
-				"group by " +
-				" a.Row_Id, " +
-				" a.ListId, " +
-				" a.DisplayName, " +
-				" a.AcctUserName, " +
-				" a.Description, " +
-				" a.StatusId, " +
-				" a.IsBuiltin, " +
-				" a.IsSendText, " +
-				" a.CreateTime, " +
-				" a.UpdtUserid, " +
-				" a.UpdtTime, " +
-				" a.SenderDataRowId, " +
-				" a.ListMasterEmailAddr ";
+				GroupBy;
 		try {
 			Query query = em.createNativeQuery(sql,MailingList.MAPPING_MAILING_LIST_WITH_COUNTS);
 			query.setParameter(1, listId);
-			Object[] mailingList = (Object[]) query.getSingleResult();
+			Object[] listObj = (Object[]) query.getSingleResult();
+			MailingList mailingList = (MailingList) listObj[0];
+			mailingList.setSentCount(numberToInteger(listObj[1]));
+			mailingList.setOpenCount(numberToInteger(listObj[2]));
+			mailingList.setClickCount(numberToInteger(listObj[3]));
 			return mailingList;
 		}
 		finally {
 		}
 	}
 	
+	private Integer numberToInteger(Object number) {
+		if (number instanceof Number) {
+			return ((Number)number).intValue();
+		}
+		return null;
+	}
+
 	public MailingList getByRowId(int rowId) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from MailingList t where t.rowId = :rowId");

@@ -17,6 +17,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
+
 @Entity
 @Table(name="subscriber_data")
 @SqlResultSetMappings({ // used by native queries
@@ -120,6 +122,17 @@ public class SubscriberData extends BaseModel implements java.io.Serializable {
 		// must have a no-argument constructor
 		startDate = new Date(System.currentTimeMillis());
 	}
+
+	/*
+	 * define methods for UI
+	 */
+	public String getSubscriberName() {
+		return (lastName + (StringUtils.isBlank(firstName)?"":", " + firstName));
+	}
+	
+	/*
+	 * End of UI
+	 */
 
 	public SenderData getSenderData() {
 		return senderData;

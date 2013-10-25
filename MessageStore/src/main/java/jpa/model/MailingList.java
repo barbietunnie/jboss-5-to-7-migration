@@ -75,6 +75,13 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	@Transient
 	private String origListId = null;
 
+	@Transient
+	private Integer sentCount;
+	@Transient
+	private Integer openCount;
+	@Transient
+	private Integer clickCount;
+
 	public MailingList() {
 		// must have a no-argument constructor
 		createTime = new Timestamp(System.currentTimeMillis());
@@ -181,5 +188,29 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 
 	public void setOrigListId(String origListId) {
 		this.origListId = origListId;
+	}
+
+	public Integer getSentCount() {
+		return sentCount;
+	}
+
+	public void setSentCount(Integer sentCount) {
+		this.sentCount = sentCount;
+	}
+
+	public Integer getOpenCount() {
+		return openCount;
+	}
+
+	public void setOpenCount(Integer openCount) {
+		this.openCount = openCount;
+	}
+
+	public Integer getClickCount() {
+		return clickCount;
+	}
+
+	public void setClickCount(Integer clickCount) {
+		this.clickCount = clickCount;
 	}
 }

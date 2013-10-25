@@ -87,9 +87,14 @@
 		<artifactId>aspectjweaver</artifactId>
 		<version>${aspectjweaver.version}</version>
 	</dependency>
-	<dependency>
+	<!-- dependency>
 		<groupId>cglib</groupId>
 		<artifactId>cglib</artifactId>
+		<version>${cglib.version}</version>
+	</dependency -->
+	<dependency>
+		<groupId>cglib</groupId>
+		<artifactId>cglib-nodep</artifactId>
 		<version>${cglib.version}</version>
 	</dependency>
 

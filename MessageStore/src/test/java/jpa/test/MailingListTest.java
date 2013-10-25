@@ -1,9 +1,10 @@
 package jpa.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,18 +149,14 @@ public class MailingListTest {
 		assertFalse(rcd3.getListMasterEmailAddr().equals(rcd5.getListMasterEmailAddr()));
 		// end of test insert
 		
-		Object[] mlst1 = service.getByListIdWithCounts(MailingListEnum.SMPLLST1.name());
-		assertTrue(mlst1[0] instanceof MailingList);
-		assertTrue(mlst1[1] instanceof Number);
-		assertTrue(mlst1[2] instanceof Number);
-		assertTrue(mlst1[3] instanceof BigDecimal || mlst1[3] instanceof BigInteger || mlst1[3] instanceof Number);
+		MailingList mlst1 = service.getByListIdWithCounts(MailingListEnum.SMPLLST1.name());
 		/*
 		 * MySQL 	 : BigDecimal
 		 * PostgreSQL: BigInteger
 		 * Derby 	 : Integer
 		 */
-		System.out.println(StringUtil.prettyPrint(mlst1[0],1));
-		System.out.println("Mailing List Counts: " + mlst1[1] + "," + mlst1[2] + "," + mlst1[3]);
+		System.out.println(StringUtil.prettyPrint(mlst1,1));
+		System.out.println("Mailing List Counts: " + mlst1.getSentCount() + "," + mlst1.getOpenCount() + "," + mlst1.getClickCount());
 		
 		// test delete
 		service.delete(rcd3);
