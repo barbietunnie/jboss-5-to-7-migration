@@ -263,6 +263,11 @@ public class EmailAddressBean implements java.io.Serializable {
 		}
 		return TO_SAVED;
 	}
+	
+	public void saveEmailAddrListener(AjaxBehaviorEvent event) {
+		saveEmailAddr();
+		testResult = "changesAreSaved";
+	}
 
 	private void addToList(EmailAddress vo) {
 		@SuppressWarnings("unchecked")
@@ -341,6 +346,7 @@ public class EmailAddressBean implements java.io.Serializable {
 
 	public String cancelEdit() {
 		refresh();
+		// TODO check from page and redirect to different pages
 		return TO_CANCELED;
 	}
 
