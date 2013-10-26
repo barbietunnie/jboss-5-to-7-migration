@@ -19,7 +19,7 @@
 			label="#{msgs.emailAddrPrompt}" maxlength="255" size="80"
 			validator="#{emailAddress.validatePrimaryKey}">
 			<f:validateLength minimum="1" maximum="255"/>
-			<f:validator validatorId="msgui.EmailAddressValidator"/>
+			<f:validator validatorId="emailAddressValidator"/>
 		</h:inputText>
 		<h:message for="emailaddr" styleClass="errorMessage"/>
 		
@@ -136,8 +136,9 @@
 		columnClasses="alignLeft70, alignRight30">
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
-				action="#{emailAddress.saveEmailAddr}"
-				onclick="javascript:return confirmSubmit();" />
+				onclick="javascript:return confirmSubmit();" >
+				<f:ajax execute="@form" listener="#{emailAddress.saveEmailAddrListener}" render="@form"/>
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
