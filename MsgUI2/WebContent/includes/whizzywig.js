@@ -374,7 +374,9 @@ function fullscreen() {  //Enable or disable fullscreen
  }
 }
 function getDir() { //Detect current whizzywig directory
- var base=location.href,e=document.getElementsByTagName('base'),i;
+ //var base=location.href;
+ var e=document.getElementsByTagName('base');
+ var i;
  for(i=0;i<e.length;i++){
   if(e[i].href){base = e[i].href;}
  }
