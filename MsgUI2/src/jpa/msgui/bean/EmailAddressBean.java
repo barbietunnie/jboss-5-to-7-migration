@@ -52,8 +52,9 @@ public class EmailAddressBean implements java.io.Serializable {
 
 	private static String TO_SELF = null;
 	private static String TO_FAILED = TO_SELF;
+	private static String TO_LIST = "emailAddressList";
 	private static String TO_EDIT = "emailAddressEdit";
-	private static String TO_SAVED = "emailAddressList";
+	private static String TO_SAVED = TO_LIST;
 	private static String TO_CANCELED = "main";
 	
 	@SuppressWarnings("unchecked")
@@ -178,9 +179,10 @@ public class EmailAddressBean implements java.io.Serializable {
 	}
 
 	public void refreshPage(AjaxBehaviorEvent event) {
-		refresh();
-		pagingVo.setRowCount(-1);
-		return; // TO_SELF;
+		//refresh();
+		//pagingVo.setRowCount(-1);
+		//return; // TO_SELF;
+		resetPagingVo();
 	}
 	
 	private void resetPagingVo() {
@@ -191,8 +193,7 @@ public class EmailAddressBean implements java.io.Serializable {
 	
 	public EmailAddressService getEmailAddressService() {
 		if (emailAddrDao == null) {
-			emailAddrDao = (EmailAddressService) SpringUtil.getWebAppContext().getBean(
-					"emailAddressService");
+			emailAddrDao = SpringUtil.getWebAppContext().getBean(EmailAddressService.class);
 		}
 		return emailAddrDao;
 	}
@@ -203,8 +204,7 @@ public class EmailAddressBean implements java.io.Serializable {
 
 	public MailingListService getMailingListService() {
 		if (mailingListDao == null)
-			mailingListDao = (MailingListService) SpringUtil.getWebAppContext().getBean(
-					"mailingListService");
+			mailingListDao = SpringUtil.getWebAppContext().getBean(MailingListService.class);
 		return mailingListDao;
 	}
 
@@ -258,7 +258,7 @@ public class EmailAddressBean implements java.io.Serializable {
 			getEmailAddressService().insert(emailAddr);
 			addToList(emailAddr);
 			pagingVo.setRowCount(pagingVo.getRowCount() + 1);
-			refresh();
+			//refresh();
 			logger.info("saveEmailAddr() - Rows Inserted: " + 1);
 		}
 		return TO_SAVED;
@@ -293,9 +293,10 @@ public class EmailAddressBean implements java.io.Serializable {
 					logger.info("deleteEmailAddrs() - EmailAddr deleted: " + vo.getAddress());
 					pagingVo.setRowCount(pagingVo.getRowCount() - rowsDeleted);
 				}
+				addrList.remove(i);
 			}
 		}
-		refresh();
+		//refresh();
 		return; // TO_DELETED;
 	}
 
@@ -327,7 +328,7 @@ public class EmailAddressBean implements java.io.Serializable {
 				vo.setMarkedForDeletion(false);
 			}
 		}
-		refresh();
+		//refresh();
 		return TO_SAVED;
 	}
 
@@ -345,9 +346,13 @@ public class EmailAddressBean implements java.io.Serializable {
 	}
 
 	public String cancelEdit() {
-		refresh();
-		// TODO check from page and redirect to different pages
-		return TO_CANCELED;
+		//refresh();
+		if (StringUtils.contains(FacesUtil.getCurrentViewId(), TO_EDIT)) {
+			return TO_LIST;
+		}
+		else {
+			return TO_CANCELED;
+		}
 	}
 
 	public boolean getAnyEmailAddrsMarkedForDeletion() {
