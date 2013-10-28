@@ -1,13 +1,18 @@
-<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
-<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
-
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:messages styleClass="errors" layout="list" rendered="#{debug.showMessages}"/>
-<h:outputFormat value="#{msgs.manageCustomerInformation}" styleClass="gridHeader">
+<h:outputFormat value="#{msgs.manageSubscriberInformation}" styleClass="gridHeader">
    <f:param value=""/>
 </h:outputFormat>
-<h:dataTable binding="#{customers.dataTable}" 
-   value="#{customers.customers}" var="list" 
-   rows="#{customers.pagingVo.pageSize}"
+<h:dataTable binding="#{subscriberData.dataTable}" 
+   value="#{subscriberData.subscribers}" var="list" 
+   rows="#{subscriberData.pagingVo.pageSize}"
    styleClass="jsfDataTable" rowClasses="oddRows, evenRows"
    headerClass="dataTableHeader" footerClass="dataTableFooter"
    columnClasses="twoPercent,tenPercent,tenPercent,tenPercent,fourtyPercent,tenPercent,tenPercent,tenPercent">
@@ -21,9 +26,9 @@
    </h:column>
    <h:column>
       <f:facet name="header">
-         <h:outputText value="#{msgs.customerIdHeader}"/>
+         <h:outputText value="#{msgs.subscriberIdHeader}"/>
       </f:facet>
-      <h:commandLink action="#{customers.viewCustomer}">
+      <h:commandLink action="#{subscriberData.viewSubscriber}">
       	<h:outputText value="#{list.custId}" title="Click to Edit"/>
       	<f:param name="custId" value="#{list.custId}"/>
       </h:commandLink>
@@ -79,38 +84,38 @@
 	<h:panelGrid columns="2" styleClass="fullWidth"
 		columnClasses="alignLeft50, alignRight50">
 		<h:panelGroup>
-			<h:inputText value="#{customers.searchString}" size="30"
+			<h:inputText value="#{subscriberData.searchString}" size="30"
 				maxlength="100"/>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton value="#{msgs.searchByEmailButtonText}"
 				title="Search By Email Address"
-				action="#{customers.searchByAddress}" />
+				action="#{subscriberData.searchByAddress}" />
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton value="#{msgs.resetButtonText}" title="Reset"
-				action="#{customers.resetSearch}" />
+				action="#{subscriberData.resetSearch}" />
 		</h:panelGroup>
 		<h:panelGroup>
-          	<h:outputText value="#{customers.dataTable.first + 1}"
+          	<h:outputText value="#{subscriberData.dataTable.first + 1}"
           		style="font-weight: bold;"/>
           	<h:outputText value=" - "/>
-			<h:outputText value="#{customers.lastPageRow}"
+			<h:outputText value="#{subscriberData.lastPageRow}"
 				style="font-weight: bold;" />
-			<h:outputText value=" of #{customers.dataTable.rowCount}" 
+			<h:outputText value=" of #{subscriberData.dataTable.rowCount}" 
           		style="font-weight: bold;"/>
           	<f:verbatim>&nbsp;&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.firstLinkText}" action="#{customers.pageFirst}"
-                disabled="#{customers.dataTable.first == 0}" />
+            <h:commandLink value="#{msgs.firstLinkText}" action="#{subscriberData.pageFirst}"
+                disabled="#{subscriberData.dataTable.first == 0}" />
             <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.prevLinkText}" action="#{customers.pagePrevious}"
-                disabled="#{customers.dataTable.first == 0}" />
+            <h:commandLink value="#{msgs.prevLinkText}" action="#{subscriberData.pagePrevious}"
+                disabled="#{subscriberData.dataTable.first == 0}" />
             <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.nextLinkText}" action="#{customers.pageNext}"
-                disabled="#{customers.dataTable.first + customers.dataTable.rows
-                    >= customers.dataTable.rowCount}" />
+            <h:commandLink value="#{msgs.nextLinkText}" action="#{subscriberData.pageNext}"
+                disabled="#{subscriberData.dataTable.first + subscriberData.dataTable.rows
+                    >= subscriberData.dataTable.rowCount}" />
             <f:verbatim>&nbsp;|&nbsp;</f:verbatim>
-            <h:commandLink value="#{msgs.lastLinkText}" action="#{customers.pageLast}"
-                disabled="#{customers.dataTable.first + customers.dataTable.rows
-                    >= customers.dataTable.rowCount}" />
+            <h:commandLink value="#{msgs.lastLinkText}" action="#{subscriberData.pageLast}"
+                disabled="#{subscriberData.dataTable.first + subscriberData.dataTable.rows
+                    >= subscriberData.dataTable.rowCount}" />
         </h:panelGroup>
     </h:panelGrid>
     </h:panelGroup>
@@ -121,23 +126,24 @@
 	columnClasses="alignLeft70, alignRight30">
 	<h:panelGroup>
 		<h:commandButton value="#{msgs.deleteButtonText}"
-			title="Delete selected rows" action="#{customers.deleteCustomers}"
-			disabled="#{not customers.anyCustomersMarkedForDeletion}"
+			title="Delete selected rows" action="#{subscriberData.deleteSubscribers}"
+			disabled="#{not subscriberData.subscribersMarkedForDeletion}"
 			onclick="javascript:return confirmDelete();" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.copyToNewButtonText}"
-			title="Delete selected rows" action="#{customers.copyCustomer}"
-			disabled="#{not customers.anyCustomersMarkedForDeletion}" />
+			title="Delete selected rows" action="#{subscriberData.copySubscriber}"
+			disabled="#{not subscriberData.subscribersMarkedForDeletion}" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.addNewButtonText}"
-			title="Add a new row" action="#{customers.addCustomer}" />
+			title="Add a new row" action="#{subscriberData.addSubscriber}" />
 		<f:verbatim>&nbsp;</f:verbatim>
 		<h:commandButton value="#{msgs.refreshLinkText}"
-			title="Refresh from database" action="#{customers.refreshPage}" />
+			title="Refresh from database" action="#{subscriberData.refreshPage}" />
 		<f:verbatim>&nbsp;</f:verbatim>
-		<h:commandButton value="#{msgs.backButtonText}" action="#{customers.cancelEdit}"/>
+		<h:commandButton value="#{msgs.backButtonText}" action="#{subscriberData.cancelEdit}"/>
 	</h:panelGroup>
 	<h:panelGroup>
 		<f:verbatim>&nbsp;</f:verbatim>
 	</h:panelGroup>
 </h:panelGrid>
+</html>
