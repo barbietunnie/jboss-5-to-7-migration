@@ -36,6 +36,22 @@ public class EmailAddressService implements java.io.Serializable {
 	@Autowired
 	EntityManager em;
 
+	final static String GroupBy =
+			"group by " +
+			" a.Row_Id, " +
+			" a.Address, " +
+			" a.statusChangeTime, " +
+			" a.statusChangeUserId, " +
+			" a.bounceCount, " +
+			" a.StatusId, " +
+			" a.lastBounceTime, " +
+			" a.lastSentTime, " +
+			" a.lastRcptTime, " +
+			" a.isAcceptHtml, " +
+			" a.origAddress, " +
+			" a.UpdtUserid, " +
+			" a.UpdtTime ";
+	
 	public EmailAddress getByAddress(String addr) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from EmailAddress t where t.address = :address");
@@ -47,7 +63,7 @@ public class EmailAddressService implements java.io.Serializable {
 		finally {
 		}
 	}
-	
+
 	/*
 	 * return an array with 4 elements:
 	 * 1) EmailAddress
@@ -63,20 +79,7 @@ public class EmailAddressService implements java.io.Serializable {
 				"from Email_Address a " +
 				" LEFT OUTER JOIN Subscription b on a.Row_Id = b.EmailAddrRowId " +
 				" where a.address = ?1 " +
-				"group by " +
-				" a.Row_Id, " +
-				" a.Address, " +
-				" a.statusChangeTime, " +
-				" a.statusChangeUserId, " +
-				" a.bounceCount, " +
-				" a.StatusId, " +
-				" a.lastBounceTime, " +
-				" a.lastSentTime, " +
-				" a.lastRcptTime, " +
-				" a.isAcceptHtml, " +
-				" a.origAddress, " +
-				" a.UpdtUserid, " +
-				" a.UpdtTime ";
+				GroupBy;
 		try {
 			Query query = em.createNativeQuery(sql, EmailAddress.MAPPING_EMAIL_ADDR_WITH_COUNTS);
 			query.setParameter(1, EmailAddrUtil.removeDisplayName(addr));
@@ -374,22 +377,6 @@ public class EmailAddressService implements java.io.Serializable {
 			}
 		}
 
-		String groupBy =
-				"group by " +
-				" a.Row_Id, " +
-				" a.Address, " +
-				" a.statusChangeTime, " +
-				" a.statusChangeUserId, " +
-				" a.bounceCount, " +
-				" a.StatusId, " +
-				" a.lastBounceTime, " +
-				" a.lastSentTime, " +
-				" a.lastRcptTime, " +
-				" a.isAcceptHtml, " +
-				" a.origAddress, " +
-				" a.UpdtUserid, " +
-				" a.UpdtTime ";
-		
 		String sql = "select a.*, "
 				+ " sum(b.SentCount) as sentCount, "
 				+ " sum(b.OpenCount) as openCount, " 
@@ -398,7 +385,7 @@ public class EmailAddressService implements java.io.Serializable {
 				+ " LEFT OUTER JOIN Subscription b on a.Row_Id = b.EmailAddrRowId "
 				//+ " LEFT JOIN Subscriber_Data b on a.Row_Id=b.EmailAddrRowId "
 				+ whereSql
-				+ groupBy
+				+ GroupBy
 				+ " order by a.Address "
 				+ fetchOrder;
 		//if (Constants.DB_PRODNAME_MYSQL.equals(JpaUtil.getDBProductName())) {
