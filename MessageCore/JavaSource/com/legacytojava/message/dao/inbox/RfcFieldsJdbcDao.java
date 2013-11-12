@@ -28,9 +28,9 @@ public class RfcFieldsJdbcDao implements RfcFieldsDao {
 		return jdbcTemplate;
 	}
 
-	private static final class RfcFieldsMapper implements RowMapper {
+	private static final class RfcFieldsMapper implements RowMapper<RfcFieldsVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public RfcFieldsVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			RfcFieldsVo rfcFieldsVo = new RfcFieldsVo();
 			
 			rfcFieldsVo.setMsgId(rs.getLong("MsgId"));
@@ -64,7 +64,6 @@ public class RfcFieldsJdbcDao implements RfcFieldsDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<RfcFieldsVo> getByMsgId(long msgId) {
 		String sql = 
 			"select * " +

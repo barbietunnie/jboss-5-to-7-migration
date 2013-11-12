@@ -28,9 +28,9 @@ public class RenderObjectJdbcDao implements RenderObjectDao {
 		return jdbcTemplate;
 	}
 
-	private static final class RenderObjectMapper implements RowMapper {
+	private static final class RenderObjectMapper implements RowMapper<RenderObjectVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public RenderObjectVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			RenderObjectVo renderVariableVo = new RenderObjectVo();
 
 			renderVariableVo.setRenderId(rs.getLong("RenderId"));
@@ -57,7 +57,6 @@ public class RenderObjectJdbcDao implements RenderObjectDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<RenderObjectVo> getByRenderId(long renderId) {
 		String sql = 
 			"select * " +

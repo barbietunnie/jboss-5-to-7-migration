@@ -33,9 +33,9 @@ public class TemplateVariableJdbcDao implements TemplateVariableDao {
 	
 	private static final HashMap<String, List<?>> currentVariablesCache = new HashMap<String, List<?>>();
 	
-	private static final class TemplateVariableMapper implements RowMapper {
+	private static final class TemplateVariableMapper implements RowMapper<TemplateVariableVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public TemplateVariableVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			TemplateVariableVo templateVariableVo = new TemplateVariableVo();
 			
 			templateVariableVo.setRowId(rs.getInt("RowId"));
@@ -119,7 +119,6 @@ public class TemplateVariableJdbcDao implements TemplateVariableDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<TemplateVariableVo> getByVariableName(String variableName) {
 		String sql = 
 			"select * " +
@@ -131,7 +130,6 @@ public class TemplateVariableJdbcDao implements TemplateVariableDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<TemplateVariableVo> getByClientId(String clientId) {
 		String sql = 
 			"select * " +
@@ -169,7 +167,6 @@ public class TemplateVariableJdbcDao implements TemplateVariableDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<TemplateVariableVo> getByTemplateId(String templateId) {
 		String sql = 
 			"select * " +

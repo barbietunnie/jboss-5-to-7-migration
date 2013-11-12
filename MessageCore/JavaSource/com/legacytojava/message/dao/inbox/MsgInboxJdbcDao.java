@@ -38,9 +38,9 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 		return jdbcTemplate;
 	}
 
-	private static class MsgInboxMapper implements RowMapper {
+	private static class MsgInboxMapper implements RowMapper<MsgInboxVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgInboxVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgInboxVo msgInboxVo = setRowValues(rs);
 			
 			return msgInboxVo;
@@ -100,9 +100,9 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 		}
 	}
 
-	private static class MsgInboxMapperWeb implements RowMapper {
+	private static class MsgInboxMapperWeb implements RowMapper<MsgInboxWebVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgInboxWebVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgInboxWebVo msgInboxVo = new MsgInboxWebVo();
 			
 			msgInboxVo.setMsgId(rs.getLong("MsgId"));
@@ -158,7 +158,6 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgInboxWebVo> getByLeadMsgId(long leadMsgId) {
 		String sql = 
 			"select * " +
@@ -171,7 +170,6 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgInboxWebVo> getByMsgRefId(long msgRefId) {
 		String sql = 
 			"select * " +
@@ -184,7 +182,6 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgInboxVo> getByFromAddrId(long addrId) {
 		String sql = 
 			"select * " +
@@ -197,7 +194,6 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgInboxVo> getByToAddrId(long addrId) {
 		String sql = 
 			"select * " +
@@ -220,7 +216,6 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 	/**
 	 * retrieve up to 100 rows
 	 */
-	@SuppressWarnings("unchecked")
 	public List<MsgInboxVo> getRecent(Date date) {
 		if (date == null) {
 			date = new java.util.Date();
@@ -295,7 +290,6 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 		return rowCount;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgInboxWebVo> getListForWeb(SearchFieldsVo vo) {
 		List<Object> parms = new ArrayList<Object>();
 		String whereSql = getWhereSqlForWeb(vo, parms);

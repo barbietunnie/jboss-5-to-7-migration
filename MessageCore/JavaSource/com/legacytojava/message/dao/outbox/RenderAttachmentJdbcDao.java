@@ -28,9 +28,9 @@ public class RenderAttachmentJdbcDao implements RenderAttachmentDao {
 		return jdbcTemplate;
 	}
 
-	private static final class RenderAttachmentMapper implements RowMapper {
+	private static final class RenderAttachmentMapper implements RowMapper<RenderAttachmentVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public RenderAttachmentVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			RenderAttachmentVo renderAttachmentVo = new RenderAttachmentVo();
 			
 			renderAttachmentVo.setRenderId(rs.getLong("RenderId"));
@@ -58,7 +58,6 @@ public class RenderAttachmentJdbcDao implements RenderAttachmentDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<RenderAttachmentVo> getByRenderId(long renderId) {
 		String sql = 
 			"select * " +

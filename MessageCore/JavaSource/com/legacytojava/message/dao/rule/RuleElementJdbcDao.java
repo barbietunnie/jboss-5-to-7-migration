@@ -29,9 +29,9 @@ public class RuleElementJdbcDao implements RuleElementDao {
 		return jdbcTemplate;
 	}
 
-	static final class RuleElementMapper implements RowMapper {
+	static final class RuleElementMapper implements RowMapper<RuleElementVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public RuleElementVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			RuleElementVo ruleElementVo = new RuleElementVo();
 			
 			ruleElementVo.setRowId(rs.getInt("RowId"));
@@ -66,7 +66,6 @@ public class RuleElementJdbcDao implements RuleElementDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<RuleElementVo> getAll() {
 		String sql = 
 			"select * " +
@@ -77,7 +76,6 @@ public class RuleElementJdbcDao implements RuleElementDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<RuleElementVo> getByRuleName(String ruleName) {
 		String sql = 
 			"select * " +

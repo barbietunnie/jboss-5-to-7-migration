@@ -29,9 +29,9 @@ public class SubjTemplateJdbcDao implements SubjTemplateDao {
 		return jdbcTemplate;
 	}
 	
-	private static final class SubjTemplateMapper implements RowMapper {
+	private static final class SubjTemplateMapper implements RowMapper<SubjTemplateVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public SubjTemplateVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			SubjTemplateVo subjTemplateVo = new SubjTemplateVo();
 			
 			subjTemplateVo.setRowId(rs.getInt("RowId"));
@@ -100,7 +100,6 @@ public class SubjTemplateJdbcDao implements SubjTemplateDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SubjTemplateVo> getByTemplateId(String templateId) {
 		String sql = 
 			"select * " +
@@ -112,7 +111,6 @@ public class SubjTemplateJdbcDao implements SubjTemplateDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SubjTemplateVo> getByClientId(String clientId) {
 		String sql = 
 			"select * " +

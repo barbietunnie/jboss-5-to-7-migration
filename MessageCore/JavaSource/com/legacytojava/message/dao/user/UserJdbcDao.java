@@ -29,9 +29,9 @@ public class UserJdbcDao implements UserDao {
 		return jdbcTemplate;
 	}
 
-	private static final class UserMapper implements RowMapper {
+	private static final class UserMapper implements RowMapper<UserVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public UserVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			UserVo userVo = new UserVo();
 			
 			userVo.setRowId(rs.getInt("RowId"));
@@ -80,7 +80,6 @@ public class UserJdbcDao implements UserDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<UserVo> getAll(boolean onlyActive) {
 		
 		String sql = "select * from Users ";

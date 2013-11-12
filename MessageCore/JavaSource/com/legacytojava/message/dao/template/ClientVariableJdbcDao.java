@@ -33,9 +33,9 @@ public class ClientVariableJdbcDao implements ClientVariableDao {
 		return jdbcTemplate;
 	}
 
-	private static final class ClientVariableMapper implements RowMapper {
+	private static final class ClientVariableMapper implements RowMapper<ClientVariableVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public ClientVariableVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			ClientVariableVo clientVariableVo = new ClientVariableVo();
 			
 			clientVariableVo.setRowId(rs.getInt("RowId"));
@@ -100,7 +100,6 @@ public class ClientVariableJdbcDao implements ClientVariableDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<ClientVariableVo> getByVariableName(String variableName) {
 		String sql = 
 			"select * " +

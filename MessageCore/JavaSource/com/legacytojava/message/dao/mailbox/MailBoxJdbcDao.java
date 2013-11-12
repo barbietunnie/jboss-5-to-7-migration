@@ -33,13 +33,13 @@ public class MailBoxJdbcDao implements MailBoxDao {
 		return jdbcTemplate;
 	}
 
-	private static final class MailBoxMapper implements RowMapper {
+	private static final class MailBoxMapper implements RowMapper<MailBoxVo> {
 		private final String clientDomains;
 		MailBoxMapper(String clientDomains) {
 			this.clientDomains = clientDomains;
 		}
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MailBoxVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MailBoxVo mailBoxVo = new MailBoxVo();
 			
 			mailBoxVo.setRowId(rs.getInt("RowId"));
@@ -113,7 +113,6 @@ public class MailBoxJdbcDao implements MailBoxDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MailBoxVo> getAll(boolean onlyActive) {
 		List<String> keys = new ArrayList<String>();
 		String sql = "select * from MailBoxes ";
@@ -127,7 +126,6 @@ public class MailBoxJdbcDao implements MailBoxDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MailBoxVo> getAllForTrial(boolean onlyActive) {
 		List<String> keys = new ArrayList<String>();
 		String sql = "select * from MailBoxes ";

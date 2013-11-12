@@ -29,9 +29,9 @@ public class MsgSourceJdbcDao implements MsgSourceDao {
 		return jdbcTemplate;
 	}
 	
-	private static final class MsgSourceMapper implements RowMapper {
+	private static final class MsgSourceMapper implements RowMapper<MsgSourceVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgSourceVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgSourceVo msgSourceVo = new MsgSourceVo();
 			
 			msgSourceVo.setRowId(rs.getInt("RowId"));
@@ -71,7 +71,6 @@ public class MsgSourceJdbcDao implements MsgSourceDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgSourceVo> getByFromAddrId(long fromAddrId) {
 		String sql = 
 			"select * " +

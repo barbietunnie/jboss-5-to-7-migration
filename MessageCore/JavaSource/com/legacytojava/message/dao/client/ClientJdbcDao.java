@@ -42,8 +42,8 @@ public class ClientJdbcDao implements ClientDao {
 		return jdbcTemplate;
 	}
 
-	private static final class ClientMapper implements RowMapper {
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+	private static final class ClientMapper implements RowMapper<ClientVo> {
+		public ClientVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			ClientVo clientVo = new ClientVo();
 			
 			clientVo.setPrimaryKey(rs.getString("ClientId"));
@@ -126,7 +126,6 @@ public class ClientJdbcDao implements ClientDao {
 			"select * " +
 				"from Clients order by clientId";
 		
-		@SuppressWarnings("unchecked")
 		List<ClientVo> list = (List<ClientVo>)getJdbcTemplate().query(sql, new ClientMapper());
 		return list;
 	}
@@ -141,7 +140,6 @@ public class ClientJdbcDao implements ClientDao {
 		int maxRows = getJdbcTemplate().getMaxRows();
 		getJdbcTemplate().setFetchSize(1);
 		getJdbcTemplate().setMaxRows(1);
-		@SuppressWarnings("unchecked")
 		List<ClientVo> list =  (List<ClientVo>)getJdbcTemplate().query(sql, new ClientMapper());
 		getJdbcTemplate().setFetchSize(fetchSize);
 		getJdbcTemplate().setMaxRows(maxRows);

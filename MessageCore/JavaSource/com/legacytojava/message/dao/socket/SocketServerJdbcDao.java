@@ -29,9 +29,9 @@ public class SocketServerJdbcDao implements SocketServerDao {
 		return jdbcTemplate;
 	}
 
-	private static final class SocketMapper implements RowMapper {
+	private static final class SocketMapper implements RowMapper<SocketServerVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public SocketServerVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			SocketServerVo socketServerVo = new SocketServerVo();
 			
 			socketServerVo.setRowId(rs.getInt("RowId"));
@@ -65,7 +65,6 @@ public class SocketServerJdbcDao implements SocketServerDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SocketServerVo> getAll(boolean onlyActive) {
 		
 		String sql = "select * from SocketServers ";

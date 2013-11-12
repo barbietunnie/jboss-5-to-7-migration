@@ -38,9 +38,9 @@ public class CustomerJdbcDao implements CustomerDao {
 		return jdbcTemplate;
 	}
 
-	private static final class CustomerMapper implements RowMapper {
+	private static final class CustomerMapper implements RowMapper<CustomerVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public CustomerVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			CustomerVo customerVo = new CustomerVo();
 			
 			customerVo.setPrimaryKey(rs.getString("CustId"));
@@ -113,7 +113,6 @@ public class CustomerJdbcDao implements CustomerDao {
 			"select * " +
 				"from Customers where clientid=? ";
 		Object[] parms = new Object[] {clientId};
-		@SuppressWarnings("unchecked")
 		List<CustomerVo> list = (List<CustomerVo>)getJdbcTemplate().query(sql, parms, new CustomerMapper());
 		return list;
 	}
@@ -123,7 +122,6 @@ public class CustomerJdbcDao implements CustomerDao {
 			"select * " +
 			" from customers where emailAddrId=? ";
 		Object[] parms = new Object[] {Long.valueOf(emailAddrId)};
-		@SuppressWarnings("unchecked")
 		List<CustomerVo> list = (List<CustomerVo>)getJdbcTemplate().query(sql, parms, new CustomerMapper());
 		if (list == null || list.isEmpty()) {
 			return null;
@@ -140,7 +138,6 @@ public class CustomerJdbcDao implements CustomerDao {
 			" where a.EmailAddrId=b.EmailAddrId " +
 			" and a.EmailAddr=? ";
 		Object[] parms = new Object[] {EmailAddrUtil.removeDisplayName(emailAddr)};
-		@SuppressWarnings("unchecked")
 		List<CustomerVo> list = (List<CustomerVo>)getJdbcTemplate().query(sql, parms, new CustomerMapper());
 		if (list == null || list.isEmpty()) {
 			return null;
@@ -155,7 +152,6 @@ public class CustomerJdbcDao implements CustomerDao {
 			"select * " +
 				"from Customers";
 		
-		@SuppressWarnings("unchecked")
 		List<CustomerVo> list = (List<CustomerVo>)getJdbcTemplate().query(sql, new CustomerMapper());
 		return list;
 	}
@@ -225,7 +221,6 @@ public class CustomerJdbcDao implements CustomerDao {
 		int maxRows = getJdbcTemplate().getMaxRows();
 		getJdbcTemplate().setFetchSize(vo.getPageSize());
 		getJdbcTemplate().setMaxRows(vo.getPageSize());
-		@SuppressWarnings("unchecked")
 		List<CustomerVo> list = (List<CustomerVo>) getJdbcTemplate().query(sql, parms.toArray(),
 				new CustomerMapper());
 		getJdbcTemplate().setFetchSize(fetchSize);

@@ -33,9 +33,9 @@ public class GlobalVariableJdbcDao implements GlobalVariableDao {
 	
 	private static final List<GlobalVariableVo> currentVariablesCache = new ArrayList<GlobalVariableVo>();
 	
-	private static final class GlobalVariableMapper implements RowMapper {
+	private static final class GlobalVariableMapper implements RowMapper<GlobalVariableVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public GlobalVariableVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			GlobalVariableVo globalVariableVo = new GlobalVariableVo();
 			
 			globalVariableVo.setRowId(rs.getInt("RowId"));
@@ -96,7 +96,6 @@ public class GlobalVariableJdbcDao implements GlobalVariableDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<GlobalVariableVo> getByVariableName(String variableName) {
 		String sql = 
 			"select * " +
@@ -108,7 +107,6 @@ public class GlobalVariableJdbcDao implements GlobalVariableDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<GlobalVariableVo> getCurrent() {
 		if (currentVariablesCache.size()==0) {
 			String sql = 

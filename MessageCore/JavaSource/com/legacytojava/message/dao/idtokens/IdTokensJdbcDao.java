@@ -31,9 +31,9 @@ public class IdTokensJdbcDao implements IdTokensDao {
 		return jdbcTemplate;
 	}
 
-	private static final class IdTokensMapper implements RowMapper {
+	private static final class IdTokensMapper implements RowMapper<IdTokensVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public IdTokensVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			IdTokensVo idTokensVo = new IdTokensVo();
 			
 			idTokensVo.setRowId(rs.getInt("RowId"));
@@ -71,7 +71,6 @@ public class IdTokensJdbcDao implements IdTokensDao {
 		return (IdTokensVo)cache.get(clientId);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<IdTokensVo> getAll() {
 		String sql = "select * from IdTokens order by clientId";
 		List<IdTokensVo> list = (List<IdTokensVo>)getJdbcTemplate().query(sql, new IdTokensMapper());

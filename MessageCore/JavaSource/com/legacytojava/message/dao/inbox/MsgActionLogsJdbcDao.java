@@ -29,9 +29,9 @@ public class MsgActionLogsJdbcDao implements MsgActionLogsDao {
 		return jdbcTemplate;
 	}
 
-	private static final class MsgActionLogsMapper implements RowMapper {
+	private static final class MsgActionLogsMapper implements RowMapper<MsgActionLogsVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgActionLogsVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgActionLogsVo msgActionLogsVo = new MsgActionLogsVo();
 			
 			msgActionLogsVo.setMsgId(rs.getLong("MsgId"));
@@ -68,7 +68,6 @@ public class MsgActionLogsJdbcDao implements MsgActionLogsDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgActionLogsVo> getByMsgId(long msgId) {
 		String sql = 
 			"select * " +
@@ -80,7 +79,6 @@ public class MsgActionLogsJdbcDao implements MsgActionLogsDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgActionLogsVo> getByLeadMsgId(long leadMsgId) {
 		String sql = 
 			"select * " +

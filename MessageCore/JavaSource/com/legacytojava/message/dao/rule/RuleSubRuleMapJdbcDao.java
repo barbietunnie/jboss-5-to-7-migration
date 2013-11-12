@@ -29,9 +29,9 @@ public class RuleSubRuleMapJdbcDao implements RuleSubRuleMapDao {
 		return jdbcTemplate;
 	}
 	
-	private static final class RuleSubRuleMapMapper implements RowMapper {
+	private static final class RuleSubRuleMapMapper implements RowMapper<RuleSubRuleMapVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public RuleSubRuleMapVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			RuleSubRuleMapVo ruleSubRuleMapVo = new RuleSubRuleMapVo();
 			
 			ruleSubRuleMapVo.setRowId(rs.getInt("RowId"));
@@ -58,7 +58,6 @@ public class RuleSubRuleMapJdbcDao implements RuleSubRuleMapDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<RuleSubRuleMapVo> getByRuleName(String ruleName) {
 		String sql = 
 			"select * " +

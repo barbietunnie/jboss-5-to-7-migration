@@ -45,9 +45,9 @@ public class EmailVariableJdbcDao implements EmailVariableDao {
 		return this.namedParameterJdbcTemplate; 
 	}
 
-	private static final class EmailVariableMapper implements RowMapper {
+	private static final class EmailVariableMapper implements RowMapper<EmailVariableVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public EmailVariableVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			EmailVariableVo emailVariableVo = new EmailVariableVo();
 			
 			emailVariableVo.setRowId(rs.getInt("RowId"));
@@ -77,7 +77,6 @@ public class EmailVariableJdbcDao implements EmailVariableDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<EmailVariableVo> getAll() {
 		String sql = "select * from EmailVariable " +
 		" order by RowId";
@@ -85,7 +84,6 @@ public class EmailVariableJdbcDao implements EmailVariableDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<EmailVariableVo> getAllForTrial() {
 		String sql = "select * from EmailVariable " +
 		" order by RowId" +
@@ -100,7 +98,6 @@ public class EmailVariableJdbcDao implements EmailVariableDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<EmailVariableVo> getAllCustomVariables() {
 		String sql = "select * from EmailVariable " +
 			" where IsBuiltIn!='" + Constants.YES_CODE + "' " +
@@ -109,7 +106,6 @@ public class EmailVariableJdbcDao implements EmailVariableDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<EmailVariableVo> getAllBuiltinVariables() {
 		String sql = "select * from EmailVariable " +
 			" where IsBuiltIn='" + Constants.YES_CODE + "' " +

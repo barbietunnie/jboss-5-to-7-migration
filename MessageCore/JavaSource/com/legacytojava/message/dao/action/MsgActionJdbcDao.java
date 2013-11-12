@@ -31,9 +31,9 @@ public class MsgActionJdbcDao implements MsgActionDao {
 		return jdbcTemplate;
 	}
 
-	static final class MsgActionMapper implements RowMapper {
+	static final class MsgActionMapper implements RowMapper<MsgActionVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgActionVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgActionVo msgActionVo = new MsgActionVo();
 			
 			msgActionVo.setRowId(rs.getInt("RowId"));
@@ -52,7 +52,6 @@ public class MsgActionJdbcDao implements MsgActionDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgActionVo> getByRuleName(String ruleName) {
 		String sql = 
 			"select a.*, b.ProcessBeanId, b.ProcessClassName, b.DataType " +
@@ -65,7 +64,6 @@ public class MsgActionJdbcDao implements MsgActionDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public MsgActionVo getByPrimaryKey(int rowId) {
 		String sql = 
 			"select a.*, b.ProcessBeanId, b.ProcessClassName, b.DataType " +
@@ -104,7 +102,6 @@ public class MsgActionJdbcDao implements MsgActionDao {
 		sql += " order by actionSeq, clientId desc, startTime desc ";
 		
 		Object[] parms = keys.toArray();
-		@SuppressWarnings("unchecked")
 		List<MsgActionVo> list = (List<MsgActionVo>)getJdbcTemplate().query(sql, parms, new MsgActionMapper());
 		// remove duplicates
 		list = removeDuplicates(list);
@@ -131,7 +128,6 @@ public class MsgActionJdbcDao implements MsgActionDao {
 			" where a.ActionId = b.ActionId " +
 			" order by actionSeq";
 		
-		@SuppressWarnings("unchecked")
 		List<MsgActionVo> list = (List<MsgActionVo>)getJdbcTemplate().query(sql, new MsgActionMapper());
 		return list;	
 	}
@@ -188,7 +184,6 @@ public class MsgActionJdbcDao implements MsgActionDao {
 		sql += " order by clientId desc, startTime desc ";
 		
 		Object[] parms = keys.toArray();
-		@SuppressWarnings("unchecked")
 		List<MsgActionVo> list =  (List<MsgActionVo>)getJdbcTemplate().query(sql, parms, new MsgActionMapper());
 		if (list.size() > 0)
 			return (MsgActionVo) list.get(0);

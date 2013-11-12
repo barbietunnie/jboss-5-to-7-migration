@@ -31,9 +31,9 @@ public class MsgClickCountsJdbcDao implements MsgClickCountsDao {
 		return jdbcTemplate;
 	}
 
-	private static final class MsgClickCountsMapper implements RowMapper {
+	private static final class MsgClickCountsMapper implements RowMapper<MsgClickCountsVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgClickCountsVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgClickCountsVo msgClickCountsVo = new MsgClickCountsVo();
 			
 			msgClickCountsVo.setMsgId(rs.getLong("MsgId"));
@@ -54,7 +54,6 @@ public class MsgClickCountsJdbcDao implements MsgClickCountsDao {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<MsgClickCountsVo> getAll() {
 		String sql = 
 			"select * " +
@@ -91,7 +90,6 @@ public class MsgClickCountsJdbcDao implements MsgClickCountsDao {
 	
 	static String[] CRIT = { " where ", " and ", " and ", " and ", " and ", " and " };
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgClickCountsVo> getBroadcastsWithPaging(PagingVo vo) {
 		List<Object> parms = new ArrayList<Object>();
 		String whereSql = "";

@@ -34,9 +34,9 @@ public class MailingListJdbcDao implements MailingListDao {
 		return jdbcTemplate;
 	}
 
-	private static final class MailingListMapper implements RowMapper {
+	private static final class MailingListMapper implements RowMapper<MailingListVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MailingListVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MailingListVo mailingListVo = new MailingListVo();
 			
 			mailingListVo.setRowId(rs.getInt("RowId"));
@@ -117,7 +117,6 @@ public class MailingListJdbcDao implements MailingListDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MailingListVo> getByAddress(String emailAddr) {
 		emailAddr = emailAddr == null ? "" : emailAddr; // just for safety
 		String acctUserName = emailAddr;
@@ -170,7 +169,6 @@ public class MailingListJdbcDao implements MailingListDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MailingListVo> getAll(boolean onlyActive) {
 		List<Object> parms = new ArrayList<Object>();
 		String sql = "select " +
@@ -215,7 +213,6 @@ public class MailingListJdbcDao implements MailingListDao {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<MailingListVo> getAllForTrial(boolean onlyActive) {
 		List<Object> parms = new ArrayList<Object>();
 		String sql = "select " +
@@ -266,7 +263,6 @@ public class MailingListJdbcDao implements MailingListDao {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<MailingListVo> getSubscribedLists(long emailAddrId) {
 		String sql = "SELECT " +
 			" m.*, " +

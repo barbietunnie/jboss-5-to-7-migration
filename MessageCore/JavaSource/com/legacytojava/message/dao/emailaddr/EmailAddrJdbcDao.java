@@ -54,9 +54,9 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 		return jdbcTemplate;
 	}
 
-	private static class EmailAddrMapper implements RowMapper {
+	private static class EmailAddrMapper implements RowMapper<EmailAddrVo> {
 
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public EmailAddrVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			EmailAddrVo emailAddrVo = new EmailAddrVo();
 
 			emailAddrVo.setEmailAddrId(rs.getInt("EmailAddrId"));
@@ -81,7 +81,7 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 	}
 
 	private static final class EmailAddrMapper2 extends EmailAddrMapper {
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public EmailAddrVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			EmailAddrVo emailAddrVo = (EmailAddrVo) super.mapRow(rs, rowNum);
 			emailAddrVo.setRuleName(rs.getString("RuleName"));
 			return emailAddrVo;
@@ -89,7 +89,7 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 	}
 
 	private static final class EmailAddrMapper3 extends EmailAddrMapper {
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public EmailAddrVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			EmailAddrVo emailAddrVo = (EmailAddrVo) super.mapRow(rs, rowNum);
 			emailAddrVo.setCustId(rs.getString("CustId"));
 			emailAddrVo.setFirstName(rs.getString("FirstName"));
@@ -145,7 +145,6 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 		return rowCount;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<EmailAddrVo> getEmailAddrsWithPaging(PagingVo vo) {
 		List<Object> parms = new ArrayList<Object>();
 		String whereSql = buildWhereClause(vo, parms);

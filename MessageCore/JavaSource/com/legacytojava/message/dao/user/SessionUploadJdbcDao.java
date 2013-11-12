@@ -29,9 +29,9 @@ public class SessionUploadJdbcDao implements SessionUploadDao {
 		return jdbcTemplate;
 	}
 
-	private static final class SessionUploadMapper implements RowMapper {
+	private static final class SessionUploadMapper implements RowMapper<SessionUploadVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public SessionUploadVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			SessionUploadVo sessVo = new SessionUploadVo();
 			
 			sessVo.setSessionId(rs.getString("SessionId"));
@@ -58,7 +58,6 @@ public class SessionUploadJdbcDao implements SessionUploadDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SessionUploadVo> getBySessionId(String sessionId) {
 		String sql = "select * from SessionUploads where SessionId=?";
 		Object[] parms = new Object[] {sessionId};
@@ -85,7 +84,6 @@ public class SessionUploadJdbcDao implements SessionUploadDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SessionUploadVo> getByUserId(String userId) {
 		String sql = "select * from SessionUploads where UserId=?";
 		Object[] parms = new Object[] {userId};
