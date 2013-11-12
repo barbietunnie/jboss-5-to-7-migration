@@ -19,7 +19,7 @@ public class SpringThreadScope implements Scope {
 	};
 
 	@Override
-	public Object get(String beanName, ObjectFactory objectFactory) {
+	public Object get(String beanName, ObjectFactory<?> objectFactory) {
 		@SuppressWarnings("unchecked")
 		Map<Object, Object> scope = (Map<Object, Object>) threadScopeMap.get();
 		Object beanObject = scope.get(beanName);

@@ -30,9 +30,9 @@ public class ReloadFlagsJdbcDao implements ReloadFlagsDao {
 		return jdbcTemplate;
 	}
 
-	private static final class ReloadFlagsMapper implements RowMapper {
+	private static final class ReloadFlagsMapper implements RowMapper<ReloadFlagsVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public ReloadFlagsVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			ReloadFlagsVo vo = new ReloadFlagsVo();
 			
 			vo.setClients(rs.getInt("Clients"));

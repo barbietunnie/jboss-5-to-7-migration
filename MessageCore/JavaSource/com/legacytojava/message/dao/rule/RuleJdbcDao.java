@@ -38,9 +38,9 @@ public class RuleJdbcDao implements RuleDao {
 	@Autowired
 	private RuleSubRuleMapDao ruleSubRuleMapDao;
 	
-	private static final class RuleMapper implements RowMapper {
+	private static final class RuleMapper implements RowMapper<RuleVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public RuleVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			RuleVo ruleVo = new RuleVo();
 			
 			ruleVo.setRuleName(rs.getString("RuleName"));

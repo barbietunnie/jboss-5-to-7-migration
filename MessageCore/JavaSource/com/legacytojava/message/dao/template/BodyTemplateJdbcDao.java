@@ -29,9 +29,9 @@ public class BodyTemplateJdbcDao implements BodyTemplateDao {
 		return jdbcTemplate;
 	}
 	
-	private static final class BodyTemplateMapper implements RowMapper {
+	private static final class BodyTemplateMapper implements RowMapper<BodyTemplateVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public BodyTemplateVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			BodyTemplateVo bodyTemplateVo = new BodyTemplateVo();
 			
 			
@@ -110,7 +110,6 @@ public class BodyTemplateJdbcDao implements BodyTemplateDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<BodyTemplateVo> getByTemplateId(String templateId) {
 		String sql = 
 			"select * " +
@@ -122,7 +121,6 @@ public class BodyTemplateJdbcDao implements BodyTemplateDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<BodyTemplateVo> getByClientId(String clientId) {
 		String sql = 
 			"select * " +

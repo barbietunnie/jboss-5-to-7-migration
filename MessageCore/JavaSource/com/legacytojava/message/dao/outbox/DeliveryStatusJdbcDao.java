@@ -29,9 +29,9 @@ public class DeliveryStatusJdbcDao implements DeliveryStatusDao {
 		return jdbcTemplate;
 	}
 
-	private static final class DeliveryStatusMapper implements RowMapper {
+	private static final class DeliveryStatusMapper implements RowMapper<DeliveryStatusVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public DeliveryStatusVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			DeliveryStatusVo deliveryStatusVo = new DeliveryStatusVo();
 
 			deliveryStatusVo.setMsgId(rs.getLong("MsgId"));
@@ -64,7 +64,6 @@ public class DeliveryStatusJdbcDao implements DeliveryStatusDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<DeliveryStatusVo> getByMsgId(long msgId) {
 		String sql = 
 			"select * " +

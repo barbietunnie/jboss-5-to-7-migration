@@ -33,9 +33,9 @@ public class RuleLogicJdbcDao implements RuleLogicDao {
 		return jdbcTemplate;
 	}
 	
-	static final class RuleLogicMapper implements RowMapper {
+	static final class RuleLogicMapper implements RowMapper<RuleLogicVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public RuleLogicVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			RuleLogicVo ruleLogicVo = new RuleLogicVo();
 			
 			ruleLogicVo.setRowId(rs.getInt("RowId"));
@@ -145,7 +145,6 @@ public class RuleLogicJdbcDao implements RuleLogicDao {
 		return (nextSeq + 1);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<RuleLogicVo> getActiveRules() {
 		String sql = 
 			"select " +
@@ -182,7 +181,6 @@ public class RuleLogicJdbcDao implements RuleLogicDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<RuleLogicVo> getAll(boolean builtInRule) {
 		String sql = 
 			"select " +
@@ -226,7 +224,6 @@ public class RuleLogicJdbcDao implements RuleLogicDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<RuleLogicVo> getAllSubRules(boolean excludeBuiltIn) {
 		String sql = 
 			"select *, 0 as SubRuleCount " +

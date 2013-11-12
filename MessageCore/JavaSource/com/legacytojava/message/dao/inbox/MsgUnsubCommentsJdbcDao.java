@@ -32,9 +32,9 @@ public class MsgUnsubCommentsJdbcDao implements MsgUnsubCommentsDao {
 		return jdbcTemplate;
 	}
 
-	private static final class MsgUnsubCommentsMapper implements RowMapper {
+	private static final class MsgUnsubCommentsMapper implements RowMapper<MsgUnsubCommentsVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgUnsubCommentsVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgUnsubCommentsVo msgUnsubCommentsVo = new MsgUnsubCommentsVo();
 			
 			msgUnsubCommentsVo.setRowId(rs.getInt("RowId"));
@@ -60,7 +60,6 @@ public class MsgUnsubCommentsJdbcDao implements MsgUnsubCommentsDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgUnsubCommentsVo> getAll() {
 		String sql = "select * from MsgUnsubComments " +
 		" order by RowId";
@@ -68,7 +67,6 @@ public class MsgUnsubCommentsJdbcDao implements MsgUnsubCommentsDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgUnsubCommentsVo> getByMsgId(long msgId) {
 		String sql = "select * from MsgUnsubComments " +
 			" where MsgId=" + msgId +
@@ -77,7 +75,6 @@ public class MsgUnsubCommentsJdbcDao implements MsgUnsubCommentsDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgUnsubCommentsVo> getByEmailAddrId(long emailAddrId) {
 		String sql = "select * from MsgUnsubComments " +
 			" where EmailAddrId=" + emailAddrId +
@@ -86,7 +83,6 @@ public class MsgUnsubCommentsJdbcDao implements MsgUnsubCommentsDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgUnsubCommentsVo> getByListId(String listId) {
 		String sql = "select * from MsgUnsubComments " +
 			" where ListId='" + listId + "' " +

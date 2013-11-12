@@ -29,9 +29,9 @@ public class MsgStreamJdbcDao implements MsgStreamDao {
 		return jdbcTemplate;
 	}
 
-	private static final class MsgStreamMapper implements RowMapper {
+	private static final class MsgStreamMapper implements RowMapper<MsgStreamVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgStreamVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgStreamVo msgStreamVo = new MsgStreamVo();
 
 			msgStreamVo.setMsgId(rs.getLong("MsgId"));
@@ -59,7 +59,6 @@ public class MsgStreamJdbcDao implements MsgStreamDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgStreamVo> getByFromAddrId(long fromAddrId) {
 		String sql = 
 			"select * " +

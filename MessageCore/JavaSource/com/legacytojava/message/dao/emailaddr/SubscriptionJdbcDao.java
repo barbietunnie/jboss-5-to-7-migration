@@ -40,9 +40,9 @@ public class SubscriptionJdbcDao implements SubscriptionDao {
 		return jdbcTemplate;
 	}
 
-	protected static class SubscriptionMapper implements RowMapper {
+	protected static class SubscriptionMapper implements RowMapper<SubscriptionVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public SubscriptionVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			SubscriptionVo subscriptionVo = new SubscriptionVo();
 			
 			subscriptionVo.setEmailAddrId(rs.getLong("EmailAddrId"));
@@ -64,7 +64,7 @@ public class SubscriptionJdbcDao implements SubscriptionDao {
 	
 	private static final class SubscriberMapper2 extends SubscriptionMapper {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public SubscriptionVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			
 			SubscriptionVo subscriptionVo = (SubscriptionVo) super.mapRow(rs, rowNum);
 			subscriptionVo.setFirstName(rs.getString("FirstName"));
@@ -194,7 +194,6 @@ public class SubscriptionJdbcDao implements SubscriptionDao {
 		return rowCount;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SubscriptionVo> getSubscribersWithPaging(String listId, PagingVo vo) {
 		List<Object> parms = new ArrayList<Object>();
 		String whereSql = buildWhereClause(listId, vo, parms);
@@ -299,7 +298,6 @@ public class SubscriptionJdbcDao implements SubscriptionDao {
 		return whereSql;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SubscriptionVo> getSubscribers(String listId) {
 		String sql = 
 			"select a.EmailAddrId, " +
@@ -329,7 +327,6 @@ public class SubscriptionJdbcDao implements SubscriptionDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SubscriptionVo> getSubscribersWithCustomerRecord(String listId) {
 		String sql = 
 			"select a.EmailAddrId, " +
@@ -359,7 +356,6 @@ public class SubscriptionJdbcDao implements SubscriptionDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SubscriptionVo> getSubscribersWithoutCustomerRecord(String listId) {
 		String sql = 
 			"select a.EmailAddrId, " +
@@ -420,7 +416,6 @@ public class SubscriptionJdbcDao implements SubscriptionDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SubscriptionVo> getByAddrId(long addrId) {
 		String sql = "select a.*, " +
 				" b.EmailAddr, " +
@@ -434,7 +429,6 @@ public class SubscriptionJdbcDao implements SubscriptionDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SubscriptionVo> getByListId(String listId) {
 		String sql = "select a.*, " +
 				" b.EmailAddr, " +

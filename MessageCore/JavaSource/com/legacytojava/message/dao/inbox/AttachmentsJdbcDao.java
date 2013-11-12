@@ -28,9 +28,9 @@ public class AttachmentsJdbcDao implements AttachmentsDao {
 		return jdbcTemplate;
 	}
 
-	private static final class AttachmentsMapper implements RowMapper {
+	private static final class AttachmentsMapper implements RowMapper<AttachmentsVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public AttachmentsVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			AttachmentsVo attachmentsVo = new AttachmentsVo();
 			
 			attachmentsVo.setMsgId(rs.getLong("MsgId"));
@@ -59,7 +59,6 @@ public class AttachmentsJdbcDao implements AttachmentsDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<AttachmentsVo> getByMsgId(long msgId) {
 		String sql = 
 			"select * " +

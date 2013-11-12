@@ -29,9 +29,9 @@ public class MsgHeadersJdbcDao implements MsgHeadersDao {
 		return jdbcTemplate;
 	}
 
-	private static final class MsgHeadersMapper implements RowMapper {
+	private static final class MsgHeadersMapper implements RowMapper<MsgHeadersVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgHeadersVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgHeadersVo msgHeadersVo = new MsgHeadersVo();
 			
 			msgHeadersVo.setMsgId(rs.getLong("MsgId"));
@@ -57,7 +57,6 @@ public class MsgHeadersJdbcDao implements MsgHeadersDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgHeadersVo> getByMsgId(long msgId) {
 		String sql = 
 			"select * " +

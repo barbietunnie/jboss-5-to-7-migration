@@ -31,9 +31,9 @@ public class SmtpServerJdbcDao implements SmtpServerDao {
 		return jdbcTemplate;
 	}
 
-	private static final class SmtpServerMapper implements RowMapper {
+	private static final class SmtpServerMapper implements RowMapper<SmtpConnVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public SmtpConnVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			SmtpConnVo smtpConnVo = new SmtpConnVo();
 			
 			smtpConnVo.setRowId(rs.getInt("RowId"));
@@ -73,7 +73,6 @@ public class SmtpServerJdbcDao implements SmtpServerDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SmtpConnVo> getAll(boolean onlyActive) {
 		List<String> keys = new ArrayList<String>();
 		String sql = "select * from SmtpServers ";
@@ -86,7 +85,6 @@ public class SmtpServerJdbcDao implements SmtpServerDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SmtpConnVo> getAllForTrial(boolean onlyActive) {
 		List<String> keys = new ArrayList<String>();
 		String sql = "select * from SmtpServers ";
@@ -105,7 +103,6 @@ public class SmtpServerJdbcDao implements SmtpServerDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<SmtpConnVo> getByServerType(String serverType, boolean onlyActive) {
 		List<String> keys = new ArrayList<String>();
 		keys.add(serverType);

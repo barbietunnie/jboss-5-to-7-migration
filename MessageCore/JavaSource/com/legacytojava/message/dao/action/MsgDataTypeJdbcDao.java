@@ -28,9 +28,9 @@ public class MsgDataTypeJdbcDao implements MsgDataTypeDao {
 		return jdbcTemplate;
 	}
 
-	static final class MsgDataTypeMapper implements RowMapper {
+	static final class MsgDataTypeMapper implements RowMapper<MsgDataTypeVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgDataTypeVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgDataTypeVo msgDataTypeVo = new MsgDataTypeVo();
 			
 			msgDataTypeVo.setRowId(rs.getInt("RowId"));
@@ -80,7 +80,6 @@ public class MsgDataTypeJdbcDao implements MsgDataTypeDao {
 			" order by DataTypeValue asc ";
 		
 		Object[] parms = new Object[] {dataType};
-		@SuppressWarnings("unchecked")
 		List<MsgDataTypeVo> list = (List<MsgDataTypeVo>)getJdbcTemplate().query(sql, parms, new MsgDataTypeMapper());
 		return list;
 	}

@@ -29,9 +29,9 @@ public class MsgRenderedJdbcDao implements MsgRenderedDao {
 		return jdbcTemplate;
 	}
 
-	private static final class MsgRenderedMapper implements RowMapper {
+	private static final class MsgRenderedMapper implements RowMapper<MsgRenderedVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgRenderedVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgRenderedVo msgRenderedVo = new MsgRenderedVo();
 			
 			msgRenderedVo.setRenderId(rs.getLong("RenderId"));
@@ -76,7 +76,6 @@ public class MsgRenderedJdbcDao implements MsgRenderedDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgRenderedVo> getByMsgSourceId(String msgSourceId) {
 		String sql = 
 			"select * " +

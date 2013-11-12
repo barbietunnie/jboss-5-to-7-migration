@@ -29,9 +29,9 @@ public class TimerServerJdbcDao implements TimerServerDao {
 		return jdbcTemplate;
 	}
 
-	private static final class TimerMapper implements RowMapper {
+	private static final class TimerMapper implements RowMapper<TimerServerVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public TimerServerVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			TimerServerVo timerServerVo = new TimerServerVo();
 			
 			timerServerVo.setRowId(rs.getInt("RowId"));
@@ -62,7 +62,6 @@ public class TimerServerJdbcDao implements TimerServerDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<TimerServerVo> getAll(boolean onlyActive) {
 		
 		String sql = "select * from TimerServers ";

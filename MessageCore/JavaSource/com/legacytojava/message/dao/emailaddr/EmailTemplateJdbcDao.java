@@ -37,9 +37,9 @@ public class EmailTemplateJdbcDao implements EmailTemplateDao {
 		return jdbcTemplate;
 	}
 
-	private static final class EmailTemplateMapper implements RowMapper {
+	private static final class EmailTemplateMapper implements RowMapper<EmailTemplateVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public EmailTemplateVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			EmailTemplateVo emailTemplateVo = new EmailTemplateVo();
 			
 			emailTemplateVo.setRowId(rs.getInt("RowId"));
@@ -84,7 +84,6 @@ public class EmailTemplateJdbcDao implements EmailTemplateDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<EmailTemplateVo> getByListId(String listId) {
 		String sql = "select a.*, b.ClientId " +
 				" from EmailTemplate a, MailingList b " +
@@ -96,7 +95,6 @@ public class EmailTemplateJdbcDao implements EmailTemplateDao {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<EmailTemplateVo> getAll() {
 		String sql = "select a.*, b.ClientId " +
 				" from EmailTemplate a, MailingList b " +
@@ -107,7 +105,6 @@ public class EmailTemplateJdbcDao implements EmailTemplateDao {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<EmailTemplateVo> getAllForTrial() {
 		String sql = "select a.*, b.ClientId " +
 				" from EmailTemplate a, MailingList b " +

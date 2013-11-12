@@ -30,9 +30,9 @@ public class MsgActionDetailJdbcDao implements MsgActionDetailDao {
 		return jdbcTemplate;
 	}
 
-	static final class MsgActionDetailMapper implements RowMapper {
+	static final class MsgActionDetailMapper implements RowMapper<MsgActionDetailVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MsgActionDetailVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MsgActionDetailVo msgActionDetailVo = new MsgActionDetailVo();
 			
 			msgActionDetailVo.setRowId(rs.getInt("RowId"));
@@ -78,7 +78,6 @@ public class MsgActionDetailJdbcDao implements MsgActionDetailDao {
 			return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MsgActionDetailVo> getAll() {
 		String sql = 
 			"select * " +

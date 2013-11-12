@@ -29,9 +29,9 @@ public class MailSenderPropsJdbcDao implements MailSenderPropsDao {
 		return jdbcTemplate;
 	}
 
-	private static final class MailSenderPropsMapper implements RowMapper {
+	private static final class MailSenderPropsMapper implements RowMapper<MailSenderVo> {
 		
-		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public MailSenderVo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			MailSenderVo mailSenderVo = new MailSenderVo();
 			
 			mailSenderVo.setRowId(rs.getInt("RowId"));
@@ -62,7 +62,6 @@ public class MailSenderPropsJdbcDao implements MailSenderPropsDao {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MailSenderVo> getAll() {
 		
 		String sql = "select * from MailSenderProps ";
