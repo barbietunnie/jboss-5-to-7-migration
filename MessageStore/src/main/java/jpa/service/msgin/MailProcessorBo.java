@@ -3,6 +3,7 @@ package jpa.service.msgin;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import javax.mail.Flags;
 import javax.mail.Message;
@@ -11,6 +12,7 @@ import javax.mail.Part;
 import javax.mail.Transport;
 
 import jpa.constant.CarrierCode;
+import jpa.data.preload.RuleNameEnum;
 import jpa.exception.DataValidationException;
 import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
@@ -82,15 +84,10 @@ public class MailProcessorBo implements java.io.Serializable {
 						&& !msgs[i].isSet(Flags.Flag.DELETED)) {
 					long start = System.currentTimeMillis();
 					logger.info("Processing message number[" + (i+1) +"]...");
-					MessageBean msgBean = processPart(msgs[i]);
-					String ruleName = msgParser.parse(msgBean);
-					msgBean.setRuleName(ruleName);
-					MessageContext ctx = new MessageContext(msgBean);
-					taskBo.scheduleTasks(ctx);
+					processPart(msgs[i], req.getRowIds());
 					logger.info("Completed processing of message number["
 							+ (i + 1) + "], time taken: "
 							+ (System.currentTimeMillis() - start) + " ms");
-					req.getRowIds().addAll(ctx.getRowIds());
 				}
 				// release the instance for GC, not working w/pop3
 				// msgs[i]=null;
@@ -109,9 +106,10 @@ public class MailProcessorBo implements java.io.Serializable {
 	 * @param p - part
 	 * @throws MessagingException 
 	 * @throws IOException if any error
-	 * @return a MessageBean instance
+	 * @throws TemplateException 
+	 * @throws DataValidationException 
 	 */
-	MessageBean processPart(Part p) throws IOException, MessagingException {
+	void processPart(Part p, List<Integer> savedRowIds) throws IOException, MessagingException, DataValidationException, TemplateException {
 		long start_tms = System.currentTimeMillis();
 		
 		// parse the MimeMessage to MessageBean
@@ -151,7 +149,7 @@ public class MailProcessorBo implements java.io.Serializable {
 		}
 		if (msgBean.getComponentsSize().size() > 0) {
 			for (int i = 0; i < msgBean.getComponentsSize().size(); i++) {
-				Integer objSize = (Integer) msgBean.getComponentsSize().get(i);
+				Integer objSize = msgBean.getComponentsSize().get(i);
 				if (objSize.intValue() > MAX_INBOUND_CMPT_SIZE) {
 					isMsgSizeTooLarge = true;
 					logger.warn("Message component(" + i + ") exceeded limit: "
@@ -162,6 +160,7 @@ public class MailProcessorBo implements java.io.Serializable {
 		}
 		
 		if (isMsgSizeTooLarge) {
+			msgBean.setRuleName(RuleNameEnum.SIZE_TOO_LARGE.getValue());
 			try {
 				// return the mail
 				Message reply = new MailReaderReply().composeReply((Message) p, body, contentType);
@@ -204,13 +203,14 @@ public class MailProcessorBo implements java.io.Serializable {
 			else { // parse the message for RuleName
 				msgBean.setRuleName(msgParser.parse(msgBean));
 				/* saveMessage() is handled by TackschedulerBo */
-				//int msgId = messageInboxBo.saveMessage(msgBean);
-				//logger.info("MessageBean saved to database, MessageInbox RowId: " + msgId);
+				MessageContext ctx = new MessageContext(msgBean);
+				taskBo.scheduleTasks(ctx);
+				savedRowIds.addAll(ctx.getRowIds());
 			}
 		}
 		logger.info("Number of attachments: " + msgBean.getAttachCount());
 
-		// message has been sent, delete it from mail box
+		// message has been processed, delete it from mail box
 		// keep the message if it's from notes
 		if (!CarrierCode.READONLY.getValue().equals(mInbox.getCarrierCode())) {
 			((Message) p).setFlag(Flags.Flag.DELETED, true);
@@ -222,7 +222,5 @@ public class MailProcessorBo implements java.io.Serializable {
 		long time_spent = System.currentTimeMillis() - start_tms;
 		logger.info("Msg from " + msgBean.getFromAsString() + " processed, milliseconds: "
 				+ time_spent);
-		
-		return msgBean;
 	}
 }
