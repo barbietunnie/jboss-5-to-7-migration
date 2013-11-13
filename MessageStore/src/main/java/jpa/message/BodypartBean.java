@@ -1,12 +1,12 @@
 package jpa.message;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -18,6 +18,7 @@ import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -540,21 +541,19 @@ public class BodypartBean implements Serializable {
 	 *            an InputStream
 	 */
 	protected final void setValue(InputStream value) {
-		// if the stream is not buffered, wrap it with a BufferedInputStream
-		if (!(value instanceof BufferedInputStream)) {
-			value = new BufferedInputStream(value);
-		}
-		DataInputStream dis = new DataInputStream(value);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buf = new byte[512];
-		int len;
+		OutputStreamWriter osw = new OutputStreamWriter(baos);
 		try {
-			while ((len = dis.read(buf)) > 0) {
-				baos.write(buf, 0, len);
-			}
+			IOUtils.copy(value, osw, Charset.defaultCharset());
 		}
 		catch (IOException e) {
 			logger.error("IOExcetion caught", e);
+		}
+		finally {
+			try {
+				osw.close();
+			}
+			catch (IOException ignore) {}
 		}
 		this.value = baos.toByteArray();
 	}

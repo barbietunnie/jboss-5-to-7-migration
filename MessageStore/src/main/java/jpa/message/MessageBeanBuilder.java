@@ -583,7 +583,7 @@ public final class MessageBeanBuilder {
 			if (p.isMimeType("text/plain") || p.isMimeType("text/html")) {
 				logger.info("processAttc: level " + level + ", text message: " + contentType);
 				aNode.setValue((String) p.getContent());
-				msgBean.getComponentsSize().add(Integer.valueOf(aNode.getSize()));
+				msgBean.getComponentsSize().add(aNode.getSize());
 			}
 			else if (p.isMimeType("multipart/*")) {
 				// multipart attachment(s) detected
@@ -629,26 +629,25 @@ public final class MessageBeanBuilder {
 							+ contentType);
 					aNode.setValue((String) o);
 					if (aNode.getValue() != null) {
-						msgBean.getComponentsSize().add(Integer.valueOf(((byte[]) aNode.getValue()).length));
+						msgBean.getComponentsSize().add(aNode.getValue().length);
 					}
 				}
 				else if (o instanceof InputStream) {
 					// stream type of section
 					logger.info("processAttc: level " + level + ", Java InputStream Content type "
 							+ contentType);
-					InputStream is = (InputStream) o;
-					aNode.setValue((InputStream) is);
+					aNode.setValue((InputStream) o); // it converts input stream to byte array
 					if (aNode.getValue() != null) {
-						msgBean.getComponentsSize().add(Integer.valueOf(((byte[]) aNode.getValue()).length));
+						msgBean.getComponentsSize().add(aNode.getValue().length);
 					}
 				}
 				else if (o != null) {
 					// unknown Java type, write it out as a string anyway.
 					logger.error("processAttc: level " + level + ", Unknown Object type: "
 							+ o.toString());
-					aNode.setValue((String) o.toString());
+					aNode.setValue(o.toString());
 					if (aNode.getValue() != null) {
-						msgBean.getComponentsSize().add(Integer.valueOf(((byte[]) aNode.getValue()).length));
+						msgBean.getComponentsSize().add(aNode.getValue().length);
 					}
 				}
 				else {
@@ -668,7 +667,7 @@ public final class MessageBeanBuilder {
 			setAnodeValue(subNode, p,
 					"reader002: IndexOutOfBoundsException thrown from mp.getBodyPart(i), Body Part does not exist.");
 			if (subNode.getValue() != null) {
-				msgBean.getComponentsSize().add(Integer.valueOf(((byte[]) subNode.getValue()).length));
+				msgBean.getComponentsSize().add(subNode.getValue().length);
 			}
 			subNode.setDisposition(aNode.getDisposition());
 			subNode.setDescription(aNode.getDescription());
@@ -687,8 +686,7 @@ public final class MessageBeanBuilder {
 				aNode.put(subNode);
 				setAnodeValue(subNode, p);
 				if (subNode.getValue() != null) {
-					msgBean.getComponentsSize().add(
-							Integer.valueOf(((byte[]) subNode.getValue()).length));
+					msgBean.getComponentsSize().add(subNode.getValue().length);
 				}
 				subNode.setDisposition(aNode.getDisposition());
 				subNode.setDescription(aNode.getDescription());
@@ -696,8 +694,7 @@ public final class MessageBeanBuilder {
 			else {
 				setAnodeValue(aNode, p);
 				if (aNode.getValue() != null) {
-					msgBean.getComponentsSize()
-							.add(Integer.valueOf(((byte[]) aNode.getValue()).length));
+					msgBean.getComponentsSize().add(aNode.getValue().length);
 				}
 			}
 		}
@@ -712,8 +709,7 @@ public final class MessageBeanBuilder {
 				aNode.put(subNode);
 				setAnodeValue(subNode, p);
 				if (subNode.getValue() != null) {
-					msgBean.getComponentsSize().add(
-							Integer.valueOf(((byte[]) subNode.getValue()).length));
+					msgBean.getComponentsSize().add(subNode.getValue().length);
 				}
 				subNode.setDisposition(aNode.getDisposition());
 				subNode.setDescription(aNode.getDescription());
@@ -721,8 +717,7 @@ public final class MessageBeanBuilder {
 			else {
 				setAnodeValue(aNode, p);
 				if (aNode.getValue() != null) {
-					msgBean.getComponentsSize()
-							.add(Integer.valueOf(((byte[]) aNode.getValue()).length));
+					msgBean.getComponentsSize().add(aNode.getValue().length);
 				}
 			}
 		}
