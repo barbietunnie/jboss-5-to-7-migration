@@ -12,6 +12,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.component.html.HtmlDataTable;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.DataModel;
 import javax.faces.validator.ValidatorException;
 import javax.persistence.NoResultException;
@@ -19,11 +20,15 @@ import javax.persistence.NoResultException;
 import jpa.constant.Constants;
 import jpa.constant.MobileCarrierEnum;
 import jpa.exception.DataValidationException;
+import jpa.model.EmailAddress;
+import jpa.model.SenderData;
 import jpa.model.SubscriberData;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
 import jpa.msgui.vo.PagingSubscriberData;
 import jpa.msgui.vo.PagingVo;
+import jpa.service.EmailAddressService;
+import jpa.service.SenderDataService;
 import jpa.service.SubscriberDataService;
 import jpa.util.EmailAddrUtil;
 import jpa.util.PhoneNumberUtil;
@@ -40,6 +45,8 @@ public class SubscriberDataBean implements java.io.Serializable {
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private SubscriberDataService subscriberDao = null;
+	private SenderDataService senderDao = null;
+	private EmailAddressService emailAddrDao = null;
 	private transient DataModel<SubscriberData> subscribers = null;
 	private SubscriberData subscriber = null;
 	private boolean editMode = true;
@@ -48,7 +55,7 @@ public class SubscriberDataBean implements java.io.Serializable {
 	private final PagingSubscriberData pagingVo =  new PagingSubscriberData();;
 	private String searchString = null;
 	
-	private transient UIInput custIdInput = null;
+	private transient UIInput subscriberIdInput = null;
 	private String testResult = null;
 	private String actionFailure = null;
 	
@@ -61,20 +68,17 @@ public class SubscriberDataBean implements java.io.Serializable {
 	private transient UIInput endDateInput = null;
 	private transient UIInput mobileCarrierInput = null;
 	
-	private final SubscriberData custMeta = new SubscriberData();
-	
-	private static String TO_EDIT = "subscriberlist.edit";
-	private static String TO_FAILED = "subscriberlist.failed";
-	private static String TO_DELETED = "subscriberlist.deleted";
-	private static String TO_SAVED = "subscriberlist.saved";
-	private static String TO_CANCELED = "subscriberlist.canceled";
 	private static String TO_SELF = null;
-	private static String TO_PAGING = "subscriberlist.paging";
+	private static String TO_EDIT = "subscriberEdit";
+	private static String TO_FAILED = TO_SELF;
+	private static String TO_LIST = "subscribersList";
+	private static String TO_SAVED = TO_LIST;
+	private static String TO_CANCELED = TO_LIST;
 
 	@SuppressWarnings("unchecked")
 	public DataModel<SubscriberData> getSubscribers() {
 		String fromPage = FacesUtil.getRequestParameter("frompage");
-		if (fromPage != null && fromPage.equals("main")) {
+		if (StringUtils.equals(fromPage,"main")) {
 			resetPagingVo();
 		}
 		// retrieve total number of rows
@@ -87,8 +91,8 @@ public class SubscriberDataBean implements java.io.Serializable {
 			/* set keys for paging */
 			if (!subscriberList.isEmpty()) {
 				SubscriberData firstRow = (SubscriberData) subscriberList.get(0);
-				pagingVo.setStrIdFirst(firstRow.getSubscriberId());
 				SubscriberData lastRow = (SubscriberData) subscriberList.get(subscriberList.size() - 1);
+				pagingVo.setStrIdFirst(firstRow.getSubscriberId());
 				pagingVo.setStrIdLast(lastRow.getSubscriberId());
 			}
 			else {
@@ -101,6 +105,28 @@ public class SubscriberDataBean implements java.io.Serializable {
 			subscribers = new PagedListDataModel(subscriberList, pagingVo.getRowCount(), pagingVo.getPageSize());
 		}
 		return subscribers;
+	}
+
+	public SenderDataService getSenderDataService() {
+		if (senderDao == null) {
+			senderDao = SpringUtil.getWebAppContext().getBean(SenderDataService.class);
+		}
+		return senderDao;
+	}
+
+	public void setSenderDataService(SenderDataService senderDao) {
+		this.senderDao = senderDao;
+	}
+	
+	public EmailAddressService getEmailAddressService() {
+		if (emailAddrDao == null) {
+			emailAddrDao = SpringUtil.getWebAppContext().getBean(EmailAddressService.class);
+		}
+		return emailAddrDao;
+	}
+
+	public void setEmailAddressService(EmailAddressService emailAddrDao) {
+		this.emailAddrDao = emailAddrDao;
 	}
 
 	public String viewSubscriber() {
@@ -125,7 +151,7 @@ public class SubscriberDataBean implements java.io.Serializable {
 		return TO_EDIT;
 	}
 
-	public String searchByAddress() {
+	public void searchByAddress(AjaxBehaviorEvent event) {
 		boolean changed = false;
 		if (this.searchString == null) {
 			if (pagingVo.getSearchString() != null) {
@@ -141,40 +167,40 @@ public class SubscriberDataBean implements java.io.Serializable {
 			resetPagingVo();
 			pagingVo.setSearchString(searchString);
 		}
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String resetSearch() {
+	public void resetSearch(AjaxBehaviorEvent event) {
 		searchString = null;
 		pagingVo.setSearchString(null);
 		resetPagingVo();
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
-	public String pageFirst() {
+	public void pageFirst(AjaxBehaviorEvent event) {
 		dataTable.setFirst(0);
 		pagingVo.setPageAction(PagingVo.PageAction.FIRST);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
 
-	public String pagePrevious() {
+	public void pagePrevious(AjaxBehaviorEvent event) {
 		dataTable.setFirst(dataTable.getFirst() - dataTable.getRows());
 		pagingVo.setPageAction(PagingVo.PageAction.PREVIOUS);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
 
-	public String pageNext() {
+	public void pageNext(AjaxBehaviorEvent event) {
 		dataTable.setFirst(dataTable.getFirst() + dataTable.getRows());
 		pagingVo.setPageAction(PagingVo.PageAction.NEXT);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
 
-	public String pageLast() {
+	public void pageLast(AjaxBehaviorEvent event) {
 		int count = dataTable.getRowCount();
 		int rows = dataTable.getRows();
 		dataTable.setFirst(count - ((count % rows != 0) ? count % rows : rows));
 		pagingVo.setPageAction(PagingVo.PageAction.LAST);
-		return TO_PAGING;
+		return; // TO_PAGING;
 	}
     
 	public int getLastPageRow() {
@@ -193,10 +219,10 @@ public class SubscriberDataBean implements java.io.Serializable {
 		subscribers = null;
 	}
 
-	public String refreshPage() {
+	public void refreshPage(AjaxBehaviorEvent event) {
 		refresh();
 		pagingVo.setRowCount(-1);
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 	
 	public SubscriberData getData() {
@@ -205,10 +231,10 @@ public class SubscriberDataBean implements java.io.Serializable {
 		return subscriber;
 	}
 	
-	public String refreshSubscriber() {
+	public void refreshSubscriber(AjaxBehaviorEvent event) {
 		getData();
 		FacesUtil.refreshCurrentJSFPage();
-		return TO_SELF;
+		return; // TO_SELF;
 	}
 
 	private void resetPagingVo() {
@@ -220,7 +246,7 @@ public class SubscriberDataBean implements java.io.Serializable {
 	private void reset() {
 		testResult = null;
 		actionFailure = null;
-		custIdInput = null;
+		subscriberIdInput = null;
 		emailAddrInput = null;
 		ssnNumberInput = null;
 		dayPhoneInput = null;
@@ -231,12 +257,12 @@ public class SubscriberDataBean implements java.io.Serializable {
 		mobileCarrierInput = null;
 	}
 	
-	public String deleteSubscribers() {
+	public void deleteSubscribers(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("deleteSubscribers() - Entering...");
 		if (subscribers == null) {
 			logger.warn("deleteSubscribers() - Subscriber List is null.");
-			return TO_FAILED;
+			return; //TO_FAILED;
 		}
 		reset();
 		List<SubscriberData> addrList = getSubscriberList();
@@ -251,7 +277,7 @@ public class SubscriberDataBean implements java.io.Serializable {
 			}
 		}
 		refresh();
-		return TO_DELETED;
+		return; // TO_DELETED;
 	}
 
 	public String saveSubscriber() {
@@ -263,6 +289,10 @@ public class SubscriberDataBean implements java.io.Serializable {
 		}
 		reset();
 		// update database
+		EmailAddress email = getEmailAddressService().findSertAddress(subscriber.getEmailAddr().getAddress());
+		subscriber.setEmailAddr(email);
+		SenderData sender = getSenderDataService().getBySenderId(subscriber.getSenderData().getSenderId());
+		subscriber.setSenderData(sender);
 		if (StringUtils.isNotBlank(FacesUtil.getLoginUserId())) {
 			subscriber.setUpdtUserId(FacesUtil.getLoginUserId());
 		}
@@ -301,9 +331,9 @@ public class SubscriberDataBean implements java.io.Serializable {
 			return TO_FAILED;
 		}
 		reset();
-		List<SubscriberData> custList = getSubscriberList();
-		for (int i=0; i<custList.size(); i++) {
-			SubscriberData vo = custList.get(i);
+		List<SubscriberData> subrList = getSubscriberList();
+		for (int i=0; i<subrList.size(); i++) {
+			SubscriberData vo = subrList.get(i);
 			if (vo.isMarkedForDeletion()) {
 				this.subscriber = new SubscriberData();
 				try {
@@ -316,7 +346,7 @@ public class SubscriberDataBean implements java.io.Serializable {
 				//subscriber.setLastName(null);
 				//subscriber.setFirstName(null);
 				subscriber.setSubscriberId(null);
-				subscriber.setEmailAddr(null);
+				subscriber.setEmailAddr(new EmailAddress());
 				subscriber.setUserPassword(null);
 				subscriber.setMarkedForEdition(true);
 				editMode = false;
@@ -331,6 +361,9 @@ public class SubscriberDataBean implements java.io.Serializable {
 			logger.debug("addSubscriber() - Entering...");
 		reset();
 		this.subscriber = new SubscriberData();
+		SenderData default_sender = getSenderDataService().getBySenderId(Constants.DEFAULT_SENDER_ID);
+		subscriber.setEmailAddr(new EmailAddress());
+		subscriber.setSenderData(default_sender);
 		subscriber.setMarkedForEdition(true);
 		subscriber.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		editMode = false;
@@ -368,7 +401,7 @@ public class SubscriberDataBean implements java.io.Serializable {
 	public void validatePrimaryKey(FacesContext context, UIComponent component, Object value) {
 		String subrId = (String) value;
 		if (isDebugEnabled)
-			logger.debug("validatePrimaryKey() - CustId: " + subrId);
+			logger.debug("validatePrimaryKey() - SubscriberId: " + subrId);
 		try {
 			SubscriberData vo = getSubscriberDataService().getBySubscriberId(subrId);
 			if (editMode == true && subscriber != null
@@ -405,13 +438,16 @@ public class SubscriberDataBean implements java.io.Serializable {
 				throw new ValidatorException(message);
 			}
 			else {
-				SubscriberData vo = getSubscriberDataService().getByEmailAddress(emailAddr);
-				if (vo != null && subscriber != null && !vo.getSubscriberId().equals(subscriber.getSubscriberId())) {
-					FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
-							"jpa.msgui.messages", "emailAddressAlreadyUsed", null);
-					message.setSeverity(FacesMessage.SEVERITY_WARN);
-					throw new ValidatorException(message);
+				try {
+					SubscriberData vo = getSubscriberDataService().getByEmailAddress(emailAddr);
+					if (subscriber != null && !vo.getSubscriberId().equals(subscriber.getSubscriberId())) {
+						FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+								"jpa.msgui.messages", "emailAddressAlreadyUsed", null);
+						message.setSeverity(FacesMessage.SEVERITY_WARN);
+						throw new ValidatorException(message);
+					}
 				}
+				catch (NoResultException e) {}
 			}
 		}
 	}
@@ -562,12 +598,12 @@ public class SubscriberDataBean implements java.io.Serializable {
 		this.dataTable = dataTable;
 	}
 
-	public UIInput getCustIdInput() {
-		return custIdInput;
+	public UIInput getSubscriberIdInput() {
+		return subscriberIdInput;
 	}
 
-	public void setCustIdInput(UIInput custIdInput) {
-		this.custIdInput = custIdInput;
+	public void setSubscriberIdInput(UIInput subscriberIdInput) {
+		this.subscriberIdInput = subscriberIdInput;
 	}
 
 	public UIInput getEmailAddrInput() {
@@ -632,9 +668,5 @@ public class SubscriberDataBean implements java.io.Serializable {
 
 	public void setMobileCarrierInput(UIInput mobileCarrierInput) {
 		this.mobileCarrierInput = mobileCarrierInput;
-	}
-
-	public SubscriberData getCustMeta() {
-		return custMeta;
 	}
 }
