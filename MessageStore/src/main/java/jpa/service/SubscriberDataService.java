@@ -138,6 +138,7 @@ public class SubscriberDataService implements java.io.Serializable {
 			}
 		}
 		finally {
+			em.flush();
 		}
 	}
 	
@@ -157,12 +158,7 @@ public class SubscriberDataService implements java.io.Serializable {
 			}
 		}
 		if (subscriber.getEmailAddr()==null) {
-			if (StringUtils.isNotBlank(subscriber.getEmailAddress())) {
-				subscriber.setEmailAddr(emailService.findSertAddress(subscriber.getEmailAddress()));
-			}
-			else {
-				throw new IllegalArgumentException("An EmailAddress instance must be provided in the entity.");
-			}
+			throw new IllegalArgumentException("An EmailAddress instance must be provided in the entity.");
 		}
 	}
 
