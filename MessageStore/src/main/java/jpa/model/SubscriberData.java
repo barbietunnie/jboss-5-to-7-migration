@@ -115,8 +115,8 @@ public class SubscriberData extends BaseModel implements java.io.Serializable {
 
 	@Transient
 	private String origSubrId = null;
-	@Transient
-	private String emailAddress = null;
+//	@Transient
+//	private String emailAddress = null;
 
 	public SubscriberData() {
 		// must have a no-argument constructor
@@ -428,14 +428,6 @@ public class SubscriberData extends BaseModel implements java.io.Serializable {
 
 	public void setOrigSubrId(String origSubrId) {
 		this.origSubrId = origSubrId;
-	}
-
-	public String getEmailAddress() {
-		return emailAddress;
-	}
-
-	public void setEmailAddress(String emailAddress) {
-		this.emailAddress = emailAddress;
 	}
 
 }
