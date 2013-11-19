@@ -16,27 +16,27 @@
 		
 		<h:panelGroup>
 		<h:outputText value="#{msgs.subscriberIdPrompt}"/>
-		<h:outputText value="*" style="color: red;" rendered="#{subscriberData.custMeta.subscriberId != null}"/>
+		<h:outputText value="*" style="color: red;" rendered="#{subscriberData.subscriber.subscriberId != null}"/>
 		</h:panelGroup>
-		<h:inputText id="custid" value="#{subscriberData.subscriber.subscriberId}"
+		<h:inputText id="subscriberid" value="#{subscriberData.subscriber.subscriberId}"
 			required="true" label="#{msgs.subscriberIdPrompt}" 
-			binding="#{subscriberData.custIdInput}" 
+			binding="#{subscriberData.subscriberIdInput}" 
 			validator="#{subscriberData.validatePrimaryKey}"
-			maxlength="16" size="16">
-			<f:validateLength minimum="1" maximum="16"/>
+			maxlength="20" size="20">
+			<f:validateLength minimum="1" maximum="20"/>
 		</h:inputText>
-		<h:message for="custid" styleClass="errorMessage"/>
+		<h:message for="subscriberid" styleClass="errorMessage"/>
 		
 		<h:outputText value="#{msgs.siteIdPrompt}"/>
 		<h:selectOneMenu value="#{subscriberData.subscriber.senderData.senderId}"
-			id="clientid" label="#{msgs.siteIdPrompt}">
+			id="senderid" label="#{msgs.siteIdPrompt}">
 			<f:selectItems value="#{dynacodes.senderIdItems}"/>
 		</h:selectOneMenu>
-		<h:message for="clientid" styleClass="errorMessage"/>
+		<h:message for="senderid" styleClass="errorMessage"/>
 
 		<h:panelGroup>
 		<h:outputText value="#{msgs.firstNamePrompt}"/>
-		<h:outputText value="*" style="color: red;" rendered="#{subscriberData.custMeta.firstName != null}"/>
+		<h:outputText value="*" style="color: red;" rendered="#{subscriberData.subscriber.firstName != null}"/>
 		</h:panelGroup>
 		<h:inputText id="firstnm" value="#{subscriberData.subscriber.firstName}"
 			label="#{msgs.firstNamePrompt}"	maxlength="32" size="32">
@@ -53,7 +53,7 @@
 		
 		<h:panelGroup>
 		<h:outputText value="#{msgs.lastNamePrompt}"/>
-		<h:outputText value="*" style="color: red;" rendered="#{subscriberData.custMeta.lastName != null}"/>
+		<h:outputText value="*" style="color: red;" rendered="#{subscriberData.subscriber.lastName != null}"/>
 		</h:panelGroup>
 		<h:inputText id="lastnm" value="#{subscriberData.subscriber.lastName}"
 			required="true" label="#{msgs.lastNamePrompt}" 
@@ -64,17 +64,15 @@
 		
 		<h:panelGroup>
 		<h:outputText value="#{msgs.emailAddrPrompt}"/>
-		<h:outputText value="*" style="color: red;" rendered="#{subscriberData.custMeta.emailAddr != null}"/>
+		<h:outputText value="*" style="color: red;" rendered="#{subscriberData.subscriber.emailAddr != null}"/>
 		</h:panelGroup>
 		<h:panelGroup>
-		<div class="cellHeight">
 		<h:inputText id="emailaddr" value="#{subscriberData.subscriber.emailAddr.address}"
 			binding="#{subscriberData.emailAddrInput}"
 			required="true" validator="#{subscriberData.validateEmailAddress}"
 			label="#{msgs.emailAddrPrompt}" maxlength="255" size="50">
         	<f:validateLength minimum="1" maximum="255"/>
 		</h:inputText>
-		</div>
 		</h:panelGroup>
 		<h:message for="emailaddr" styleClass="errorMessage"/>
 		
@@ -220,13 +218,14 @@
 				onclick="javascript:return confirmSubmit();" />
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton value="#{msgs.refreshLinkText}" 
-				action="#{subscriberData.refreshSubscriber}"
-				immediate="true" title="Refresh" />
+				immediate="true" title="Refresh">
+				<f:ajax event="click" immediate="true" listener="#{subscriberData.refreshSubscriber}" render="@form"/>
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton type="reset" value="#{msgs.resetButtonText}"
 				title="Reset" />
 			<f:verbatim>&nbsp;</f:verbatim>
-			<h:commandButton value="#{msgs.cancelButtonText}" title="Cancel changes"
+			<h:commandButton value="#{msgs.backButtonText}" title="Go Back"
 				immediate="true" action="#{subscriberData.cancelEdit}" />
 		</h:panelGroup>
 		<h:panelGroup>
