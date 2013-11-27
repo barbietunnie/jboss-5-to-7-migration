@@ -13,7 +13,7 @@ import com.es.dao.action.RuleDataTypeDao;
 import com.es.dao.rule.RuleLogicDao;
 import com.es.dao.sender.SenderDao;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddrType;
+import com.es.data.constant.EmailAddressType;
 import com.es.data.constant.StatusId;
 import com.es.data.constant.TableColumnName;
 import com.es.data.constant.VariableName;
@@ -140,7 +140,7 @@ public class RuleActionTables extends AbstractTableBase {
 			RuleDataTypeVo tp = null;
 			if (RuleDataTypeEnum.EMAIL_ADDRESS.equals(type)) {
 				// insert email address values
-				for (EmailAddrType addrType : EmailAddrType.values()) {
+				for (EmailAddressType addrType : EmailAddressType.values()) {
 					tp = new RuleDataTypeVo(RuleDataTypeEnum.EMAIL_ADDRESS.name(), "$" + addrType.getValue(), "MessageBean");
 					typeService.insert(tp);
 				}

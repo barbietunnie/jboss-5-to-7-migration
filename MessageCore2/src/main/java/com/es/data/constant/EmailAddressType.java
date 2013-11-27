@@ -1,6 +1,6 @@
 package com.es.data.constant;
 
-public enum EmailAddrType {
+public enum EmailAddressType {
 	FROM_ADDR("From"),
 	REPLYTO_ADDR("Reply-To"),
 	TO_ADDR("To"),
@@ -12,7 +12,7 @@ public enum EmailAddrType {
 	ORIG_RCPT_ADDR("OrigRcpt");
 	
 	private String value;
-	EmailAddrType(String value) {
+	EmailAddressType(String value) {
 		this.value=value;
 	}
 	public String getValue() {
@@ -21,8 +21,8 @@ public enum EmailAddrType {
 	@Override public String toString() {
 		return getValue();
 	}
-	public EmailAddrType fromValue(String value) {
-		for (EmailAddrType v : EmailAddrType.values()) {
+	public EmailAddressType fromValue(String value) {
+		for (EmailAddressType v : EmailAddressType.values()) {
 			if (v.getValue().equalsIgnoreCase(value)) {
 				return v;
 			}

@@ -27,7 +27,7 @@ import com.es.dao.template.TemplateDataDao;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddrType;
+import com.es.data.constant.EmailAddressType;
 import com.es.data.constant.MailingListDeliveryType;
 import com.es.data.constant.MsgDirectionCode;
 import com.es.data.constant.MsgStatusCode;
@@ -663,14 +663,14 @@ public class InboxTables extends AbstractTableBase {
 		MsgAddressVo adr1 = new MsgAddressVo();
 		adr1.setMsgId(inbox.getMsgId());
 		adr1.setAddrSeq(addrSeq++);
-		adr1.setAddrType(EmailAddrType.FROM_ADDR.getValue());
+		adr1.setAddrType(EmailAddressType.FROM_ADDR.getValue());
 		adr1.setAddrValue(emailAddrService.getByAddrId(inbox.getFromAddrId()).getEmailAddr());
 		msgAddrService.insert(adr1);
 		
 		MsgAddressVo adr2 = new MsgAddressVo();
 		adr2.setMsgId(inbox.getMsgId());
 		adr2.setAddrSeq(addrSeq++);
-		adr2.setAddrType(EmailAddrType.TO_ADDR.getValue());
+		adr2.setAddrType(EmailAddressType.TO_ADDR.getValue());
 		adr2.setAddrValue(emailAddrService.getByAddrId(inbox.getToAddrId()).getEmailAddr());
 		msgAddrService.insert(adr2);
 	}

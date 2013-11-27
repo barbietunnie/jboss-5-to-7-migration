@@ -3,6 +3,7 @@ package com.es.data.constant;
 public class Constants {
 	public final static String DEFAULT_USER_ID = "MsgMaint";
 	public final static String DEFAULT_SENDER_ID = "System";
+	public final static String DEFAULT_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 	public final static String VENDER_DOMAIN_NAME = "Emailsphere.com";
 	public final static String VENDER_SUPPORT_EMAIL = "support@" + VENDER_DOMAIN_NAME;
