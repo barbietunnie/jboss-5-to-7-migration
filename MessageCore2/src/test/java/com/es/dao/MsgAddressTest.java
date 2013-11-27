@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.es.dao.inbox.MsgAddressDao;
 import com.es.dao.inbox.MsgInboxDao;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddrType;
+import com.es.data.constant.EmailAddressType;
 import com.es.vo.inbox.MsgAddressVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,7 +33,7 @@ public class MsgAddressTest {
 	@Resource
 	private MsgInboxDao msgInboxDao;
 	long testMsgId = 2L;
-	String testAddrType = EmailAddrType.FROM_ADDR.getValue();
+	String testAddrType = EmailAddressType.FROM_ADDR.getValue();
 
 	@BeforeClass
 	public static void MsgAddrsPrepare() {
