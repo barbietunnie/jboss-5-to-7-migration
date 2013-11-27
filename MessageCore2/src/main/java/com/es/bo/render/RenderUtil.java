@@ -53,10 +53,10 @@ public final class RenderUtil {
 	private static GlobalVariableDao globalVariableDao = null;
 	private static SenderVariableDao senderVariableDao = null;
 	private static TemplateVariableDao templateVariableDao = null;
-	private static TemplateDataDao bodyTemplateDao = null;
+	private static TemplateDataDao templateDataDao = null;
 	private static EmailTemplateDao emailTemplateDao = null;
 	private static MailingListDao mailingListDao = null;
-	private static EmailAddressDao emailAddrDao = null;
+	private static EmailAddressDao emailAddressDao = null;
 
 	private RenderUtil() {
 		// static methods only
@@ -81,9 +81,9 @@ public final class RenderUtil {
 	}
 
 	static TemplateDataDao getBodyTemplateDao() {
-		if (bodyTemplateDao == null)
-			bodyTemplateDao = SpringUtil.getAppContext().getBean(TemplateDataDao.class);
-		return bodyTemplateDao;
+		if (templateDataDao == null)
+			templateDataDao = SpringUtil.getAppContext().getBean(TemplateDataDao.class);
+		return templateDataDao;
 	}
 
 	static EmailTemplateDao getEmailTemplateDao() {
@@ -99,9 +99,9 @@ public final class RenderUtil {
 	}
 
 	static EmailAddressDao getEmailAddrDao() {
-		if (emailAddrDao == null)
-			emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressDao.class);
-		return emailAddrDao;
+		if (emailAddressDao == null)
+			emailAddressDao = SpringUtil.getAppContext().getBean(EmailAddressDao.class);
+		return emailAddressDao;
 	}
 
 	/**
@@ -110,7 +110,7 @@ public final class RenderUtil {
 	 * @param templateId -
 	 *            template id
 	 * @param senderId -
-	 *            client id
+	 *            sender id
 	 * @param variables -
 	 *            variables
 	 * @return rendered text
@@ -118,7 +118,7 @@ public final class RenderUtil {
 	 * @throws ParseException
 	 */
 	public static String renderTemplateId(String templateId, String senderId,
-			HashMap<String, RenderVariable> variables) throws DataValidationException,
+			Map<String, RenderVariable> variables) throws DataValidationException,
 			ParseException {
 		if (StringUtils.isEmpty(senderId)) {
 			senderId = Constants.DEFAULT_SENDER_ID;
@@ -133,7 +133,7 @@ public final class RenderUtil {
 			logger.debug("Template to render:" + LF + bodyVo.getBodyTemplate());
 		}
 		
-		HashMap<String, RenderVariable> map = new HashMap<String, RenderVariable>();
+		Map<String, RenderVariable> map = new HashMap<String, RenderVariable>();
 
 		List<TemplateVariableVo> tmpltList = getTemplateVariableDao().getByTemplateId(templateId);
 		for (Iterator<TemplateVariableVo> it = tmpltList.iterator(); it.hasNext();) {
@@ -178,12 +178,12 @@ public final class RenderUtil {
 	}
 	
 	/**
-	 * render a template by template text and client id.
+	 * render a template by template text and sender id.
 	 * 
 	 * @param templateText -
 	 *            template text
 	 * @param senderId -
-	 *            client id
+	 *            sender id
 	 * @param variables -
 	 *            variables
 	 * @return rendered text
@@ -191,7 +191,7 @@ public final class RenderUtil {
 	 * @throws ParseException
 	 */
 	public static String renderTemplateText(String templateText, String senderId,
-			HashMap<String, RenderVariable> variables) throws DataValidationException,
+			Map<String, RenderVariable> variables) throws DataValidationException,
 			ParseException {
 		if (templateText == null || templateText.trim().length() == 0) {
 			return templateText;
@@ -200,7 +200,7 @@ public final class RenderUtil {
 			senderId = Constants.DEFAULT_SENDER_ID;
 		}
 		
-		HashMap<String, RenderVariable> map = new HashMap<String, RenderVariable>();
+		Map<String, RenderVariable> map = new HashMap<String, RenderVariable>();
 
 		List<GlobalVariableVo> globalList = getGlobalVariableDao().getCurrent();
 		for (Iterator<GlobalVariableVo> it = globalList.iterator(); it.hasNext();) {
@@ -216,10 +216,10 @@ public final class RenderUtil {
 			map.put(vo.getVariableName(), var);
 		}
 
-		List<SenderVariableVo> clientList = null;
+		List<SenderVariableVo> sndrList = null;
 		if (senderId != null) {
-			clientList = getSenderVariableDao().getCurrentBySenderId(senderId);
-			for (Iterator<SenderVariableVo> it = clientList.iterator(); it.hasNext();) {
+			sndrList = getSenderVariableDao().getCurrentBySenderId(senderId);
+			for (Iterator<SenderVariableVo> it = sndrList.iterator(); it.hasNext();) {
 				SenderVariableVo vo = it.next();
 				RenderVariable var = new RenderVariable(
 						vo.getVariableName(),
@@ -257,7 +257,7 @@ public final class RenderUtil {
 			}
 		}
 		
-		HashMap<String, RenderVariable> errors = new HashMap<String, RenderVariable>();
+		Map<String, RenderVariable> errors = new HashMap<String, RenderVariable>();
 		String text = Renderer.getInstance().render(templateText, map, errors);
 		return text;
 	}
@@ -439,9 +439,9 @@ public final class RenderUtil {
 	 *            email address id
 	 * @return a map of rendered variables.
 	 */
-	static HashMap<String, RenderVariable> renderEmailVariables(List<String> variables,
+	static Map<String, RenderVariable> renderEmailVariables(List<String> variables,
 			long addrId) {
-		HashMap<String, RenderVariable> vars = new HashMap<String, RenderVariable>();
+		Map<String, RenderVariable> vars = new HashMap<String, RenderVariable>();
 		for (String name : variables) {
 			if (isListVariable(name)) {
 				continue;
@@ -503,7 +503,7 @@ public final class RenderUtil {
 	static String renderEmailVariable(String emailVariableName, Long sbsrId) throws DataValidationException {
 		String renderedValue = "";
 		EmailVariableVo vo = getEmailVariableDao().getByName(emailVariableName);
-		HashMap<String, RenderVariable> vars = new HashMap<String, RenderVariable>();
+		Map<String, RenderVariable> vars = new HashMap<String, RenderVariable>();
 		if (sbsrId != null) {
 			RenderVariable var = new RenderVariable(
 					"SubscriberAddressId",
@@ -617,7 +617,7 @@ public final class RenderUtil {
 		}
 		EmailAddressVo addrVo = getEmailAddrDao().findSertAddress(toAddr);
 		// render email variables using TO emailAddrId
-		HashMap<String, RenderVariable> vars = RenderUtil.renderEmailVariables(varNames, addrVo
+		Map<String, RenderVariable> vars = RenderUtil.renderEmailVariables(varNames, addrVo
 				.getEmailAddrId());
 		// include render variables from input data
 		if (variables != null) {
@@ -632,9 +632,9 @@ public final class RenderUtil {
 		vars.putAll(MailingListUtil.renderListVariables(listVo, toAddr, addrVo.getEmailAddrId()));
 		try {
 			// now render the templates
-			String clientId = listVo.getSenderId();
-			String body = RenderUtil.renderTemplateText(tmpltVo.getBodyText(), clientId, vars);
-			String subj = RenderUtil.renderTemplateText(tmpltVo.getSubject(), clientId, vars);
+			String senderId = listVo.getSenderId();
+			String body = RenderUtil.renderTemplateText(tmpltVo.getBodyText(), senderId, vars);
+			String subj = RenderUtil.renderTemplateText(tmpltVo.getSubject(), senderId, vars);
 			renderVo.setSubject(subj);
 			renderVo.setBody(body);
 		}
@@ -768,7 +768,7 @@ public final class RenderUtil {
 		}
 		EmailAddressVo addrVo = getEmailAddrDao().findSertAddress(toAddr);
 		// retrieve variable values by variable name and email address id
-		HashMap<String, RenderVariable> vars = RenderUtil.renderEmailVariables(varNames,
+		Map<String, RenderVariable> vars = RenderUtil.renderEmailVariables(varNames,
 				addrVo.getEmailAddrId());
 		// include render variables from input data
 		if (variables != null) {

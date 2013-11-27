@@ -20,7 +20,7 @@ public class CreateMysqlDatabase {
 	static final Logger logger = Logger.getLogger(CreateMysqlDatabase.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	private static String DB_NAME = "emaildb";
+	private static String DB_NAME = "message";
 	private String hostName = null;
 	private String rootPassword = null;
 	

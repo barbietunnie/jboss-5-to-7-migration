@@ -55,26 +55,25 @@ public class RenderBo {
 	@Autowired
 	private MsgSourceDao msgSourceDao;
 	@Autowired
-	private TemplateDataDao bodyTemplateDao;
+	private TemplateDataDao templateDataDao;
 	@Autowired
-	private TemplateDataDao subjTemplateDao;
-	@Autowired
-	private SenderVariableDao clientVariableDao;
+	private SenderVariableDao senderVariableDao;
 	@Autowired
 	private GlobalVariableDao globalVariableDao;
 	@Autowired
 	private TemplateVariableDao templateVariableDao;
 	@Autowired
-	private EmailAddressDao emailAddrDao;
+	private EmailAddressDao emailAddressDao;
 	
 	public RenderResponse getRenderedEmail(RenderRequest req) throws DataValidationException,
 			ParseException, AddressException {
 		logger.info("in getRenderedEmail(RenderRequest)...");
-		if (req == null)
+		if (req == null) {
 			throw new IllegalArgumentException("RenderRequest is null");
-		if (req.startTime==null)
+		}
+		if (req.startTime==null) {
 			req.startTime = new Timestamp(new java.util.Date().getTime());
-
+		}
 		RenderResponse rsp = initRenderResponse(req);
 		buildRenderVariables(req, rsp);
 		buildRenderedBody(req, rsp);
@@ -155,18 +154,17 @@ public class RenderBo {
 		String bodyTemplate = null;
 		String contentType = null;
 		// body template may come from variables
-		if (rsp.variableFinal.containsKey(VariableName.BODY_TEMPLATE)
+		if (rsp.variableFinal.containsKey(VariableName.BODY_TEMPLATE.getValue())
 				&& CodeType.YES_CODE.getValue().equalsIgnoreCase(srcVo.getAllowOverride())) {
-			RenderVariable var = (RenderVariable) rsp.variableFinal.get(VariableName.BODY_TEMPLATE);
+			RenderVariable var = rsp.variableFinal.get(VariableName.BODY_TEMPLATE.getValue());
 			if (VariableType.TEXT.equals(var.getVariableType())) {
 				bodyTemplate = (String) var.getVariableValue();
-				contentType = var.getVariableFormat() == null ? "text/plain" : var
-						.getVariableFormat();
+				contentType = var.getVariableFormat() == null ? "text/plain" : var.getVariableFormat();
 			}
 		}
 		
 		if (bodyTemplate == null) {
-			TemplateDataVo tmpltVo = getBodyTemplateDao().getByBestMatch(srcVo.getTemplateDataId(),
+			TemplateDataVo tmpltVo = getTemplateDataDao().getByBestMatch(srcVo.getTemplateDataId(),
 					req.senderId, req.startTime);
 			if (tmpltVo == null) {
 				throw new DataValidationException("BodyTemplate not found for: "
@@ -189,16 +187,16 @@ public class RenderBo {
 
 		String subjTemplate = null;
 		// subject template may come from variables
-		if (rsp.variableFinal.containsKey(VariableName.SUBJECT_TEMPLATE)
+		if (rsp.variableFinal.containsKey(VariableName.SUBJECT_TEMPLATE.getValue())
 				&& CodeType.YES_CODE.getValue().equalsIgnoreCase(srcVo.getAllowOverride())) {
-			RenderVariable var = (RenderVariable) rsp.variableFinal.get(VariableName.SUBJECT_TEMPLATE);
+			RenderVariable var = rsp.variableFinal.get(VariableName.SUBJECT_TEMPLATE.getValue());
 			if (VariableType.TEXT.equals(var.getVariableType())) {
 				subjTemplate = (String) var.getVariableValue();
 			}
 		}
 
 		if (subjTemplate == null) {
-			TemplateDataVo tmpltVo = getSubjTemplateDao().getByBestMatch(srcVo.getTemplateDataId(),
+			TemplateDataVo tmpltVo = getTemplateDataDao().getByBestMatch(srcVo.getTemplateDataId(),
 					req.senderId, req.startTime);
 			if (tmpltVo == null) {
 				throw new DataValidationException("SubjTemplate not found for: "
@@ -302,33 +300,33 @@ public class RenderBo {
 		for (Iterator<RenderVariable> it=c.iterator(); it.hasNext();) {
 			RenderVariable r = it.next();
 			if (r.getVariableValue() != null && VariableType.TEXT.equals(r.getVariableType())) {
-				if (VariableName.PRIORITY.equals(r.getVariableName())) {
+				if (VariableName.PRIORITY.getValue().equals(r.getVariableName())) {
 					String[] s = { (String) r.getVariableValue() };
 					mBean.setPriority(s);
 				}
-				else if (VariableName.RULE_NAME.equals(r.getVariableName()))
+				else if (VariableName.RULE_NAME.getValue().equals(r.getVariableName()))
 					mBean.setRuleName((String)r.getVariableValue());
-				else if (VariableName.CARRIER_CODE.equals(r.getVariableName()))
+				else if (VariableName.CARRIER_CODE.getValue().equals(r.getVariableName()))
 					mBean.setCarrierCode(CarrierCode.getByValue((String)r.getVariableValue()));
-				else if (VariableName.MAILBOX_HOST.equals(r.getVariableName()))
+				else if (VariableName.MAILBOX_HOST.getValue().equals(r.getVariableName()))
 					mBean.setMailboxHost((String)r.getVariableValue());
-				else if (VariableName.MAILBOX_HOST.equals(r.getVariableName()))
+				else if (VariableName.MAILBOX_HOST.getValue().equals(r.getVariableName()))
 					mBean.setMailboxHost((String)r.getVariableValue());
-				else if (VariableName.MAILBOX_NAME.equals(r.getVariableName()))
+				else if (VariableName.MAILBOX_NAME.getValue().equals(r.getVariableName()))
 					mBean.setMailboxName((String)r.getVariableValue());
-				else if (VariableName.MAILBOX_USER.equals(r.getVariableName()))
+				else if (VariableName.MAILBOX_USER.getValue().equals(r.getVariableName()))
 					mBean.setMailboxUser((String)r.getVariableValue());
-				else if (VariableName.FOLDER_NAME.equals(r.getVariableName()))
+				else if (VariableName.FOLDER_NAME.getValue().equals(r.getVariableName()))
 					mBean.setFolderName((String)r.getVariableValue());
-				else if (VariableName.SENDER_ID.equals(r.getVariableName()))
+				else if (VariableName.SENDER_ID.getValue().equals(r.getVariableName()))
 					mBean.setSenderId((String)r.getVariableValue());
-				else if (VariableName.SUBSCRIBER_ID.equals(r.getVariableName()))
+				else if (VariableName.SUBSCRIBER_ID.getValue().equals(r.getVariableName()))
 					mBean.setSubrId((String)r.getVariableValue());
-				else if (VariableName.TO_PLAIN_TEXT.equals(r.getVariableName()))
+				else if (VariableName.TO_PLAIN_TEXT.getValue().equals(r.getVariableName()))
 					mBean.setToPlainText(CodeType.YES_CODE.getValue().equals((String)r.getVariableValue()));
 			}
 			else if (r.getVariableValue() != null && VariableType.NUMERIC.equals(r.getVariableType())) {
-				if (VariableName.MSG_REF_ID.equals(r.getVariableName())) {
+				if (VariableName.MSG_REF_ID.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof Long)
 						mBean.setMsgRefId(((Long) r.getVariableValue()).intValue());
 					else if (r.getVariableValue() instanceof String)
@@ -336,7 +334,7 @@ public class RenderBo {
 				}
 			}
 			else if (VariableType.DATETIME.equals(r.getVariableType())) {
-				if (VariableName.SEND_DATE.equals(r.getVariableName())) {
+				if (VariableName.SEND_DATE.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() == null) {
 						mBean.setSendDate(new java.util.Date());
 					}
@@ -371,16 +369,18 @@ public class RenderBo {
 			mBean.setEmBedEmailId(Boolean.valueOf(false));
 		}
 
-		if (CodeType.YES_CODE.getValue().equalsIgnoreCase(src.getSaveMsgStream()))
+		if (CodeType.YES_CODE.getValue().equalsIgnoreCase(src.getSaveMsgStream())) {
 			mBean.setSaveMsgStream(true);
-		else
+		}
+		else {
 			mBean.setSaveMsgStream(false);
+		}
 	}
 	
 	/*
-	 * If MessageBean's ClientId field is not valued, and X-Client_id header is
-	 * found and valued, populate MessageBean's ClientId field with the value
-	 * from X-Client_id header. <br> 
+	 * If MessageBean's SenderId field is not valued, and X-Sender_id header is
+	 * found and valued, populate MessageBean's SenderId field with the value
+	 * from X-Sender_id header. <br> 
 	 */
 	private void buildRenderedXHdrs(RenderRequest req, RenderResponse rsp) {
 		logger.info("in buildRenderedXHdrs()...");
@@ -398,14 +398,16 @@ public class RenderBo {
 				msgHeader.setName(r.getVariableName());
 				msgHeader.setValue((String) r.getVariableValue());
 				headers.add(msgHeader);
-				// set ClientId for MessageBean
-				if (XHeaderName.SENDER_ID.equals(r.getVariableName())) {
-					if (StringUtils.isEmpty(mBean.getSenderId()))
+				// set SenderId for MessageBean
+				if (XHeaderName.SENDER_ID.getValue().equals(r.getVariableName())) {
+					if (StringUtils.isEmpty(mBean.getSenderId())) {
 						mBean.setSenderId((String) r.getVariableValue());
+					}
 				}
-				else if (XHeaderName.SUBSCRIBER_ID.equals(r.getVariableName())) {
-					if (StringUtils.isEmpty(mBean.getSubrId()))
+				else if (XHeaderName.SUBSCRIBER_ID.getValue().equals(r.getVariableName())) {
+					if (StringUtils.isEmpty(mBean.getSubrId())) {
 						mBean.setSubrId((String) r.getVariableValue());
+					}
 				}
 			}
 		}
@@ -420,7 +422,7 @@ public class RenderBo {
 		
 		// retrieve variables
 		Collection<GlobalVariableVo> globalVariables = getGlobalVariableDao().getCurrent();
-		Collection<SenderVariableVo> senderVariables = getClientVariableDao().getCurrentBySenderId(
+		Collection<SenderVariableVo> senderVariables = getSenderVariableDao().getCurrentBySenderId(
 				req.senderId);
 		Collection<TemplateVariableVo> templateVariables = getTemplateVariableDao()
 				.getCurrentByTemplateId(msgSourceVo.getTemplateVariableId(), req.senderId);
@@ -444,7 +446,7 @@ public class RenderBo {
 		
 		vreq = new RenderVariable(
 			EmailAddressType.FROM_ADDR.getValue(),
-			emailAddrDao.getByAddrId(msgSourceVo.getFromAddrId().longValue()).getEmailAddr(),
+			emailAddressDao.getByAddrId(msgSourceVo.getFromAddrId()).getEmailAddr(),
 			null,
 			VariableType.ADDRESS, 
 			CodeType.YES_CODE.getValue(),
@@ -455,7 +457,7 @@ public class RenderBo {
 		if (msgSourceVo.getReplyToAddrId()!=null) {
 			vreq = new RenderVariable(
 				EmailAddressType.REPLYTO_ADDR.getValue(),
-				emailAddrDao.getByAddrId(msgSourceVo.getReplyToAddrId().longValue()).getEmailAddr(),
+				emailAddressDao.getByAddrId(msgSourceVo.getReplyToAddrId()).getEmailAddr(),
 				null,
 				VariableType.ADDRESS, 
 				CodeType.YES_CODE.getValue(),
@@ -490,12 +492,12 @@ public class RenderBo {
 			String name = it.next();
 			if (to.get(name) != null) {
 				RenderVariable req = (RenderVariable) to.get(name);
-				if (CodeType.YES_CODE.getValue().equalsIgnoreCase(req.getAllowOverride())
-						|| CodeType.MANDATORY_CODE.getValue().equalsIgnoreCase(req.getAllowOverride())) {
+				if (CodeType.YES_CODE.getValue().equals(req.getAllowOverride())
+						|| CodeType.MANDATORY_CODE.getValue().equals(req.getAllowOverride())) {
 					to.put(name, from.get(name));
 				}
 				else {
-					RenderVariable r = (RenderVariable) from.get(name);
+					RenderVariable r = from.get(name);
 					r.setErrorMsg("Variable Override is not allowed.");
 					error.put(name, r);
 				}
@@ -512,7 +514,7 @@ public class RenderBo {
 		for (Iterator<String> it=keys.iterator(); it.hasNext();) {
 			String name = it.next();
 			RenderVariable req = (RenderVariable) ht.get(name);
-			if (CodeType.MANDATORY_CODE.getValue().equalsIgnoreCase(req.getAllowOverride())) {
+			if (CodeType.MANDATORY_CODE.getValue().equals(req.getAllowOverride())) {
 				req.setErrorMsg("Variable Override is mandatory.");
 				error.put(name, req);
 			}
@@ -578,28 +580,24 @@ public class RenderBo {
 		return msgSourceDao;
 	}
 
-	public TemplateDataDao getBodyTemplateDao() {
-		return bodyTemplateDao;
+	public TemplateDataDao getTemplateDataDao() {
+		return templateDataDao;
 	}
 
-	public SenderVariableDao getClientVariableDao() {
-		return clientVariableDao;
+	public SenderVariableDao getSenderVariableDao() {
+		return senderVariableDao;
 	}
 
 	public GlobalVariableDao getGlobalVariableDao() {
 		return globalVariableDao;
 	}
 
-	public TemplateDataDao getSubjTemplateDao() {
-		return subjTemplateDao;
-	}
-
 	public TemplateVariableDao getTemplateVariableDao() {
 		return templateVariableDao;
 	}
 
-	public EmailAddressDao getEmailAddrDao() {
-		return emailAddrDao;
+	public EmailAddressDao getEmailAddressDao() {
+		return emailAddressDao;
 	}
 
 }
