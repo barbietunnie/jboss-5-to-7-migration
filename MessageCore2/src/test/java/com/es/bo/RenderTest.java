@@ -8,12 +8,14 @@ import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,9 +29,17 @@ import com.es.bo.render.RenderRequest;
 import com.es.bo.render.RenderResponse;
 import com.es.bo.render.RenderVariable;
 import com.es.bo.render.Renderer;
+import com.es.core.util.SpringUtil;
+import com.es.data.constant.CarrierCode;
 import com.es.data.constant.Constants;
 import com.es.data.constant.EmailAddressType;
 import com.es.data.constant.VariableType;
+import com.es.data.constant.XHeaderName;
+import com.es.msgbean.BodypartBean;
+import com.es.msgbean.BodypartUtil;
+import com.es.msgbean.MessageBean;
+import com.es.msgbean.MessageNode;
+import com.es.msgbean.MsgHeader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-core-config.xml"})
@@ -52,7 +62,9 @@ public class RenderTest {
 					);
 			RenderResponse rsp = util.getRenderedEmail(req);
 			assertNotNull(rsp);
-			logger.info(rsp);
+			logger.info("testRender1() - ####################" + LF + rsp);
+			// verify rendered data
+			verifyRenderedData(rsp);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -70,13 +82,89 @@ public class RenderTest {
 					);
 			RenderResponse rsp = util.getRenderedEmail(req);
 			assertNotNull(rsp);
-			logger.info(rsp);
+			logger.info("testRender2() - ####################" + LF + rsp);
+			// verify rendered data
+			MessageBean msgBean = rsp.getMessageBean();
+			assertTrue("jsmith@test.com".equals(msgBean.getFromAsString()));
+			assertTrue(CarrierCode.SMTPMAIL.equals(msgBean.getCarrierCode()));
+			assertTrue(StringUtils.startsWith(msgBean.getSubject(), "Weekend Deals at MyBestDeals.com"));
+			assertTrue(Constants.DEFAULT_SENDER_ID.equals(msgBean.getSenderId()));
+			List<MsgHeader> headers = msgBean.getHeaders();
+			boolean headerFound = false;
+			for (MsgHeader header : headers) {
+				if (XHeaderName.SENDER_ID.getValue().equals(header.getName())) {
+					assertTrue(Constants.DEFAULT_SENDER_ID.equals(header.getValue()));
+					headerFound = true;
+					break;
+				}
+			}
+			assertTrue(headerFound);
+			assertTrue(StringUtils.contains(msgBean.getBody(), "Dear subscriber, here is a list"));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 			fail();
 		}
 	}
+	
+	@Test
+	public void testRenderBo() {
+		RenderBo renderBo = SpringUtil.getAppContext().getBean(RenderBo.class);
+		try {
+			RenderRequest req = new RenderRequest(
+					"testMsgSource",
+					Constants.DEFAULT_SENDER_ID,
+					new Timestamp(new java.util.Date().getTime()),
+					buildTestVariables()
+					);
+			RenderResponse rsp = renderBo.getRenderedEmail(req);
+			assertNotNull(rsp);
+			logger.info("testRenderBo() - ####################" + LF + rsp);
+			// verify rendered data
+			verifyRenderedData(rsp);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	private void verifyRenderedData(RenderResponse rsp) {
+		MessageBean msgBean = rsp.getMessageBean();
+		assertTrue("jsmith@test.com".equals(msgBean.getFromAsString()));
+		assertTrue("testto@localhost".equals(msgBean.getToAsString()));
+		assertTrue(CarrierCode.SMTPMAIL.equals(msgBean.getCarrierCode()));
+		assertTrue("Test Template".equals(msgBean.getSubject()));
+		assertTrue(Constants.DEFAULT_SENDER_ID.equals(msgBean.getSenderId()));
+		List<MsgHeader> headers = msgBean.getHeaders();
+		boolean headerFound = false;
+		for (MsgHeader header : headers) {
+			if (XHeaderName.SENDER_ID.getValue().equals(header.getName())) {
+				assertTrue(Constants.DEFAULT_SENDER_ID.equals(header.getValue()));
+				headerFound = true;
+				break;
+			}
+		}
+		assertTrue(headerFound);
+		assertTrue(StringUtils.contains(msgBean.getBody(), "Recursive Variable Jack Wang End"));
+		List<MessageNode> attachments = BodypartUtil.retrieveAttachments(msgBean);
+		assertTrue(attachments.size()==2);
+		MessageNode atc1 = attachments.get(0);
+		BodypartBean bpt1 = atc1.getBodypartNode();
+		assertTrue(StringUtils.startsWith(bpt1.getMimeType(), "text/plain"));
+		assertTrue(StringUtils.equals(bpt1.getDescription(), "jndi.txt"));
+		assertTrue(StringUtils.equals(bpt1.getDisposition(), "attachment"));
+		String body1 = new String(bpt1.getValue());
+		assertTrue(StringUtils.contains(body1, "# JBoss 7.1 jndi.properties"));
+		MessageNode atc2 = attachments.get(1);
+		BodypartBean bpt2 = atc2.getBodypartNode();
+		assertTrue(StringUtils.startsWith(bpt2.getMimeType(), "text/plain"));
+		assertTrue(StringUtils.equals(bpt2.getDescription(), "attachment1.txt"));
+		assertTrue(StringUtils.equals(bpt2.getDisposition(), "attachment"));
+		String body2 = new String(bpt2.getValue());
+		assertTrue(StringUtils.contains(body2, "Attachment Text ===="));
+	}
+
 	private static Map<String, RenderVariable> buildTestVariables() {
 		Map<String, RenderVariable> map=new HashMap<String, RenderVariable>();
 		
