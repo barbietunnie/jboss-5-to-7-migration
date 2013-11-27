@@ -37,7 +37,7 @@ import com.es.core.util.SpringUtil;
 import com.es.core.util.StringUtil;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddrType;
+import com.es.data.constant.EmailAddressType;
 import com.es.data.constant.RuleDataName;
 import com.es.data.constant.XHeaderName;
 import com.es.msg.util.EmailIdParser;
@@ -90,7 +90,7 @@ public final class MessageBeanUtil {
 			for (int i = 0; i < msgBean.getFrom().length; i++) {
 				// just for safety
 				if (msgBean.getFrom()[i] != null) {
-					msg.removeHeader(EmailAddrType.FROM_ADDR.getValue());
+					msg.removeHeader(EmailAddressType.FROM_ADDR.getValue());
 					msg.setFrom(msgBean.getFrom()[i]);
 					break;
 				}
@@ -101,22 +101,22 @@ public final class MessageBeanUtil {
 			msg.setFrom();
 		}
 		if (msgBean.getTo() != null) {
-			msg.removeHeader(EmailAddrType.TO_ADDR.getValue());
+			msg.removeHeader(EmailAddressType.TO_ADDR.getValue());
 			msg.setRecipients(Message.RecipientType.TO, msgBean.getTo());
 		}
 		else {
 			logger.warn("createMimeMessage() - MessageBean.getTo() returned a null");
 		}
 		if (msgBean.getCc() != null) {
-			msg.removeHeader(EmailAddrType.CC_ADDR.getValue());
+			msg.removeHeader(EmailAddressType.CC_ADDR.getValue());
 			msg.setRecipients(Message.RecipientType.CC, msgBean.getCc());
 		}
 		if (msgBean.getBcc() != null) {
-			msg.removeHeader(EmailAddrType.BCC_ADDR.getValue());
+			msg.removeHeader(EmailAddressType.BCC_ADDR.getValue());
 			msg.setRecipients(Message.RecipientType.BCC, msgBean.getBcc());
 		}
 		if (msgBean.getReplyto() != null) {
-			msg.removeHeader(EmailAddrType.REPLYTO_ADDR.getValue());
+			msg.removeHeader(EmailAddressType.REPLYTO_ADDR.getValue());
 			msg.setReplyTo(msgBean.getReplyto());
 		}
 		
