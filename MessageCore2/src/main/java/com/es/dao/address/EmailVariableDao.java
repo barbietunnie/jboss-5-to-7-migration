@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -46,12 +47,12 @@ public class EmailVariableDao {
 	public EmailVariableVo getByName(String variableName) {
 		String sql = "select * from Email_Variable where VariableName=:variableName";
 		SqlParameterSource namedParameters = new MapSqlParameterSource("variableName", variableName);
-		List<EmailVariableVo> list = getNamedParameterJdbcTemplate().query(sql, namedParameters,
-				new BeanPropertyRowMapper<EmailVariableVo>(EmailVariableVo.class));
-		if (list.size()>0) {
-			return list.get(0);
+		try {
+			EmailVariableVo vo = getNamedParameterJdbcTemplate().queryForObject(sql, namedParameters,
+					new BeanPropertyRowMapper<EmailVariableVo>(EmailVariableVo.class));
+			return vo;
 		}
-		else {
+		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}

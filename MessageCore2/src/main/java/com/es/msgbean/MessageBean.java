@@ -67,10 +67,10 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 
 	// MsgId of a MsgInbox record, set by MailSender. Not used by incoming
 	// e-mails
-	private Integer msgId;
+	private Long msgId;
 	
 	// RenderId of MsgRendered record, set by renderer engine.
-	private Integer renderId;
+	private Long renderId;
 
 	// Embed email IdToken into out-going email message, set by MailSender. Not
 	// used by incoming e-mails
@@ -81,7 +81,7 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	
 	// EmailId obtained from scanning incoming email, or set by rendering
 	// or mail delivery programs. A reference to a MsgInbox record.
-	private Integer msgRefId;
+	private Long msgRefId;
 
 	// email type, set by RuleEngine
 	private String ruleName = null;
@@ -419,11 +419,11 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	/**
 	 * @return message id
 	 */
-	public Integer getMsgId() {
+	public Long getMsgId() {
 		return msgId;
 	}
 
-	public Integer getRenderId() {
+	public Long getRenderId() {
 		return renderId;
 	}
 
@@ -444,7 +444,7 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	/**
 	 * @return reference message id
 	 */
-	public Integer getMsgRefId() {
+	public Long getMsgRefId() {
 		return msgRefId;
 	}
 
@@ -707,11 +707,11 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	 * 
 	 * @param msgId
 	 */
-	public void setMsgId(Integer msgId) {
+	public void setMsgId(Long msgId) {
 		this.msgId = msgId;
 	}
 
-	public void setRenderId(Integer renderId) {
+	public void setRenderId(Long renderId) {
 		this.renderId = renderId;
 	}
 
@@ -738,7 +738,7 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	 * 
 	 * @param outRefMsgId
 	 */
-	public void setMsgRefId(Integer msgRefId) {
+	public void setMsgRefId(Long msgRefId) {
 		this.msgRefId = msgRefId;
 	}
 

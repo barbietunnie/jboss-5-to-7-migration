@@ -1,8 +1,8 @@
-package com.es.variable;
+package com.es.bo.render;
 
 import java.io.Serializable;
 
-public class ErrorVariableVo implements Serializable {
+public class ErrorVariable implements Serializable {
 	private static final long serialVersionUID = 7902451918468414337L;
 
 	final static String LF = System.getProperty("line.separator", "\n");
@@ -11,7 +11,7 @@ public class ErrorVariableVo implements Serializable {
 	private final Object variableInfo;
 	private String errorMsg;
 
-	public ErrorVariableVo(String variableName, Object variableInfo, String errorMsg) {
+	public ErrorVariable(String variableName, Object variableInfo, String errorMsg) {
 		this.variableName = variableName;
 		this.variableInfo = variableInfo;
 		this.errorMsg = errorMsg;
@@ -19,7 +19,7 @@ public class ErrorVariableVo implements Serializable {
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("========== ErrorVariableVo Fields ==========" + LF);
+		sb.append("========== ErrorVariable Fields ==========" + LF);
 		sb.append("VariableName:   " + variableName + LF);
 		sb.append("VariableInfo:   " + variableInfo + LF);
 		sb.append("ErrorMsg:       " + errorMsg + LF);

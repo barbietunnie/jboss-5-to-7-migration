@@ -670,7 +670,7 @@ public final class MessageBeanUtil {
 		
 		MessageBean msgBean = new MessageBean();
 		msgBean.setBody("test body text");
-		msgBean.setMsgId(Integer.valueOf(100));
+		msgBean.setMsgId(Long.valueOf(100));
 		try {
 			msgBean.setFrom(InternetAddress.parse("testfrom@test.com"));
 			msgBean.setTo(InternetAddress.parse("testto@test.com"));

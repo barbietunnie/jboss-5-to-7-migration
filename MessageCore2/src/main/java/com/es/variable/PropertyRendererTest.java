@@ -23,7 +23,7 @@ public final class PropertyRendererTest {
 			String renderedText = renderer.render(template, map);
 			logger.info("\n++++++++++ Template Text++++++++++\n" + template);
 			logger.info("\n++++++++++ Rendered Text++++++++++\n" + renderedText);
-			assertEquals(renderedText, "jdbc:mysql://localhost:3306/emaildb");
+			assertEquals(renderedText, "jdbc:mysql://localhost:3306/message");
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);
@@ -85,7 +85,7 @@ public final class PropertyRendererTest {
 	}
 
 	private Map<Object, Object> loadVariableMap() {
-		String fileName = "META-INF/msgstore.mysql.properties";
+		String fileName = "META-INF/msgcore.mysql.properties";
 		return VarReplProperties.loadMyProperties(fileName);
 	}
 }

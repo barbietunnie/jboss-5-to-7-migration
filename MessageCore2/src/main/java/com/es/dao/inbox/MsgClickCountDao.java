@@ -30,6 +30,23 @@ public class MsgClickCountDao {
 		return jdbcTemplate;
 	}
 
+	public MsgClickCountVo getByPrimaryKey(long msgId) {
+		String sql = 
+			"select * " +
+			"from " +
+				"Msg_Click_Count where msgid=? ";
+		
+		Object[] parms = new Object[] {msgId};
+		try {
+			MsgClickCountVo vo = getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<MsgClickCountVo>(MsgClickCountVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+	
 	public List<MsgClickCountVo> getAll() {
 		String sql = 
 			"select * " +
@@ -48,23 +65,6 @@ public class MsgClickCountDao {
 				"Msg_Click_Count where SentCount > 0 and StartTime is not null ";
 		int count = getJdbcTemplate().queryForObject(sql, Integer.class);
 		return count;
-	}
-	
-	public MsgClickCountVo getByPrimaryKey(long msgId) {
-		String sql = 
-			"select * " +
-			"from " +
-				"Msg_Click_Count where msgid=? ";
-		
-		Object[] parms = new Object[] {msgId};
-		try {
-			MsgClickCountVo vo = getJdbcTemplate().queryForObject(sql, parms,
-					new BeanPropertyRowMapper<MsgClickCountVo>(MsgClickCountVo.class));
-			return vo;
-		}
-		catch (EmptyResultDataAccessException e) {
-			return null;
-		}
 	}
 	
 	static String[] CRIT = { " where ", " and ", " and ", " and ", " and ", " and " };

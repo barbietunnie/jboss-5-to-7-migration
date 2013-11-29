@@ -209,7 +209,7 @@ public final class EmailIdParser implements Serializable {
 	 *            new message id
 	 * @return message text with a new email_id
 	 */
-	public String replaceEmailId(String msgStr, int msgId) {
+	public String replaceEmailId(String msgStr, long msgId) {
 		if (msgStr == null || msgStr.trim().length() == 0) {
 			return msgStr;
 		}
@@ -264,7 +264,7 @@ public final class EmailIdParser implements Serializable {
 	 * Find an Email_Id section in the message text, and replace the Email_Id
 	 * code with a new one.
 	 */
-	public String replaceKey(String msg, Pattern pattern, int msgId) {
+	public String replaceKey(String msg, Pattern pattern, long msgId) {
 		Matcher matcher = pattern.matcher(msg);
 		if (matcher.find()) {
 			//msg = matcher.replaceFirst(MsgIdCipher.encode(msgId)); // not working with group
@@ -289,7 +289,7 @@ public final class EmailIdParser implements Serializable {
 	 *            email_id to be wrapped
 	 * @return wrapped email_id
 	 */
-	public String createEmailId(Integer msgId) throws NumberFormatException {
+	public String createEmailId(Long msgId) throws NumberFormatException {
 		if (msgId == null) {
 			return null;
 		}
@@ -306,7 +306,7 @@ public final class EmailIdParser implements Serializable {
 	 *            email_id to be wrapped
 	 * @return wrapped email_id
 	 */
-	public String createEmailId4XHdr(Integer msgId) throws NumberFormatException {
+	public String createEmailId4XHdr(Long msgId) throws NumberFormatException {
 		if (msgId == null) {
 			return null;
 		}
@@ -360,7 +360,7 @@ public final class EmailIdParser implements Serializable {
 	public static void main(String[] args) {
 		SpringUtil.beginTransaction();
 		try {
-			int msgId = 12345;
+			long msgId = 12345;
 			EmailIdParser parser = EmailIdParser.getDefaultParser();
 			String msgStr = "this is my message text.\n" + parser.createEmailId(msgId) + "\n...the rest";
 			logger.info("Original Msg Text: " + msgStr);

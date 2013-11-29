@@ -29,7 +29,6 @@ import com.es.bo.render.RenderRequest;
 import com.es.bo.render.RenderResponse;
 import com.es.bo.render.RenderVariable;
 import com.es.bo.render.Renderer;
-import com.es.core.util.SpringUtil;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.Constants;
 import com.es.data.constant.EmailAddressType;
@@ -45,14 +44,15 @@ import com.es.msgbean.MsgHeader;
 @ContextConfiguration(locations={"/spring-core-config.xml"})
 @TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional
-public class RenderTest {
-	static final Logger logger = Logger.getLogger(RenderTest.class);
+public class RenderBoTest {
+	static final Logger logger = Logger.getLogger(RenderBoTest.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	static final String LF = System.getProperty("line.separator","\n");
 	@Resource
-	private RenderBo util;
+	private RenderBo renderBo;
+
 	@Test
-	public void testRender1() {
+	public void testRenderBo1() {
 		try {
 			RenderRequest req = new RenderRequest(
 					"testMsgSource",
@@ -60,7 +60,7 @@ public class RenderTest {
 					new Timestamp(new java.util.Date().getTime()),
 					buildTestVariables()
 					);
-			RenderResponse rsp = util.getRenderedEmail(req);
+			RenderResponse rsp = renderBo.getRenderedEmail(req);
 			assertNotNull(rsp);
 			logger.info("testRender1() - ####################" + LF + rsp);
 			// verify rendered data
@@ -71,8 +71,9 @@ public class RenderTest {
 			fail();
 		}
 	}
+
 	@Test
-	public void testRender2() {
+	public void testRenderBo2() {
 		try {
 			RenderRequest req = new RenderRequest(
 					"WeekendDeals",
@@ -80,7 +81,7 @@ public class RenderTest {
 					new Timestamp(new java.util.Date().getTime()),
 					new HashMap<String, RenderVariable>()
 					);
-			RenderResponse rsp = util.getRenderedEmail(req);
+			RenderResponse rsp = renderBo.getRenderedEmail(req);
 			assertNotNull(rsp);
 			logger.info("testRender2() - ####################" + LF + rsp);
 			// verify rendered data
@@ -107,28 +108,6 @@ public class RenderTest {
 		}
 	}
 	
-	@Test
-	public void testRenderBo() {
-		RenderBo renderBo = SpringUtil.getAppContext().getBean(RenderBo.class);
-		try {
-			RenderRequest req = new RenderRequest(
-					"testMsgSource",
-					Constants.DEFAULT_SENDER_ID,
-					new Timestamp(new java.util.Date().getTime()),
-					buildTestVariables()
-					);
-			RenderResponse rsp = renderBo.getRenderedEmail(req);
-			assertNotNull(rsp);
-			logger.info("testRenderBo() - ####################" + LF + rsp);
-			// verify rendered data
-			verifyRenderedData(rsp);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			fail();
-		}
-	}
-
 	private void verifyRenderedData(RenderResponse rsp) {
 		MessageBean msgBean = rsp.getMessageBean();
 		assertTrue("jsmith@test.com".equals(msgBean.getFromAsString()));

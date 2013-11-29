@@ -1,7 +1,8 @@
-package com.es.variable;
+package com.es.bo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -13,6 +14,9 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
+import com.es.bo.render.ErrorVariable;
+import com.es.bo.render.RenderVariable;
+import com.es.bo.render.Renderer;
 import com.es.data.constant.VariableType;
 
 public final class RendererTest {
@@ -20,7 +24,7 @@ public final class RendererTest {
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	@Test
-	public void testRender() throws Exception {
+	public void testRenderer() {
 		String template = "BeginTemplate\n"
 			+ "Current Date: ${CurrentDate} ${0}\n"
 			+ "${name1}, ${name2} Some Text ${name3} More Text\n"
@@ -40,13 +44,14 @@ public final class RendererTest {
 			+ "Recursive Variable Jack Wang End\n"
 			+ "$EndTemplate\n";
 		
-		Map<String, RenderVariableVo> map = createVariableMap(currDate, dateTimeFormat1);
+		Map<String, RenderVariable> map = createVariableMap(currDate, dateTimeFormat1);
 		
 		Renderer renderer = Renderer.getInstance();
 		try {
-			Map<String, ErrorVariableVo> errors = new HashMap<String, ErrorVariableVo>();
+			Map<String, ErrorVariable> errors = new HashMap<String, ErrorVariable>();
 			String renderedText = renderer.render(template, map, errors);
 			logger.info("\n++++++++++ Template Text++++++++++\n" + template);
+			logger.info("\n++++++++++ Expected Text++++++++++\n" + expected);
 			logger.info("\n++++++++++ Rendered Text++++++++++\n" + renderedText);
 			assertEquals(renderedText, expected);
 			assertTrue(!errors.isEmpty());
@@ -55,20 +60,20 @@ public final class RendererTest {
 				Set<String> set = errors.keySet();
 				for (Iterator<String> it=set.iterator(); it.hasNext();) {
 					String key = (String) it.next();
-					ErrorVariableVo req = (ErrorVariableVo) errors.get(key);
+					ErrorVariable req = (ErrorVariable) errors.get(key);
 					logger.info(req.toString());
 				}
 			}
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);
-			throw e;
+			fail();
 		}
 	}
 
 	@Test
-	public void testBadTemplate() throws Exception {
-		Map<String, RenderVariableVo> map = createVariableMap(new java.util.Date(), "yyyy-MM-dd");
+	public void testBadTemplate() {
+		Map<String, RenderVariable> map = createVariableMap(new java.util.Date(), "yyyy-MM-dd");
 		Renderer renderer = Renderer.getInstance();
 		int exceptionCaught = 0;
 		
@@ -76,12 +81,20 @@ public final class RendererTest {
 			+ "Some Numberic values: ${numeric1, ${numeric2}, ${numeric3}\n"
 			+ "$EndTemplate\n";
 		
+		Map<String, ErrorVariable> errors = new HashMap<String, ErrorVariable>();
 		try {
-			renderer.render(template1, map, new HashMap<String, ErrorVariableVo>());
+			renderer.render(template1, map, errors);
+			assertTrue(errors.size()==1);
+			for (ErrorVariable error : errors.values()) {
+				assertTrue(error.getVariableName().indexOf("numeric1")>=0);
+			}
+			exceptionCaught++;
+			errors.clear();
 		}
 		catch (Exception e) {
 			assertTrue(e.getMessage().indexOf("${numeric1,") > 0);
 			exceptionCaught++;
+			fail();
 		}
 		
 		String template2 = "Missing middle closing delimiter\n"
@@ -89,11 +102,18 @@ public final class RendererTest {
 			+ "$EndTemplate\n";
 		
 		try {
-			renderer.render(template2, map, new HashMap<String, ErrorVariableVo>());
+			renderer.render(template2, map, errors);
+			assertTrue(errors.size()==1);
+			for (ErrorVariable error : errors.values()) {
+				assertTrue(error.getVariableName().indexOf("numeric2")>=0);
+			}
+			exceptionCaught++;
+			errors.clear();
 		}
 		catch (Exception e) {
 			assertTrue(e.getMessage().indexOf("${numeric2,") > 0);
 			exceptionCaught++;
+			fail();
 		}
 		
 		String template3 = "Missing last closing delimiter\n"
@@ -101,7 +121,8 @@ public final class RendererTest {
 			+ "$EndTemplate\n";
 		
 		try {
-			renderer.render(template3, map, new HashMap<String, ErrorVariableVo>());
+			renderer.render(template3, map, errors);
+			fail();
 		}
 		catch (Exception e) {
 			assertTrue(e.getMessage().indexOf("${numeric3") > 0);
@@ -111,10 +132,10 @@ public final class RendererTest {
 		assertTrue(exceptionCaught == 3);
 	}
 
-	private Map<String, RenderVariableVo> createVariableMap(java.util.Date currDate, String dateTimeFormat1) {
-		Map<String, RenderVariableVo> map = new HashMap<String, RenderVariableVo>();
+	private Map<String, RenderVariable> createVariableMap(java.util.Date currDate, String dateTimeFormat1) {
+		Map<String, RenderVariable> map = new HashMap<String, RenderVariable>();
 		
-		RenderVariableVo currentDate = new RenderVariableVo(
+		RenderVariable currentDate = new RenderVariable(
 				"CurrentDate", 
 				currDate, 
 				VariableType.DATETIME,
@@ -122,70 +143,70 @@ public final class RendererTest {
 			);
 		map.put(currentDate.getVariableName(), currentDate);
 		
-		RenderVariableVo req1 = new RenderVariableVo(
+		RenderVariable req1 = new RenderVariable(
 				"name1", 
 				"Jack Wang"
 			);
-		RenderVariableVo req2 = new RenderVariableVo(
+		RenderVariable req2 = new RenderVariable(
 				"name2", 
 				"John Lin"
 			);
-		RenderVariableVo req3 = new RenderVariableVo(
+		RenderVariable req3 = new RenderVariable(
 				"name3", 
 				"Ramana"
 			);
-		RenderVariableVo req4 = new RenderVariableVo(
+		RenderVariable req4 = new RenderVariable(
 				"name4.recurrsive", 
 				"Recursive Variable ${name1} End", 
 				VariableType.TEXT
 			);
-		RenderVariableVo req5 = new RenderVariableVo(
+		RenderVariable req5 = new RenderVariable(
 				"name5", 
 				"Roger Banner", 
 				VariableType.TEXT
 			);
 		
-		RenderVariableVo req6_1 = new RenderVariableVo(
+		RenderVariable req6_1 = new RenderVariable(
 				"numeric1", 
 				"12345.678", // use default format
 				VariableType.NUMERIC
 			);
 		
-		RenderVariableVo req6_2 = new RenderVariableVo(
+		RenderVariable req6_2 = new RenderVariable(
 				"numeric2", 
 				"-12345.678",
 				VariableType.NUMERIC,
 				"000,000,000.0#;(-000,000,000.0#)"
 			);
 		
-		RenderVariableVo req6_3 = new RenderVariableVo(
+		RenderVariable req6_3 = new RenderVariable(
 				"numeric3", 
 				new BigDecimal(-99999.99),
 				VariableType.NUMERIC,
 				"$###,###,##0.00;-$###,###,##0.00"
 			);
 		
-		RenderVariableVo req7_1 = new RenderVariableVo(
+		RenderVariable req7_1 = new RenderVariable(
 				"datetime1", 
 				"2007-10-01 15:23:12", // use default format
 				VariableType.DATETIME
 			);
 		
-		RenderVariableVo req7_2 = new RenderVariableVo(
+		RenderVariable req7_2 = new RenderVariable(
 				"datetime2", 
 				"12/01/2007", 
 				VariableType.DATETIME,
 				"MM/dd/yyyy" // custom format
 			);
 		
-		RenderVariableVo req7_3 = new RenderVariableVo(
+		RenderVariable req7_3 = new RenderVariable(
 				"datetime3", 
 				null,
 				VariableType.DATETIME,
 				"yyyy-MM-dd:hh.mm.ss a" // custom format
 			);
 		
-		RenderVariableVo req7_4 = new RenderVariableVo(
+		RenderVariable req7_4 = new RenderVariable(
 				"datetime4", 
 				new java.util.Date(), // current date time
 				VariableType.DATETIME,
@@ -205,7 +226,7 @@ public final class RendererTest {
 		map.put(req7_3.getVariableName(), req7_3);
 		map.put(req7_4.getVariableName(), req7_4);
 		
-		req7_4 = new RenderVariableVo(
+		req7_4 = new RenderVariable(
 				"datetime4", 
 				"2009-07-29 13.04",
 				VariableType.DATETIME,

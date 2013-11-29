@@ -1,6 +1,7 @@
 package com.es.bo.render;
 	
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -12,8 +13,10 @@ import javax.mail.Address;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
+import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.VariableType;
+import com.es.data.preload.GlobalVariableEnum;
 
 public class RenderVariable implements Serializable {
 	private static final long serialVersionUID = 6995211477252194373L;
@@ -22,7 +25,7 @@ public class RenderVariable implements Serializable {
 	
 	// N - Long or String, D - Date of String, A - Address or String
 	// L - String or byte[], C - Collection
-	private final Object variableValue;
+	private Object variableValue;
 	
 	// used for Type: N/D/L, for L: Mime Type(include name/content type, etc)
 	private final String variableFormat; // TODO: use enum
@@ -34,6 +37,51 @@ public class RenderVariable implements Serializable {
 	private final String required;
 	private String errorMsg;
     
+	/**
+	 * Instantiate a RenderVariable with variable name and value.
+	 * @param variableName
+	 * @param variableValue
+	 */
+	public RenderVariable(String variableName, Object variableValue) {
+		this(variableName, variableValue, null, VariableType.TEXT,
+				CodeType.YES_CODE.getValue(), CodeType.NO_CODE.getValue(), null);
+	}
+	
+	/**
+	 * Instantiate a RenderVariable with variable name, value, and type.
+	 * @param variableName
+	 * @param variableValue
+	 * @param variableType
+	 */
+	public RenderVariable(String variableName, Object variableValue,
+			VariableType variableType) {
+		this(variableName, variableValue, null, variableType,
+				CodeType.YES_CODE.getValue(), CodeType.NO_CODE.getValue(), null);
+	}
+	
+	/**
+	 * Instantiate a RenderVariable with variable name, value, type, and format.
+	 * @param variableName
+	 * @param variableValue
+	 * @param variableType
+	 * @param variableFormat
+	 */
+	public RenderVariable(String variableName, Object variableValue,
+			VariableType variableType, String variableFormat) {
+		this(variableName, variableValue, variableFormat, variableType,
+				CodeType.YES_CODE.getValue(), CodeType.NO_CODE.getValue(), null);
+	}
+	
+	/**
+	 * Instantiate a RenderVariable.
+	 * @param variableName
+	 * @param variableValue
+	 * @param variableFormat
+	 * @param variableType
+	 * @param allowOverride
+	 * @param required
+	 * @param errorMsg
+	 */
     public RenderVariable(
 			String variableName,
 			Object variableValue,
@@ -56,8 +104,10 @@ public class RenderVariable implements Serializable {
 				new DecimalFormat(variableFormat);
 			}
 			if (variableValue!=null) {
-				if (!(variableValue instanceof Long) && !(variableValue instanceof String)
-						&& !(variableValue instanceof Integer)) {
+				if (!(variableValue instanceof Long)
+						&& !(variableValue instanceof String)
+						&& !(variableValue instanceof Integer)
+						&& !(variableValue instanceof BigDecimal)) {
 					throw new IllegalArgumentException("Invalid Value Type: "
 							+ variableValue.getClass().getName() + ", by " + variableName);
 				}
@@ -76,7 +126,14 @@ public class RenderVariable implements Serializable {
 		else if (VariableType.DATETIME.equals(variableType)) {
 			SimpleDateFormat fmt = new SimpleDateFormat(Constants.DEFAULT_DATETIME_FORMAT);
 			if (variableFormat!=null) {
-				fmt.applyPattern(variableFormat);
+				fmt.applyPattern(variableFormat); // validate the format
+			}
+			if (variableValue == null) { // populate "CurrentDateTime"
+				if (GlobalVariableEnum.CurrentDateTime.name().equals(variableName)
+						|| GlobalVariableEnum.CurrentDate.name().equals(variableName)
+						|| GlobalVariableEnum.CurrentTime.name().equals(variableName)) {
+					this.variableValue = variableValue = new Date();
+				}
 			}
 			if (variableValue!=null) {
 				if (!(variableValue instanceof Date) && !(variableValue instanceof String)) {
@@ -111,6 +168,14 @@ public class RenderVariable implements Serializable {
 				}
 			}
 		}
+		else if (VariableType.TEXT.equals(variableType) || VariableType.X_HEADER.equals(variableType)) {
+			if (variableValue != null) {
+				if (!(variableValue instanceof String)) {
+					throw new IllegalArgumentException("Invalid Value Type: "
+							+ variableValue.getClass().getName() + ", for " + variableName);
+				}
+			}
+		}
 		else if (VariableType.LOB.equals(variableType)) {
 			if (variableValue!=null) {
 				if (!(variableValue instanceof String) && !(variableValue instanceof byte[])) {
@@ -131,11 +196,11 @@ public class RenderVariable implements Serializable {
 				}
 			}
 		}
-		else if (!VariableType.TEXT.equals(variableType) && !VariableType.X_HEADER.equals(variableType)) {
-			throw new IllegalArgumentException("Invalid Variable Type: " + variableType + ", by "
+		else {
+			throw new IllegalArgumentException("Invalid Variable Type: " + variableType + ", for "
 					+ variableName);
 		}
-    }
+   }
 	
 	public String toString() {
 		String LF = System.getProperty("line.separator","\n");

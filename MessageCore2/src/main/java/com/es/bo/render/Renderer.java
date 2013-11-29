@@ -1,5 +1,6 @@
 package com.es.bo.render;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -21,7 +22,7 @@ import org.apache.log4j.Logger;
 
 import com.es.data.constant.Constants;
 import com.es.data.constant.VariableType;
-import com.es.exception.DataValidationException;
+import com.es.exception.TemplateException;
 
 /**
  * A template is a text string with variables defined inside ${ and } tokens.<br>
@@ -89,25 +90,25 @@ public final class Renderer implements java.io.Serializable {
 	}
 	
 	public String render(String templateText, Map<String, RenderVariable> variables,
-			Map<String, RenderVariable> errors) throws DataValidationException, ParseException {
+			Map<String, ErrorVariable> errors) throws ParseException, TemplateException {
 		return renderTemplate(templateText, variables, errors);
 	}
 
 	private String renderTemplate(String templateText, Map<String, RenderVariable> variables,
-			Map<String, RenderVariable> errors) throws DataValidationException, ParseException {
+			Map<String, ErrorVariable> errors) throws ParseException, TemplateException {
 		return renderTemplate(templateText, variables, errors, false);
 	}
 
 	private String renderTemplate(String templateText, Map<String, RenderVariable> variables,
-			Map<String, RenderVariable> errors, boolean isOptionalSection)
-			throws DataValidationException, ParseException {
+			Map<String, ErrorVariable> errors, boolean isOptionalSection)
+			throws ParseException, TemplateException {
 		return renderTemplate(templateText, variables, errors, isOptionalSection, 0);
 	}
 
 	@SuppressWarnings("unchecked")
 	private String renderTemplate(String templateText, Map<String, RenderVariable> variables,
-			Map<String, RenderVariable> errors, boolean isOptionalSection, int loopCount)
-			throws DataValidationException, ParseException {
+			Map<String, ErrorVariable> errors, boolean isOptionalSection, int loopCount)
+			throws ParseException, TemplateException {
 		
 		if (templateText==null) {
 			throw new IllegalArgumentException("Template Text must be provided");
@@ -129,7 +130,7 @@ public final class Renderer implements java.io.Serializable {
 			if (OptionalTagBgn.equals(varProps.name)) { // optional section
 				int optEndPos = getEndTagPosition(templateText, varProps.endPos);
 				if (optEndPos < varProps.endPos) {
-					RenderVariable req = buildErrorRecord(varProps.name, "" + varProps.bgnPos,
+					ErrorVariable req = buildErrorRecord(varProps.name, "" + varProps.bgnPos,
 							OptionalTagEnd + " Missing");
 					errors.put(req.getVariableName(), req);
 					break;
@@ -144,7 +145,7 @@ public final class Renderer implements java.io.Serializable {
 				int tableEndPos = templateText.indexOf(openDelimiter + TableTagEnd + closeDelimiter,
 						varProps.endPos);
 				if (tableEndPos < varProps.endPos) {
-					RenderVariable req = buildErrorRecord(varProps.name, "" + varProps.bgnPos,
+					ErrorVariable req = buildErrorRecord(varProps.name, "" + varProps.bgnPos,
 							TableTagEnd + " Missing");
 					errors.put(req.getVariableName(), req);
 					break;
@@ -167,7 +168,7 @@ public final class Renderer implements java.io.Serializable {
 						}
 					}
 					else {
-						RenderVariable req = buildErrorRecord(varProps.name, TableVariableName,
+						ErrorVariable req = buildErrorRecord(varProps.name, TableVariableName,
 								"VarblValue is not a Collection for a Table");
 						errors.put(req.getVariableName(), req);
 					}
@@ -201,6 +202,9 @@ public final class Renderer implements java.io.Serializable {
 						else if (r.getVariableValue() instanceof Long) {
 							sb.append(formatter.format(((Long)r.getVariableValue()).longValue()));
 						}
+						else if (r.getVariableValue() instanceof BigDecimal) {
+							sb.append(formatter.format(((BigDecimal)r.getVariableValue()).doubleValue()));
+						}
 						else if (r.getVariableValue() instanceof String) {
 							try {
 								NumberFormat parser = NumberFormat.getNumberInstance();
@@ -220,9 +224,12 @@ public final class Renderer implements java.io.Serializable {
 						fmt.applyPattern(r.getVariableFormat());
 					}
 					if (r.getVariableValue() == null) { // default to now
-						sb.append(fmt.format(new java.util.Date()));
+						sb.append(""); //fmt.format(new java.util.Date()));
 					}
-					else {
+					else if (r.getVariableValue() instanceof java.util.Date) {
+						sb.append(fmt.format(r.getVariableValue()));
+					}
+ 					else {
 						try {
 							java.util.Date date = fmt.parse((String) r.getVariableValue());
 							sb.append(fmt.format(date));
@@ -253,7 +260,7 @@ public final class Renderer implements java.io.Serializable {
 				return "";
 			}
 			else { // variable name not on render variables list
-				RenderVariable req = buildErrorRecord(varProps.name, "" + varProps.bgnPos,
+				ErrorVariable req = buildErrorRecord(varProps.name, "" + varProps.bgnPos,
 						"Variable Name could not be resolved.");
 				errors.put(req.getVariableName(), req);
 				sb.append(openDelimiter + varProps.name + closeDelimiter);
@@ -265,20 +272,16 @@ public final class Renderer implements java.io.Serializable {
 		return sb.toString();
 	}
 	
-	private RenderVariable buildErrorRecord(String name,String value, String error) {
-		RenderVariable req = new RenderVariable(
+	private ErrorVariable buildErrorRecord(String name,String value, String error) {
+		ErrorVariable req = new ErrorVariable(
 			name, 
 			value, 
-			null, 
-			VariableType.TEXT, 
-			"Y", 
-			null, 
 			error
 			);
 		return req;
 	}
 	
-	private VarProperties getVariableName(String text, int pos) throws DataValidationException {
+	private VarProperties getVariableName(String text, int pos) throws TemplateException  {
 		VarProperties varProps = new VarProperties();
 		int nextPos;
 		if ((varProps.bgnPos = text.indexOf(openDelimiter, pos)) >= 0) {
@@ -288,7 +291,10 @@ public final class Renderer implements java.io.Serializable {
 				return varProps;
 			}
 			else {
-				throw new DataValidationException("Missing the Closing Delimiter from position " + varProps.bgnPos);
+				int len = varProps.bgnPos + Constants.VARIABLE_NAME_LENGTH + openDelimiter.length();
+				len = text.length() < len ? text.length() : len;
+				throw new TemplateException("Missing the Closing Delimiter from position " + varProps.bgnPos
+						+ ": " + text.substring(varProps.bgnPos, len));
 			}
 		}
 		return null;
@@ -539,7 +545,7 @@ public final class Renderer implements java.io.Serializable {
 
 		Renderer tmp=new Renderer();
 		try {
-			Map<String, RenderVariable> errors = new HashMap<String, RenderVariable>();
+			Map<String, ErrorVariable> errors = new HashMap<String, ErrorVariable>();
 			String text = tmp.render(tmplt, map, errors);
 			logger.info("++++++++++ Rendered Text++++++++++\n" + text);
 			if (!errors.isEmpty()) {
@@ -547,7 +553,7 @@ public final class Renderer implements java.io.Serializable {
 				Set<String> set = errors.keySet();
 				for (Iterator<String> it=set.iterator(); it.hasNext();) {
 					String key = it.next();
-					RenderVariable req = (RenderVariable) errors.get(key);
+					ErrorVariable req = (ErrorVariable) errors.get(key);
 					logger.info(req.toString());
 				}
 			}

@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -43,12 +44,14 @@ public class SubscriberDao {
 				"from Subscriber where subrid=? ";
 		
 		Object[] parms = new Object[] {subrId};
-		List<SubscriberVo> list =  getJdbcTemplate().query(sql, parms,
-				new BeanPropertyRowMapper<SubscriberVo>(SubscriberVo.class));
-		if (list.size()>0)
-			return list.get(0);
-		else
+		try {
+			SubscriberVo vo =  getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<SubscriberVo>(SubscriberVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public List<SubscriberVo> getBySenderId(String senderId) {
@@ -66,13 +69,13 @@ public class SubscriberDao {
 			"select * " +
 			" from Subscriber where emailAddrId=? ";
 		Object[] parms = new Object[] {Long.valueOf(emailAddrId)};
-		List<SubscriberVo> list = getJdbcTemplate().query(sql, parms,
-				new BeanPropertyRowMapper<SubscriberVo>(SubscriberVo.class));
-		if (list == null || list.isEmpty()) {
-			return null;
+		try {
+			SubscriberVo vo = getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<SubscriberVo>(SubscriberVo.class));
+			return vo;
 		}
-		else {
-			return (SubscriberVo) list.get(0);
+		catch (EmptyResultDataAccessException e) {
+			return null;
 		}
 	}
 	
@@ -83,13 +86,13 @@ public class SubscriberDao {
 			" where a.EmailAddrId=b.EmailAddrId " +
 			" and a.EmailAddr=? ";
 		Object[] parms = new Object[] {EmailAddrUtil.removeDisplayName(emailAddr)};
-		List<SubscriberVo> list = getJdbcTemplate().query(sql, parms,
-				new BeanPropertyRowMapper<SubscriberVo>(SubscriberVo.class));
-		if (list == null || list.isEmpty()) {
-			return null;
+		try {
+			SubscriberVo vo = getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<SubscriberVo>(SubscriberVo.class));
+			return vo;
 		}
-		else {
-			return (SubscriberVo) list.get(0);
+		catch (EmptyResultDataAccessException e) {
+			return null;
 		}
 	}
 	
@@ -343,51 +346,51 @@ public class SubscriberDao {
 		return rowsDeleted;
 	}
 
-	public int insert(SubscriberVo customerVo) {
-		customerVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		syncupEmailFields(customerVo);
+	public int insert(SubscriberVo subrVo) {
+		subrVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+		syncupEmailFields(subrVo);
 		Object[] parms = {
-				customerVo.getSubrId(),
-				customerVo.getSenderId(),
-				customerVo.getSsnNumber(),
-				customerVo.getTaxId(),
-				customerVo.getProfession(),
-				customerVo.getFirstName(),
-				customerVo.getMiddleName(),
-				customerVo.getLastName(),
-				customerVo.getAlias(),
-				customerVo.getStreetAddress(),
-				customerVo.getStreetAddress2(),
-				customerVo.getCityName(),
-				customerVo.getStateCode(),
-				customerVo.getZipCode5(),
-				customerVo.getZipCode4(),
-				customerVo.getProvinceName(),
-				customerVo.getPostalCode(),
-				customerVo.getCountry(),
-				customerVo.getDayPhone(),
-				customerVo.getEveningPhone(),
-				customerVo.getMobilePhone(),
-				customerVo.getBirthDate(),
-				customerVo.getStartDate(),
-				customerVo.getEndDate(),
-				customerVo.getMobileCarrier(),
-				customerVo.getMsgHeader(),
-				customerVo.getMsgDetail(),
-				customerVo.getMsgOptional(),
-				customerVo.getMsgFooter(),
-				customerVo.getTimeZoneCode(),
-				customerVo.getMemoText(),
-				customerVo.getStatusId(),
-				customerVo.getSecurityQuestion(),
-				customerVo.getSecurityAnswer(),
-				customerVo.getEmailAddr(),
-				customerVo.getEmailAddrId(),
-				customerVo.getPrevEmailAddr(),
-				customerVo.getPasswordChangeTime(),
-				customerVo.getUserPassword(),
-				customerVo.getUpdtTime(),
-				customerVo.getUpdtUserId()
+				subrVo.getSubrId(),
+				subrVo.getSenderId(),
+				subrVo.getSsnNumber(),
+				subrVo.getTaxId(),
+				subrVo.getProfession(),
+				subrVo.getFirstName(),
+				subrVo.getMiddleName(),
+				subrVo.getLastName(),
+				subrVo.getAlias(),
+				subrVo.getStreetAddress(),
+				subrVo.getStreetAddress2(),
+				subrVo.getCityName(),
+				subrVo.getStateCode(),
+				subrVo.getZipCode5(),
+				subrVo.getZipCode4(),
+				subrVo.getProvinceName(),
+				subrVo.getPostalCode(),
+				subrVo.getCountry(),
+				subrVo.getDayPhone(),
+				subrVo.getEveningPhone(),
+				subrVo.getMobilePhone(),
+				subrVo.getBirthDate(),
+				subrVo.getStartDate(),
+				subrVo.getEndDate(),
+				subrVo.getMobileCarrier(),
+				subrVo.getMsgHeader(),
+				subrVo.getMsgDetail(),
+				subrVo.getMsgOptional(),
+				subrVo.getMsgFooter(),
+				subrVo.getTimeZoneCode(),
+				subrVo.getMemoText(),
+				subrVo.getStatusId(),
+				subrVo.getSecurityQuestion(),
+				subrVo.getSecurityAnswer(),
+				subrVo.getEmailAddr(),
+				subrVo.getEmailAddrId(),
+				subrVo.getPrevEmailAddr(),
+				subrVo.getPasswordChangeTime(),
+				subrVo.getUserPassword(),
+				subrVo.getUpdtTime(),
+				subrVo.getUpdtUserId()
 			};
 		
 		String sql = "insert into Subscriber ("
@@ -439,9 +442,9 @@ public class SubscriberDao {
 			+ ",?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? )";
 		
 		int rowsInserted = getJdbcTemplate().update(sql, parms);
-		customerVo.setRowId(retrieveRowId());
-		customerVo.setOrigUpdtTime(customerVo.getUpdtTime());
-		customerVo.setOrigSubrId(customerVo.getSubrId());
+		subrVo.setRowId(retrieveRowId());
+		subrVo.setOrigUpdtTime(subrVo.getUpdtTime());
+		subrVo.setOrigSubrId(subrVo.getSubrId());
 		return rowsInserted;
 	}
 	
