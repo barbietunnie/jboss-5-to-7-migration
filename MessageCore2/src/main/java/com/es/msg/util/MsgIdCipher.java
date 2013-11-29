@@ -50,7 +50,7 @@ public final class MsgIdCipher {
 	 *            message id
 	 * @return cipher text
 	 */
-	public static String encode(int msgId) throws NumberFormatException {
+	public static String encode(long msgId) throws NumberFormatException {
 		String plainText = msgId + "" + getCheckDigit(msgId);
 		// insert ones to make sure the value of each block is less than n
 		// for example: 956789876 (after insert 1's) -> 195617891867
@@ -137,7 +137,7 @@ public final class MsgIdCipher {
 		return outString;
 	}
 	
-	private static int getCheckDigit(int msgId) {
+	private static int getCheckDigit(long msgId) {
 		String numberStr = msgId+"";
 		if (numberStr.length()>30)
 			throw new NumberFormatException("Input number exceeded size limit: [" + numberStr + "]");

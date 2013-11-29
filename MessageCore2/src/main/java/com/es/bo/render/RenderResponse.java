@@ -13,7 +13,7 @@ public class RenderResponse implements Serializable {
 	String senderId;
 	Timestamp startTime;
 	Map<String, RenderVariable> variableFinal;
-	Map<String, RenderVariable> variableErrors;
+	Map<String, ErrorVariable> variableErrors;
 	MessageBean messageBean;
 
 	RenderResponse(
@@ -21,7 +21,7 @@ public class RenderResponse implements Serializable {
 			String senderId,
 			Timestamp startTime,
 			Map<String, RenderVariable> variableFinal,
-			Map<String, RenderVariable> variableErrors,
+			Map<String, ErrorVariable> variableErrors,
 			MessageBean messageBean)
 		{
 			this.msgSourceVo=msgSourceVo;
@@ -57,9 +57,9 @@ public class RenderResponse implements Serializable {
 		}
 		if (variableErrors!=null && !variableErrors.isEmpty()) {
 			sb.append("Display Error Variables.........."+LF);
-			Collection<RenderVariable> c = variableErrors.values();
-			for (Iterator<RenderVariable> it=c.iterator(); it.hasNext();) {
-				RenderVariable req = it.next();
+			Collection<ErrorVariable> c = variableErrors.values();
+			for (Iterator<ErrorVariable> it=c.iterator(); it.hasNext();) {
+				ErrorVariable req = it.next();
 				sb.append(req.toString());
 			}
 		}
@@ -83,7 +83,7 @@ public class RenderResponse implements Serializable {
 		return msgSourceVo;
 	}
 
-	public Map<String, RenderVariable> getVariableErrors() {
+	public Map<String, ErrorVariable> getVariableErrors() {
 		return variableErrors;
 	}
 

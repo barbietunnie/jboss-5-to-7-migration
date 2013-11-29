@@ -85,14 +85,14 @@ public class RuleDao {
 		
 		Object[] parms = new Object[] {ruleName};
 		
-		List<?> list = getJdbcTemplate().query(sql, parms, new RuleMapper());
+		List<RuleVo> list = getJdbcTemplate().query(sql, parms, new RuleMapper());
 		if (list == null || list.size() == 0) {
 			return null;
 		}
 
 		RuleVo vo = null;
 		for (int i = 0; i < list.size(); i++) {
-			RuleVo ruleVo = (RuleVo) list.get(i);
+			RuleVo ruleVo = list.get(i);
 			if (vo == null) {
 				vo = ruleVo;
 			}
@@ -102,7 +102,7 @@ public class RuleDao {
 		}
 		List<RuleSubRuleMapVo> subRules = getRuleSubRuleMapDao().getByRuleName(vo.getRuleName());
 		vo.getRuleSubRuleVos().addAll(subRules);
-		return (RuleVo) vo;
+		return vo;
 	}
 	
 	/**

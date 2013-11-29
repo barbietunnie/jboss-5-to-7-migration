@@ -67,19 +67,6 @@ public class SenderDao {
 		return (SenderVo) BlobUtil.deepCopy(senderCache.get(senderId));
 	}
 
-	public SenderVo getByDomainName(String domainName) {
-		String sql = "select * from Sender_Data where DomainName=?";
-		Object[] parms = new Object[] { domainName };
-		List<?> list = getJdbcTemplate().query(sql, parms, 
-				new BeanPropertyRowMapper<SenderVo>(SenderVo.class));
-		if (list.size() > 0) {
-			return (SenderVo) list.get(0);
-		}
-		else {
-			return null;
-		}
-	}
-
 	public List<SenderVo> getAll() {
 		String sql = 
 			"select * " +

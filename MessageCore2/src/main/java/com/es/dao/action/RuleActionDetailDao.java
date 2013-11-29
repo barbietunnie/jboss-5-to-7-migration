@@ -36,13 +36,14 @@ public class RuleActionDetailDao {
 				"Rule_Action_Detail where actionId=? ";
 		
 		Object[] parms = new Object[] {actionId};
-		
-		List<RuleActionDetailVo> list = getJdbcTemplate().query(sql, parms, 
-				new BeanPropertyRowMapper<RuleActionDetailVo>(RuleActionDetailVo.class));
-		if (list.size()>0)
-			return list.get(0);
-		else
+		try {
+			RuleActionDetailVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<RuleActionDetailVo>(RuleActionDetailVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public RuleActionDetailVo getByPrimaryKey(int rowId) {

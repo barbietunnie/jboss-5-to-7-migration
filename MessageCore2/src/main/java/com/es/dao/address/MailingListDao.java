@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -70,12 +71,12 @@ public class MailingListDao {
 				" where a.ListId = ? " +
 				groupByCluse;
 		Object[] parms = new Object[] {listId};
-		List<MailingListVo> list = getJdbcTemplate().query(sql, parms,
-				new BeanPropertyRowMapper<MailingListVo>(MailingListVo.class));
-		if (list.size()>0) {
-			return list.get(0);
+		try {
+			MailingListVo vo = getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<MailingListVo>(MailingListVo.class));
+			return vo;
 		}
-		else {
+		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}

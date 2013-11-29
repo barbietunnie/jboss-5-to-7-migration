@@ -16,9 +16,8 @@ import javax.mail.internet.InternetAddress;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.es.bo.external.VariableResolver;
+import com.es.bo.external.AbstractResolver;
 import com.es.core.util.EmailAddrUtil;
-import com.es.core.util.MailingListUtil;
 import com.es.core.util.SpringUtil;
 import com.es.dao.address.EmailAddressDao;
 import com.es.dao.address.EmailTemplateDao;
@@ -34,6 +33,7 @@ import com.es.data.constant.EmailAddressType;
 import com.es.data.constant.VariableName;
 import com.es.data.constant.VariableType;
 import com.es.exception.DataValidationException;
+import com.es.exception.TemplateException;
 import com.es.exception.TemplateNotFoundException;
 import com.es.vo.address.EmailAddressVo;
 import com.es.vo.address.EmailTemplateVo;
@@ -114,12 +114,11 @@ public final class RenderUtil {
 	 * @param variables -
 	 *            variables
 	 * @return rendered text
-	 * @throws DataValidationException
 	 * @throws ParseException
+	 * @throws TemplateException 
 	 */
 	public static String renderTemplateId(String templateId, String senderId,
-			Map<String, RenderVariable> variables) throws DataValidationException,
-			ParseException {
+			Map<String, RenderVariable> variables) throws ParseException, TemplateException {
 		if (StringUtils.isEmpty(senderId)) {
 			senderId = Constants.DEFAULT_SENDER_ID;
 		}
@@ -189,10 +188,10 @@ public final class RenderUtil {
 	 * @return rendered text
 	 * @throws DataValidationException
 	 * @throws ParseException
+	 * @throws TemplateException 
 	 */
 	public static String renderTemplateText(String templateText, String senderId,
-			Map<String, RenderVariable> variables) throws DataValidationException,
-			ParseException {
+			Map<String, RenderVariable> variables) throws ParseException, TemplateException {
 		if (templateText == null || templateText.trim().length() == 0) {
 			return templateText;
 		}
@@ -257,7 +256,7 @@ public final class RenderUtil {
 			}
 		}
 		
-		Map<String, RenderVariable> errors = new HashMap<String, RenderVariable>();
+		Map<String, ErrorVariable> errors = new HashMap<String, ErrorVariable>();
 		String text = Renderer.getInstance().render(templateText, map, errors);
 		return text;
 	}
@@ -466,11 +465,11 @@ public final class RenderUtil {
 			else if (!StringUtils.isEmpty(proc)) {
 				try {
 					Object obj = Class.forName(proc).newInstance();
-					if (obj instanceof VariableResolver) {
-						value = ((VariableResolver)obj).process(addrId);
+					if (obj instanceof AbstractResolver) {
+						value = ((AbstractResolver)obj).process(addrId);
 					}
 					else {
-						logger.error("Variable class is not a VariableResolver.");
+						logger.error("Variable class is not a AbstractResolver.");
 					}
 				}
 				catch (Exception e) {
@@ -540,11 +539,11 @@ public final class RenderUtil {
 	 * @param templateId -
 	 *            template id
 	 * @return A TemplateRenderVo instance
-	 * @throws DataValidationException
 	 * @throws TemplateNotFoundException
+	 * @throws TemplateException 
 	 */
 	public static TemplateRenderVo renderEmailTemplate(String toAddr, Map<String, String> variables,
-			String templateId) throws DataValidationException, TemplateNotFoundException {
+			String templateId) throws TemplateNotFoundException, TemplateException {
 		return renderEmailTemplate(toAddr, variables, templateId, null);
 	}
 	
@@ -565,12 +564,11 @@ public final class RenderUtil {
 	 * @param listIdOverride -
 	 *            use this list address as FROM address if provided.
 	 * @return A TemplateRenderVo instance
-	 * @throws DataValidationException
 	 * @throws TemplateNotFoundException
+	 * @throws TemplateException 
 	 */
 	public static TemplateRenderVo renderEmailTemplate(String toAddr, Map<String, String> variables,
-			String templateId, String listIdOverride) throws DataValidationException,
-			TemplateNotFoundException {
+			String templateId, String listIdOverride) throws TemplateNotFoundException, TemplateException {
 		if (templateId == null) {
 			throw new DataValidationException("Input templateId is null.");
 		}
@@ -629,7 +627,7 @@ public final class RenderUtil {
 			}
 		}
 		// include mailing list variables
-		vars.putAll(MailingListUtil.renderListVariables(listVo, toAddr, addrVo.getEmailAddrId()));
+		vars.putAll(renderListVariables(listVo, toAddr, addrVo.getEmailAddrId()));
 		try {
 			// now render the templates
 			String senderId = listVo.getSenderId();
@@ -694,10 +692,10 @@ public final class RenderUtil {
 	 * @param listId -
 	 *            mailing list id this email associated to
 	 * @return A TemplateRenderVo instance
-	 * @throws DataValidationException
+	 * @throws TemplateException 
 	 */
 	public static TemplateRenderVo renderEmailText(String toAddr, Map<String, String> variables,
-			String subj, String body, String listId) throws DataValidationException {
+			String subj, String body, String listId) throws TemplateException {
 		return renderEmailText(toAddr, variables, subj, body, listId, null);
 	}
 	
@@ -727,10 +725,11 @@ public final class RenderUtil {
 	 *            list of variable names retrieved from subject and body
 	 * @return A TemplateRenderVo instance
 	 * @throws DataValidationException
+	 * @throws TemplateException 
 	 */
 	public static TemplateRenderVo renderEmailText(String toAddr, Map<String, String> variables,
 			String subj, String body, String listId, List<String> variableNames)
-			throws DataValidationException {
+			throws TemplateException {
 		// first check input TO address
 		validateToAddress(toAddr);
 		MailingListVo listVo = getMailingListDao().getByListId(listId);
@@ -780,8 +779,7 @@ public final class RenderUtil {
 			}
 		}
 		// include mailing list variables
-		vars.putAll(MailingListUtil.renderListVariables(listVo, addrVo.getEmailAddr(), addrVo
-				.getEmailAddrId()));
+		vars.putAll(renderListVariables(listVo, addrVo.getEmailAddr(), addrVo.getEmailAddrId()));
 		try {
 			String bodyText = RenderUtil.renderTemplateText(body, listVo.getSenderId(), vars);
 			String subjText = RenderUtil.renderTemplateText(subj, listVo.getSenderId(), vars);
@@ -795,6 +793,70 @@ public final class RenderUtil {
 		return renderVo;
 	}
 	
+	public static Map<String, RenderVariable> renderListVariables(MailingListVo listVo,
+			String subscriberAddress, long subscriberAddressId) {
+		Map<String, RenderVariable> variables = new HashMap<String, RenderVariable>();
+		String varName = null;
+		RenderVariable var = null;
+		
+		varName = VariableName.LIST_VARIABLE_NAME.MailingListId.toString();
+		var = new RenderVariable(
+				varName,
+				listVo.getListId(),
+				null,
+				VariableType.TEXT,
+				CodeType.YES_CODE.getValue(),
+				CodeType.NO_CODE.getValue(),
+				null);
+		variables.put(varName, var);
+		
+		varName = VariableName.LIST_VARIABLE_NAME.MailingListName.toString();
+		var = new RenderVariable(
+				varName,
+				listVo.getDisplayName(),
+				null,
+				VariableType.TEXT,
+				CodeType.YES_CODE.getValue(),
+				CodeType.NO_CODE.getValue(),
+				null);
+		variables.put(varName, var);
+		
+		varName = VariableName.LIST_VARIABLE_NAME.MailingListAddress.toString();
+		var = new RenderVariable(
+				varName,
+				listVo.getEmailAddr(),
+				null,
+				VariableType.TEXT,
+				CodeType.YES_CODE.getValue(),
+				CodeType.NO_CODE.getValue(),
+				null);
+		variables.put(varName, var);
+		
+		varName = VariableName.LIST_VARIABLE_NAME.SubscriberAddress.toString();
+		var = new RenderVariable(
+				varName,
+				subscriberAddress,
+				null,
+				VariableType.TEXT,
+				CodeType.YES_CODE.getValue(),
+				CodeType.NO_CODE.getValue(),
+				null);
+		variables.put(varName, var);
+		
+		varName = VariableName.LIST_VARIABLE_NAME.SubscriberAddressId.toString();
+		var = new RenderVariable(
+				varName,
+				String.valueOf(subscriberAddressId),
+				null,
+				VariableType.TEXT,
+				CodeType.YES_CODE.getValue(),
+				CodeType.NO_CODE.getValue(),
+				null);
+		variables.put(varName, var);
+		
+		return variables;
+	}
+
 	private static void validateToAddress(String toAddr) throws DataValidationException {
 		if (toAddr == null) {
 			throw new DataValidationException("Input toAddr is null.");

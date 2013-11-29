@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -76,11 +77,11 @@ public class EmailTemplateDao {
 				" from Email_Template a, Mailing_List b " +
 				" where a.ListId=b.ListId and a.TemplateId=?";
 		Object[] parms = new Object[] {templateId};
-		List<?> list = (List<?>) getJdbcTemplate().query(sql, parms, new EmailTemplateMapper());
-		if (list.size()>0) {
-			return (EmailTemplateVo)list.get(0);
+		try {
+			EmailTemplateVo vo = getJdbcTemplate().queryForObject(sql, parms, new EmailTemplateMapper());
+			return vo;
 		}
-		else {
+		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}

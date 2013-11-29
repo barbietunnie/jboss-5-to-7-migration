@@ -469,12 +469,12 @@ public final class MessageBodyBuilder {
 		logger.info("Prepend: "+ str);
 		
 		EmailIdParser parser = EmailIdParser.getDefaultParser();
-		String emailIdStr = parser.createEmailId(123456);
+		String emailIdStr = parser.createEmailId(123456L);
 
 		// embed email_id for HTML email
 		MessageBean msgBean = new MessageBean();
 		msgBean.setContentType("text/html");
-		msgBean.setMsgId(Integer.valueOf(999999));
+		msgBean.setMsgId(Long.valueOf(999999));
 		msgBean.setSubject("Test Embedding Email_Id 1");
 		msgBean.setBody("<HTML>This is the test message with no Email_Id in the body.</HTML>");
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
@@ -484,7 +484,7 @@ public final class MessageBodyBuilder {
 		// embed email_id for plain text email
 		msgBean = new MessageBean();
 		msgBean.setContentType("text/plain");
-		msgBean.setMsgId(Integer.valueOf(999999));
+		msgBean.setMsgId(Long.valueOf(999999));
 		msgBean.setSubject("Test Embedding Email_Id 2");
 		msgBean.setBody("This is the test message that has an existing Email_Id\n"
 				+ Constants.MSG_DELIMITER_BEGIN
@@ -504,7 +504,7 @@ public final class MessageBodyBuilder {
 		
 		msgBean = new MessageBean();
 		msgBean.setContentType("text/plain");
-		msgBean.setMsgId(Integer.valueOf(999999));
+		msgBean.setMsgId(Long.valueOf(999999));
 		msgBean.setSubject("Test Embedding Email_Id 3");
 		msgBean.setBody("This is the test message with embedded Email_Id.");
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL); 

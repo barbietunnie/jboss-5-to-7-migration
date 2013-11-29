@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.sql.DataSource;
 
@@ -19,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -32,6 +34,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.es.core.util.EmailAddrUtil;
+import com.es.core.util.SpringUtil;
 import com.es.core.util.StringUtil;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
@@ -116,11 +119,12 @@ public class EmailAddressDao {
 	public EmailAddressVo getByAddrId(long addrId) {
 		String sql = "select * from Email_Address where emailAddrId=?";
 		Object[] parms = new Object[] { addrId + "" };
-		List<EmailAddressVo> list = getJdbcTemplate().query(sql, parms,
-				new BeanPropertyRowMapper<EmailAddressVo>(EmailAddressVo.class));
-		if (list.size() > 0) {
-			return list.get(0);
-		} else {
+		try {
+			EmailAddressVo vo = getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<EmailAddressVo>(EmailAddressVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}
@@ -129,13 +133,62 @@ public class EmailAddressDao {
 		String sql = "select * from Email_Address where EmailAddr=?";
 		String emailAddress = EmailAddrUtil.removeDisplayName(address);
 		Object[] parms = new Object[] { emailAddress };
-		List<EmailAddressVo> list = getJdbcTemplate().query(sql, parms,
-				new BeanPropertyRowMapper<EmailAddressVo>(EmailAddressVo.class));
-		if (list.size() > 0) {
-			return list.get(0);
-		} else {
+		try {
+			EmailAddressVo vo = getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<EmailAddressVo>(EmailAddressVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
+	}
+
+	public List<EmailAddressVo> getByAddressDomain(String domain) {
+		return getByAddressPattern(domain + "$");
+	}
+	
+	public List<EmailAddressVo> getByAddressUser(String user) {
+		return getByAddressPattern("^" + user);
+	}
+	
+	/*
+	 * Sample address regex patterns
+	 * 1) find by domain name - '@test.com$' or '@yahoo.com'
+	 * 2) find by email user name - '^myname@' or 'noreply@'
+	 */
+	public List<EmailAddressVo> getByAddressPattern(String addressPattern) {
+		String sql = "select t.* from Email_Address t where t.emailAddr REGEXP '" + addressPattern + "' ";
+		if (Constants.DB_PRODNAME_PSQL.equalsIgnoreCase(SpringUtil.getDBProductName())) {
+			sql = "select t.* from Email_Address t where t.emailAddr ~ '" + addressPattern + "' ";
+		}
+		else if (Constants.DB_PRODNAME_DERBY.equalsIgnoreCase(SpringUtil.getDBProductName())) {
+			String pattern = StringUtils.remove(addressPattern, "^");
+			pattern = StringUtils.remove(pattern, "$");
+			pattern = StringUtils.removeStart(pattern, "(");
+			pattern = StringUtils.removeEnd(pattern, ")");
+			sql = "select t.* from Email_Address t " ; //where address like '" + pattern + "' ";
+			String whereClause = "";
+			StringTokenizer st = new StringTokenizer(pattern, "|");
+			while (st.hasMoreTokens()) {
+				String token = st.nextToken();
+				if (addressPattern.startsWith("^")) {
+					token = token + "%";
+				}
+				else if (addressPattern.endsWith("$")) {
+					token = "%" + token;
+				}
+				if (StringUtils.isBlank(whereClause)) {
+					whereClause = " where (t.emailAddr like '" + token + "') ";
+				}
+				else {
+					whereClause += " or (t.emailAddr like '" + token + "') ";
+				}
+			}
+			sql += whereClause;
+		}
+		List<EmailAddressVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<EmailAddressVo>(EmailAddressVo.class));
+		return list;
 	}
 
 	public int getEmailAddressCount(PagingVo vo) {

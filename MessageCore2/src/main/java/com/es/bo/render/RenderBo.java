@@ -35,6 +35,7 @@ import com.es.data.constant.VariableName;
 import com.es.data.constant.VariableType;
 import com.es.data.constant.XHeaderName;
 import com.es.exception.DataValidationException;
+import com.es.exception.TemplateException;
 import com.es.msgbean.BodypartBean;
 import com.es.msgbean.MessageBean;
 import com.es.msgbean.MsgHeader;
@@ -65,8 +66,8 @@ public class RenderBo {
 	@Autowired
 	private EmailAddressDao emailAddressDao;
 	
-	public RenderResponse getRenderedEmail(RenderRequest req) throws DataValidationException,
-			ParseException, AddressException {
+	public RenderResponse getRenderedEmail(RenderRequest req) throws 
+			ParseException, AddressException, TemplateException {
 		logger.info("in getRenderedEmail(RenderRequest)...");
 		if (req == null) {
 			throw new IllegalArgumentException("RenderRequest is null");
@@ -96,14 +97,13 @@ public class RenderBo {
 				req.senderId,
 				req.startTime,
 				new HashMap<String, RenderVariable>(),
-				new HashMap<String, RenderVariable>(),
+				new HashMap<String, ErrorVariable>(),
 				new MessageBean()
 				);
 		return rsp;
 	}
 	
-	public RenderResponse getRenderedBody(RenderRequest req) throws DataValidationException,
-			ParseException {
+	public RenderResponse getRenderedBody(RenderRequest req) throws ParseException, TemplateException {
 		RenderResponse rsp = initRenderResponse(req);
 		buildRenderVariables(req, rsp);
 		buildRenderedBody(req, rsp);
@@ -119,8 +119,7 @@ public class RenderBo {
 		return rsp;
 	}
 	
-	public RenderResponse getRenderedSubj(RenderRequest req) throws DataValidationException,
-			ParseException {
+	public RenderResponse getRenderedSubj(RenderRequest req) throws	ParseException, TemplateException {
 		RenderResponse rsp = initRenderResponse(req);
 		buildRenderVariables(req, rsp);
 		buildRenderedSubj(req, rsp);
@@ -146,7 +145,7 @@ public class RenderBo {
 	}
 	
 	private void buildRenderedBody(RenderRequest req, RenderResponse rsp)
-			throws DataValidationException, ParseException {
+			throws ParseException, TemplateException {
 		if (isDebugEnabled)
 			logger.debug("in buildRenderedBody()...");
 		MsgSourceVo srcVo = rsp.msgSourceVo;
@@ -181,7 +180,7 @@ public class RenderBo {
 	}
 	
 	private void buildRenderedSubj(RenderRequest req, RenderResponse rsp)
-			throws DataValidationException, ParseException {
+			throws ParseException, TemplateException {
 		logger.info("in buildRenderedSubj()...");
 		MsgSourceVo srcVo = rsp.msgSourceVo;
 
@@ -237,7 +236,7 @@ public class RenderBo {
 	}
 	
 	private String render(String templateText, Map<String, RenderVariable> varbls,
-			Map<String, RenderVariable> errors) throws DataValidationException, ParseException {
+			Map<String, ErrorVariable> errors) throws ParseException, TemplateException {
 		return render.render(templateText, varbls, errors);
 	}
 	
@@ -328,9 +327,9 @@ public class RenderBo {
 			else if (r.getVariableValue() != null && VariableType.NUMERIC.equals(r.getVariableType())) {
 				if (VariableName.MSG_REF_ID.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof Long)
-						mBean.setMsgRefId(((Long) r.getVariableValue()).intValue());
+						mBean.setMsgRefId(((Long) r.getVariableValue()).longValue());
 					else if (r.getVariableValue() instanceof String)
-						mBean.setMsgRefId(Integer.valueOf((String) r.getVariableValue()));
+						mBean.setMsgRefId(Long.valueOf((String) r.getVariableValue()));
 				}
 			}
 			else if (VariableType.DATETIME.equals(r.getVariableType())) {
@@ -471,7 +470,7 @@ public class RenderBo {
 		if (r_ht==null) r_ht = new HashMap<String, RenderVariable>();
 		
 		// error hash table
-		Map<String, RenderVariable> err_ht = new HashMap<String, RenderVariable>();
+		Map<String, ErrorVariable> err_ht = new HashMap<String, ErrorVariable>();
 		
 		// merge variable hash tables
 		mergeMaps(s_ht, g_ht, err_ht);
@@ -486,7 +485,7 @@ public class RenderBo {
 	}
 	
 	private void mergeMaps(Map<String, RenderVariable> from,
-			Map<String, RenderVariable> to, Map<String, RenderVariable> error) {
+			Map<String, RenderVariable> to, Map<String, ErrorVariable> error) {
 		Set<String> keys = from.keySet();
 		for (Iterator<String> it=keys.iterator(); it.hasNext();) {
 			String name = it.next();
@@ -499,7 +498,10 @@ public class RenderBo {
 				else {
 					RenderVariable r = from.get(name);
 					r.setErrorMsg("Variable Override is not allowed.");
-					error.put(name, r);
+					ErrorVariable err = new ErrorVariable(r.getVariableName(),
+							r.getVariableValue(),
+							"Variable Override is not allowed.");
+					error.put(name, err);
 				}
 			}
 			else {
@@ -509,14 +511,17 @@ public class RenderBo {
 	}
 	
 	private void verifyMap(Map<String, RenderVariable> ht,
-			Map<String, RenderVariable> error) {
+			Map<String, ErrorVariable> error) {
 		Set<String> keys = ht.keySet();
 		for (Iterator<String> it=keys.iterator(); it.hasNext();) {
 			String name = it.next();
 			RenderVariable req = (RenderVariable) ht.get(name);
 			if (CodeType.MANDATORY_CODE.getValue().equals(req.getAllowOverride())) {
 				req.setErrorMsg("Variable Override is mandatory.");
-				error.put(name, req);
+				ErrorVariable err = new ErrorVariable(req.getVariableName(),
+						req.getVariableValue(),
+						"Variable Override is mandatory.");
+				error.put(name, err);
 			}
 		}
 	}

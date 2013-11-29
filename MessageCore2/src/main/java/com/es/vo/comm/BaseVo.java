@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.es.core.util.Printf;
 import com.es.data.constant.StatusId;
 
 @XmlAccessorType (XmlAccessType.NONE)
@@ -312,18 +311,18 @@ public class BaseVo implements java.io.Serializable, Cloneable {
 		}
 		
 		String printf() {
-			String str = Printf.sprintf("%14s", fieldName) + " : ";
+			String str = String.format("%14s", fieldName) + " : ";
 			if (leftValue instanceof Long) {
-				str += Printf.sprintf("%14d", leftValue) + "  <->  ";
+				str += String.format("%14d", leftValue) + "  <->  ";
 			}
 			else {
-				str += Printf.sprintf("%14s", leftValue) + "  <->  ";
+				str += String.format("%14s", leftValue) + "  <->  ";
 			}
 			if (rightValue instanceof Long) {
-				str += Printf.sprintf("%-14d", rightValue);
+				str += String.format("%-14d", rightValue);
 			}
 			else {
-				str += Printf.sprintf("%-14s", rightValue);
+				str += String.format("%-14s", rightValue);
 			}
 			return str;
 		}

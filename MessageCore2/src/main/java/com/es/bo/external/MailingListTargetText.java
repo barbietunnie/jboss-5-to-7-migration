@@ -3,6 +3,9 @@ package com.es.bo.external;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.es.core.util.EmailAddrUtil;
 import com.es.core.util.SpringUtil;
@@ -11,7 +14,9 @@ import com.es.dao.address.MailingListDao;
 import com.es.exception.DataValidationException;
 import com.es.vo.address.MailingListVo;
 
-public class MailingListTargetText implements RuleTargetProc {
+@Component("mailingListTargetText")
+@Transactional(propagation=Propagation.REQUIRED)
+public class MailingListTargetText implements AbstractTargetProc {
 	static final Logger logger = Logger.getLogger(MailingListTargetText.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
@@ -22,9 +27,9 @@ public class MailingListTargetText implements RuleTargetProc {
 	 * @return a regular expression
 	 */
 	public String process() throws DataValidationException {
-		if (isDebugEnabled)
+		if (isDebugEnabled) {
 			logger.debug("Entering process() method...");
-		
+		}
 		StringBuffer sb = new StringBuffer();
 		MailingListDao dao = SpringUtil.getAppContext().getBean(MailingListDao.class);
 		List<MailingListVo> list = dao.getAll(false);

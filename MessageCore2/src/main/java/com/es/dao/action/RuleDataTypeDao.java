@@ -34,12 +34,14 @@ public class RuleDataTypeDao {
 				"Rule_Data_Type where DataType=? and DataTypeValue=? ";
 		
 		Object[] parms = new Object[] {type, value};
-		
-		List<RuleDataTypeVo> list = getJdbcTemplate().query(sql, parms, new BeanPropertyRowMapper<RuleDataTypeVo>(RuleDataTypeVo.class));
-		if (list.size()>0)
-			return list.get(0);
-		else
+		try {
+			RuleDataTypeVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<RuleDataTypeVo>(RuleDataTypeVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public RuleDataTypeVo getByPrimaryKey(int rowId) {
