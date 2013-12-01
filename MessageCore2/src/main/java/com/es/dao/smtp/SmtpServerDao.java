@@ -43,13 +43,23 @@ public class SmtpServerDao {
 		}
 	}
 	
-	public List<SmtpConnVo> getAll(boolean onlyActive) {
+	public List<SmtpConnVo> getAll(boolean onlyActive, Boolean isSecure) {
 		List<String> keys = new ArrayList<String>();
 		String sql = "select * from Smtp_Server ";
 		if (onlyActive) {
 			sql += " where StatusId=? ";
 			keys.add(StatusId.ACTIVE.getValue());
 		}
+		if (isSecure!=null) {
+			keys.add(isSecure?CodeType.YES.getValue():CodeType.NO.getValue());
+			if (sql.indexOf("where")>0) {
+				sql += " and UseSsl=? ";
+			}
+			else {
+				sql += " where UseSsl=? ";
+			}
+		}
+
 		sql += " order by ServerName ";
 		List<SmtpConnVo> list = getJdbcTemplate().query(sql, keys.toArray(), 
 				new BeanPropertyRowMapper<SmtpConnVo>(SmtpConnVo.class));
