@@ -23,10 +23,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.es.bo.render.RenderBo;
 import com.es.bo.render.RenderRequest;
 import com.es.bo.render.RenderResponse;
 import com.es.bo.render.RenderVariable;
+import com.es.bo.sender.RenderBo;
 import com.es.core.util.SpringUtil;
 import com.es.dao.address.EmailAddressDao;
 import com.es.dao.inbox.MsgAddressDao;
@@ -368,8 +368,7 @@ public class MsgOutboxBo {
 						varVo.getVariableFormat(),
 						VariableType.getByValue(varVo.getVariableType()), 
 						CodeType.YES_CODE.getValue(), // allow override
-						CodeType.NO_CODE.getValue(), // required
-						null // error message
+						Boolean.FALSE // required
 						);
 				
 				varblFinal.put(r.getVariableName(), r);
@@ -399,8 +398,7 @@ public class MsgOutboxBo {
 						varVo.getVariableFormat(),
 						VariableType.getByValue(varVo.getVariableType()),
 						CodeType.YES_CODE.getValue(), // allow override
-						CodeType.NO_CODE.getValue(), // required
-						null // error message
+						Boolean.FALSE // required
 						);
 				
 				varblFinal.put(r.getVariableName(), r);
@@ -425,8 +423,7 @@ public class MsgOutboxBo {
 					attVo.getAttchmntType(), // content type as format
 					VariableType.LOB, 
 					CodeType.YES_CODE.getValue(), 
-					CodeType.NO_CODE.getValue(), 
-					null
+					Boolean.FALSE 
 					);
 				varblFinal.put(r.getVariableName(), r);
 			}

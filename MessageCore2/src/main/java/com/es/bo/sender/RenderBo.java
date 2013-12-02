@@ -16,48 +16,49 @@ import javax.mail.Address;
 import javax.mail.Part;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.persistence.NoResultException;
-
-import jpa.constant.CarrierCode;
-import jpa.constant.CodeType;
-import jpa.constant.Constants;
-import jpa.constant.EmailAddrType;
-import jpa.constant.VariableName;
-import jpa.constant.VariableType;
-import jpa.constant.XHeaderName;
-import jpa.exception.DataValidationException;
-import jpa.exception.TemplateException;
-import jpa.message.BodypartBean;
-import jpa.message.MessageBean;
-import jpa.message.MsgHeader;
-import jpa.model.GlobalVariable;
-import jpa.model.SenderData;
-import jpa.model.SenderVariable;
-import jpa.model.message.MessageRendered;
-import jpa.model.message.MessageSource;
-import jpa.model.message.RenderVariable;
-import jpa.model.message.TemplateData;
-import jpa.model.message.TemplateDataPK;
-import jpa.model.message.TemplateVariable;
-import jpa.service.EmailAddressService;
-import jpa.service.GlobalVariableService;
-import jpa.service.SenderDataService;
-import jpa.service.SenderVariableService;
-import jpa.service.message.MessageRenderedService;
-import jpa.service.message.MessageSourceService;
-import jpa.service.message.TemplateDataService;
-import jpa.service.message.TemplateVariableService;
-import jpa.util.SpringUtil;
-import jpa.variable.ErrorVariableVo;
-import jpa.variable.RenderVariableVo;
-import jpa.variable.Renderer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.es.bo.outbox.MsgOutboxBo;
+import com.es.bo.render.ErrorVariable;
+import com.es.bo.render.RenderRequest;
+import com.es.bo.render.RenderResponse;
+import com.es.bo.render.RenderVariable;
+import com.es.bo.render.Renderer;
+import com.es.core.util.SpringUtil;
+import com.es.dao.address.EmailAddressDao;
+import com.es.dao.outbox.MsgRenderedDao;
+import com.es.dao.sender.GlobalVariableDao;
+import com.es.dao.sender.SenderDao;
+import com.es.dao.sender.SenderVariableDao;
+import com.es.dao.template.MsgSourceDao;
+import com.es.dao.template.TemplateDataDao;
+import com.es.dao.template.TemplateVariableDao;
+import com.es.data.constant.CarrierCode;
+import com.es.data.constant.CodeType;
+import com.es.data.constant.Constants;
+import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.VariableName;
+import com.es.data.constant.VariableType;
+import com.es.data.constant.XHeaderName;
+import com.es.exception.DataValidationException;
+import com.es.exception.TemplateException;
+import com.es.msgbean.BodypartBean;
+import com.es.msgbean.MessageBean;
+import com.es.msgbean.MsgHeader;
+import com.es.vo.comm.SenderVo;
+import com.es.vo.outbox.MsgRenderedVo;
+import com.es.vo.template.GlobalVariableVo;
+import com.es.vo.template.MsgSourceVo;
+import com.es.vo.template.SenderVariableVo;
+import com.es.vo.template.TemplateDataVo;
+import com.es.vo.template.TemplateVariableVo;
 
 @Component("renderBo")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -70,36 +71,36 @@ public class RenderBo implements java.io.Serializable {
 	private final Renderer render = Renderer.getInstance();
 	
 	@Autowired
-	private MessageSourceService msgSourceDao;
+	private MsgSourceDao msgSourceDao;
 	@Autowired
-	private TemplateDataService templateDao;
+	private TemplateDataDao templateDao;
 	@Autowired
-	private SenderVariableService senderVariableDao;
+	private SenderVariableDao senderVariableDao;
 	@Autowired
-	private GlobalVariableService globalVariableDao;
+	private GlobalVariableDao globalVariableDao;
 	@Autowired
-	private TemplateVariableService templateVariableDao;
+	private TemplateVariableDao templateVariableDao;
 	@Autowired
-	private EmailAddressService emailAddrDao;
+	private EmailAddressDao emailAddrDao;
 	@Autowired
-	private SenderDataService senderService;
+	private SenderDao senderDao;
 	
 	public static void main(String[] args) {
-		RenderBo bo = (RenderBo) SpringUtil.getAppContext().getBean("renderBo");
-		MsgOutboxBo outboxBo = (MsgOutboxBo) SpringUtil.getAppContext().getBean("msgOutboxBo");
-		MessageRenderedService rndrDao = (MessageRenderedService) SpringUtil.getAppContext().getBean("messageRenderedService");
+		RenderBo bo = SpringUtil.getAppContext().getBean(RenderBo.class);
+		MsgOutboxBo outboxBo = SpringUtil.getAppContext().getBean(MsgOutboxBo.class);
+		MsgRenderedDao rndrDao = SpringUtil.getAppContext().getBean(MsgRenderedDao.class);
 		SpringUtil.beginTransaction();
 		try {
-			MessageRendered mr = null;
+			MsgRenderedVo mr = null;
 			try {
 				mr = rndrDao.getFirstRecord();
 			}
-			catch (NoResultException e) {
-				throw new IllegalStateException("Message_Rendered table is empty.");
+			catch (EmptyResultDataAccessException e) {
+				throw new IllegalStateException("Msg_Rendered table is empty.");
 			}
 			RenderRequest req = outboxBo.getRenderRequestByPK(mr.getRowId());
-			RenderVariableVo vo = new RenderVariableVo(
-					EmailAddrType.TO_ADDR.getValue(),
+			RenderVariable vo = new RenderVariable(
+					EmailAddressType.TO_ADDR.getValue(),
 					"testto@localhost",
 					VariableType.ADDRESS);
 			req.getVariableOverrides().put(vo.getVariableName(), vo);
@@ -118,13 +119,14 @@ public class RenderBo implements java.io.Serializable {
 	public RenderResponse getRenderedEmail(RenderRequest req)
 			throws ParseException, AddressException, TemplateException {
 		logger.info("in getRenderedEmail(RenderRequest)...");
-		if (req == null)
+		if (req == null) {
 			throw new IllegalArgumentException("RenderRequest is null");
-		if (req.startTime==null)
-			req.startTime = new Timestamp(new java.util.Date().getTime());
-
+		}
+		if (req.getStartTime()==null) {
+			req.setStartTime(new Timestamp(System.currentTimeMillis()));
+		}
 		RenderResponse rsp = initRenderResponse(req);
-		buildRenderVariableVos(req, rsp);
+		buildRenderVariables(req, rsp);
 		buildRenderedBody(req, rsp);
 		buildRenderedSubj(req, rsp);
 		buildRenderedAttachments(req, rsp);
@@ -136,19 +138,19 @@ public class RenderBo implements java.io.Serializable {
 	}
 	
 	private RenderResponse initRenderResponse(RenderRequest req) throws DataValidationException {
-		MessageSource vo = null;
+		MsgSourceVo vo = null;
 		try {
-			vo = (MessageSource) msgSourceDao.getByMsgSourceId(req.msgSourceId);
+			vo = msgSourceDao.getByPrimaryKey(req.getMsgSourceId());
 		}
-		catch (NoResultException e) {
-			throw new DataValidationException("MsgSource record not found for " + req.msgSourceId);
+		catch (EmptyResultDataAccessException e) {
+			throw new DataValidationException("MsgSource record not found for " + req.getMsgSourceId());
 		}
 		RenderResponse rsp = new RenderResponse(
 				vo,
-				req.senderId,
-				req.startTime,
-				new HashMap<String, RenderVariableVo>(),
-				new HashMap<String, ErrorVariableVo>(),
+				req.getSenderId(),
+				req.getStartTime(),
+				new HashMap<String, RenderVariable>(),
+				new HashMap<String, ErrorVariable>(),
 				new MessageBean()
 				);
 		return rsp;
@@ -156,7 +158,7 @@ public class RenderBo implements java.io.Serializable {
 	
 	public RenderResponse getRenderedBody(RenderRequest req) throws ParseException, TemplateException {
 		RenderResponse rsp = initRenderResponse(req);
-		buildRenderVariableVos(req, rsp);
+		buildRenderVariables(req, rsp);
 		buildRenderedBody(req, rsp);
 
 		return rsp;
@@ -164,7 +166,7 @@ public class RenderBo implements java.io.Serializable {
 	
 	public RenderResponse getRenderedMisc(RenderRequest req) {
 		RenderResponse rsp = initRenderResponse(req);
-		buildRenderVariableVos(req, rsp);
+		buildRenderVariables(req, rsp);
 		buildRenderedMisc(req, rsp);
 
 		return rsp;
@@ -173,7 +175,7 @@ public class RenderBo implements java.io.Serializable {
 	public RenderResponse getRenderedSubj(RenderRequest req)
 			throws ParseException, TemplateException {
 		RenderResponse rsp = initRenderResponse(req);
-		buildRenderVariableVos(req, rsp);
+		buildRenderVariables(req, rsp);
 		buildRenderedSubj(req, rsp);
 
 		return rsp;
@@ -181,7 +183,7 @@ public class RenderBo implements java.io.Serializable {
 
 	public RenderResponse getRenderedAddrs(RenderRequest req) throws AddressException {
 		RenderResponse rsp = initRenderResponse(req);
-		buildRenderVariableVos(req, rsp);
+		buildRenderVariables(req, rsp);
 		buildRenderedAddrs(req, rsp);
 
 		return rsp;
@@ -189,7 +191,7 @@ public class RenderBo implements java.io.Serializable {
 
 	public RenderResponse getRenderedXHdrs(RenderRequest req) {
 		RenderResponse rsp = initRenderResponse(req);
-		buildRenderVariableVos(req, rsp);
+		buildRenderVariables(req, rsp);
 		buildRenderedXHdrs(req, rsp);
 
 		return rsp;
@@ -199,14 +201,14 @@ public class RenderBo implements java.io.Serializable {
 			throws ParseException, TemplateException {
 		if (isDebugEnabled)
 			logger.debug("in buildRenderedBody()...");
-		MessageSource srcVo = rsp.msgSourceVo;
+		MsgSourceVo srcVo = rsp.getMsgSourceVo();
 		
 		String bodyTemplate = null;
 		String contentType = null;
 		// body template may come from variables
-		if (rsp.variableFinal.containsKey(VariableName.BODY_TEMPLATE.getValue())
+		if (rsp.getVariableFinal().containsKey(VariableName.BODY_TEMPLATE.getValue())
 				&& CodeType.YES_CODE.getValue().equalsIgnoreCase(srcVo.getAllowOverride())) {
-			RenderVariableVo var = (RenderVariableVo) rsp.variableFinal.get(VariableName.BODY_TEMPLATE.getValue());
+			RenderVariable var = (RenderVariable) rsp.getVariableFinal().get(VariableName.BODY_TEMPLATE.getValue());
 			if (VariableType.TEXT.equals(var.getVariableType())) {
 				bodyTemplate = (String) var.getVariableValue();
 				contentType = var.getVariableFormat() == null ? "text/plain"
@@ -215,17 +217,17 @@ public class RenderBo implements java.io.Serializable {
 		}
 		
 		if (bodyTemplate == null) {
-			TemplateData tmpltVo = templateDao.getByBestMatch(srcVo.getTemplateData().getTemplateDataPK());
+			TemplateDataVo tmpltVo = templateDao.getByBestMatch(srcVo.getTemplateDataId(), req.getSenderId(), req.getStartTime());
 			if (tmpltVo == null) {
 				throw new DataValidationException("BodyTemplate not found for: "
-						+ srcVo.getTemplateData().getTemplateDataPK());
+						+ srcVo.getTemplateDataId() + "/" + req.getSenderId() + "/" + req.getStartTime());
 			}
 			bodyTemplate = tmpltVo.getBodyTemplate();
 			contentType = tmpltVo.getContentType();
 		}
 		
-		String body = render(bodyTemplate, rsp.variableFinal, rsp.variableErrors);
-		MessageBean mBean = rsp.messageBean;
+		String body = render(bodyTemplate, rsp.getVariableFinal(), rsp.getVariableErrors());
+		MessageBean mBean = rsp.getMessageBean();
 		mBean.setContentType(contentType);
 		mBean.setBody(body);
 	}
@@ -233,39 +235,39 @@ public class RenderBo implements java.io.Serializable {
 	private void buildRenderedSubj(RenderRequest req, RenderResponse rsp)
 			throws ParseException, TemplateException {
 		logger.info("in buildRenderedSubj()...");
-		MessageSource srcVo = rsp.msgSourceVo;
+		MsgSourceVo srcVo = rsp.getMsgSourceVo();
 
 		String subjTemplate = null;
 		// subject template may come from variables
-		if (rsp.variableFinal.containsKey(VariableName.SUBJECT_TEMPLATE.getValue())
+		if (rsp.getVariableFinal().containsKey(VariableName.SUBJECT_TEMPLATE.getValue())
 				&& CodeType.YES_CODE.getValue().equalsIgnoreCase(srcVo.getAllowOverride())) {
-			RenderVariableVo var = (RenderVariableVo) rsp.variableFinal.get(VariableName.SUBJECT_TEMPLATE.getValue());
+			RenderVariable var = (RenderVariable) rsp.getVariableFinal().get(VariableName.SUBJECT_TEMPLATE.getValue());
 			if (VariableType.TEXT.equals(var.getVariableType())) {
 				subjTemplate = (String) var.getVariableValue();
 			}
 		}
 
 		if (subjTemplate == null) {
-			TemplateData tmpltVo = templateDao.getByBestMatch(srcVo.getTemplateData().getTemplateDataPK());
+			TemplateDataVo tmpltVo = templateDao.getByBestMatch(srcVo.getTemplateDataId(), req.getSenderId(), req.getStartTime());
 			if (tmpltVo == null) {
 				throw new DataValidationException("SubjTemplate not found for: "
-						+ srcVo.getTemplateData().getTemplateDataPK());
+						+ srcVo.getTemplateDataId() + "/" + req.getSenderId() + "/" + req.getStartTime());
 			}
-			subjTemplate = tmpltVo.getSubjectTemplate();
+			subjTemplate = tmpltVo.getSubjTemplate();
 		}
 		
-		String subj = render(subjTemplate, rsp.variableFinal, rsp.variableErrors);
-		MessageBean mBean = rsp.messageBean;
+		String subj = render(subjTemplate, rsp.getVariableFinal(), rsp.getVariableErrors());
+		MessageBean mBean = rsp.getMessageBean();
 		mBean.setSubject(subj);
 	}
 
 	private void buildRenderedAttachments(RenderRequest req, RenderResponse rsp) {
 		logger.info("in buildRenderedAttachments()...");
-		Map<String, RenderVariableVo> varbls = rsp.variableFinal;
-		MessageBean mBean = rsp.messageBean;
-		Collection<RenderVariableVo> c = varbls.values();
-		for (Iterator<RenderVariableVo> it = c.iterator(); it.hasNext();) {
-			RenderVariableVo r = it.next();
+		Map<String, RenderVariable> varbls = rsp.getVariableFinal();
+		MessageBean mBean = rsp.getMessageBean();
+		Collection<RenderVariable> c = varbls.values();
+		for (Iterator<RenderVariable> it = c.iterator(); it.hasNext();) {
+			RenderVariable r = it.next();
 			if (VariableType.LOB.equals(r.getVariableType()) && r.getVariableValue() != null) {
 				BodypartBean attNode = new BodypartBean();
 				if (r.getVariableFormat() != null && r.getVariableFormat().indexOf(";") > 0
@@ -285,50 +287,50 @@ public class RenderBo implements java.io.Serializable {
 		}
 	}
 	
-	private String render(String templateText, Map<String, RenderVariableVo> varbls,
-			Map<String, ErrorVariableVo> errors) throws TemplateException, ParseException {
+	private String render(String templateText, Map<String, RenderVariable> varbls,
+			Map<String, ErrorVariable> errors) throws TemplateException, ParseException {
 		return render.render(templateText, varbls, errors);
 	}
 	
 	private void buildRenderedAddrs(RenderRequest req, RenderResponse rsp) throws AddressException {
 		logger.info("in buildRenderedAddrs()...");
-		Map<String, RenderVariableVo> varbls = rsp.variableFinal;
-		MessageBean mBean = rsp.messageBean;
+		Map<String, RenderVariable> varbls = rsp.getVariableFinal();
+		MessageBean mBean = rsp.getMessageBean();
 
 		// variableValue could be type of: String/Address
-		Collection<RenderVariableVo> c = varbls.values();
-		for (Iterator<RenderVariableVo> it=c.iterator(); it.hasNext();) {
-			RenderVariableVo r = it.next();
+		Collection<RenderVariable> c = varbls.values();
+		for (Iterator<RenderVariable> it=c.iterator(); it.hasNext();) {
+			RenderVariable r = it.next();
 			if (VariableType.ADDRESS.equals(r.getVariableType()) && r.getVariableValue() != null) {
-				if (EmailAddrType.FROM_ADDR.getValue().equals(r.getVariableName())) {
+				if (EmailAddressType.FROM_ADDR.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof String)
 						mBean.setFrom(InternetAddress.parse((String) r.getVariableValue()));
 					else if (r.getVariableValue() instanceof InternetAddress) {
 						mBean.setFrom(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
-				else if (EmailAddrType.REPLYTO_ADDR.getValue().equals(r.getVariableName())) {
+				else if (EmailAddressType.REPLYTO_ADDR.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof String)
 						mBean.setReplyto(InternetAddress.parse((String) r.getVariableValue()));
 					else if (r.getVariableValue() instanceof Address) {
 						mBean.setReplyto(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
-				else if (EmailAddrType.TO_ADDR.getValue().equals(r.getVariableName())) {
+				else if (EmailAddressType.TO_ADDR.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof String)
 						mBean.setTo(InternetAddress.parse((String) r.getVariableValue()));
 					else if (r.getVariableValue() instanceof Address) {
 						mBean.setTo(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
-				else if (EmailAddrType.CC_ADDR.getValue().equals(r.getVariableName())) {
+				else if (EmailAddressType.CC_ADDR.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof String)
 						mBean.setCc(InternetAddress.parse((String) r.getVariableValue()));
 					else if (r.getVariableValue() instanceof Address) {
 						mBean.setCc(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
-				else if (EmailAddrType.BCC_ADDR.getValue().equals(r.getVariableName())) {
+				else if (EmailAddressType.BCC_ADDR.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof String)
 						mBean.setBcc(InternetAddress.parse((String) r.getVariableValue()));
 					else if (r.getVariableValue() instanceof Address) {
@@ -341,13 +343,13 @@ public class RenderBo implements java.io.Serializable {
 
 	private void buildRenderedMisc(RenderRequest req, RenderResponse rsp) {
 		logger.info("in buildRenderedMisc()...");
-		MessageSource src = rsp.msgSourceVo;
-		Map<String, RenderVariableVo> varbls = rsp.variableFinal;
-		MessageBean mBean = rsp.messageBean;
+		MsgSourceVo src = rsp.getMsgSourceVo();
+		Map<String, RenderVariable> varbls = rsp.getVariableFinal();
+		MessageBean mBean = rsp.getMessageBean();
 
-		Collection<RenderVariableVo> c = varbls.values();
-		for (Iterator<RenderVariableVo> it=c.iterator(); it.hasNext();) {
-			RenderVariableVo r = it.next();
+		Collection<RenderVariable> c = varbls.values();
+		for (Iterator<RenderVariable> it=c.iterator(); it.hasNext();) {
+			RenderVariable r = it.next();
 			if (r.getVariableValue() != null && VariableType.TEXT.equals(r.getVariableType())) {
 				if (VariableName.PRIORITY.getValue().equals(r.getVariableName())) {
 					String[] s = { (String) r.getVariableValue() };
@@ -377,9 +379,9 @@ public class RenderBo implements java.io.Serializable {
 			else if (r.getVariableValue() != null && VariableType.NUMERIC.equals(r.getVariableType())) {
 				if (VariableName.MSG_REF_ID.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof BigDecimal)
-						mBean.setMsgRefId(((BigDecimal) r.getVariableValue()).intValue());
+						mBean.setMsgRefId(((BigDecimal) r.getVariableValue()).longValue());
 					else if (r.getVariableValue() instanceof String)
-						mBean.setMsgRefId(Integer.valueOf((String) r.getVariableValue()));
+						mBean.setMsgRefId(Long.valueOf((String) r.getVariableValue()));
 				}
 			}
 			else if (VariableType.DATETIME.equals(r.getVariableType())) {
@@ -388,7 +390,7 @@ public class RenderBo implements java.io.Serializable {
 						mBean.setSendDate(new java.util.Date());
 					}
 					else {
-						SimpleDateFormat fmt = new SimpleDateFormat(RenderVariableVo.DEFAULT_DATETIME_FORMAT);
+						SimpleDateFormat fmt = new SimpleDateFormat(RenderVariable.DEFAULT_DATETIME_FORMAT);
 						if (r.getVariableFormat()!=null) {
 							fmt.applyPattern(r.getVariableFormat());
 						}
@@ -411,14 +413,14 @@ public class RenderBo implements java.io.Serializable {
 		}
 		// make sure CarrierCode is populated
 		if (mBean.getCarrierCode() == null) {
-			mBean.setCarrierCode(CarrierCode.getByValue(rsp.msgSourceVo.getCarrierCode()));
+			mBean.setCarrierCode(CarrierCode.getByValue(rsp.getMsgSourceVo().getCarrierCode()));
 		}
 
-		if (src.isExcludingIdToken()) {
+		if (CodeType.YES_CODE.getValue().equals(src.getExcludingIdToken())) {
 			mBean.setEmBedEmailId(Boolean.valueOf(false));
 		}
 
-		if (src.isSaveMsgStream())
+		if (CodeType.YES_CODE.getValue().equals(src.getSaveMsgStream()))
 			mBean.setSaveMsgStream(true);
 		else
 			mBean.setSaveMsgStream(false);
@@ -431,14 +433,14 @@ public class RenderBo implements java.io.Serializable {
 	 */
 	private void buildRenderedXHdrs(RenderRequest req, RenderResponse rsp) {
 		logger.info("in buildRenderedXHdrs()...");
-		// MessageSource src = rsp.msgSourceVo;
-		Map<String, RenderVariableVo> varbls = rsp.variableFinal;
-		MessageBean mBean = rsp.messageBean;
+		// MsgSourceVo src = rsp.msgSourceVo;
+		Map<String, RenderVariable> varbls = rsp.getVariableFinal();
+		MessageBean mBean = rsp.getMessageBean();
 		List<MsgHeader> headers = new ArrayList<MsgHeader>();
 
-		Collection<RenderVariableVo> c = varbls.values();
-		for (Iterator<RenderVariableVo> it=c.iterator(); it.hasNext();) {
-			RenderVariableVo r = it.next();
+		Collection<RenderVariable> c = varbls.values();
+		for (Iterator<RenderVariable> it=c.iterator(); it.hasNext();) {
+			RenderVariable r = it.next();
 			if (VariableType.X_HEADER.equals(r.getVariableType()) && r.getVariableValue() != null) {
 				MsgHeader msgHeader = new MsgHeader();
 				msgHeader.setName(r.getVariableName());
@@ -460,47 +462,48 @@ public class RenderBo implements java.io.Serializable {
 		mBean.setHeaders(headers);
 	}
 	
-	private void buildRenderVariableVos(RenderRequest req, RenderResponse rsp) {
-		logger.info("in buildRenderVariableVos()...");
+	private void buildRenderVariables(RenderRequest req, RenderResponse rsp) {
+		logger.info("in buildRenderVariables()...");
 		
-		MessageSource msgSourceVo = msgSourceDao.getByMsgSourceId(req.msgSourceId);
-		rsp.msgSourceVo = msgSourceVo;
+		MsgSourceVo msgSourceVo = msgSourceDao.getByPrimaryKey(req.getMsgSourceId());
+		rsp.setMsgSourceVo(msgSourceVo);
 		
 		// retrieve variables
-		Collection<GlobalVariable> globalVariables = globalVariableDao.getCurrent();
-		Collection<SenderVariable> senderVariables = senderVariableDao.getCurrentBySenderId(
-				req.senderId);
-		Collection<TemplateVariable> templateVariables = msgSourceVo.getTemplateVariableList();
+		Collection<GlobalVariableVo> globalVariables = globalVariableDao.getCurrent();
+		Collection<SenderVariableVo> senderVariables = senderVariableDao.getCurrentBySenderId(
+				req.getSenderId());
+		Collection<TemplateVariableVo> templateVariables = templateVariableDao.getCurrentByTemplateId(
+				msgSourceVo.getTemplateVariableId(), req.getSenderId());
 		
 		// convert variables into Map
-		Map<String, RenderVariableVo> g_ht = globalVariablesToMap(globalVariables);
-		Map<String, RenderVariableVo> c_ht = senderVariablesToMap(senderVariables);
-		Map<String, RenderVariableVo> t_ht = templateVariablesToMap(templateVariables);
+		Map<String, RenderVariable> g_ht = globalVariablesToMap(globalVariables);
+		Map<String, RenderVariable> c_ht = senderVariablesToMap(senderVariables);
+		Map<String, RenderVariable> t_ht = templateVariablesToMap(templateVariables);
 		
 		// variables from req and MsgSource table
-		Map<String, RenderVariableVo> s_ht = new HashMap<String, RenderVariableVo>();
-		RenderVariableVo vreq = new RenderVariableVo(
+		Map<String, RenderVariable> s_ht = new HashMap<String, RenderVariable>();
+		RenderVariable vreq = new RenderVariable(
 				VariableName.SENDER_ID.getValue(),
-				req.senderId,
+				req.getSenderId(),
 				null,
 				VariableType.TEXT, 
 				CodeType.YES_CODE.getValue(),
 				Boolean.TRUE);
 		s_ht.put(vreq.getVariableName(), vreq);
 		
-		vreq = new RenderVariableVo(
-			EmailAddrType.FROM_ADDR.getValue(),
-			msgSourceVo.getFromAddress().getAddress(),
+		vreq = new RenderVariable(
+			EmailAddressType.FROM_ADDR.getValue(),
+			emailAddrDao.getByAddrId(msgSourceVo.getFromAddrId()).getEmailAddr(),
 			null,
 			VariableType.ADDRESS, 
 			CodeType.YES_CODE.getValue(),
 			Boolean.TRUE);
 		s_ht.put(vreq.getVariableName(), vreq);
 		
-		if (msgSourceVo.getReplyToAddress()!=null) {
-			vreq = new RenderVariableVo(
-				EmailAddrType.REPLYTO_ADDR.getValue(),
-				msgSourceVo.getReplyToAddress().getAddress(),
+		if (msgSourceVo.getReplyToAddrId()!=null) {
+			vreq = new RenderVariable(
+				EmailAddressType.REPLYTO_ADDR.getValue(),
+				emailAddrDao.getByAddrId(msgSourceVo.getReplyToAddrId()).getEmailAddr(),
 				null,
 				VariableType.ADDRESS, 
 				CodeType.YES_CODE.getValue(),
@@ -509,13 +512,13 @@ public class RenderBo implements java.io.Serializable {
 		}
 		
 		// get Runtime variables
-		Map<String, RenderVariableVo> r_ht = req.variableOverrides;
+		Map<String, RenderVariable> r_ht = req.getVariableOverrides();
 		if (r_ht==null) {
-			r_ht = new HashMap<String, RenderVariableVo>();
+			r_ht = new HashMap<String, RenderVariable>();
 		}
 		
 		// error hash table
-		Map<String, ErrorVariableVo> err_ht = new HashMap<String, ErrorVariableVo>();
+		Map<String, ErrorVariable> err_ht = new HashMap<String, ErrorVariable>();
 		
 		// merge variable tables
 		mergeVariableMaps(s_ht, g_ht, err_ht);
@@ -524,24 +527,24 @@ public class RenderBo implements java.io.Serializable {
 		verifyVariableMap(g_ht, r_ht, err_ht);
 		mergeVariableMaps(r_ht, g_ht, err_ht);
 		
-		rsp.variableFinal.putAll(g_ht);
-		rsp.variableErrors.putAll(err_ht);
+		rsp.getVariableFinal().putAll(g_ht);
+		rsp.getVariableErrors().putAll(err_ht);
 	}
 	
-	private void mergeVariableMaps(Map<String, RenderVariableVo> from,
-			Map<String, RenderVariableVo> to, Map<String, ErrorVariableVo> error) {
+	private void mergeVariableMaps(Map<String, RenderVariable> from,
+			Map<String, RenderVariable> to, Map<String, ErrorVariable> error) {
 		Set<String> keys = from.keySet();
 		for (Iterator<String> it=keys.iterator(); it.hasNext();) {
 			String name = it.next();
 			if (to.get(name) != null) {
-				RenderVariableVo req = (RenderVariableVo) to.get(name);
+				RenderVariable req = (RenderVariable) to.get(name);
 				if (CodeType.YES_CODE.getValue().equalsIgnoreCase(req.getAllowOverride())
 						|| CodeType.MANDATORY_CODE.getValue().equalsIgnoreCase(req.getAllowOverride())) {
 					to.put(name, from.get(name));
 				}
 				else {
-					RenderVariableVo r = (RenderVariableVo) from.get(name);
-					ErrorVariableVo err = new ErrorVariableVo(
+					RenderVariable r = (RenderVariable) from.get(name);
+					ErrorVariable err = new ErrorVariable(
 							r.getVariableName(), 
 							r.getVariableValue(), 
 							"Variable Override is not allowed.");
@@ -554,15 +557,15 @@ public class RenderBo implements java.io.Serializable {
 		}
 	}
 	
-	private void verifyVariableMap(Map<String, RenderVariableVo> gt,
-			Map<String, RenderVariableVo> rt, Map<String, ErrorVariableVo> error) {
+	private void verifyVariableMap(Map<String, RenderVariable> gt,
+			Map<String, RenderVariable> rt, Map<String, ErrorVariable> error) {
 		Set<String> keys = gt.keySet();
 		for (Iterator<String> it=keys.iterator(); it.hasNext();) {
 			String name = it.next();
-			RenderVariableVo req = (RenderVariableVo) gt.get(name);
+			RenderVariable req = (RenderVariable) gt.get(name);
 			if (CodeType.MANDATORY_CODE.getValue().equalsIgnoreCase(req.getAllowOverride())) {
 				if (!rt.containsKey(name)) {
-					ErrorVariableVo err = new ErrorVariableVo(
+					ErrorVariable err = new ErrorVariable(
 							req.getVariableName(),
 							req.getVariableValue(),
 							"Variable Override is mandatory.");
@@ -572,67 +575,66 @@ public class RenderBo implements java.io.Serializable {
 		}
 	}
 	
-	private Map<String, RenderVariableVo> globalVariablesToMap(Collection<GlobalVariable> c) {
-		Map<String, RenderVariableVo> ht = new HashMap<String, RenderVariableVo>();
-		for (GlobalVariable req : c) {
-			RenderVariableVo r = new RenderVariableVo(
-				req.getGlobalVariablePK().getVariableName(),
+	private Map<String, RenderVariable> globalVariablesToMap(Collection<GlobalVariableVo> c) {
+		Map<String, RenderVariable> ht = new HashMap<String, RenderVariable>();
+		for (GlobalVariableVo req : c) {
+			RenderVariable r = new RenderVariable(
+				req.getVariableName(),
 				req.getVariableValue(), 
 				req.getVariableFormat(), 
 				VariableType.getByValue(req.getVariableType()), 
 				req.getAllowOverride(), 
-				req.isRequired()
+				CodeType.YES_CODE.equals(req.getRequired())?true:false
 				);
-			ht.put(req.getGlobalVariablePK().getVariableName(), r);
+			ht.put(req.getVariableName(), r);
 		}
 		return ht;
 	}
 	
-	private Map<String, RenderVariableVo> senderVariablesToMap(Collection<SenderVariable> c) {
-		Map<String, RenderVariableVo> ht = new HashMap<String, RenderVariableVo>();
-		for (SenderVariable req : c) {
-			RenderVariableVo r = new RenderVariableVo(
-				req.getSenderVariablePK().getVariableName(),
+	private Map<String, RenderVariable> senderVariablesToMap(Collection<SenderVariableVo> c) {
+		Map<String, RenderVariable> ht = new HashMap<String, RenderVariable>();
+		for (SenderVariableVo req : c) {
+			RenderVariable r = new RenderVariable(
+				req.getVariableName(),
 				req.getVariableValue(), 
 				req.getVariableFormat(), 
 				VariableType.getByValue(req.getVariableType()), 
 				req.getAllowOverride(), 
-				req.isRequired()
+				CodeType.YES_CODE.equals(req.getRequired())
 				);
-			ht.put(req.getSenderVariablePK().getVariableName(), r);
+			ht.put(req.getVariableName(), r);
 		}
 		return ht;
 	}
 	
-	private Map<String, RenderVariableVo> templateVariablesToMap(
-			Collection<TemplateVariable> c) {
-		Map<String, RenderVariableVo> ht = new HashMap<String, RenderVariableVo>();
-		for (TemplateVariable req : c) {
-			RenderVariableVo r = new RenderVariableVo(
-				req.getTemplateVariablePK().getVariableName(),
+	private Map<String, RenderVariable> templateVariablesToMap(Collection<TemplateVariableVo> c) {
+		Map<String, RenderVariable> ht = new HashMap<String, RenderVariable>();
+		for (TemplateVariableVo req : c) {
+			RenderVariable r = new RenderVariable(
+				req.getVariableName(),
 				req.getVariableValue(), 
 				req.getVariableFormat(), 
 				VariableType.getByValue(req.getVariableType()), 
 				req.getAllowOverride(), 
-				req.isRequired()
+				CodeType.YES_CODE.equals(req.getRequired())
 				);
-			ht.put(req.getTemplateVariablePK().getVariableName(), r);
+			ht.put(req.getVariableName(), r);
 		}
 		return ht;
 	}
 
-	public static Map<String, RenderVariableVo> renderVariablesToMap(Collection<RenderVariable> c) {
-		Map<String, RenderVariableVo> ht = new HashMap<String, RenderVariableVo>();
+	public static Map<String, RenderVariable> renderVariablesToMap(Collection<RenderVariable> c) {
+		Map<String, RenderVariable> ht = new HashMap<String, RenderVariable>();
 		for (RenderVariable req : c) {
-			RenderVariableVo r = new RenderVariableVo(
-				req.getRenderVariablePK().getVariableName(),
+			RenderVariable r = new RenderVariable(
+				req.getVariableName(),
 				req.getVariableValue(), 
 				req.getVariableFormat(), 
-				VariableType.getByValue(req.getVariableType()), 
+				req.getVariableType(), 
 				CodeType.YES_CODE.getValue(), 
 				Boolean.FALSE
 				);
-			ht.put(req.getRenderVariablePK().getVariableName(), r);
+			ht.put(req.getVariableName(), r);
 		}
 		return ht;
 	}
@@ -653,19 +655,15 @@ public class RenderBo implements java.io.Serializable {
 	 * @throws TemplateException 
 	 */
 	public String renderTemplateById(String templateId, String senderId,
-			Map<String, RenderVariableVo> variables) throws DataValidationException,
+			Map<String, RenderVariable> variables) throws DataValidationException,
 			ParseException, TemplateException {
 		if (StringUtils.isBlank(senderId)) {
 			senderId = Constants.DEFAULT_SENDER_ID;
 		}
-		SenderData sender = senderService.getBySenderId(senderId);
+		SenderVo sender = senderDao.getBySenderId(senderId);
 		Timestamp startTime = new Timestamp(System.currentTimeMillis());
-		TemplateDataPK pk = new TemplateDataPK(sender,templateId,startTime);
-		TemplateData tmpltVo = null;
-		try {
-			tmpltVo = templateDao.getByBestMatch(pk);
-		}
-		catch (NoResultException e) {
+		TemplateDataVo tmpltVo = templateDao.getByBestMatch(sender.getSenderId(),templateId,startTime);
+		if (tmpltVo == null) {
 			throw new DataValidationException("TemplateData not found by: " + templateId + "/"
 					+ senderId + "/" + startTime);
 		}
@@ -673,26 +671,26 @@ public class RenderBo implements java.io.Serializable {
 			logger.debug("Template to render:" + LF + tmpltVo.getBodyTemplate());
 		}
 		
-		HashMap<String, RenderVariableVo> map = new HashMap<String, RenderVariableVo>();
+		Map<String, RenderVariable> map = new HashMap<String, RenderVariable>();
 
-		List<TemplateVariable> tmpltList = templateVariableDao.getByVariableId(templateId);
-		for (Iterator<TemplateVariable> it = tmpltList.iterator(); it.hasNext();) {
-			TemplateVariable vo = it.next();
-			RenderVariableVo var = new RenderVariableVo(
-					vo.getTemplateVariablePK().getVariableName(),
+		List<TemplateVariableVo> tmpltList = templateVariableDao.getByTemplateId(templateId);
+		for (Iterator<TemplateVariableVo> it = tmpltList.iterator(); it.hasNext();) {
+			TemplateVariableVo vo = it.next();
+			RenderVariable var = new RenderVariable(
+					vo.getVariableName(),
 					vo.getVariableValue(),
 					vo.getVariableFormat(),
 					VariableType.getByValue(vo.getVariableType()),
 					vo.getAllowOverride(),
-					vo.isRequired());
-			if (map.containsKey(vo.getTemplateVariablePK().getVariableName())) {
-				RenderVariableVo v2 = map.get(vo.getTemplateVariablePK().getVariableName());
+					CodeType.YES_CODE.equals(vo.getRequired()));
+			if (map.containsKey(vo.getVariableName())) {
+				RenderVariable v2 = map.get(vo.getVariableName());
 				if (CodeType.YES_CODE.getValue().equalsIgnoreCase(v2.getAllowOverride())) {
-					map.put(vo.getTemplateVariablePK().getVariableName(), var);
+					map.put(vo.getVariableName(), var);
 				}
 			}
 			else {
-				map.put(vo.getTemplateVariablePK().getVariableName(), var);
+				map.put(vo.getVariableName(), var);
 			}
 		}
 		
@@ -701,7 +699,7 @@ public class RenderBo implements java.io.Serializable {
 			for (Iterator<String> it=keys.iterator(); it.hasNext(); ) {
 				String key = it.next();
 				if (map.containsKey(key)) {
-					RenderVariableVo v2 = map.get(key);
+					RenderVariable v2 = map.get(key);
 					if (CodeType.YES_CODE.getValue().equalsIgnoreCase(v2.getAllowOverride())) {
 						map.put(key, variables.get(key));
 					}
@@ -731,7 +729,7 @@ public class RenderBo implements java.io.Serializable {
 	 * @throws TemplateException 
 	 */
 	public String renderTemplateText(String templateText, String senderId,
-			Map<String, RenderVariableVo> variables) throws
+			Map<String, RenderVariable> variables) throws
 			ParseException, TemplateException {
 		if (templateText == null || templateText.trim().length() == 0) {
 			return templateText;
@@ -740,41 +738,41 @@ public class RenderBo implements java.io.Serializable {
 			senderId = Constants.DEFAULT_SENDER_ID;
 		}
 		
-		Map<String, RenderVariableVo> map = new HashMap<String, RenderVariableVo>();
+		Map<String, RenderVariable> map = new HashMap<String, RenderVariable>();
 
-		List<GlobalVariable> globalList = globalVariableDao.getCurrent();
-		for (Iterator<GlobalVariable> it = globalList.iterator(); it.hasNext();) {
-			GlobalVariable vo = it.next();
-			RenderVariableVo var = new RenderVariableVo(
-					vo.getGlobalVariablePK().getVariableName(),
+		List<GlobalVariableVo> globalList = globalVariableDao.getCurrent();
+		for (Iterator<GlobalVariableVo> it = globalList.iterator(); it.hasNext();) {
+			GlobalVariableVo vo = it.next();
+			RenderVariable var = new RenderVariable(
+					vo.getVariableName(),
 					vo.getVariableValue(),
 					vo.getVariableFormat(),
 					VariableType.getByValue(vo.getVariableType()),
 					vo.getAllowOverride(),
-					vo.isRequired());
-			map.put(vo.getGlobalVariablePK().getVariableName(), var);
+					CodeType.YES_CODE.equals(vo.getRequired()));
+			map.put(vo.getVariableName(), var);
 		}
 
-		List<SenderVariable> clientList = null;
+		List<SenderVariableVo> clientList = null;
 		if (senderId != null) {
 			clientList = senderVariableDao.getCurrentBySenderId(senderId);
-			for (Iterator<SenderVariable> it = clientList.iterator(); it.hasNext();) {
-				SenderVariable vo = it.next();
-				RenderVariableVo var = new RenderVariableVo(
-						vo.getSenderVariablePK().getVariableName(),
+			for (Iterator<SenderVariableVo> it = clientList.iterator(); it.hasNext();) {
+				SenderVariableVo vo = it.next();
+				RenderVariable var = new RenderVariable(
+						vo.getVariableName(),
 						vo.getVariableValue(),
 						vo.getVariableFormat(),
 						VariableType.getByValue(vo.getVariableType()),
 						vo.getAllowOverride(),
-						vo.isRequired());
-				if (map.containsKey(vo.getSenderVariablePK().getVariableName())) {
-					RenderVariableVo v2 = map.get(vo.getSenderVariablePK().getVariableName());
+						CodeType.YES_CODE.equals(vo.getRequired()));
+				if (map.containsKey(vo.getVariableName())) {
+					RenderVariable v2 = map.get(vo.getVariableName());
 					if (CodeType.YES_CODE.getValue().equalsIgnoreCase(v2.getAllowOverride())) {
-						map.put(vo.getSenderVariablePK().getVariableName(), var);
+						map.put(vo.getVariableName(), var);
 					}
 				}
 				else {
-					map.put(vo.getSenderVariablePK().getVariableName(), var);
+					map.put(vo.getVariableName(), var);
 				}
 			}
 		}
@@ -784,7 +782,7 @@ public class RenderBo implements java.io.Serializable {
 			for (Iterator<String> it=keys.iterator(); it.hasNext(); ) {
 				String key = it.next();
 				if (map.containsKey(key)) {
-					RenderVariableVo v2 = map.get(key);
+					RenderVariable v2 = map.get(key);
 					if (CodeType.YES_CODE.getValue().equalsIgnoreCase(v2.getAllowOverride())) {
 						map.put(key, variables.get(key));
 					}
@@ -795,7 +793,7 @@ public class RenderBo implements java.io.Serializable {
 			}
 		}
 		
-		Map<String, ErrorVariableVo> errors = new HashMap<String, ErrorVariableVo>();
+		Map<String, ErrorVariable> errors = new HashMap<String, ErrorVariable>();
 		String text = Renderer.getInstance().render(templateText, map, errors);
 		return text;
 	}

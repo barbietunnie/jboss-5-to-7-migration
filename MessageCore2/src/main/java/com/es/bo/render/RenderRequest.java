@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Map;
 
+import com.es.bo.render.RenderVariable;
+
 public class RenderRequest implements Serializable {
 	private static final long serialVersionUID = 1682554017067987597L;
 	String msgSourceId;
@@ -20,6 +22,26 @@ public class RenderRequest implements Serializable {
 		this.senderId = senderId;
 		this.startTime = effectiveDate;
 		this.variableOverrides = variableOverrides;
+	}
+
+	public String getMsgSourceId() {
+		return msgSourceId;
+	}
+
+	public String getSenderId() {
+		return senderId;
+	}
+
+	public Timestamp getStartTime() {
+		return startTime;
+	}
+	
+	public void setStartTime(Timestamp startTime) {
+		this.startTime = startTime;
+	}
+
+	public Map<String, RenderVariable> getVariableOverrides() {
+		return variableOverrides;
 	}
 
 	public String toString() {

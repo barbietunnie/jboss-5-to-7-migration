@@ -68,7 +68,7 @@ public class SmtpServerTest {
 			}
 		}
 		else {
-			smtpServeres = smtpServerDao.getAll(false);
+			smtpServeres = smtpServerDao.getAll(false, null);
 			for (Iterator<SmtpConnVo> it=smtpServeres.iterator(); it.hasNext();) {
 				SmtpConnVo smtpConnVo = it.next();
 				System.out.println("SmtpServerDao - selectAll(): "+LF+smtpConnVo);
