@@ -45,6 +45,17 @@ public class MsgRenderedDao {
 		}
 	}
 	
+	public MsgRenderedVo getFirstRecord() {
+		String sql = 
+			"select * " +
+			"from " +
+				"Msg_Rendered where renderId=(select min(RenderId) from Msg_Rendered) ";
+		
+		MsgRenderedVo vo = getJdbcTemplate().queryForObject(sql, 
+				new BeanPropertyRowMapper<MsgRenderedVo>(MsgRenderedVo.class));
+		return vo;
+	}
+	
 	public MsgRenderedVo getLastRecord() {
 		String sql = 
 			"select * " +

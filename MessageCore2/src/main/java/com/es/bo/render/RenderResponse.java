@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.*;
 
+import com.es.bo.render.ErrorVariable;
+import com.es.bo.render.RenderVariable;
 import com.es.msgbean.MessageBean;
 import com.es.vo.template.MsgSourceVo;
 
@@ -16,7 +18,7 @@ public class RenderResponse implements Serializable {
 	Map<String, ErrorVariable> variableErrors;
 	MessageBean messageBean;
 
-	RenderResponse(
+	public RenderResponse(
 			MsgSourceVo msgSourceVo,
 			String senderId,
 			Timestamp startTime,
@@ -32,7 +34,8 @@ public class RenderResponse implements Serializable {
 			this.messageBean=messageBean;
     }
 
-	public String toString() {
+	public String toString()
+	{
 		String LF = System.getProperty("line.separator","\n");
 		StringBuffer sb = new StringBuffer();
 		sb.append("========== Display RenderResponse Fields =========="+LF);
@@ -93,5 +96,9 @@ public class RenderResponse implements Serializable {
 
 	public Timestamp getStartTime() {
 		return startTime;
+	}
+
+	public void setMsgSourceVo(MsgSourceVo msgSourceVo) {
+		this.msgSourceVo = msgSourceVo;
 	}
 }

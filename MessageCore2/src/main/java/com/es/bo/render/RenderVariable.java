@@ -14,118 +14,104 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import com.es.data.constant.CodeType;
-import com.es.data.constant.Constants;
 import com.es.data.constant.VariableType;
 import com.es.data.preload.GlobalVariableEnum;
 
 public class RenderVariable implements Serializable {
-	private static final long serialVersionUID = 6995211477252194373L;
+	private static final long serialVersionUID = -1784984311808865823L;
+	public final static String DEFAULT_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	final static String LF = System.getProperty("line.separator", "\n");
 
 	private final String variableName;
-	
-	// N - Long or String, D - Date of String, A - Address or String
-	// L - String or byte[], C - Collection
 	private Object variableValue;
-	
-	// used for Type: N/D/L, for L: Mime Type(include name/content type, etc)
-	private final String variableFormat; // TODO: use enum
-	
-	// T - text, N - numeric, D - Datetime, A - address, X - X header, 
-	// L - LOB(Attachment), C - Collection
+	// Data Type: T - Text, N - Numeric, D - Date time.
 	private final VariableType variableType;
+	// Data Format, used by Numeric and Date time data types.
+	private final String variableFormat;
+
 	private final String allowOverride;
-	private final String required;
-	private String errorMsg;
-    
+	private final Boolean isRequired;
+
 	/**
-	 * Instantiate a RenderVariable with variable name and value.
-	 * @param variableName
-	 * @param variableValue
+	 * Define a text variable.
+	 * @param variableName - name
+	 * @param variableValue - value
 	 */
-	public RenderVariable(String variableName, Object variableValue) {
-		this(variableName, variableValue, null, VariableType.TEXT,
-				CodeType.YES_CODE.getValue(), CodeType.NO_CODE.getValue(), null);
+	public RenderVariable(String variableName, String variableValue) {
+		this(variableName, variableValue, VariableType.TEXT);
 	}
-	
+
 	/**
-	 * Instantiate a RenderVariable with variable name, value, and type.
-	 * @param variableName
-	 * @param variableValue
-	 * @param variableType
+	 * Define a variable with specified type and default format.
+	 * <ul>Variable Type vs. Variable Value:
+	 * <li>Text - String</li>
+	 * <li>Numeric - String or BigDecimal</li>
+	 * <li>DateTime - String or java.util.Date</li>
+	 * </ul>
+	 * @param variableName - name
+	 * @param variableValue - value
+	 * @param variableType - type
 	 */
-	public RenderVariable(String variableName, Object variableValue,
-			VariableType variableType) {
-		this(variableName, variableValue, null, variableType,
-				CodeType.YES_CODE.getValue(), CodeType.NO_CODE.getValue(), null);
+	public RenderVariable(String variableName, Object variableValue, VariableType variableType) {
+		this(variableName, variableValue, variableType, null);
 	}
-	
+
 	/**
-	 * Instantiate a RenderVariable with variable name, value, type, and format.
-	 * @param variableName
-	 * @param variableValue
-	 * @param variableType
-	 * @param variableFormat
+	 * Define a variable with specified type and format.
+	 * <ul>Variable Type vs. Variable Value:
+	 * <li>Text - String</li>
+	 * <li>Numeric - String or BigDecimal</li>
+	 * <li>DateTime - String or java.util.Date</li>
+	 * </ul>
+	 * @param variableName - name
+	 * @param variableValue - value
+	 * @param variableType - type
+	 * @param variableFormat - ignored for Text type.
 	 */
-	public RenderVariable(String variableName, Object variableValue,
-			VariableType variableType, String variableFormat) {
-		this(variableName, variableValue, variableFormat, variableType,
-				CodeType.YES_CODE.getValue(), CodeType.NO_CODE.getValue(), null);
+	public RenderVariable(String variableName, Object variableValue, VariableType variableType,
+			String variableFormat) {
+		this(variableName, variableValue, variableFormat, variableType, CodeType.YES_CODE.getValue(), Boolean.FALSE);
 	}
-	
-	/**
-	 * Instantiate a RenderVariable.
-	 * @param variableName
-	 * @param variableValue
-	 * @param variableFormat
-	 * @param variableType
-	 * @param allowOverride
-	 * @param required
-	 * @param errorMsg
-	 */
-    public RenderVariable(
+
+	public RenderVariable(
 			String variableName,
 			Object variableValue,
 			String variableFormat,
 			VariableType variableType,
 			String allowOverride,
-			String required,
-			String errorMsg) {
-    	
-		this.variableName=variableName;
-		this.variableValue=variableValue;
-		this.variableFormat=variableFormat;
-		this.variableType=variableType;
-		this.allowOverride=allowOverride;
-		this.required=required;
-		this.errorMsg=errorMsg;
-		
+			Boolean isRequired) {
+
+		this.variableName = variableName;
+		this.variableValue = variableValue;
+		this.variableType = variableType;
+		this.variableFormat = variableFormat;
+		this.allowOverride = allowOverride;
+		this.isRequired = isRequired;
+
 		if (VariableType.NUMERIC.equals(variableType)) {
-			if (variableFormat!=null) {
-				new DecimalFormat(variableFormat);
+			if (variableFormat != null) {
+				new DecimalFormat(variableFormat); // validate the format
 			}
-			if (variableValue!=null) {
-				if (!(variableValue instanceof Long)
-						&& !(variableValue instanceof String)
-						&& !(variableValue instanceof Integer)
-						&& !(variableValue instanceof BigDecimal)) {
+			if (variableValue != null) {
+				if (!(variableValue instanceof BigDecimal) && !(variableValue instanceof String)) {
 					throw new IllegalArgumentException("Invalid Value Type: "
-							+ variableValue.getClass().getName() + ", by " + variableName);
+							+ variableValue.getClass().getName() + ", for " + variableName);
 				}
 				if (variableValue instanceof String) {
 					NumberFormat numberFormat = NumberFormat.getNumberInstance();
 					try {
-						numberFormat.parse((String)variableValue);
+						numberFormat.parse((String) variableValue);
 					}
 					catch (ParseException e) {
-						throw new IllegalArgumentException("Invalid Numeric Value: "
-								+ variableValue + ", by " + variableName);
+						throw new IllegalArgumentException("Invalid Numeric Value: " + variableValue
+								+ ", for " + variableName);
 					}
 				}
 			}
 		}
 		else if (VariableType.DATETIME.equals(variableType)) {
-			SimpleDateFormat fmt = new SimpleDateFormat(Constants.DEFAULT_DATETIME_FORMAT);
-			if (variableFormat!=null) {
+			SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
+			if (variableFormat != null) {
 				fmt.applyPattern(variableFormat); // validate the format
 			}
 			if (variableValue == null) { // populate "CurrentDateTime"
@@ -135,18 +121,18 @@ public class RenderVariable implements Serializable {
 					this.variableValue = variableValue = new Date();
 				}
 			}
-			if (variableValue!=null) {
+			if (variableValue != null) {
 				if (!(variableValue instanceof Date) && !(variableValue instanceof String)) {
 					throw new IllegalArgumentException("Invalid Value Type: "
-						+ variableValue.getClass().getName() + ", by " + variableName);
+							+ variableValue.getClass().getName() + ", for " + variableName);
 				}
 				if (variableValue instanceof String) {
 					try {
-						fmt.parse((String)variableValue);
+						fmt.parse((String) variableValue);
 					}
 					catch (ParseException e) {
-						throw new IllegalArgumentException("Invalid DateTime Value: "
-								+ variableValue + ", by " + variableName);						
+						throw new IllegalArgumentException("Invalid DateTime Value: " + variableValue
+								+ ", for " + variableName);
 					}
 				}
 			}
@@ -200,36 +186,24 @@ public class RenderVariable implements Serializable {
 			throw new IllegalArgumentException("Invalid Variable Type: " + variableType + ", for "
 					+ variableName);
 		}
-   }
-	
+	}
+
 	public String toString() {
-		String LF = System.getProperty("line.separator","\n");
 		StringBuffer sb = new StringBuffer();
-		sb.append("========== Display RenderVariable Fields =========="+LF);
-		sb.append("VariableName:   "+variableName+LF);
-		sb.append("VariableValue:  "+(variableValue==null?"null":variableValue.toString())+LF);
-		sb.append("VariableFormat: "+variableFormat+LF);
-		sb.append("VariableType:   "+variableType.getValue()+LF);
-		sb.append("AllowOverride:  "+allowOverride+LF);
-		sb.append("Required:       "+required+LF);
-		sb.append("ErrorMsg:       "+errorMsg+LF);
+		sb.append("========== RenderVariable Fields ==========" + LF);
+		sb.append("VariableName:   " + variableName + LF);
+		sb.append("VariableValue:  " + (variableValue == null ? "null" : variableValue) + LF);
+		sb.append("VariableType:   " + variableType.getValue() + LF);
+		sb.append("VariableFormat: " + variableFormat + LF);
 		return sb.toString();
 	}
 
-	public String getErrorMsg() {
-		return errorMsg;
+	public VariableType getVariableType() {
+		return variableType;
 	}
 
-	public void setErrorMsg(String errorMsg) {
-		this.errorMsg = errorMsg;
-	}
-
-	public String getAllowOverride() {
-		return allowOverride;
-	}
-
-	public String getRequired() {
-		return required;
+	public Object getVariableValue() {
+		return variableValue;
 	}
 
 	public String getVariableFormat() {
@@ -240,11 +214,11 @@ public class RenderVariable implements Serializable {
 		return variableName;
 	}
 
-	public VariableType getVariableType() {
-		return variableType;
+	public String getAllowOverride() {
+		return allowOverride;
 	}
 
-	public Object getVariableValue() {
-		return variableValue;
+	public Boolean getIsRequired() {
+		return isRequired;
 	}
 }
