@@ -31,11 +31,11 @@ import com.es.bo.render.RenderRequest;
 import com.es.bo.render.RenderResponse;
 import com.es.bo.render.RenderVariable;
 import com.es.bo.render.Renderer;
+import com.es.core.util.HtmlUtil;
 import com.es.core.util.SpringUtil;
 import com.es.dao.address.EmailAddressDao;
 import com.es.dao.outbox.MsgRenderedDao;
 import com.es.dao.sender.GlobalVariableDao;
-import com.es.dao.sender.SenderDao;
 import com.es.dao.sender.SenderVariableDao;
 import com.es.dao.template.MsgSourceDao;
 import com.es.dao.template.TemplateDataDao;
@@ -52,7 +52,6 @@ import com.es.exception.TemplateException;
 import com.es.msgbean.BodypartBean;
 import com.es.msgbean.MessageBean;
 import com.es.msgbean.MsgHeader;
-import com.es.vo.comm.SenderVo;
 import com.es.vo.outbox.MsgRenderedVo;
 import com.es.vo.template.GlobalVariableVo;
 import com.es.vo.template.MsgSourceVo;
@@ -82,8 +81,6 @@ public class RenderBo implements java.io.Serializable {
 	private TemplateVariableDao templateVariableDao;
 	@Autowired
 	private EmailAddressDao emailAddrDao;
-	@Autowired
-	private SenderDao senderDao;
 	
 	public static void main(String[] args) {
 		RenderBo bo = SpringUtil.getAppContext().getBean(RenderBo.class);
@@ -143,7 +140,7 @@ public class RenderBo implements java.io.Serializable {
 			vo = msgSourceDao.getByPrimaryKey(req.getMsgSourceId());
 		}
 		catch (EmptyResultDataAccessException e) {
-			throw new DataValidationException("MsgSource record not found for " + req.getMsgSourceId());
+			throw new DataValidationException("Msg_Source record not found for " + req.getMsgSourceId());
 		}
 		RenderResponse rsp = new RenderResponse(
 				vo,
@@ -208,11 +205,11 @@ public class RenderBo implements java.io.Serializable {
 		// body template may come from variables
 		if (rsp.getVariableFinal().containsKey(VariableName.BODY_TEMPLATE.getValue())
 				&& CodeType.YES_CODE.getValue().equalsIgnoreCase(srcVo.getAllowOverride())) {
-			RenderVariable var = (RenderVariable) rsp.getVariableFinal().get(VariableName.BODY_TEMPLATE.getValue());
+			RenderVariable var = rsp.getVariableFinal().get(VariableName.BODY_TEMPLATE.getValue());
 			if (VariableType.TEXT.equals(var.getVariableType())) {
 				bodyTemplate = (String) var.getVariableValue();
-				contentType = var.getVariableFormat() == null ? "text/plain"
-						: var.getVariableFormat();
+				contentType = (var.getVariableFormat() == null ? (HtmlUtil.isHTML(bodyTemplate) ? "text/html" : "text/plain")
+						: var.getVariableFormat());
 			}
 		}
 		
@@ -241,7 +238,7 @@ public class RenderBo implements java.io.Serializable {
 		// subject template may come from variables
 		if (rsp.getVariableFinal().containsKey(VariableName.SUBJECT_TEMPLATE.getValue())
 				&& CodeType.YES_CODE.getValue().equalsIgnoreCase(srcVo.getAllowOverride())) {
-			RenderVariable var = (RenderVariable) rsp.getVariableFinal().get(VariableName.SUBJECT_TEMPLATE.getValue());
+			RenderVariable var = rsp.getVariableFinal().get(VariableName.SUBJECT_TEMPLATE.getValue());
 			if (VariableType.TEXT.equals(var.getVariableType())) {
 				subjTemplate = (String) var.getVariableValue();
 			}
@@ -584,7 +581,7 @@ public class RenderBo implements java.io.Serializable {
 				req.getVariableFormat(), 
 				VariableType.getByValue(req.getVariableType()), 
 				req.getAllowOverride(), 
-				CodeType.YES_CODE.equals(req.getRequired())?true:false
+				CodeType.YES_CODE.equals(req.getRequired())
 				);
 			ht.put(req.getVariableName(), r);
 		}
@@ -660,9 +657,8 @@ public class RenderBo implements java.io.Serializable {
 		if (StringUtils.isBlank(senderId)) {
 			senderId = Constants.DEFAULT_SENDER_ID;
 		}
-		SenderVo sender = senderDao.getBySenderId(senderId);
 		Timestamp startTime = new Timestamp(System.currentTimeMillis());
-		TemplateDataVo tmpltVo = templateDao.getByBestMatch(sender.getSenderId(),templateId,startTime);
+		TemplateDataVo tmpltVo = templateDao.getByBestMatch(senderId,templateId,startTime);
 		if (tmpltVo == null) {
 			throw new DataValidationException("TemplateData not found by: " + templateId + "/"
 					+ senderId + "/" + startTime);
