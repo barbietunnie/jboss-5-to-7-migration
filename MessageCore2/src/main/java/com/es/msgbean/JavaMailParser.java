@@ -34,8 +34,8 @@ import com.es.core.util.HostUtil;
 import com.es.data.constant.Constants;
 import com.es.data.constant.XHeaderName;
 
-public final class MessageBeanBuilder {
-	static final Logger logger = Logger.getLogger(MessageBeanBuilder.class);
+public final class JavaMailParser {
+	static final Logger logger = Logger.getLogger(JavaMailParser.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	public static final String MSG_RAW_STREAM = "msg_raw_stream";
@@ -43,7 +43,7 @@ public final class MessageBeanBuilder {
 	
 	private static String hostName = null;
 	
-	private MessageBeanBuilder() {
+	private JavaMailParser() {
 		// make it static only
 	}
 	
@@ -704,7 +704,7 @@ public final class MessageBeanBuilder {
 		catch (UnsupportedEncodingException e) {
 			/* unsupported encoding found, use its raw data instead */
 			logger.error("processAttc(): UnsupportedEncodingException caught: " + contentType);
-			logger.error("UnsupportedEncodingException caught", e);
+			//logger.error("UnsupportedEncodingException caught: " + e.getMessage());
 			if (contentType.trim().toLowerCase().startsWith("multipart/")
 					|| contentType.trim().toLowerCase().startsWith("message/rfc822")) {
 				aNode.setValue("reader004: UnsupportedEncodingException caught during process.");
@@ -765,8 +765,8 @@ public final class MessageBeanBuilder {
 			}
 			// notify programming with an Email (requires an SMTP server on local host)
 			String hostIp = HostUtil.getHostIpAddress();
-			String subj = "MessageBeanBuilder running on " + hostIp + " caught Unchecked Exception";
-			String fromAddr = "MessageBeanBuilder@" + HostUtil.getHostName();
+			String subj = "JavaMailParser running on " + hostIp + " caught Unchecked Exception";
+			String fromAddr = "JavaMailParser@" + HostUtil.getHostName();
 			try {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				PrintStream ps = new PrintStream(baos);

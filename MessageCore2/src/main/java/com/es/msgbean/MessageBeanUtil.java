@@ -240,7 +240,7 @@ public final class MessageBeanUtil {
 	 */
 	public static MessageBean createBeanFromStream(byte[] mailStream) throws MessagingException {
 		Message msg = createMimeMessage(mailStream);
-		MessageBean msgBean = MessageBeanBuilder.processPart(msg, null);
+		MessageBean msgBean = JavaMailParser.processPart(msg, null);
 		return msgBean;
 	}
 	
@@ -369,7 +369,7 @@ public final class MessageBeanUtil {
 		else {
 			if (aNode.getDescription() == null) {
 				// not sure why do this, consistency?
-				part.setDescription(MessageBeanBuilder.getFileName(aNode.getContentType()));
+				part.setDescription(JavaMailParser.getFileName(aNode.getContentType()));
 			}
 			ByteArrayDataSource bads = new ByteArrayDataSource(aNode.getValue(), aNode.getContentType());
 			part.setDataHandler(new DataHandler(bads));
@@ -689,7 +689,7 @@ public final class MessageBeanUtil {
 		try {
 			Address addr = new InternetAddress("bad.address@localhost");
 			Message msg = createMimeMessage(msgBean, addr, "5.1.1" + LF + LF);
-			MessageBeanBuilder.processPart(msg, null);
+			JavaMailParser.processPart(msg, null);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

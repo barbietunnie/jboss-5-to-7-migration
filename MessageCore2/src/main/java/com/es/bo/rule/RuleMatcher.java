@@ -14,7 +14,7 @@ import com.es.data.constant.VariableName;
 import com.es.data.constant.XHeaderName;
 import com.es.msgbean.BodypartBean;
 import com.es.msgbean.MessageBean;
-import com.es.msgbean.MessageBeanBuilder;
+import com.es.msgbean.JavaMailParser;
 import com.es.msgbean.MessageBeanUtil;
 import com.es.msgbean.MessageNode;
 import com.es.msgbean.MsgHeader;
@@ -161,7 +161,7 @@ public class RuleMatcher implements java.io.Serializable {
 					if (data == null) {
 						String ctype = anode.getContentType();
 						try {
-							data = MessageBeanBuilder.getFileName(ctype);
+							data = JavaMailParser.getFileName(ctype);
 						}
 						catch (Exception e) {
 							logger.error("ERROR!!! - caught unchecked Exception.", e);

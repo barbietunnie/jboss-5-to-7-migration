@@ -44,7 +44,7 @@ public class EmailVariableDao {
 		return this.namedParameterJdbcTemplate; 
 	}
 
-	public EmailVariableVo getByName(String variableName) {
+	public EmailVariableVo getByVariableName(String variableName) {
 		String sql = "select * from Email_Variable where VariableName=:variableName";
 		SqlParameterSource namedParameters = new MapSqlParameterSource("variableName", variableName);
 		try {

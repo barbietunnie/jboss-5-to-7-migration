@@ -37,7 +37,7 @@ import com.es.data.preload.RuleNameEnum;
 import com.es.exception.DataValidationException;
 import com.es.msg.util.MsgIdCipher;
 import com.es.msgbean.MessageBean;
-import com.es.msgbean.MessageBeanBuilder;
+import com.es.msgbean.JavaMailParser;
 import com.es.msgbean.MessageBeanUtil;
 import com.es.msgbean.MessageContext;
 import com.es.msgbean.MsgHeader;
@@ -116,7 +116,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 			 * to the message body and X-header).
 			 */
 			// convert the JavaMail message to a MessageBean
-			msgBean = MessageBeanBuilder.processPart(mimeMsg, null);
+			msgBean = JavaMailParser.processPart(mimeMsg, null);
 			// convert extra mimeMessage headers
 			addXHeadersToBean(msgBean, mimeMsg);
 		}
@@ -547,7 +547,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 		logger.info("loopbackMail() - Undelivered message has been routed to "
 				+ "loopback@localhost");
 		Message msg = MessageBeanUtil.createMimeMessage(msgBean, failedAddr, loopbackText);
-//		MessageBean loopBackBean = MessageBeanBuilder.processPart(msg, null);
+//		MessageBean loopBackBean = JavaMailParser.processPart(msg, null);
 //		loopBackBean.setMsgRefId(msgBean.getMsgId());
 //		loopBackBean.setIsReceived(true);
 //		if (isDebugEnabled) {

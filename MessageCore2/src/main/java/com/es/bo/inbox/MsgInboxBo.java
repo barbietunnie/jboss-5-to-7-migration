@@ -37,7 +37,7 @@ import com.es.exception.DataValidationException;
 import com.es.msgbean.BodypartBean;
 import com.es.msgbean.BodypartUtil;
 import com.es.msgbean.MessageBean;
-import com.es.msgbean.MessageBeanBuilder;
+import com.es.msgbean.JavaMailParser;
 import com.es.msgbean.MessageBeanUtil;
 import com.es.msgbean.MessageBodyBuilder;
 import com.es.msgbean.MessageNode;
@@ -372,7 +372,7 @@ public class MsgInboxBo {
 		saveAddress(msgBean.getBcc(), EmailAddressType.BCC_ADDR, msgVo.getMsgId());
 		
 		// save message raw stream if received by MailReader
-		if (msgBean.getHashMap().containsKey(MessageBeanBuilder.MSG_RAW_STREAM)
+		if (msgBean.getHashMap().containsKey(JavaMailParser.MSG_RAW_STREAM)
 				&& msgBean.getIsReceived()) {
 			// save raw stream for in-bound mails only
 			// out-bound raw stream is saved in MailSender
@@ -382,7 +382,7 @@ public class MsgInboxBo {
 			msgStreamVo.setToAddrId(msgVo.getToAddrId());
 			msgStreamVo.setMsgSubject(msgVo.getMsgSubject());
 			msgStreamVo.setMsgStream((byte[]) msgBean.getHashMap().get(
-					MessageBeanBuilder.MSG_RAW_STREAM));
+					JavaMailParser.MSG_RAW_STREAM));
 			msgStreamDao.insert(msgStreamVo);
 		}
 		

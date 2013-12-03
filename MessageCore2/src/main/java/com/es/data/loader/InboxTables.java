@@ -374,7 +374,7 @@ public class InboxTables extends AbstractTableBase {
 		try {
 			getJdbcTemplate().execute("CREATE TABLE MSG_ADDRESS ( " +
 			"MsgId bigint NOT NULL, " +
-			"AddrType varchar(7) NOT NULL, " + // from, replyto, to, cc, bcc
+			"AddrType varchar(10) NOT NULL, " + // from, replyto, to, cc, bcc
 			"AddrSeq decimal(4) NOT NULL, " +
 			"AddrValue varchar(255), " +
 			"FOREIGN KEY (MsgId) REFERENCES MSG_INBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE, " +
