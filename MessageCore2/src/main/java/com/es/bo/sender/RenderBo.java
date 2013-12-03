@@ -711,12 +711,12 @@ public class RenderBo implements java.io.Serializable {
 	}
 
 	/**
-	 * render a template by template text and client id.
+	 * render a template by template text and sender id.
 	 * 
 	 * @param templateText -
 	 *            template text
 	 * @param senderId -
-	 *            client id
+	 *            sender id
 	 * @param variables -
 	 *            variables
 	 * @return rendered text
@@ -749,10 +749,10 @@ public class RenderBo implements java.io.Serializable {
 			map.put(vo.getVariableName(), var);
 		}
 
-		List<SenderVariableVo> clientList = null;
+		List<SenderVariableVo> senderList = null;
 		if (senderId != null) {
-			clientList = senderVariableDao.getCurrentBySenderId(senderId);
-			for (Iterator<SenderVariableVo> it = clientList.iterator(); it.hasNext();) {
+			senderList = senderVariableDao.getCurrentBySenderId(senderId);
+			for (Iterator<SenderVariableVo> it = senderList.iterator(); it.hasNext();) {
 				SenderVariableVo vo = it.next();
 				RenderVariable var = new RenderVariable(
 						vo.getVariableName(),

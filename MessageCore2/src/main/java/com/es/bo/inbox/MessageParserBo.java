@@ -334,10 +334,10 @@ public class MessageParserBo {
 			}
 		}
 
-		// find client id by matching Email's TO address to addresses from
-		// Client records (Send E-mails Return-Path) and EmailTemplate records
+		// find sender id by matching Email's TO address to addresses from
+		// sender records (Send E-mails Return-Path) and EmailTemplate records
 		// (Mailing List address)
-		String senderId = ruleLoaderBo.findClientIdByAddr(msgBean.getToAsString());
+		String senderId = ruleLoaderBo.findSenderIdByAddr(msgBean.getToAsString());
 		if (senderId != null) {
 			if (isDebugEnabled) {
 				logger.debug("parse() - Sender Id found by matching TO address: " + senderId);
@@ -346,8 +346,8 @@ public class MessageParserBo {
 				msgBean.setSenderId(senderId);
 			}
 			else if (!senderId.equals(msgBean.getSenderId())) {
-				logger.warn("parse() - Client Id from TO: " + senderId + " is different from"
-						+ " MessageBean's existing Client Id: " + msgBean.getSenderId());
+				logger.warn("parse() - Sender Id from TO: " + senderId + " is different from"
+						+ " MessageBean's existing Sender Id: " + msgBean.getSenderId());
 			}
 		}
 
@@ -369,7 +369,7 @@ public class MessageParserBo {
 				logger.warn("parse() - EmailAddr record not found by MsgRefId: "
 						+ msgBean.getMsgRefId());
 			}
-			// find original client id
+			// find original sender id
 			MsgInboxVo origVo = msgInboxDao.getByPrimaryKey(msgBean.getMsgRefId());
 			if (origVo == null) { // could be deleted by User or purged by Purge routine
 				logger.warn("parse() - MsgInbox record not found by MsgId: "

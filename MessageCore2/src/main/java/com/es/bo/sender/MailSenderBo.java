@@ -51,11 +51,11 @@ public class MailSenderBo extends MailSenderBase {
 	public static void main(String[] args) {
 		MailSenderBo sender = SpringUtil.getAppContext().getBean(MailSenderBo.class);
 		MsgOutboxBo msgOutboxBo = SpringUtil.getAppContext().getBean(MsgOutboxBo.class);
-		MsgRenderedDao msgRenderedService = SpringUtil.getAppContext().getBean(MsgRenderedDao.class);
+		MsgRenderedDao msgRenderedDao = SpringUtil.getAppContext().getBean(MsgRenderedDao.class);
 		SpringUtil.beginTransaction();
 		try {
-			MsgRenderedVo mr = msgRenderedService.getFirstRecord();
-			MessageBean bean = msgOutboxBo.getMessageByPK(mr.getRowId());
+			MsgRenderedVo mr = msgRenderedDao.getFirstRecord();
+			MessageBean bean = msgOutboxBo.getMessageByPK(mr.getRenderId());
 			if (bean.getTo()==null || bean.getTo().length==0) {
 				bean.setTo(InternetAddress.parse("testto@localhost"));
 			}

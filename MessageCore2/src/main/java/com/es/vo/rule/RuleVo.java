@@ -18,8 +18,9 @@ public class RuleVo extends BaseVo implements Serializable {
 	private List<RuleSubRuleMapVo> ruleSubRuleVos = null; // list of RuleSubRuleVo
 	
 	public List<RuleElementVo> getRuleElementVos() {
-		if (ruleElementVos==null)
+		if (ruleElementVos==null) {
 			ruleElementVos = new ArrayList<RuleElementVo>();
+		}
 		return ruleElementVos;
 	}
 	public void setRuleElementVos(List<RuleElementVo> ruleElementVos) {
@@ -38,8 +39,9 @@ public class RuleVo extends BaseVo implements Serializable {
 		this.ruleName = ruleName;
 	}
 	public List<RuleSubRuleMapVo> getRuleSubRuleVos() {
-		if (ruleSubRuleVos==null)
+		if (ruleSubRuleVos==null) {
 			ruleSubRuleVos = new ArrayList<RuleSubRuleMapVo>();
+		}
 		return ruleSubRuleVos;
 	}
 	public void setRuleSubRuleVos(List<RuleSubRuleMapVo> ruleSubRuleVos) {

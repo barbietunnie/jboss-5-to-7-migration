@@ -86,28 +86,28 @@ public class BaseVo implements java.io.Serializable, Cloneable {
 	}
 	
 	public String getStatusIdDesc() {
-		try {
-			Method method = this.getClass().getMethod("getStatusId", (Class[])null);
-			String desc = (String) method.invoke(this, (Object[])null);
-			if (StatusId.ACTIVE.getValue().equals(desc))
-				desc = "Active";
-			else if (StatusId.INACTIVE.getValue().equals(desc))
-				desc = "Inactive";
-			else if (StatusId.SUSPENDED.getValue().equals(desc))
-				desc = "Suspended";
-			return desc;
+		String desc = getStatusId();
+		if (StatusId.ACTIVE.getValue().equals(desc)) {
+			desc = "Active";
 		}
-		catch (Exception e) {
-			// ignored
-			return null;
+		else if (StatusId.INACTIVE.getValue().equals(desc)) {
+			desc = "Inactive";
 		}
+		else if (StatusId.SUSPENDED.getValue().equals(desc)) {
+			desc = "Suspended";
+		}
+		return desc;
 	}
 	/** end of UI components */
 	
 	public boolean equalsTo(BaseVo vo) {
 		getLogList().clear();
-		if (this == vo) return true;
-		if (vo == null) return false;
+		if (this == vo) {
+			return true;
+		}
+		if (vo == null) {
+			return false;
+		}
 		Method thisMethods[] = this.getClass().getMethods();
 		for (int i = 0; i < thisMethods.length; i++) {
 			Method method = (Method) thisMethods[i];
@@ -157,8 +157,12 @@ public class BaseVo implements java.io.Serializable, Cloneable {
 				}
 			}
 		}
-		if (getLogList().size() > 0) return false;
-		else return true;
+		if (getLogList().size() > 0) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 	
 	public String toString() {

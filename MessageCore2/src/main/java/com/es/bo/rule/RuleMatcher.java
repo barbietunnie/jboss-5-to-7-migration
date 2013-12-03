@@ -7,10 +7,11 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.es.core.util.EmailAddrUtil;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.Constants;
+import com.es.data.constant.RuleDataName;
 import com.es.data.constant.VariableName;
+import com.es.data.constant.XHeaderName;
 import com.es.msgbean.BodypartBean;
 import com.es.msgbean.MessageBean;
 import com.es.msgbean.MessageBeanBuilder;
@@ -67,8 +68,8 @@ public class RuleMatcher implements java.io.Serializable {
 				}
 				// now check attachment rules
 				if (ruleName == null 
-						&& (RuleBase.MIME_TYPE.equals(r.getDataName()) 
-							|| RuleBase.FILE_NAME.equals(r.getDataName()))) {
+						&& (RuleDataName.MIME_TYPE.getValue().equals(r.getDataName()) 
+							|| RuleDataName.FILE_NAME.getValue().equals(r.getDataName()))) {
 					ruleName = matchMimeTypes((MessageBean)mailObj, r);
 				}
 			}
@@ -122,19 +123,19 @@ public class RuleMatcher implements java.io.Serializable {
 		String data_name = r.getDataName();
 		String data = null;
 		if (VariableName.XHEADER_DATA_NAME.getValue().equals(data_name)) {
-			String headerName = r.getHeaderName();
+			XHeaderName headerName = r.getHeaderName();
 			if (headerName != null) {
 				List<MsgHeader> headers = mobj.getHeaders();
 				for (int i = 0; headers != null && i < headers.size(); i++) {
 					String name = headers.get(i).getName();
-					if (headerName.equalsIgnoreCase(name)) {
+					if (headerName.getValue().equalsIgnoreCase(name)) {
 						data = headers.get(i).getValue();
 						break;
 					}
 				}
 			}
 		}
-		else if (RuleBase.FILE_NAME.equals(data_name)) {
+		else if (RuleDataName.FILE_NAME.getValue().equals(data_name)) {
 			// ignored
 		}
 		else {
@@ -143,36 +144,6 @@ public class RuleMatcher implements java.io.Serializable {
 		return data;
 	}
 
-	/* @deprecated, replaced by above method using reflection */
-	static String getFieldDataV0(RuleBase r, MessageBean mobj) {
-		String data = null;
-		String data_type = r.getDataName();
-		if (RuleBase.FROM_ADDR.equals(data_type))
-			data = EmailAddrUtil.addressToString(mobj.getFrom());
-		else if (RuleBase.TO_ADDR.equals(data_type))
-			data = EmailAddrUtil.addressToString(mobj.getTo());
-		else if (RuleBase.REPLYTO_ADDR.equals(data_type))
-			data = EmailAddrUtil.addressToString(mobj.getReplyto());
-		else if (RuleBase.CC_ADDR.equals(data_type))
-			data = EmailAddrUtil.addressToString(mobj.getCc());
-		else if (RuleBase.BCC_ADDR.equals(data_type))
-			data = EmailAddrUtil.addressToString(mobj.getBcc());
-		else if (RuleBase.SUBJECT.equals(data_type))
-			data = mobj.getSubject();
-		else if (RuleBase.BODY.equals(data_type))
-			data = mobj.getBody();
-		else if (RuleBase.MSG_REF_ID.equals(data_type))
-			data = mobj.getMsgRefId() == null ? null : mobj.getMsgRefId().toString();
-		else if (RuleBase.MAILBOX_USER.equals(data_type))
-			data = mobj.getMailboxUser();
-		else if (RuleBase.MAILBOX_HOST.equals(data_type))
-			data = mobj.getMailboxHost();
-		else if (RuleBase.RULE_NAME.equals(data_type)) {
-			data = mobj.getRuleName();
-		}
-		return data;
-	}
-	
 	static String matchMimeTypes(MessageBean mailObj, RuleBase r) {
 		String ruleName = null;
 		List<MessageNode> nodes = ((MessageBean) mailObj).getAttachments();
@@ -180,10 +151,10 @@ public class RuleMatcher implements java.io.Serializable {
 			for (Iterator<MessageNode> it=nodes.iterator(); it.hasNext(); ) {
 				String data = null;
 				BodypartBean anode = it.next().getBodypartNode();
-				if (RuleBase.MIME_TYPE.equals(r.getDataName())) {
+				if (RuleDataName.MIME_TYPE.getValue().equals(r.getDataName())) {
 					data = anode.getMimeType();
 				}
-				else if (RuleBase.FILE_NAME.equals(r.getDataName())) {
+				else if (RuleDataName.FILE_NAME.getValue().equals(r.getDataName())) {
 					data = anode.getDescription();
 					// if file name is not present, extract it from
 					// content type

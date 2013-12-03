@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.es.data.constant.RuleCriteria;
+import com.es.data.constant.RuleDataName;
+import com.es.data.constant.RuleType;
 import com.es.msgbean.MessageBean;
 
 public class RuleComplex extends RuleBase {
@@ -13,23 +16,27 @@ public class RuleComplex extends RuleBase {
 	private final List<RuleBase> ruleList;
 	
 	public RuleComplex(String _ruleName,
-			String _ruleType, 
+			RuleType _ruleType, 
 			String _mailType, 
 			List<RuleBase> _rule_list) {
-		super(_ruleName, _ruleType, _mailType, "", null, RuleBase.EQUALS, "N");
+		super(_ruleName, _ruleType, _mailType, "", null, RuleCriteria.EQUALS, false);
 		this.ruleList = _rule_list;
 		logger.info(">>>>> Complex-Rule initialized for " + ruleName);
 	}
 
-	public String match(String mail_type, Object mail_obj) {
-		if (mail_type==null || !mail_type.equals(mailType))
-			return null;
+	public List<RuleBase> getRuleList() {
+		return ruleList;
+	}
 
+	public String match(String mail_type, Object mail_obj) {
+		if (mail_type==null || !mail_type.equals(mailType)) {
+			return null;
+		}
 		if (isDebugEnabled) {
 			logger.debug("BEGIN - [" + getRuleName(20) + "] [" + mailType + "] rule_type: ["
 					+ ruleType + "]");
 		}
-		if (RuleBase.ALL_RULE.equals(ruleType)) {
+		if (RuleType.ALL.equals(ruleType)) {
 			for (int i = 0; i < ruleList.size(); i++) {
 				RuleBase rule = (RuleBase) ruleList.get(i);
 				String match = match(mail_obj, rule, mail_type);
@@ -42,7 +49,7 @@ public class RuleComplex extends RuleBase {
 			}
 			return returnToCaller(ruleName);
 		}
-		else if (RuleBase.ANY_RULE.equals(ruleType)) {
+		else if (RuleType.ANY.equals(ruleType)) {
 			for (int i = 0; i < ruleList.size(); i++) {
 				RuleBase rule = (RuleBase) ruleList.get(i);
 				String match = match(mail_obj, rule, mail_type);
@@ -53,7 +60,7 @@ public class RuleComplex extends RuleBase {
 			}
 			return returnToCaller(null);
 		}
-		else if (RuleBase.NONE_RULE.equals(ruleType)) {
+		else if (RuleType.NONE.equals(ruleType)) {
 			for (int i = 0; i < ruleList.size(); i++) {
 				RuleBase rule = (RuleBase) ruleList.get(i);
 				String match = match(mail_obj, rule, mail_type);
@@ -80,8 +87,8 @@ public class RuleComplex extends RuleBase {
 		String ruleName = rule.match(mail_type, rule.getDataName(), data);
 		// now check attachment rules
 		if (ruleName == null 
-				&& (RuleBase.MIME_TYPE.equals(rule.getDataName()) 
-					|| RuleBase.FILE_NAME.equals(rule.getDataName()))) {
+				&& (RuleDataName.MIME_TYPE.getValue().equals(rule.getDataName()) 
+					|| RuleDataName.FILE_NAME.getValue().equals(rule.getDataName()))) {
 			ruleName = RuleMatcher.matchMimeTypes((MessageBean)mail_obj, rule);
 		}
 		

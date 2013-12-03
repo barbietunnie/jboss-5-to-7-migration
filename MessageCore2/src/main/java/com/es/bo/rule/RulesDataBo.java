@@ -2,12 +2,12 @@ package com.es.bo.rule;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.es.bo.external.AbstractTargetProc;
-import com.es.bo.task.AbstractTaskBo;
 import com.es.core.util.SpringUtil;
 import com.es.dao.rule.RuleDao;
 import com.es.vo.rule.RuleElementVo;
@@ -38,12 +38,10 @@ public class RulesDataBo {
 		return ruleVo;
 	}
 	
-	public RuleDao getRuleDao() {
-		return ruleDao;
-	}
-
 	private void substituteTargetProc(List<RuleVo> rules) {
-		if (rules == null || rules.size() == 0) return;
+		if (rules == null) {
+			return;
+		}
 		for (RuleVo rule : rules) {
 			substituteTargetProc(rule);
 		}
@@ -51,18 +49,22 @@ public class RulesDataBo {
 	
 	private void substituteTargetProc(RuleVo rule) {
 		List<RuleElementVo> elements = rule.getRuleElementVos();
-		if (elements == null) return;
+		if (elements == null) {
+			return;
+		}
 		for (RuleElementVo element : elements) {
-			if (element.getTargetProc() == null) continue;
-			Object obj = null;
+			if (StringUtils.isBlank(element.getTargetProc())) {
+				continue;
+			}
+			Object proc = null;
 			try { // a TargetProc could be a class name or a bean id
-				obj = Class.forName(element.getTargetProc()).newInstance();
+				proc = Class.forName(element.getTargetProc()).newInstance();
 				logger.info("Loaded class " + element.getTargetProc() + " for rule "
 						+ rule.getRuleName());
 			}
 			catch (Exception e) { // not a class name, try load it as a Bean
 				try {
-					obj = SpringUtil.getAppContext().getBean(element.getTargetProc());
+					proc = SpringUtil.getAppContext().getBean(element.getTargetProc());
 					logger.info("Loaded bean " + element.getTargetProc() + " for rule "
 							+ rule.getRuleName());
 				}
@@ -70,19 +72,16 @@ public class RulesDataBo {
 					logger.warn("Failed to load: " + element.getTargetProc() + " for rule "
 							+ rule.getRuleName());
 				}
-				if (obj == null) continue;
+				if (proc == null) {
+					continue;
+				}
 			}
 			try {
 				String text = null;
-				if (obj instanceof AbstractTaskBo) {
-					AbstractTaskBo bo = (AbstractTaskBo) obj;
-					text = (String) bo.process(null);
+				if (proc instanceof AbstractTargetProc) {
+					text = ((AbstractTargetProc)proc).process();
 				}
-				else if (obj instanceof AbstractTargetProc) {
-					AbstractTargetProc bo = (AbstractTargetProc) obj;
-					text = bo.process();
-				}
-				if (text != null && text.trim().length() > 0) {
+				if (StringUtils.isNotBlank(text)) {
 					logger.info("Changing Target Text for rule: " + rule.getRuleName());
 					logger.info("  From: " + element.getTargetText());
 					logger.info("    To: " + text);
@@ -97,7 +96,9 @@ public class RulesDataBo {
 	}
 	
 	private void substituteExclListProc(List<RuleVo> rules) {
-		if (rules == null || rules.size() == 0) return;
+		if (rules == null) {
+			return;
+		}
 		for (RuleVo rule : rules) {
 			substituteExclListProc(rule);
 		}
@@ -105,22 +106,28 @@ public class RulesDataBo {
 	
 	private void substituteExclListProc(RuleVo rule) {
 		List<RuleElementVo> elements = rule.getRuleElementVos();
-		if (elements == null) return;
+		if (elements == null) {
+			return;
+		}
 		for (RuleElementVo element : elements) {
-			if (element.getExclListProc() == null) continue;
-			Object obj = null;
+			if (StringUtils.isBlank(element.getExclListProc())) {
+				continue;
+			}
+			Object proc = null;
 			try {
-				obj = SpringUtil.getAppContext().getBean(element.getExclListProc());
+				proc = SpringUtil.getAppContext().getBean(element.getExclListProc());
 			}
 			catch (Exception e) {
 				logger.error("Failed to load bean: " + element.getExclListProc() + " for rule "
 						+ rule.getRuleName());
+				continue;
 			}
-			if (obj == null || !(obj instanceof AbstractTaskBo)) continue;
-			AbstractTaskBo bo = (AbstractTaskBo) obj;
+			String text = null;
 			try {
-				String text = (String) bo.process(null);
-				if (text != null && text.trim().length() > 0) {
+				if (proc instanceof AbstractTargetProc) {
+					text = ((AbstractTargetProc)proc).process();
+				}
+				if (StringUtils.isNotBlank(text)) {
 					logger.info("Appending Exclusion list for rule: " + rule.getRuleName());
 					logger.info("  Exclusion List: " + text);
 					String delimiter = element.getDelimiter();
@@ -128,7 +135,7 @@ public class RulesDataBo {
 						delimiter = ",";
 					}
 					String origText = element.getExclusions();
-					if (origText != null && origText.length() > 0) {
+					if (StringUtils.isNotBlank(origText)) {
 						origText = origText + delimiter;
 					}
 					else {

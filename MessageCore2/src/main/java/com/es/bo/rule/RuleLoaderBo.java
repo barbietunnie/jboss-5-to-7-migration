@@ -22,6 +22,10 @@ import com.es.dao.sender.ReloadFlagsDao;
 import com.es.dao.sender.SenderDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
+import com.es.data.constant.RuleCategory;
+import com.es.data.constant.RuleCriteria;
+import com.es.data.constant.RuleType;
+import com.es.data.constant.XHeaderName;
 import com.es.vo.address.MailingListVo;
 import com.es.vo.comm.ReloadFlagsVo;
 import com.es.vo.comm.SenderVo;
@@ -156,16 +160,16 @@ public class RuleLoaderBo implements java.io.Serializable {
 		subRules[index].clear();
 		
 		for (int i = 0; i < ruleVos.size(); i++) {
-			RuleVo ruleVo = (RuleVo) ruleVos.get(i);
+			RuleVo ruleVo = ruleVos.get(i);
 			List<RuleBase> rules = createRules(ruleVo);
 			if (rules.size() == 0) {
 				continue;
 			}
 			
-			if (RuleBase.PRE_RULE.equals(ruleVo.getRuleLogicVo().getRuleCategory())) {
+			if (RuleCategory.PRE_RULE.getValue().equals(ruleVo.getRuleLogicVo().getRuleCategory())) {
 				preRules[index].addAll(rules);
 			}
-			else if (RuleBase.POST_RULE.equals(ruleVo.getRuleLogicVo().getRuleCategory())) {
+			else if (RuleCategory.POST_RULE.getValue().equals(ruleVo.getRuleLogicVo().getRuleCategory())) {
 				postRules[index].addAll(rules);
 			}
 			else if (!(ruleVo.getRuleLogicVo().isSubRule())) {
@@ -184,17 +188,17 @@ public class RuleLoaderBo implements java.io.Serializable {
 		List<RuleSubRuleMapVo> subRuleVos = ruleVo.getRuleSubRuleVos();
 		
 		// build rules
-		if (RuleBase.SIMPLE_RULE.equals(logicVo.getRuleType()))	{
+		if (RuleType.SIMPLE.getValue().equals(logicVo.getRuleType()))	{
 			for (int i=0; i<elementVos.size(); i++) {
 				RuleElementVo elementVo = elementVos.get(i);
 				RuleSimple ruleSimple = new RuleSimple(
 					logicVo.getRuleName(),
-					logicVo.getRuleType(),
+					RuleType.getByValue(logicVo.getRuleType()),
 					logicVo.getMailType(),
 					elementVo.getDataName(),
-					elementVo.getHeaderName(),
-					elementVo.getCriteria(),
-					elementVo.getCaseSensitive(),
+					XHeaderName.getByValue(elementVo.getHeaderName()),
+					RuleCriteria.getByValue(elementVo.getCriteria()),
+					CodeType.YES_CODE.equals(elementVo.getCaseSensitive()),
 					elementVo.getTargetText(),
 					elementVo.getExclusions(),
 					elementVo.getExclListProc(),
@@ -203,7 +207,7 @@ public class RuleLoaderBo implements java.io.Serializable {
 				
 				for (int j=0; j<subRuleVos.size(); j++) {
 					RuleSubRuleMapVo subRuleVo = subRuleVos.get(j);
-					ruleSimple.subRuleList.add(subRuleVo.getSubRuleName());
+					ruleSimple.subruleList.add(subRuleVo.getSubRuleName());
 				}
 				
 				rules.add(ruleSimple);
@@ -215,12 +219,12 @@ public class RuleLoaderBo implements java.io.Serializable {
 				RuleElementVo elementVo = elementVos.get(i);
 				RuleSimple ruleSimple = new RuleSimple(
 					logicVo.getRuleName(),
-					logicVo.getRuleType(),
+					RuleType.getByValue(logicVo.getRuleType()),
 					logicVo.getMailType(),
 					elementVo.getDataName(),
-					elementVo.getHeaderName(),
-					elementVo.getCriteria(),
-					elementVo.getCaseSensitive(),
+					XHeaderName.getByValue(elementVo.getHeaderName()),
+					RuleCriteria.getByValue(elementVo.getCriteria()),
+					CodeType.YES_CODE.getValue().equals(elementVo.getCaseSensitive()),
 					elementVo.getTargetText(),
 					elementVo.getExclusions(),
 					elementVo.getExclListProc(),
@@ -231,14 +235,14 @@ public class RuleLoaderBo implements java.io.Serializable {
 
 			RuleComplex ruleComplex = new RuleComplex(
 					ruleVo.getRuleName(),
-					logicVo.getRuleType(),
+					RuleType.getByValue(logicVo.getRuleType()),
 					logicVo.getMailType(),
 					ruleList
 					);
 			
 			for (int j=0; j<subRuleVos.size(); j++) {
 				RuleSubRuleMapVo subRuleVo = subRuleVos.get(j);
-				ruleComplex.subRuleList.add(subRuleVo.getSubRuleName());
+				ruleComplex.subruleList.add(subRuleVo.getSubRuleName());
 			}
 
 			rules.add(ruleComplex);
@@ -319,7 +323,7 @@ public class RuleLoaderBo implements java.io.Serializable {
 		}		
 	}
 	
-	public String findClientIdByAddr(String addr) {
+	public String findSenderIdByAddr(String addr) {
 		if (StringUtils.isEmpty(addr)) {
 			return null;
 		}
@@ -347,26 +351,26 @@ public class RuleLoaderBo implements java.io.Serializable {
 	
 	private final Map<String, Pattern> loadAddressPatterns() {
 		Map<String, String> map = new LinkedHashMap<String, String>();
-		// make sure the default client is the first on the list
+		// make sure the default sender is the first on the list
 		SenderVo sender0 = getSenderDao().getBySenderId(Constants.DEFAULT_SENDER_ID);
 		if (sender0 != null) {
-			String clientId = sender0.getSenderId();
+			String senderId = sender0.getSenderId();
 			String returnPath = buildReturnPath(sender0);
-			map.put(clientId, returnPath);
+			map.put(senderId, returnPath);
 		}
 		List<SenderVo> senders = getSenderDao().getAll();
-		// now add all other clients' return path
+		// now add all other senders' return path
 		for (SenderVo sender : senders) {
-			String clientId = sender.getSenderId();
-			if (Constants.DEFAULT_SENDER_ID.equalsIgnoreCase(clientId)) {
-				continue; // skip the default client
+			String senderId = sender.getSenderId();
+			if (Constants.DEFAULT_SENDER_ID.equalsIgnoreCase(senderId)) {
+				continue; // skip the default sender
 			}
 			String returnPath = buildReturnPath(sender);
-			if (map.containsKey(clientId)) {
-				map.put(clientId, map.get(clientId) + "|" + returnPath);
+			if (map.containsKey(senderId)) {
+				map.put(senderId, map.get(senderId) + "|" + returnPath);
 			}
 			else {
-				map.put(clientId, returnPath);
+				map.put(senderId, returnPath);
 			}
 		}
 		// add mailing list addresses
