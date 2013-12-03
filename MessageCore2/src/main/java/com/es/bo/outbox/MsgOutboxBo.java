@@ -64,14 +64,6 @@ public class MsgOutboxBo {
 	private RenderVariableDao renderVariableDao;
 	@Autowired
 	private RenderObjectDao renderObjectDao;
-//	@Autowired
-//	private MsgInboxDao msgInboxDao;
-//	@Autowired
-//	private MsgAttachmentDao attachmentDao;
-//	@Autowired
-//	private MsgHeaderDao msgHeaderDao;
-//	@Autowired
-//	private MsgAddressDao msgAddressDao;
 	@Autowired
 	private EmailAddressDao emailAddressDao;
 	

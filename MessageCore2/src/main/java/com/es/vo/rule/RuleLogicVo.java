@@ -32,20 +32,26 @@ public class RuleLogicVo extends BaseVo implements Serializable {
 		setIsSubRule(value == true ? CodeType.YES_CODE.getValue() : CodeType.NO_CODE.getValue());
 	}
 	public String getIsSubRuleDesc() {
-		if (CodeType.YES_CODE.getValue().equalsIgnoreCase(getIsSubRule()))
+		if (CodeType.YES_CODE.getValue().equalsIgnoreCase(getIsSubRule())) {
 			return "SubRule";
-		else if (subRuleCount > 0)
+		}
+		else if (subRuleCount > 0) {
 			return "Edit";
-		else
+		}
+		else {
 			return "Add";
+		}
 	}
 	public String getRuleCategoryDesc() {
-		if (RuleCategory.PRE_RULE.getValue().equalsIgnoreCase(getRuleCategory()))
+		if (RuleCategory.PRE_RULE.getValue().equalsIgnoreCase(getRuleCategory())) {
 			return "Pre Scan";
-		else if (RuleCategory.POST_RULE.getValue().equalsIgnoreCase(getRuleCategory()))
+		}
+		else if (RuleCategory.POST_RULE.getValue().equalsIgnoreCase(getRuleCategory())) {
 			return "Post Scan";
-		else
+		}
+		else {
 			return "Main";
+		}
 	}
 	public boolean isBuiltInRule() {
 		return CodeType.YES_CODE.getValue().equalsIgnoreCase(builtInRule);
@@ -57,7 +63,7 @@ public class RuleLogicVo extends BaseVo implements Serializable {
 	public java.util.Date getStartDate() {
 		if (startDate == null) {
 			if (getStartTime() == null) {
-				setStartTime(new Timestamp(new java.util.Date().getTime()));
+				setStartTime(new Timestamp(System.currentTimeMillis()));
 			}
 			startDate = new java.util.Date(getStartTime().getTime());
 		}

@@ -22,10 +22,10 @@ public class RuleElementVo extends BaseVo implements Serializable {
 	private String delimiter = null;
 	
 	public boolean isTextCaseSensitive() {
-		return "Y".equalsIgnoreCase(getCaseSensitive());
+		return CodeType.YES_CODE.getValue().equalsIgnoreCase(getCaseSensitive());
 	}
 	public void setTextCaseSensitive(boolean value) {
-		setCaseSensitive(value == true ? "Y" : "N");
+		setCaseSensitive(value == true ? CodeType.YES_CODE.getValue() : CodeType.NO_CODE.getValue());
 	}
 	
 	public String getCaseSensitive() {

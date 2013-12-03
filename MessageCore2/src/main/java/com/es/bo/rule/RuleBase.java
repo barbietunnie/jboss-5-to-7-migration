@@ -6,94 +6,48 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.es.data.constant.EmailAddressType;
-import com.es.data.constant.VariableName;
+import com.es.core.util.StringUtil;
+import com.es.data.constant.RuleCriteria;
+import com.es.data.constant.RuleType;
+import com.es.data.constant.XHeaderName;
 
 public abstract class RuleBase implements java.io.Serializable {
 	private static final long serialVersionUID = -2619176738651938695L;
 	protected static final Logger logger = Logger.getLogger(RuleBase.class);
 	protected final static boolean isDebugEnabled = logger.isDebugEnabled();
 
-	/** define rule type constants */
-	public static final String SIMPLE_RULE = "Simple";
-	public static final String ALL_RULE = "All";
-	public static final String ANY_RULE = "Any";
-	public static final String NONE_RULE = "None";
-	
-	public static final String PRE_RULE = "E";
-	public static final String MAIN_RULE = "M";
-	public static final String POST_RULE = "P";
-
-	/** define criteria constants for simple rule */
-	public static final String STARTS_WITH = "starts_with";
-	public static final String ENDS_WITH = "ends_with";
-	public static final String CONTAINS = "contains";
-	public static final String EQUALS = "equals";
-	public static final String GREATER_THAN = "greater_than";
-	public static final String LESS_THAN = "less_than";
-	public static final String VALUED = "valued";
-	public static final String NOT_VALUED = "not_valued";
-	public static final String REG_EX = "reg_ex";
-
-	public static final String[] CRITERIAS = 
-		{ STARTS_WITH, ENDS_WITH, CONTAINS, EQUALS, GREATER_THAN, LESS_THAN, VALUED, NOT_VALUED, REG_EX };
-
-	/** define data type constants for Internet mail */
-	public static final String FROM_ADDR = EmailAddressType.FROM_ADDR.getValue();
-	public static final String TO_ADDR = EmailAddressType.TO_ADDR.getValue();
-	public static final String REPLYTO_ADDR = EmailAddressType.REPLYTO_ADDR.getValue();
-	public static final String CC_ADDR = EmailAddressType.CC_ADDR.getValue();
-	public static final String BCC_ADDR = EmailAddressType.BCC_ADDR.getValue();
-	public static final String SUBJECT = VariableName.SUBJECT.getValue();
-	public static final String BODY = VariableName.BODY.getValue();
-	public static final String MSG_REF_ID = VariableName.MSG_REF_ID.getValue();
-	public static final String RULE_NAME = VariableName.RULE_NAME.getValue();
-	public static final String X_HEADER = VariableName.XHEADER_DATA_NAME.getValue();
-	public static final String RETURN_PATH = "ReturnPath";
-	// mailbox properties
-	public static final String MAILBOX_USER = VariableName.MAILBOX_USER.getValue();
-	public static final String MAILBOX_HOST = VariableName.MAILBOX_HOST.getValue();
-	// the next two items are not implemented yet
-	public static final String RFC822 = VariableName.RFC822.getValue();
-	public static final String DELIVERY_STATUS = VariableName.DELIVERY_STATUS.getValue();
-
-	public static final String[] DATATYPES = 
-		{ FROM_ADDR, TO_ADDR, REPLYTO_ADDR, CC_ADDR, BCC_ADDR,
-			SUBJECT, BODY, MSG_REF_ID, RULE_NAME, MAILBOX_USER, MAILBOX_HOST };
-
-	/** define data type constants for Internet email attachments */
-	public static final String MIME_TYPE = "MimeType";
-	public static final String FILE_NAME = "FileName";
-
 	final static String LF = System.getProperty("line.separator", "\n");
 
 	// store rule names found in rules.xml
 	private final static Set<String> ruleNameList = Collections.synchronizedSet(new HashSet<String>());
 
-	protected final String ruleName, ruleType;
+	protected final String ruleName;
+	protected final RuleType ruleType;
 	protected String dataName;
-	protected String headerName;
-	protected final String mailType, criteria;
-	protected final boolean caseSensitive;
+	protected XHeaderName headerName;
+	protected final String mailType;
+	protected final RuleCriteria criteria;
+	protected final boolean isCaseSensitive;
 
-	protected final List<String> subRuleList = new ArrayList<String>();
+	protected final List<String> subruleList = new ArrayList<String>();
 
 	public RuleBase(String _ruleName, 
-			String _ruleType, 
+			RuleType _ruleType, 
 			String _mailType, 
 			String _dataName,
-			String _headerName,
-			String _criteria, 
-			String _caseSensitive) {
+			XHeaderName _headerName,
+			RuleCriteria _criteria, 
+			boolean _caseSensitive) {
 		this.ruleName = _ruleName;
 		this.ruleType = _ruleType;
 		this.mailType = _mailType;
 		this.dataName = _dataName;
 		this.headerName = _headerName;
 		this.criteria = _criteria;
-		this.caseSensitive = "Y".equalsIgnoreCase(_caseSensitive);
+		this.isCaseSensitive = _caseSensitive;
 		if (this.ruleName != null && !ruleNameList.contains(this.ruleName))
 			ruleNameList.add(this.ruleName);
 	}
@@ -109,43 +63,85 @@ public abstract class RuleBase implements java.io.Serializable {
 		return ruleName + sb.toString();
 	}
 	
-	public String getRuleType() {
-		return mailType;
+	public RuleType getRuleType() {
+		return ruleType;
 	}
 
 	public String getDataName() {
 		return dataName;
 	}
 
-	public String getHeaderName() {
+	public XHeaderName getHeaderName() {
 		return headerName;
 	}
 
 	public List<String> getSubRules() {
-		return subRuleList;
+		return subruleList;
 	}
 
-	public String getRuleContent() {
+	public String getMailType() {
+		return mailType;
+	}
+
+	public RuleCriteria getCriteria() {
+		return criteria;
+	}
+
+	public boolean isCaseSensitive() {
+		return isCaseSensitive;
+	}
+
+	public String printRuleContent() {
+		return printRuleContent(0);
+	}
+
+	public String printRuleContent(int level) {
+		String dots = getBlanks(level) + StringUtil.getDots(level);
 		StringBuffer sb = new StringBuffer();
-		sb.append(LF + "---- listing rule content for " + ruleName + " ----" + LF);
-		sb.append("Rule Name: " + ruleName + LF);
-		sb.append("Rule Type: " + ruleType + LF);
-		sb.append("Mail Type: " + mailType + LF);
-		sb.append("Data Type: " + dataName + LF);
-		if (headerName != null)
-			sb.append("Header Name: " + headerName + LF);
-		sb.append("Criteria : " + criteria + LF);
-		sb.append("Case Sensitive : " + caseSensitive + LF);
-		if (subRuleList != null) {
-			sb.append("SubRule List:" + LF);
-			for (int i = 0; i < subRuleList.size(); i++) {
-				sb.append("     " + subRuleList.get(i) + LF);
+		sb.append(LF + dots + "---- listing rule content for " + ruleName + " ----" + LF);
+		if (dots.length()==0) {
+			sb.append(dots + "Rule Name : " + ruleName + LF);
+			sb.append(dots + "Rule Type : " + ruleType.getValue() + LF);
+			sb.append(dots + "Mail Type : " + mailType + LF);
+		}
+		sb.append(dots + "Data Name : " + dataName + LF);
+		if (headerName != null) {
+			sb.append(dots + "Header Name: " + headerName.getValue() + LF);
+		}
+		sb.append(dots + "Criteria  : " + criteria.getValue() + LF);
+		sb.append(dots + "Case Sensitive : " + isCaseSensitive + LF);
+		if (this instanceof RuleSimple) {
+			if (StringUtils.isNotBlank(((RuleSimple)this).targetText)) {
+				sb.append(dots + "Target Text : " + ((RuleSimple)this).targetText + LF);
 			}
+		}
+		if (subruleList != null) {
+			sb.append(dots + "SubRule List:" + LF);
+			for (int i = 0; i < subruleList.size(); i++) {
+				sb.append(dots + "     " + subruleList.get(i) + LF);
+			}
+		}
+		if (this instanceof RuleComplex) {
+			sb.append(dots + "Rule Category: Complex" + LF);
+			for (RuleBase rule :((RuleComplex)this).getRuleList()) {
+				sb.append(dots + rule.printRuleContent(level+1));
+			}
+		}
+		else if (this instanceof RuleSimple) {
+			sb.append(dots + "Rule Category: Simple" + LF);
 		}
 
 		return sb.toString();
 	}
 	
+	private String getBlanks(int level) {
+		StringBuffer sb = new StringBuffer();
+		for (int i=0; i<level; i++) {
+			sb.append("   ");
+		}
+		return sb.toString();
+	}
+
 	public abstract String match(String mail_type, String data_type, String data);
 	
 	public abstract String match(String mail_type, Object mail_obj);

@@ -146,7 +146,7 @@ public class MsgInboxBo {
 		// set purge Date
 		msgVo.setPurgeDate(new java.sql.Date(cal.getTime().getTime()));
 
-		// find LeadMsgId. Also find client id if it's from MailReader
+		// find LeadMsgId. Also find sender id if it's from MailReader
 		if (msgBean.getMsgRefId() != null) {
 			MsgInboxVo origVo = msgInboxDao.getByPrimaryKey(msgBean.getMsgRefId());
 			if (origVo == null) { // could be deleted by User or purged by Purge routine

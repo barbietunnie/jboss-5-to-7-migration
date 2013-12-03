@@ -34,8 +34,7 @@ public class RenderResponse implements Serializable {
 			this.messageBean=messageBean;
     }
 
-	public String toString()
-	{
+	public String toString() {
 		String LF = System.getProperty("line.separator","\n");
 		StringBuffer sb = new StringBuffer();
 		sb.append("========== Display RenderResponse Fields =========="+LF);
@@ -69,8 +68,9 @@ public class RenderResponse implements Serializable {
 		else {
 			sb.append("VariableErrors:   "+"null"+LF);
 		}
-		if (messageBean!=null)
+		if (messageBean!=null) {
 			sb.append(LF+messageBean.toString());
+		}
 		return sb.toString();
 	}
 	   
