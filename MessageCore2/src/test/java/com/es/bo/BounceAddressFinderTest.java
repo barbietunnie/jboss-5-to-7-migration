@@ -1,4 +1,4 @@
-package com.es.bo.inbox;
+package com.es.bo;
 
 import static org.junit.Assert.*;
 
@@ -15,6 +15,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.es.bo.inbox.BounceAddressFinder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-core-config.xml"})

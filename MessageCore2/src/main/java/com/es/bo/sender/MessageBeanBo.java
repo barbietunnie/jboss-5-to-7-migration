@@ -7,31 +7,6 @@ import java.util.List;
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.persistence.NoResultException;
-
-import jpa.constant.CarrierCode;
-import jpa.constant.EmailAddrType;
-import jpa.constant.MsgDirectionCode;
-import jpa.exception.DataValidationException;
-import jpa.message.BodypartBean;
-import jpa.message.MessageBean;
-import jpa.message.MsgHeader;
-import jpa.message.util.MsgHeaderUtil;
-import jpa.model.EmailAddress;
-import jpa.model.SenderData;
-import jpa.model.SubscriberData;
-import jpa.model.message.MessageAddress;
-import jpa.model.message.MessageAttachment;
-import jpa.model.message.MessageDeliveryStatus;
-import jpa.model.message.MessageHeader;
-import jpa.model.message.MessageInbox;
-import jpa.model.message.MessageRfcField;
-import jpa.model.rule.RuleLogic;
-import jpa.service.EmailAddressService;
-import jpa.service.SenderDataService;
-import jpa.service.SubscriberDataService;
-import jpa.service.rule.RuleLogicService;
-import jpa.util.HtmlUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -39,6 +14,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.es.core.util.HtmlUtil;
+import com.es.dao.address.EmailAddressDao;
+import com.es.dao.rule.RuleLogicDao;
+import com.es.dao.sender.SenderDao;
+import com.es.dao.subscriber.SubscriberDao;
+import com.es.data.constant.CarrierCode;
+import com.es.data.constant.CodeType;
+import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.MsgDirectionCode;
+import com.es.exception.DataValidationException;
+import com.es.msg.util.MsgHeaderUtil;
+import com.es.msgbean.BodypartBean;
+import com.es.msgbean.MessageBean;
+import com.es.msgbean.MsgHeader;
+import com.es.vo.address.EmailAddressVo;
+import com.es.vo.inbox.MsgAddressVo;
+import com.es.vo.inbox.MsgAttachmentVo;
+import com.es.vo.inbox.MsgHeaderVo;
+import com.es.vo.inbox.MsgInboxVo;
+import com.es.vo.inbox.MsgRfcFieldVo;
+import com.es.vo.outbox.DeliveryStatusVo;
 
 @Component("messageBeanBo")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -48,23 +45,23 @@ public class MessageBeanBo implements java.io.Serializable {
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
 	@Autowired
-	private SenderDataService senderService;
+	private SenderDao senderDao;
 	@Autowired
-	private SubscriberDataService subrService;
+	private SubscriberDao subrDao;
 	@Autowired
-	private RuleLogicService logicService;
+	private RuleLogicDao logicDao;
 	@Autowired
-	private EmailAddressService emailService;
+	private EmailAddressDao emailDao;
 	
 	/**
-	 * create a MessageBean object from a MessageInbox object.
+	 * create a MessageBean object from a MsgInboxVo object.
 	 * 
 	 * @param msgVo -
 	 *            MsgInboxVo
 	 * @return MessageBean
 	 * @throws DataValidationException
 	 */
-	public MessageBean createMessageBean(MessageInbox msgVo) throws DataValidationException {
+	public MessageBean createMessageBean(MsgInboxVo msgVo) throws DataValidationException {
 		if (isDebugEnabled)
 			logger.debug("Entering createMessageBean() method...");
 		if (msgVo == null) {
@@ -72,52 +69,26 @@ public class MessageBeanBo implements java.io.Serializable {
 		}
 
 		MessageBean msgBean = new MessageBean();
-		msgBean.setMsgId(Integer.valueOf(msgVo.getRowId()));
-		msgBean.setMsgRefId(msgVo.getReferringMessageRowId());
+		msgBean.setMsgId(Long.valueOf(msgVo.getRowId()));
+		msgBean.setMsgRefId(msgVo.getMsgRefId());
 		msgBean.setCarrierCode(CarrierCode.getByValue(msgVo.getCarrierCode()));
 		msgBean.setSubject(msgVo.getMsgSubject());
 		msgBean.setPriority(new String[] {msgVo.getMsgPriority()});
 		msgBean.setSendDate(msgVo.getReceivedTime());
 		
 		msgBean.setIsReceived(MsgDirectionCode.RECEIVED.getValue().equals(msgVo.getMsgDirection()));
-		if (msgVo.getSenderData()==null && msgVo.getSenderDataRowId()!=null) {
-			try {
-				SenderData sender = senderService.getByRowId(msgVo.getSenderDataRowId());
-				msgVo.setSenderData(sender);
-			}
-			catch (NoResultException e) {}
-		}
-		if (msgVo.getSenderData()!=null) {
-			msgBean.setSenderId(msgVo.getSenderData().getSenderId());
-		}
-		if (msgVo.getSubscriberData()==null && msgVo.getSubscriberDataRowId()!=null) {
-			try {
-				SubscriberData subr = subrService.getByRowId(msgVo.getSubscriberDataRowId());
-				msgVo.setSubscriberData(subr);
-			}
-			catch (NoResultException e) {}
-		}
-		if (msgVo.getSubscriberData()!=null) {
-			msgBean.setSubrId(msgVo.getSubscriberData().getSubscriberId());
-		}
+		msgBean.setSenderId(msgVo.getSenderId());
+		msgBean.setSubrId(msgVo.getSubrId());
 		msgBean.setSmtpMessageId(msgVo.getSmtpMessageId());
 		msgBean.setRenderId(msgVo.getRenderId());
-		msgBean.setOverrideTestAddr(msgVo.isOverrideTestAddr());
-		if (msgVo.getRuleLogic()==null) {
-			try {
-				RuleLogic logic = logicService.getByRowId(msgVo.getRuleLogicRowId());
-				msgVo.setRuleLogic(logic);
-			}
-			catch (NoResultException e) {}
-		}
-		if (msgVo.getRuleLogic()!=null) {
-			msgBean.setRuleName(msgVo.getRuleLogic().getRuleName());
-		}
+		msgBean.setOverrideTestAddr(CodeType.YES_CODE.getValue().equals(msgVo.getOverrideTestAddr()));
+
+		msgBean.setRuleName(msgVo.getRuleName());
 		
 		// set message body and attachments
 		String msgBody = msgVo.getMsgBody();
 		msgBean.setContentType(msgVo.getMsgContentType());
-		List<MessageAttachment> attchs = msgVo.getMessageAttachmentList();
+		List<MsgAttachmentVo> attchs = msgVo.getAttachments();
 		if (attchs != null && !attchs.isEmpty()) {
 			// construct a multipart (/mixed)
 			// message body part
@@ -128,12 +99,12 @@ public class MessageBeanBo implements java.io.Serializable {
 			msgBean.put(aNode);
 			// attachments
 			for (int i = 0; i < attchs.size(); i++) {
-				MessageAttachment vo = attchs.get(i);
+				MsgAttachmentVo vo = attchs.get(i);
 				BodypartBean subNode = new BodypartBean();
-				subNode.setContentType(vo.getAttachmentType());
-				subNode.setDisposition(vo.getAttachmentDisp());
-				subNode.setDescription(vo.getAttachmentName());
-				byte[] bytes = vo.getAttachmentValue();
+				subNode.setContentType(vo.getAttchmntType());
+				subNode.setDisposition(vo.getAttchmntDisp());
+				subNode.setDescription(vo.getAttchmntName());
+				byte[] bytes = vo.getAttchmntValue();
 				if (bytes != null) {
 					ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 					subNode.setValue(bais);
@@ -157,28 +128,22 @@ public class MessageBeanBo implements java.io.Serializable {
 		
 		setDeliveryStatus(msgVo, msgBean, msgBean);
 		
-		List<MessageRfcField> rfcList = msgVo.getMessageRfcFieldList();
+		List<MsgRfcFieldVo> rfcList = msgVo.getRfcFields();
 		if (rfcList!=null && rfcList.size()>0) {
-			for (MessageRfcField rfc : rfcList) {
+			for (MsgRfcFieldVo rfc : rfcList) {
 				BodypartBean aNode = new BodypartBean();
-				aNode.setContentType(rfc.getMessageRfcFieldPK().getRfcType());
+				aNode.setContentType(rfc.getRfcType());
 				if (isRfc822(rfc)) {
-					msgBean.setOrigSubject(rfc.getOriginalMsgSubject());
+					msgBean.setOrigSubject(rfc.getOrigMsgSubject());
 					msgBean.setSmtpMessageId(rfc.getMessageId());
 					msgBean.setDsnRfc822(rfc.getDsnRfc822());
 					msgBean.setDsnText(rfc.getDsnText());
 					aNode.setValue(rfc.getDsnRfc822());
 				}
-				if (StringUtils.isNotBlank(rfc.getOriginalRecipient())) {
-					msgBean.setOrigRcpt(rfc.getOriginalRecipient());
+				if (StringUtils.isNotBlank(rfc.getOrigRcpt())) {
+					msgBean.setOrigRcpt(rfc.getOrigRcpt());
 				}
-				if (rfc.getFinalRcptAddrRowId()!=null) {
-					try {
-						EmailAddress finalRcpt = emailService.getByRowId(rfc.getFinalRcptAddrRowId());
-						msgBean.setFinalRcpt(finalRcpt.getAddress());
-					}
-					catch (NoResultException e) {}
-				}
+				msgBean.setFinalRcpt(rfc.getFinalRcpt());
 				aNode.setSize(aNode.getValue()==null?0:aNode.getValue().length);
 				if (aNode.getValue()!=null || StringUtils.isNotBlank(msgBean.getDsnText())) {
 					BodypartBean textNode = new BodypartBean();
@@ -210,16 +175,16 @@ public class MessageBeanBo implements java.io.Serializable {
 							header.setValue(rfc.getMessageId());
 							headers.add(header);
 						}
-						if (rfc.getOriginalMsgSubject()!=null) {
+						if (rfc.getOrigMsgSubject()!=null) {
 							MsgHeader header = new MsgHeader();
 							header.setName("Subject");
-							header.setValue(rfc.getOriginalMsgSubject());
+							header.setValue(rfc.getOrigMsgSubject());
 							headers.add(header);
 						}
-						if (rfc.getOriginalRecipient()!=null) {
+						if (rfc.getOrigRcpt()!=null) {
 							MsgHeader header = new MsgHeader();
 							header.setName("To");
-							header.setValue(rfc.getOriginalRecipient());
+							header.setValue(rfc.getOrigRcpt());
 							headers.add(header);
 						}
 						if (StringUtils.isNotBlank(msgBean.getFinalRcpt())) {
@@ -244,11 +209,11 @@ public class MessageBeanBo implements java.io.Serializable {
 		}
 
 		// set message headers
-		List<MessageHeader> headersVo = msgVo.getMessageHeaderList();
+		List<MsgHeaderVo> headersVo = msgVo.getMsgHeaders();
 		if (headersVo != null) {
 			List<MsgHeader> headers = new ArrayList<MsgHeader>(); 
 			for (int i = 0; i < headersVo.size(); i++) {
-				MessageHeader msgHeadersVo = headersVo.get(i);
+				MsgHeaderVo msgHeadersVo = headersVo.get(i);
 				MsgHeader header = new MsgHeader();
 				header.setName(msgHeadersVo.getHeaderName());
 				header.setValue(msgHeadersVo.getHeaderValue());
@@ -258,7 +223,7 @@ public class MessageBeanBo implements java.io.Serializable {
 		}
 
 		// set addresses
-		List<MessageAddress> addrsVo = msgVo.getMessageAddressList();
+		List<MsgAddressVo> addrsVo = msgVo.getMsgAddrs();
 		if (addrsVo != null) {
 			String fromAddr = null;
 			String toAddr = null;
@@ -266,39 +231,38 @@ public class MessageBeanBo implements java.io.Serializable {
 			String ccAddr = null;
 			String bccAddr = null;
 			for (int i = 0; i < addrsVo.size(); i++) {
-				MessageAddress addrVo = addrsVo.get(i);
-				EmailAddress addr = emailService.getByRowId(addrVo.getEmailAddrRowId());
-				if (EmailAddrType.FROM_ADDR.getValue().equalsIgnoreCase(addrVo.getAddressType())) {
+				MsgAddressVo addrVo = addrsVo.get(i);
+				if (EmailAddressType.FROM_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
 					if (fromAddr == null) {
-						fromAddr = addr.getAddress();
+						fromAddr = addrVo.getAddrValue();
 					}
 					else {
-						fromAddr += "," + addr.getAddress();
+						fromAddr += "," + addrVo.getAddrValue();
 					}
 				}
-				else if (EmailAddrType.TO_ADDR.getValue().equalsIgnoreCase(addrVo.getAddressType())) {
+				else if (EmailAddressType.TO_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
 					if (toAddr == null)
-						toAddr = addr.getAddress();
+						toAddr = addrVo.getAddrValue();
 					else
-						toAddr += "," + addr.getAddress();
+						toAddr += "," + addrVo.getAddrValue();
 				}
-				else if (EmailAddrType.REPLYTO_ADDR.getValue().equalsIgnoreCase(addrVo.getAddressType())) {
+				else if (EmailAddressType.REPLYTO_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
 					if (replyToAddr == null)
-						replyToAddr = addr.getAddress();
+						replyToAddr = addrVo.getAddrValue();
 					else
-						replyToAddr += "," + addr.getAddress();
+						replyToAddr += "," + addrVo.getAddrValue();
 				}
-				else if (EmailAddrType.CC_ADDR.getValue().equalsIgnoreCase(addrVo.getAddressType())) {
+				else if (EmailAddressType.CC_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
 					if (ccAddr == null)
-						ccAddr = addr.getAddress();
+						ccAddr = addrVo.getAddrValue();
 					else
-						ccAddr += "," + addr.getAddress();
+						ccAddr += "," + addrVo.getAddrValue();
 				}
-				else if (EmailAddrType.BCC_ADDR.getValue().equalsIgnoreCase(addrVo.getAddressType())) {
+				else if (EmailAddressType.BCC_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
 					if (bccAddr == null)
-						bccAddr = addr.getAddress();
+						bccAddr = addrVo.getAddrValue();
 					else
-						bccAddr += "," + addr.getAddress();
+						bccAddr += "," + addrVo.getAddrValue();
 				}
 			}
 			if (fromAddr != null) {
@@ -354,39 +318,36 @@ public class MessageBeanBo implements java.io.Serializable {
 		return msgBean;
 	}
 
-	private void setDeliveryStatus(MessageInbox msgVo, MessageBean msgBean, BodypartBean subNode) {
-		List<MessageDeliveryStatus> statusList = msgVo.getMessageDeliveryStatusList();
+	private void setDeliveryStatus(MsgInboxVo msgVo, MessageBean msgBean, BodypartBean subNode) {
+		List<DeliveryStatusVo> statusList = msgVo.getDeliveryStatus();
 		if (statusList!=null && statusList.size()>0) {
-			for (MessageDeliveryStatus status : statusList) {
+			for (DeliveryStatusVo status : statusList) {
 				BodypartBean aNode = new BodypartBean();
 				aNode.setContentType("message/delivery-status");
 				aNode.setValue(status.getDeliveryStatus());
 				aNode.setSize(aNode.getValue().length);
 				subNode.put(aNode);
-				msgBean.setSmtpMessageId(status.getSmtpMessageId());
+				msgBean.setSmtpMessageId(status.getMessageId());
 				msgBean.setDsnDlvrStat(status.getDeliveryStatus());
 				msgBean.setDiagnosticCode(status.getDsnReason());
 				msgBean.setDsnStatus(status.getDsnStatus());
 				msgBean.setDsnText(status.getDsnText());
-				msgBean.setFinalRcpt(status.getFinalRecipientAddress());
-				if (status.getOriginalRcptAddrRowId()!=null) {
-					try {
-						EmailAddress origAddr = emailService.getByRowId(status.getOriginalRcptAddrRowId());
-						msgBean.setOrigRcpt(origAddr.getAddress());
-					}
-					catch (NoResultException e) {}
+				msgBean.setFinalRcpt(status.getFinalRecipient());
+				if (status.getOriginalRecipientId()!=null) {
+					EmailAddressVo origAddr = emailDao.getByAddrId(status.getOriginalRecipientId());
+					msgBean.setOrigRcpt(origAddr.getEmailAddr());
 				}
  				List<MsgHeader> headers = new ArrayList<MsgHeader>(); 
-				if (status.getSmtpMessageId()!=null) {
+				if (status.getMessageId()!=null) {
 					MsgHeader header = new MsgHeader();
 					header.setName("Message-Id");
-					header.setValue(status.getSmtpMessageId());
+					header.setValue(status.getMessageId());
 					headers.add(header);
 				}
-				if (status.getFinalRecipientAddress()!=null) {
+				if (status.getFinalRecipient()!=null) {
 					MsgHeader header = new MsgHeader();
 					header.setName("Final-Recipient");
-					header.setValue("rfc822;" + status.getFinalRecipientAddress());
+					header.setValue("rfc822;" + status.getFinalRecipient());
 					headers.add(header);
 				}
 				if (StringUtils.isNotBlank(msgBean.getOrigRcpt())) {
@@ -414,7 +375,7 @@ public class MessageBeanBo implements java.io.Serializable {
 		}
 	}
 
-	boolean isReport(MessageDeliveryStatus rfc) {
+	boolean isReport(DeliveryStatusVo rfc) {
 		if (StringUtils.isNotBlank(rfc.getDsnReason())
 				|| StringUtils.isNotBlank(rfc.getDsnStatus())
 				|| StringUtils.isNotBlank(rfc.getDeliveryStatus())) {
@@ -423,9 +384,9 @@ public class MessageBeanBo implements java.io.Serializable {
 		return false;
 	}
 
-	boolean isRfc822(MessageRfcField rfc) {
+	boolean isRfc822(MsgRfcFieldVo rfc) {
 		if (StringUtils.isNotBlank(rfc.getMessageId())
-				|| StringUtils.isNotBlank(rfc.getOriginalMsgSubject())
+				|| StringUtils.isNotBlank(rfc.getOrigMsgSubject())
 				|| StringUtils.isNotBlank(rfc.getDsnRfc822())
 				|| StringUtils.isNotBlank(rfc.getDsnText())) {
 			return true;

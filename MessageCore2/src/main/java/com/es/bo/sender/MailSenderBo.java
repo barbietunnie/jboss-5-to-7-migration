@@ -8,19 +8,24 @@ import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
-import jpa.exception.DataValidationException;
-import jpa.message.MessageBean;
-import jpa.message.MessageContext;
-import jpa.model.message.MessageRendered;
-import jpa.service.message.MessageRenderedService;
-import jpa.util.EmailSender;
-import jpa.util.SpringUtil;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.es.bo.outbox.MsgOutboxBo;
+import com.es.bo.smtp.NamedPool;
+import com.es.bo.smtp.SmtpConnection;
+import com.es.bo.smtp.SmtpException;
+import com.es.bo.smtp.SmtpWrapperUtil;
+import com.es.core.util.EmailSender;
+import com.es.core.util.SpringUtil;
+import com.es.dao.outbox.MsgRenderedDao;
+import com.es.exception.DataValidationException;
+import com.es.msgbean.MessageBean;
+import com.es.msgbean.MessageContext;
+import com.es.vo.outbox.MsgRenderedVo;
 
 /**
  * Class to send the email off.
@@ -44,12 +49,12 @@ public class MailSenderBo extends MailSenderBase {
 	}
 
 	public static void main(String[] args) {
-		MailSenderBo sender = (MailSenderBo) SpringUtil.getAppContext().getBean("mailSenderBo");
-		MsgOutboxBo msgOutboxBo = (MsgOutboxBo) SpringUtil.getAppContext().getBean("msgOutboxBo");
-		MessageRenderedService msgRenderedService = (MessageRenderedService) SpringUtil.getAppContext().getBean("messageRenderedService");
+		MailSenderBo sender = SpringUtil.getAppContext().getBean(MailSenderBo.class);
+		MsgOutboxBo msgOutboxBo = SpringUtil.getAppContext().getBean(MsgOutboxBo.class);
+		MsgRenderedDao msgRenderedService = SpringUtil.getAppContext().getBean(MsgRenderedDao.class);
 		SpringUtil.beginTransaction();
 		try {
-			MessageRendered mr = msgRenderedService.getFirstRecord();
+			MsgRenderedVo mr = msgRenderedService.getFirstRecord();
 			MessageBean bean = msgOutboxBo.getMessageByPK(mr.getRowId());
 			if (bean.getTo()==null || bean.getTo().length==0) {
 				bean.setTo(InternetAddress.parse("testto@localhost"));

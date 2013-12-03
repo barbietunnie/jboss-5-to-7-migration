@@ -145,8 +145,7 @@ public class MsgOutboxBo {
 			msgBean.setCarrierCode(CarrierCode.getByValue(cc));
 		}
 		if (msgBean.getFrom() == null && rsp.getMsgSourceVo().getFromAddrId() != null) {
-			EmailAddressVo addrVo = getEmailAddrDao()
-					.getByAddrId(rsp.getMsgSourceVo().getFromAddrId());
+			EmailAddressVo addrVo = emailAddressDao.getByAddrId(rsp.getMsgSourceVo().getFromAddrId());
 			if (addrVo !=null) {
 				try {
 					Address[] from = InternetAddress.parse(addrVo.getEmailAddr());
@@ -159,8 +158,7 @@ public class MsgOutboxBo {
 			}
 		}
 		if (msgBean.getReplyto() == null && rsp.getMsgSourceVo().getReplyToAddrId() != null) {
-			EmailAddressVo addrVo = getEmailAddrDao()
-					.getByAddrId(rsp.getMsgSourceVo().getReplyToAddrId());
+			EmailAddressVo addrVo = emailAddressDao.getByAddrId(rsp.getMsgSourceVo().getReplyToAddrId());
 			if (addrVo != null) {
 				try {
 					Address[] replyto = InternetAddress.parse(addrVo.getEmailAddr());
@@ -439,43 +437,4 @@ public class MsgOutboxBo {
 		return renderRequest;
 	}
 
-	public MsgAttachmentDao getAttachmentsDao() {
-		return attachmentDao;
-	}
-
-	public RenderVariableDao getRenderVariableDao() {
-		return renderVariableDao;
-	}
-
-	public EmailAddressDao getEmailAddrDao() {
-		return emailAddressDao;
-	}
-
-	public RenderBo getRenderBo() {
-		return renderBo;
-	}
-
-	public MsgRenderedDao getMsgRenderedDao() {
-		return msgRenderedDao;
-	}
-
-	public RenderAttachmentDao getRenderAttachmentDao() {
-		return renderAttachmentDao;
-	}
-
-	public MsgHeaderDao getMsgHeadersDao() {
-		return msgHeaderDao;
-	}
-
-	public MsgAddressDao getMsgAddrsDao() {
-		return msgAddressDao;
-	}
-
-	public MsgInboxDao getMsgInboxDao() {
-		return msgInboxDao;
-	}
-
-	public RenderObjectDao getRenderObjectDao() {
-		return renderObjectDao;
-	}
 }

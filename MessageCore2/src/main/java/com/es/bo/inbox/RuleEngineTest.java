@@ -33,7 +33,7 @@ public class RuleEngineTest {
 	@Resource
 	MsgInboxBo msgInboxBo;
 	@Resource
-	private MessageParser messageParser;
+	private MessageParserBo messageParser;
 	static AbstractApplicationContext factory = null;
 	final int startFrom = 1;
 	final int endTo = 1;

@@ -36,7 +36,7 @@ public class RuleMatch2Test {
 	@Resource
 	private RulesDataBo rulesDataBo;
 	@Resource
-	private RuleLoader loader;
+	private RuleLoaderBo loader;
 	private RuleMatcher matcher;
 	Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
 
