@@ -29,10 +29,6 @@ import com.es.bo.render.RenderVariable;
 import com.es.bo.sender.RenderBo;
 import com.es.core.util.SpringUtil;
 import com.es.dao.address.EmailAddressDao;
-import com.es.dao.inbox.MsgAddressDao;
-import com.es.dao.inbox.MsgAttachmentDao;
-import com.es.dao.inbox.MsgHeaderDao;
-import com.es.dao.inbox.MsgInboxDao;
 import com.es.dao.outbox.MsgRenderedDao;
 import com.es.dao.outbox.RenderAttachmentDao;
 import com.es.dao.outbox.RenderObjectDao;
@@ -68,14 +64,14 @@ public class MsgOutboxBo {
 	private RenderVariableDao renderVariableDao;
 	@Autowired
 	private RenderObjectDao renderObjectDao;
-	@Autowired
-	private MsgInboxDao msgInboxDao;
-	@Autowired
-	private MsgAttachmentDao attachmentDao;
-	@Autowired
-	private MsgHeaderDao msgHeaderDao;
-	@Autowired
-	private MsgAddressDao msgAddressDao;
+//	@Autowired
+//	private MsgInboxDao msgInboxDao;
+//	@Autowired
+//	private MsgAttachmentDao attachmentDao;
+//	@Autowired
+//	private MsgHeaderDao msgHeaderDao;
+//	@Autowired
+//	private MsgAddressDao msgAddressDao;
 	@Autowired
 	private EmailAddressDao emailAddressDao;
 	
@@ -169,7 +165,6 @@ public class MsgOutboxBo {
 							+ addrVo.getEmailAddr());
 				}
 			}
-			
 		}
 		
 		if (CodeType.YES_CODE.getValue().equalsIgnoreCase(rsp.getMsgSourceVo().getExcludingIdToken())) {
