@@ -14,7 +14,7 @@ public class MessageContext implements Serializable {
 	private MessageBean messageBean;
 	private byte[] messageStream;
 	private String taskArguments;
-	private List<Integer> rowIds;
+	private List<Long> rowIds;
 	
 	public MessageContext() {}
 	
@@ -71,9 +71,9 @@ public class MessageContext implements Serializable {
 		this.taskArguments = taskArguments;
 	}
 
-	public List<Integer> getRowIds() {
+	public List<Long> getRowIds() {
 		if (rowIds == null) {
-			rowIds = new ArrayList<Integer>();
+			rowIds = new ArrayList<Long>();
 		}
 		return rowIds;
 	}

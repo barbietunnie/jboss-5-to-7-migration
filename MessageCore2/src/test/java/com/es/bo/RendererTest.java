@@ -84,17 +84,10 @@ public final class RendererTest {
 		Map<String, ErrorVariable> errors = new HashMap<String, ErrorVariable>();
 		try {
 			renderer.render(template1, map, errors);
-			assertTrue(errors.size()==1);
-			for (ErrorVariable error : errors.values()) {
-				assertTrue(error.getVariableName().indexOf("numeric1")>=0);
-			}
-			exceptionCaught++;
-			errors.clear();
 		}
 		catch (Exception e) {
 			assertTrue(e.getMessage().indexOf("${numeric1,") > 0);
 			exceptionCaught++;
-			fail();
 		}
 		
 		String template2 = "Missing middle closing delimiter\n"
@@ -103,17 +96,10 @@ public final class RendererTest {
 		
 		try {
 			renderer.render(template2, map, errors);
-			assertTrue(errors.size()==1);
-			for (ErrorVariable error : errors.values()) {
-				assertTrue(error.getVariableName().indexOf("numeric2")>=0);
-			}
-			exceptionCaught++;
-			errors.clear();
 		}
 		catch (Exception e) {
 			assertTrue(e.getMessage().indexOf("${numeric2,") > 0);
 			exceptionCaught++;
-			fail();
 		}
 		
 		String template3 = "Missing last closing delimiter\n"

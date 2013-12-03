@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.es.bo.rule.RuleLoader;
+import com.es.bo.rule.RuleLoaderBo;
 import com.es.bo.rule.RuleMatcher;
 import com.es.data.constant.XHeaderName;
 import com.es.data.preload.RuleNameEnum;
@@ -39,7 +39,7 @@ public class RuleMatchTest {
 	
 	Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
 	@Resource
-	private RuleLoader loader;
+	private RuleLoaderBo loader;
 	@BeforeClass
 	public static void RuleMatchPrepare() {
 	}
@@ -50,7 +50,7 @@ public class RuleMatchTest {
 		runTest(loader, matcher);
 	}
 	
-	private void runTest(RuleLoader loader, RuleMatcher matcher) throws AddressException {
+	private void runTest(RuleLoaderBo loader, RuleMatcher matcher) throws AddressException {
 		MessageBean mBean = new MessageBean();
 		try {
 			mBean.setFrom(InternetAddress.parse("event.alert@localhost", false));

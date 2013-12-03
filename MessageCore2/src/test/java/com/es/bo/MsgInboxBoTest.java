@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.es.bo.inbox.MessageParser;
+import com.es.bo.inbox.MessageParserBo;
 import com.es.bo.inbox.MsgInboxBo;
 import com.es.bo.outbox.MsgOutboxBo;
 import com.es.dao.outbox.MsgRenderedDao;
@@ -40,7 +40,7 @@ public class MsgInboxBoTest {
 	@Resource
 	private MsgOutboxBo msgOutboxBo;
 	@Resource
-	private MessageParser parser;
+	private MessageParserBo parser;
 	@Resource
 	private MsgRenderedDao msgRenderedDao;
 	@BeforeClass

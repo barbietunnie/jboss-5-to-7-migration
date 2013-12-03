@@ -145,7 +145,7 @@ public class RulesDataBo {
 	}
 	
 	public static void main(String[] args) {
-		RulesDataBo bo = (RulesDataBo) SpringUtil.getAppContext().getBean("rulesDataBo");
+		RulesDataBo bo = SpringUtil.getAppContext().getBean(RulesDataBo.class);
 		bo.getCurrentRules();
 	}
 }

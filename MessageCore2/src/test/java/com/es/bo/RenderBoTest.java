@@ -1,12 +1,13 @@
 package com.es.bo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +25,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.es.bo.render.RenderBo;
 import com.es.bo.render.RenderRequest;
 import com.es.bo.render.RenderResponse;
 import com.es.bo.render.RenderVariable;
-import com.es.bo.render.Renderer;
+import com.es.bo.sender.RenderBo;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.Constants;
 import com.es.data.constant.EmailAddressType;
@@ -154,8 +154,7 @@ public class RenderBoTest {
 					null, 
 					VariableType.ADDRESS, 
 					"Y",
-					"N", 
-					null
+					Boolean.FALSE
 				);
 			map.put(toAddr.getVariableName(), toAddr);
 		}
@@ -169,8 +168,7 @@ public class RenderBoTest {
 				null, 
 				VariableType.TEXT, 
 				"Y",
-				"N", 
-				null
+				Boolean.FALSE
 			);
 		RenderVariable req2 = new RenderVariable(
 				"name2", 
@@ -178,8 +176,7 @@ public class RenderBoTest {
 				null, 
 				VariableType.TEXT, 
 				"Y",
-				"N", 
-				null
+				Boolean.FALSE
 			);
 		RenderVariable req3 = new RenderVariable(
 				"name3", 
@@ -187,8 +184,7 @@ public class RenderBoTest {
 				null, 
 				VariableType.TEXT, 
 				"Y",
-				"N", 
-				null
+				Boolean.FALSE
 			);
 		RenderVariable req4 = new RenderVariable(
 				"name4", 
@@ -196,8 +192,7 @@ public class RenderBoTest {
 				null, 
 				VariableType.TEXT, 
 				"Y",
-				"N", 
-				null
+				Boolean.FALSE
 			);
 		RenderVariable req5 = new RenderVariable(
 				"name5", 
@@ -205,8 +200,7 @@ public class RenderBoTest {
 				null, 
 				VariableType.TEXT, 
 				"Y",
-				"N", 
-				null
+				Boolean.FALSE
 			);
 		
 		RenderVariable req6_1 = new RenderVariable(
@@ -215,8 +209,7 @@ public class RenderBoTest {
 				"text/plain", 
 				VariableType.LOB, 
 				"Y",
-				"N", 
-				null
+				Boolean.FALSE
 			);
 		
 		ClassLoader loader = ClassLoader.getSystemClassLoader();
@@ -247,8 +240,7 @@ public class RenderBoTest {
 					"text/plain",
 					VariableType.LOB, 
 					"Y",
-					"N", 
-					null
+					Boolean.FALSE
 				);
 			map.put("attachment2", req6_2);
 		}
@@ -257,42 +249,31 @@ public class RenderBoTest {
 		}
 		
 		// build a Collection for Table
-		RenderVariable req2_row1 = new RenderVariable(
-				"name2", 
-				"Rendered User2 - Row 1", 
-				null, 
-				VariableType.TEXT, 
-				"Y",
-				"N", 
-				null
-			);
-		RenderVariable req2_row2 = new RenderVariable(
-				"name2", 
-				"Rendered User2 - Row 2", 
-				null, 
-				VariableType.TEXT, 
-				"Y",
-				"N", 
-				null
-			);
-		ArrayList<Map<String, RenderVariable>> collection = new ArrayList<Map<String, RenderVariable>>();
-		Map<String, RenderVariable> row1 = new HashMap<String, RenderVariable>();	// a row
-		row1.put(req2.getVariableName(), req2_row1);
-		row1.put(req3.getVariableName(), req3);
-		collection.add(row1);
-		Map<String, RenderVariable> row2 = new HashMap<String, RenderVariable>();	// a row
-		row2.put(req2.getVariableName(), req2_row2);
-		row2.put(req3.getVariableName(), req3);
-		collection.add(row2);
-		RenderVariable array = new RenderVariable(
-				Renderer.TableVariableName, 
-				collection, 
-				null, 
-				VariableType.COLLECTION, 
-				"Y",
-				"N", 
-				null
-			);
+//		RenderVariable req2_row1 = new RenderVariable(
+//				"name2", 
+//				"Rendered User2 - Row 1", 
+//				null, 
+//				VariableType.TEXT, 
+//				"Y",
+//				Boolean.FALSE
+//			);
+//		RenderVariable req2_row2 = new RenderVariable(
+//				"name2", 
+//				"Rendered User2 - Row 2", 
+//				null, 
+//				VariableType.TEXT, 
+//				"Y",
+//				Boolean.FALSE
+//			);
+//		ArrayList<Map<String, RenderVariable>> collection = new ArrayList<Map<String, RenderVariable>>();
+//		Map<String, RenderVariable> row1 = new HashMap<String, RenderVariable>();	// a row
+//		row1.put(req2.getVariableName(), req2_row1);
+//		row1.put(req3.getVariableName(), req3);
+//		collection.add(row1);
+//		Map<String, RenderVariable> row2 = new HashMap<String, RenderVariable>();	// a row
+//		row2.put(req2.getVariableName(), req2_row2);
+//		row2.put(req3.getVariableName(), req3);
+//		collection.add(row2);
 		// end of Collection
 		
 		map.put("name1", req1);
@@ -301,7 +282,6 @@ public class RenderBoTest {
 		map.put("name4", req4);
 		map.put("name5", req5);
 		map.put("attachment1", req6_1);
-		map.put(Renderer.TableVariableName, array);
 		
 		return map;
 	}

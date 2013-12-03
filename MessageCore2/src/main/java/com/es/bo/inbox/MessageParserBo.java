@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.es.bo.rule.RuleBase;
-import com.es.bo.rule.RuleLoader;
+import com.es.bo.rule.RuleLoaderBo;
 import com.es.bo.rule.RuleMatcher;
 import com.es.core.util.EmailAddrUtil;
 import com.es.core.util.SpringUtil;
@@ -43,10 +43,10 @@ import com.es.vo.outbox.MsgRenderedVo;
 /**
  * Scan email header and body, and match rules to determine the ruleName.
  */
-@Component("messageParser")
+@Component("messageParserBo")
 @Scope(value="prototype")
-public class MessageParser {
-	static final Logger logger = Logger.getLogger(MessageParser.class);
+public class MessageParserBo {
+	static final Logger logger = Logger.getLogger(MessageParserBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private final RfcCodeScan rfcScan;
@@ -57,7 +57,7 @@ public class MessageParser {
 	static final String LF = System.getProperty("line.separator", "\n");
 
 	@Autowired
-	private RuleLoader ruleLoader;
+	private RuleLoaderBo ruleLoaderBo;
 	@Autowired
 	private EmailAddressDao emailAddressDao;
 	@Autowired
@@ -68,7 +68,7 @@ public class MessageParser {
 	/**
 	 * default constructor
 	 */
-	public MessageParser() throws IOException {
+	public MessageParserBo() throws IOException {
 		rfcScan = RfcCodeScan.getInstance();
 		ruleMatcher = new RuleMatcher();
 	}
@@ -121,10 +121,10 @@ public class MessageParser {
 					+ ") is different from the count from RuleEngine (" + subNodes.size() + ")");
 		}
 
-		List<RuleBase> preRules = ruleLoader.getPreRuleSet(); // always check rule changes.
+		List<RuleBase> preRules = ruleLoaderBo.getPreRuleSet(); // always check rule changes.
 		// match pre-rfc-scan rules
 		if (ruleName == null) {
-			ruleName = ruleMatcher.match(msgBean, preRules, ruleLoader.getSubRuleSet());
+			ruleName = ruleMatcher.match(msgBean, preRules, ruleLoaderBo.getSubRuleSet());
 		}
 		// end of pre-rfc-scan rules
 
@@ -299,8 +299,8 @@ public class MessageParser {
 
 		// match main rules
 		if (ruleName == null) {
-			List<RuleBase> rules = ruleLoader.getRuleSet();
-			Map<String, List<RuleBase>> subRules = ruleLoader.getSubRuleSet();
+			List<RuleBase> rules = ruleLoaderBo.getRuleSet();
+			Map<String, List<RuleBase>> subRules = ruleLoaderBo.getSubRuleSet();
 			// matching custom rules
 			ruleName = ruleMatcher.match(msgBean, rules, subRules);
 		}
@@ -337,7 +337,7 @@ public class MessageParser {
 		// find client id by matching Email's TO address to addresses from
 		// Client records (Send E-mails Return-Path) and EmailTemplate records
 		// (Mailing List address)
-		String senderId = ruleLoader.findClientIdByAddr(msgBean.getToAsString());
+		String senderId = ruleLoaderBo.findClientIdByAddr(msgBean.getToAsString());
 		if (senderId != null) {
 			if (isDebugEnabled) {
 				logger.debug("parse() - Sender Id found by matching TO address: " + senderId);
@@ -408,8 +408,8 @@ public class MessageParser {
 		// match post-rules
 		if (ruleName != null) {
 			msgBean.setRuleName(ruleName); // post rules may evaluate RuleName
-			List<RuleBase> postRules = ruleLoader.getPostRuleSet();
-			Map<String, List<RuleBase>> subRules = ruleLoader.getSubRuleSet();
+			List<RuleBase> postRules = ruleLoaderBo.getPostRuleSet();
+			Map<String, List<RuleBase>> subRules = ruleLoaderBo.getSubRuleSet();
 			String post_ruleName = ruleMatcher.match(msgBean, postRules, subRules);
 			if (post_ruleName != null) {
 				ruleName = post_ruleName;
@@ -661,25 +661,9 @@ public class MessageParser {
 		return msgRefId;
 	}
 
-	public RuleLoader getRuleLoader() {
-		return ruleLoader;
-	}
-
-	public EmailAddressDao getEmailAddressDao() {
-		return emailAddressDao;
-	}
-
-	public MsgInboxDao getMsgInboxDao() {
-		return msgInboxDao;
-	}
-
-	public MsgRenderedDao getMsgRenderedDao() {
-		return msgRenderedDao;
-	}
-
 	public static void main(String[] args) {
 		try {
-			MessageParser parser = SpringUtil.getAppContext().getBean(MessageParser.class);
+			MessageParserBo parser = SpringUtil.getAppContext().getBean(MessageParserBo.class);
 			MessageBean mBean = new MessageBean();
 			try {
 				mBean.setFrom(InternetAddress.parse("event.alert@localhost", false));

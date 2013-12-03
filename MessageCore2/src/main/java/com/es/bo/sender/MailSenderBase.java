@@ -13,38 +13,38 @@ import javax.mail.MessagingException;
 import javax.mail.SendFailedException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.persistence.NoResultException;
-
-import jpa.constant.CarrierCode;
-import jpa.constant.CodeType;
-import jpa.constant.Constants;
-import jpa.constant.EmailIdToken;
-import jpa.constant.MsgStatusCode;
-import jpa.constant.XHeaderName;
-import jpa.data.preload.RuleNameEnum;
-import jpa.exception.DataValidationException;
-import jpa.message.MessageBean;
-import jpa.message.MessageBeanBuilder;
-import jpa.message.MessageBeanUtil;
-import jpa.message.MessageContext;
-import jpa.message.MsgHeader;
-import jpa.message.util.MsgIdCipher;
-import jpa.model.SenderData;
-import jpa.model.EmailAddress;
-import jpa.model.message.MessageInbox;
-import jpa.model.message.MessageStream;
-import jpa.service.SenderDataService;
-import jpa.service.EmailAddressService;
-import jpa.service.message.MessageDeliveryStatusService;
-import jpa.service.message.MessageInboxService;
-import jpa.service.message.MessageStreamService;
-import jpa.service.msgin.MessageInboxBo;
-import jpa.service.msgin.MessageParserBo;
-import jpa.util.EmailAddrUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.es.bo.inbox.MsgInboxBo;
+import com.es.bo.outbox.MsgOutboxBo;
+import com.es.bo.smtp.SmtpException;
+import com.es.core.util.EmailAddrUtil;
+import com.es.dao.address.EmailAddressDao;
+import com.es.dao.inbox.MsgInboxDao;
+import com.es.dao.inbox.MsgStreamDao;
+import com.es.dao.outbox.DeliveryStatusDao;
+import com.es.dao.sender.SenderDao;
+import com.es.data.constant.CarrierCode;
+import com.es.data.constant.CodeType;
+import com.es.data.constant.Constants;
+import com.es.data.constant.EmailIdToken;
+import com.es.data.constant.MsgStatusCode;
+import com.es.data.constant.XHeaderName;
+import com.es.data.preload.RuleNameEnum;
+import com.es.exception.DataValidationException;
+import com.es.msg.util.MsgIdCipher;
+import com.es.msgbean.MessageBean;
+import com.es.msgbean.MessageBeanBuilder;
+import com.es.msgbean.MessageBeanUtil;
+import com.es.msgbean.MessageContext;
+import com.es.msgbean.MsgHeader;
+import com.es.vo.address.EmailAddressVo;
+import com.es.vo.comm.SenderVo;
+import com.es.vo.inbox.MsgInboxVo;
+import com.es.vo.outbox.MsgStreamVo;
 
 /**
  * Base class for sending messages off through SMTP server(s).
@@ -57,24 +57,22 @@ public abstract class MailSenderBase implements java.io.Serializable {
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
 	protected boolean debugSession = false;
-	protected SenderData senderVo = null;
+	protected SenderVo senderVo = null;
 
 	@Autowired
-	protected MessageInboxBo msgInboxBo;
+	protected MsgInboxBo msgInboxBo;
 	@Autowired
-	protected MessageInboxService msgInboxDao;
+	protected MsgInboxDao msgInboxDao;
 	@Autowired
 	protected MsgOutboxBo msgOutboxBo;
 	@Autowired
-	protected MessageDeliveryStatusService deliveryStatusDao;
+	protected DeliveryStatusDao deliveryStatusDao;
 	@Autowired
-	protected EmailAddressService emailAddrDao;
+	protected EmailAddressDao emailAddrDao;
 	@Autowired
-	protected MessageStreamService msgStreamDao;
+	protected MsgStreamDao msgStreamDao;
 	@Autowired
-	protected SenderDataService senderService;
-	@Autowired
-	private MessageParserBo parser;
+	protected SenderDao senderDao;
 
 	//private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	protected static final String LF = System.getProperty("line.separator", "\n");
@@ -128,23 +126,21 @@ public abstract class MailSenderBase implements java.io.Serializable {
 		}
 		// set rule name to SEND_MAIL
 		msgBean.setRuleName(RuleNameEnum.SEND_MAIL.getValue());
-		try {
-			senderVo = senderService.getBySenderId(msgBean.getSenderId());
-		}
-		catch (NoResultException e) {
+		senderVo = senderDao.getBySenderId(msgBean.getSenderId());
+		if (senderVo == null) {
 			throw new DataValidationException("SenderId (" + msgBean.getSenderId() + ") not found.");
 		}
 		msgBean.setIsReceived(false); // out going message
 		if (msgBean.getEmBedEmailId() == null) { // not provided by calling program
 			// use system default
-			msgBean.setEmBedEmailId(Boolean.valueOf(senderVo.isEmbedEmailId()));
+			msgBean.setEmBedEmailId(Boolean.valueOf(senderVo.getIsEmbedEmailId()));
 		}
 		// save the message to the database
-		int rowId = msgInboxBo.saveMessage(msgBean);
+		long rowId = msgInboxBo.saveMessage(msgBean);
 		ctx.getRowIds().add(rowId);
-		MessageInbox minbox = msgInboxDao.getByPrimaryKey(rowId);
+		MsgInboxVo minbox = msgInboxDao.getByPrimaryKey(rowId);
 		// check if VERP is enabled
-		if (senderVo.isVerpEnabled()) {
+		if (senderVo.getIsVerpAddressEnabled()) {
 			// set return path with VERP, msgBean.msgId must be valued.
 			String emailId = EmailIdToken.XHDR_BEGIN + MsgIdCipher.encode(msgBean.getMsgId())
 					+ EmailIdToken.XHDR_END;
@@ -214,7 +210,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 		if (renderId != null && renderId.length > 0) {
 			String renderIdStr = renderId[0];
 			try {
-				msgBean.setRenderId(Integer.valueOf(renderIdStr));
+				msgBean.setRenderId(Long.valueOf(renderIdStr));
 			}
 			catch (NumberFormatException e) {
 				logger.error("addXHeadersToBean() - NumberFormatException caught from converting "
@@ -226,7 +222,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 		if (msgRefId != null && msgRefId.length > 0) {
 			String msgRefIdStr = msgRefId[0];
 			try {
-				msgBean.setMsgRefId(Integer.valueOf(msgRefIdStr));
+				msgBean.setMsgRefId(Long.valueOf(msgRefIdStr));
 			}
 			catch (NumberFormatException e) {
 				logger.error("addXHeadersToBean() - NumberFormatException caught from converting "
@@ -290,7 +286,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 			logger.debug("Entering rebuildAddresses method...");
 		}
 		// set TO address to Test Address if it's a test run
-		if (senderVo.isUseTestAddr() && !isOverrideTestAddr) {
+		if (senderVo.getUseTestAddress() && !isOverrideTestAddr) {
 			boolean toAddrIsLocal = false;
 			String displayName = null;
 			// use the original address as Display Name 
@@ -328,7 +324,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 			throw new AddressException("TO address is blank!");
 		}
 		// Set From address to Test Address if it's a test run and not provided
-		if (senderVo.isUseTestAddr() && !isOverrideTestAddr
+		if (senderVo.getUseTestAddress() && !isOverrideTestAddr
 				&& (m.getFrom() == null || m.getFrom().length == 0)) {
 			if (isDebugEnabled) {
 				logger.debug("rebuildAddresses() - Original From is missing, use testing address: "
@@ -347,7 +343,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 			throw new AddressException("FROM address is blank!");
 		}
 		// set ReplyTo address to Test Address if it's a test run and not provided
-		if (senderVo.isUseTestAddr() && !isOverrideTestAddr
+		if (senderVo.getUseTestAddress() && !isOverrideTestAddr
 				&& (m.getReplyTo() == null || m.getReplyTo().length == 0)) {
 			if (StringUtils.isNotBlank(senderVo.getTestReplytoAddr())) {
 				if (EmailAddrUtil.hasDisplayName(senderVo.getTestReplytoAddr())) {
@@ -371,21 +367,21 @@ public abstract class MailSenderBase implements java.io.Serializable {
 	 * @throws MessagingException
 	 * @throws IOException
 	 */
-	protected void saveMsgStream(javax.mail.Message msg, MessageInbox msgInboxVo) throws MessagingException,
+	protected void saveMsgStream(javax.mail.Message msg, MsgInboxVo msgInboxVo) throws MessagingException,
 			IOException {
 		if (isDebugEnabled)
 			logger.debug("saveMsgStream() - msgId: " + msgInboxVo.getRowId());
-		MessageStream msgStreamVo = new MessageStream();
-		msgStreamVo.setMessageInbox(msgInboxVo);
+		MsgStreamVo msgStreamVo = new MsgStreamVo();
+		msgStreamVo.setMsgId(msgInboxVo.getMsgId());
 		Address[] fromAddrs = msg.getFrom();
 		if (fromAddrs != null && fromAddrs.length > 0) {
-			EmailAddress emailAddrVo = emailAddrDao.findSertAddress(fromAddrs[0].toString());
-			msgStreamVo.setFromAddrRowId(Integer.valueOf(emailAddrVo.getRowId()));
+			EmailAddressVo emailAddrVo = emailAddrDao.findSertAddress(fromAddrs[0].toString());
+			msgStreamVo.setFromAddrId(Long.valueOf(emailAddrVo.getEmailAddrId()));
 		}
 		Address[] toAddrs = msg.getRecipients(RecipientType.TO);
 		if (toAddrs != null && toAddrs.length > 0) {
-			EmailAddress emailAddrVo = emailAddrDao.findSertAddress(toAddrs[0].toString());
-			msgStreamVo.setToAddrRowId(Integer.valueOf(emailAddrVo.getRowId()));
+			EmailAddressVo emailAddrVo = emailAddrDao.findSertAddress(toAddrs[0].toString());
+			msgStreamVo.setToAddrId(Long.valueOf(emailAddrVo.getEmailAddrId()));
 		}
 		msgStreamVo.setMsgSubject(msg.getSubject());
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -425,10 +421,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 	protected void validUnsent(MessageBean msgBean, SendFailedException exp, Address[] validUnsent)
 			throws MessagingException, IOException, SmtpException {
 		
-		try {
-			msgInboxDao.getByPrimaryKey(msgBean.getMsgId());
-		}
-		catch (NoResultException e) {
+		if (msgInboxDao.getByPrimaryKey(msgBean.getMsgId())==null) {
 			logger.error("validUnsent() - MsgInbox record not found for MsgId: "
 					+ msgBean.getMsgId());
 			return;
@@ -455,10 +448,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 	protected void invalid(MessageBean msgBean, SendFailedException exp, Address[] invalid)
 			throws MessagingException, IOException, SmtpException {
 		
-		try {
-			msgInboxDao.getByPrimaryKey(msgBean.getMsgId());
-		}
-		catch (NoResultException e) {
+		if (msgInboxDao.getByPrimaryKey(msgBean.getMsgId())==null) {
 			logger.error("invalid() - MsgInbox record not found for MsgId: " + msgBean.getMsgId());
 			return;
 		}
@@ -488,7 +478,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 	 * @return number of email's that were sent
 	 * @throws MessagingException
 	 */
-	public int updateDeliveryReport(MessageBean m, MessageInbox minbox) throws MessagingException {
+	public int updateDeliveryReport(MessageBean m, MsgInboxVo minbox) throws MessagingException {
 		int rspCount = 0;
 		if (CarrierCode.SMTPMAIL.equals(m.getCarrierCode())) {
 			if (m.isInternalOnly()) {
@@ -512,7 +502,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 	 * @return number records updated
 	 * @throws MessagingException 
 	 */
-	protected int updateMsgStatus(MessageBean msgBean, MessageInbox msgInboxVo) throws MessagingException {
+	protected int updateMsgStatus(MessageBean msgBean, MsgInboxVo msgInboxVo) throws MessagingException {
 		// update MsgInbox status (to delivered)
 		Timestamp ts = new Timestamp(System.currentTimeMillis());
 		msgInboxVo.setStatusId(MsgStatusCode.DELIVERED.getValue());
@@ -564,7 +554,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 //					+ loopBackBean + LF + "---->");
 //		}
 //		// use MessageParserBo to invoke rule engine
-//		parser.parse(loopBackBean);
+//		parserBo.parse(loopBackBean);
 		// send the loop back mail off
 		sendMail(msg, new HashMap<String, Address[]>());
 	}

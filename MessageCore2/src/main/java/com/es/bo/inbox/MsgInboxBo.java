@@ -156,7 +156,7 @@ public class MsgInboxBo {
 			else {
 				msgVo.setLeadMsgId(origVo.getLeadMsgId());
 				if (msgBean.getIsReceived()) { // from MailReader
-					// code has been moved to MessageParser.parse()
+					// code has been moved to MessageParserBo.parse()
 				}
 			}
 		}
@@ -505,53 +505,5 @@ public class MsgInboxBo {
 			}
 		}
 		return id;
-	}
-
-	public MsgSequenceDao getMsgSequenceDao() {
-		return msgSequenceDao;
-	}
-
-	public MsgInboxDao getMsgInboxDao() {
-		return msgInboxDao;
-	}
-
-	public MsgAttachmentDao getAttachmentsDao() {
-		return attachmentDao;
-	}
-
-	public MsgAddressDao getMsgAddrsDao() {
-		return msgAddressDao;
-	}
-
-	public MsgHeaderDao getMsgHeadersDao() {
-		return msgHeaderDao;
-	}
-
-	public MsgRfcFieldDao getMsgRfcFieldDao() {
-		return rfcFieldDao;
-	}
-
-	public EmailAddressDao getEmailAddrDao() {
-		return emailAddressDao;
-	}
-
-	public MsgStreamDao getMsgStreamDao() {
-		return msgStreamDao;
-	}
-
-	public DeliveryStatusDao getDeliveryStatusDao() {
-		return deliveryStatusDao;
-	}
-
-	public MsgRenderedDao getMsgRenderedDao() {
-		return msgRenderedDao;
-	}
-
-	public MsgActionLogDao getMsgActionLogDao() {
-		return msgActionLogDao;
-	}
-
-	public MsgClickCountDao getMsgClickCountDao() {
-		return msgClickCountDao;
 	}
 }

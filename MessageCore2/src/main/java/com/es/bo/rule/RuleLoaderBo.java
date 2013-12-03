@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -31,11 +30,11 @@ import com.es.vo.rule.RuleLogicVo;
 import com.es.vo.rule.RuleSubRuleMapVo;
 import com.es.vo.rule.RuleVo;
 
-@Component("ruleLoader")
+@Component("ruleLoaderBo")
 @Scope(value="prototype")
-public final class RuleLoader implements java.io.Serializable {
-	private static final long serialVersionUID = 5251082728950956779L;
-	static final Logger logger = Logger.getLogger(RuleLoader.class);
+public class RuleLoaderBo implements java.io.Serializable {
+	private static final long serialVersionUID = -1239400387960912573L;
+	static final Logger logger = Logger.getLogger(RuleLoaderBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	final List<RuleBase>[] mainRules;
@@ -44,7 +43,8 @@ public final class RuleLoader implements java.io.Serializable {
 	final HashMap<String, List<RuleBase>>[] subRules;
 	
 	private int currIndex = 0;
-	private transient RulesDataBo rulesDataBo = null;
+	@Autowired
+	private RulesDataBo rulesDataBo;
 	
 	private int currIndex2 = 0;
 	private final Map<String, Pattern>[] patternMaps;
@@ -53,14 +53,12 @@ public final class RuleLoader implements java.io.Serializable {
 	private long lastTimeLoaded;
 	final static int INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-	@Autowired(required=true)
-	public RuleLoader(@Qualifier("rulesDataBo") RulesDataBo rulesDataBo) {
-		this(rulesDataBo.getCurrentRules());
-		this.rulesDataBo = rulesDataBo;
+	public RuleLoaderBo() {
+		this(SpringUtil.getAppContext().getBean(RulesDataBo.class).getCurrentRules());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public RuleLoader(List<RuleVo> ruleVos) {
+	RuleLoaderBo(List<RuleVo> ruleVos) {
 		/*
 		 * define place holders for two sets of rules
 		 */
@@ -287,7 +285,7 @@ public final class RuleLoader implements java.io.Serializable {
 		while (it.hasNext()) {
 			RuleBase r = it.next();
 			String ruleName = StringUtils.rightPad(r.getRuleName(), 28, " ");
-			prt.print("RuleLoader.1 - " + ruleLit + ": " + ruleName);
+			prt.print("RuleLoaderBo.1 - " + ruleLit + ": " + ruleName);
 			listSubRuleNames(r.getSubRules(), prt);
 			prt.println();
 		}
@@ -300,12 +298,12 @@ public final class RuleLoader implements java.io.Serializable {
 			if (obj instanceof RuleBase) {
 				RuleBase r = (RuleBase) obj;
 				String ruleName = StringUtils.rightPad(r.getRuleName(), 28, " ");
-				prt.println("RuleLoader.2 - " + ruleLit + ": " + ruleName);
+				prt.println("RuleLoaderBo.2 - " + ruleLit + ": " + ruleName);
 				listSubRuleNames(r.getSubRules(), prt);
  			}
 			else {
 				String ruleName = (String) obj;
-				prt.println("RuleLoader.3 - " + ruleLit + ": " + ruleName);
+				prt.println("RuleLoaderBo.3 - " + ruleLit + ": " + ruleName);
 			}
 		}
 	}
@@ -426,7 +424,9 @@ public final class RuleLoader implements java.io.Serializable {
 		return returnPath;
 	}
 	
-	// called from constructor, could not be Autowired
+	/*
+	 *  called from constructor, can not be Autowired
+	 */
 	private SenderDao senderDao = null;
 	private SenderDao getSenderDao() {
 		if (senderDao == null) {
