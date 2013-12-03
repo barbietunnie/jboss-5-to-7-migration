@@ -261,6 +261,12 @@ public class MsgInboxDao {
 		return getInboxUnreadCount() + getSentUnreadCount();
 	}
 	
+	public boolean isMessageIdExist(String smtpMessageId) {
+		String sql = "select count(*) from MSGID_DUPCHK where message_id=? ";
+		int rows = getJdbcTemplate().queryForObject(sql, new Object[] {smtpMessageId}, Integer.class);
+		return (rows>0);
+	}
+
 	public int resetInboxUnreadCount() {
 		String sql = 
 			"select count(*) " +

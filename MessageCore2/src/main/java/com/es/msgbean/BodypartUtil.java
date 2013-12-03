@@ -64,7 +64,7 @@ public final class BodypartUtil implements Serializable {
 
 			if (Part.ATTACHMENT.equalsIgnoreCase(disp)
 					|| (Part.INLINE.equalsIgnoreCase(disp) && desc != null)
-					|| MessageBeanBuilder.getFileName(subNode.getContentType()) != null) {
+					|| JavaMailParser.getFileName(subNode.getContentType()) != null) {
 				
 				// this Node is an attachment
 				aNodes.add(new MessageNode(subNode, level));

@@ -72,7 +72,7 @@ public class EmailVariableTest {
 	}
 	
 	private EmailVariableVo selectByName(EmailVariableVo vo) {
-		EmailVariableVo emailVariable = emailVariableDao.getByName(vo.getVariableName());
+		EmailVariableVo emailVariable = emailVariableDao.getByVariableName(vo.getVariableName());
 		System.out.println("EmailVariableDao - selectByName: "+LF+emailVariable);
 		return emailVariable;
 	}
@@ -94,7 +94,7 @@ public class EmailVariableTest {
 	}
 	
 	private EmailVariableVo insert(String variableName) {
-		EmailVariableVo vo = emailVariableDao.getByName(variableName);
+		EmailVariableVo vo = emailVariableDao.getByVariableName(variableName);
 		if (vo != null) {
 			vo.setVariableName(vo.getVariableName()+"_v2");
 		}

@@ -13,8 +13,8 @@ import org.apache.log4j.Logger;
 
 import com.es.msgbean.MsgHeader;
 
-public class MsgHeaderUtil {
-	static final Logger logger = Logger.getLogger(MsgHeaderUtil.class);
+public class RfcHeaderParser {
+	static final Logger logger = Logger.getLogger(RfcHeaderParser.class);
 	static boolean isDebugEnabled = false; //logger.isDebugEnabled();
 	static final String LF = System.getProperty("line.separator","\n");
 	
@@ -67,7 +67,7 @@ public class MsgHeaderUtil {
 		}
 	}
 
-	public static String printHeaders(List<MsgHeader> list) {
+	public static String printRfcHeaders(List<MsgHeader> list) {
 		StringBuffer sb = new StringBuffer();
 		for (MsgHeader header : list) {
 			sb.append(header.getName() + ": " + header.getValue() + LF);
@@ -103,7 +103,7 @@ public class MsgHeaderUtil {
 			"Date: 14 May 2008 08:50:31 +1000";
 		
 		List<MsgHeader> list = parseRfc822Headers(rfc822Headers);
-		logger.info(LF+printHeaders(list));
+		logger.info(LF+printRfcHeaders(list));
 		logger.info("Number of headers: " + list.size());
 	}
 }

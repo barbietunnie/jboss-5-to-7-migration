@@ -658,7 +658,7 @@ public class RenderBo implements java.io.Serializable {
 			senderId = Constants.DEFAULT_SENDER_ID;
 		}
 		Timestamp startTime = new Timestamp(System.currentTimeMillis());
-		TemplateDataVo tmpltVo = templateDao.getByBestMatch(senderId,templateId,startTime);
+		TemplateDataVo tmpltVo = templateDao.getByBestMatch(templateId,senderId,startTime);
 		if (tmpltVo == null) {
 			throw new DataValidationException("TemplateData not found by: " + templateId + "/"
 					+ senderId + "/" + startTime);

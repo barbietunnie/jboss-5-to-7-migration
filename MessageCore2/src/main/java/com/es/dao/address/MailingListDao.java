@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -81,7 +82,7 @@ public class MailingListDao {
 		}
 	}
 	
-	public List<MailingListVo> getByAddress(String emailAddr) {
+	public MailingListVo getByListAddress(String emailAddr) {
 		emailAddr = emailAddr == null ? "" : emailAddr; // just for safety
 		String acctUserName = emailAddr;
 		String domainName = null;
@@ -92,14 +93,19 @@ public class MailingListDao {
 		}
 		String sql = selectCluse +
 			" where a.AcctUserName = ? ";
-		if (domainName != null && domainName.trim().length() > 0) {
+		if (StringUtils.isNotBlank(domainName)) {
 			sql += " and c.DomainName = '" + domainName + "' ";
 		}
 		sql += groupByCluse;
 		Object[] parms = new Object[] {acctUserName};
-		List<MailingListVo> list = getJdbcTemplate().query(sql, parms,
-				new BeanPropertyRowMapper<MailingListVo>(MailingListVo.class));
-		return list;
+		try {
+			MailingListVo vo = getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<MailingListVo>(MailingListVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 	
 	public List<MailingListVo> getAll(boolean onlyActive) {

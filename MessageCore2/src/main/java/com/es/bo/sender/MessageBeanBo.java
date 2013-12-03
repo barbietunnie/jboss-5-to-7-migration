@@ -25,7 +25,7 @@ import com.es.data.constant.CodeType;
 import com.es.data.constant.EmailAddressType;
 import com.es.data.constant.MsgDirectionCode;
 import com.es.exception.DataValidationException;
-import com.es.msg.util.MsgHeaderUtil;
+import com.es.msg.util.RfcHeaderParser;
 import com.es.msgbean.BodypartBean;
 import com.es.msgbean.MessageBean;
 import com.es.msgbean.MsgHeader;
@@ -164,7 +164,7 @@ public class MessageBeanBo implements java.io.Serializable {
 					textNode.setSize(textNode.getValue().length);
 					aNode.put(textNode);
 					if (rfc.getDsnRfc822()!=null) {
-						List<MsgHeader> headers = MsgHeaderUtil.parseRfc822Headers(rfc.getDsnRfc822());
+						List<MsgHeader> headers = RfcHeaderParser.parseRfc822Headers(rfc.getDsnRfc822());
 						textNode.setHeaders(headers);
 					}
 					else {

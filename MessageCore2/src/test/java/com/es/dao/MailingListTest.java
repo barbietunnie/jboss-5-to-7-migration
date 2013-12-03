@@ -2,8 +2,6 @@ package com.es.dao;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -38,8 +36,8 @@ public class MailingListTest {
 			MailingListVo vo = insert();
 			assertNotNull(vo);
 			assertTrue(vo.getListId().endsWith("_v2"));
-			List<MailingListVo> list = selectByAddr(vo.getEmailAddr());
-			assertTrue(list.size()>0);
+			MailingListVo vo1 = selectByAddr(vo.getEmailAddr());
+			assertTrue(vo1!=null);
 			MailingListVo vo2 = selectByListId(vo);
 			assertNotNull(vo2);
 			vo.setCreateTime(vo2.getCreateTime());
@@ -55,6 +53,7 @@ public class MailingListTest {
 			assertEquals(rowsDeleted, 1);
 		}
 		catch (RuntimeException e) {
+			e.printStackTrace();
 			MailingListVo vo = new MailingListVo();
 			vo.setListId(StringUtils.left(listId, 5) + "_v2");
 			delete(vo);
@@ -70,15 +69,15 @@ public class MailingListTest {
 		return mailingList;
 	}
 	
-	private List<MailingListVo> selectByAddr(String emailAddr) {
-		List<MailingListVo> list = mailingListDao.getByAddress(emailAddr);
-		for (MailingListVo vo : list) {
+	private MailingListVo selectByAddr(String emailAddr) {
+		MailingListVo vo = mailingListDao.getByListAddress(emailAddr);
+		if (vo != null) {
 			System.out.println("MailingListDao - selectByAddr: " + LF + vo);
 		}
 		mailingListDao.getSubscribedLists(1);
 		mailingListDao.getAll(false);
 		mailingListDao.getAll(true);
-		return list;
+		return vo;
 	}
 	
 	private int update(MailingListVo vo) {
@@ -101,6 +100,7 @@ public class MailingListTest {
 	private MailingListVo insert() {
 		MailingListVo mailingListVo = mailingListDao.getByListId(listId);
 		mailingListVo.setListId(StringUtils.left(mailingListVo.getListId(),5)+"_v2");
+		mailingListVo.setAcctUserName(mailingListVo.getAcctUserName() + "_v2");
 		mailingListDao.insert(mailingListVo);
 		System.out.println("MailingListDao - insert: "+mailingListVo);
 		return mailingListVo;

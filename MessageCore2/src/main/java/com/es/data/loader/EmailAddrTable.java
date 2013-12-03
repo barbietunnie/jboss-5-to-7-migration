@@ -125,7 +125,7 @@ public class EmailAddrTable extends AbstractTableBase {
 					+ "ListMasterEmailAddr varchar(255), "
 					+ "PRIMARY KEY (RowId), "
 					+ "FOREIGN KEY (SenderId) REFERENCES Sender_Data (SenderId) ON DELETE CASCADE ON UPDATE CASCADE, "
-					+ "INDEX (AcctUserName), "
+					+ "UNIQUE INDEX (AcctUserName, SenderId), "
 					+ "UNIQUE INDEX (ListId) "
 					+ ") ENGINE=InnoDB");
 			System.out.println("Created MAILING_LIST Table...");
