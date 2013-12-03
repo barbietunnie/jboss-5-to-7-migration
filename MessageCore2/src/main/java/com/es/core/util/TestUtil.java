@@ -38,8 +38,7 @@ public class TestUtil {
 		assertTrue("Delivery Status Notification (Failure)".equals(inbox.getMsgSubject()));
 		for (MsgAddressVo addr : inbox.getMsgAddrs()) {
 			if (EmailAddressType.FINAL_RCPT_ADDR.getValue().equals(addr.getAddrType())) {
-				EmailAddressVo emailAddr = emailService.getByAddrId(addr.getRowId());
-				assertTrue("jackwnn@synnex.com.au".equals(emailAddr.getEmailAddr()));
+				assertTrue("jackwnn@synnex.com.au".equals(addr.getAddrValue()));
 			}
 		}
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(inbox.getRuleName()));
@@ -66,8 +65,7 @@ public class TestUtil {
 		assertTrue("Mail System Error - Returned Mail".equals(inbox.getMsgSubject()));
 		for (MsgAddressVo addr : inbox.getMsgAddrs()) {
 			if (EmailAddressType.FINAL_RCPT_ADDR.getValue().equals(addr.getAddrType())) {
-				EmailAddressVo emailAddr = emailService.getByAddrId(addr.getRowId());
-				assertTrue("unknown.useraddress@aim.com".equals(emailAddr.getEmailAddr()));
+				assertTrue("unknown.useraddress@aim.com".equals(addr.getAddrValue()));
 			}
 		}
 		assertTrue(RuleNameEnum.HARD_BOUNCE.getValue().equals(inbox.getRuleName()));

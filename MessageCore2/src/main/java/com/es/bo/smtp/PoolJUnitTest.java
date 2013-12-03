@@ -15,14 +15,14 @@ import org.junit.Test;
 import com.es.core.util.SpringUtil;
 import com.es.dao.smtp.SmtpServerDao;
 import com.es.data.constant.MailServerType;
-import com.es.vo.comm.SmtpConnVo;
+import com.es.vo.comm.SmtpServerVo;
 
 public class PoolJUnitTest {
 	static final Logger logger = Logger.getLogger(PoolJUnitTest.class);
 	static int init_count = 0;
 
 	final static String LF = System.getProperty("line.separator", "\n");
-	private SmtpConnVo smtpServer = null;
+	private SmtpServerVo smtpServer = null;
 	private SmtpConnection smtpConnection = null;
 
 	private SmtpServerDao smtpService;
@@ -30,7 +30,7 @@ public class PoolJUnitTest {
 	@Before
 	public void prepare() {
 		smtpService = SpringUtil.getAppContext().getBean(SmtpServerDao.class);
-		List<SmtpConnVo> servers = smtpService.getAll(true, null);
+		List<SmtpServerVo> servers = smtpService.getAll(true, null);
 		assertFalse(servers.isEmpty());
 		smtpServer = servers.get(0);
 		smtpConnection = new SmtpConnection(smtpServer);

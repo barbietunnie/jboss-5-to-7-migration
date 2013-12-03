@@ -3,12 +3,10 @@ package com.es.vo.action;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
-public class RuleActionVo extends BaseVo implements Serializable
-{
+public class RuleActionVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = 5576050695865725099L;
-	private int rowId = -1;
 	private String ruleName = "";
 	private int actionSeq = -1;
 	private Timestamp startTime;
@@ -40,12 +38,6 @@ public class RuleActionVo extends BaseVo implements Serializable
 		this.dataTypeValues = dataTypeValues;
 	}
 	
-	public int getRowId() {
-		return rowId;
-	}
-	public void setRowId(int rowId) {
-		this.rowId = rowId;
-	}
 	public String getRuleName() {
 		return ruleName;
 	}

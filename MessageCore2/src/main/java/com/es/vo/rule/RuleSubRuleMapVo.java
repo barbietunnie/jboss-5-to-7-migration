@@ -2,9 +2,9 @@ package com.es.vo.rule;
 
 import java.io.Serializable;
 
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
-public class RuleSubRuleMapVo extends BaseVo implements Serializable {
+public class RuleSubRuleMapVo extends BaseVoWithRowId implements Serializable {
 
 	private static final long serialVersionUID = 5397520412552955484L;
 	private String ruleName = "";

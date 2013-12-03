@@ -21,7 +21,7 @@ import com.es.dao.outbox.DeliveryStatusDao;
 import com.es.dao.outbox.MsgRenderedDao;
 import com.es.dao.outbox.MsgSequenceDao;
 import com.es.dao.rule.RuleLogicDao;
-import com.es.dao.sender.SenderDao;
+import com.es.dao.sender.SenderDataDao;
 import com.es.dao.template.MsgSourceDao;
 import com.es.dao.template.TemplateDataDao;
 import com.es.data.constant.CarrierCode;
@@ -35,7 +35,7 @@ import com.es.data.constant.XHeaderName;
 import com.es.data.preload.MailingListEnum;
 import com.es.data.preload.RuleNameEnum;
 import com.es.vo.address.EmailAddressVo;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 import com.es.vo.inbox.MsgAddressVo;
 import com.es.vo.inbox.MsgAttachmentVo;
 import com.es.vo.inbox.MsgClickCountVo;
@@ -560,13 +560,13 @@ public class InboxTables extends AbstractTableBase {
 
 	private void loadMessageInbox() throws IOException {
 		MsgInboxDao service = SpringUtil.getAppContext().getBean(MsgInboxDao.class);
-		SenderDao senderService = SpringUtil.getAppContext().getBean(SenderDao.class);
+		SenderDataDao senderService = SpringUtil.getAppContext().getBean(SenderDataDao.class);
 		EmailAddressDao emailAddrService = SpringUtil.getAppContext().getBean(EmailAddressDao.class);
 		RuleLogicDao logicService = SpringUtil.getAppContext().getBean(RuleLogicDao.class);
 		MsgSequenceDao msgSequenceDao = SpringUtil.getAppContext().getBean(MsgSequenceDao.class);
 		
 		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
-		SenderVo sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
+		SenderDataVo sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 
 		MsgInboxVo data1 = new MsgInboxVo();
 		data1.setMsgId(msgSequenceDao.findNextValue());

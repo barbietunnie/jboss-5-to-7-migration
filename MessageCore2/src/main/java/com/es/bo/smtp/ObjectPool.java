@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 import com.es.core.util.SpringUtil;
 import com.es.data.constant.MailServerType;
-import com.es.vo.comm.SmtpConnVo;
+import com.es.vo.comm.SmtpServerVo;
 
 /**
  * a common object pool.
@@ -31,7 +31,7 @@ public class ObjectPool implements java.io.Serializable {
 	// available during a refresh cycle. to be used
 	// by the adjustPoolSize() to release free connections.
 
-	private final SmtpConnVo smtpConnVo;
+	private final SmtpServerVo smtpConnVo;
 	
 	private String name;
 	private MailServerType type;
@@ -110,7 +110,7 @@ public class ObjectPool implements java.io.Serializable {
 	 * @param smtpConnVo -
 	 *            SMTP connection properties
 	 */
-	public ObjectPool(SmtpConnVo vo) {
+	public ObjectPool(SmtpServerVo vo) {
 		this(vo,100);
 	}
 	
@@ -122,7 +122,7 @@ public class ObjectPool implements java.io.Serializable {
 	 * @param _dist -
 	 *            the distribution ratio, used by NamedPool class
 	 */
-	public ObjectPool(SmtpConnVo vo, int _dist) {
+	public ObjectPool(SmtpServerVo vo, int _dist) {
 		this.poolItemName = vo.getServerName();
 		name = poolItemName;
 		type = MailServerType.getByValue(vo.getServerType());

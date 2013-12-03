@@ -9,12 +9,12 @@ import com.es.core.util.ProductKey;
 import com.es.core.util.ProductUtil;
 import com.es.core.util.SpringUtil;
 import com.es.core.util.TimestampUtil;
-import com.es.dao.sender.SenderDao;
+import com.es.dao.sender.SenderDataDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.SenderType;
 import com.es.data.constant.StatusId;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 
 public class SenderTable extends AbstractTableBase {
 	
@@ -123,8 +123,8 @@ public class SenderTable extends AbstractTableBase {
 	}
 
 	private void loadSystemSender() {
-		SenderDao dao = SpringUtil.getAppContext().getBean(SenderDao.class);
-		SenderVo data = new SenderVo();
+		SenderDataDao dao = SpringUtil.getAppContext().getBean(SenderDataDao.class);
+		SenderDataVo data = new SenderDataVo();
 		data.setSenderId(Constants.DEFAULT_SENDER_ID);
 		data.setSenderName(getProperty("sender.name"));
 		data.setDomainName(getProperty("sender.domain")); // domain name
@@ -158,8 +158,8 @@ public class SenderTable extends AbstractTableBase {
 	}
 	
 	private void loadJBatchSender() {
-		SenderDao dao = SpringUtil.getAppContext().getBean(SenderDao.class);
-		SenderVo data = new SenderVo();
+		SenderDataDao dao = SpringUtil.getAppContext().getBean(SenderDataDao.class);
+		SenderDataVo data = new SenderDataVo();
 		data.setSenderId("JBatchCorp");
 		data.setSenderName("JBatch Corp. Site");
 		data.setDomainName("jbatch.com"); // domain name
@@ -211,8 +211,8 @@ public class SenderTable extends AbstractTableBase {
 	}
 
 	public int updateSender4Prod() {
-		SenderDao dao = SpringUtil.getAppContext().getBean(SenderDao.class);
-		SenderVo vo = dao.getBySenderId(Constants.DEFAULT_SENDER_ID);
+		SenderDataDao dao = SpringUtil.getAppContext().getBean(SenderDataDao.class);
+		SenderDataVo vo = dao.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		vo.setSenderName("Emailsphere");
 		vo.setSenderType(null);
 		vo.setDomainName("emailsphere.com"); // domain name
@@ -252,14 +252,14 @@ public class SenderTable extends AbstractTableBase {
 	 * SenderVariable table.
 	 */
 	public void updateAllSenders() {
-		SenderDao dao = SpringUtil.getAppContext().getBean(SenderDao.class);
+		SenderDataDao dao = SpringUtil.getAppContext().getBean(SenderDataDao.class);
 		int rowsUpdated = 0;
-		List<SenderVo> list = dao.getAll();
-		for (SenderVo vo : list) {
+		List<SenderDataVo> list = dao.getAll();
+		for (SenderDataVo vo : list) {
 			vo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
 			rowsUpdated += dao.update(vo);
 		}
-		SenderVo vo = dao.getBySenderId(Constants.DEFAULT_SENDER_ID);
+		SenderDataVo vo = dao.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		if (vo == null) { // just in case
 			try {
 				loadSystemSender();

@@ -9,12 +9,12 @@ import org.apache.log4j.Logger;
 
 import com.es.core.util.SpringUtil;
 import com.es.core.util.StringUtil;
-import com.es.dao.sender.SenderDao;
+import com.es.dao.sender.SenderDataDao;
 import com.es.data.constant.Constants;
 import com.es.data.constant.EmailIdToken;
 import com.es.msgbean.MsgHeader;
 import com.es.vo.comm.IdTokensVo;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 
 /**
  * search the input string for possible embedded message id.
@@ -33,10 +33,10 @@ public final class EmailIdParser implements Serializable {
 	
 	private static EmailIdParser emailIdParser = null;
 
-	private SenderVo senderVo = null;
+	private SenderDataVo senderVo = null;
 
 	private EmailIdParser(IdTokensVo _tokensVo) {
-		SenderDao senderService = SpringUtil.getAppContext().getBean(SenderDao.class);
+		SenderDataDao senderService = SpringUtil.getAppContext().getBean(SenderDataDao.class);
 		senderVo = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		if (_tokensVo != null) { // not used
 			this.idTokensVo = _tokensVo;

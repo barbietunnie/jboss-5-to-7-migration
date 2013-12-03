@@ -12,7 +12,7 @@ import com.es.dao.address.EmailTemplateDao;
 import com.es.dao.address.EmailVariableDao;
 import com.es.dao.address.MailingListDao;
 import com.es.dao.address.SubscriptionDao;
-import com.es.dao.sender.SenderUtil;
+import com.es.dao.sender.SenderDataUtil;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.MailingListDeliveryType;
@@ -28,7 +28,7 @@ import com.es.vo.address.EmailVariableVo;
 import com.es.vo.address.MailingListVo;
 import com.es.vo.address.SchedulesBlob;
 import com.es.vo.address.SubscriptionVo;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 
 public class EmailAddrTable extends AbstractTableBase {
 
@@ -388,7 +388,7 @@ DELIMITER ;
 	}
 
 	private void loadMailingLists() throws DataAccessException {
-		SenderVo sender = SenderUtil.getDefaultSenderVo();
+		SenderDataVo sender = SenderDataUtil.getDefaultSenderVo();
 		String domain = sender.getDomainName();
 		
 		MailingListDao mlistService = SpringUtil.getAppContext().getBean(MailingListDao.class);
@@ -417,7 +417,7 @@ DELIMITER ;
 	}
 	
 	private void loadProdMailingLists() throws DataAccessException {
-		SenderVo sender = SenderUtil.getDefaultSenderVo();
+		SenderDataVo sender = SenderDataUtil.getDefaultSenderVo();
 		String domain = sender.getDomainName();
 
 		MailingListDao mlistService = SpringUtil.getAppContext().getBean(MailingListDao.class);
@@ -494,7 +494,7 @@ DELIMITER ;
 	}
 	
 	private void loadEmailTemplates() {
-		SenderVo sender = SenderUtil.getDefaultSenderVo();
+		SenderDataVo sender = SenderDataUtil.getDefaultSenderVo();
 		MailingListDao mlistService = SpringUtil.getAppContext().getBean(MailingListDao.class);
 		EmailTemplateDao service = getEmailTemplateDao();
 		for (EmailTemplateEnum tmp : EmailTemplateEnum.values()) {
@@ -526,7 +526,7 @@ DELIMITER ;
 	}
 	
 	void loadProdEmailTemplates() {
-		SenderVo sender = SenderUtil.getDefaultSenderVo();
+		SenderDataVo sender = SenderDataUtil.getDefaultSenderVo();
 		MailingListDao mlistService = SpringUtil.getAppContext().getBean(MailingListDao.class);
 		EmailTemplateDao service = getEmailTemplateDao();
 		for (EmailTemplateEnum tmp : EmailTemplateEnum.values()) {

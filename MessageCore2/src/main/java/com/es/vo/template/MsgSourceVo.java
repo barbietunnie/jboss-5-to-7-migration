@@ -5,9 +5,9 @@ import java.sql.Timestamp;
 
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
-public class MsgSourceVo extends BaseVo implements Serializable {
+public class MsgSourceVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -8801080860617417345L;
 	private String msgSourceId = "";
 	private String description = null;

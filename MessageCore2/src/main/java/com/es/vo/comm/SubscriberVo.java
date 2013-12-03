@@ -6,7 +6,7 @@ import java.util.Date;
 
 import com.es.core.util.StringUtil;
 
-public class SubscriberVo extends BaseVo implements Serializable {
+public class SubscriberVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -1028823392338670111L;
 	
 	private String subrId = "";

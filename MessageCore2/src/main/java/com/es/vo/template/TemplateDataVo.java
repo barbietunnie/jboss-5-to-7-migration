@@ -3,10 +3,9 @@ package com.es.vo.template;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
-public class TemplateDataVo extends BaseVo implements Serializable
-{
+public class TemplateDataVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -2565627868809110960L;
 	private String templateId = "";
 	private String senderId = null;

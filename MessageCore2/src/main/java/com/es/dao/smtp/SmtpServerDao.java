@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.es.data.constant.CodeType;
 import com.es.data.constant.StatusId;
-import com.es.vo.comm.SmtpConnVo;
+import com.es.vo.comm.SmtpServerVo;
 
 @Component("smtpServerDao")
 public class SmtpServerDao {
@@ -30,12 +30,12 @@ public class SmtpServerDao {
 		return jdbcTemplate;
 	}
 
-	public SmtpConnVo getByPrimaryKey(String serverName) {
+	public SmtpServerVo getByPrimaryKey(String serverName) {
 		String sql = "select * from Smtp_Server where ServerName=?";
 		Object[] parms = new Object[] {serverName};
 		try {
-			SmtpConnVo vo = getJdbcTemplate().queryForObject(sql, parms, 
-					new BeanPropertyRowMapper<SmtpConnVo>(SmtpConnVo.class));
+			SmtpServerVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<SmtpServerVo>(SmtpServerVo.class));
 			return vo;
 		}
 		catch (EmptyResultDataAccessException e) {
@@ -43,7 +43,7 @@ public class SmtpServerDao {
 		}
 	}
 	
-	public List<SmtpConnVo> getAll(boolean onlyActive, Boolean isSecure) {
+	public List<SmtpServerVo> getAll(boolean onlyActive, Boolean isSecure) {
 		List<String> keys = new ArrayList<String>();
 		String sql = "select * from Smtp_Server ";
 		if (onlyActive) {
@@ -61,12 +61,12 @@ public class SmtpServerDao {
 		}
 
 		sql += " order by ServerName ";
-		List<SmtpConnVo> list = getJdbcTemplate().query(sql, keys.toArray(), 
-				new BeanPropertyRowMapper<SmtpConnVo>(SmtpConnVo.class));
+		List<SmtpServerVo> list = getJdbcTemplate().query(sql, keys.toArray(), 
+				new BeanPropertyRowMapper<SmtpServerVo>(SmtpServerVo.class));
 		return list;
 	}
 	
-	public List<SmtpConnVo> getAllForTrial(boolean onlyActive) {
+	public List<SmtpServerVo> getAllForTrial(boolean onlyActive) {
 		List<String> keys = new ArrayList<String>();
 		String sql = "select * from Smtp_Server ";
 		if (onlyActive) {
@@ -78,14 +78,14 @@ public class SmtpServerDao {
 		int maxRows = getJdbcTemplate().getMaxRows();
 		getJdbcTemplate().setFetchSize(1);
 		getJdbcTemplate().setMaxRows(1);
-		List<SmtpConnVo> list = getJdbcTemplate().query(sql, keys.toArray(), 
-				new BeanPropertyRowMapper<SmtpConnVo>(SmtpConnVo.class));
+		List<SmtpServerVo> list = getJdbcTemplate().query(sql, keys.toArray(), 
+				new BeanPropertyRowMapper<SmtpServerVo>(SmtpServerVo.class));
 		getJdbcTemplate().setFetchSize(fetchSize);
 		getJdbcTemplate().setMaxRows(maxRows);
 		return list;
 	}
 	
-	public List<SmtpConnVo> getByServerType(String serverType, boolean onlyActive) {
+	public List<SmtpServerVo> getByServerType(String serverType, boolean onlyActive) {
 		List<String> keys = new ArrayList<String>();
 		keys.add(serverType);
 		String sql = "select * from Smtp_Server where ServerType=?";
@@ -94,12 +94,12 @@ public class SmtpServerDao {
 			keys.add(StatusId.ACTIVE.getValue());
 		}
 		sql += " order by ServerName ";
-		List<SmtpConnVo> list = getJdbcTemplate().query(sql, keys.toArray(),
-				new BeanPropertyRowMapper<SmtpConnVo>(SmtpConnVo.class));
+		List<SmtpServerVo> list = getJdbcTemplate().query(sql, keys.toArray(),
+				new BeanPropertyRowMapper<SmtpServerVo>(SmtpServerVo.class));
 		return list;
 	}
 	
-	public List<SmtpConnVo> getBySslFlag(boolean useSSL, boolean onlyActive) {
+	public List<SmtpServerVo> getBySslFlag(boolean useSSL, boolean onlyActive) {
 		List<String> keys = new ArrayList<String>();
 		keys.add(useSSL ? CodeType.YES.getValue() : CodeType.NO.getValue());
 		String sql = "select * from Smtp_Server where UseSsl=?";
@@ -108,12 +108,12 @@ public class SmtpServerDao {
 			keys.add(StatusId.ACTIVE.getValue());
 		}
 		sql += " order by RowId ";
-		List<SmtpConnVo> list = getJdbcTemplate().query(sql, keys.toArray(), 
-				new BeanPropertyRowMapper<SmtpConnVo>(SmtpConnVo.class));
+		List<SmtpServerVo> list = getJdbcTemplate().query(sql, keys.toArray(), 
+				new BeanPropertyRowMapper<SmtpServerVo>(SmtpServerVo.class));
 		return list;
 	}
 
-	public List<SmtpConnVo> getBySslFlagForTrial(boolean useSSL, boolean onlyActive) {
+	public List<SmtpServerVo> getBySslFlagForTrial(boolean useSSL, boolean onlyActive) {
 		List<String> keys = new ArrayList<String>();
 		keys.add(useSSL ? CodeType.YES.getValue() : CodeType.NO.getValue());
 		String sql = "select * from Smtp_Server where UseSsl=?";
@@ -122,12 +122,12 @@ public class SmtpServerDao {
 			keys.add(StatusId.ACTIVE.getValue());
 		}
 		sql += " order by RowId limit 1 ";
-		List<SmtpConnVo> list = getJdbcTemplate().query(sql, keys.toArray(), 
-				new BeanPropertyRowMapper<SmtpConnVo>(SmtpConnVo.class));
+		List<SmtpServerVo> list = getJdbcTemplate().query(sql, keys.toArray(), 
+				new BeanPropertyRowMapper<SmtpServerVo>(SmtpServerVo.class));
 		return list;
 	}
 
-	public int update(SmtpConnVo smtpConnVo) {
+	public int update(SmtpServerVo smtpConnVo) {
 		smtpConnVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
 		ArrayList<Object> keys = new ArrayList<Object>();
 		keys.add(smtpConnVo.getServerName());
@@ -189,7 +189,7 @@ public class SmtpServerDao {
 		return rowsDeleted;
 	}
 	
-	public int insert(SmtpConnVo smtpConnVo) {
+	public int insert(SmtpServerVo smtpConnVo) {
 		smtpConnVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
 		Object[] parms = {
 				smtpConnVo.getSmtpHost(),

@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import com.es.vo.comm.MailSenderVo;
+import com.es.vo.comm.MailSenderPropsVo;
 
 @Component("mailSenderPropsDao")
 public class MailSenderPropsDao {
@@ -28,13 +28,13 @@ public class MailSenderPropsDao {
 		return jdbcTemplate;
 	}
 
-	public MailSenderVo getByPrimaryKey(int rowId) {
+	public MailSenderPropsVo getByPrimaryKey(int rowId) {
 		String sql = 
 			"select * from Mail_Sender_Props where rowId=?";
 		Object[] parms = new Object[] {rowId};
 		try {
-			MailSenderVo vo = getJdbcTemplate().queryForObject(sql, parms, 
-					new BeanPropertyRowMapper<MailSenderVo>(MailSenderVo.class));
+			MailSenderPropsVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<MailSenderPropsVo>(MailSenderPropsVo.class));
 			return vo;
 		}
 		catch (EmptyResultDataAccessException e) {
@@ -42,15 +42,15 @@ public class MailSenderPropsDao {
 		}
 	}
 	
-	public List<MailSenderVo> getAll() {
+	public List<MailSenderPropsVo> getAll() {
 		
 		String sql = "select * from Mail_Sender_Props ";
-		List<MailSenderVo> list = getJdbcTemplate().query(sql, 
-				new BeanPropertyRowMapper<MailSenderVo>(MailSenderVo.class));
+		List<MailSenderPropsVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<MailSenderPropsVo>(MailSenderPropsVo.class));
 		return list;
 	}
 	
-	public int update(MailSenderVo mailSenderVo) {
+	public int update(MailSenderPropsVo mailSenderVo) {
 		mailSenderVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
 		ArrayList<Object> keys = new ArrayList<Object>();
 		keys.add(mailSenderVo.getInternalLoopback());
@@ -93,7 +93,7 @@ public class MailSenderPropsDao {
 		return rowsDeleted;
 	}
 	
-	public int insert(MailSenderVo mailSenderVo) {
+	public int insert(MailSenderPropsVo mailSenderVo) {
 		mailSenderVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
 		Object[] parms = {
 				mailSenderVo.getInternalLoopback(),

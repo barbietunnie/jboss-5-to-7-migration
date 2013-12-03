@@ -12,7 +12,7 @@ import com.es.data.constant.Constants;
 import com.es.data.constant.MailServerType;
 import com.es.data.constant.StatusId;
 import com.es.data.preload.SmtpServerEnum;
-import com.es.vo.comm.SmtpConnVo;
+import com.es.vo.comm.SmtpServerVo;
 
 public class SmtpTable extends AbstractTableBase {
 	
@@ -128,7 +128,7 @@ public class SmtpTable extends AbstractTableBase {
 					continue;
 				}
 			}
-			SmtpConnVo in = new SmtpConnVo();
+			SmtpServerVo in = new SmtpServerVo();
 			in.setSmtpHost(mc.getSmtpHost());
 			in.setSmtpPort(mc.getSmtpPort());
 			in.setServerName(mc.getServerName());

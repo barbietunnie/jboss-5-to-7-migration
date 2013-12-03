@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.es.core.util.HtmlUtil;
 import com.es.dao.address.EmailAddressDao;
 import com.es.dao.rule.RuleLogicDao;
-import com.es.dao.sender.SenderDao;
+import com.es.dao.sender.SenderDataDao;
 import com.es.dao.subscriber.SubscriberDao;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
@@ -45,7 +45,7 @@ public class MessageBeanBo implements java.io.Serializable {
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
 	@Autowired
-	private SenderDao senderDao;
+	private SenderDataDao senderDao;
 	@Autowired
 	private SubscriberDao subrDao;
 	@Autowired
@@ -69,7 +69,7 @@ public class MessageBeanBo implements java.io.Serializable {
 		}
 
 		MessageBean msgBean = new MessageBean();
-		msgBean.setMsgId(Long.valueOf(msgVo.getRowId()));
+		msgBean.setMsgId(Long.valueOf(msgVo.getMsgId()));
 		msgBean.setMsgRefId(msgVo.getMsgRefId());
 		msgBean.setCarrierCode(CarrierCode.getByValue(msgVo.getCarrierCode()));
 		msgBean.setSubject(msgVo.getMsgSubject());

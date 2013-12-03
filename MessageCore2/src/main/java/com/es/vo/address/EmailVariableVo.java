@@ -3,9 +3,9 @@ package com.es.vo.address;
 import java.io.Serializable;
 
 import com.es.data.constant.CodeType;
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
-public class EmailVariableVo extends BaseVo implements Serializable {
+public class EmailVariableVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -1851563259118001846L;
 	private String variableName = "";
 	private String variableType = "";

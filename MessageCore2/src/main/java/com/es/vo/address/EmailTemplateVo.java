@@ -7,9 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.MailingListDeliveryType;
 import com.es.data.constant.MailingListType;
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
-public class EmailTemplateVo extends BaseVo implements Serializable {
+public class EmailTemplateVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -5007781927317135437L;
 	private String templateId = "";
 	private String listId = "";

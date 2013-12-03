@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.es.data.constant.Constants;
 
-public class UserVo extends BaseVo implements Serializable {
+public class UserDataVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = 5066188503284566018L;
 	private String userId = "";
 	private String password = "";

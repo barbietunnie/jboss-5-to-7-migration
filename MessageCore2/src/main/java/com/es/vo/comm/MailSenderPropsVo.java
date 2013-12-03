@@ -2,10 +2,9 @@ package com.es.vo.comm;
 
 import java.io.Serializable;
 
-public class MailSenderVo extends ServerBaseVo implements Serializable {
+public class MailSenderPropsVo extends ServerBaseVo implements Serializable {
 	private static final long serialVersionUID = -6119296927649805655L;
 	
-	private int rowId = -1;
 	private String internalLoopback = "";
 	private String externalLoopback = "";
 	private String useTestAddr = "";
@@ -14,12 +13,6 @@ public class MailSenderVo extends ServerBaseVo implements Serializable {
 	private String testReplytoAddr = null;
 	private String isVerpEnabled = "";
 	
-	public int getRowId() {
-		return rowId;
-	}
-	public void setRowId(int rowId) {
-		this.rowId = rowId;
-	}
 	public String getIsVerpEnabled() {
 		return isVerpEnabled;
 	}

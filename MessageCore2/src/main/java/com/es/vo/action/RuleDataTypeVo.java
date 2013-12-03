@@ -2,12 +2,10 @@ package com.es.vo.action;
 
 import java.io.Serializable;
 
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
-public class RuleDataTypeVo extends BaseVo implements Serializable
-{
+public class RuleDataTypeVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = 1257470921464461217L;
-	private int rowId = -1;
 	private String dataType = "";
 	private String dataTypeValue = "";
 	private String miscProperties = null;
@@ -20,14 +18,6 @@ public class RuleDataTypeVo extends BaseVo implements Serializable
 		this.dataType = dataType;
 		this.dataTypeValue = dataTypeValue;
 		this.miscProperties = miscProperties;
-	}
-
-	public int getRowId() {
-		return rowId;
-	}
-
-	public void setRowId(int rowId) {
-		this.rowId = rowId;
 	}
 
 	public String getDataType() {

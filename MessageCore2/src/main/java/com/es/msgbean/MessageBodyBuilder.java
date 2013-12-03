@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 
 import com.es.core.util.EmailAddrUtil;
 import com.es.core.util.StringUtil;
-import com.es.dao.sender.SenderUtil;
+import com.es.dao.sender.SenderDataUtil;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.Constants;
 import com.es.msg.util.EmailIdParser;
@@ -100,7 +100,7 @@ public final class MessageBodyBuilder {
 		String newBody = null;
 		if (msgBean.getBodyContentType().indexOf("html") >= 0) {
 			origBody = removeHtmlBodyTags(origBody);
-			if (!SenderUtil.isProductKeyValid() && SenderUtil.isTrialPeriodEnded()) {
+			if (!SenderDataUtil.isProductKeyValid() && SenderDataUtil.isTrialPeriodEnded()) {
 				if (Constants.EmbedPoweredByToFreeVersion) {
 					newBody = appendTextToHtml(msgBody, LF + Constants.POWERED_BY_HTML_TAG + LF);
 				}
@@ -109,7 +109,7 @@ public final class MessageBodyBuilder {
 		}
 		else { // only original is HTML
 			msgBody = removeHtmlBodyTags(msgBody);
-			if (!SenderUtil.isProductKeyValid() && SenderUtil.isTrialPeriodEnded()) {
+			if (!SenderDataUtil.isProductKeyValid() && SenderDataUtil.isTrialPeriodEnded()) {
 				if (Constants.EmbedPoweredByToFreeVersion) {
 					msgBody += LF + Constants.POWERED_BY_HTML_TAG + LF;
 				}
@@ -139,7 +139,7 @@ public final class MessageBodyBuilder {
 			embedEmailId2Header(msgBean);
 		}
 
-		if (!SenderUtil.isProductKeyValid() && SenderUtil.isTrialPeriodEnded()) {
+		if (!SenderDataUtil.isProductKeyValid() && SenderDataUtil.isTrialPeriodEnded()) {
 			if (Constants.EmbedPoweredByToFreeVersion) {
 				msgBody += Constants.CRLF + Constants.CRLF + Constants.POWERED_BY_TEXT + Constants.CRLF;
 			}

@@ -4,12 +4,10 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import com.es.core.util.StringUtil;
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
-public class RuleActionDetailVo extends BaseVo implements Serializable
-{
+public class RuleActionDetailVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -3441560088153348986L;
-	private int rowId = -1;
 	private String actionId = "";
 	private String description = null;
 	private String processBeanId = "";
@@ -44,14 +42,6 @@ public class RuleActionDetailVo extends BaseVo implements Serializable
 	
 	/** end of UI component */
 
-	public int getRowId() {
-		return rowId;
-	}
-
-	public void setRowId(int rowId) {
-		this.rowId = rowId;
-	}
-	
 	public String getDescription() {
 		return description;
 	}

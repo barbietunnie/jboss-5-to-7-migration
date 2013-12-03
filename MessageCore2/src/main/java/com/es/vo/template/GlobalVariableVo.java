@@ -4,10 +4,9 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import com.es.data.constant.CodeType;
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
-public class GlobalVariableVo extends BaseVo implements Serializable
-{
+public class GlobalVariableVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = 8887386091033102579L;
 	private String variableName = "";
 	private Timestamp startTime = new Timestamp(new java.util.Date().getTime());
