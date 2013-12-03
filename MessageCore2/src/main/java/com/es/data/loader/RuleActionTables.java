@@ -11,7 +11,7 @@ import com.es.dao.action.RuleActionDao;
 import com.es.dao.action.RuleActionDetailDao;
 import com.es.dao.action.RuleDataTypeDao;
 import com.es.dao.rule.RuleLogicDao;
-import com.es.dao.sender.SenderDao;
+import com.es.dao.sender.SenderDataDao;
 import com.es.data.constant.Constants;
 import com.es.data.constant.EmailAddressType;
 import com.es.data.constant.StatusId;
@@ -27,7 +27,7 @@ import com.es.data.preload.RuleNameEnum;
 import com.es.vo.action.RuleActionDetailVo;
 import com.es.vo.action.RuleActionVo;
 import com.es.vo.action.RuleDataTypeVo;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 import com.es.vo.rule.RuleLogicVo;
 
 /**
@@ -225,7 +225,7 @@ public class RuleActionTables extends AbstractTableBase {
 		RuleLogicDao logicService = SpringUtil.getAppContext().getBean(RuleLogicDao.class);
 		RuleActionDetailDao detailService = SpringUtil.getAppContext().getBean(RuleActionDetailDao.class);
 		RuleActionDao actionService = SpringUtil.getAppContext().getBean(RuleActionDao.class);
-		SenderDao senderService = SpringUtil.getAppContext().getBean(SenderDao.class);
+		SenderDataDao senderService = SpringUtil.getAppContext().getBean(SenderDataDao.class);
 		
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		for (RuleActionEnum act : RuleActionEnum.values()) {
@@ -238,7 +238,7 @@ public class RuleActionTables extends AbstractTableBase {
 		}
 
 		try {
-			SenderVo sender = senderService.getBySenderId("JBatchCorp");
+			SenderDataVo sender = senderService.getBySenderId("JBatchCorp");
 			System.out.println("JbatchCorp Sender found: " + StringUtil.prettyPrint(sender));
 		}
 		catch (DataAccessException e) {}

@@ -2,7 +2,7 @@ package com.es.vo.comm;
 
 import java.io.Serializable;
 
-public class SmtpConnVo extends ServerBaseVo implements Serializable {
+public class SmtpServerVo extends ServerBaseVo implements Serializable {
 	private static final long serialVersionUID = -1343713327747984527L;
 	private String smtpHost = "";
 	private int smtpPort = -1;

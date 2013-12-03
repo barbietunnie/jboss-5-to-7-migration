@@ -2,8 +2,7 @@ package com.es.vo.template;
 
 import java.io.Serializable;
 
-public class TemplateVariableVo extends GlobalVariableVo implements Serializable
-{
+public class TemplateVariableVo extends GlobalVariableVo implements Serializable {
 	private static final long serialVersionUID = 7372301662242870634L;
 	private String templateId = "";
 	private String senderId = "";

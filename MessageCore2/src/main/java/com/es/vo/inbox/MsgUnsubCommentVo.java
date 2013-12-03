@@ -3,23 +3,16 @@ package com.es.vo.inbox;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
-public class MsgUnsubCommentVo extends BaseVo implements Serializable {
+public class MsgUnsubCommentVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -3365866865718039073L;
-	private int rowId = -1;
 	private long msgId = -1;
 	private long emailAddrId = -1;
 	private String listId = null;
 	private String comments = "";
 	private Timestamp addTime = null;
 	
-	public int getRowId() {
-		return rowId;
-	}
-	public void setRowId(int rowId) {
-		this.rowId = rowId;
-	}
 	public long getMsgId() {
 		return msgId;
 	}

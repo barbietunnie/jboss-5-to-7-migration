@@ -12,10 +12,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.es.data.constant.StatusId;
-import com.es.vo.comm.UserVo;
+import com.es.vo.comm.UserDataVo;
 
-@Component("userDao")
-public class UserDao {
+@Component("userDataDao")
+public class UserDataDao {
 	
 	@Autowired
 	private DataSource msgDataSource;
@@ -28,12 +28,12 @@ public class UserDao {
 		return jdbcTemplate;
 	}
 
-	public UserVo getByPrimaryKey(String userId) {
+	public UserDataVo getByPrimaryKey(String userId) {
 		String sql = "select * from User_Data where UserId=?";
 		Object[] parms = new Object[] {userId};
 		try {
-			UserVo vo = getJdbcTemplate().queryForObject(sql, parms, 
-					new BeanPropertyRowMapper<UserVo>(UserVo.class));
+			UserDataVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<UserDataVo>(UserDataVo.class));
 			return vo;
 		}
 		catch (EmptyResultDataAccessException e) {
@@ -41,11 +41,11 @@ public class UserDao {
 		}
 	}
 	
-	public UserVo getForLogin(String userId, String password) {
+	public UserDataVo getForLogin(String userId, String password) {
 		String sql = "select * from User_Data where UserId=? and Password=?";
 		Object[] parms = new Object[] {userId, password};
-		List<UserVo> list = getJdbcTemplate().query(sql, parms, 
-				new BeanPropertyRowMapper<UserVo>(UserVo.class));
+		List<UserDataVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<UserDataVo>(UserDataVo.class));
 		if (list.size()>0) {
 			return list.get(0);
 		}
@@ -54,18 +54,18 @@ public class UserDao {
 		}
 	}
 	
-	public List<UserVo> getAll(boolean onlyActive) {
+	public List<UserDataVo> getAll(boolean onlyActive) {
 		
 		String sql = "select * from User_Data ";
 		if (onlyActive) {
 			sql += " where StatusId='" + StatusId.ACTIVE.getValue() + "'";
 		}
-		List<UserVo> list = getJdbcTemplate().query(sql, 
-				new BeanPropertyRowMapper<UserVo>(UserVo.class));
+		List<UserDataVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<UserDataVo>(UserDataVo.class));
 		return list;
 	}
 	
-	public int update(UserVo userVo) {
+	public int update(UserDataVo userVo) {
 		if (userVo.getCreateTime()==null) {
 			userVo.setCreateTime(new Timestamp(new java.util.Date().getTime()));
 		}
@@ -112,7 +112,7 @@ public class UserDao {
 		return rowsUpadted;
 	}
 	
-	public int update4Web(UserVo userVo) {
+	public int update4Web(UserDataVo userVo) {
 		Object[] parms = {
 				userVo.getSessionId(),
 				userVo.getLastVisitTime(),
@@ -137,7 +137,7 @@ public class UserDao {
 		return rowsDeleted;
 	}
 	
-	public int insert(UserVo userVo) {
+	public int insert(UserDataVo userVo) {
 		if (userVo.getCreateTime()==null) {
 			userVo.setCreateTime(new Timestamp(new java.util.Date().getTime()));
 		}

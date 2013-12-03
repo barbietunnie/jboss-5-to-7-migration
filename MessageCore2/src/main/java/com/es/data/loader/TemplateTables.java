@@ -8,7 +8,7 @@ import org.springframework.dao.DataAccessException;
 import com.es.core.util.SpringUtil;
 import com.es.dao.address.EmailAddressDao;
 import com.es.dao.sender.GlobalVariableDao;
-import com.es.dao.sender.SenderDao;
+import com.es.dao.sender.SenderDataDao;
 import com.es.dao.template.MsgSourceDao;
 import com.es.dao.template.TemplateDataDao;
 import com.es.dao.template.TemplateVariableDao;
@@ -21,7 +21,7 @@ import com.es.data.constant.VariableType;
 import com.es.data.constant.XHeaderName;
 import com.es.data.preload.GlobalVariableEnum;
 import com.es.vo.address.EmailAddressVo;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 import com.es.vo.template.GlobalVariableVo;
 import com.es.vo.template.MsgSourceVo;
 import com.es.vo.template.TemplateDataVo;
@@ -233,13 +233,13 @@ public class TemplateTables extends AbstractTableBase {
 	}
 
 	private void loadTemplateData() {
-		SenderDao senderService = SpringUtil.getAppContext().getBean(SenderDao.class);
+		SenderDataDao senderService = SpringUtil.getAppContext().getBean(SenderDataDao.class);
 		TemplateDataDao templateService = SpringUtil.getAppContext().getBean(TemplateDataDao.class);
 		TemplateVariableDao variableService = SpringUtil.getAppContext().getBean(TemplateVariableDao.class);
 		EmailAddressDao addrService = SpringUtil.getAppContext().getBean(EmailAddressDao.class);
 		MsgSourceDao sourceService = SpringUtil.getAppContext().getBean(MsgSourceDao.class);
 
-		SenderVo sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
+		SenderDataVo sender = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		Timestamp tms =  new Timestamp(System.currentTimeMillis());
 
 		TemplateDataVo data = new TemplateDataVo();

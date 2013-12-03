@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 
 import com.es.core.util.SpringUtil;
 import com.es.dao.smtp.SmtpServerDao;
-import com.es.vo.comm.SmtpConnVo;
+import com.es.vo.comm.SmtpServerVo;
 
 public class SmtpWrapperUtil implements java.io.Serializable {
 	private static final long serialVersionUID = -5036775609137065316L;
@@ -81,9 +81,9 @@ public class SmtpWrapperUtil implements java.io.Serializable {
 				|| (currTime.getTime() - lastGetTime.getTime()) > (15 * 60 * 1000)) {
 			clearSmtpNamedPool();
 			clearSecuNamedPool();
-			List<SmtpConnVo> smtpConnVos = getSmtpServers(false);
+			List<SmtpServerVo> smtpConnVos = getSmtpServers(false);
 			smtpPools =getNamedPool(smtpConnVos);
-			List<SmtpConnVo> secuConnVos = getSmtpServers(true);
+			List<SmtpServerVo> secuConnVos = getSmtpServers(true);
 			secuPools =getNamedPool(secuConnVos);
 			lastGetTime = currTime;
 		}
@@ -92,10 +92,10 @@ public class SmtpWrapperUtil implements java.io.Serializable {
 	/*
 	 * returns a list of named pools or an empty list
 	 */
-	private static NamedPool getNamedPool(List<SmtpConnVo> smtpConnVos) {
+	private static NamedPool getNamedPool(List<SmtpServerVo> smtpConnVos) {
 		List<ObjectPool> objPools = new ArrayList<ObjectPool>();
 		for (int i = 0; i < smtpConnVos.size(); i++) {
-			SmtpConnVo smtpConnVo = smtpConnVos.get(i);
+			SmtpServerVo smtpConnVo = smtpConnVos.get(i);
 			ObjectPool smtpPool = new ObjectPool(smtpConnVo);
 			objPools.add(smtpPool);
 		}
@@ -106,8 +106,8 @@ public class SmtpWrapperUtil implements java.io.Serializable {
 	/*
 	 * returns a list or SmtpServer's or an empty list 
 	 */
-	private static List<SmtpConnVo> getSmtpServers(boolean isSecure) {
-		List<SmtpConnVo> list = null;
+	private static List<SmtpServerVo> getSmtpServers(boolean isSecure) {
+		List<SmtpServerVo> list = null;
 		list = getSmtpServerService().getAll(true, isSecure);
 		return list;
 	}

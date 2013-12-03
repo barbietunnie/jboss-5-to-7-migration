@@ -11,16 +11,16 @@ import com.es.core.util.ProductUtil;
 import com.es.core.util.SpringUtil;
 import com.es.core.util.TimestampUtil;
 import com.es.data.constant.Constants;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 
-public final class SenderUtil {
-	static final Logger logger = Logger.getLogger(SenderUtil.class);
+public final class SenderDataUtil {
+	static final Logger logger = Logger.getLogger(SenderDataUtil.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
-	private static SenderDao senderDao = null;
+	private static SenderDataDao senderDao = null;
 	private static final int TRIAL_DAYS = 30;
 	
-	private SenderUtil() {
+	private SenderDataUtil() {
 		// static only
 	}
 	
@@ -74,19 +74,19 @@ public final class SenderUtil {
 		return (ProductKey.validateKey(key) | ProductUtil.isProductKeyValid());
 	}
 
-	public static SenderVo getDefaultSenderVo() {
+	public static SenderDataVo getDefaultSenderVo() {
 		return getSiteProfile(Constants.DEFAULT_SENDER_ID);
 	}
 	
-	public static SenderVo getSenderVo(String senderId) {
+	public static SenderDataVo getSenderVo(String senderId) {
 		return getSiteProfile(senderId);
 	}
 	
-	public static SenderVo getSiteProfile(String senderId) {
+	public static SenderDataVo getSiteProfile(String senderId) {
 		if (StringUtils.isEmpty(senderId)) {
 			senderId = Constants.DEFAULT_SENDER_ID;
 		}
-		SenderVo vo = getSenderDao().getBySenderId(senderId);
+		SenderDataVo vo = getSenderDao().getBySenderId(senderId);
 		if (vo != null) {
 			return vo;
 		}
@@ -101,9 +101,9 @@ public final class SenderUtil {
 		}
 	}
 	
-	private static SenderDao getSenderDao() {
+	private static SenderDataDao getSenderDao() {
 		if (senderDao == null) {
-			senderDao = SpringUtil.getAppContext().getBean(SenderDao.class);
+			senderDao = SpringUtil.getAppContext().getBean(SenderDataDao.class);
 		}
 		return senderDao;
 	}

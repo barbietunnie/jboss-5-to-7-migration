@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 import com.es.core.util.EmailAddrUtil;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.MailServerType;
-import com.es.vo.comm.SmtpConnVo;
+import com.es.vo.comm.SmtpServerVo;
 
 /** 
   * SmtpConnection initializes a SMTP connection and provides methods to send 
@@ -35,7 +35,7 @@ public final class SmtpConnection implements java.io.Serializable {
 	static final Logger logger = Logger.getLogger(SmtpConnection.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
-	private final SmtpConnVo smtpConnVo;
+	private final SmtpServerVo smtpConnVo;
 
 	private final String smtpHost, userId, password, serverType;
 	private final int smtpPort;
@@ -60,7 +60,7 @@ public final class SmtpConnection implements java.io.Serializable {
 	 * @param _props -
 	 *            smtp server properties
 	 */
-	public SmtpConnection(SmtpConnVo vo) {
+	public SmtpConnection(SmtpServerVo vo) {
 		this.smtpConnVo = vo;
 
 		// retrieve server properties
@@ -188,8 +188,8 @@ public final class SmtpConnection implements java.io.Serializable {
 		this(propertiesToVo(_props));
 	}
 
-	static SmtpConnVo propertiesToVo(Properties props) {
-		SmtpConnVo vo = new SmtpConnVo();
+	static SmtpServerVo propertiesToVo(Properties props) {
+		SmtpServerVo vo = new SmtpServerVo();
 		
 		vo.setSmtpHost(props.getProperty("smtphost"));
 
@@ -511,7 +511,7 @@ public final class SmtpConnection implements java.io.Serializable {
 		super.finalize();
 	}
 
-	public SmtpConnVo getSmtpConnVo() {
+	public SmtpServerVo getSmtpConnVo() {
 		return smtpConnVo;
 	}
 }

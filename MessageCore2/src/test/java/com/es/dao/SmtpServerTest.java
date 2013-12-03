@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.es.dao.smtp.SmtpServerDao;
 import com.es.data.constant.StatusId;
-import com.es.vo.comm.SmtpConnVo;
+import com.es.vo.comm.SmtpServerVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-core-config.xml"})
@@ -35,13 +35,13 @@ public class SmtpServerTest {
 	@Test
 	public void testSmtpServer() {
 		try {
-			List<SmtpConnVo> lst1 = selectAll(true);
+			List<SmtpServerVo> lst1 = selectAll(true);
 			assertTrue(lst1.size()>0);
-			List<SmtpConnVo> lst2 = selectAll(false);
+			List<SmtpServerVo> lst2 = selectAll(false);
 			assertTrue(lst2.size()>0);
-			SmtpConnVo vo = selectByPrimaryKey(lst2.get(0).getServerName());
+			SmtpServerVo vo = selectByPrimaryKey(lst2.get(0).getServerName());
 			assertNotNull(vo);
-			SmtpConnVo vo2 = insert(lst2.get(0).getServerName());
+			SmtpServerVo vo2 = insert(lst2.get(0).getServerName());
 			int rowsUpdated = update(vo2);
 			vo.setRowId(vo2.getRowId());
 			vo.setUpdtTime(vo2.getUpdtTime());
@@ -58,32 +58,32 @@ public class SmtpServerTest {
 		}
 	}
 	
-	private List<SmtpConnVo> selectAll(boolean forTrial) {
-		List<SmtpConnVo> smtpServeres;
+	private List<SmtpServerVo> selectAll(boolean forTrial) {
+		List<SmtpServerVo> smtpServeres;
 		if (forTrial) {
 			smtpServeres = smtpServerDao.getAllForTrial(false);
-			for (Iterator<SmtpConnVo> it=smtpServeres.iterator(); it.hasNext();) {
-				SmtpConnVo smtpConnVo = it.next();
+			for (Iterator<SmtpServerVo> it=smtpServeres.iterator(); it.hasNext();) {
+				SmtpServerVo smtpConnVo = it.next();
 				System.out.println("SmtpServerDao - getAllForTrial(): "+LF+smtpConnVo);
 			}
 		}
 		else {
 			smtpServeres = smtpServerDao.getAll(false, null);
-			for (Iterator<SmtpConnVo> it=smtpServeres.iterator(); it.hasNext();) {
-				SmtpConnVo smtpConnVo = it.next();
+			for (Iterator<SmtpServerVo> it=smtpServeres.iterator(); it.hasNext();) {
+				SmtpServerVo smtpConnVo = it.next();
 				System.out.println("SmtpServerDao - selectAll(): "+LF+smtpConnVo);
 			}
 		}
 		return smtpServeres;
 	}
 	
-	public SmtpConnVo selectByPrimaryKey(String serverName) {
-		SmtpConnVo vo2 = smtpServerDao.getByPrimaryKey(serverName);
+	public SmtpServerVo selectByPrimaryKey(String serverName) {
+		SmtpServerVo vo2 = smtpServerDao.getByPrimaryKey(serverName);
 		System.out.println("SmtpServerDao - selectByPrimaryKey: "+LF+vo2);
 		return vo2;
 	}
 	
-	private int update(SmtpConnVo smtpConnVo) {
+	private int update(SmtpServerVo smtpConnVo) {
 		if (StatusId.ACTIVE.getValue().equals(smtpConnVo.getStatusId())) {
 			smtpConnVo.setStatusId(StatusId.ACTIVE.getValue());
 		}
@@ -97,8 +97,8 @@ public class SmtpServerTest {
 		System.out.println("SmtpServerDao - delete: Rows Deleted: "+rowsDeleted);
 		return rowsDeleted;
 	}
-	private SmtpConnVo insert(String serverName) {
-		SmtpConnVo smtpConnVo = smtpServerDao.getByPrimaryKey(serverName);
+	private SmtpServerVo insert(String serverName) {
+		SmtpServerVo smtpConnVo = smtpServerDao.getByPrimaryKey(serverName);
 		if (smtpConnVo != null) {
 			smtpConnVo.setServerName(smtpConnVo.getServerName()+"_test");
 			int rows = smtpServerDao.insert(smtpConnVo);

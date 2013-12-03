@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import com.es.core.util.SpringUtil;
 import com.es.dao.address.MailingListDao;
 import com.es.dao.sender.ReloadFlagsDao;
-import com.es.dao.sender.SenderDao;
+import com.es.dao.sender.SenderDataDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.RuleCategory;
@@ -28,7 +28,7 @@ import com.es.data.constant.RuleType;
 import com.es.data.constant.XHeaderName;
 import com.es.vo.address.MailingListVo;
 import com.es.vo.comm.ReloadFlagsVo;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 import com.es.vo.rule.RuleElementVo;
 import com.es.vo.rule.RuleLogicVo;
 import com.es.vo.rule.RuleSubRuleMapVo;
@@ -352,15 +352,15 @@ public class RuleLoaderBo implements java.io.Serializable {
 	private final Map<String, Pattern> loadAddressPatterns() {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		// make sure the default sender is the first on the list
-		SenderVo sender0 = getSenderDao().getBySenderId(Constants.DEFAULT_SENDER_ID);
+		SenderDataVo sender0 = getSenderDao().getBySenderId(Constants.DEFAULT_SENDER_ID);
 		if (sender0 != null) {
 			String senderId = sender0.getSenderId();
 			String returnPath = buildReturnPath(sender0);
 			map.put(senderId, returnPath);
 		}
-		List<SenderVo> senders = getSenderDao().getAll();
+		List<SenderDataVo> senders = getSenderDao().getAll();
 		// now add all other senders' return path
-		for (SenderVo sender : senders) {
+		for (SenderDataVo sender : senders) {
 			String senderId = sender.getSenderId();
 			if (Constants.DEFAULT_SENDER_ID.equalsIgnoreCase(senderId)) {
 				continue; // skip the default sender
@@ -399,7 +399,7 @@ public class RuleLoaderBo implements java.io.Serializable {
 		return patterns;
 	}
 	
-	private String buildReturnPath(SenderVo vo) {
+	private String buildReturnPath(SenderDataVo vo) {
 		String domainName = vo.getDomainName().trim();
 		String returnPath = vo.getReturnPathLeft().trim() + "@" + domainName;
 		if (CodeType.YES.getValue().equalsIgnoreCase(vo.getIsVerpEnabled())) {
@@ -431,10 +431,10 @@ public class RuleLoaderBo implements java.io.Serializable {
 	/*
 	 *  called from constructor, can not be Autowired
 	 */
-	private SenderDao senderDao = null;
-	private SenderDao getSenderDao() {
+	private SenderDataDao senderDao = null;
+	private SenderDataDao getSenderDao() {
 		if (senderDao == null) {
-			senderDao = SpringUtil.getAppContext().getBean(SenderDao.class);
+			senderDao = SpringUtil.getAppContext().getBean(SenderDataDao.class);
 		}
 		return senderDao;
 	}

@@ -21,18 +21,18 @@ import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.StatusId;
 import com.es.data.constant.VariableType;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 import com.es.vo.template.SenderVariableVo;
 
-@Component("senderDao")
-public class SenderDao {
+@Component("senderDataDao")
+public class SenderDataDao {
 	
 	@Autowired
 	private DataSource msgDataSource;
 	private JdbcTemplate jdbcTemplate;
 	private java.util.Date lastFetchTime = new java.util.Date();
 	
-	final static Map<String, SenderVo> senderCache = new HashMap<String, SenderVo>();
+	final static Map<String, SenderDataVo> senderCache = new HashMap<String, SenderDataVo>();
 
 	private JdbcTemplate getJdbcTemplate() {
 		if (jdbcTemplate == null) {
@@ -41,7 +41,7 @@ public class SenderDao {
 		return jdbcTemplate;
 	}
 
-	public SenderVo getBySenderId(String senderId) {
+	public SenderDataVo getBySenderId(String senderId) {
 		java.util.Date currTime = new java.util.Date();
 		if (currTime.getTime() - lastFetchTime.getTime() > (15*60*1000)) {
 			// reload every 15 minutes
@@ -54,8 +54,8 @@ public class SenderDao {
 			String sql = "select * from Sender_Data where senderid=?";
 			Object[] parms = new Object[] { senderId };
 			try {
-				SenderVo senderVo = getJdbcTemplate().queryForObject(sql, parms,
-						new BeanPropertyRowMapper<SenderVo>(SenderVo.class));
+				SenderDataVo senderVo = getJdbcTemplate().queryForObject(sql, parms,
+						new BeanPropertyRowMapper<SenderDataVo>(SenderDataVo.class));
 				synchronized (senderCache) {
 					senderCache.put(senderId, senderVo);					
 				}
@@ -64,20 +64,20 @@ public class SenderDao {
 				return null;
 			}
 		}
-		return (SenderVo) BlobUtil.deepCopy(senderCache.get(senderId));
+		return (SenderDataVo) BlobUtil.deepCopy(senderCache.get(senderId));
 	}
 
-	public List<SenderVo> getAll() {
+	public List<SenderDataVo> getAll() {
 		String sql = 
 			"select * " +
 				"from Sender_Data order by senderId";
 		
-		List<SenderVo> list = (List<SenderVo>)getJdbcTemplate().query(sql, 
-				new BeanPropertyRowMapper<SenderVo>(SenderVo.class));
+		List<SenderDataVo> list = (List<SenderDataVo>)getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<SenderDataVo>(SenderDataVo.class));
 		return list;
 	}
 	
-	public List<SenderVo> getAllForTrial() {
+	public List<SenderDataVo> getAllForTrial() {
 		String sql = 
 			"select * " +
 				"from Sender_Data " +
@@ -87,8 +87,8 @@ public class SenderDao {
 		int maxRows = getJdbcTemplate().getMaxRows();
 		getJdbcTemplate().setFetchSize(1);
 		getJdbcTemplate().setMaxRows(1);
-		List<SenderVo> list =  (List<SenderVo>)getJdbcTemplate().query(sql, 
-				new BeanPropertyRowMapper<SenderVo>(SenderVo.class));
+		List<SenderDataVo> list =  (List<SenderDataVo>)getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<SenderDataVo>(SenderDataVo.class));
 		getJdbcTemplate().setFetchSize(fetchSize);
 		getJdbcTemplate().setMaxRows(maxRows);
 		return list;
@@ -118,7 +118,7 @@ public class SenderDao {
 		return rowsUpdated;
 	}
 
-	public synchronized int update(SenderVo senderVo) {
+	public synchronized int update(SenderDataVo senderVo) {
 		senderVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
 		validateSenderVo(senderVo);
 		ArrayList<Object> keys = new ArrayList<Object>();
@@ -216,7 +216,7 @@ public class SenderDao {
 		return rowsDeleted;
 	}
 	
-	public synchronized int insert(SenderVo senderVo) {
+	public synchronized int insert(SenderDataVo senderVo) {
 		senderVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
 		validateSenderVo(senderVo);
 		String systemId = TimestampUtil.db2ToDecimalString(TimestampUtil.getCurrentDb2Tms());
@@ -298,7 +298,7 @@ public class SenderDao {
 		return rowsInserted;
 	}
 	
-	public static void validateSenderVo(SenderVo senderVo) {
+	public static void validateSenderVo(SenderDataVo senderVo) {
 		if (senderVo.getUseTestAddress()) {
 			if (StringUtils.isEmpty(senderVo.getTestToAddr())) {
 				throw new IllegalStateException("Test TO Address was null");
@@ -320,7 +320,7 @@ public class SenderDao {
 	 * 
 	 * @return number of rows inserted
 	 */
-	private int updateSenderVariables(SenderVo senderVo) {
+	private int updateSenderVariables(SenderDataVo senderVo) {
 		getSenderVariableDao().deleteBySenderId(senderVo.getSenderId());
 		if (StringUtils.isEmpty(senderVo.getOrigSenderId())) {
 			getSenderVariableDao().deleteBySenderId(senderVo.getOrigSenderId());

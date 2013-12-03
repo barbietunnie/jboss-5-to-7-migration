@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 
-public class SenderVo extends BaseVo implements Serializable {
+public class SenderDataVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -16795349179937720L;
 	private String senderId = "";
 	private String senderName = "";

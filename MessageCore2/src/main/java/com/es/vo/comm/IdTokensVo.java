@@ -1,9 +1,8 @@
 package com.es.vo.comm;
 
-public class IdTokensVo extends BaseVo implements java.io.Serializable {	
+public class IdTokensVo extends BaseVoWithRowId implements java.io.Serializable {	
 	private static final long serialVersionUID = -2226574685229227694L;
 	
-	private int rowId = -1;
 	private String senderId = "";
 	private int senderRowId = -1;
 	private String description = null;
@@ -14,12 +13,6 @@ public class IdTokensVo extends BaseVo implements java.io.Serializable {
 	private String xhdrEndToken = null;
 	private int maxLength = -1;
 	
-	public int getRowId() {
-		return rowId;
-	}
-	public void setRowId(int rowId) {
-		this.rowId = rowId;
-	}
 	public String getSenderId() {
 		return senderId;
 	}

@@ -95,7 +95,7 @@ public class RenderBo implements java.io.Serializable {
 			catch (EmptyResultDataAccessException e) {
 				throw new IllegalStateException("Msg_Rendered table is empty.");
 			}
-			RenderRequest req = outboxBo.getRenderRequestByPK(mr.getRowId());
+			RenderRequest req = outboxBo.getRenderRequestByPK(mr.getRenderId());
 			RenderVariable vo = new RenderVariable(
 					EmailAddressType.TO_ADDR.getValue(),
 					"testto@localhost",

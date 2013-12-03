@@ -15,10 +15,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.address.EmailAddressDao;
-import com.es.dao.sender.SenderDao;
+import com.es.dao.sender.SenderDataDao;
 import com.es.data.constant.StatusId;
 import com.es.vo.comm.MailBoxVo;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 
 @Component("mailBoxDao")
 public class MailBoxDao {
@@ -26,7 +26,7 @@ public class MailBoxDao {
 	@Autowired
 	private DataSource msgDataSource;
 	@Autowired
-	private SenderDao senderDao;
+	private SenderDataDao senderDao;
 
 	private JdbcTemplate jdbcTemplate;
 
@@ -84,7 +84,7 @@ public class MailBoxDao {
 	
 	private String getSenderDomains() {
 		// retrieve matching domains from SenderData table
-		List<SenderVo> vos = senderDao.getAll();
+		List<SenderDataVo> vos = senderDao.getAll();
 		String toDomains = "";
 		for (int i = 0; i < vos.size(); i++) {
 			if (i > 0) {

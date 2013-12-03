@@ -18,9 +18,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.es.dao.idtoken.IdTokensDao;
-import com.es.dao.sender.SenderDao;
+import com.es.dao.sender.SenderDataDao;
 import com.es.vo.comm.IdTokensVo;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-core-config.xml"})
@@ -30,7 +30,7 @@ public class IdTokensTest {
 	@Resource
 	private IdTokensDao idTokensDao;
 	@Resource
-	private SenderDao senderDao;
+	private SenderDataDao senderDao;
 	private String testSenderId = "JBatchCorp";
 	
 	@BeforeClass
@@ -78,7 +78,7 @@ public class IdTokensTest {
 	}
 	private IdTokensVo insert() {
 		if (senderDao.getBySenderId(testSenderId)==null) {
-			List<SenderVo> list = senderDao.getAll();
+			List<SenderDataVo> list = senderDao.getAll();
 			testSenderId = list.get(0).getSenderId();
 		}
 		List<IdTokensVo> list = idTokensDao.getAll();

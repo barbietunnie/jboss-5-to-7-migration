@@ -16,7 +16,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.es.dao.smtp.MailSenderPropsDao;
-import com.es.vo.comm.MailSenderVo;
+import com.es.vo.comm.MailSenderPropsVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-core-config.xml"})
@@ -34,11 +34,11 @@ public class MailSenderPropsTest {
 	@Test
 	public void testMailSenderProps() {
 		try {
-			List<MailSenderVo> list = selectAll();
+			List<MailSenderPropsVo> list = selectAll();
 			assertTrue(list.size()>0);
-			MailSenderVo vo = selectByPrimaryKey(list.get(0).getRowId());
+			MailSenderPropsVo vo = selectByPrimaryKey(list.get(0).getRowId());
 			assertNotNull(vo);
-			MailSenderVo vo2 = insert(vo.getRowId());
+			MailSenderPropsVo vo2 = insert(vo.getRowId());
 			assertNotNull(vo2);
 			vo.setRowId(vo2.getRowId());
 			vo.setUpdtTime(vo2.getUpdtTime());
@@ -56,22 +56,22 @@ public class MailSenderPropsTest {
 		}
 	}
 	
-	private List<MailSenderVo> selectAll() {
-		List<MailSenderVo> mailSenderPropses = mailSenderPropsDao.getAll();
-		for (Iterator<MailSenderVo> it=mailSenderPropses.iterator(); it.hasNext();) {
-			MailSenderVo mailSenderVo = it.next();
+	private List<MailSenderPropsVo> selectAll() {
+		List<MailSenderPropsVo> mailSenderPropses = mailSenderPropsDao.getAll();
+		for (Iterator<MailSenderPropsVo> it=mailSenderPropses.iterator(); it.hasNext();) {
+			MailSenderPropsVo mailSenderVo = it.next();
 			System.out.println("MailSenderPropsDao - selectAll: "+LF+mailSenderVo);
 		}
 		return mailSenderPropses;
 	}
 	
-	public MailSenderVo selectByPrimaryKey(int rowId) {
-		MailSenderVo vo = mailSenderPropsDao.getByPrimaryKey(rowId);
+	public MailSenderPropsVo selectByPrimaryKey(int rowId) {
+		MailSenderPropsVo vo = mailSenderPropsDao.getByPrimaryKey(rowId);
 		System.out.println("MailSenderPropsDao - selectByPrimaryKey: "+LF+vo);
 		return vo;
 	}
 	
-	private int update(MailSenderVo mailSenderVo) {
+	private int update(MailSenderPropsVo mailSenderVo) {
 		if ("Yes".equalsIgnoreCase(mailSenderVo.getUseTestAddr())) {
 			mailSenderVo.setUseTestAddr("yes");
 		}
@@ -85,8 +85,8 @@ public class MailSenderPropsTest {
 		System.out.println("MailSenderPropsDao - deleteByPrimaryKey: Rows Deleted: "+rowsDeleted);
 		return rowsDeleted;
 	}
-	private MailSenderVo insert(int rowId) {
-		MailSenderVo vo = mailSenderPropsDao.getByPrimaryKey(rowId);
+	private MailSenderPropsVo insert(int rowId) {
+		MailSenderPropsVo vo = mailSenderPropsDao.getByPrimaryKey(rowId);
 		if (vo != null) {
 			vo.setInternalLoopback(vo.getInternalLoopback() + "_test");
 			int rows = mailSenderPropsDao.insert(vo);

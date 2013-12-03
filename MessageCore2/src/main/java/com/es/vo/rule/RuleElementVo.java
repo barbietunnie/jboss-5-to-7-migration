@@ -3,10 +3,10 @@ package com.es.vo.rule;
 import java.io.Serializable;
 
 import com.es.data.constant.CodeType;
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
 
-public class RuleElementVo extends BaseVo implements Serializable {
+public class RuleElementVo extends BaseVoWithRowId implements Serializable {
 	
 	private static final long serialVersionUID = -1717399300313450033L;
 	private String ruleName = "";

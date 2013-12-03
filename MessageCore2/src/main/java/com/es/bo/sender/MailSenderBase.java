@@ -26,7 +26,7 @@ import com.es.dao.address.EmailAddressDao;
 import com.es.dao.inbox.MsgInboxDao;
 import com.es.dao.inbox.MsgStreamDao;
 import com.es.dao.outbox.DeliveryStatusDao;
-import com.es.dao.sender.SenderDao;
+import com.es.dao.sender.SenderDataDao;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
@@ -42,7 +42,7 @@ import com.es.msgbean.MessageBeanUtil;
 import com.es.msgbean.MessageContext;
 import com.es.msgbean.MsgHeader;
 import com.es.vo.address.EmailAddressVo;
-import com.es.vo.comm.SenderVo;
+import com.es.vo.comm.SenderDataVo;
 import com.es.vo.inbox.MsgInboxVo;
 import com.es.vo.outbox.MsgStreamVo;
 
@@ -57,7 +57,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
 	protected boolean debugSession = false;
-	protected SenderVo senderVo = null;
+	protected SenderDataVo senderVo = null;
 
 	@Autowired
 	protected MsgInboxBo msgInboxBo;
@@ -72,7 +72,7 @@ public abstract class MailSenderBase implements java.io.Serializable {
 	@Autowired
 	protected MsgStreamDao msgStreamDao;
 	@Autowired
-	protected SenderDao senderDao;
+	protected SenderDataDao senderDao;
 
 	//private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	protected static final String LF = System.getProperty("line.separator", "\n");
@@ -369,8 +369,9 @@ public abstract class MailSenderBase implements java.io.Serializable {
 	 */
 	protected void saveMsgStream(javax.mail.Message msg, MsgInboxVo msgInboxVo) throws MessagingException,
 			IOException {
-		if (isDebugEnabled)
-			logger.debug("saveMsgStream() - msgId: " + msgInboxVo.getRowId());
+		if (isDebugEnabled) {
+			logger.debug("saveMsgStream() - msgId: " + msgInboxVo.getMsgId());
+		}
 		MsgStreamVo msgStreamVo = new MsgStreamVo();
 		msgStreamVo.setMsgId(msgInboxVo.getMsgId());
 		Address[] fromAddrs = msg.getFrom();

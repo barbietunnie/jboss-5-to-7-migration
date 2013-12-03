@@ -5,11 +5,11 @@ import org.springframework.dao.DataAccessException;
 
 import com.es.core.util.SpringUtil;
 import com.es.dao.user.SessionUploadDao;
-import com.es.dao.user.UserDao;
+import com.es.dao.user.UserDataDao;
 import com.es.data.constant.Constants;
 import com.es.data.constant.StatusId;
 import com.es.vo.comm.SessionUploadVo;
-import com.es.vo.comm.UserVo;
+import com.es.vo.comm.UserDataVo;
 
 public class UserTable extends AbstractTableBase {
 	
@@ -106,8 +106,8 @@ public class UserTable extends AbstractTableBase {
 	}
 	
 	private void loadUserData() {
-		UserDao service = SpringUtil.getAppContext().getBean(UserDao.class);
-		UserVo data = new UserVo();
+		UserDataDao service = SpringUtil.getAppContext().getBean(UserDataDao.class);
+		UserDataVo data = new UserDataVo();
 		data.setSenderId(Constants.DEFAULT_SENDER_ID);
 		data.setUserId("admin");
 		data.setPassword("admin");
@@ -119,7 +119,7 @@ public class UserTable extends AbstractTableBase {
 		data.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(data);
 
-		data = new UserVo();
+		data = new UserDataVo();
 		data.setSenderId(Constants.DEFAULT_SENDER_ID);
 		data.setUserId(getProperty("user.id.1"));
 		data.setPassword(getProperty("user.password.1"));

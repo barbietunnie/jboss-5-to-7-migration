@@ -3,22 +3,15 @@ package com.es.vo.address;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.es.vo.comm.BaseVo;
+import com.es.vo.comm.BaseVoWithRowId;
 
-public class UnsubCommentVo extends BaseVo implements Serializable {
+public class UnsubCommentVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -8214632550517452561L;
-	private int rowId = -1;
 	private long emailAddrId = -1;
 	private String listId = null;
 	private String comments = "";
 	private Timestamp addTime = null;
 	
-	public int getRowId() {
-		return rowId;
-	}
-	public void setRowId(int rowId) {
-		this.rowId = rowId;
-	}
 	public long getEmailAddrId() {
 		return emailAddrId;
 	}
