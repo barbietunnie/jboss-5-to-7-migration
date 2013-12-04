@@ -7,6 +7,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -168,6 +169,15 @@ public class DeliveryStatusDao {
 		
 		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsInserted;
+	}
+	
+	public synchronized int upsert(DeliveryStatusVo deliveryStatusVo) {
+		try {
+			return insert(deliveryStatusVo);
+		}
+		catch (DataIntegrityViolationException e) {
+			return update(deliveryStatusVo);
+		}
 	}
 	
 	protected String getRowIdSql() {

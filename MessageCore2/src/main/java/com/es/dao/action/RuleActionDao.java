@@ -61,9 +61,9 @@ public class RuleActionDao {
 	}
 	
 	public List<RuleActionVo> getByBestMatch(String ruleName, Timestamp startTime, String senderId) {
-		if (startTime == null)
-			startTime = new Timestamp(new java.util.Date().getTime());
-		
+		if (startTime == null) {
+			startTime = new Timestamp(System.currentTimeMillis());
+		}
 		String sql = 
 			"select a.*, b.ProcessBeanId, b.ProcessClassName, b.DataType " +
 			" from Rule_Action a, Rule_Action_Detail b " +
@@ -136,17 +136,18 @@ public class RuleActionDao {
 			sql += " and senderId=? ";
 			keys.add(senderId);
 		}
-		
-		List<RuleActionVo> list = getJdbcTemplate().query(sql, keys.toArray(), 
-				new BeanPropertyRowMapper<RuleActionVo>(RuleActionVo.class));
-		if (list.size()>0)
-			return list.get(0);
-		else
+		try {
+			RuleActionVo vo = getJdbcTemplate().queryForObject(sql, keys.toArray(), 
+					new BeanPropertyRowMapper<RuleActionVo>(RuleActionVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public RuleActionVo getMostCurrent(String ruleName, int actionSeq, String senderId) {
-		Timestamp startTime = new Timestamp(new java.util.Date().getTime());
+		Timestamp startTime = new Timestamp(System.currentTimeMillis());
 		
 		String sql = 
 			"select a.*, b.ProcessBeanId, b.ProcessClassName, b.DataType " +

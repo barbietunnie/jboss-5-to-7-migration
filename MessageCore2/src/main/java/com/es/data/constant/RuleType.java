@@ -22,7 +22,7 @@ public enum RuleType {
 				return type;
 			}
 		}
-		throw new IllegalArgumentException("No enum const value jpa.constant.RuleType." + value);
+		throw new IllegalArgumentException("No enum const value constant.RuleType." + value);
 	}
 } 
 

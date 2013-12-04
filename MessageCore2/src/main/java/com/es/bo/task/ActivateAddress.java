@@ -114,6 +114,7 @@ public class ActivateAddress extends TaskBaseAdaptor {
 					emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
 					emailAddrVo.setStatusChangeTime(updtTime);
 					emailAddrDao.update(emailAddrVo);
+					ctx.getEmailAddrIdList().add(emailAddrVo.getEmailAddrId());
 				}
 				else { // email address already active, reset bounce count
 					emailAddrVo.setBounceCount(0); // reset bounce count

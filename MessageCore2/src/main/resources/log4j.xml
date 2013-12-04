@@ -5,7 +5,7 @@
 
    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
       <param name="Target" value="System.out"/>
-      <param name="Threshold" value="DEBUG"/>
+      <param name="Threshold" value="debug"/>
 
       <layout class="org.apache.log4j.PatternLayout">
          <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
@@ -14,7 +14,7 @@
 
    <appender name="FILE" class="org.apache.log4j.FileAppender">
       <param name="File" value="./logs/msgcore.log"/>
-      <param name="Threshold" value="DEBUG"/>
+      <param name="Threshold" value="debug"/>
       <param name="Append" value="false"/>
 
       <layout class="org.apache.log4j.PatternLayout">
@@ -22,20 +22,54 @@
       </layout>
    </appender>
 
+   <appender name="DUPLICATE" class="org.apache.log4j.RollingFileAppender">
+      <param name="File" value="./logs/dupcheck.log"/>
+      <param name="MaxFileSize" value="500KB" />
+      <param name="MaxBackupIndex" value="1"/>
+      <param name="Threshold" value="debug"/>
+      <param name="Append" value="true"/>
+
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
+      </layout>
+   </appender>
+
+   <appender name="RFCINFO" class="org.apache.log4j.RollingFileAppender">
+      <param name="File" value="./logs/rfcinfo.log"/>
+      <param name="MaxFileSize" value="1MB" />
+      <param name="MaxBackupIndex" value="1"/>
+      <param name="Threshold" value="debug"/>
+      <param name="Append" value="true"/>
+
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
+      </layout>
+   </appender>
+
    <logger name="org.springframework">
-	  <level value="INFO"/> 
+	  <level value="info"/> 
    </logger>
 
    <logger name="org.apache">
-	  <level value="INFO"/> 
+	  <level value="info"/> 
    </logger>
 
    <logger name="com.es">
-	  <level value="DEBUG"/>
+	  <level value="debug"/>
+   </logger>
+
+   <logger name="message.report.duplicate" additivity="false">
+	  <level value="debug"/>
+	   <appender-ref ref="DUPLICATE"/>
+   </logger>
+
+   <logger name="message.report.rfc" additivity="false">
+	  <level value="debug"/>
+	   <appender-ref ref="RFCINFO"/>
    </logger>
 
    <root>
-      <level value="DEBUG"/>
+      <priority value ="debug" /> 
       <appender-ref ref="CONSOLE"/>
       <appender-ref ref="FILE"/>
    </root>

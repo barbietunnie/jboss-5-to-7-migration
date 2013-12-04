@@ -3,7 +3,6 @@ package com.es.bo.reader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 
 import javax.mail.Flags;
 import javax.mail.Message;
@@ -43,7 +42,7 @@ public class MailProcessBo implements java.io.Serializable {
 	private static final long serialVersionUID = -2192214375199179774L;
 	static final Logger logger = Logger.getLogger(MailProcessBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
-	static Logger duplicateReport = Logger.getLogger("jpa.message.report.duplicate");
+	static Logger duplicateReport = Logger.getLogger("message.report.duplicate");
 
 	//volatile boolean keepRunning = true;
 	private final int MAX_INBOUND_BODY_SIZE = 150 * 1024; // 150K
@@ -83,7 +82,7 @@ public class MailProcessBo implements java.io.Serializable {
 						&& !msgs[i].isSet(Flags.Flag.DELETED)) {
 					long start = System.currentTimeMillis();
 					logger.info("Processing message number[" + (i+1) +"]...");
-					processPart(msgs[i], req.getRowIds());
+					processPart(msgs[i], req);
 					logger.info("Completed processing of message number["
 							+ (i + 1) + "], time taken: "
 							+ (System.currentTimeMillis() - start) + " ms");
@@ -108,7 +107,7 @@ public class MailProcessBo implements java.io.Serializable {
 	 * @throws TemplateException 
 	 * @throws DataValidationException 
 	 */
-	void processPart(Part p, List<Long> savedRowIds) throws IOException, MessagingException, 
+	void processPart(Part p, MessageContext ctx) throws IOException, MessagingException, 
 			DataValidationException, TemplateException {
 		long start_tms = System.currentTimeMillis();
 		
@@ -203,9 +202,10 @@ public class MailProcessBo implements java.io.Serializable {
 			else { // parse the message for RuleName
 				msgBean.setRuleName(msgParserBo.parse(msgBean));
 				/* saveMessage() is handled by TackschedulerBo */
-				MessageContext ctx = new MessageContext(msgBean);
-				taskBo.scheduleTasks(ctx);
-				savedRowIds.addAll(ctx.getRowIds());
+				MessageContext task_ctx = new MessageContext(msgBean);
+				taskBo.scheduleTasks(task_ctx);
+				ctx.getMsgIdList().addAll(task_ctx.getMsgIdList());
+				ctx.getEmailAddrIdList().addAll(task_ctx.getEmailAddrIdList());
 			}
 		}
 		logger.info("Number of attachments: " + msgBean.getAttachCount());

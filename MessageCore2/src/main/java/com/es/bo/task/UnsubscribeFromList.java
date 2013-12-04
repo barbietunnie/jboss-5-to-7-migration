@@ -74,7 +74,7 @@ public class UnsubscribeFromList extends TaskBaseAdaptor {
 				messageBean.setMailingListId(mlist.getListId());
 				int rows = subService.unsubscribe(emailAddrVo.getEmailAddr(), mlist.getListId());
 				if (rows > 0) {
-					ctx.getRowIds().add(emailAddrVo.getEmailAddrId());
+					ctx.getEmailAddrIdList().add(emailAddrVo.getEmailAddrId());
 				}
 				logger.info(addr + " unsubscribed from: " + mlist.getListId());
 				addrsUpdated++;

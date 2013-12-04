@@ -47,9 +47,11 @@ public class OpenMessage extends TaskBaseAdaptor {
 			if (!MsgStatusCode.OPENED.getValue().equals(msgInboxVo.getStatusId())) {
 				msgInboxVo.setStatusId(MsgStatusCode.OPENED.getValue());
 				msgInboxDao.update(msgInboxVo);
+				ctx.getMsgIdList().add(msgId);
 			}
-			if (isDebugEnabled)
+			if (isDebugEnabled) {
 				logger.debug("Message with Row_Id of (" + msgInboxVo.getMsgId() + ") is Opened.");
+			}
 		}
 		else {
 			logger.error("Message record not found by row_id (" + messageBean.getMsgId() + ").");

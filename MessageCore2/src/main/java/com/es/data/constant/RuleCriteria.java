@@ -27,7 +27,7 @@ public enum RuleCriteria {
 				return type;
 			}
 		}
-		throw new IllegalArgumentException("No enum const value jpa.constant.RuleCriteria." + value);
+		throw new IllegalArgumentException("No enum const value constant.RuleCriteria." + value);
 	}
 }
 

@@ -25,7 +25,7 @@ public class CloseMessage extends TaskBaseAdaptor {
 
 	/**
 	 * Close the message by MsgId.
-	 * @return a Integer representing the msgId closed.
+	 * @return a Long representing the msgId closed.
 	 */
 	public Long process(MessageContext ctx) throws DataValidationException {
 		if (isDebugEnabled) {
@@ -46,6 +46,7 @@ public class CloseMessage extends TaskBaseAdaptor {
 			msgId = msgInboxVo.getMsgId();
 			msgInboxVo.setStatusId(MsgStatusCode.CLOSED.getValue());
 			inboxService.update(msgInboxVo);
+			ctx.getMsgIdList().add(msgId);
 			if (isDebugEnabled) {
 				logger.debug("Message with Msg_Id of (" + msgInboxVo.getMsgId() + ") is Closed.");
 			}

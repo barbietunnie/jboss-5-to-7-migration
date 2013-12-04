@@ -136,9 +136,9 @@ public abstract class MailSenderBase implements java.io.Serializable {
 			msgBean.setEmBedEmailId(Boolean.valueOf(senderVo.getIsEmbedEmailId()));
 		}
 		// save the message to the database
-		long rowId = msgInboxBo.saveMessage(msgBean);
-		ctx.getRowIds().add(rowId);
-		MsgInboxVo minbox = msgInboxDao.getByPrimaryKey(rowId);
+		long msgId = msgInboxBo.saveMessage(msgBean);
+		ctx.getMsgIdList().add(msgId);
+		MsgInboxVo minbox = msgInboxDao.getByPrimaryKey(msgId);
 		// check if VERP is enabled
 		if (senderVo.getIsVerpAddressEnabled()) {
 			// set return path with VERP, msgBean.msgId must be valued.

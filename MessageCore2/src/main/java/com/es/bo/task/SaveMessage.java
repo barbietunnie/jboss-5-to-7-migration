@@ -33,10 +33,10 @@ public class SaveMessage extends TaskBaseAdaptor {
 			throw new DataValidationException("input MessageBean is null");
 		}
 		
-		long rowId = msgInboxBo.saveMessage(ctx.getMessageBean());
-		ctx.getRowIds().add(rowId);
+		long msgId = msgInboxBo.saveMessage(ctx.getMessageBean());
+		ctx.getMsgIdList().add(msgId);
 		
-		return rowId;
+		return msgId;
 	}
 	
 }

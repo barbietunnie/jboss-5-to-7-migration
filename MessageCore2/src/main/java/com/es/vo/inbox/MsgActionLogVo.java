@@ -8,11 +8,10 @@ import com.es.vo.comm.BaseVo;
 public class MsgActionLogVo extends BaseVo implements Serializable {
 	private static final long serialVersionUID = -2253515007664999230L;
 	private long msgId = -1;
-	private Long msgRefId = null;
-	private long leadMsgId = -1;
+	private int ActionSeq = -1;
+	private Timestamp addTime;
 	private String actionBo = "";
 	private String parameters = null;
-	private Timestamp addTime;
 	
 	private MsgInboxVo msgInboxVo = null;
 	
@@ -22,29 +21,23 @@ public class MsgActionLogVo extends BaseVo implements Serializable {
 	public void setMsgId(long msgId) {
 		this.msgId = msgId;
 	}
-	public Long getMsgRefId() {
-		return msgRefId;
+	public Timestamp getAddTime() {
+		return addTime;
 	}
-	public void setMsgRefId(Long msgRefId) {
-		this.msgRefId = msgRefId;
+	public void setAddTime(Timestamp addTime) {
+		this.addTime = addTime;
 	}
-	public long getLeadMsgId() {
-		return leadMsgId;
+	public int getActionSeq() {
+		return ActionSeq;
 	}
-	public void setLeadMsgId(long leadMsgId) {
-		this.leadMsgId = leadMsgId;
+	public void setActionSeq(int actionSeq) {
+		ActionSeq = actionSeq;
 	}
 	public String getActionBo() {
 		return actionBo;
 	}
 	public void setActionBo(String actionId) {
 		this.actionBo = actionId;
-	}
-	public Timestamp getAddTime() {
-		return addTime;
-	}
-	public void setAddTime(Timestamp addTime) {
-		this.addTime = addTime;
 	}
 	public MsgInboxVo getMsgInboxVo() {
 		return msgInboxVo;

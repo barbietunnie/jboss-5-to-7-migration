@@ -41,10 +41,10 @@ public class SuspendAddress extends TaskBaseAdaptor {
 	 * Suspend email addresses. The column "DataTypeValues" from MsgAction table
 	 * contains address types (FROM, TO, etc) that to be suspended.
 	 * 
-	 * @return a Integer value representing the number of addresses that have been
+	 * @return a Long value representing the number of addresses that have been
 	 *         suspended.
 	 */
-	public Integer process(MessageContext ctx) throws DataValidationException {
+	public Long process(MessageContext ctx) throws DataValidationException {
 		if (isDebugEnabled) {
 			logger.debug("Entering process() method...");
 		}
@@ -120,6 +120,7 @@ public class SuspendAddress extends TaskBaseAdaptor {
 					emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
 					emailAddrVo.setStatusChangeTime(updtTime);
 					emailAddrDao.update(emailAddrVo);
+					ctx.getEmailAddrIdList().add(emailAddrVo.getEmailAddrId());
 					addrsSuspended++;
 				}
 			}
@@ -129,7 +130,7 @@ public class SuspendAddress extends TaskBaseAdaptor {
 			// -- this has been taken care of by MessageParser
 			//addrsSuspended = suspendByMsgRefId(messageBean, updtTime);
 		}
-		return Integer.valueOf(addrsSuspended);
+		return Long.valueOf(addrsSuspended);
 	}
 
 	int suspendByMsgRefId(MessageBean messageBean, Timestamp updtTime) {
