@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.es.bo.render.RenderUtil;
 import com.es.bo.sender.EmailRenderBo;
-import com.es.bo.sender.EmailRenderVo;
+import com.es.bo.sender.EmailRenderDo;
 import com.es.bo.sender.RenderBo;
 import com.es.dao.address.EmailTemplateDao;
 import com.es.dao.sender.SenderDataDao;
@@ -77,7 +77,7 @@ public class EmailRenderBoTest {
 			
 			Map<String, String> vars = new HashMap<String, String>();
 			vars.put("BroadcastMsgId","3");
-			EmailRenderVo renderVo = service.renderEmailTemplate("jsmith@test.com",vars, "SampleNewsletter1");
+			EmailRenderDo renderVo = service.renderEmailTemplate("jsmith@test.com",vars, "SampleNewsletter1");
 			logger.info(renderVo);
 			assertTrue(renderVo.getBody().indexOf("${CurrentDate}")<0);
 			assertTrue(renderVo.getBody().indexOf(sdf.format(new java.util.Date()))>0);

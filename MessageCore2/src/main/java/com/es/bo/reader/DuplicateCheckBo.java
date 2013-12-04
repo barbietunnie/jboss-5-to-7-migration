@@ -22,9 +22,9 @@ import com.es.core.util.SpringUtil;
  * called with its SMTP message-id, and the return should be evaluated to see if
  * it's a duplicate message.
  */
-@Component("duplicateCheck")
-public class DuplicateCheck {
-	static final Logger logger = Logger.getLogger(DuplicateCheck.class);
+@Component("duplicateCheckBo")
+public class DuplicateCheckBo {
+	static final Logger logger = Logger.getLogger(DuplicateCheckBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
 	@Autowired
@@ -54,7 +54,7 @@ public class DuplicateCheck {
 	*/
 	
 	public static void main(String[] args) {
-		DuplicateCheck dCheck = SpringUtil.getAppContext().getBean(DuplicateCheck.class);
+		DuplicateCheckBo dCheck = SpringUtil.getAppContext().getBean(DuplicateCheckBo.class);
 		try {
 			String msgId = "1223344556788990";
 			boolean isDuplicate = dCheck.isDuplicate(msgId);
@@ -126,7 +126,7 @@ public class DuplicateCheck {
 						+ ",add_time timestamp not null"
 						+ ")";
 					getJdbcTemplate().update(sql_create);
-					logger.info("DuplicateCheck: table MSGID_DUPCHK and its index created.");
+					logger.info("DuplicateCheckBo: table MSGID_DUPCHK and its index created.");
 					return isDuplicate(smtpMsgId);
 				}
 				catch (Exception se) {

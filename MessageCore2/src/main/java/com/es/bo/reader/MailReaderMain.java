@@ -21,7 +21,7 @@ public class MailReaderMain {
 		for (MailBoxVo mbox : mboxes) {
 			try {
 				//mbox.setFromTimer(true);
-				MailReaderBo reader = new MailReaderBo(mbox);
+				MailReaderRunner reader = new MailReaderRunner(mbox);
 				Thread thread = new Thread(reader, mbox.getUserId() + "@" + mbox.getHostName());
 				threads.add(thread);
 				try {

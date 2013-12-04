@@ -46,9 +46,9 @@ import com.es.vo.comm.MailBoxVo;
  * 	. set DELETE flag for the message and issue folder.close()
  * </pre>
  */
-public class MailReaderBo implements Serializable, Runnable, ConnectionListener, StoreListener {
+public class MailReaderRunner implements Serializable, Runnable, ConnectionListener, StoreListener {
 	private static final long serialVersionUID = -9061869821061961065L;
-	private static final Logger logger = Logger.getLogger(MailReaderBo.class);
+	private static final Logger logger = Logger.getLogger(MailReaderRunner.class);
 	protected static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	protected final MailBoxVo mboxVo;
@@ -81,7 +81,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 		try {
 			MailBoxVo vo = mailBoxDao.getByPrimaryKey("testto", "localhost");
 			vo.setFromTimer(true);
-			MailReaderBo reader = new MailReaderBo(vo);
+			MailReaderRunner reader = new MailReaderRunner(vo);
 			//Thread thread = new Thread(reader);
 			try {
 				//thread.start();
@@ -98,13 +98,13 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	}
 
 	/**
-	 * create a MailReaderBo instance
+	 * create a MailReaderRunner instance
 	 * 
 	 * @param mboxVo -
 	 *            mailbox properties
 	 * @throws MessagingException
 	 */
-	public MailReaderBo(MailBoxVo mailBoxVo) {
+	public MailReaderRunner(MailBoxVo mailBoxVo) {
 		this.mboxVo = mailBoxVo;
 		logger.info("in Constructor - MailBox Properties:" + LF + StringUtil.prettyPrint(mboxVo));
 		MESSAGE_COUNT = mboxVo.getMessageCount();
@@ -224,7 +224,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	}
 	
 	/**
-	 * run the MailReaderBo, invoke Application plug-in to process e-mails.
+	 * run the MailReaderRunner, invoke Application plug-in to process e-mails.
 	 * 
 	 * @param isFromTimer -
 	 *            true if called from EJBTimer
@@ -288,7 +288,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 			}
 		}
 		if (isDebugEnabled)
-			logger.debug("MailReaderBo ended");
+			logger.debug("MailReaderRunner ended");
 		
 		start_idling = System.currentTimeMillis();
 	} // end of run()
@@ -504,8 +504,8 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	}
 	
 	/**
-	 * process e-mails using MailProcessorBo, and the results will be sent to
-	 * ruleEngineInput queue by the MailProcessorBo.
+	 * process e-mails using MailProcessBo, and the results will be sent to
+	 * ruleEngineInput queue by the MailProcessBo.
 	 * 
 	 * @param msgs -
 	 *            messages to be processed.
@@ -520,7 +520,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 		if (msgs == null || msgs.length == 0) return;
 		SpringUtil.beginTransaction();
 		try {
-			MailProcessorBo processor = (MailProcessorBo) SpringUtil.getAppContext().getBean("mailProcessorBo");
+			MailProcessBo processor = (MailProcessBo) SpringUtil.getAppContext().getBean("mailProcessorBo");
 			MessageContext ctx = new MessageContext(msgs, mboxVo);
 			processor.process(ctx);
 			SpringUtil.commitTransaction();
@@ -698,7 +698,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	public List<String> getStatus() {
 		List<String> v = new ArrayList<String>();
 		if (mboxVo != null) {
-			v.add("MailReaderBo: user=" + mboxVo.getUserId() + ", host="
+			v.add("MailReaderRunner: user=" + mboxVo.getUserId() + ", host="
 					+ mboxVo.getHostName() + ", #Threads=" + MAX_SENDERS);
 			v.add(mboxVo.toString());
 		}

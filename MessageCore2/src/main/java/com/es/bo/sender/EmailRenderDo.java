@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.es.vo.address.EmailTemplateVo;
 import com.es.vo.address.MailingListVo;
 
-public class EmailRenderVo implements Serializable {
+public class EmailRenderDo implements Serializable {
 	private static final long serialVersionUID = 7218586114850127817L;
 	private String subject = null;
 	private String body = null;

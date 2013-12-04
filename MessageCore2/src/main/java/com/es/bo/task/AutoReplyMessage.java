@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.es.bo.sender.EmailRenderBo;
-import com.es.bo.sender.EmailRenderVo;
+import com.es.bo.sender.EmailRenderDo;
 import com.es.bo.sender.MailSenderBo;
 import com.es.bo.smtp.SmtpException;
 import com.es.core.util.HtmlConverter;
@@ -101,7 +101,7 @@ public class AutoReplyMessage extends TaskBaseAdaptor {
 			// select the address from database (or insert if it does not exist)
 			EmailAddressVo vo = emailAddrDao.findSertAddress(_from.toString());
 			Map<String, String> variables = null;
-			EmailRenderVo renderVo = null;
+			EmailRenderDo renderVo = null;
 			try {
 				// Mailing List id may have been provided by upstream process (subscribe)
 				renderVo = emailRenderBo.renderEmailTemplate(vo.getEmailAddr(), variables, ctx.getTaskArguments(),

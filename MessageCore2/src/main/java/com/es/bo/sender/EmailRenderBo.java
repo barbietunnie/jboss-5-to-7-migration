@@ -25,8 +25,6 @@ import com.es.dao.address.EmailAddressDao;
 import com.es.dao.address.EmailTemplateDao;
 import com.es.dao.address.EmailVariableDao;
 import com.es.dao.address.MailingListDao;
-import com.es.dao.sender.SenderDataDao;
-import com.es.dao.template.TemplateDataDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.EmailAddressType;
 import com.es.data.constant.VariableType;
@@ -56,10 +54,6 @@ public class EmailRenderBo implements java.io.Serializable {
 	private MailingListDao mailingListDao;
 	@Autowired
 	private EmailAddressDao emailAddrDao;
-	@Autowired
-	private TemplateDataDao templateDataDao;
-	@Autowired
-	private SenderDataDao senderService;
 	
 	/**
 	 * This method first retrieves variable names from the input text and save
@@ -183,12 +177,12 @@ public class EmailRenderBo implements java.io.Serializable {
 	 *            list of variables with rendered values
 	 * @param templateId -
 	 *            template id
-	 * @return A EmailRenderVo instance
+	 * @return A EmailRenderDo instance
 	 * @throws DataValidationException
 	 * @throws TemplateNotFoundException
 	 * @throws TemplateException 
 	 */
-	public EmailRenderVo renderEmailTemplate(String toAddr, Map<String, String> variables,
+	public EmailRenderDo renderEmailTemplate(String toAddr, Map<String, String> variables,
 			String templateId) throws DataValidationException, TemplateNotFoundException,
 			TemplateException {
 		return renderEmailTemplate(toAddr, variables, templateId, null);
@@ -210,12 +204,12 @@ public class EmailRenderBo implements java.io.Serializable {
 	 *            template id
 	 * @param listIdOverride -
 	 *            use this list address as FROM address if provided.
-	 * @return A EmailRenderVo instance
+	 * @return A EmailRenderDo instance
 	 * @throws DataValidationException
 	 * @throws TemplateNotFoundException
 	 * @throws TemplateException 
 	 */
-	public EmailRenderVo renderEmailTemplate(String toAddr, Map<String, String> variables,
+	public EmailRenderDo renderEmailTemplate(String toAddr, Map<String, String> variables,
 			String templateId, String listIdOverride) throws DataValidationException,
 			TemplateNotFoundException, TemplateException {
 		if (templateId == null) {
@@ -243,7 +237,7 @@ public class EmailRenderBo implements java.io.Serializable {
 						+ tmpltVo.getListId());
 			}
 		}
-		EmailRenderVo renderVo = new EmailRenderVo();
+		EmailRenderDo renderVo = new EmailRenderDo();
 		renderVo.setToAddr(toAddr);
 		renderVo.setSenderId(listVo.getSenderId());
 		renderVo.setEmailTemplateVo(tmpltVo);
@@ -274,7 +268,7 @@ public class EmailRenderBo implements java.io.Serializable {
 			}
 		}
 		// include mailing list variables
-		vars.putAll(MailingListUtil.renderListVariables(listVo, toAddr, addrVo.getEmailAddrId()));
+		vars.putAll(MailingListUtil.buildRenderVariables(listVo, toAddr, addrVo.getEmailAddrId()));
 		try {
 			// now render the templates
 			String senderId = listVo.getSenderId();
@@ -362,11 +356,11 @@ public class EmailRenderBo implements java.io.Serializable {
 	 *            message body
 	 * @param listId -
 	 *            mailing list id this email associated to
-	 * @return A EmailRenderVo instance
+	 * @return A EmailRenderDo instance
 	 * @throws DataValidationException
 	 * @throws TemplateException 
 	 */
-	public EmailRenderVo renderEmailText(String toAddr, Map<String, String> variables,
+	public EmailRenderDo renderEmailText(String toAddr, Map<String, String> variables,
 			String subj, String body, String listId) throws DataValidationException,
 			TemplateException {
 		return renderEmailText(toAddr, variables, subj, body, listId, null);
@@ -396,11 +390,11 @@ public class EmailRenderBo implements java.io.Serializable {
 	 *            mailing list id this email associated to
 	 * @param variableNames -
 	 *            list of variable names retrieved from subject and body
-	 * @return A EmailRenderVo instance
+	 * @return A EmailRenderDo instance
 	 * @throws DataValidationException
 	 * @throws TemplateException 
 	 */
-	public EmailRenderVo renderEmailText(String toAddr, Map<String, String> variables,
+	public EmailRenderDo renderEmailText(String toAddr, Map<String, String> variables,
 			String subj, String body, String listId, List<String> variableNames)
 			throws DataValidationException, TemplateException {
 		// first check input TO address
@@ -415,7 +409,7 @@ public class EmailRenderBo implements java.io.Serializable {
 			_from = dispName + "<" + _from + ">";
 		}
 		validateFromAddress(_from); // us list address as FROM
-		EmailRenderVo renderVo = new EmailRenderVo();
+		EmailRenderDo renderVo = new EmailRenderDo();
 		renderVo.setToAddr(toAddr);
 		renderVo.setFromAddr(_from);
 		renderVo.setSenderId(listVo.getSenderId());
@@ -452,7 +446,7 @@ public class EmailRenderBo implements java.io.Serializable {
 			}
 		}
 		// include mailing list variables
-		vars.putAll(MailingListUtil.renderListVariables(listVo, addrVo.getEmailAddr(), addrVo.getEmailAddrId()));
+		vars.putAll(MailingListUtil.buildRenderVariables(listVo, addrVo.getEmailAddr(), addrVo.getEmailAddrId()));
 		try {
 			String bodyText = renderBo.renderTemplateText(body, listVo.getSenderId(), vars);
 			String subjText = renderBo.renderTemplateText(subj, listVo.getSenderId(), vars);
@@ -465,6 +459,5 @@ public class EmailRenderBo implements java.io.Serializable {
 		}
 		return renderVo;
 	}
-	
 
 }

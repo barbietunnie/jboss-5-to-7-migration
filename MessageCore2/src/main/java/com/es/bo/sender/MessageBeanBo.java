@@ -17,9 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.es.core.util.HtmlUtil;
 import com.es.dao.address.EmailAddressDao;
-import com.es.dao.rule.RuleLogicDao;
-import com.es.dao.sender.SenderDataDao;
-import com.es.dao.subscriber.SubscriberDao;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.EmailAddressType;
@@ -45,13 +42,7 @@ public class MessageBeanBo implements java.io.Serializable {
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
 	@Autowired
-	private SenderDataDao senderDao;
-	@Autowired
-	private SubscriberDao subrDao;
-	@Autowired
-	private RuleLogicDao logicDao;
-	@Autowired
-	private EmailAddressDao emailDao;
+	private EmailAddressDao emailAddrDao;
 	
 	/**
 	 * create a MessageBean object from a MsgInboxVo object.
@@ -62,8 +53,9 @@ public class MessageBeanBo implements java.io.Serializable {
 	 * @throws DataValidationException
 	 */
 	public MessageBean createMessageBean(MsgInboxVo msgVo) throws DataValidationException {
-		if (isDebugEnabled)
+		if (isDebugEnabled) {
 			logger.debug("Entering createMessageBean() method...");
+		}
 		if (msgVo == null) {
 			throw new DataValidationException("Input msgInboxVo is null");
 		}
@@ -334,7 +326,7 @@ public class MessageBeanBo implements java.io.Serializable {
 				msgBean.setDsnText(status.getDsnText());
 				msgBean.setFinalRcpt(status.getFinalRecipient());
 				if (status.getOriginalRecipientId()!=null) {
-					EmailAddressVo origAddr = emailDao.getByAddrId(status.getOriginalRecipientId());
+					EmailAddressVo origAddr = emailAddrDao.getByAddrId(status.getOriginalRecipientId());
 					msgBean.setOrigRcpt(origAddr.getEmailAddr());
 				}
  				List<MsgHeader> headers = new ArrayList<MsgHeader>(); 
