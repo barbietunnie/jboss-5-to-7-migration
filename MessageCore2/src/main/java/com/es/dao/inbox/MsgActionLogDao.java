@@ -27,15 +27,14 @@ public class MsgActionLogDao {
 		return jdbcTemplate;
 	}
 
-	public MsgActionLogVo getByPrimaryKey(long msgId, int actionSeq, Timestamp addTime) {
+	public MsgActionLogVo getByPrimaryKey(long msgId, int actionSeq) {
 		String sql = 
 			"select * " +
 			"from " +
-				"Msg_Action_Log where msgId=? and actionSeq=? and addTime=? ";
+				"Msg_Action_Log where msgId=? and actionSeq=? ";
 		ArrayList<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		fields.add(actionSeq);
-		fields.add(addTime);
 		
 		try {
 			MsgActionLogVo vo = getJdbcTemplate().queryForObject(sql, fields.toArray(),
@@ -52,7 +51,7 @@ public class MsgActionLogDao {
 			"select * " +
 			" from " +
 				" Msg_Action_Log where msgId=? " +
-			" order by actionSeq, addTime ";
+			" order by actionSeq ";
 		Object[] parms = new Object[] {msgId};
 		List<MsgActionLogVo> list = getJdbcTemplate().query(sql, parms, 
 				new BeanPropertyRowMapper<MsgActionLogVo>(MsgActionLogVo.class));
@@ -66,27 +65,25 @@ public class MsgActionLogDao {
 		fields.add(msgActionLogsVo.getParameters());
 		fields.add(msgActionLogsVo.getMsgId());
 		fields.add(msgActionLogsVo.getActionSeq());
-		fields.add(msgActionLogsVo.getAddTime());
 		
 		String sql =
 			"update Msg_Action_Log set " +
 				"ActionBo=?, " +
 				"Parameters=? " +
 			" where " +
-				" MsgId=? and ActionSeq=? and AddTime=? ";
+				" MsgId=? and ActionSeq=? ";
 		
 		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsUpadted;
 	}
 	
-	public int deleteByPrimaryKey(long msgId, int actionSeq, Timestamp addTime) {
+	public int deleteByPrimaryKey(long msgId, int actionSeq) {
 		String sql = 
-			"delete from Msg_Action_Log where msgId=? and actionSeq=? and addTime=? ";
+			"delete from Msg_Action_Log where msgId=? and actionSeq=? ";
 		
 		ArrayList<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		fields.add(actionSeq);
-		fields.add(addTime);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;

@@ -1,8 +1,10 @@
 package com.es.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,7 +52,7 @@ public class MsgActionLogTest {
 			}
 			assertTrue(lst1.size()>0);
 			MsgActionLogVo vo1 = lst1.get(lst1.size()-1);
-			MsgActionLogVo vo0 = selectByPrimaryKey(vo1.getMsgId(), vo1.getActionSeq(), vo1.getAddTime());
+			MsgActionLogVo vo0 = selectByPrimaryKey(vo1.getMsgId(), vo1.getActionSeq());
 			assertNotNull(vo0);
 			assertTrue(vo1.equalsTo(vo0));
 			MsgActionLogVo vo2 = insert(testMsgId);
@@ -78,8 +80,8 @@ public class MsgActionLogTest {
 		return actions;
 	}
 	
-	private MsgActionLogVo selectByPrimaryKey(long msgId, int seq, Timestamp addTime) {
-		MsgActionLogVo msgHeadersVo = actionLogDao.getByPrimaryKey(msgId,seq,addTime);
+	private MsgActionLogVo selectByPrimaryKey(long msgId, int seq) {
+		MsgActionLogVo msgHeadersVo = actionLogDao.getByPrimaryKey(msgId,seq);
 		System.out.println("MsgActionLogDao - selectByPrimaryKey: "+LF+msgHeadersVo);
 		return msgHeadersVo;
 	}
@@ -92,7 +94,7 @@ public class MsgActionLogTest {
 	}
 	
 	private int deleteByPrimaryKey(MsgActionLogVo vo) {
-		int rowsDeleted = actionLogDao.deleteByPrimaryKey(vo.getMsgId(),vo.getActionSeq(), vo.getAddTime());
+		int rowsDeleted = actionLogDao.deleteByPrimaryKey(vo.getMsgId(),vo.getActionSeq());
 		System.out.println("MsgActionLogDao - deleteByPrimaryKey: Rows Deleted: "+rowsDeleted);
 		return rowsDeleted;
 	}
@@ -112,6 +114,6 @@ public class MsgActionLogTest {
 		}
 		int rows = actionLogDao.insert(msgHeadersVo);
 		System.out.println("MsgActionLogDao - insert: rows inserted "+rows);
-		return selectByPrimaryKey(msgHeadersVo.getMsgId(), msgHeadersVo.getActionSeq(), msgHeadersVo.getAddTime());
+		return selectByPrimaryKey(msgHeadersVo.getMsgId(), msgHeadersVo.getActionSeq());
 	}
 }

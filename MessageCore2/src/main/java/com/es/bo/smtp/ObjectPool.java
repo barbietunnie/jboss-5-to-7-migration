@@ -173,9 +173,10 @@ public class ObjectPool implements java.io.Serializable {
 			// Update the Hash table to show this one is taken
 			inUse.put(obj, new java.util.Date());
 			
-			if (isDebugEnabled)
+			if (isDebugEnabled) {
 				logger.debug(name + "/" + type + ": " + "Found a free pool item, pool size: "
 					+ (freeConns.size() + inUse.size()) + ", in use: " + inUse.size());
+			}
 			// Return the item
 			return obj;
 		}
@@ -193,12 +194,14 @@ public class ObjectPool implements java.io.Serializable {
 			}
 		}
 		else { // wait for next available connection
-			if (isDebugEnabled)
+			if (isDebugEnabled) {
 				logger.debug("Allocated items has reached the limit, entering wait()...");
+			}
 			try {
 				wait();
-				if (isDebugEnabled)
+				if (isDebugEnabled) {
 					logger.debug("Notified by returnItem(), exiting from the wait()...");
+				}
 			}
 			catch (InterruptedException e) {
 				logger.error("ObjectPool.getItem() - InterruptedException caught. "
@@ -238,10 +241,10 @@ public class ObjectPool implements java.io.Serializable {
 		if (!remove) {
 			freeConns.addElement(returned);
 		}
-		if (isDebugEnabled)
+		if (isDebugEnabled) {
 			logger.debug(name + "/" + type + ": " + "Returned a pool item, pool size: "
 				+ (freeConns.size() + inUse.size()) + ", in use: " + inUse.size());
-
+		}
 		// wake up the threads that are waiting for available connections
 		notifyAll();
 	}
@@ -252,8 +255,9 @@ public class ObjectPool implements java.io.Serializable {
 	 */
 	synchronized void refreshPool() throws Exception {
 		if (freeConns.size() > 0) {
-			if (isDebugEnabled)
+			if (isDebugEnabled) {
 				logger.debug("ObjectPool.refreshPool(): Refresh the oldest free item.");
+			}
 			Object obj = getItem();
 			returnItem(obj);
 		}
@@ -263,8 +267,9 @@ public class ObjectPool implements java.io.Serializable {
 	 * reduce the pool size when there are too many idled connections
 	 */
 	synchronized void adjustPoolSize() {
-		if (isDebugEnabled)
+		if (isDebugEnabled) {
 			logger.debug("freeItemsLastCycle/initialItems: " + freeItemsLastCycle + "/" + initialItems);
+		}
 		if (freeItemsLastCycle > initialItems) {
 			int number2keep;
 			if (freeItemsLastCycle / 2 > initialItems) {
@@ -280,8 +285,9 @@ public class ObjectPool implements java.io.Serializable {
 		}
 
 		freeItemsLastCycle = freeConns.size() + inUse.size();
-		if (isDebugEnabled)
+		if (isDebugEnabled) {
 			logger.debug("ObjectPool: adjusted the pool size to: " + freeItemsLastCycle);
+		}
 	}
 	
 	/**
