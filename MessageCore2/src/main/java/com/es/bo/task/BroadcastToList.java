@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.es.bo.render.RenderUtil;
 import com.es.bo.sender.EmailRenderBo;
-import com.es.bo.sender.EmailRenderVo;
+import com.es.bo.sender.EmailRenderDo;
 import com.es.bo.sender.MailSenderBo;
 import com.es.bo.smtp.SmtpException;
 import com.es.core.util.EmailSender;
@@ -236,7 +236,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 			variables.put(varName, String.valueOf(msgBean.getMsgId()));
 		}
 		logger.info("Sending Broadcast Email to: " + toAddress);
-		EmailRenderVo renderVo = null;
+		EmailRenderDo renderVo = null;
 		renderVo = emailTemplateBo.renderEmailText(toAddress, variables, subjText,
 				bodyText, listId, varNames);
 		// set TO to subscriber address

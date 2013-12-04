@@ -21,29 +21,27 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.es.bo.inbox.MessageParserBo;
-import com.es.bo.inbox.MsgInboxBo;
 import com.es.bo.task.TaskSchedulerBo;
 import com.es.core.util.EmailSender;
-import com.es.dao.inbox.MsgInboxDao;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
 import com.es.data.preload.RuleNameEnum;
 import com.es.exception.DataValidationException;
 import com.es.exception.TemplateException;
-import com.es.msgbean.MessageBean;
 import com.es.msgbean.JavaMailParser;
+import com.es.msgbean.MessageBean;
 import com.es.msgbean.MessageContext;
 import com.es.vo.comm.MailBoxVo;
 
 /**
  * process email's handed over by MailReader class.
  */
-@Component("mailProcessorBo")
+@Component("mailProcessBo")
 @Scope(value="prototype")
 @Transactional(propagation=Propagation.REQUIRED)
-public class MailProcessorBo implements java.io.Serializable {
+public class MailProcessBo implements java.io.Serializable {
 	private static final long serialVersionUID = -2192214375199179774L;
-	static final Logger logger = Logger.getLogger(MailProcessorBo.class);
+	static final Logger logger = Logger.getLogger(MailProcessBo.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	static Logger duplicateReport = Logger.getLogger("jpa.message.report.duplicate");
 
@@ -54,19 +52,15 @@ public class MailProcessorBo implements java.io.Serializable {
 	final static String LF = System.getProperty("line.separator", "\n");
 
 	@Autowired
-	private MsgInboxDao inboxDao;
+	private MessageParserBo msgParserBo;
 	@Autowired
-	private MsgInboxBo msgInboxBo;
+	private TaskSchedulerBo taskBo;
 	@Autowired
-	MessageParserBo msgParser;
-	@Autowired
-	TaskSchedulerBo taskBo;
-	@Autowired
-	DuplicateCheck dupCheck;
+	private DuplicateCheckBo dupCheckBo;
 	
 	private MailBoxVo mboxVo;
 	
-	public MailProcessorBo() {}
+	public MailProcessBo() {}
 
 	/**
 	 * process request
@@ -114,7 +108,8 @@ public class MailProcessorBo implements java.io.Serializable {
 	 * @throws TemplateException 
 	 * @throws DataValidationException 
 	 */
-	void processPart(Part p, List<Long> savedRowIds) throws IOException, MessagingException, DataValidationException, TemplateException {
+	void processPart(Part p, List<Long> savedRowIds) throws IOException, MessagingException, 
+			DataValidationException, TemplateException {
 		long start_tms = System.currentTimeMillis();
 		
 		// parse the MimeMessage to MessageBean
@@ -181,7 +176,7 @@ public class MailProcessorBo implements java.io.Serializable {
 			// check for duplicate
 			if (StringUtils.isNotBlank(msgBean.getSmtpMessageId())) {
 				if (CodeType.YES.getValue().equals(mboxVo.getCheckDuplicate())) {
-					isDuplicate = dupCheck.isDuplicate(msgBean.getSmtpMessageId());
+					isDuplicate = dupCheckBo.isDuplicate(msgBean.getSmtpMessageId());
 				}
 			}
 			else {
@@ -206,7 +201,7 @@ public class MailProcessorBo implements java.io.Serializable {
 				}
 			}
 			else { // parse the message for RuleName
-				msgBean.setRuleName(msgParser.parse(msgBean));
+				msgBean.setRuleName(msgParserBo.parse(msgBean));
 				/* saveMessage() is handled by TackschedulerBo */
 				MessageContext ctx = new MessageContext(msgBean);
 				taskBo.scheduleTasks(ctx);

@@ -15,7 +15,7 @@ public final class MailingListUtil {
 		// static only
 	}
 	
-	public static Map<String, RenderVariable> renderListVariables(MailingListVo listVo,
+	public static Map<String, RenderVariable> buildRenderVariables(MailingListVo listVo,
 			String subscriberAddress, long subscriberAddressId) {
 		Map<String, RenderVariable> variables = new HashMap<String, RenderVariable>();
 		String varName = null;
