@@ -67,6 +67,7 @@ public class MailSenderBo extends MailSenderBase {
 			e.printStackTrace();
 		}
 		finally {
+			SpringUtil.clearTransaction();
 		}
 	}
 

@@ -42,7 +42,7 @@ public class DataLoader {
 		List<AbstractTableBase> loaders = new ArrayList<AbstractTableBase>();
 		loaders.add(new SenderTable());
 		loaders.add(new IdTokensTable());
-		loaders.add(new EmailAddrTable());
+		loaders.add(new EmailAddrTables());
 		loaders.add(new UserTable());
 		loaders.add(new SubscriberTable());
 		loaders.add(new RuleTables());

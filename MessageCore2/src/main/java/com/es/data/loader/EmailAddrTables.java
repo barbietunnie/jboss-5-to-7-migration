@@ -11,11 +11,13 @@ import com.es.dao.address.EmailAddressDao;
 import com.es.dao.address.EmailTemplateDao;
 import com.es.dao.address.EmailVariableDao;
 import com.es.dao.address.MailingListDao;
+import com.es.dao.address.MobileCarrierDao;
 import com.es.dao.address.SubscriptionDao;
 import com.es.dao.sender.SenderDataUtil;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.MailingListDeliveryType;
+import com.es.data.constant.MobileCarrierEnum;
 import com.es.data.constant.StatusId;
 import com.es.data.preload.EmailTemplateEnum;
 import com.es.data.preload.EmailVariableEnum;
@@ -26,14 +28,16 @@ import com.es.vo.address.EmailAddressVo;
 import com.es.vo.address.EmailTemplateVo;
 import com.es.vo.address.EmailVariableVo;
 import com.es.vo.address.MailingListVo;
+import com.es.vo.address.MobileCarrierVo;
 import com.es.vo.address.SchedulesBlob;
 import com.es.vo.address.SubscriptionVo;
 import com.es.vo.comm.SenderDataVo;
 
-public class EmailAddrTable extends AbstractTableBase {
+public class EmailAddrTables extends AbstractTableBase {
 
 	public void createTables() throws DataAccessException {
-		createEmailTable();
+		createEmailAddrTable();
+		createMobileCarrierTable();
 		createMailingListTable();
 		createSubscriptionTable();
 		createEmailVariableTable();
@@ -74,6 +78,12 @@ public class EmailAddrTable extends AbstractTableBase {
 		catch (DataAccessException e) {
 		}
 		try {
+			getJdbcTemplate().execute("DROP TABLE MOBILE_CARRIER");
+			System.out.println("Dropped MOBILE_CARRIER Table...");
+		}
+		catch (DataAccessException e) {
+		}
+		try {
 			getJdbcTemplate().execute("DROP TABLE EMAIL_ADDRESS");
 			System.out.println("Dropped EMAIL_ADDRESS Table...");
 		}
@@ -81,7 +91,7 @@ public class EmailAddrTable extends AbstractTableBase {
 		}
 	}
 	
-	void createEmailTable() throws DataAccessException {
+	void createEmailAddrTable() throws DataAccessException {
 		try {
 			getJdbcTemplate().execute("CREATE TABLE EMAIL_ADDRESS ( "
 					+ "EmailAddrId bigint AUTO_INCREMENT NOT NULL PRIMARY KEY, "
@@ -100,6 +110,30 @@ public class EmailAddrTable extends AbstractTableBase {
 					+ "UNIQUE INDEX (EmailAddr) "
 					+ ") ENGINE=InnoDB");
 			System.out.println("Created EMAIL_ADDRESS Table...");
+		}
+		catch (DataAccessException e) {
+			System.err.println("SQL Error: " + e.getMessage());
+			throw e;
+		}
+	}
+
+	void createMobileCarrierTable() throws DataAccessException {
+		try {
+			getJdbcTemplate().execute("CREATE TABLE MOBILE_CARRIER ( "
+					+ "RowId int AUTO_INCREMENT not null, "
+					+ "CarrierId varchar(20) NOT NULL, "
+					+ "CarrierName varchar(50) NOT NULL, "
+					+ "CountryCode varchar(10), " 
+					+ "MultiMediaAddress varchar(100), "
+					+ "StatusId char(1) NOT NULL DEFAULT '" + StatusId.ACTIVE.getValue() + "', " 
+						// A - active, I - Inactive
+					+ "TextAddress varchar(100) NOT NULL, "
+					+ "UpdtTime datetime NOT NULL, "
+					+ "UpdtUserId char(10) NOT NULL, "
+					+ "PRIMARY KEY (RowId), "
+					+ "UNIQUE INDEX (CarrierName) "
+					+ ") ENGINE=InnoDB");
+			System.out.println("Created MOBILE_CARRIER Table...");
 		}
 		catch (DataAccessException e) {
 			System.err.println("SQL Error: " + e.getMessage());
@@ -354,6 +388,7 @@ DELIMITER ;
 
 	public void loadTestData() throws DataAccessException {
 		loadEmailAddrs();
+		loadMobileCarriers();
 		loadMailingLists();
 		loadProdMailingLists();
 		loadEmailVariables();
@@ -364,6 +399,7 @@ DELIMITER ;
 
 	public void loadReleaseData() throws DataAccessException {
 		loadEmailAddrs();
+		loadMobileCarriers();
 		loadMailingLists();
 		loadEmailVariables();
 		loadEmailTemplates();
@@ -385,6 +421,19 @@ DELIMITER ;
 			service.insert(data);
 		}
 
+	}
+	
+	private void loadMobileCarriers() {
+		MobileCarrierDao dao = SpringUtil.getAppContext().getBean(MobileCarrierDao.class);
+		for (MobileCarrierEnum mc : MobileCarrierEnum.values()) {
+			MobileCarrierVo vo = new MobileCarrierVo();
+			vo.setCarrierId(mc.name());
+			vo.setCarrierName(mc.getValue());
+			vo.setCountryCode(mc.getCountry());
+			vo.setMultiMediaAddress(mc.getMmedia());
+			vo.setTextAddress(mc.getText());
+			dao.insert(vo);
+		}
 	}
 
 	private void loadMailingLists() throws DataAccessException {
@@ -603,7 +652,7 @@ DELIMITER ;
 	 */
 	public static void main(String[] args) {
 		try {
-			EmailAddrTable ct = new EmailAddrTable();
+			EmailAddrTables ct = new EmailAddrTables();
 			ct.dropTables();
 			ct.createTables();
 			ct.loadTestData();

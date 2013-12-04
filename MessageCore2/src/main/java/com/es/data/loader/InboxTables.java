@@ -490,13 +490,13 @@ public class InboxTables extends AbstractTableBase {
 		try {
 			getJdbcTemplate().execute("CREATE TABLE MSG_ACTION_LOG ( " +
 			"MsgId bigint NOT NULL, " +
-			"ActionSeq smallint NOT NULL, " + // message that started this thread
-			"AddTime datetime NOT NULL, " +
+			"ActionSeq smallint NOT NULL, " +
 			"ActionBo varchar(50) NOT NULL, " +
 			"Parameters varchar(255), " +
+			"AddTime datetime NOT NULL, " +
 			"FOREIGN KEY (MsgId) REFERENCES MSG_INBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE, " +
 			"INDEX (MsgId), " +
-			"PRIMARY KEY (MsgId, ActionSeq, AddTime) " +
+			"PRIMARY KEY (MsgId, ActionSeq) " +
 			// use MyISAM engine to prevent from dead locks.
 			") ENGINE=MyISAM");
 			System.out.println("Created MSG_ACTION_LOG Table...");

@@ -520,7 +520,7 @@ public class MailReaderRunner implements Serializable, Runnable, ConnectionListe
 		if (msgs == null || msgs.length == 0) return;
 		SpringUtil.beginTransaction();
 		try {
-			MailProcessBo processor = (MailProcessBo) SpringUtil.getAppContext().getBean("mailProcessorBo");
+			MailProcessBo processor = SpringUtil.getAppContext().getBean(MailProcessBo.class);
 			MessageContext ctx = new MessageContext(msgs, mboxVo);
 			processor.process(ctx);
 			SpringUtil.commitTransaction();

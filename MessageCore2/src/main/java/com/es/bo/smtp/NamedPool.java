@@ -35,7 +35,7 @@ public final class NamedPool implements java.io.Serializable {
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
 	private final LinkedHashMap<String, ObjectPool> pools;
-	private ArrayList<String> nameList;
+	private List<String> nameList;
 	private Set<String> nameSet;
 	private final Hashtable<Object, String> inUseConns;
 	private int position;
@@ -92,7 +92,7 @@ public final class NamedPool implements java.io.Serializable {
 		if (isEmpty()) {
 			throw new IllegalStateException("The NamedPool are empty, either not initialized or have been closed.");
 		}
-		ObjectPool pool = (ObjectPool) pools.get(name);
+		ObjectPool pool = pools.get(name);
 		if (pool == null) {
 			throw new IllegalArgumentException("ObjectPool " + name + " does not exist.");
 		}
@@ -117,11 +117,13 @@ public final class NamedPool implements java.io.Serializable {
 			returnConnection(conn);
 		}
 		else {
-			ObjectPool pool = (ObjectPool) pools.get(name);
-			if (pool == null)
+			ObjectPool pool = pools.get(name);
+			if (pool == null) {
 				throw new IllegalArgumentException("ObjectPool " + name + " does not exist.");
-			else
+			}
+			else {
 				pool.returnItem(conn);
+			}
 		}
 	}
 
@@ -150,12 +152,14 @@ public final class NamedPool implements java.io.Serializable {
 			}
 		}
 		
-		if (isDebugEnabled)
+		if (isDebugEnabled) {
 			logger.debug("getConnection() - All pools are empty, entering wait()...");
+		}
 		try {
 			wait();
-			if (isDebugEnabled)
+			if (isDebugEnabled) {
 				logger.debug("getConnection() - Notified by return(), exiting the wait()...");
+			}
 		}
 		catch (InterruptedException e) {
 			logger.error("getConnection() - InterruptedException caught. " + new java.util.Date());
@@ -270,10 +274,12 @@ public final class NamedPool implements java.io.Serializable {
 	 */
 	public int getDistribution(String name) {
 		ObjectPool pool = getPool(name);
-		if (pool != null)
+		if (pool != null) {
 			return pool.getDistribution();
-		else
+		}
+		else {
 			return -1;
+		}
 	}
 
 	/**
@@ -355,8 +361,9 @@ public final class NamedPool implements java.io.Serializable {
 		if ((name = getNextName()) != null) {
 			return getPool(name);
 		}
-		else
+		else {
 			return null;
+		}
 	}
 
 	/**

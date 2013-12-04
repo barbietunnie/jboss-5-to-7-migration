@@ -108,11 +108,11 @@ public class SmtpWrapperUtil implements java.io.Serializable {
 	 */
 	private static List<SmtpServerVo> getSmtpServers(boolean isSecure) {
 		List<SmtpServerVo> list = null;
-		list = getSmtpServerService().getAll(true, isSecure);
+		list = getSmtpServerDao().getAll(true, isSecure);
 		return list;
 	}
 	
-	private static SmtpServerDao getSmtpServerService() {
+	private static SmtpServerDao getSmtpServerDao() {
 		if (smtpServerDao == null) {
 			smtpServerDao = SpringUtil.getAppContext().getBean(SmtpServerDao.class);
 		}
