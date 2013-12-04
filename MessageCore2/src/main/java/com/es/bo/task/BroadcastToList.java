@@ -71,12 +71,12 @@ public class BroadcastToList extends TaskBaseAdaptor {
 	 * 
 	 * @param msgBean -
 	 *            message to broadcast
-	 * @return an Integer value representing number of addresses the message has
+	 * @return an Long value representing number of addresses the message has
 	 *         been sent to.
 	 * @throws TemplateException 
 	 * @throws IOException 
 	 */
-	public Integer process(MessageContext ctx) throws DataValidationException,
+	public Long process(MessageContext ctx) throws DataValidationException,
 			AddressException, IOException {
 		if (isDebugEnabled) {
 			logger.debug("Entering process() method...");
@@ -108,7 +108,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		}
 		if (!listVo.isActive()) {
 			logger.warn("MailingList " + listId + " is not active.");
-			return Integer.valueOf(0);
+			return Long.valueOf(0);
 		}
 		String _from = listVo.getEmailAddr();
 		String dispName = listVo.getDisplayName();
@@ -129,15 +129,17 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		}
 		// extract variables from message body
 		List<String> varNames = RenderUtil.retrieveVariableNames(bodyText);
-		if (isDebugEnabled)
+		if (isDebugEnabled) {
 			logger.debug("Body Variable names: " + varNames);
+		}
 		// extract variables from message subject
 		String subjText = messageBean.getSubject() == null ? "" : messageBean.getSubject();
 		List<String> subjVarNames = RenderUtil.retrieveVariableNames(subjText);
 		if (!subjVarNames.isEmpty()) {
 			varNames.addAll(subjVarNames);
-			if (isDebugEnabled)
+			if (isDebugEnabled) {
 				logger.debug("Subject Variable names: " + subjVarNames);
+			}
 		}
 		// get subscribers
 		List<SubscriptionVo> subrs = null;
@@ -159,6 +161,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 				if (CodeType.YES_CODE.getValue().equals(listVo.getIsSendText())) {
 					mailsSent += constructAndSendMessage(ctx, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, true);
 				}
+				ctx.getEmailAddrIdList().add(subr.getEmailAddrId());
 			}
 			catch (TemplateException e) {
 				logger.error("TemplateException caught", e);
@@ -172,7 +175,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 				msgClickCountsDao.updateSentCount(messageBean.getMsgId(), (int) mailsSent);
 			}
 		}
-		return Integer.valueOf(mailsSent);
+		return Long.valueOf(mailsSent);
 	}
 	
 	private int constructAndSendMessage(MessageContext ctx, SubscriptionVo subr,
@@ -184,7 +187,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		Address[] to = null;
 		String toAddress = null;
 		try {
-			if (isText) {
+			if (isText) { // find mobile phone email address
 				SubscriberVo subrVo = subscriberDao.getByEmailAddress(subr.getEmailAddr());
 				if (subrVo != null) {
 					if (StringUtils.isNotBlank(subrVo.getMobilePhone())
@@ -214,7 +217,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 					return 0;
 				}
 			}
-			else {
+			else { // use regular email address
 				toAddress = subr.getEmailAddr();
 				to = InternetAddress.parse(toAddress);
 			}

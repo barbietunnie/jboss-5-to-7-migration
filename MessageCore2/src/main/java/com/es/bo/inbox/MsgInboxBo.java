@@ -36,8 +36,8 @@ import com.es.data.preload.RuleNameEnum;
 import com.es.exception.DataValidationException;
 import com.es.msgbean.BodypartBean;
 import com.es.msgbean.BodypartUtil;
-import com.es.msgbean.MessageBean;
 import com.es.msgbean.JavaMailParser;
+import com.es.msgbean.MessageBean;
 import com.es.msgbean.MessageBeanUtil;
 import com.es.msgbean.MessageBodyBuilder;
 import com.es.msgbean.MessageNode;
@@ -394,30 +394,19 @@ public class MsgInboxBo {
 	}
 	
 	/**
-	 * not implemented yet
+	 * Persisting an action log record.
 	 * @param msgBean
 	 */
-	public void saveMessageFlowLogs(MessageBean msgBean) {
-		MsgActionLogVo msgActionLogVo = new MsgActionLogVo();
-		msgActionLogVo.setMsgId(msgBean.getMsgId());
-		msgActionLogVo.setMsgRefId(msgBean.getMsgRefId());
-		// find lead message id
-		if (msgBean.getMsgRefId() != null) {
-			List<MsgActionLogVo> list = msgActionLogDao.getByMsgId(msgBean.getMsgRefId());
-			if (list == null || list.size() == 0) {
-				logger.error("saveMessageFlowLogs() - record not found for MsgRefId: "
-						+ msgBean.getMsgRefId());
-			}
-			else {
-				MsgActionLogVo vo = list.get(0);
-				msgActionLogVo.setLeadMsgId(vo.getLeadMsgId());
-			}
+	public void saveMessageActionLogs(MessageBean msgBean) {
+		if (msgBean.getMsgId()!=null) {
+			MsgActionLogVo msgActionLogVo = new MsgActionLogVo();
+			msgActionLogVo.setMsgId(msgBean.getMsgId());
+			msgActionLogVo.setActionSeq(0); // will be updated by the insert method
+			String actionName = msgBean.getProperties().getProperty("action_bo_name", RuleNameEnum.SEND_MAIL.getValue());
+			msgActionLogVo.setActionBo(actionName);
+			msgActionLogVo.setParameters(msgBean.getProperties().getProperty("action_parameters"));
+			msgActionLogDao.insert(msgActionLogVo);
 		}
-		if (msgActionLogVo.getLeadMsgId() < 0) {
-			msgActionLogVo.setLeadMsgId(msgBean.getMsgId());
-		}
-		msgActionLogVo.setActionBo(RuleNameEnum.SEND_MAIL.getValue());
-		msgActionLogDao.insert(msgActionLogVo);
 	}
 	
 	/**

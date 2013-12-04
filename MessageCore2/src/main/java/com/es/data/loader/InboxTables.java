@@ -324,7 +324,7 @@ public class InboxTables extends AbstractTableBase {
 			"DeliveryTime datetime, " + // for out-bound messages only, updated by MailSender
 			"StatusId char(1) NOT NULL, " + // P - pending, D - delivered by MailSender, F - delivery failed, C/O - closed/Open (for received mail)
 			"SmtpMessageId varchar(255), " + // SMTP message Id, updated by MailSender once delivered
-			"RenderId bigint, " + // link to a Msg_Rendered record
+			"RenderId bigint, " + // link to a Msg_Rendered record, for out-bound messages
 			"OverrideTestAddr char(1), " + // Y - tell MailSender to use TO address even under test mode
 			"AttachmentCount smallint NOT NULL DEFAULT 0, " + // for UI performance
 			"AttachmentSize int NOT NULL DEFAULT 0, " + // for UI performance
@@ -374,7 +374,7 @@ public class InboxTables extends AbstractTableBase {
 		try {
 			getJdbcTemplate().execute("CREATE TABLE MSG_ADDRESS ( " +
 			"MsgId bigint NOT NULL, " +
-			"AddrType varchar(10) NOT NULL, " + // from, replyto, to, cc, bcc
+			"AddrType varchar(10) NOT NULL, " + // from, reply-to, to, cc, bcc, etc.
 			"AddrSeq decimal(4) NOT NULL, " +
 			"AddrValue varchar(255), " +
 			"FOREIGN KEY (MsgId) REFERENCES MSG_INBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE, " +
@@ -409,6 +409,7 @@ public class InboxTables extends AbstractTableBase {
 	}
 
 	void createMSGRFCFIELDTable() throws DataAccessException {
+		// for in-bound messages
 		try {
 			getJdbcTemplate().execute("CREATE TABLE MSG_RFC_FIELD ( " +
 			"MsgId bigint NOT NULL, " +
@@ -458,6 +459,7 @@ public class InboxTables extends AbstractTableBase {
 	}
 
 	void createDELIVERYSTATUSTable() throws DataAccessException {
+		// for out-bound messages storing SMTP delivery failures
 		try {
 			getJdbcTemplate().execute("CREATE TABLE DELIVERY_STATUS ( " +
 			"MsgId bigint NOT NULL, " +
@@ -488,18 +490,15 @@ public class InboxTables extends AbstractTableBase {
 		try {
 			getJdbcTemplate().execute("CREATE TABLE MSG_ACTION_LOG ( " +
 			"MsgId bigint NOT NULL, " +
-			"MsgRefId bigint, " + // link to previous message thread
-			"LeadMsgId bigint NOT NULL, " + // message that started this thread
+			"ActionSeq smallint NOT NULL, " + // message that started this thread
+			"AddTime datetime NOT NULL, " +
 			"ActionBo varchar(50) NOT NULL, " +
 			"Parameters varchar(255), " +
-			"AddTime datetime, " +
 			"FOREIGN KEY (MsgId) REFERENCES MSG_INBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE, " +
-			/* disable following foreign keys for performance reason */ 
-			//"FOREIGN KEY (MsgRefId) REFERENCES MSG_INBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE, " +
-			//"FOREIGN KEY (LeadMsgId) REFERENCES MSG_INBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE, " +
-			"INDEX (LeadMsgId), " +
-			"UNIQUE INDEX (MsgId, MsgRefId) " + // use index to make MsgRefId nullable
-			") ENGINE=InnoDB");
+			"INDEX (MsgId), " +
+			"PRIMARY KEY (MsgId, ActionSeq, AddTime) " +
+			// use MyISAM engine to prevent from dead locks.
+			") ENGINE=MyISAM");
 			System.out.println("Created MSG_ACTION_LOG Table...");
 		}
 		catch (DataAccessException e) {

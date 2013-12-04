@@ -22,6 +22,6 @@ public enum VariableType {
 				return t;
 			}
 		}
-		throw new IllegalArgumentException("No enum value (" + value + ") found in class jpa.constant.VariableType");
+		throw new IllegalArgumentException("No enum value (" + value + ") found in class constant.VariableType");
 	}
 }

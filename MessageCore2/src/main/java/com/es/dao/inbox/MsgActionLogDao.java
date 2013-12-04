@@ -27,20 +27,15 @@ public class MsgActionLogDao {
 		return jdbcTemplate;
 	}
 
-	public MsgActionLogVo getByPrimaryKey(long msgId, Long msgRefId) {
+	public MsgActionLogVo getByPrimaryKey(long msgId, int actionSeq, Timestamp addTime) {
 		String sql = 
 			"select * " +
 			"from " +
-				"Msg_Action_Log where msgId=? ";
+				"Msg_Action_Log where msgId=? and actionSeq=? and addTime=? ";
 		ArrayList<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
-		if (msgRefId == null) {
-			sql += "and msgRefId is null ";
-		}
-		else {
-			fields.add(msgRefId);
-			sql += "and msgRefId=? ";
-		}
+		fields.add(actionSeq);
+		fields.add(addTime);
 		
 		try {
 			MsgActionLogVo vo = getJdbcTemplate().queryForObject(sql, fields.toArray(),
@@ -57,21 +52,9 @@ public class MsgActionLogDao {
 			"select * " +
 			" from " +
 				" Msg_Action_Log where msgId=? " +
-			" order by msgRefId ";
-		Object[] parms = new Object[] {msgId+""};
+			" order by actionSeq, addTime ";
+		Object[] parms = new Object[] {msgId};
 		List<MsgActionLogVo> list = getJdbcTemplate().query(sql, parms, 
-				new BeanPropertyRowMapper<MsgActionLogVo>(MsgActionLogVo.class));
-		return list;
-	}
-	
-	public List<MsgActionLogVo> getByLeadMsgId(long leadMsgId) {
-		String sql = 
-			"select * " +
-			" from " +
-				" Msg_Action_Log where leadMsgId=? " +
-			" order by addrTime";
-		Object[] parms = new Object[] {leadMsgId+""};
-		List<MsgActionLogVo> list = getJdbcTemplate().query(sql, parms,
 				new BeanPropertyRowMapper<MsgActionLogVo>(MsgActionLogVo.class));
 		return list;
 	}
@@ -79,45 +62,31 @@ public class MsgActionLogDao {
 	public int update(MsgActionLogVo msgActionLogsVo) {
 		
 		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgActionLogsVo.getLeadMsgId());
 		fields.add(msgActionLogsVo.getActionBo());
 		fields.add(msgActionLogsVo.getParameters());
-		fields.add(msgActionLogsVo.getAddTime());
 		fields.add(msgActionLogsVo.getMsgId());
+		fields.add(msgActionLogsVo.getActionSeq());
+		fields.add(msgActionLogsVo.getAddTime());
 		
 		String sql =
 			"update Msg_Action_Log set " +
-				"LeadMsgId=?, " +
 				"ActionBo=?, " +
-				"Parameters=?, " +
-				"AddTime=? " +
+				"Parameters=? " +
 			" where " +
-				" MsgId=? ";
-		if (msgActionLogsVo.getMsgRefId() == null) {
-			sql += "and MsgRefId is null ";
-		}
-		else {
-			fields.add(msgActionLogsVo.getMsgRefId());
-			sql += "and MsgRefId=? ";
-		}
+				" MsgId=? and ActionSeq=? and AddTime=? ";
 		
 		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsUpadted;
 	}
 	
-	public int deleteByPrimaryKey(long msgId, Long msgRefId) {
+	public int deleteByPrimaryKey(long msgId, int actionSeq, Timestamp addTime) {
 		String sql = 
-			"delete from Msg_Action_Log where msgId=? ";
+			"delete from Msg_Action_Log where msgId=? and actionSeq=? and addTime=? ";
 		
 		ArrayList<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
-		if (msgRefId == null) {
-			sql += "and MsgRefId is null ";
-		}
-		else {
-			fields.add(msgRefId);
-			sql += "and msgRefId=? ";
-		}
+		fields.add(actionSeq);
+		fields.add(addTime);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;
@@ -134,45 +103,46 @@ public class MsgActionLogDao {
 		return rowsDeleted;
 	}
 	
-	public int deleteByLeadMsgId(long leadMsgId) {
-		String sql = 
-			"delete from Msg_Action_Log where leadMsgId=? ";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(leadMsgId);
-		
-		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
-		return rowsDeleted;
-	}
-	
 	public int insert(MsgActionLogVo msgActionLogsVo) {
-		Timestamp addTime = new Timestamp(new java.util.Date().getTime());
+		Timestamp addTime = new Timestamp(System.currentTimeMillis());
 		msgActionLogsVo.setAddTime(addTime);
+		msgActionLogsVo.setActionSeq(getNextActionSeq(msgActionLogsVo.getMsgId()));
 		
 		String sql = 
 			"INSERT INTO Msg_Action_Log (" +
 			"MsgId, " +
-			"MsgRefId, " +
-			"LeadMsgId, " +
+			"ActionSeq, " +
+			"AddTime, " +
 			"ActionBo, " +
-			"Parameters, " +
-			"AddTime " +
+			"Parameters " +
 			") VALUES (" +
-				" ?, ?, ?, ?, ?, ? " +
+				" ?, ?, ?, ?, ? " +
 				")";
 		
 		ArrayList<Object> fields = new ArrayList<Object>();
 		fields.add(msgActionLogsVo.getMsgId());
-		fields.add(msgActionLogsVo.getMsgRefId());
-		fields.add(msgActionLogsVo.getLeadMsgId());
+		fields.add(msgActionLogsVo.getActionSeq());
+		fields.add(msgActionLogsVo.getAddTime());
 		fields.add(msgActionLogsVo.getActionBo());
 		fields.add(msgActionLogsVo.getParameters());
-		fields.add(msgActionLogsVo.getAddTime());
 		
 		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsInserted;
 	}
 	
+	private int getNextActionSeq(long msgId) {
+		String sql = 
+			"select max(actionSeq) " +
+			" from " +
+				" Msg_Action_Log where msgId=? ";
+		Object[] parms = new Object[] {msgId};
+		Integer seq = getJdbcTemplate().queryForObject(sql, parms, Integer.class);
+		if (seq == null) {
+			return 1;
+		}
+		return (seq+1);
+	}
+
 	protected String getRowIdSql() {
 		return "select last_insert_id()";
 	}

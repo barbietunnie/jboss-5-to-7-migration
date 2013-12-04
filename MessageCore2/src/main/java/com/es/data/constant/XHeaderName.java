@@ -43,6 +43,6 @@ public enum XHeaderName {
 				return hdr;
 			}
 		}
-		throw new IllegalArgumentException("No enum const value jpa.constant.XHeaderName." + value);
+		throw new IllegalArgumentException("No enum const value constant.XHeaderName." + value);
 	}
 }

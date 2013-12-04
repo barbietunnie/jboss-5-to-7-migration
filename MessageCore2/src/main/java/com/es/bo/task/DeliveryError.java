@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,15 +111,11 @@ public class DeliveryError extends TaskBaseAdaptor {
 			deliveryStatusVo.setOriginalRecipientId(vo.getEmailAddrId());
 		}
 		
-		try {
-			deliveryStatusDao.insert(deliveryStatusVo);
-			msgInboxVo.getDeliveryStatus().add(deliveryStatusVo);
-			if (isDebugEnabled) {
-				logger.debug("Insert DeliveryStatus:" + LF + StringUtil.prettyPrint(deliveryStatusVo,3));
-			}
-		}
-		catch (DataIntegrityViolationException e) {
-			logger.error("DataIntegrityViolationException caught, ignore.", e);
+		//deliveryStatusDao.insertWithDelete(deliveryStatusVo);
+		deliveryStatusDao.upsert(deliveryStatusVo);
+		msgInboxVo.getDeliveryStatus().add(deliveryStatusVo);
+		if (isDebugEnabled) {
+			logger.debug("Insert DeliveryStatus:" + LF + StringUtil.prettyPrint(deliveryStatusVo,3));
 		}
 		// update MsgInbox status (delivery failure)
 		msgInboxVo.setStatusId(MsgStatusCode.DELIVERY_FAILED.getValue());
@@ -128,7 +123,7 @@ public class DeliveryError extends TaskBaseAdaptor {
 		msgInboxVo.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		
 		msgInboxDao.update(msgInboxVo);
-		ctx.getRowIds().add(msgInboxVo.getMsgId());
+		ctx.getMsgIdList().add(msgInboxVo.getMsgId());
 		return Long.valueOf(msgId);
 	}
 	

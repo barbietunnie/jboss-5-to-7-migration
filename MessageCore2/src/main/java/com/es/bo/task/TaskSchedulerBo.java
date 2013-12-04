@@ -10,12 +10,15 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.es.bo.inbox.MsgInboxBo;
 import com.es.core.util.SpringUtil;
 import com.es.dao.action.RuleActionDao;
+import com.es.data.preload.RuleActionDetailEnum;
 import com.es.data.preload.RuleNameEnum;
 import com.es.exception.DataValidationException;
 import com.es.msg.util.EmailIdParser;
@@ -36,6 +39,9 @@ public class TaskSchedulerBo {
 
 	static final String LF = System.getProperty("line.separator", "\n");
 
+	@Autowired
+	private MsgInboxBo msgInboxBo;
+	
 	public void scheduleTasks(MessageContext ctx) throws DataValidationException, 
 			MessagingException, IOException {
 		if (isDebugEnabled) {
@@ -52,18 +58,20 @@ public class TaskSchedulerBo {
 				msgBean.getRuleName(), null, msgBean.getSenderId());
 		if (actions == null || actions.isEmpty()) {
 			// actions not defined, save the message.
-			String processBeanId = "saveMessage";
+			String processBeanId = RuleActionDetailEnum.SAVE.getServiceName();
 			logger.warn("scheduleTasks() - No Actions found for ruleName: "
 					+ msgBean.getRuleName() + ", ProcessBeanId [0]: "
 					+ processBeanId);
 			AbstractTaskBo bo = (AbstractTaskBo) SpringUtil.getAppContext().getBean(processBeanId);
 			bo.process(ctx);
+			updateActionLogs(ctx, processBeanId);
 			return;
 		}
 		for (int i = 0; i < actions.size(); i++) {
 			RuleActionVo ruleActionVo = actions.get(i);
 			AbstractTaskBo bo = null;
 			String className = ruleActionVo.getProcessClassName();
+			String actionBoName = className;
 			if (StringUtils.isNotBlank(className)) {
 				// use process class
 				logger.info("scheduleTasks() - ClassName [" + i + "]: "
@@ -85,6 +93,7 @@ public class TaskSchedulerBo {
 				}
 			} else { // use process bean
 				String processBeanId = ruleActionVo.getProcessBeanId();
+				actionBoName = processBeanId;
 				logger.info("scheduleTasks() - ProcessBeanId [" + i + "]: "
 						+ processBeanId);
 				bo = (AbstractTaskBo) SpringUtil.getAppContext().getBean(processBeanId);
@@ -99,6 +108,19 @@ public class TaskSchedulerBo {
 			}
 			// invoke the processor
 			bo.process(ctx);
+			updateActionLogs(ctx, actionBoName);
+		}
+	}
+
+	private void updateActionLogs(MessageContext ctx, String actionBoName) {
+		MessageBean msgBean = ctx.getMessageBean();
+		if (msgBean.getMsgId()!=null) {
+			msgBean.getProperties().clear();
+			msgBean.getProperties().setProperty("action_bo_name", actionBoName);
+			if (StringUtils.isNotBlank(ctx.getTaskArguments())) {
+				msgBean.getProperties().setProperty("action_parameters", ctx.getTaskArguments());
+			}
+			msgInboxBo.saveMessageActionLogs(msgBean);
 		}
 	}
 

@@ -106,6 +106,7 @@ public class BounceUpAddress extends TaskBaseAdaptor {
 					}
 					emailAddrDao.updateBounceCount(emailAddrVo);
 					addrsUpdated++;
+					ctx.getEmailAddrIdList().add(emailAddrVo.getEmailAddrId());
 				}
 				else {
 					if (isDebugEnabled) {
