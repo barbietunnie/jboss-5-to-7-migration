@@ -112,16 +112,18 @@ public class SuspendAddress extends TaskBaseAdaptor {
 			while (st2.hasMoreTokens()) {
 				String addr = st2.nextToken();
 				EmailAddressVo emailAddrVo = emailAddrDao.getByAddress(addr);
-				if (emailAddrVo!= null && !StatusId.SUSPENDED.getValue().equals(emailAddrVo.getStatusId())) {
-					if (isDebugEnabled) {
-						logger.debug("Suspending EmailAddr: " + addr);
+				if (emailAddrVo!= null) {
+					if (!StatusId.SUSPENDED.getValue().equals(emailAddrVo.getStatusId())) {
+						if (isDebugEnabled) {
+							logger.debug("Suspending EmailAddr: " + addr);
+						}
+						emailAddrVo.setStatusId(StatusId.SUSPENDED.getValue());
+						emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
+						emailAddrVo.setStatusChangeTime(updtTime);
+						emailAddrDao.update(emailAddrVo);
+						addrsSuspended++;
 					}
-					emailAddrVo.setStatusId(StatusId.SUSPENDED.getValue());
-					emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
-					emailAddrVo.setStatusChangeTime(updtTime);
-					emailAddrDao.update(emailAddrVo);
 					ctx.getEmailAddrIdList().add(emailAddrVo.getEmailAddrId());
-					addrsSuspended++;
 				}
 			}
 		} // end of while loop
@@ -133,7 +135,8 @@ public class SuspendAddress extends TaskBaseAdaptor {
 		return Long.valueOf(addrsSuspended);
 	}
 
-	int suspendByMsgRefId(MessageBean messageBean, Timestamp updtTime) {
+	int suspendByMsgRefId(MessageContext ctx, Timestamp updtTime) {
+		MessageBean messageBean = ctx.getMessageBean();
 		int addrsSuspended = 0;
 		if (messageBean.getMsgRefId() == null) {
 			return addrsSuspended;
@@ -150,15 +153,18 @@ public class SuspendAddress extends TaskBaseAdaptor {
 		}
 		else if (msgInboxVo.getToAddrId() != null) { // should always valued
 			EmailAddressVo emailAddrVo = emailAddrDao.getByAddrId(msgInboxVo.getToAddrId());
-			if (emailAddrVo != null && !StatusId.SUSPENDED.getValue().equals(emailAddrVo.getStatusId())) {
-				if (isDebugEnabled) {
-					logger.debug("Suspending EmailAddr: " + emailAddrVo.getEmailAddr());
+			if (emailAddrVo != null) {
+				if (!StatusId.SUSPENDED.getValue().equals(emailAddrVo.getStatusId())) {
+					if (isDebugEnabled) {
+						logger.debug("Suspending EmailAddr: " + emailAddrVo.getEmailAddr());
+					}
+					emailAddrVo.setStatusId(StatusId.SUSPENDED.getValue());
+					emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
+					emailAddrVo.setStatusChangeTime(updtTime);
+					emailAddrDao.update(emailAddrVo);
+					addrsSuspended++;
 				}
-				emailAddrVo.setStatusId(StatusId.SUSPENDED.getValue());
-				emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
-				emailAddrVo.setStatusChangeTime(updtTime);
-				emailAddrDao.update(emailAddrVo);
-				addrsSuspended++;
+				ctx.getEmailAddrIdList().add(emailAddrVo.getEmailAddrId());
 			}
 		}
 		return addrsSuspended;

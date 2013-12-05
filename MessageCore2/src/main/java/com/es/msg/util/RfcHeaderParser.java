@@ -18,17 +18,6 @@ public class RfcHeaderParser {
 	static boolean isDebugEnabled = false; //logger.isDebugEnabled();
 	static final String LF = System.getProperty("line.separator","\n");
 	
-//	public static List<MsgHeader> messageHeaderList2MsgHeaderList(List<MessageHeader> messageHeaderList) {
-//		List<MsgHeader> list = new ArrayList<MsgHeader>();
-//		for (MessageHeader header : messageHeaderList) {
-//			MsgHeader msgHeader = new MsgHeader();
-//			msgHeader.setName(header.getHeaderName());
-//			msgHeader.setValue(header.getHeaderValue());
-//			list.add(msgHeader);
-//		}
-//		return list;
-//	}
-//	
 	public static List<MsgHeader> parseRfc822Headers(String dsnRfc822) {
 		Pattern p = Pattern.compile("^([\\w\\-]{2,40})\\:\\s(.*)");
 		ByteArrayInputStream bais = new ByteArrayInputStream(dsnRfc822.getBytes());

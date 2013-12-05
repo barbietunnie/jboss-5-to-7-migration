@@ -74,6 +74,7 @@ public class BounceUpAddressTest {
 		ctx.setTaskArguments("$From,$To," + alertAddr);
 		task.process(ctx);
 		
+		System.out.println("Verifying Results ##################################################################");
 		// verify results
 		verifyBounceCount(mBean.getFromAsString(), fromCount);
 		verifyBounceCount(mBean.getToAsString(), toCount);
