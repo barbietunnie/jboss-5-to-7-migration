@@ -38,99 +38,6 @@ public class MsgInboxDao {
 		return jdbcTemplate;
 	}
 
-//	private static class MsgInboxMapper implements RowMapper<MsgInboxVo> {
-//		
-//		public MsgInboxVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-//			MsgInboxVo msgInboxVo = setRowValues(rs);
-//			
-//			return msgInboxVo;
-//		}
-//		
-//		protected static MsgInboxVo setRowValues(ResultSet rs) throws SQLException {
-//			MsgInboxVo msgInboxVo = populateVo(rs);
-//			
-//			return msgInboxVo;
-//		}
-//		
-//		protected static final MsgInboxVo populateVo(ResultSet rs) throws SQLException {
-//			MsgInboxVo msgInboxVo = new MsgInboxVo();
-//			
-//			msgInboxVo.setMsgId(rs.getLong("MsgId"));
-//			msgInboxVo.setMsgRefId((Long)rs.getObject("MsgRefId"));
-//			msgInboxVo.setLeadMsgId(rs.getLong("LeadMsgId"));
-//			msgInboxVo.setCarrierCode(rs.getString("CarrierCode"));
-//			msgInboxVo.setMsgSubject(rs.getString("MsgSubject"));
-//			msgInboxVo.setMsgPriority(rs.getString("MsgPriority"));
-//			msgInboxVo.setReceivedTime(rs.getTimestamp("ReceivedTime"));
-//			msgInboxVo.setFromAddrId((Long)rs.getObject("FromAddrId"));
-//			msgInboxVo.setReplyToAddrId((Long)rs.getObject("ReplyToAddrId"));
-//			msgInboxVo.setToAddrId((Long)rs.getObject("ToAddrId"));
-//			msgInboxVo.setClientId(rs.getString("ClientId"));
-//			msgInboxVo.setCustId(rs.getString("CustId"));
-//			msgInboxVo.setPurgeDate((java.sql.Date)rs.getObject("PurgeDate"));
-//			msgInboxVo.setUpdtTime(rs.getTimestamp("UpdtTime"));
-//			msgInboxVo.setUpdtUserId(rs.getString("UpdtUserId"));
-//			msgInboxVo.setLockTime(rs.getTimestamp("LockTime"));
-//			msgInboxVo.setLockId(rs.getString("LockId"));
-//			msgInboxVo.setRuleName(rs.getString("RuleName"));
-//			msgInboxVo.setReadCount(rs.getInt("ReadCount"));
-//			msgInboxVo.setReplyCount(rs.getInt("ReplyCount"));
-//			msgInboxVo.setForwardCount(rs.getInt("ForwardCount"));
-//			msgInboxVo.setFlagged(rs.getString("Flagged"));
-//			
-//			msgInboxVo.setMsgDirection(rs.getString("MsgDirection"));
-//			msgInboxVo.setDeliveryTime(rs.getTimestamp("DeliveryTime"));
-//			msgInboxVo.setStatusId(rs.getString("StatusId"));
-//			msgInboxVo.setSmtpMessageId(rs.getString("SmtpMessageId"));
-//			msgInboxVo.setRenderId((Long)rs.getObject("RenderId"));
-//			msgInboxVo.setOverrideTestAddr(rs.getString("OverrideTestAddr"));
-//			
-//			msgInboxVo.setAttachmentCount(rs.getInt("AttachmentCount"));
-//			msgInboxVo.setAttachmentSize(rs.getInt("AttachmentSize"));
-//			msgInboxVo.setMsgBodySize(rs.getInt("MsgBodySize"));
-//			
-//			msgInboxVo.setMsgContentType(rs.getString("MsgContentType"));
-//			msgInboxVo.setBodyContentType(rs.getString("BodyContentType"));
-//			msgInboxVo.setMsgBody(rs.getString("MsgBody"));
-//			
-//			msgInboxVo.setOrigUpdtTime(msgInboxVo.getUpdtTime());
-//			msgInboxVo.setOrigReadCount(msgInboxVo.getReadCount());
-//			msgInboxVo.setOrigStatusId(msgInboxVo.getStatusId());
-//			return msgInboxVo;
-//		}
-//	}
-
-//	private static class MsgInboxMapperWeb implements RowMapper<MsgInboxWebVo> {
-//		
-//		public MsgInboxWebVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-//			MsgInboxWebVo msgInboxVo = new MsgInboxWebVo();
-//			
-//			msgInboxVo.setMsgId(rs.getLong("MsgId"));
-//			msgInboxVo.setMsgRefId((Long)rs.getObject("MsgRefId"));
-//			msgInboxVo.setLeadMsgId(rs.getLong("LeadMsgId"));
-//			msgInboxVo.setMsgSubject(rs.getString("MsgSubject"));
-//			msgInboxVo.setReceivedTime(rs.getTimestamp("ReceivedTime"));
-//			msgInboxVo.setFromAddrId((Long)rs.getObject("FromAddrId"));
-//			msgInboxVo.setToAddrId((Long)rs.getObject("ToAddrId"));
-//			msgInboxVo.setRuleName(rs.getString("RuleName"));
-//			msgInboxVo.setReadCount(rs.getInt("ReadCount"));
-//			msgInboxVo.setReplyCount(rs.getInt("ReplyCount"));
-//			msgInboxVo.setForwardCount(rs.getInt("ForwardCount"));
-//			msgInboxVo.setFlagged(rs.getString("Flagged"));
-//			msgInboxVo.setMsgDirection(rs.getString("MsgDirection"));
-//			msgInboxVo.setStatusId(rs.getString("StatusId"));
-//			
-//			msgInboxVo.setAttachmentCount(rs.getInt("AttachmentCount"));
-//			msgInboxVo.setAttachmentSize(rs.getInt("AttachmentSize"));
-//			msgInboxVo.setMsgBodySize(rs.getInt("MsgBodySize"));
-//			
-//			msgInboxVo.setOrigReadCount(msgInboxVo.getReadCount());
-//			msgInboxVo.setOrigStatusId(msgInboxVo.getStatusId());
-//			
-//			return msgInboxVo;
-//		}
-//	}
-	
 	public MsgInboxVo getByPrimaryKey(long msgId) {
 		String sql = 
 			"select * " +
@@ -167,6 +74,15 @@ public class MsgInboxDao {
 			" where msgId = (select max(MsgId) from Msg_Inbox) ";
 
 		MsgInboxVo vo = getJdbcTemplate().queryForObject(sql, 
+				new BeanPropertyRowMapper<MsgInboxVo>(MsgInboxVo.class));
+		return vo;
+	}
+	
+	public MsgInboxVo getRandomRecord() {
+		String sql = 
+			"select * from Msg_Inbox " +
+			" where msgId >= (select Floor(max(MsgId) * RAND()) from Msg_Inbox) limit 1 ";
+		MsgInboxVo vo = getJdbcTemplate().queryForObject(sql,
 				new BeanPropertyRowMapper<MsgInboxVo>(MsgInboxVo.class));
 		return vo;
 	}

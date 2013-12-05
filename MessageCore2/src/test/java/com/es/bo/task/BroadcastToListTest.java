@@ -33,9 +33,9 @@ import com.es.data.preload.EmailVariableEnum;
 import com.es.data.preload.MailingListEnum;
 import com.es.data.preload.RuleNameEnum;
 import com.es.msg.util.EmailIdParser;
+import com.es.msg.util.MsgHeaderVoUtil;
 import com.es.msgbean.MessageBean;
 import com.es.msgbean.MessageContext;
-import com.es.msgbean.MsgHeader;
 import com.es.vo.inbox.MsgHeaderVo;
 import com.es.vo.inbox.MsgInboxVo;
 
@@ -85,12 +85,7 @@ public class BroadcastToListTest {
 			String emailId_body = parser.parseMsg(minbox.getMsgBody());
 			List<MsgHeaderVo> headers = headerDao.getByMsgId(msgId);
 			mBean.getHeaders().clear();
-			for (MsgHeaderVo mhdr : headers) {
-				MsgHeader hdr = new MsgHeader();
-				hdr.setName(mhdr.getHeaderName());
-				hdr.setValue(mhdr.getHeaderValue());
-				mBean.getHeaders().add(hdr);
-			}
+			mBean.getHeaders().addAll(MsgHeaderVoUtil.toMsgHeaderList(headers));
 			String emailId_xhdr = parser.parseHeaders(mBean.getHeaders());
 			System.out.println("Email_Id from body: " + emailId_body + ", from XHdr: " + emailId_xhdr);
 			assertNotNull(emailId_xhdr);

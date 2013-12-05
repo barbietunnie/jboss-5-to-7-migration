@@ -72,8 +72,8 @@ public class AssignRuleNameTest {
 			logger.error("AddressException caught", e);
 		}
 		mBean.setSubject("A Exception occured");
-		MsgInboxVo firstRec = inboxDao.getFirstRecord();
-		String emailIdStr = parser.createEmailId(firstRec.getMsgId());
+		MsgInboxVo randomRec = inboxDao.getRandomRecord();
+		String emailIdStr = parser.createEmailId(randomRec.getMsgId());
 		mBean.setValue(new Date()+ "Test body message." + LF + LF + emailIdStr + LF);
 		mBean.setMailboxUser("testUser");
 		String id = parser.parseMsg(mBean.getBody());
@@ -96,9 +96,12 @@ public class AssignRuleNameTest {
 	public void testAssignRuleName() {
 		System.out.println("Verifying Results ##################################################################");
 		// verify results
-		if (ctx.getEmailAddrIdList().size()>0) {
-			EmailAddressVo addr = emailDao.getByAddrId(ctx.getEmailAddrIdList().get(0));
-			assertTrue(StatusId.SUSPENDED.getValue().equals(addr.getStatusId()));
+		if (emailDao.getByAddress(bounceAddr)!=null) {
+			assertFalse(ctx.getEmailAddrIdList().isEmpty());
+			for (Long addrId : ctx.getEmailAddrIdList()) {
+				EmailAddressVo addr = emailDao.getByAddrId(addrId);
+				assertTrue(StatusId.SUSPENDED.getValue().equals(addr.getStatusId()));
+			}
 		}
 		assertFalse(ctx.getMsgIdList().isEmpty());
 		logger.info("MsgId List: " + ctx.getMsgIdList());

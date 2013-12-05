@@ -1,7 +1,6 @@
 package com.es.bo.task;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
@@ -20,40 +19,41 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.es.dao.address.EmailAddressDao;
-import com.es.dao.inbox.MsgHeaderDao;
+import com.es.dao.inbox.MsgAddressDao;
 import com.es.dao.inbox.MsgInboxDao;
-import com.es.data.preload.EmailTemplateEnum;
-import com.es.msg.util.EmailIdParser;
-import com.es.msg.util.MsgHeaderVoUtil;
+import com.es.dao.sender.SenderDataDao;
+import com.es.data.constant.Constants;
+import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.TableColumnName;
 import com.es.msgbean.MessageBean;
 import com.es.msgbean.MessageContext;
-import com.es.msgbean.MsgHeader;
+import com.es.vo.comm.SenderDataVo;
+import com.es.vo.inbox.MsgAddressVo;
 import com.es.vo.inbox.MsgInboxVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-core-config.xml"})
 @TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=false)
 @Transactional
-public class AutoReplyMessageTest {
+public class ForwardMessageTest {
 	final static String LF = System.getProperty("line.separator", "\n");
-	static final Logger logger = Logger.getLogger(AutoReplyMessageTest.class);
+	static final Logger logger = Logger.getLogger(ForwardMessageTest.class);
 	
 	@Resource
-	private AutoReplyMessage task;
-	@Resource
-	private EmailAddressDao emailDao;
+	private ForwardMessage task;
 	@Resource
 	private MsgInboxDao inboxDao;
 	@Resource
-	private MsgHeaderDao headerDao;
+	private SenderDataDao senderDao;
+	@Resource
+	private MsgAddressDao addressDao;
 
 	@BeforeClass
-	public static void AutoReplyPrepare() {
+	public static void ForwardPrepare() {
 	}
 
 	@Test
-	public void testAutoReplyMessage() throws Exception {
+	public void testForwardMessage() throws Exception {
 		String fromaddr = "testfrom@localhost";
 		String toaddr = "testto@localhost";
 		MessageBean mBean = new MessageBean();
@@ -64,19 +64,15 @@ public class AutoReplyMessageTest {
 		catch (AddressException e) {
 			logger.error("AddressException caught", e);
 		}
-		EmailIdParser parser = EmailIdParser.getDefaultParser();
 		mBean.setSubject("A Exception occured");
-		MsgInboxVo randomRec = inboxDao.getRandomRecord();
-		String emailIdStr = parser.createEmailId(randomRec.getMsgId());
-		//mBean.setValue(new Date()+ " Test body message." + LF + LF + "System Email Id: 10.2127.0" + LF);
-		mBean.setValue(new Date()+ " Test body message." + LF + LF + emailIdStr + LF);
+		mBean.setValue(new Date()+ " Test body message.");
 		mBean.setMailboxUser("testUser");
-		String id = parser.parseMsg(mBean.getBody());
-		mBean.setMsgRefId(Long.parseLong(id));
-		mBean.setFinalRcpt("testbounce@test.com");
+		mBean.setSenderId(Constants.DEFAULT_SENDER_ID);
+		String forwardAddr = "twang@localhost";
+		mBean.setForward(InternetAddress.parse(forwardAddr));
 
 		MessageContext ctx = new MessageContext(mBean);
-		ctx.setTaskArguments(EmailTemplateEnum.SubscribeByEmailReply.name());
+		ctx.setTaskArguments("$" + EmailAddressType.FORWARD_ADDR.getValue() + ",$" + TableColumnName.SUBSCRIBER_CARE_ADDR.getValue());
 		task.process(ctx);
 		
 		System.out.println("Verifying Results ##################################################################");
@@ -84,17 +80,25 @@ public class AutoReplyMessageTest {
 		assertFalse(ctx.getMsgIdList().isEmpty());
 		logger.info("MsgId from MesageContext = " + ctx.getMsgIdList().get(0));
 		MsgInboxVo minbox = inboxDao.getByPrimaryKey(ctx.getMsgIdList().get(0));
-
-		assertTrue(toaddr.equals(minbox.getFromAddress()));
-		assertTrue(fromaddr.equals(minbox.getToAddress()));
-
-		assertTrue(minbox.getMsgRefId().equals(mBean.getMsgRefId()));
-		assertTrue(minbox.getMsgBody().indexOf(fromaddr)>0);
-
-		String emailIdBody = parser.parseMsg(minbox.getMsgBody());
-		assertNotNull(emailIdBody);
-		List<MsgHeader> hdrLst = MsgHeaderVoUtil.toMsgHeaderList(headerDao.getByMsgId(minbox.getMsgId()));
-		String emailIdHdr = parser.parseHeaders(hdrLst);
-		assertTrue(emailIdBody.equals(emailIdHdr));
+		assertTrue(fromaddr.equals(minbox.getFromAddress()));
+		List<MsgAddressVo> addrs = addressDao.getByMsgId(minbox.getMsgId());
+		assertTrue(addrs.size()>=3);
+		SenderDataVo sender = senderDao.getBySenderId(mBean.getSenderId());
+		int addrsFound = 0;
+		for (MsgAddressVo addr : addrs) {
+			if (forwardAddr.equals(addr.getAddrValue())) {
+				addrsFound++;
+			}
+			else if (fromaddr.equals(addr.getAddrValue())) {
+				addrsFound++;
+			}
+			else if (sender.getCustcareEmail().equals(addr.getAddrValue())) {
+				addrsFound++;
+			}
+		}
+		assertTrue(addrsFound==3);
+		
+		assertTrue(minbox.getMsgSubject().equals(mBean.getSubject()));
+		assertTrue(minbox.getMsgBody().equals(mBean.getBody()));
 	}
 }
