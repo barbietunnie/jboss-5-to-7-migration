@@ -20,6 +20,8 @@ import javax.mail.Part;
 
 import org.apache.log4j.Logger;
 
+import com.es.data.constant.Constants;
+
 /**
  * Represents a message body part structure.
  * <p>
@@ -33,7 +35,7 @@ public class BodypartBean implements Serializable {
 	static final Logger logger = Logger.getLogger(BodypartBean.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	protected static final String DEFAULT_CONTENT_TYPE =  "text/plain";
+	protected static final String DEFAULT_CONTENT_TYPE =  Constants.TEXT_PLAIN;
 	
 	protected final List<BodypartBean> attachParts = new ArrayList<BodypartBean>();
 	protected final List<MsgHeader> headers = new ArrayList<MsgHeader>();
@@ -207,7 +209,7 @@ public class BodypartBean implements Serializable {
 		if (this_mtype.startsWith("text")) {
 			// exclude attachment body parts
 			if (!Part.ATTACHMENT.equals(getDisposition())) {
-				if (level > 0 && !this_mtype.startsWith("text/html")) {
+				if (level > 0 && !this_mtype.startsWith(Constants.TEXT_HTML)) {
 					if (showInlineContentType)
 						sb.append(label + this.getContentType() + LF + LF);
 				}
@@ -218,14 +220,14 @@ public class BodypartBean implements Serializable {
 		}
 		else if (this_mtype.startsWith("multipart/alternative")) {
 			// alternative sub type, get the last text alternative
-			String content_type = "text/plain";
+			String content_type = Constants.TEXT_PLAIN;
 			byte[] textBody = null;
 			// get the last text alternative (order: text/plain -> text/html)
 			for (BodypartBean subNode : getNodes()) {
 				if (subNode.getMimeType().startsWith("text")) {
 					content_type = subNode.getContentType();
 					textBody = subNode.getValue();
-					if (subNode.getMimeType().startsWith("text/plain")) {
+					if (subNode.getMimeType().startsWith(Constants.TEXT_PLAIN)) {
 						// save the plain text version of the email
 						if (!hashMap.containsKey(MessageBean.MSG_BODY_TEXT)) {
 							if (textBody != null) {
@@ -244,7 +246,7 @@ public class BodypartBean implements Serializable {
 			} // end for loop
 			if (textBody != null) {
 				String txt = new String(textBody);
-				if (level > 0 && !content_type.startsWith("text/html")) {
+				if (level > 0 && !content_type.startsWith(Constants.TEXT_HTML)) {
 					if (showInlineContentType)
 						sb.append(label + content_type + LF + LF);
 				}

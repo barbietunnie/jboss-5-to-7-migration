@@ -23,6 +23,7 @@ import com.es.dao.address.EmailAddressDao;
 import com.es.dao.address.EmailTemplateDao;
 import com.es.dao.address.MailingListDao;
 import com.es.data.constant.CodeType;
+import com.es.data.constant.Constants;
 import com.es.exception.DataValidationException;
 import com.es.exception.TemplateException;
 import com.es.exception.TemplateNotFoundException;
@@ -118,7 +119,7 @@ public class AutoReplyMessage extends TaskBaseAdaptor {
 			String body = renderVo.getBody();
 			if (renderVo.getEmailTemplateVo() != null && renderVo.getEmailTemplateVo().getIsHtml()) {
 				if (CodeType.YES_CODE.getValue().equals(vo.getAcceptHtml())) {
-					replyBean.setContentType("text/html");
+					replyBean.setContentType(Constants.TEXT_HTML);
 				}
 				else {
 					try {

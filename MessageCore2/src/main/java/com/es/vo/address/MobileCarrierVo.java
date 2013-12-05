@@ -6,18 +6,11 @@ import com.es.vo.comm.BaseVoWithRowId;
 public class MobileCarrierVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = 5518151528344528993L;
 
-	private String carrierId = "";
 	private String carrierName = "";
 	private String countryCode = null;
 	private String multiMediaAddress = null;
 	private String textAddress = "";
 
-	public String getCarrierId() {
-		return carrierId;
-	}
-	public void setCarrierId(String carrierId) {
-		this.carrierId = carrierId;
-	}
 	public String getCarrierName() {
 		return carrierName;
 	}

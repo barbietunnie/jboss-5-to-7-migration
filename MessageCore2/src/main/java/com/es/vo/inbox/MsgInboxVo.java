@@ -11,6 +11,7 @@ import com.es.dao.address.EmailAddressDao;
 import com.es.dao.inbox.MsgStreamDao;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
+import com.es.data.constant.Constants;
 import com.es.data.constant.EmailAddressType;
 import com.es.data.constant.MsgDirectionCode;
 import com.es.data.constant.MsgStatusCode;
@@ -251,12 +252,14 @@ public class MsgInboxVo extends BaseVo implements Serializable {
 	 * @return body text
 	 */
 	public String getDisplayBody() {
-		if (bodyContentType == null) bodyContentType = "text/plain";
-		if (bodyContentType.toLowerCase().startsWith("text/plain")
+		if (bodyContentType == null) {
+			bodyContentType = Constants.TEXT_PLAIN;
+		}
+		if (bodyContentType.toLowerCase().startsWith(Constants.TEXT_PLAIN)
 				|| bodyContentType.toLowerCase().startsWith("message")) {
 			return StringUtil.getHtmlDisplayText(msgBody);
 		}
-		else if (bodyContentType.toLowerCase().startsWith("text/html")) {
+		else if (bodyContentType.toLowerCase().startsWith(Constants.TEXT_HTML)) {
 			return MessageBodyBuilder.removeHtmlBodyTags(msgBody);
 		}
 		else { // unknown type

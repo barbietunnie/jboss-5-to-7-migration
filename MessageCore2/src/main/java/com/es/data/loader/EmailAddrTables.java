@@ -121,7 +121,6 @@ public class EmailAddrTables extends AbstractTableBase {
 		try {
 			getJdbcTemplate().execute("CREATE TABLE MOBILE_CARRIER ( "
 					+ "RowId int AUTO_INCREMENT not null, "
-					+ "CarrierId varchar(20) NOT NULL, "
 					+ "CarrierName varchar(50) NOT NULL, "
 					+ "CountryCode varchar(10), " 
 					+ "MultiMediaAddress varchar(100), "
@@ -427,7 +426,6 @@ DELIMITER ;
 		MobileCarrierDao dao = SpringUtil.getAppContext().getBean(MobileCarrierDao.class);
 		for (MobileCarrierEnum mc : MobileCarrierEnum.values()) {
 			MobileCarrierVo vo = new MobileCarrierVo();
-			vo.setCarrierId(mc.name());
 			vo.setCarrierName(mc.getValue());
 			vo.setCountryCode(mc.getCountry());
 			vo.setMultiMediaAddress(mc.getMmedia());

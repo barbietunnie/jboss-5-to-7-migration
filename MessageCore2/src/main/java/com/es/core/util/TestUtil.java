@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.es.dao.address.EmailAddressDao;
 import com.es.dao.inbox.MsgInboxDao;
+import com.es.data.constant.Constants;
 import com.es.data.constant.EmailAddressType;
 import com.es.data.preload.RuleNameEnum;
 import com.es.msgbean.BodypartBean;
@@ -123,7 +124,7 @@ public class TestUtil {
 		assertTrue(bodyBean2.getNodes().size()==1);
 		BodypartBean bodyBean2_1 = bodyBean2.getNodes().get(0);
 		logger.info(StringUtil.prettyPrint(bodyBean2_1));
-		assertTrue(bodyBean2_1.getContentType().startsWith("text/html"));
+		assertTrue(bodyBean2_1.getContentType().startsWith(Constants.TEXT_HTML));
 		String rfc822 = new String(bodyBean2_1.getValue());
 		assertTrue(rfc822.indexOf("Dear jackwnn@synnex.com.au")>0);
 		assertTrue(rfc822.indexOf("Online Pharmacy Products!")>0);

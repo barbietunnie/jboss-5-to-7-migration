@@ -208,7 +208,7 @@ public class RenderBo implements java.io.Serializable {
 			RenderVariable var = rsp.getVariableFinal().get(VariableName.BODY_TEMPLATE.getValue());
 			if (VariableType.TEXT.equals(var.getVariableType())) {
 				bodyTemplate = (String) var.getVariableValue();
-				contentType = (var.getVariableFormat() == null ? (HtmlUtil.isHTML(bodyTemplate) ? "text/html" : "text/plain")
+				contentType = (var.getVariableFormat() == null ? (HtmlUtil.isHTML(bodyTemplate) ? Constants.TEXT_HTML : Constants.TEXT_PLAIN)
 						: var.getVariableFormat());
 			}
 		}

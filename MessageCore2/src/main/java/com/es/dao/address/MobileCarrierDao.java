@@ -34,10 +34,10 @@ public class MobileCarrierDao {
 		return jdbcTemplate;
 	}
 
-	public MobileCarrierVo getByCarrierId(String carrierId) {
+	public MobileCarrierVo getByRowId(int rowId) {
 		String sql = "select * from mobile_carrier a " +
-				" where a.CarrierId = ? ";
-		Object[] parms = new Object[] {carrierId};
+				" where a.RowId = ? ";
+		Object[] parms = new Object[] {rowId};
 		try {
 			MobileCarrierVo vo = getJdbcTemplate().queryForObject(sql, parms,
 					new BeanPropertyRowMapper<MobileCarrierVo>(MobileCarrierVo.class));
@@ -80,7 +80,6 @@ public class MobileCarrierDao {
 			mcVo.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		}
 		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(mcVo.getCarrierId());
 		keys.add(mcVo.getCarrierName());
 		keys.add(mcVo.getCountryCode());
 		keys.add(mcVo.getMultiMediaAddress());
@@ -90,7 +89,6 @@ public class MobileCarrierDao {
 		keys.add(mcVo.getUpdtUserId());
 		keys.add(mcVo.getRowId());
 		String sql = "update Mobile_Carrier set " +
-			"CarrierId=?," +
 			"CarrierName=?," +
 			"CountryCode=?," +
 			"MultiMediaAddress=?," +
@@ -106,9 +104,16 @@ public class MobileCarrierDao {
 		return rowsUpadted;
 	}
 	
-	public int deleteByCarrierId(String carrierId) {
-		String sql = "delete from Mobile_Carrier where CarrierId=?";
-		Object[] parms = new Object[] {carrierId};
+	public int deleteByRowId(int rowId) {
+		String sql = "delete from Mobile_Carrier where RowId=?";
+		Object[] parms = new Object[] {rowId};
+		int rowsDeleted = getJdbcTemplate().update(sql, parms);
+		return rowsDeleted;
+	}
+	
+	public int deleteByCarrierName(String carrierName) {
+		String sql = "delete from Mobile_Carrier where CarrierName=?";
+		Object[] parms = new Object[] {carrierName};
 		int rowsDeleted = getJdbcTemplate().update(sql, parms);
 		return rowsDeleted;
 	}
@@ -119,7 +124,6 @@ public class MobileCarrierDao {
 			mcVo.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		}
 		Object[] parms = {
-				mcVo.getCarrierId(),
 				mcVo.getCarrierName(),
 				mcVo.getCountryCode(),
 				mcVo.getMultiMediaAddress(),
@@ -130,7 +134,6 @@ public class MobileCarrierDao {
 			};
 		
 		String sql = "INSERT INTO Mobile_Carrier (" +
-			"CarrierId," +
 			"CarrierName," +
 			"CountryCode," +
 			"MultiMediaAddress," +
@@ -139,7 +142,7 @@ public class MobileCarrierDao {
 			"UpdtTime," +
 			"UpdtUserId " +
 			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ? "+
+				" ?, ?, ?, ?, ?, ?, ? "+
 				")";
 		
 		int rowsInserted = getJdbcTemplate().update(sql, parms);

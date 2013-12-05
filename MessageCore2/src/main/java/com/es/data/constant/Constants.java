@@ -31,6 +31,10 @@ public class Constants {
 	public static final String SMTP_MAIL = "smtpmail";
 	public static final String WEB_MAIL = "webmail";
 	
+	// define MIME content types
+	public static final String TEXT_PLAIN = "text/plain";
+	public static final String TEXT_HTML = "text/html";
+	
 	// define message related constants 
 	public static final String MESSAGE_TRUNCATED = "=== message truncated ===";
 	public static final String MSG_DELIMITER_BEGIN = "--- ";

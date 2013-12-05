@@ -141,7 +141,7 @@ public class UserTable extends AbstractTableBase {
 		data.setSessionId("test_session_id");
 		data.setSessionSeq(0);
 		data.setFileName("test1.txt");
-		data.setContentType("text/plain");
+		data.setContentType(Constants.TEXT_PLAIN);
 		data.setUserId(getProperty("user.id.1"));
 		data.setSessionValue("test upload text 1".getBytes());
 		uploadService.insert(data);
@@ -150,7 +150,7 @@ public class UserTable extends AbstractTableBase {
 		data.setSessionId("test_session_id");
 		data.setSessionSeq(1);
 		data.setFileName("test2.txt");
-		data.setContentType("text/plain");
+		data.setContentType(Constants.TEXT_PLAIN);
 		data.setUserId(getProperty("user.id.1"));
 		data.setSessionValue("test upload text 2".getBytes());
 		uploadService.insert(data);

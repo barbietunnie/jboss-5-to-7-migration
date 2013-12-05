@@ -483,7 +483,7 @@ public final class JavaMailParser {
 		 * 
 		 * A try/catch block is added to get around these problems.
 		 */
-		String disp = null, desc = null, contentType = "text/plain";
+		String disp = null, desc = null, contentType = Constants.TEXT_PLAIN;
 		String dispOrig = null, descOrig = null;
 		String fileName = null;
 		// initialize part size
@@ -493,7 +493,7 @@ public final class JavaMailParser {
 			contentType = p.getContentType();
 		}
 		catch (Exception e) {
-			contentType = "text/plain"; // failed to get content type, use default
+			contentType = Constants.TEXT_PLAIN; // failed to get content type, use default
 			logger.error("Exception caught during getContentType()", e);
 		}
 		// get disposition
@@ -580,7 +580,7 @@ public final class JavaMailParser {
 			 * Using isMimeType to determine the content type to avoid fetching
 			 * the actual content data until it is needed.
 			 */
-			if (p.isMimeType("text/plain") || p.isMimeType("text/html")) {
+			if (p.isMimeType(Constants.TEXT_PLAIN) || p.isMimeType(Constants.TEXT_HTML)) {
 				logger.info("processAttc: level " + level + ", text message: " + contentType);
 				aNode.setValue((String) p.getContent());
 				msgBean.getComponentsSize().add(Integer.valueOf(aNode.getSize()));
@@ -663,7 +663,7 @@ public final class JavaMailParser {
 			logger.error("processAttc(): IndexOutOfBoundsException caught: " + contentType);
 			logger.error("IndexOutOfBoundsException caught", e);
 			aNode.setValue("reader001: IndexOutOfBoundsException caught during process.");
-			BodypartBean subNode = new BodypartBean("text/plain");
+			BodypartBean subNode = new BodypartBean(Constants.TEXT_PLAIN);
 			aNode.put(subNode);
 			setAnodeValue(subNode, p,
 					"reader002: IndexOutOfBoundsException thrown from mp.getBodyPart(i), Body Part does not exist.");
@@ -683,7 +683,7 @@ public final class JavaMailParser {
 			if (contentType.trim().toLowerCase().startsWith("multipart/")
 					|| contentType.trim().toLowerCase().startsWith("message/rfc822")) {
 				aNode.setValue("reader003: MessagingException caught during process.");
-				BodypartBean subNode = new BodypartBean("text/plain");
+				BodypartBean subNode = new BodypartBean(Constants.TEXT_PLAIN);
 				aNode.put(subNode);
 				setAnodeValue(subNode, p);
 				if (subNode.getValue() != null) {
@@ -708,7 +708,7 @@ public final class JavaMailParser {
 			if (contentType.trim().toLowerCase().startsWith("multipart/")
 					|| contentType.trim().toLowerCase().startsWith("message/rfc822")) {
 				aNode.setValue("reader004: UnsupportedEncodingException caught during process.");
-				BodypartBean subNode = new BodypartBean("text/plain");
+				BodypartBean subNode = new BodypartBean(Constants.TEXT_PLAIN);
 				aNode.put(subNode);
 				setAnodeValue(subNode, p);
 				if (subNode.getValue() != null) {
@@ -737,7 +737,7 @@ public final class JavaMailParser {
 			if (contentType.trim().toLowerCase().startsWith("multipart/")
 					|| contentType.trim().toLowerCase().startsWith("message/rfc822")) {
 				aNode.setValue("reader005: IOException caught during process.");
-				BodypartBean subNode = new BodypartBean("text/plain");
+				BodypartBean subNode = new BodypartBean(Constants.TEXT_PLAIN);
 				aNode.put(subNode);
 				subNode.setValue("-- Message body has been omitted --");
 				subNode.setDisposition(aNode.getDisposition());
@@ -754,7 +754,7 @@ public final class JavaMailParser {
 			if (contentType.trim().toLowerCase().startsWith("multipart/")
 					|| contentType.trim().toLowerCase().startsWith("message/rfc822")) {
 				aNode.setValue("reader006: Exception caught during process.");
-				BodypartBean subNode = new BodypartBean("text/plain");
+				BodypartBean subNode = new BodypartBean(Constants.TEXT_PLAIN);
 				aNode.put(subNode);
 				setAnodeValue(subNode, p, "Unchecked Exception caught: " + e.toString());
 				subNode.setDisposition(aNode.getDisposition());

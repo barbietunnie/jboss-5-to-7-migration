@@ -86,7 +86,7 @@ public class MsgAttachmentTest {
 				vo.getAttchmntDepth(), vo.getAttchmntSeq());
 		int rowsUpdated = 0;
 		if (attachmentsVo!=null) {
-			attachmentsVo.setAttchmntType("text/plain");
+			attachmentsVo.setAttchmntType(Constants.TEXT_PLAIN);
 			attachmentsVo.setUpdtUserId(Constants.DEFAULT_USER_ID);
 			attachmentsVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 			rowsUpdated = msgAttachmentDao.update(attachmentsVo);

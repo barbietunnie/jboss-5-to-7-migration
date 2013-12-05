@@ -130,14 +130,14 @@ public class RenderBoTest {
 		assertTrue(attachments.size()==2);
 		MessageNode atc1 = attachments.get(0);
 		BodypartBean bpt1 = atc1.getBodypartNode();
-		assertTrue(StringUtils.startsWith(bpt1.getMimeType(), "text/plain"));
+		assertTrue(StringUtils.startsWith(bpt1.getMimeType(), Constants.TEXT_PLAIN));
 		assertTrue(StringUtils.equals(bpt1.getDescription(), "jndi.txt"));
 		assertTrue(StringUtils.equals(bpt1.getDisposition(), "attachment"));
 		String body1 = new String(bpt1.getValue());
 		assertTrue(StringUtils.contains(body1, "# JBoss 7.1 jndi.properties"));
 		MessageNode atc2 = attachments.get(1);
 		BodypartBean bpt2 = atc2.getBodypartNode();
-		assertTrue(StringUtils.startsWith(bpt2.getMimeType(), "text/plain"));
+		assertTrue(StringUtils.startsWith(bpt2.getMimeType(), Constants.TEXT_PLAIN));
 		assertTrue(StringUtils.equals(bpt2.getDescription(), "attachment1.txt"));
 		assertTrue(StringUtils.equals(bpt2.getDisposition(), "attachment"));
 		String body2 = new String(bpt2.getValue());
@@ -206,7 +206,7 @@ public class RenderBoTest {
 		RenderVariable req6_1 = new RenderVariable(
 				"attachment1.txt", 
 				"Attachment Text ============================================", 
-				"text/plain", 
+				Constants.TEXT_PLAIN, 
 				VariableType.LOB, 
 				"Y",
 				Boolean.FALSE
@@ -237,7 +237,7 @@ public class RenderBoTest {
 			RenderVariable req6_2 = new RenderVariable(
 					"jndi.txt",
 					buffer,
-					"text/plain",
+					Constants.TEXT_PLAIN,
 					VariableType.LOB, 
 					"Y",
 					Boolean.FALSE
