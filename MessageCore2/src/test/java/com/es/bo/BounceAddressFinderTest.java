@@ -48,10 +48,10 @@ public class BounceAddressFinderTest {
 					sb = new StringBuilder();
 					String addr = BounceAddressFinder.getInstance().find(body);
 					if (StringUtils.isEmpty(addr)) {
-						System.out.println("(" + count + ") - not matched ##########.");
+						logger.info("(" + count + ") - not matched ##########.");
 					}
 					else {
-						System.out.println("(" + count + ") - matched: " + addr);
+						logger.info("(" + count + ") - matched: " + addr);
 						matched++;
 					}
 				}

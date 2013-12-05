@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 public abstract class BasePagingVo extends BaseVo implements java.io.Serializable, Cloneable {
 	private static final long serialVersionUID = -1139494427014770362L;
+	static final Logger logger = Logger.getLogger(BasePagingVo.class);
 	protected final Set<String> searchFields = new HashSet<String>();
 	
 	protected abstract void setSearchableFields();
@@ -78,7 +80,7 @@ public abstract class BasePagingVo extends BaseVo implements java.io.Serializabl
 			String name = method.getName();
 			Class<?>[] params = method.getParameterTypes();
 			if (name.startsWith("get") && params.length == 0) {
-				System.out.println("Method Name: " + name + ", Return Type: "
+				logger.info("Method Name: " + name + ", Return Type: "
 						+ method.getReturnType().getName());
 			}
 		}

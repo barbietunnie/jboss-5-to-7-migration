@@ -676,7 +676,7 @@ public class MessageParserBo {
 			mBean.setValue(new Date()+ " 5.2.2 Invalid user account.");
 			mBean.setMailboxUser("testUser");
 			String ruleName = parser.parse(mBean);
-			System.out.println("### RuleName: " + ruleName);
+			logger.info("### RuleName: " + ruleName);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
