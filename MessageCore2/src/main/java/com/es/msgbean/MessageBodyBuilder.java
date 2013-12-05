@@ -55,7 +55,7 @@ public final class MessageBodyBuilder {
 		}
 		
 		MessageBean orig = msgBean.getOriginalMail();
-		String origContentType = "text/plain";
+		String origContentType = Constants.TEXT_PLAIN;
 		if (orig != null && orig.getBodyContentType() != null) {
 			origContentType = orig.getBodyContentType();
 		}
@@ -473,7 +473,7 @@ public final class MessageBodyBuilder {
 
 		// embed email_id for HTML email
 		MessageBean msgBean = new MessageBean();
-		msgBean.setContentType("text/html");
+		msgBean.setContentType(Constants.TEXT_HTML);
 		msgBean.setMsgId(Long.valueOf(999999));
 		msgBean.setSubject("Test Embedding Email_Id 1");
 		msgBean.setBody("<HTML>This is the test message with no Email_Id in the body.</HTML>");
@@ -483,7 +483,7 @@ public final class MessageBodyBuilder {
 
 		// embed email_id for plain text email
 		msgBean = new MessageBean();
-		msgBean.setContentType("text/plain");
+		msgBean.setContentType(Constants.TEXT_PLAIN);
 		msgBean.setMsgId(Long.valueOf(999999));
 		msgBean.setSubject("Test Embedding Email_Id 2");
 		msgBean.setBody("This is the test message that has an existing Email_Id\n"
@@ -503,7 +503,7 @@ public final class MessageBodyBuilder {
 		logger.info("Email_Id from X-Header: " + msgId);
 		
 		msgBean = new MessageBean();
-		msgBean.setContentType("text/plain");
+		msgBean.setContentType(Constants.TEXT_PLAIN);
 		msgBean.setMsgId(Long.valueOf(999999));
 		msgBean.setSubject("Test Embedding Email_Id 3");
 		msgBean.setBody("This is the test message with embedded Email_Id.");

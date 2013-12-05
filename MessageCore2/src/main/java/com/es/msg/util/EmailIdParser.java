@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.es.core.util.SpringUtil;
@@ -116,7 +117,7 @@ public final class EmailIdParser implements Serializable {
 	 *             if the Email_Id format is invalid
 	 */
 	public String parseMsg(String msgStr) throws NumberFormatException {
-		if (msgStr == null || msgStr.length() == 0) {
+		if (StringUtils.isBlank(msgStr)) {
 			return null;
 		}
 		// Search Email Id from body. example: Email Id: 10.1234567890.0
@@ -127,9 +128,10 @@ public final class EmailIdParser implements Serializable {
 			keyStr = getKey(msgStr, bodyHeaderPattern);			
 		}
 		if (keyStr != null) {
-			if (isDebugEnabled)
+			if (isDebugEnabled) {
 				logger.debug("parseMsg() - Encoded Email_Id found from body: " + keyStr);
-			return MsgIdCipher.decode(keyStr) + "";
+			}
+			return Integer.toString(MsgIdCipher.decode(keyStr));
 		}
 		return null;
 	}
@@ -159,7 +161,7 @@ public final class EmailIdParser implements Serializable {
 					logger.debug("parseHeaders() - Encoded Email_Id found from X-Header: "
 							+ keyStr);
 				}
-				return MsgIdCipher.decode(keyStr) + "";
+				return Integer.toString(MsgIdCipher.decode(keyStr));
 			}
 		}
 		return null;

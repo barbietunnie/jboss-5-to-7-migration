@@ -24,7 +24,7 @@ import com.es.vo.address.MobileCarrierVo;
 public class MobileCarrierTest {
 	@Resource
 	private MobileCarrierDao mobileCarrierDao;
-	private String testCarrierId = "TestCarrier";
+	private String testCarrierName = "TestCarrier";
 	
 	@BeforeClass
 	public static void MobileCarrierPrepare() {
@@ -35,7 +35,7 @@ public class MobileCarrierTest {
 		try {
 			MobileCarrierVo vo = insert();
 			assertNotNull(vo);
-			MobileCarrierVo vo2 = selectByCarrierId(vo.getCarrierId());
+			MobileCarrierVo vo2 = selectByRowId(vo.getRowId());
 			assertNotNull(vo2);
 			vo2.setUpdtTime(vo.getUpdtTime());
 			assertTrue(vo.equalsTo(vo2));
@@ -49,22 +49,22 @@ public class MobileCarrierTest {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			mobileCarrierDao.deleteByCarrierId(testCarrierId);
+			mobileCarrierDao.deleteByCarrierName(testCarrierName);
 			fail();
 		}
 	}
 	
-	private MobileCarrierVo selectByCarrierId(String carrierId) {
-		MobileCarrierVo vo = mobileCarrierDao.getByCarrierId(carrierId);
+	private MobileCarrierVo selectByRowId(int rowId) {
+		MobileCarrierVo vo = mobileCarrierDao.getByRowId(rowId);
 		if (vo != null) {
-			System.out.println("MobileCarrierDao: selectByCarrierId "+vo);
+			System.out.println("MobileCarrierDao: selectByRowId "+vo);
 		}
 		return vo;
 	}
 
 	private int update(MobileCarrierVo mcVo) {
-		MobileCarrierVo vo = mobileCarrierDao.getByCarrierId(mcVo.getCarrierId());
-		vo.setCarrierName(mcVo.getCarrierName() + "_v2");
+		MobileCarrierVo vo = mobileCarrierDao.getByRowId(mcVo.getRowId());
+		vo.setTextAddress("v2." + mcVo.getTextAddress());
 		int rows = mobileCarrierDao.update(vo);
 		System.out.println("MobileCarrierDao: update "+rows+"\n"+vo);
 		return rows;
@@ -74,22 +74,21 @@ public class MobileCarrierTest {
 		MobileCarrierVo vo = null;
 		if (list.isEmpty()) {
 			vo = new MobileCarrierVo();
-			vo.setCarrierId(testCarrierId);
 			vo.setCountryCode("US");
 			vo.setTextAddress("test.com");
 		}
 		else {
-			mobileCarrierDao.deleteByCarrierId(testCarrierId);
+			mobileCarrierDao.deleteByCarrierName(testCarrierName);
 			vo = list.get(0);
-			vo.setCarrierId(testCarrierId);
+			vo.setMultiMediaAddress("test media address");
 		}
-		vo.setCarrierName("Test Carrier Name");
+		vo.setCarrierName(testCarrierName);
 		mobileCarrierDao.insert(vo);
 		System.out.println("MobileCarrierDao: insert "+vo);
 		return vo;
 	}
 	private int delete(MobileCarrierVo mcVo) {
-		int rowsDeleted = mobileCarrierDao.deleteByCarrierId(mcVo.getCarrierId());
+		int rowsDeleted = mobileCarrierDao.deleteByCarrierName(mcVo.getCarrierName());
 		System.out.println("MobileCarrierDao - delete: Rows Deleted: "+rowsDeleted);
 		return rowsDeleted;
 	}

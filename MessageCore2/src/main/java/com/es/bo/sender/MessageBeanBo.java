@@ -19,6 +19,7 @@ import com.es.core.util.HtmlUtil;
 import com.es.dao.address.EmailAddressDao;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
+import com.es.data.constant.Constants;
 import com.es.data.constant.EmailAddressType;
 import com.es.data.constant.MsgDirectionCode;
 import com.es.exception.DataValidationException;
@@ -140,10 +141,10 @@ public class MessageBeanBo implements java.io.Serializable {
 				if (aNode.getValue()!=null || StringUtils.isNotBlank(msgBean.getDsnText())) {
 					BodypartBean textNode = new BodypartBean();
 					if (HtmlUtil.isHTML(msgBean.getDsnText())) {
-						textNode.setContentType("text/html");
+						textNode.setContentType(Constants.TEXT_HTML);
 					}
 					else {
-						textNode.setContentType("text/plain");
+						textNode.setContentType(Constants.TEXT_PLAIN);
 					}
 					String value = "";
 					if (StringUtils.isNotBlank(msgBean.getDsnRfc822())) {

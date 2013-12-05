@@ -27,10 +27,12 @@ import com.es.core.util.HtmlConverter;
 import com.es.core.util.PhoneNumberUtil;
 import com.es.dao.address.EmailAddressDao;
 import com.es.dao.address.MailingListDao;
+import com.es.dao.address.MobileCarrierDao;
 import com.es.dao.address.SubscriptionDao;
 import com.es.dao.inbox.MsgClickCountDao;
 import com.es.dao.subscriber.SubscriberDao;
 import com.es.data.constant.CodeType;
+import com.es.data.constant.Constants;
 import com.es.data.constant.MobileCarrierEnum;
 import com.es.data.constant.VariableName;
 import com.es.data.preload.RuleNameEnum;
@@ -41,6 +43,7 @@ import com.es.msgbean.MessageBean;
 import com.es.msgbean.MessageContext;
 import com.es.vo.address.EmailAddressVo;
 import com.es.vo.address.MailingListVo;
+import com.es.vo.address.MobileCarrierVo;
 import com.es.vo.address.SubscriptionVo;
 import com.es.vo.comm.SubscriberVo;
 
@@ -65,6 +68,8 @@ public class BroadcastToList extends TaskBaseAdaptor {
 	private MailSenderBo mailSenderBo;
 	@Autowired
 	private EmailAddressDao emailAddrDao;
+	@Autowired
+	private MobileCarrierDao mCarrierDao;
 
 	/**
 	 * Send the email to the addresses on the Mailing List.
@@ -178,7 +183,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		return Long.valueOf(mailsSent);
 	}
 	
-	private int constructAndSendMessage(MessageContext ctx, SubscriptionVo subr,
+	private int constructAndSendMessage(MessageContext ctx, SubscriptionVo subscription,
 			MailingListVo listVo, String subjText, String bodyText, List<String> varNames,
 			Boolean saveEmbedEmailId, boolean isText)
 			throws DataValidationException, IOException, TemplateException {
@@ -188,37 +193,16 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		String toAddress = null;
 		try {
 			if (isText) { // find mobile phone email address
-				SubscriberVo subrVo = subscriberDao.getByEmailAddress(subr.getEmailAddr());
-				if (subrVo != null) {
-					if (StringUtils.isNotBlank(subrVo.getMobilePhone())
-							&& StringUtils.isNotBlank(subrVo.getMobileCarrier())) {
-						try {
-							MobileCarrierEnum mc = MobileCarrierEnum.getByValue(subrVo.getMobileCarrier());
-							String phone = PhoneNumberUtil.convertTo10DigitNumber(subrVo.getMobilePhone());
-							if (StringUtils.isNotBlank(mc.getCountry())) {
-								phone = mc.getCountry() + phone;
-							}
-							toAddress = phone+"@"+mc.getText();
-							to = InternetAddress.parse(toAddress);
-						}
-						catch (NumberFormatException e) {
-							logger.error("Invalid mobile phone number (" + subrVo.getMobilePhone() + ") found in Subscriber!");
-						}
-						catch (IllegalArgumentException e) {
-							String msg = "Mobile carrier (" + subrVo.getMobileCarrier() + ") not found in enum MobileCarrierEnum!";
-							logger.error(msg);
-							// notify programming
-							String subj = "(" + subrVo.getMobileCarrier() + ") need to be added to the system - {0}";
-							EmailSender.sendEmail(subj, msg, null, EmailSender.EmailList.ToDevelopers);
-						}
-					}
-				}
-				if (to == null) {
+				toAddress = getTextingToAddress(subscription);
+				if (StringUtils.isBlank(toAddress)) {
 					return 0;
 				}
+				else {
+					to = InternetAddress.parse(toAddress);
+				}
 			}
-			else { // use regular email address
-				toAddress = subr.getEmailAddr();
+			else { // regular email address
+				toAddress = subscription.getEmailAddr();
 				to = InternetAddress.parse(toAddress);
 			}
 		}
@@ -245,13 +229,13 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		// set TO to subscriber address
 		msgBean.setTo(to);
 		String body = renderVo.getBody();
-		EmailAddressVo subrEmail = emailAddrDao.findSertAddress(subr.getEmailAddr());
-		if ("text/html".equals(msgBean.getBodyContentType())
-				&& CodeType.NO_CODE.getValue().equals(subrEmail.getAcceptHtml()) || isText) {
+		EmailAddressVo subrEmail = emailAddrDao.findSertAddress(subscription.getEmailAddr());
+		if (Constants.TEXT_HTML.equals(msgBean.getBodyContentType())
+				&& (isText || CodeType.NO_CODE.getValue().equals(subrEmail.getAcceptHtml()))) {
 			// convert to plain text
 			try {
 				body = HtmlConverter.getInstance().convertToText(body);
-				msgBean.getBodyNode().setContentType("text/plain");
+				msgBean.getBodyNode().setContentType(Constants.TEXT_PLAIN);
 			}
 			catch (ParserException e) {
 				logger.error("Failed to convert from html to plain text for: " + body);
@@ -270,7 +254,7 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		}
 		else {
 			msgBean.setEmBedEmailId(saveEmbedEmailId);
-			subscriptionDao.updateSentCount(subr.getEmailAddrId(), subr.getListId());
+			subscriptionDao.updateSentCount(subscription.getEmailAddrId(), subscription.getListId());
 		}
 		// invoke mail sender to send the mail off
 		try {
@@ -286,4 +270,50 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		return mailsSent;
 	}
 
+	private String getTextingToAddress(SubscriptionVo subscription) throws AddressException {
+		SubscriberVo subrVo = subscriberDao.getByEmailAddress(subscription.getEmailAddr());
+		String toAddress = null;
+		if (subrVo != null) {
+			if (StringUtils.isNotBlank(subrVo.getMobilePhone())
+					&& StringUtils.isNotBlank(subrVo.getMobileCarrier())) {
+				try {
+					String phoneNumber = PhoneNumberUtil.convertTo10DigitNumber(subrVo.getMobilePhone());
+					toAddress = getMobilePhoneEmailAddress(subrVo.getMobileCarrier(), phoneNumber);
+				}
+				catch (NumberFormatException e) {
+					logger.error("Invalid mobile phone number (" + subrVo.getMobilePhone() + ") found in Subscriber!");
+				}
+			}
+		}
+		return toAddress;
+	}
+	
+	private String getMobilePhoneEmailAddress(String carrierName, String phoneNumber) {
+		String countryCode = "";
+		String domainName = null;
+		MobileCarrierVo mCarrierVo = mCarrierDao.getByCarrierName(carrierName);
+		if (mCarrierVo != null) {
+			countryCode = mCarrierVo.getCountryCode();
+			domainName = mCarrierVo.getTextAddress();
+		}
+		else {
+			try {
+				MobileCarrierEnum mc = MobileCarrierEnum.getByValue(carrierName);
+				countryCode = mc.getCountry();
+				domainName = mc.getText();
+			}
+			catch (IllegalArgumentException e) {
+				String msg = "Mobile carrier (" + carrierName + ") not found in enum MobileCarrierEnum!";
+				logger.error(msg);
+				// notify programming
+				String subj = "(" + carrierName + ") need to be added to the system - {0}";
+				EmailSender.sendEmail(subj, msg, null, EmailSender.EmailList.ToDevelopers);
+				return null;
+			}
+		}
+		if (StringUtils.isNotBlank(countryCode)) {
+			phoneNumber = countryCode + phoneNumber;
+		}
+		return (phoneNumber + "@" + domainName);
+	}
 }

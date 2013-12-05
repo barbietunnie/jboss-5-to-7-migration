@@ -356,7 +356,7 @@ public final class MessageBeanUtil {
 
 		if (aNode.getMimeType().startsWith("text")) {
 			part.setContent(new String(aNode.getValue()), aNode.getContentType());
-			if (aNode.getMimeType().startsWith("text/html")) {
+			if (aNode.getMimeType().startsWith(Constants.TEXT_HTML)) {
 				if (aNode.getDisposition() == null) {
 					//part.setDisposition(Part.INLINE);
 					/* 
@@ -448,7 +448,7 @@ public final class MessageBeanUtil {
 
 		String body = msgBean.getBody();
 		String contentType = msgBean.getBodyContentType();
-		if (contentType != null && contentType.toLowerCase().startsWith("text/html")) {
+		if (contentType != null && contentType.toLowerCase().startsWith(Constants.TEXT_HTML)) {
 			body = MessageBodyBuilder.removeHtmlBodyTags(body);
 		}
 		if (body.length() > 10 * 1024) { // allow body text size up to 10k
@@ -487,7 +487,7 @@ public final class MessageBeanUtil {
 		BodyPart msgBody = new MimeBodyPart();
 		String body = msgBean.getValue() == null ? "" : new String(msgBean.getValue());
 		String contentType = msgBean.getContentType();
-		if (contentType.toLowerCase().startsWith("text/plain")) {
+		if (contentType.toLowerCase().startsWith(Constants.TEXT_PLAIN)) {
 			msgBody.setContent(body, contentType);
 		}
 		else {
@@ -507,7 +507,7 @@ public final class MessageBeanUtil {
 			BodyPart bp = new MimeBodyPart();
 			String html = "<html><head></head><body><h1>This is the HMTL version of the mail."
 					+ "</h1><img src=\"cid:0001\"></body></html>";
-			bp.setContent(html, "text/html");
+			bp.setContent(html, Constants.TEXT_HTML);
 			mr.addBodyPart(bp);
 		}
 		if (mNodes != null && mNodes.size() > 1) {

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.es.dao.inbox.MsgInboxDao;
 import com.es.dao.inbox.MsgRfcFieldDao;
+import com.es.data.constant.Constants;
 import com.es.vo.inbox.MsgRfcFieldVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -99,12 +100,12 @@ public class MsgRfcFieldTest {
 			}
 		}
 		if (rfcFieldsVo != null) {
-			rfcFieldsVo.setRfcType("text/plain");
+			rfcFieldsVo.setRfcType(Constants.TEXT_PLAIN);
 		}
 		else {
 			rfcFieldsVo = new MsgRfcFieldVo();
 			rfcFieldsVo.setMsgId(msgId);
-			rfcFieldsVo.setRfcType("text/plain");
+			rfcFieldsVo.setRfcType(Constants.TEXT_PLAIN);
 			rfcFieldsVo.setDsnText("Test RFC DSN Text.");
 		}
 		int rows = rfcFieldsDao.insert(rfcFieldsVo);

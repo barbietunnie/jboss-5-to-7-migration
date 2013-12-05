@@ -17,6 +17,7 @@ import org.htmlparser.util.ParserException;
 
 import com.es.core.util.HtmlConverter;
 import com.es.data.constant.CarrierCode;
+import com.es.data.constant.Constants;
 
 /**
  * this class holds all the properties and data of an email message, including
@@ -277,7 +278,7 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	/**
 	 * Get Body Content Type
 	 * 
-	 * @return content type. "text/plain" is returned if getToPlainText()
+	 * @return content type. Constants.TEXT_PLAIN is returned if getToPlainText()
 	 *         returns true.
 	 */
 	public String getBodyContentType() {
@@ -287,7 +288,7 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 	/**
 	 * @param original -
 	 *            When true, this method returns the original content type. When
-	 *            false, "text/plain" is returned if getToPlainText() returns
+	 *            false, Constants.TEXT_PLAIN is returned if getToPlainText() returns
 	 *            true.
 	 * @return content type of the body
 	 */
@@ -296,9 +297,9 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 		if (type == null || type.trim().length() == 0) {
 			type = DEFAULT_CONTENT_TYPE;
 		}
-		else if (!original && getToPlainText() && type.toLowerCase().indexOf("text/html") >= 0) {
-			type = replace(type, "text/html", "text/plain");
-			//type.replaceFirst("text/html", "text/plain");
+		else if (!original && getToPlainText() && type.toLowerCase().indexOf(Constants.TEXT_HTML) >= 0) {
+			type = replace(type, Constants.TEXT_HTML, Constants.TEXT_PLAIN);
+			//type.replaceFirst(Constants.TEXT_HTML, Constants.TEXT_PLAIN);
 		}
 		return type;
 	}
@@ -337,7 +338,7 @@ public final class MessageBean extends BodypartBean implements java.io.Serializa
 		String msgBody = getBody(0, hashMap);
 		
 		if (!original && getToPlainText()
-				&& getBodyContentType(0).toLowerCase().indexOf("text/html") >= 0) {
+				&& getBodyContentType(0).toLowerCase().indexOf(Constants.TEXT_HTML) >= 0) {
 			// convert HTML to plain text if "to_plain_text" is "yes"
 			if (!hashMap.containsKey(MSG_BODY_TEXT)) { // use a cache
 				try {

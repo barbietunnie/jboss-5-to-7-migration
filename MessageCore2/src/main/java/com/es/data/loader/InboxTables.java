@@ -593,7 +593,7 @@ public class InboxTables extends AbstractTableBase {
 		RuleLogicVo logic = logicService.getByRuleName(RuleNameEnum.GENERIC.getValue());
 		data1.setRuleName(logic.getRuleName());
 		data1.setMsgContentType("multipart/mixed");
-		data1.setBodyContentType("text/plain");
+		data1.setBodyContentType(Constants.TEXT_PLAIN);
 		data1.setMsgBody("Test Message Body");
 		data1.setStatusId(MsgStatusCode.RECEIVED.getValue());
 		service.insert(data1);
@@ -621,8 +621,8 @@ public class InboxTables extends AbstractTableBase {
 		
 		logic = logicService.getByRuleName(RuleNameEnum.BROADCAST.getValue());
 		data2.setRuleName(logic.getRuleName());
-		data2.setMsgContentType("text/plain");
-		data2.setBodyContentType("text/plain");
+		data2.setMsgContentType(Constants.TEXT_PLAIN);
+		data2.setBodyContentType(Constants.TEXT_PLAIN);
 		data2.setMsgBody("Test Broadcast Message Body");
 		data2.setStatusId(MsgStatusCode.CLOSED.getValue());
 		service.insert(data2);

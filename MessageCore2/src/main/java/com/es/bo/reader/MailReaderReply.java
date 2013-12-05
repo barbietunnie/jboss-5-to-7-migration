@@ -99,7 +99,7 @@ public class MailReaderReply implements java.io.Serializable {
 			"X-Mailer: "+x_mailer+LF+
 			"Content-Type: text/plain; charset=iso-8859-1"+LF+LF;
 		// remove HTML/BODY tags from original message
-		if (contentType != null && contentType.toLowerCase().startsWith("text/html")) {
+		if (contentType != null && contentType.toLowerCase().startsWith(Constants.TEXT_HTML)) {
 			body = MessageBodyBuilder.removeHtmlBodyTags(body);
 		}
 		// limit reply message size

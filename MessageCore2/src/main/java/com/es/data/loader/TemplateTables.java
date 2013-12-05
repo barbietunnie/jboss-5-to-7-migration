@@ -246,7 +246,7 @@ public class TemplateTables extends AbstractTableBase {
 		data.setSenderId(sender.getSenderId());
 		data.setTemplateId("WeekendDeals");
 		data.setStartTime(tms);
-		data.setContentType("text/plain");
+		data.setContentType(Constants.TEXT_PLAIN);
 		data.setBodyTemplate("Dear subscriber, here is a list of great deals on gardening tools provided to you by mydot.com.\n" +
 				"Available by ${CurrentDate}. Sponsor (${SenderId}).");
 		data.setSubjTemplate("Weekend Deals at MyBestDeals.com - ${CurrentDate}");
@@ -309,7 +309,7 @@ public class TemplateTables extends AbstractTableBase {
 		tmp3.setTemplateId("testTemplate");
 		tmp3.setStartTime(tms);
 		
-		tmp3.setContentType("text/html");
+		tmp3.setContentType(Constants.TEXT_HTML);
 		tmp3.setBodyTemplate("BeginTemplate\n"
 				+ "Current DateTime: ${CurrentDate}<br>\n"
 				+ "${name1}${name2} Some Text ${name3}More Text<br>\n"
