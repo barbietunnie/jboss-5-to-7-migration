@@ -8,7 +8,7 @@
       <param name="Threshold" value="debug"/>
 
       <layout class="org.apache.log4j.PatternLayout">
-         <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
+         <param name="ConversionPattern" value="[%d] [%t] [%p,%c:%L] %m%n"/>
       </layout>
    </appender>
 
@@ -18,7 +18,7 @@
       <param name="Append" value="false"/>
 
       <layout class="org.apache.log4j.PatternLayout">
-         <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
+         <param name="ConversionPattern" value="[%d] [%t] [%p,%c:%L] %m%n"/>
       </layout>
    </appender>
 
@@ -30,7 +30,7 @@
       <param name="Append" value="true"/>
 
       <layout class="org.apache.log4j.PatternLayout">
-         <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
+         <param name="ConversionPattern" value="[%d] [%t] [%p,%c:%L] %m%n"/>
       </layout>
    </appender>
 
@@ -42,7 +42,7 @@
       <param name="Append" value="true"/>
 
       <layout class="org.apache.log4j.PatternLayout">
-         <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
+         <param name="ConversionPattern" value="[%d] [%t] [%p,%c:%L] %m%n"/>
       </layout>
    </appender>
 

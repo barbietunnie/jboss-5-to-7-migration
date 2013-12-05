@@ -48,10 +48,10 @@ public class RuleMatch2Test {
 	public void testRuleMatcher() throws Exception {
 		try {
 			RuleVo ruleVo = rulesDataBo.getRuleByPrimaryKey("HardBouce_WatchedMailbox");
-			System.out.println("RulesDataBo - getRuleByPrimaryKey: " + LF + ruleVo);
+			logger.info("RulesDataBo - getRuleByPrimaryKey: " + LF + ruleVo);
 			
 			ruleVo = rulesDataBo.getRuleByPrimaryKey(RuleNameEnum.VIRUS_BLOCK.getValue());
-			System.out.println("RulesDataBo - getRuleByPrimaryKey: " + LF + ruleVo);
+			logger.info("RulesDataBo - getRuleByPrimaryKey: " + LF + ruleVo);
 			
 			loader.listRuleNames();
 			

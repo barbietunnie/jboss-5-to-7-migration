@@ -3,6 +3,8 @@ package com.es.bo.rule;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.es.data.preload.RuleElementEnum;
+
 public class TestRuleRegex {
 		static final String LF = System.getProperty("line.separator", "\n");
 		public static void main(String[] args) {
@@ -69,12 +71,8 @@ public class TestRuleRegex {
 			"before are quarantined until the address of the sender can be" + LF +
 			"confirmed.";
 			
-			String body = "(?:Your mail .* requires your confirmation" +
-				"|Your message .* anti-spam system.* iPermitMail" +
-				"|apologize .* automatic reply.* control spam.* approved senders" +
-				"|Vanquish to avoid spam.* automated message" +
-				"|automated message.* apologize .* approved senders)";
-			Pattern bodyPattern = Pattern.compile(body, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+			String bodyRegex = RuleElementEnum.ChalResp_Body_Match_1.getTargetText();
+			Pattern bodyPattern = Pattern.compile(bodyRegex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 			Matcher matcher = bodyPattern.matcher(bodyEarthLink);
 			System.out.print("challenge_response body matching? " + matcher.find());
 			matcher.reset(bodyIpermitMail);
@@ -86,47 +84,43 @@ public class TestRuleRegex {
 			matcher.reset(bodyQurb);
 			System.out.println(", " + matcher.find());
 			
-			String header = "(?:spamblocker-challenge|spamhippo|devnull-quarantine)\\@" +
-					"|\\@(?:spamstomp\\.com|ipermitmail\\.com)";
-			Pattern headerPattern = Pattern.compile(header, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+			String headerRegex = RuleElementEnum.CHALLENGE_RESPONSE_1.getTargetText();
+			Pattern headerPattern = Pattern.compile(headerRegex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 			matcher = headerPattern.matcher("challenge_resp@ipermitmail.com");
 			System.out.print("challenge_response header matching? " + matcher.find());
 			matcher.reset("spamhippo@cr.com");
 			System.out.println(", " + matcher.find());
 			
-			String subj = "^(?:Your email requires verification verify:" +
-					"|Please Verify Your Email Address" +
-					"|Unverified email to " +
-					"|Your mail to .* requires confirmation)" +
-					"|\\[Qurb .\\d+\\]$";
-			Pattern subjPattern = Pattern.compile(subj, Pattern.CASE_INSENSITIVE);
+			String subjRegex = RuleElementEnum.CHALLENGE_RESPONSE_2.getTargetText();
+			Pattern subjPattern = Pattern.compile(subjRegex, Pattern.CASE_INSENSITIVE);
 			matcher = subjPattern.matcher("Your mail to peter@gradwell.com requires confirmation");
 			System.out.print("challenge_response subject matching? " + matcher.find());
 			matcher.reset("CR found as [Qurb 100]");
 			System.out.println(", " + matcher.find());
 			
-			String from = "confirm-\\S+\\@spamguard\\.vanquish\\.com";
-			Pattern fromPattern = Pattern.compile(from, Pattern.CASE_INSENSITIVE);
+			String fromRegex = RuleElementEnum.CHALLENGE_RESPONSE_3.getTargetText();
+			Pattern fromPattern = Pattern.compile(fromRegex, Pattern.CASE_INSENSITIVE);
 			matcher = fromPattern.matcher("Confirmation from Kenneth E. Slaughter " + "<confirm-tech=openbsd.org@spamguard.vanquish.com>");
 			System.out.println("challenge_response from matching? " + matcher.find());
 		}
 		
 		void postmaster() {
-			String postmasterFrom = "^(?:postmaster|mailmaster|mailadmin|administrator)\\S*\\@";
+			String postmasterFrom = RuleElementEnum.HARD_BOUNCE_1.getTargetText();
 			Pattern postPattern = Pattern.compile(postmasterFrom, Pattern.CASE_INSENSITIVE);
 			Matcher m = postPattern.matcher("postmaster@abc.com");
 			System.out.print("postmater matching: " + m.find());
 			m.reset("administrator2@abc.com");
 			System.out.print(", " + m.find());
-			String mailerdaemonFrom = "^(?:mailer-(?:daemon|deamon)|smtp.gateway|majordomo)\\S*\\@";
+
+			String mailerdaemonFrom = RuleElementEnum.HARD_BOUNCE_2.getTargetText();
 			Pattern daemPattern = Pattern.compile(mailerdaemonFrom, Pattern.CASE_INSENSITIVE);
 			m = daemPattern.matcher("mailer-daemon@abc.com");
 			System.out.println(", " + m.find());
 		}
 		
 		void outOfOffice() {
-			String subj1 = "(?:out\\s+of\\s+.*office|\\(away from the office\\)$)";
-			Pattern pattern = Pattern.compile(subj1, Pattern.CASE_INSENSITIVE);
+			String subjRegex = RuleElementEnum.OUF_OF_OFFICE_AUTO_REPLY_1.getTargetText();
+			Pattern pattern = Pattern.compile(subjRegex, Pattern.CASE_INSENSITIVE);
 			Matcher m = pattern.matcher("Re: (away from the office)");
 			System.out.print("Out of office matching: " + m.find());
 			m.reset("out of the office auto reply");
@@ -134,29 +128,22 @@ public class TestRuleRegex {
 		}
 		
 		void auto_reply() {
-			String from = "^(?:automated-response|autoresponder|autoresponse-\\S+)\\S*\\@";
-			Pattern fromPattern = Pattern.compile(from);
+			String fromRegex = RuleElementEnum.AUTO_REPLY_2.getTargetText();
+			Pattern fromPattern = Pattern.compile(fromRegex);
 			Matcher m = fromPattern.matcher("autoresponder@abc.com");
 			System.out.print("Auto-reply matching: " + m.find());
 			m.reset("autoresponse-ooo@abc.com");
 			System.out.print(", " + m.find());
 			
-			String subj1 = 
-				"(?:Exception.*(?:Out\\b.*of\\b.*Office|Autoreply:)|\\(Auto Response\\))" +
-			 	"|^(?:Automatically Generated Response from|Auto-Respond E-?Mail from" +
-			 	"|AutoResponse - Email Returned|automated response|Yahoo! Auto Response)";
-			Pattern subjPattern = Pattern.compile(subj1, Pattern.CASE_INSENSITIVE);
+			String subjRegex = RuleElementEnum.AUTO_REPLY_1.getTargetText();
+			Pattern subjPattern = Pattern.compile(subjRegex, Pattern.CASE_INSENSITIVE);
 			m = subjPattern.matcher("Re: Exception Autoreply: from SAXK");
 			System.out.print(", " + m.find());
 			m.reset("Auto-Respond E-Mail from aaa");
 			System.out.println(", " + m.find());
 			
-			String body1 = "^This messages was created automatically by mail delivery software" +
-				"|(?:\\bThis is an autoresponder. I'll never see your message\\b" +
-				"|(?:\\bI(?:.m|\\s+am|\\s+will\\s+be|.ll\\s+be)\\s+(?:(?:out\\s+of|away\\s+from)\\s+the\\s+office|on\\s+vacation)\\s+(?:from|to|until|after)\\b)" +
-				"|\\bI\\s+am\\s+currently\\s+out\\s+of\\s+the\\s+office\\b" +
-				"|\\bI ?.m\\s+away\\s+until\\s+.{10,20}\\s+and\\s+am\\s+unable\\s+to\\s+read\\s+your\\s+message\\b)";
-			Pattern bodyPattern = Pattern.compile(body1, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+			String bodyRegex = RuleElementEnum.AUTO_REPLY_3.getTargetText();
+			Pattern bodyPattern = Pattern.compile(bodyRegex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 			m = bodyPattern.matcher("This is an autoresponder. I'll never see your message SAXK");
 			System.out.print("Auto-reply matching: " + m.find());
 			m.reset("I.ll be away from the office until next monday.");
@@ -170,15 +157,8 @@ public class TestRuleRegex {
 		}
 		
 		void deliveryFailure() {
-			String subj1 = 
-				"^(?:Returned mail:\\s(?:User unknown|Data format error)" +
-				"|Undeliverable: |Undeliver(?:able|ed) Mail\\b|Undeliverable Message" +
-				"|Returned mail.{0,5}(?:Error During Delivery|see transcript for details)" +
-				"|e-?mail addressing error \\(|No valid recipient in )" +
-				"|(?:User.*unknown|failed.*delivery|delivery.*(?:failed|failure|problem)" +
-				"|Returned mail:.*(?:failed|failure|error)|\\(Failure\\)|failure notice" +
-				"|not.*delivered)";
-			Pattern subjPattern = Pattern.compile(subj1, Pattern.CASE_INSENSITIVE);
+			String subjRegex = RuleElementEnum.HardBounce_Subj_Match_1.getTargetText();
+			Pattern subjPattern = Pattern.compile(subjRegex, Pattern.CASE_INSENSITIVE);
 			Matcher m = subjPattern.matcher("Returned mail: Error During Delivery");
 			System.out.print("Delivery Failure matching: " + m.find());
 			m.reset("Returned mail: User Unknown");
@@ -192,11 +172,8 @@ public class TestRuleRegex {
 			m.reset("Returned mail: Delivery Error...");
 			System.out.println(", " + m.find());
 			
-			String body2 = "(?:\\bYou(?:.ve| have) reached a non.?working address\\.\\s+Please check\\b" +
-					"|eTrust Secure Content Manager SMTPMAIL could not deliver the e-?mail" +
-					"|\\bPlease do not resend your original message\\." +
-					"|\\s[45]\\.\\d{1,3}\\.\\d{1,3}\\s)";
-			Pattern bodyPattern = Pattern.compile(body2, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+			String bodyRegex = RuleElementEnum.HardBounce_Body_Match_1.getTargetText();
+			Pattern bodyPattern = Pattern.compile(bodyRegex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 			m = bodyPattern.matcher("You've reached a non-working address. Please check");
 			System.out.print("Delivery Failure matching: " + m.find());
 			m.reset("Delivery Status: 5.4.1 Please check");
@@ -204,20 +181,18 @@ public class TestRuleRegex {
 		}
 		
 		void spamblocker() {
-			String spamFrom = "(?:^surfcontrol|.*You_Got_Spammed)\\S*\\@";
-			Pattern fromPattern = Pattern.compile(spamFrom, Pattern.CASE_INSENSITIVE);
+			String fromRegex = RuleElementEnum.SPAM_BLOCK_3.getTargetText();
+			Pattern fromPattern = Pattern.compile(fromRegex, Pattern.CASE_INSENSITIVE);
 			Matcher m = fromPattern.matcher("surfcontrol_agent@abc.com");
 			System.out.print("Spam blocker matching: " + m.find());
-			String returnPath = "^(?:pleaseforward|quotaagent)\\S*\\@";
-			Pattern pathPattern = Pattern.compile(returnPath, Pattern.CASE_INSENSITIVE);
+
+			String returnPathRegex = RuleElementEnum.SPAM_BLOCK_4.getTargetText();
+			Pattern pathPattern = Pattern.compile(returnPathRegex, Pattern.CASE_INSENSITIVE);
 			m = pathPattern.matcher("pleaseforward@abc.com");
 			System.out.println(", " + m.find());
 			
-			String subj1 = "^Spam rapport \\/ Spam report \\S+ -\\s+\\(\\S+\\)$" +
-					"|^GWAVA Sender Notification .(?:RBL block|Spam|Content filter).$" +
-					"|^\\[MailServer Notification\\]" +
-					"|^MailMarshal has detected possible spam in your message";
-			Pattern subjPattern = Pattern.compile(subj1, Pattern.CASE_INSENSITIVE);
+			String subjRegex = RuleElementEnum.SPAM_BLOCK_1.getTargetText();
+			Pattern subjPattern = Pattern.compile(subjRegex, Pattern.CASE_INSENSITIVE);
 			m = subjPattern.matcher("[MailServer Notification]Attachment Blocking Notification");
 			System.out.print("Spam blocker matching: " + m.find());
 			m.reset("GWAVA Sender Notification .RBL block2");
@@ -228,83 +203,25 @@ public class TestRuleRegex {
 			String virusFrom = "(?:virus|scanner|devnull)\\S*\\@";
 			Pattern fromPattern = Pattern.compile(virusFrom, Pattern.CASE_INSENSITIVE);
 			Matcher m = fromPattern.matcher("virus_blocker@abc.com");
-			System.out.print("Virus blocker matching" + m.find());
+			System.out.print("Virus blocker matching " + m.find());
 			
-			String body1 = "(?:a potentially executable attachment " +
-					"|\\bhas stripped one or more attachments from the following message\\b" +
-					"|message contains file attachments that are not permitted" +
-					"|host \\S+ said: 5\\d\\d\\s+Error: Message content rejected" +
-					"|TRANSACTION FAILED - Unrepairable Virus Detected. " +
-					"|Mail.?Marshal Rule: Inbound Messages : Block Dangerous Attachments" +
-					"|The mail message \\S+ \\S+ you sent to \\S+ contains the virus" +
-					"|mailsweeper has found that a \\S+ \\S+ \\S+ \\S+ one or more virus" +
-					"|Attachment.{0,40}was Deleted" +
-					"|Virus.{1,40}was found" +
-					"|\\bblocked by Mailsweeper\\b" +
-					"|\\bvirus scanner deleted your message\\b" +
-					"|\\bThe attachment was quarantined\\b" +
-					"|\\bGROUP securiQ.Wall\\b)";
+			String body1 = RuleElementEnum.VirusBlock_Body_Match_1.getTargetText();
 			Pattern body1Pattern = Pattern.compile(body1, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 			m = body1Pattern.matcher("There host The attachment was quarantined rejected found in ");
 			System.out.print(", " + m.find());
 			
-			String body2 = "(?:Reason: Rejected by filter" +
-					"|antivirus system report" +
-					"|the antivirus module has" +
-					"|the infected attachment" +
-					"|illegal attachment" +
-					"|Unrepairable Virus Detected" +
-					"|Reporting-MTA: Norton Anti.?Virus Gateway" +
-					"|\\bV I R U S\\b)" +
-				"|^(?:Found virus \\S+ in file \\S+" +
-					"|Incident Information:)";
+			String body2 = RuleElementEnum.VirusBlock_Body_Match_2.getTargetText();
 			Pattern body2Pattern = Pattern.compile(body2, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 			m = body2Pattern.matcher("Incident Information: virus ");
 			System.out.print(", " + m.find());
 			
-			String subj1 = "^(?:Disallowed attachment type found" +
-					"|Norton Anti.?Virus failed to scan an attachment in a message you sent" +
-					"|Norton Anti.?Virus detected and quarantined" +
-					"|Warning - You sent a Virus Infected Email to " +
-					"|Warning:\\s*E-?mail virus(es)? detected" +
-					"|MailMarshal has detected a Virus in your message" +
-					"|Banned or potentially offensive material" +
-					"|Failed to clean virus\\b" +
-					"|Virus Alert\\b" +
-					"|Virus detected " +
-					"|Virus to sender" +
-					"|NAV detected a virus in a document " +
-					"|InterScan MSS for SMTP has delivered a message" +
-					"|InterScan NT Alert" +
-					"|Antigen found\\b" +
-					"|MMS Notification" +
-					"|VIRUS IN YOUR MAIL " +
-					"|Scan.?Mail Message: ?.{0,30} virus found " +
-					"|McAfee GroupShield Alert)";
-			Pattern subj1Pattern = Pattern.compile(subj1, Pattern.CASE_INSENSITIVE);
+			String subj1Regex = RuleElementEnum.VIRUS_BLOCK_1.getTargetText();
+			Pattern subj1Pattern = Pattern.compile(subj1Regex, Pattern.CASE_INSENSITIVE);
 			m = subj1Pattern.matcher("McAfee GroupShield Alert message you sent");
 			System.out.print(", " + m.find());
 			
-			String subj2 = "^(?:Undeliverable mail, invalid characters in header" +
-					"|Delivery (?:warning|error) report id=" +
-					"|The MIME information you requested" +
-					"|Content violation" +
-					"|Report to Sender" +
-					"|RAV Anti.?Virus scan results" +
-					"|Symantec AVF detected " +
-					"|Symantec E-Mail-Proxy " +
-					"|Virus Found in message" +
-					"|Inflex scan report \\[" +
-					"|\\[Mail Delivery .{10,100} infected attachment.*removed)" +
-				"|(?:(Re: ?)+Wicked screensaver\\b" +
-					"|\\bmailsweeper\\b" +
-					"|\\bFile type Forbidden\\b" +
-					"|AntiVirus scan results" +
-					"|Security.?Scan Anti.?Virus)" +
-				"|^(?:Message Undeliverable: Possible Junk\\/Spam Mail Identified" +
-					"|EMAIL REJECTED" +
-					"|Virusmelding)$";
-			Pattern subj2Pattern = Pattern.compile(subj2, Pattern.CASE_INSENSITIVE);
+			String subj2Regex = RuleElementEnum.VIRUS_BLOCK_2.getTargetText();
+			Pattern subj2Pattern = Pattern.compile(subj2Regex, Pattern.CASE_INSENSITIVE);
 			m = subj2Pattern.matcher("EMAIL REJECTED");
 			System.out.print(", " + m.find());
 		}
