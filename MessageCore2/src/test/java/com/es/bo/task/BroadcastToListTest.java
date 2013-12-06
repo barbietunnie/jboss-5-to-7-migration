@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,13 +58,20 @@ public class BroadcastToListTest {
 	@Resource
 	private MsgHeaderDao headerDao;
 
+	private MessageContext ctx = null; 
+	EmailTemplateEnum testNewsLetter = EmailTemplateEnum.SampleNewsletter2;
+
 	@BeforeClass
 	public static void BroadcastPrepare() {
 	}
 
-	@Test
-	public void testBroadcastToList() {
-		EmailTemplateEnum testNewsLetter = EmailTemplateEnum.SampleNewsletter2;
+	@BeforeTransaction
+	public void performBroadcastToList() {
+		/*
+		 * perform the task in @BeforeTransaction block to have the new email
+		 * address persisted before the JUnit assertions are executed. This will
+		 * prevent the method call like "minbox.getToAddress()" from failing.
+		 */
 		MessageBean mBean = new MessageBean();
 		mBean.setSubject(testNewsLetter.getSubject());
 		mBean.setValue(testNewsLetter.getBodyText());
@@ -73,15 +81,18 @@ public class BroadcastToListTest {
 		mBean.setMsgId(_minbox.getMsgId());
 		mBean.setSenderId(Constants.DEFAULT_SENDER_ID);
 
-		MessageContext ctx = new MessageContext(mBean);
+		ctx = new MessageContext(mBean);
 		ctx.setTaskArguments(MailingListEnum.SMPLLST1.name());
 		try {
 			task.process(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();
-		}
-		
+		}		
+	}
+
+	@Test
+	public void verifyBroadcastToList() {
 		// now verify results
 		System.out.println("Verifying Results ##################################################################");
 		assertFalse(ctx.getMsgIdList().isEmpty());
@@ -90,6 +101,7 @@ public class BroadcastToListTest {
 			MsgInboxVo minbox = inboxDao.getByPrimaryKey(msgId);
 			String emailId_body = parser.parseMsg(minbox.getMsgBody());
 			List<MsgHeaderVo> headers = headerDao.getByMsgId(msgId);
+			MessageBean mBean = ctx.getMessageBean();
 			mBean.getHeaders().clear();
 			mBean.getHeaders().addAll(MsgHeaderVoUtil.toMsgHeaderList(headers));
 			String emailId_xhdr = parser.parseHeaders(mBean.getHeaders());
