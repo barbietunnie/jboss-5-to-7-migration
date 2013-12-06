@@ -1,6 +1,7 @@
 package com.es.bo.task;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
@@ -21,13 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.es.dao.address.MailingListDao;
 import com.es.dao.address.SubscriptionDao;
+import com.es.data.constant.CodeType;
 import com.es.msgbean.MessageBean;
 import com.es.msgbean.MessageContext;
 import com.es.vo.address.MailingListVo;
 import com.es.vo.address.SubscriptionVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/spring-jpa-config.xml"})
+@ContextConfiguration(locations={"/spring-core-config.xml"})
 @TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=false)
 @Transactional
 public class SubscribeToListTest {
@@ -46,11 +48,12 @@ public class SubscribeToListTest {
 	}
 
 	@Test
-	public void testSubscribeToList() throws Exception {
+	public void testSubscribeToList() {
 		MessageBean mBean = new MessageBean();
 		String fromaddr = "event.alert@localhost";
 		List<MailingListVo> lists = listService.getAll(true);
-		String toaddr = lists.get(0).getEmailAddr();
+		MailingListVo mList = lists.get(0);
+		String toaddr = mList.getEmailAddr();
 		try {
 			mBean.setFrom(InternetAddress.parse(fromaddr, false));
 			mBean.setTo(InternetAddress.parse(toaddr, false));
@@ -65,11 +68,14 @@ public class SubscribeToListTest {
 		MessageContext ctx = new MessageContext(mBean);
 		task.process(ctx);
 		
+		System.out.println("Verifying Results ##################################################################");
 		// verify results
 		assertFalse(ctx.getEmailAddrIdList().isEmpty());
-		List<SubscriptionVo> sub = subService.getByAddrId(ctx.getEmailAddrIdList().get(0));
-		assertTrue(fromaddr.equals(sub.get(0).getEmailAddr()));
-		assertTrue(sub.isSubscribed());
-		assertTrue(lists.get(0).getListId().equals(sub.getMailingList().getListId()));
+		logger.info("EmailAddrId from MesageContext = " + ctx.getEmailAddrIdList());
+		SubscriptionVo sub = subService.getByPrimaryKey(ctx.getEmailAddrIdList().get(0), mList.getListId());
+		assertNotNull(sub);
+		assertTrue(fromaddr.equals(sub.getEmailAddr()));
+		assertTrue(CodeType.YES_CODE.getValue().equals(sub.getSubscribed()));
+		assertTrue(mList.getListId().equals(sub.getListId()));
 	}
 }

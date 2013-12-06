@@ -2,6 +2,7 @@ package com.es.bo.task;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 
@@ -47,7 +48,7 @@ public class ForwardtoCsrTest {
 	}
 
 	@Test
-	public void testForwardToCsr() throws Exception {
+	public void testForwardToCsr() {
 		String fromaddr = "testfrom@localhost";
 		String toaddr = "testto@localhost";
 		MessageBean mBean = new MessageBean();
@@ -65,7 +66,12 @@ public class ForwardtoCsrTest {
 
 		MessageContext ctx = new MessageContext(mBean);
 		ctx.setTaskArguments("$" + TableColumnName.SUBSCRIBER_CARE_ADDR.getValue());
-		task.process(ctx);
+		try {
+			task.process(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
 		
 		System.out.println("Verifying Results ##################################################################");
 		// verify results

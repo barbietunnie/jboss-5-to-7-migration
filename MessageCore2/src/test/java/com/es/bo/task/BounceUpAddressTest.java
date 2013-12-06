@@ -44,7 +44,7 @@ public class BounceUpAddressTest {
 	}
 
 	@Test
-	public void testBounceUpAddress() throws Exception {
+	public void testBounceUpAddress() {
 		MessageBean mBean = new MessageBean();
 		String fromaddr = "testfrom@localhost";
 		String toaddr = "testto@localhost";

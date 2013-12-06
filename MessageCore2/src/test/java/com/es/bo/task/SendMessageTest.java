@@ -2,6 +2,7 @@ package com.es.bo.task;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 
@@ -46,7 +47,7 @@ public class SendMessageTest {
 	}
 
 	@Test
-	public void testSendMessage() throws Exception {
+	public void testSendMessage() {
 		MessageBean mBean = new MessageBean();
 		String fromaddr = "event.alert@localhost";
 		String toaddr = "support@localhost";
@@ -63,7 +64,12 @@ public class SendMessageTest {
 		mBean.setSenderId(Constants.DEFAULT_SENDER_ID);
 
 		MessageContext ctx = new MessageContext(mBean);
-		task.process(ctx);
+		try {
+			task.process(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
 		
 		System.out.println("Verifying Results ##################################################################");
 		// verify results

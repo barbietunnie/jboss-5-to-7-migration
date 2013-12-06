@@ -71,10 +71,8 @@ public class SubscribeToList extends TaskBaseAdaptor {
 				}
 				EmailAddressVo emailAddrVo = emailAddrDao.findSertAddress(addr.toString());
 				messageBean.setMailingListId(mlist.getListId());
-				int rows = subscriptionDao.subscribe(emailAddrVo.getEmailAddr(), mlist.getListId());
-				if (rows > 0) {
-					ctx.getEmailAddrIdList().add(emailAddrVo.getEmailAddrId());
-				}
+				subscriptionDao.subscribe(emailAddrVo.getEmailAddr(), mlist.getListId());
+				ctx.getEmailAddrIdList().add(emailAddrVo.getEmailAddrId());
 				logger.info(addr + " subscribed to: " + mlist.getListId());
 				addrsUpdated++;
 			}

@@ -2,6 +2,7 @@ package com.es.bo.task;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 import java.util.List;
@@ -53,7 +54,7 @@ public class ForwardMessageTest {
 	}
 
 	@Test
-	public void testForwardMessage() throws Exception {
+	public void testForwardMessage() throws AddressException {
 		String fromaddr = "testfrom@localhost";
 		String toaddr = "testto@localhost";
 		MessageBean mBean = new MessageBean();
@@ -73,7 +74,12 @@ public class ForwardMessageTest {
 
 		MessageContext ctx = new MessageContext(mBean);
 		ctx.setTaskArguments("$" + EmailAddressType.FORWARD_ADDR.getValue() + ",$" + TableColumnName.SUBSCRIBER_CARE_ADDR.getValue());
-		task.process(ctx);
+		try {
+			task.process(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
 		
 		System.out.println("Verifying Results ##################################################################");
 		// verify results
