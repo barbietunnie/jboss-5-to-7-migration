@@ -19,7 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.es.bo.inbox.MessageParserBo;
 import com.es.dao.inbox.MsgInboxDao;
 import com.es.data.constant.Constants;
 import com.es.msg.util.EmailIdParser;
@@ -38,10 +37,10 @@ public class SendMessageTest {
 	@Resource
 	private SendMessage task;
 	@Resource
-	private MsgInboxDao inboxService;
-	@Resource
-	private MessageParserBo parserBo;
+	private MsgInboxDao inboxDao;
 
+	private EmailIdParser parser = EmailIdParser.getDefaultParser();
+	
 	@BeforeClass
 	public static void SendMessagePrepare() {
 	}
@@ -59,7 +58,11 @@ public class SendMessageTest {
 			logger.error("AddressException caught", e);
 		}
 		mBean.setSubject("A Exception occured");
-		mBean.setValue(new Date()+ "Test body message." + LF + LF + "System Email Id: 10.2127.0" + LF);
+		MsgInboxVo randomRec = inboxDao.getRandomRecord();
+		String emailIdStr = parser.createEmailId(randomRec.getMsgId());
+		logger.info("Email_Id to embed: " + emailIdStr);
+		// The Email_Id will be replaced by MailSender with a new one generated from MsgId
+		mBean.setValue(new Date()+ " Test body message." + LF + LF + emailIdStr + LF);
 		mBean.setMailboxUser("testUser");
 		mBean.setSenderId(Constants.DEFAULT_SENDER_ID);
 
@@ -74,14 +77,13 @@ public class SendMessageTest {
 		System.out.println("Verifying Results ##################################################################");
 		// verify results
 		assertFalse(ctx.getMsgIdList().isEmpty());
-		logger.info("MsgId from MesageContext = " + ctx.getMsgIdList().get(0));
-		MsgInboxVo minbox = inboxService.getByPrimaryKey(ctx.getMsgIdList().get(0));
+		logger.info("MsgId from MesageContext = " + ctx.getMsgIdList());
+		MsgInboxVo minbox = inboxDao.getByPrimaryKey(ctx.getMsgIdList().get(0));
 		assertTrue(fromaddr.equals(minbox.getFromAddress()));
 		assertTrue(toaddr.equals(minbox.getToAddress()));
 		assertTrue(mBean.getSubject().equals(minbox.getMsgSubject()));
 		assertTrue(mBean.getBody().equals(minbox.getMsgBody()));
 		
-		EmailIdParser parser = EmailIdParser.getDefaultParser();
 		String id = parser.parseMsg(mBean.getBody());
 		assertTrue(id.equals(minbox.getMsgId()+""));
 	}

@@ -3,29 +3,15 @@ package com.es.dao.inbox;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.es.dao.abst.AbstractDao;
 import com.es.vo.inbox.MsgAttachmentVo;
 
 @Component("msgAttachmentDao")
-public class MsgAttachmentDao {
-	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
+public class MsgAttachmentDao extends AbstractDao {
 
 	public MsgAttachmentVo getByPrimaryKey(long msgId, int attchmntDepth, int attchmntSeq) {
 		String sql = 
@@ -131,7 +117,4 @@ public class MsgAttachmentDao {
 		return rowsInserted;
 	}
 	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
 }

@@ -17,12 +17,10 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
@@ -36,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.es.core.util.EmailAddrUtil;
 import com.es.core.util.SpringUtil;
 import com.es.core.util.StringUtil;
+import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.StatusId;
@@ -43,24 +42,13 @@ import com.es.vo.address.EmailAddressVo;
 import com.es.vo.comm.PagingVo;
 
 @Component("emailAddressDao")
-public class EmailAddressDao {
+public class EmailAddressDao extends AbstractDao {
 	static final Logger logger = Logger.getLogger(EmailAddressDao.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public EmailAddressVo getByAddrId(long addrId) {
 		String sql = "select * from Email_Address where emailAddrId=?";
-		Object[] parms = new Object[] { addrId + "" };
+		Object[] parms = new Object[] { addrId };
 		try {
 			EmailAddressVo vo = getJdbcTemplate().queryForObject(sql, parms,
 					new BeanPropertyRowMapper<EmailAddressVo>(EmailAddressVo.class));
@@ -99,6 +87,7 @@ public class EmailAddressDao {
 	 * 2) find by email user name - '^myname@' or 'noreply@'
 	 */
 	public List<EmailAddressVo> getByAddressPattern(String addressPattern) {
+		// MySQL
 		String sql = "select t.* from Email_Address t where t.emailAddr REGEXP '" + addressPattern + "' ";
 		if (Constants.DB_PRODNAME_PSQL.equalsIgnoreCase(SpringUtil.getDBProductName())) {
 			sql = "select t.* from Email_Address t where t.emailAddr ~ '" + addressPattern + "' ";
@@ -245,19 +234,16 @@ public class EmailAddressDao {
 	}
 
 	public long getEmailAddrIdForPreview() {
-		String sql = "SELECT min(e.emailaddrid) as emailaddrid "
+		String sql = "SELECT Floor(max(e.emailaddrid) * RAND()) as emailaddrid "
 				+ " FROM email_address e, subscriber c "
 				+ " where e.emailaddrid=c.emailaddrid ";
-		Long emailAddrId = (Long) getJdbcTemplate().queryForObject(sql, Long.class);
-		if (emailAddrId == null) {
-			sql = "SELECT min(e.emailaddrid) as emailaddrid "
+		Long emailAddrId = getJdbcTemplate().queryForObject(sql, Long.class);
+		if (emailAddrId == null || emailAddrId == 0) {
+			sql = "SELECT Floor(max(e.emailaddrid) * RAND()) as emailaddrid "
 					+ " FROM email_address e ";
-			emailAddrId = (Long) getJdbcTemplate().queryForObject(sql, Long.class);
+			emailAddrId = getJdbcTemplate().queryForObject(sql, Long.class);
 		}
-		if (emailAddrId == null) {
-			emailAddrId = Long.valueOf(0);
-		}
-		return emailAddrId.longValue();
+		return emailAddrId;
 	}
 
 	/**
@@ -692,13 +678,5 @@ public class EmailAddressDao {
 		emailAddrVo.setCurrEmailAddr(emailAddrVo.getEmailAddr());
 		emailAddrVo.setOrigUpdtTime(emailAddrVo.getUpdtTime());
 		return rowsInserted;
-	}
-
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

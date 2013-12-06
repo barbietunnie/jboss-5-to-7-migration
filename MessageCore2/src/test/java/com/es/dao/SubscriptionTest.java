@@ -128,7 +128,7 @@ public class SubscriptionTest {
 	}
 	
 	private List<SubscriptionVo> selectByListId2() {
-		List<SubscriptionVo> list = subscriptionDao.getSubscribersWithCustomerRecord(listId);
+		List<SubscriptionVo> list = subscriptionDao.getSubscribersWithRecord(listId);
 		for (SubscriptionVo vo : list) {
 			System.out.println("getSubscribersWithCustomerRecord(): " + LF +vo);
 		}
@@ -136,7 +136,7 @@ public class SubscriptionTest {
 	}
 	
 	private List<SubscriptionVo> selectByListId3() {
-		List<SubscriptionVo> list = subscriptionDao.getSubscribersWithoutCustomerRecord(listId);
+		List<SubscriptionVo> list = subscriptionDao.getSubscribersWithoutRecord(listId);
 		for (SubscriptionVo vo : list) {
 			System.out.println("getSubscribersWithoutCustomerRecord(): " + LF + vo);
 		}

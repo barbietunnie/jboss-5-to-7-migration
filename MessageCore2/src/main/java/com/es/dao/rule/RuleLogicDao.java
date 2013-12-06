@@ -4,14 +4,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.es.dao.abst.AbstractDao;
 import com.es.dao.sender.ReloadFlagsDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.RuleCategory;
@@ -19,18 +17,7 @@ import com.es.data.constant.StatusId;
 import com.es.vo.rule.RuleLogicVo;
 
 @Component("ruleLogicDao")
-public class RuleLogicDao {
-	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
+public class RuleLogicDao extends AbstractDao {
 	
 	private String selectCluse = "select " +
 			"r.RowId, " +
@@ -287,11 +274,4 @@ public class RuleLogicDao {
 		return reloadFlagsDao;
 	}
 	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
 }

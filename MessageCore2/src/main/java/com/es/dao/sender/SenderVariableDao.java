@@ -4,34 +4,21 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.StatusId;
 import com.es.vo.template.SenderVariableVo;
 
 @Component("senderVariableDao")
-public class SenderVariableDao {
+public class SenderVariableDao extends AbstractDao {
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
+	private static final Map<String, List<SenderVariableVo>> currentVariablesCache = new HashMap<String, List<SenderVariableVo>>();
 	
-	private static final HashMap<String, List<SenderVariableVo>> currentVariablesCache = new HashMap<String, List<SenderVariableVo>>();
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public SenderVariableVo getByPrimaryKey(String senderId, String variableName, Timestamp startTime) {
 		String sql = 
 			"select * " +
@@ -235,12 +222,4 @@ public class SenderVariableDao {
 		return rowsInserted;
 	}
 
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
-	
 }

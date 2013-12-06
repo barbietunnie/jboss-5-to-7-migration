@@ -4,32 +4,19 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.es.dao.abst.AbstractDao;
 import com.es.dao.sender.ReloadFlagsDao;
 import com.es.data.constant.StatusId;
 import com.es.vo.action.RuleActionVo;
 
 @Component("ruleActionDao")
-public class RuleActionDao {
+public class RuleActionDao extends AbstractDao {
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public List<RuleActionVo> getByRuleName(String ruleName) {
 		String sql = 
 			"select a.*, b.ProcessBeanId, b.ProcessClassName, b.DataType " +
@@ -172,10 +159,12 @@ public class RuleActionDao {
 		Object[] parms = keys.toArray();
 		List<RuleActionVo> list = getJdbcTemplate().query(sql, parms, 
 				new BeanPropertyRowMapper<RuleActionVo>(RuleActionVo.class));
-		if (list.size() > 0)
+		if (list.size() > 0) {
 			return (RuleActionVo) list.get(0);
-		else
+		}
+		else {
 			return null;
+		}
 	}
 	
 	public synchronized int update(RuleActionVo msgActionVo) {
@@ -286,10 +275,4 @@ public class RuleActionDao {
 		return reloadFlagsDao;
 	}
 	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
 }

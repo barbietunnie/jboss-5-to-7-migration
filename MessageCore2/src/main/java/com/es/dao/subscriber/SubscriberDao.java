@@ -5,18 +5,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.es.core.util.EmailAddrUtil;
 import com.es.core.util.StringUtil;
+import com.es.dao.abst.AbstractDao;
 import com.es.dao.address.EmailAddressDao;
 import com.es.vo.address.EmailAddressVo;
 import com.es.vo.comm.PagingSubscriberVo;
@@ -25,18 +23,7 @@ import com.es.vo.comm.SubscriberVo;
 
 @Repository
 @Component("subscriberDao")
-public class SubscriberDao {
-
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
+public class SubscriberDao extends AbstractDao {
 
 	public SubscriberVo getBySubscriberId(String subrId) {
 		String sql = 
@@ -467,12 +454,4 @@ public class SubscriberDao {
 		return emailAddressDao;
 	}
 	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
-		
 }

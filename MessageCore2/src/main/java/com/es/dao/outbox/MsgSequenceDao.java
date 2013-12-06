@@ -1,27 +1,14 @@
 package com.es.dao.outbox;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.es.dao.abst.AbstractDao;
+
 @Component("msgSequenceDao")
-public class MsgSequenceDao {
+public class MsgSequenceDao extends AbstractDao {
 	protected static final Logger logger = Logger.getLogger(MsgSequenceDao.class);
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public long findNextValue() {
 		/* simulate a sequence table */
 		String sql1 = "update Msg_Sequence set seqId = LAST_INSERT_ID(seqId + 1)";

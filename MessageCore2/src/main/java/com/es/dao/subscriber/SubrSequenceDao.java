@@ -1,29 +1,16 @@
 package com.es.dao.subscriber;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.es.dao.abst.AbstractDao;
+
 @Repository
 @Component("subrSequenceDao")
-public class SubrSequenceDao {
+public class SubrSequenceDao extends AbstractDao {
 	protected static final Logger logger = Logger.getLogger(SubrSequenceDao.class);
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public long findNextValue() {
 		/* simulate a sequence table */
 		String sql1 = "update Subr_Sequence set seqId = LAST_INSERT_ID(seqId + 1)";

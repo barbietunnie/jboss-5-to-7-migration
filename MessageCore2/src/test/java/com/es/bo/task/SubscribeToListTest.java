@@ -39,9 +39,9 @@ public class SubscribeToListTest {
 	@Resource
 	private SubscribeToList task;
 	@Resource
-	private MailingListDao listService;
+	private MailingListDao mListDao;
 	@Resource
-	private SubscriptionDao subService;
+	private SubscriptionDao subscriptionDao;
 
 	@BeforeClass
 	public static void SubscribeToListPrepare() {
@@ -51,7 +51,7 @@ public class SubscribeToListTest {
 	public void testSubscribeToList() {
 		MessageBean mBean = new MessageBean();
 		String fromaddr = "event.alert@localhost";
-		List<MailingListVo> lists = listService.getAll(true);
+		List<MailingListVo> lists = mListDao.getAll(true);
 		MailingListVo mList = lists.get(0);
 		String toaddr = mList.getEmailAddr();
 		try {
@@ -72,7 +72,7 @@ public class SubscribeToListTest {
 		// verify results
 		assertFalse(ctx.getEmailAddrIdList().isEmpty());
 		logger.info("EmailAddrId from MesageContext = " + ctx.getEmailAddrIdList());
-		SubscriptionVo sub = subService.getByPrimaryKey(ctx.getEmailAddrIdList().get(0), mList.getListId());
+		SubscriptionVo sub = subscriptionDao.getByPrimaryKey(ctx.getEmailAddrIdList().get(0), mList.getListId());
 		assertNotNull(sub);
 		assertTrue(fromaddr.equals(sub.getEmailAddr()));
 		assertTrue(CodeType.YES_CODE.getValue().equals(sub.getSubscribed()));

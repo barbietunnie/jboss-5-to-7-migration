@@ -4,33 +4,19 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.MailServerType;
 import com.es.data.constant.StatusId;
 import com.es.vo.comm.SmtpServerVo;
 
 @Component("smtpServerDao")
-public class SmtpServerDao {
+public class SmtpServerDao extends AbstractDao {
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public SmtpServerVo getByPrimaryKey(String serverName) {
 		String sql = "select * from Smtp_Server where ServerName=?";
 		Object[] parms = new Object[] {serverName};
@@ -244,11 +230,4 @@ public class SmtpServerDao {
 		return rowsInserted;
 	}
 	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
 }

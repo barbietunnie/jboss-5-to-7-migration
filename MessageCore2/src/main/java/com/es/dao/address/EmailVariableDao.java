@@ -4,45 +4,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.CodeType;
 import com.es.vo.address.EmailVariableVo;
 
 @Component("emailVariableDao")
-public class EmailVariableDao {
+public class EmailVariableDao extends AbstractDao {
 	static final Logger logger = Logger.getLogger(EmailVariableDao.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
-	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate; 
-	}
-
-	private NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
-		if (this.namedParameterJdbcTemplate == null) {
-			this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(msgDataSource);
-		}
-		return this.namedParameterJdbcTemplate; 
-	}
 
 	public EmailVariableVo getByVariableName(String variableName) {
 		String sql = "select * from Email_Variable where VariableName=:variableName";
@@ -165,11 +142,4 @@ public class EmailVariableDao {
 		return rowsInserted;
 	}
 
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
 }

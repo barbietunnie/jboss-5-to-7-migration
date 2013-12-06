@@ -1,6 +1,9 @@
 package com.es.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 import java.util.List;
@@ -99,7 +102,12 @@ public class MsgInboxTest {
 	@Rollback(true)
 	public void testBroadCastAndClickCounts() {
 		try {
-			MsgInboxWebVo webvo = selectBroadcastMsg();
+			// get "Closed" Broadcast messages
+			MsgInboxWebVo webvo = selectBroadcastMsg(SearchFieldsVo.MsgType.Closed);
+			if (webvo == null) {
+				// did not find any, get any "Broadcast" messages
+				webvo = selectBroadcastMsg(null);
+			}
 			assertNotNull(webvo);
 			int unreadCountBefore = unreadCountDao.selectInboxUnreadCount();
 			MsgInboxVo msgvo = insert(webvo.getMsgId());
@@ -154,10 +162,10 @@ public class MsgInboxTest {
 		return actions;
 	}
 	
-	private MsgInboxWebVo selectBroadcastMsg() {
+	private MsgInboxWebVo selectBroadcastMsg(SearchFieldsVo.MsgType msgType) {
 		SearchFieldsVo vo = new SearchFieldsVo();
 		vo.setRuleName(RuleNameEnum.BROADCAST.getValue());
-		vo.setMsgType(SearchFieldsVo.MsgType.Closed);
+		vo.setMsgType(msgType);
 		List<MsgInboxWebVo> list = msgInboxDao.getListForWeb(vo);
 		for (MsgInboxWebVo webVo : list) {
 			System.out.println("MsgInboxWebVo - selectBroadcastMsg: " + LF + webVo);

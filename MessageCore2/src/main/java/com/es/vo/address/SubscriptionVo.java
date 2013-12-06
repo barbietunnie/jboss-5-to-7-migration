@@ -20,10 +20,10 @@ public class SubscriptionVo extends BaseVo implements Serializable {
 	private int clickCount = 0;
 	private Timestamp lastClickTime = null;
 	
-	// used when joining EmailAddr table to get Email Address
+	// used when joining Email_Address table to get Email Address
 	private String acceptHtml = "";
 	private String emailAddr = null;
-	// used when joining Subscriber table to get customer name
+	// used when joining Subscriber table to get subscriber name
 	private String firstName = null;
 	private String lastName = null;
 	private String middleName = null;
