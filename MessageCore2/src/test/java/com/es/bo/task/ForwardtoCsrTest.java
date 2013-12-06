@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,14 +44,21 @@ public class ForwardtoCsrTest {
 	@Resource
 	private SenderDataDao senderService;
 
+	private String fromaddr = "testfrom@localhost";
+	private String toaddr = "testto@localhost";
+	private MessageContext ctx = null; 
+
 	@BeforeClass
 	public static void ForwardPrepare() {
 	}
 
-	@Test
-	public void testForwardToCsr() {
-		String fromaddr = "testfrom@localhost";
-		String toaddr = "testto@localhost";
+	@BeforeTransaction
+	public void performForwardToCsr() {
+		/*
+		 * perform the task in @BeforeTransaction block to have the new email
+		 * address persisted before the JUnit assertions are executed. This will
+		 * prevent the method call like "minbox.getToAddress()" from failing.
+		 */
 		MessageBean mBean = new MessageBean();
 		try {
 			mBean.setFrom(InternetAddress.parse(fromaddr, false));
@@ -64,7 +72,7 @@ public class ForwardtoCsrTest {
 		mBean.setMailboxUser("testUser");
 		mBean.setSenderId(Constants.DEFAULT_SENDER_ID);
 
-		MessageContext ctx = new MessageContext(mBean);
+		ctx = new MessageContext(mBean);
 		ctx.setTaskArguments("$" + TableColumnName.SUBSCRIBER_CARE_ADDR.getValue());
 		try {
 			task.process(ctx);
@@ -72,13 +80,17 @@ public class ForwardtoCsrTest {
 			e.printStackTrace();
 			fail();
 		}
-		
+	}
+
+	@Test
+	public void verifyForwardToCsr() {
 		System.out.println("Verifying Results ##################################################################");
 		// verify results
 		assertFalse(ctx.getMsgIdList().isEmpty());
 		logger.info("MsgId from MesageContext = " + ctx.getMsgIdList().get(0));
 		MsgInboxVo minbox = inboxService.getByPrimaryKey(ctx.getMsgIdList().get(0));
 		assertTrue(fromaddr.equals(minbox.getFromAddress()));
+		MessageBean mBean = ctx.getMessageBean();
 		SenderDataVo sender = senderService.getBySenderId(mBean.getSenderId());
 		assertTrue(sender.getCustcareEmail().equals(minbox.getToAddress()));
 		

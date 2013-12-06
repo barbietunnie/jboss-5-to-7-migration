@@ -169,14 +169,14 @@ public class MsgInboxVo extends BaseVo implements Serializable {
 	}
 	
 	public String getToAddress() {
-		// first locate To from header
+		// first locate To address from msg_header
 		List<MsgHeaderVo> headers = getMsgHeaders();
 		for (MsgHeaderVo header : headers) {
 			if (EmailAddressType.TO_ADDR.getValue().equalsIgnoreCase(header.getHeaderName())) {
 				return header.getHeaderValue();
 			}
 		}
-		// if not found from header, get from toAddrId
+		// if not found, get it from Email_Address by toAddrId
 		if (toAddrId == null) return "";
 		EmailAddressVo vo = getEmailAddrDao().getByAddrId(toAddrId);
 		if (vo == null) return "";
