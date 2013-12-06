@@ -3,6 +3,7 @@ package com.es.bo.task;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -61,7 +62,7 @@ public class BroadcastToListTest {
 	}
 
 	@Test
-	public void testBroadcastToList() throws Exception {
+	public void testBroadcastToList() {
 		EmailTemplateEnum testNewsLetter = EmailTemplateEnum.SampleNewsletter2;
 		MessageBean mBean = new MessageBean();
 		mBean.setSubject(testNewsLetter.getSubject());
@@ -74,7 +75,12 @@ public class BroadcastToListTest {
 
 		MessageContext ctx = new MessageContext(mBean);
 		ctx.setTaskArguments(MailingListEnum.SMPLLST1.name());
-		task.process(ctx);
+		try {
+			task.process(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
 		
 		// now verify results
 		System.out.println("Verifying Results ##################################################################");
@@ -101,18 +107,24 @@ public class BroadcastToListTest {
 					VariableType.ADDRESS);
 			Map<String, RenderVariable> vars = new HashMap<String, RenderVariable>();
 			vars.put(vo.getVariableName(), vo);
-			String subj = Renderer.getInstance().render(
-					testNewsLetter.getSubject(), vars,
-					new HashMap<String, ErrorVariable>());
-			System.out.println("Subject rendered: " + subj);
-			System.out.println("Subject msginbox: " + minbox.getMsgSubject());
-			assertTrue(subj.equals(minbox.getMsgSubject()));
-			
-			if (EmailTemplateEnum.SampleNewsletter2.equals(testNewsLetter)) {
-				assertTrue(minbox.getMsgBody().indexOf(to_sent)>0);
+			try {
+				String subj = Renderer.getInstance().render(
+						testNewsLetter.getSubject(), vars,
+						new HashMap<String, ErrorVariable>());
+				System.out.println("Subject rendered: " + subj);
+				System.out.println("Subject msginbox: " + minbox.getMsgSubject());
+				assertTrue(subj.equals(minbox.getMsgSubject()));
+				
+				if (EmailTemplateEnum.SampleNewsletter2.equals(testNewsLetter)) {
+					assertTrue(minbox.getMsgBody().indexOf(to_sent)>0);
+				}
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				assertTrue(minbox.getMsgBody().indexOf(sdf.format(new java.util.Date()))>0);
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			assertTrue(minbox.getMsgBody().indexOf(sdf.format(new java.util.Date()))>0);
+			catch (Exception e) {
+				e.printStackTrace();
+				fail();
+			}
 		}
 	}
 }

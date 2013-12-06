@@ -3,6 +3,7 @@ package com.es.bo.task;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 import java.util.List;
@@ -53,7 +54,7 @@ public class AutoReplyMessageTest {
 	}
 
 	@Test
-	public void testAutoReplyMessage() throws Exception {
+	public void testAutoReplyMessage() {
 		String fromaddr = "testfrom@localhost";
 		String toaddr = "testto@localhost";
 		MessageBean mBean = new MessageBean();
@@ -77,7 +78,12 @@ public class AutoReplyMessageTest {
 
 		MessageContext ctx = new MessageContext(mBean);
 		ctx.setTaskArguments(EmailTemplateEnum.SubscribeByEmailReply.name());
-		task.process(ctx);
+		try {
+			task.process(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
 		
 		System.out.println("Verifying Results ##################################################################");
 		// verify results

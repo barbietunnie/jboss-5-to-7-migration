@@ -46,7 +46,7 @@ public class SaveMessageTest {
 	}
 
 	@Test
-	public void testSaveMessage() throws Exception {
+	public void testSaveMessage() {
 		MessageBean mBean = new MessageBean();
 		String fromaddr = "event.alert@localhost";
 		String toaddr = "support@localhost";

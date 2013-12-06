@@ -1,5 +1,6 @@
 package com.es.bo.task;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
@@ -7,15 +8,6 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.persistence.NoResultException;
-
-import jpa.constant.EmailAddrType;
-import jpa.constant.StatusId;
-import jpa.message.MessageBean;
-import jpa.message.MessageContext;
-import jpa.model.EmailAddress;
-import jpa.service.EmailAddressService;
-import jpa.service.task.SuspendAddress;
 
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
@@ -26,8 +18,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.es.dao.address.EmailAddressDao;
+import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.StatusId;
+import com.es.msgbean.MessageBean;
+import com.es.msgbean.MessageContext;
+import com.es.vo.address.EmailAddressVo;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/spring-jpa-config.xml"})
+@ContextConfiguration(locations={"/spring-core-config.xml"})
 @TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=false)
 @Transactional
 public class SuspendAddressTest {
@@ -37,14 +36,14 @@ public class SuspendAddressTest {
 	@Resource
 	private SuspendAddress task;
 	@Resource
-	private EmailAddressService emailService;
+	private EmailAddressDao emailService;
 
 	@BeforeClass
 	public static void SuspendAddressPrepare() {
 	}
 
 	@Test
-	public void testSuspendAddress() throws Exception {
+	public void testSuspendAddress() {
 		MessageBean mBean = new MessageBean();
 		String fromaddr = "event.alert@localhost";
 		String toaddr = "watched_maibox@domain.com";
@@ -62,18 +61,17 @@ public class SuspendAddressTest {
 		mBean.setFinalRcpt(finalRcptAddr);
 
 		MessageContext ctx = new MessageContext(mBean);
-		ctx.setTaskArguments("$" + EmailAddrType.FINAL_RCPT_ADDR.getValue() +",$" + EmailAddrType.FROM_ADDR.getValue());
+		ctx.setTaskArguments("$" + EmailAddressType.FINAL_RCPT_ADDR.getValue() +",$" + EmailAddressType.FROM_ADDR.getValue());
 		task.process(ctx);
 		
+		System.out.println("Verifying Results ##################################################################");
 		// verify results
-		EmailAddress from = emailService.getByAddress(mBean.getFromAsString());
-		assertTrue(StatusId.SUSPENDED.getValue().equals(from.getStatusId()));
-		assertTrue(0<=from.getBounceCount());
-		try {
-			EmailAddress othr = emailService.getByAddress(finalRcptAddr);
-			assertTrue(StatusId.SUSPENDED.getValue().equals(othr.getStatusId()));
-			assertTrue(0<=othr.getBounceCount());
+		assertFalse(ctx.getEmailAddrIdList().isEmpty());
+		logger.info("EmailAddrIds from MesageContext = " + ctx.getEmailAddrIdList());
+		for (Long addrId : ctx.getEmailAddrIdList()) {
+			EmailAddressVo addrvo = emailService.getByAddrId(addrId);
+			assertTrue(StatusId.SUSPENDED.getValue().equals(addrvo.getStatusId()));
+			assertTrue(addrvo.getEmailAddr().equals(finalRcptAddr) || addrvo.getEmailAddr().equals(fromaddr));
 		}
-		catch (NoResultException e) {}
 	}
 }

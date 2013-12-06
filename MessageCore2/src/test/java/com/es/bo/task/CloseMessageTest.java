@@ -42,7 +42,7 @@ public class CloseMessageTest {
 	}
 
 	@Test
-	public void testCloseMessage() throws Exception {
+	public void testCloseMessage() {
 		MessageBean mBean = new MessageBean();
 		String fromaddr = "event.alert@localhost";
 		String toaddr = "watched_maibox@domain.com";

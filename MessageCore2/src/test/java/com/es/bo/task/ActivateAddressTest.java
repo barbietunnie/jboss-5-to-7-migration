@@ -43,7 +43,7 @@ public class ActivateAddressTest {
 	}
 
 	@Test
-	public void testActivateAddress() throws Exception {
+	public void testActivateAddress() {
 		MessageBean mBean = new MessageBean();
 		String fromaddr = "event.alert@localhost";
 		String toaddr = "watched_maibox@domain.com";

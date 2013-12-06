@@ -2,6 +2,7 @@ package com.es.bo.task;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 
@@ -50,7 +51,7 @@ public class CsrReplyMessageTest {
 	}
 
 	@Test
-	public void testCsrReplyMessage() throws Exception {
+	public void testCsrReplyMessage() throws AddressException {
 		String fromaddr = "testfrom@localhost";
 		String toaddr = "support@localhost";
 		MessageBean origMsg = new MessageBean();
@@ -77,7 +78,12 @@ public class CsrReplyMessageTest {
 		mBean.setBody(replyBody);
 
 		MessageContext ctx = new MessageContext(mBean);
-		task.process(ctx);
+		try {
+			task.process(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
 		
 		System.out.println("Verifying Results ##################################################################");
 		// verify results

@@ -58,64 +58,6 @@ public class EmailAddressDao {
 		return jdbcTemplate;
 	}
 
-//	private static class EmailAddrMapper implements RowMapper<EmailAddressVo> {
-//
-//		public EmailAddressVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-//			EmailAddressVo emailAddrVo = new EmailAddressVo();
-//
-//			emailAddrVo.setEmailAddrId(rs.getInt("EmailAddrId"));
-//			emailAddrVo.setEmailAddr(rs.getString("OrigEmailAddr"));
-//			emailAddrVo.setStatusId(rs.getString("StatusId"));
-//			emailAddrVo
-//					.setStatusChangeTime(rs.getTimestamp("StatusChangeTime"));
-//			emailAddrVo.setStatusChangeUserId(rs
-//					.getString("StatusChangeUserId"));
-//			emailAddrVo.setBounceCount(rs.getInt("BounceCount"));
-//			emailAddrVo.setLastBounceTime(rs.getTimestamp("LastBounceTime"));
-//			emailAddrVo.setLastSentTime(rs.getTimestamp("LastSentTime"));
-//			emailAddrVo.setLastRcptTime(rs.getTimestamp("LastRcptTime"));
-//			emailAddrVo.setAcceptHtml(rs.getString("AcceptHtml"));
-//			emailAddrVo.setUpdtTime(rs.getTimestamp("UpdtTime"));
-//			emailAddrVo.setUpdtUserId(rs.getString("UpdtUserId"));
-//
-//			emailAddrVo.setCurrEmailAddr(emailAddrVo.getEmailAddr());
-//			emailAddrVo.setOrigUpdtTime(emailAddrVo.getUpdtTime());
-//			return emailAddrVo;
-//		}
-//	}
-
-//	private static final class EmailAddrMapper2 extends EmailAddrMapper {
-//		public EmailAddressVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-//			EmailAddressVo emailAddrVo = (EmailAddressVo) super.mapRow(rs, rowNum);
-//			emailAddrVo.setRuleName(rs.getString("RuleName"));
-//			return emailAddrVo;
-//		}
-//	}
-//
-//	private static final class EmailAddrMapper3 extends EmailAddrMapper {
-//		public EmailAddressVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-//			EmailAddressVo emailAddrVo = (EmailAddressVo) super.mapRow(rs, rowNum);
-//			emailAddrVo.setCustId(rs.getString("CustId"));
-//			emailAddrVo.setFirstName(rs.getString("FirstName"));
-//			emailAddrVo.setMiddleName(rs.getString("MiddleName"));
-//			emailAddrVo.setLastName(rs.getString("LastName"));
-//			emailAddrVo.setSentCount(toInteger(rs.getObject("SentCount")));
-//			emailAddrVo.setOpenCount(toInteger(rs.getObject("OpenCount")));
-//			emailAddrVo.setClickCount(toInteger(rs.getObject("ClickCount")));
-//			return emailAddrVo;
-//		}
-//	}
-
-//	private static Integer toInteger(Object count) {
-//		Integer intCount = null;
-//		if (count instanceof BigDecimal) {
-//			intCount = count == null ? null : ((BigDecimal) count).intValue();
-//		} else if (count instanceof Integer) {
-//			intCount = (Integer) count;
-//		}
-//		return intCount;
-//	}
-
 	public EmailAddressVo getByAddrId(long addrId) {
 		String sql = "select * from Email_Address where emailAddrId=?";
 		Object[] parms = new Object[] { addrId + "" };
@@ -360,62 +302,14 @@ public class EmailAddressDao {
 	 */
 	private EmailAddressVo findByAddress(String address, int retries) {
 		EmailAddressVo vo = getByAddress(address);
-		if (vo == null) { // record not found, insert one
-			synchronized (lock) {
-				// concurrency issue still pops up but it is much better
-				// controlled
-				Timestamp updtTime = new Timestamp(
-						new java.util.Date().getTime());
-				EmailAddressVo emailAddrVo = new EmailAddressVo();
-				emailAddrVo.setEmailAddr(address);
-				emailAddrVo.setBounceCount(0);
-				emailAddrVo.setStatusId(StatusId.ACTIVE.getValue());
-				emailAddrVo.setStatusChangeTime(updtTime);
-				emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
-				emailAddrVo.setAcceptHtml(CodeType.YES_CODE.getValue());
-				emailAddrVo.setUpdtTime(updtTime);
-				emailAddrVo.setUpdtUserId(Constants.DEFAULT_USER_ID);
-				try {
-					insert(emailAddrVo);
-					return emailAddrVo;
-				} catch (DuplicateKeyException e) {
-					logger.error("findByAddress() - DuplicateKeyException caught", e);
-					if (retries < 0) {
-						// retry once may overcome concurrency issue. (the retry
-						// never worked and the reason might be that it is under
-						// a same transaction). So no retry from now on.
-						logger.info("findByAddress() - duplicate key error, retry...");
-						return findByAddress(address, retries + 1);
-					} else {
-						throw e;
-					}
-				} catch (DataIntegrityViolationException e) {
-					// shouldn't reach here, should be caught by DuplicateKeyException
-					logger.error(
-							"findByAddress() - DataIntegrityViolationException caught",
-							e);
-					String err = e.toString() + "";
-					if (err.toLowerCase().indexOf("duplicate entry") > 0
-							&& retries < 0) {
-						// retry once may overcome concurrency issue. (the retry
-						// never worked and the reason might be that it is under
-						// a same transaction). So no retry from now on.
-						logger.info("findByAddress() - duplicate key error, retry...");
-						return findByAddress(address, retries + 1);
-					} else {
-						throw e;
-					}
-				}
-			} // end of synchronized block
-		} else { // found a record
+		if (vo != null) {
 			return vo;
 		}
-	}
-
-	EmailAddressVo findByAddress_deadlock(String address, int retries) {
-		EmailAddressVo vo = getByAddress(address);
-		if (vo == null) { // record not found, insert one
-			Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
+		// record not found, insert one
+		synchronized (lock) {
+			// concurrency issue still pops up but it is much better
+			// controlled
+			Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 			EmailAddressVo emailAddrVo = new EmailAddressVo();
 			emailAddrVo.setEmailAddr(address);
 			emailAddrVo.setBounceCount(0);
@@ -425,15 +319,62 @@ public class EmailAddressDao {
 			emailAddrVo.setAcceptHtml(CodeType.YES_CODE.getValue());
 			emailAddrVo.setUpdtTime(updtTime);
 			emailAddrVo.setUpdtUserId(Constants.DEFAULT_USER_ID);
-			// concurrency issue still pops up but it is much better controlled
-			synchronized (lock) {
-				insert(emailAddrVo, true);
-				// return emailAddrVo;
-			} // end of synchronized block
-			return getByAddress(address);
-		} else { // found a record
+			try {
+				insert(emailAddrVo);
+				return emailAddrVo;
+			}
+			catch (DuplicateKeyException e) {
+				logger.error("findByAddress() - DuplicateKeyException caught", e);
+				if (retries < 0) {
+					// retry once may overcome concurrency issue. (the retry
+					// never worked and the reason might be that it is under
+					// a same transaction). So no retry from now on.
+					logger.info("findByAddress() - duplicate key error, retry...");
+					return findByAddress(address, retries + 1);
+				} else {
+					throw e;
+				}
+			}
+			catch (DataIntegrityViolationException e) {
+				// shouldn't reach here, should be caught by DuplicateKeyException
+				logger.error("findByAddress() - DataIntegrityViolationException caught", e);
+				String err = e.toString() + "";
+				if (err.toLowerCase().indexOf("duplicate entry") > 0
+						&& retries < 0) {
+					// retry once may overcome concurrency issue. (the retry
+					// never worked and the reason might be that it is under
+					// a same transaction). So no retry from now on.
+					logger.info("findByAddress() - duplicate key error, retry...");
+					return findByAddress(address, retries + 1);
+				} else {
+					throw e;
+				}
+			}
+		} // end of synchronized block
+	}
+
+	EmailAddressVo findByAddress_deadlock(String address, int retries) {
+		EmailAddressVo vo = getByAddress(address);
+		if (vo != null) {
 			return vo;
 		}
+		// record not found, insert one
+		Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
+		EmailAddressVo emailAddrVo = new EmailAddressVo();
+		emailAddrVo.setEmailAddr(address);
+		emailAddrVo.setBounceCount(0);
+		emailAddrVo.setStatusId(StatusId.ACTIVE.getValue());
+		emailAddrVo.setStatusChangeTime(updtTime);
+		emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
+		emailAddrVo.setAcceptHtml(CodeType.YES_CODE.getValue());
+		emailAddrVo.setUpdtTime(updtTime);
+		emailAddrVo.setUpdtUserId(Constants.DEFAULT_USER_ID);
+		// concurrency issue still pops up but it is much better controlled
+		synchronized (lock) {
+			insert(emailAddrVo, true);
+			// return emailAddrVo;
+		} // end of synchronized block
+		return getByAddress(address);
 	}
 
 	private static class FindByAddressProcedure extends StoredProcedure {
@@ -533,7 +474,7 @@ public class EmailAddressDao {
 	}
 
 	public int update(EmailAddressVo emailAddrVo) {
-		emailAddrVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+		emailAddrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 
 		ArrayList<Object> keys = new ArrayList<Object>();
 		keys.add(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
@@ -571,7 +512,7 @@ public class EmailAddressDao {
 
 	public int updateLastRcptTime(long addrId) {
 		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(new Timestamp(new java.util.Date().getTime()));
+		keys.add(new Timestamp(System.currentTimeMillis()));
 		keys.add(addrId);
 
 		String sql = "update Email_Address set " + " LastRcptTime=? "
@@ -583,7 +524,7 @@ public class EmailAddressDao {
 
 	public int updateLastSentTime(long addrId) {
 		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(new Timestamp(new java.util.Date().getTime()));
+		keys.add(new Timestamp(System.currentTimeMillis()));
 		keys.add(addrId);
 
 		String sql = "update Email_Address set " + " LastSentTime=? "
@@ -606,7 +547,7 @@ public class EmailAddressDao {
 	}
 
 	public int updateBounceCount(EmailAddressVo emailAddrVo) {
-		emailAddrVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+		emailAddrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		ArrayList<Object> keys = new ArrayList<Object>();
 
 		String sql = "update Email_Address set BounceCount=?,";
@@ -669,7 +610,7 @@ public class EmailAddressDao {
 	 * exists, but the "update" will not return the RowId. Use with caution.
 	 */
 	private int insert(EmailAddressVo emailAddrVo, boolean withUpdate) {
-		emailAddrVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+		emailAddrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		ArrayList<Object> keys = new ArrayList<Object>();
 		keys.add(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
 		keys.add(emailAddrVo.getEmailAddr());
@@ -712,7 +653,7 @@ public class EmailAddressDao {
 		int rowsInserted = getJdbcTemplate().update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(
 					Connection connection) throws SQLException {
-				emailAddrVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+				emailAddrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 				ArrayList<Object> keys = new ArrayList<Object>();
 				keys.add(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
 				keys.add(emailAddrVo.getEmailAddr());

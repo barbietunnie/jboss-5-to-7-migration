@@ -36,7 +36,7 @@ public class DropMessageTest {
 	}
 
 	@Test
-	public void testDropMessage() throws Exception {
+	public void testDropMessage() {
 		MessageBean mBean = new MessageBean();
 		String fromaddr = "event.alert@localhost";
 		String toaddr = "watched_maibox@domain.com";
