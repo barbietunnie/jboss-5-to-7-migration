@@ -7,16 +7,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.es.core.util.StringUtil;
+import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.MsgDirectionCode;
 import com.es.data.constant.MsgStatusCode;
@@ -25,19 +23,8 @@ import com.es.vo.inbox.MsgInboxWebVo;
 import com.es.vo.inbox.SearchFieldsVo;
 
 @Component("msgInboxDao")
-public class MsgInboxDao {
+public class MsgInboxDao extends AbstractDao {
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public MsgInboxVo getByPrimaryKey(long msgId) {
 		String sql = 
 			"select * " +
@@ -336,10 +323,12 @@ public class MsgInboxDao {
 		// msgDirection
 		String direction = null;
 		if (vo.getMsgType() != null) {
-			if (vo.getMsgType().equals(SearchFieldsVo.MsgType.Received))
+			if (vo.getMsgType().equals(SearchFieldsVo.MsgType.Received)) {
 				direction = MsgDirectionCode.RECEIVED.getValue();
-			else if (vo.getMsgType().equals(SearchFieldsVo.MsgType.Sent))
+			}
+			else if (vo.getMsgType().equals(SearchFieldsVo.MsgType.Sent)) {
 				direction = MsgDirectionCode.SENT.getValue();
+			}
 		}
 		if (direction != null && closed == null) { // and not closed
 			whereSql += CRIT[parms.size()] + " a.MsgDirection = ? ";
@@ -889,12 +878,8 @@ public class MsgInboxDao {
 	}
 
 	@Autowired
-	private MsgUnreadCountDao msgUnreadCountDao = null;
+	private MsgUnreadCountDao msgUnreadCountDao;
 	MsgUnreadCountDao getMsgUnreadCountDao() {
 		return msgUnreadCountDao;
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

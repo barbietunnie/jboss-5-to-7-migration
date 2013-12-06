@@ -4,30 +4,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.es.dao.abst.AbstractDao;
 import com.es.vo.outbox.MsgRenderedVo;
 
 @Component("msgRenderedDao")
-public class MsgRenderedDao {
+public class MsgRenderedDao extends AbstractDao {
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public MsgRenderedVo getByPrimaryKey(long renderId) {
 		String sql = 
 			"select * " +
@@ -159,7 +145,4 @@ public class MsgRenderedDao {
 		return rowsInserted;
 	}
 	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
 }

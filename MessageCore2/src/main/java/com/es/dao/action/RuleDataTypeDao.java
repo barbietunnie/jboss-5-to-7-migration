@@ -3,30 +3,16 @@ package com.es.dao.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.es.dao.abst.AbstractDao;
 import com.es.vo.action.RuleDataTypeVo;
 
 @Component("ruleDataTypeDao")
-public class RuleDataTypeDao {
+public class RuleDataTypeDao extends AbstractDao {
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public RuleDataTypeVo getByTypeValuePair(String type, String value) {
 		String sql = 
 			"select * " +
@@ -70,7 +56,8 @@ public class RuleDataTypeDao {
 			" order by DataTypeValue asc ";
 		
 		Object[] parms = new Object[] {dataType};
-		List<RuleDataTypeVo> list = getJdbcTemplate().query(sql, parms, new BeanPropertyRowMapper<RuleDataTypeVo>(RuleDataTypeVo.class));
+		List<RuleDataTypeVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<RuleDataTypeVo>(RuleDataTypeVo.class));
 		return list;
 	}
 	
@@ -147,10 +134,4 @@ public class RuleDataTypeDao {
 		return rowsInserted;
 	}
 	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
 }

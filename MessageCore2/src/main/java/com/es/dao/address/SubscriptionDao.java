@@ -5,18 +5,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.es.core.util.SpringUtil;
 import com.es.core.util.StringUtil;
+import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.MsgStatusCode;
 import com.es.data.constant.StatusId;
@@ -25,21 +22,10 @@ import com.es.vo.address.SubscriptionVo;
 import com.es.vo.comm.PagingVo;
 
 @Component("subscriptionDao")
-public class SubscriptionDao {
+public class SubscriptionDao extends AbstractDao {
 	static final Logger logger = Logger.getLogger(SubscriptionDao.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	/**
 	 * Set Subscribed field to "Yes". Called when an subscription is received
 	 * from an email address.
@@ -279,7 +265,7 @@ public class SubscriptionDao {
 		return list;
 	}
 	
-	public List<SubscriptionVo> getSubscribersWithCustomerRecord(String listId) {
+	public List<SubscriptionVo> getSubscribersWithRecord(String listId) {
 		String sql = 
 			selectClause +
 				" JOIN Subscriber c on a.EmailAddrId=c.EmailAddrId " +
@@ -292,7 +278,7 @@ public class SubscriptionDao {
 		return list;
 	}
 	
-	public List<SubscriptionVo> getSubscribersWithoutCustomerRecord(String listId) {
+	public List<SubscriptionVo> getSubscribersWithoutRecord(String listId) {
 		String sql = 
 			"select a.EmailAddrId, " +
 				" b.OrigEmailAddr as EmailAddr, " +
@@ -344,12 +330,12 @@ public class SubscriptionDao {
 				" JOIN Email_Address b ON a.EmailAddrId=b.EmailAddrId " +
 				" and a.ListId=? and b.EmailAddr=?";
 		Object[] parms = new Object[] {listId, addr};
-		List<SubscriptionVo> list = getJdbcTemplate().query(sql, parms,
-				new BeanPropertyRowMapper<SubscriptionVo>(SubscriptionVo.class));
-		if (list.size()>0) {
-			return list.get(0);
+		try {
+			SubscriptionVo vo = getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<SubscriptionVo>(SubscriptionVo.class));
+			return vo;
 		}
-		else {
+		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}
@@ -476,7 +462,7 @@ public class SubscriptionDao {
 	
 	public int insert(SubscriptionVo subscriptionVo) {
 		if (subscriptionVo.getCreateTime()==null) {
-			subscriptionVo.setCreateTime(new Timestamp(new java.util.Date().getTime()));
+			subscriptionVo.setCreateTime(new Timestamp(System.currentTimeMillis()));
 		}
 		Object[] parms = {
 				subscriptionVo.getEmailAddrId(),
@@ -516,13 +502,5 @@ public class SubscriptionDao {
 			emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressDao.class);
 		}
 		return emailAddrDao;
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

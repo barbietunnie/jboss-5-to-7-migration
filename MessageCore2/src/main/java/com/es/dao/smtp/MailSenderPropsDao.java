@@ -4,30 +4,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.es.dao.abst.AbstractDao;
 import com.es.vo.comm.MailSenderPropsVo;
 
 @Component("mailSenderPropsDao")
-public class MailSenderPropsDao {
+public class MailSenderPropsDao extends AbstractDao {
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public MailSenderPropsVo getByPrimaryKey(int rowId) {
 		String sql = 
 			"select * from Mail_Sender_Props where rowId=?";
@@ -124,13 +110,5 @@ public class MailSenderPropsDao {
 		mailSenderVo.setRowId(retrieveRowId());
 		mailSenderVo.setOrigUpdtTime(mailSenderVo.getUpdtTime());
 		return rowsInserted;
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

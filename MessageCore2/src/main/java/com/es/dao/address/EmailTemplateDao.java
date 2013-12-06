@@ -5,16 +5,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import com.es.core.util.BlobUtil;
+import com.es.dao.abst.AbstractDao;
 import com.es.dao.action.RuleDataTypeDao;
 import com.es.dao.sender.ReloadFlagsDao;
 import com.es.data.constant.CodeType;
@@ -24,21 +22,10 @@ import com.es.vo.address.EmailTemplateVo;
 import com.es.vo.address.SchedulesBlob;
 
 @Component("emailTemplateDao")
-public class EmailTemplateDao {
+public class EmailTemplateDao extends AbstractDao {
 	static final Logger logger = Logger.getLogger(EmailTemplateDao.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	private static final class EmailTemplateMapper implements RowMapper<EmailTemplateVo> {
 		
 		public EmailTemplateVo mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -92,7 +79,7 @@ public class EmailTemplateDao {
 				" where a.ListId=b.ListId and a.ListId=?" +
 				" order by a.TemplateId";
 		Object[] parms = new Object[] {listId};
-		List<EmailTemplateVo> list = (List<EmailTemplateVo>) getJdbcTemplate().query(sql, parms,
+		List<EmailTemplateVo> list = getJdbcTemplate().query(sql, parms,
 				new EmailTemplateMapper());
 		return list;
 	}
@@ -102,7 +89,7 @@ public class EmailTemplateDao {
 				" from Email_Template a, Mailing_List b " +
 				" where a.ListId=b.ListId" +
 				" order by a.RowId";
-		List<EmailTemplateVo> list = (List<EmailTemplateVo>) getJdbcTemplate().query(sql,
+		List<EmailTemplateVo> list = getJdbcTemplate().query(sql,
 				new EmailTemplateMapper());
 		return list;
 	}
@@ -117,7 +104,7 @@ public class EmailTemplateDao {
 		int maxRows = getJdbcTemplate().getMaxRows();
 		getJdbcTemplate().setFetchSize(20);
 		getJdbcTemplate().setMaxRows(20);
-		List<EmailTemplateVo> list = (List<EmailTemplateVo>) getJdbcTemplate().query(sql,
+		List<EmailTemplateVo> list = getJdbcTemplate().query(sql,
 				new EmailTemplateMapper());
 		getJdbcTemplate().setFetchSize(fetchSize);
 		getJdbcTemplate().setMaxRows(maxRows);
@@ -281,13 +268,5 @@ public class EmailTemplateDao {
 	private RuleDataTypeDao ruleDataTypeDao = null;
 	RuleDataTypeDao getRuleDataTypeDao() {
 		return ruleDataTypeDao;
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

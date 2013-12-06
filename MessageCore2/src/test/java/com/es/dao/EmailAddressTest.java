@@ -34,7 +34,7 @@ public class EmailAddressTest {
 	}
 	
 	@Test
-	public void insertSelectDelete() {
+	public void testInsertSelectDelete() {
 		try {
 			EmailAddressVo vo = insert();
 			assertNotNull(vo);
@@ -58,10 +58,10 @@ public class EmailAddressTest {
 			assertTrue(previewId>0);
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			EmailAddressVo vo = new EmailAddressVo();
 			vo.setEmailAddr(insertEmailAddr);
 			delete(vo);
-			e.printStackTrace();
 			fail();
 		}
 	}

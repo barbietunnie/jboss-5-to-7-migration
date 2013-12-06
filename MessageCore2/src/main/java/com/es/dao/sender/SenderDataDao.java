@@ -6,17 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.es.core.util.BlobUtil;
 import com.es.core.util.TimestampUtil;
+import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.StatusId;
@@ -25,21 +23,11 @@ import com.es.vo.comm.SenderDataVo;
 import com.es.vo.template.SenderVariableVo;
 
 @Component("senderDataDao")
-public class SenderDataDao {
+public class SenderDataDao extends AbstractDao {
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
 	private java.util.Date lastFetchTime = new java.util.Date();
 	
 	final static Map<String, SenderDataVo> senderCache = new HashMap<String, SenderDataVo>();
-
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
 
 	public SenderDataVo getBySenderId(String senderId) {
 		java.util.Date currTime = new java.util.Date();
@@ -440,11 +428,4 @@ public class SenderDataDao {
 		return reloadFlagsDao;
 	}
 	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class);
-	}
-
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
 }

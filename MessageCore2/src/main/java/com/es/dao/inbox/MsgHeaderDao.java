@@ -3,31 +3,17 @@ package com.es.dao.inbox;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.es.dao.abst.AbstractDao;
 import com.es.vo.inbox.MsgHeaderVo;
 
 @Component("msgHeaderDao")
-public class MsgHeaderDao {
+public class MsgHeaderDao extends AbstractDao {
 	
-	@Autowired
-	private DataSource msgDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(msgDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public MsgHeaderVo getByPrimaryKey(long msgId, int headerSeq) {
 		String sql = 
 			"select * " +
@@ -118,9 +104,5 @@ public class MsgHeaderDao {
 		
 		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsInserted;
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }
