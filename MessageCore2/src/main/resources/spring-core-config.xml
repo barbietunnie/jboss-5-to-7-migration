@@ -18,14 +18,14 @@
 	<context:component-scan base-package="com.es.bo, com.es.dao" />
 	<context:annotation-config/>
 
-	<!-- Spring JPA transaction manager -->
+	<!-- Spring transaction manager -->
 	<bean id="msgTransactionManager" 
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 			<property name="dataSource" ref="msgDataSource"/>
 	</bean>
 
 	<!-- Data Sources -->
-	<bean id="msgDataSource"
+	<bean id="msgDataSource_v0"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${dataSource.driverClassName}" />
 		<property name="url" value="${dataSource.url}" />
@@ -33,7 +33,7 @@
 		<property name="password" value="${dataSource.password}" />
 	</bean>
 
-	<bean id="msgDataSource_v1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	<bean id="msgDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<!-- Connection Settings -->
 		<property name="driverClassName" value="${dataSource.driverClassName}" />
 		<property name="defaultAutoCommit" value="${dataSource.defaultAutoCommit}" />
@@ -71,7 +71,7 @@
 	<!-- Transaction Advice -->
 	<tx:advice id="dsTxAdviceEmailAddr" transaction-manager="msgTransactionManager">
 		<tx:attributes>
-			<tx:method name="findSertAddress" no-rollback-for="javax.persistence.NoResultException"/>
+			<tx:method name="findSertAddress" no-rollback-for="org.springframework.dao.EmptyResultDataAccessException"/>
 		</tx:attributes>
 	</tx:advice>
 	
@@ -85,9 +85,9 @@
 		<!-- the transactional semantics... -->
 		<tx:attributes>
 			<!-- all methods starting with 'get' are read-only -->
-			<tx:method name="get*" read-only="true" no-rollback-for="javax.persistence.NoResultException"/>
+			<tx:method name="get*" read-only="true" no-rollback-for="org.springframework.dao.EmptyResultDataAccessException"/>
 			<!-- other methods use the default transaction settings (see below) -->
-			<tx:method name="*" no-rollback-for="javax.persistence.NoResultException"/>
+			<tx:method name="*" no-rollback-for="org.springframework.dao.EmptyResultDataAccessException"/>
 		</tx:attributes>
 	</tx:advice>
 	
