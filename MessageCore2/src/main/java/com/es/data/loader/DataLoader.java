@@ -34,7 +34,9 @@ public class DataLoader {
 			creator.createTables();
 		}
 		for (AbstractTableBase creator : creators) {
+			SpringUtil.beginTransaction();
 			creator.loadTestData();
+			SpringUtil.commitTransaction();
 		}
 	}
 	
