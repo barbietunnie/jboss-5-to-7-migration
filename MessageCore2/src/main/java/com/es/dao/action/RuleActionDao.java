@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import com.es.dao.abst.AbstractDao;
 import com.es.dao.sender.ReloadFlagsDao;
 import com.es.data.constant.StatusId;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.action.RuleActionVo;
 
 @Component("ruleActionDao")
@@ -169,18 +170,10 @@ public class RuleActionDao extends AbstractDao {
 		}
 	}
 	
-	public synchronized int update(RuleActionVo msgActionVo) {
-		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionVo);
+	public synchronized int update(RuleActionVo ruleActionVo) {
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleActionVo);
 		
-		String sql = "update Rule_Action set " +
-			"ruleName=:ruleName, " +
-			"actionSeq=:actionSeq, " +
-			"startTime=:startTime, " +
-			"senderId=:senderId, " +
-			"actionId=:actionId, " +
-			"statusId=:statusId, " +
-			"dataTypeValues=:dataTypeValues " +
-			" where rowId=:rowId ";
+		String sql = MetaDataUtil.buildUpdateStatement("Rule_Action", ruleActionVo);
 		
 		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		updateReloadFlags();
@@ -231,21 +224,13 @@ public class RuleActionDao extends AbstractDao {
 		return rowsDeleted;
 	}
 	
-	public synchronized int insert(RuleActionVo msgActionVo) {
-		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionVo);
+	public synchronized int insert(RuleActionVo ruleActionVo) {
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleActionVo);
 
-		String sql = 
-			"INSERT INTO Rule_Action ( " +
-			"ruleName, " +
-			"actionSeq," +
-			"startTime," +
-			"senderId," +
-			"actionId," +
-			"statusId," +
-			"dataTypeValues " +
-			") VALUES (:ruleName, :actionSeq, :startTime, :senderId, :actionId, :statusId, :dataTypeValues)";
+		String sql = MetaDataUtil.buildInsertStatement("Rule_Action", ruleActionVo);
+
 		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
-		msgActionVo.setRowId(retrieveRowId());
+		ruleActionVo.setRowId(retrieveRowId());
 		updateReloadFlags();
 		return rowsInserted;
 	}

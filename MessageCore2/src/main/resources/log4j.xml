@@ -50,6 +50,10 @@
 	  <level value="info"/> 
    </logger>
 
+   <logger name="org.springframework.jdbc.core.JdbcTemplate">
+	  <level value="debug"/> 
+   </logger>
+
    <logger name="org.apache">
 	  <level value="info"/> 
    </logger>

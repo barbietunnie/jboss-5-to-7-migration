@@ -52,7 +52,6 @@ public class SpringUtil {
 		return "UnKnown";
 	}
 
-
 	private static String[] getSpringConfigXmlFiles() {
 		List<String> cfgFileNames = new ArrayList<String>();
 		cfgFileNames.add("classpath*:spring-core-config.xml");
@@ -113,6 +112,7 @@ public class SpringUtil {
 	};
 
 	public static void main(String[] args) {
-		logger.info("AppContext: " + getAppContext());
+		AbstractApplicationContext ctx = getAppContext();
+		logger.info("AppContext: " + ctx);
 	}
 }
