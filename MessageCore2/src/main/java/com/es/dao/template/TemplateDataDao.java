@@ -6,9 +6,12 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.template.TemplateDataVo;
 
 @Component("templateDataDao")
@@ -104,33 +107,11 @@ public class TemplateDataDao extends AbstractDao {
 		return list;
 	}
 	
-	public int update(TemplateDataVo bodyTemplateVo) {
+	public int update(TemplateDataVo templateVo) {
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(templateVo);
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(bodyTemplateVo.getTemplateId());
-		fields.add(bodyTemplateVo.getSenderId());
-		fields.add(bodyTemplateVo.getStartTime());
-		fields.add(bodyTemplateVo.getDescription());
-		fields.add(bodyTemplateVo.getStatusId());
-		fields.add(bodyTemplateVo.getBodyTemplate());
-		fields.add(bodyTemplateVo.getSubjTemplate());
-		fields.add(bodyTemplateVo.getContentType());
-		fields.add(bodyTemplateVo.getRowId());
-		
-		String sql =
-			"update Template_Data set " +
-				"TemplateId=?, " +
-				"SenderId=?, " +
-				"StartTime=?, " +
-				"Description=?, " +
-				"StatusId=?, " +
-				"BodyTemplate=?, " +
-				"SubjTemplate=?, " +
-				"ContentType=? " +
-			"where " +
-				" RowId=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		String sql = MetaDataUtil.buildUpdateStatement("Template_Data", templateVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -175,33 +156,12 @@ public class TemplateDataDao extends AbstractDao {
 		return rowsDeleted;
 	}
 	
-	public int insert(TemplateDataVo bodyTemplateVo) {
-		String sql = 
-			"INSERT INTO Template_Data (" +
-			"TemplateId, " +
-			"SenderId, " +
-			"StartTime, " +
-			"Description, " +
-			"StatusId, " +
-			"BodyTemplate, " +
-			"SubjTemplate, " +
-			"ContentType" +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ? " +
-				")";
+	public int insert(TemplateDataVo templateVo) {
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(templateVo);
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(bodyTemplateVo.getTemplateId());
-		fields.add(bodyTemplateVo.getSenderId());
-		fields.add(bodyTemplateVo.getStartTime());
-		fields.add(bodyTemplateVo.getDescription());
-		fields.add(bodyTemplateVo.getStatusId());
-		fields.add(bodyTemplateVo.getBodyTemplate());
-		fields.add(bodyTemplateVo.getSubjTemplate());
-		fields.add(bodyTemplateVo.getContentType());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
-		bodyTemplateVo.setRowId(retrieveRowId());
+		String sql = MetaDataUtil.buildInsertStatement("Template_Data", templateVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
+		templateVo.setRowId(retrieveRowId());
 		return rowsInserted;
 	}
 	

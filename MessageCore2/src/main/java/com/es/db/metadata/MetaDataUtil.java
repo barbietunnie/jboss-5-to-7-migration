@@ -15,6 +15,7 @@ import com.es.core.util.SpringUtil;
 import com.es.core.util.StringUtil;
 import com.es.vo.address.MailingListVo;
 import com.es.vo.comm.BaseVo;
+import com.es.vo.inbox.MsgAttachmentVo;
 import com.es.vo.inbox.MsgInboxVo;
 
 public class MetaDataUtil {
@@ -171,5 +172,6 @@ public class MetaDataUtil {
 		logger.info("Table Metadata:" + StringUtil.prettyPrint(msg_inbox));
 		logger.info(buildUpdateStatement("Msg_Inbox", new MsgInboxVo()));
 		logger.info(buildInsertStatement("Mailing_List", new MailingListVo()));
+		logger.info(buildUpdateStatement("Msg_Attachment", new MsgAttachmentVo()));
 	}
 }

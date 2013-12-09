@@ -6,9 +6,12 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.template.MsgSourceVo;
 
 @Component("msgSourceDao")
@@ -53,50 +56,16 @@ public class MsgSourceDao extends AbstractDao {
 	}
 	
 	public int update(MsgSourceVo msgSourceVo) {
-		msgSourceVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgSourceVo.getMsgSourceId());
-		fields.add(msgSourceVo.getDescription());
-		fields.add(msgSourceVo.getStatusId());
-		fields.add(msgSourceVo.getFromAddrId());
-		fields.add(msgSourceVo.getReplyToAddrId());
-		fields.add(msgSourceVo.getTemplateDataId());
-		fields.add(msgSourceVo.getTemplateVariableId());
-		fields.add(msgSourceVo.getExcludingIdToken());
-		fields.add(msgSourceVo.getCarrierCode());
-		fields.add(msgSourceVo.getAllowOverride());
-		fields.add(msgSourceVo.getSaveMsgStream());
-		fields.add(msgSourceVo.getArchiveInd());
-		fields.add(msgSourceVo.getPurgeAfter());
-		fields.add(msgSourceVo.getUpdtTime());
-		fields.add(msgSourceVo.getUpdtUserId());
-		fields.add(msgSourceVo.getRowId());
+		msgSourceVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgSourceVo);
 		
-		String sql =
-			"update Msg_Source set " +
-				"MsgSourceId=?, " +
-				"Description=?, " +
-				"StatusId=?, " +
-				"FromAddrId=?, " +
-				"ReplyToAddrId=?, " +
-				"TemplateDataId=?, " +
-				"TemplateVariableId=?, " +
-				"ExcludingIdToken=?, " +
-				"CarrierCode=?, " +
-				"AllowOverride=?, " +
-				"SaveMsgStream=?, " +
-				"ArchiveInd=?, " +
-				"PurgeAfter=?, " +
-				"UpdtTime=?, " +
-				"UpdtUserId=? " +
-			"where " +
-				" RowId=? ";
+		String sql = MetaDataUtil.buildUpdateStatement("Msg_Source", msgSourceVo);
 		
 		if (msgSourceVo.getOrigUpdtTime() != null) {
-			sql += " and UpdtTime=?";
-			fields.add(msgSourceVo.getOrigUpdtTime());
+			// optimistic locking
+			sql += " and UpdtTime=:origUpdtTime ";
 		}
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgSourceVo.setOrigUpdtTime(msgSourceVo.getUpdtTime());
 		return rowsUpadted;
 	}
@@ -124,47 +93,12 @@ public class MsgSourceDao extends AbstractDao {
 	}
 	
 	public int insert(MsgSourceVo msgSourceVo) {
-		String sql = 
-			"INSERT INTO Msg_Source (" +
-			"MsgSourceId, " +
-			"Description, " +
-			"StatusId, " +
-			"FromAddrId, " +
-			"ReplyToAddrId, " +
-			"TemplateDataId, " +
-			"TemplateVariableId, " +
-			"ExcludingIdToken, " +
-			"CarrierCode, " +
-			"AllowOverride, " +
-			"SaveMsgStream, " +
-			"ArchiveInd, " +
-			"PurgeAfter, " +
-			"UpdtTime, " +
-			"UpdtUserId " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ? ,?, ?, ?, " +
-				" ?, ?, ?, ?, ? ,?, ? " +
-				")";
+		msgSourceVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgSourceVo);
 		
-		msgSourceVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgSourceVo.getMsgSourceId());
-		fields.add(msgSourceVo.getDescription());
-		fields.add(msgSourceVo.getStatusId());
-		fields.add(msgSourceVo.getFromAddrId());
-		fields.add(msgSourceVo.getReplyToAddrId());
-		fields.add(msgSourceVo.getTemplateDataId());
-		fields.add(msgSourceVo.getTemplateVariableId());
-		fields.add(msgSourceVo.getExcludingIdToken());
-		fields.add(msgSourceVo.getCarrierCode());
-		fields.add(msgSourceVo.getAllowOverride());
-		fields.add(msgSourceVo.getSaveMsgStream());
-		fields.add(msgSourceVo.getArchiveInd());
-		fields.add(msgSourceVo.getPurgeAfter());
-		fields.add(msgSourceVo.getUpdtTime());
-		fields.add(msgSourceVo.getUpdtUserId());
+		String sql = MetaDataUtil.buildInsertStatement("Msg_Source", msgSourceVo);
 		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgSourceVo.setRowId(retrieveRowId());
 		msgSourceVo.setOrigUpdtTime(msgSourceVo.getUpdtTime());
 		return rowsInserted;

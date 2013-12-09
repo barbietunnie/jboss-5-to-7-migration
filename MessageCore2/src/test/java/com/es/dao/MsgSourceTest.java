@@ -48,6 +48,7 @@ public class MsgSourceTest {
 			vo.setUpdtTime(vo2.getUpdtTime());
 			vo.setOrigUpdtTime(vo2.getOrigUpdtTime());
 			assertTrue(vo.equalsTo(vo2));
+			vo2.setOrigUpdtTime(vo2.getUpdtTime());
 			int rowsUpdated = update(vo2);
 			assertEquals(rowsUpdated,1);
 			int rowsDeleted = deleteByPrimaryKey(vo2);

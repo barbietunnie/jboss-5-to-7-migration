@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +18,7 @@ import com.es.core.util.EmailAddrUtil;
 import com.es.core.util.StringUtil;
 import com.es.dao.abst.AbstractDao;
 import com.es.dao.address.EmailAddressDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.address.EmailAddressVo;
 import com.es.vo.comm.PagingSubscriberVo;
 import com.es.vo.comm.PagingVo;
@@ -212,104 +215,18 @@ public class SubscriberDao extends AbstractDao {
 		return whereSql;
 	}
 	
-	public int update(SubscriberVo customerVo) {
-		customerVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		syncupEmailFields(customerVo);
-		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(customerVo.getSubrId());
-		keys.add(customerVo.getSenderId());
-		keys.add(customerVo.getSsnNumber());
-		keys.add(customerVo.getTaxId());
-		keys.add(customerVo.getProfession());
-		keys.add(customerVo.getFirstName());
-		keys.add(customerVo.getMiddleName());
-		keys.add(customerVo.getLastName());
-		keys.add(customerVo.getAlias());
-		keys.add(customerVo.getStreetAddress());
-		keys.add(customerVo.getStreetAddress2());
-		keys.add(customerVo.getCityName());
-		keys.add(customerVo.getStateCode());
-		keys.add(customerVo.getZipCode5());
-		keys.add(customerVo.getZipCode4());
-		keys.add(customerVo.getProvinceName());
-		keys.add(customerVo.getPostalCode());
-		keys.add(customerVo.getCountry());
-		keys.add(customerVo.getDayPhone());
-		keys.add(customerVo.getEveningPhone());
-		keys.add(customerVo.getMobilePhone());
-		keys.add(customerVo.getBirthDate());
-		keys.add(customerVo.getStartDate());
-		keys.add(customerVo.getEndDate());
-		keys.add(customerVo.getMobileCarrier());
-		keys.add(customerVo.getMsgHeader());
-		keys.add(customerVo.getMsgDetail());
-		keys.add(customerVo.getMsgOptional());
-		keys.add(customerVo.getMsgFooter());
-		keys.add(customerVo.getTimeZoneCode());
-		keys.add(customerVo.getMemoText());
-		keys.add(customerVo.getStatusId());
-		keys.add(customerVo.getSecurityQuestion());
-		keys.add(customerVo.getSecurityAnswer());
-		keys.add(customerVo.getEmailAddr());
-		keys.add(customerVo.getEmailAddrId());
-		keys.add(customerVo.getPrevEmailAddr());
-		keys.add(customerVo.getPasswordChangeTime());
-		keys.add(customerVo.getUserPassword());
-		keys.add(customerVo.getUpdtTime());
-		keys.add(customerVo.getUpdtUserId());
-		keys.add(customerVo.getRowId());
+	public int update(SubscriberVo subrVo) {
+		subrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		syncupEmailFields(subrVo);
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(subrVo);
 		
-		String sql = "update Subscriber set "
-			+ "SubrId=?, "
-			+ "SenderId=?, "
-			+ "SsnNumber=?, "
-			+ "TaxId=?, "
-			+ "Profession=?, "	//5
-			+ "FirstName=?, "
-			+ "MiddleName=?, "
-			+ "LastName=?, "
-			+ "Alias=?, "
-			+ "StreetAddress=?, "	//10
-			+ "StreetAddress2=?, "
-			+ "CityName=?, "
-			+ "StateCode=?, "
-			+ "ZipCode5=?, "
-			+ "ZipCode4=?, "	//15
-			+ "ProvinceName=?, "
-			+ "PostalCode=?, "
-			+ "Country=?, "
-			+ "DayPhone=?, "
-			+ "EveningPhone=?, "	//20
-			+ "MobilePhone=?, "
-			+ "BirthDate=?, "
-			+ "StartDate=?, "
-			+ "EndDate=?, "
-			+ "MobileCarrier=?, " // 25
-			+ "MsgHeader=?, "
-			+ "MsgDetail=?, "
-			+ "MsgOptional=?, "
-			+ "MsgFooter=?, "
-			+ "TimeZoneCode=?, " // 30
-			+ "MemoText=?, "
-			+ "StatusId=?, "
-			+ "SecurityQuestion=?, "
-			+ "SecurityAnswer=?, "
-			+ "EmailAddr=?, " // 35
-			+ "EmailAddrId=?, "
-			+ "PrevEmailAddr=?, "
-			+ "PasswordChangeTime=?, "
-			+ "UserPassword=?, "
-			+ "UpdtTime=?," // 40
-			+ "UpdtUserId=? "
-			+ " where Rowid=?";
-		
-		if (customerVo.getOrigUpdtTime() != null) {
-			sql += " and UpdtTime=?";
-			keys.add(customerVo.getOrigUpdtTime());
+		String sql = MetaDataUtil.buildUpdateStatement("Subscriber", subrVo);
+		if (subrVo.getOrigUpdtTime() != null) {
+			sql += " and UpdtTime=:origUpdtTime";
 		}
-		int rowsUpadted = getJdbcTemplate().update(sql, keys.toArray());
-		customerVo.setOrigUpdtTime(customerVo.getUpdtTime());
-		customerVo.setOrigSubrId(customerVo.getSubrId());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
+		subrVo.setOrigUpdtTime(subrVo.getUpdtTime());
+		subrVo.setOrigSubrId(subrVo.getSubrId());
 		return rowsUpadted;
 	}
 	
@@ -334,101 +251,13 @@ public class SubscriberDao extends AbstractDao {
 	}
 
 	public int insert(SubscriberVo subrVo) {
-		subrVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+		subrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		syncupEmailFields(subrVo);
-		Object[] parms = {
-				subrVo.getSubrId(),
-				subrVo.getSenderId(),
-				subrVo.getSsnNumber(),
-				subrVo.getTaxId(),
-				subrVo.getProfession(),
-				subrVo.getFirstName(),
-				subrVo.getMiddleName(),
-				subrVo.getLastName(),
-				subrVo.getAlias(),
-				subrVo.getStreetAddress(),
-				subrVo.getStreetAddress2(),
-				subrVo.getCityName(),
-				subrVo.getStateCode(),
-				subrVo.getZipCode5(),
-				subrVo.getZipCode4(),
-				subrVo.getProvinceName(),
-				subrVo.getPostalCode(),
-				subrVo.getCountry(),
-				subrVo.getDayPhone(),
-				subrVo.getEveningPhone(),
-				subrVo.getMobilePhone(),
-				subrVo.getBirthDate(),
-				subrVo.getStartDate(),
-				subrVo.getEndDate(),
-				subrVo.getMobileCarrier(),
-				subrVo.getMsgHeader(),
-				subrVo.getMsgDetail(),
-				subrVo.getMsgOptional(),
-				subrVo.getMsgFooter(),
-				subrVo.getTimeZoneCode(),
-				subrVo.getMemoText(),
-				subrVo.getStatusId(),
-				subrVo.getSecurityQuestion(),
-				subrVo.getSecurityAnswer(),
-				subrVo.getEmailAddr(),
-				subrVo.getEmailAddrId(),
-				subrVo.getPrevEmailAddr(),
-				subrVo.getPasswordChangeTime(),
-				subrVo.getUserPassword(),
-				subrVo.getUpdtTime(),
-				subrVo.getUpdtUserId()
-			};
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(subrVo);
 		
-		String sql = "insert into Subscriber ("
-			+ "SubrId, "
-			+ "SenderId, "
-			+ "SsnNumber, "
-			+ "TaxId, "
-			+ "Profession, "	//5
-			+ "FirstName, "
-			+ "MiddleName, "
-			+ "LastName, "
-			+ "Alias, "
-			+ "StreetAddress, "	//10
-			+ "StreetAddress2, "
-			+ "CityName, "
-			+ "StateCode, "
-			+ "ZipCode5, "
-			+ "ZipCode4, "	//15
-			+ "ProvinceName, "
-			+ "PostalCode, "
-			+ "Country, "
-			+ "DayPhone, "
-			+ "EveningPhone, "	//20
-			+ "MobilePhone, "
-			+ "BirthDate, "
-			+ "StartDate, "
-			+ "EndDate, "
-			+ "MobileCarrier, " // 25
-			+ "MsgHeader, "
-			+ "MsgDetail, "
-			+ "MsgOptional, "
-			+ "MsgFooter, "
-			+ "TimeZoneCode, " //30
-			+ "MemoText, "
-			+ "StatusId, "
-			+ "SecurityQuestion, "
-			+ "SecurityAnswer, "
-			+ "EmailAddr, " // 35
-			+ "EmailAddrId, "
-			+ "PrevEmailAddr, "
-			+ "PasswordChangeTime, "
-			+ "UserPassword, "
-			+ "UpdtTime," //40
-			+ "UpdtUserId) "
-			+ " VALUES ( "
-			+ " ?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
-			+ ",?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
-			+ ",?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
-			+ ",?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? )";
+		String sql = MetaDataUtil.buildInsertStatement("Subscriber", subrVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
 		subrVo.setRowId(retrieveRowId());
 		subrVo.setOrigUpdtTime(subrVo.getUpdtTime());
 		subrVo.setOrigSubrId(subrVo.getSubrId());
