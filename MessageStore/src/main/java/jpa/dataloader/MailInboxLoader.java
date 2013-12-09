@@ -60,10 +60,10 @@ public class MailInboxLoader extends AbstractDataLoader {
 			in.setMinimumWait(mc.getMinimumWait());
 			in.setMessageCount(mc.getMessageCount());
 			in.setIsToPlainText(mc.getIsToPlainText());
+			in.setToAddressDomain(mc.getToAddressDomain());
 			if (StringUtils.isBlank(in.getToAddressDomain())) {
 				in.setToAddressDomain(in.getMailInboxPK().getHostName());
 			}
-			in.setToAddressDomain(mc.getToAddressDomain());
 			in.setIsCheckDuplicate(mc.getIsCheckDuplicate());
 			in.setIsAlertDuplicate(mc.getIsAlertDuplicate());
 			in.setIsLogDuplicate(mc.getIsLogDuplicate());
