@@ -18,7 +18,7 @@ public class SmtpServerLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (SmtpServerService) SpringUtil.getAppContext().getBean("smtpServerService");
+		service = SpringUtil.getAppContext().getBean(SmtpServerService.class);
 		startTransaction();
 		try {
 			loadSmtpServers();

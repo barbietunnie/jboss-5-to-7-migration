@@ -36,9 +36,9 @@ public class VariableDataLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		cvService = (SenderVariableService) SpringUtil.getAppContext().getBean("senderVariableService");
-		gvService = (GlobalVariableService) SpringUtil.getAppContext().getBean("globalVariableService");
-		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
+		cvService = SpringUtil.getAppContext().getBean(SenderVariableService.class);
+		gvService = SpringUtil.getAppContext().getBean(GlobalVariableService.class);
+		senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
 		startTransaction();
 		try {
 			loadSenderVariables();

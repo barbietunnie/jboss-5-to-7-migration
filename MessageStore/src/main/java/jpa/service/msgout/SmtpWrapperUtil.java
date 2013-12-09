@@ -113,7 +113,7 @@ public class SmtpWrapperUtil implements java.io.Serializable {
 	
 	private static SmtpServerService getSmtpServerService() {
 		if (smtpServerDao == null) {
-			smtpServerDao = (SmtpServerService) SpringUtil.getAppContext().getBean("smtpServerService");
+			smtpServerDao = SpringUtil.getAppContext().getBean(SmtpServerService.class);
 		}
 		return smtpServerDao;
 	}

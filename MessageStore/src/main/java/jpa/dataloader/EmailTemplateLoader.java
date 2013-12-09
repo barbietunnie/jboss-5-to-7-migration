@@ -27,9 +27,9 @@ public class EmailTemplateLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (EmailTemplateService) SpringUtil.getAppContext().getBean("emailTemplateService");
-		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
-		mlistService = (MailingListService) SpringUtil.getAppContext().getBean("mailingListService");
+		service = SpringUtil.getAppContext().getBean(EmailTemplateService.class);
+		senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
+		mlistService = SpringUtil.getAppContext().getBean(MailingListService.class);
 		startTransaction();
 		try {
 			loadEmailTemplates();

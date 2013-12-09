@@ -91,7 +91,7 @@ public class RuleLoaderBo implements java.io.Serializable {
 	}
 	
 	public static void main(String[] args) {
-		RuleLoaderBo loader = (RuleLoaderBo) SpringUtil.getAppContext().getBean("ruleLoaderBo");
+		RuleLoaderBo loader = SpringUtil.getAppContext().getBean(RuleLoaderBo.class);
 		SpringUtil.beginTransaction();
 		try {
 			loader.loadRules();

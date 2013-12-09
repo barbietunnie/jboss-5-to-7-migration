@@ -36,7 +36,7 @@ public final class EmailIdParser implements Serializable {
 	private SenderData senderData = null;
 
 	private EmailIdParser(IdTokens _tokens) {
-		SenderDataService senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
+		SenderDataService senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
 		senderData = senderService.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		if (_tokens != null) { // not used
 			this.id_tokens = _tokens;

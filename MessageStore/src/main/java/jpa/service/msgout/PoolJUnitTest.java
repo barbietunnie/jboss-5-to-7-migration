@@ -28,7 +28,7 @@ public class PoolJUnitTest {
 	
 	@Before
 	public void prepare() {
-		smtpService = (SmtpServerService) SpringUtil.getAppContext().getBean("smtpServerService");
+		smtpService = SpringUtil.getAppContext().getBean(SmtpServerService.class);
 		List<SmtpServer> servers = smtpService.getAll(true, null);
 		assertFalse(servers.isEmpty());
 		smtpServer = servers.get(0);

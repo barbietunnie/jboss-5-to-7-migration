@@ -60,16 +60,16 @@ public class MessageInboxLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (MessageInboxService) SpringUtil.getAppContext().getBean("messageInboxService");
-		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
-		emailAddrService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
-		logicService = (RuleLogicService) SpringUtil.getAppContext().getBean("ruleLogicService");
-		msgAddrService = (MessageAddressService) SpringUtil.getAppContext().getBean("messageAddressService");
-		headerService = (MessageHeaderService) SpringUtil.getAppContext().getBean("messageHeaderService");
-		attchmntService = (MessageAttachmentService) SpringUtil.getAppContext().getBean("messageAttachmentService");
-		rfcService = (MessageRfcFieldService) SpringUtil.getAppContext().getBean("messageRfcFieldService");
-		streamService = (MessageStreamService) SpringUtil.getAppContext().getBean("messageStreamService");
-		dlvrStatService = (MessageDeliveryStatusService) SpringUtil.getAppContext().getBean("messageDeliveryStatusService");
+		service = SpringUtil.getAppContext().getBean(MessageInboxService.class);
+		senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
+		emailAddrService = SpringUtil.getAppContext().getBean(EmailAddressService.class);
+		logicService = SpringUtil.getAppContext().getBean(RuleLogicService.class);
+		msgAddrService = SpringUtil.getAppContext().getBean(MessageAddressService.class);
+		headerService = SpringUtil.getAppContext().getBean(MessageHeaderService.class);
+		attchmntService = SpringUtil.getAppContext().getBean(MessageAttachmentService.class);
+		rfcService = SpringUtil.getAppContext().getBean(MessageRfcFieldService.class);
+		streamService = SpringUtil.getAppContext().getBean(MessageStreamService.class);
+		dlvrStatService = SpringUtil.getAppContext().getBean(MessageDeliveryStatusService.class);
 		startTransaction();
 		try {
 			loadMessageInbox();

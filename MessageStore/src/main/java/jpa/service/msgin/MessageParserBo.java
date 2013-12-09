@@ -687,7 +687,7 @@ public class MessageParserBo implements java.io.Serializable {
 
 	public static void main(String[] args) {
 		try {
-			MessageParserBo parser = (MessageParserBo) SpringUtil.getAppContext().getBean("messageParserBo");
+			MessageParserBo parser = SpringUtil.getAppContext().getBean(MessageParserBo.class);
 			MessageBean mBean = new MessageBean();
 			SpringUtil.beginTransaction();
 			try {

@@ -33,9 +33,9 @@ public class RuleDataLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (RuleLogicService) SpringUtil.getAppContext().getBean("ruleLogicService");
-		elementService = (RuleElementService) SpringUtil.getAppContext().getBean("ruleElementService");
-		mapService = (RuleSubruleMapService) SpringUtil.getAppContext().getBean("ruleSubruleMapService");
+		service = SpringUtil.getAppContext().getBean(RuleLogicService.class);
+		elementService = SpringUtil.getAppContext().getBean(RuleElementService.class);
+		mapService = SpringUtil.getAppContext().getBean(RuleSubruleMapService.class);
 		startTransaction();
 		try {
 			loadBuiltInRules();

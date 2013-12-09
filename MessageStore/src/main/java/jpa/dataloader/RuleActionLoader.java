@@ -49,12 +49,12 @@ public class RuleActionLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		typeService = (RuleDataTypeService) SpringUtil.getAppContext().getBean("ruleDataTypeService");
-		valueService = (RuleDataValueService) SpringUtil.getAppContext().getBean("ruleDataValueService");
-		detailService = (RuleActionDetailService) SpringUtil.getAppContext().getBean("ruleActionDetailService");
-		actionService = (RuleActionService) SpringUtil.getAppContext().getBean("ruleActionService");
-		logicService = (RuleLogicService) SpringUtil.getAppContext().getBean("ruleLogicService");
-		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
+		typeService = SpringUtil.getAppContext().getBean(RuleDataTypeService.class);
+		valueService = SpringUtil.getAppContext().getBean(RuleDataValueService.class);
+		detailService = SpringUtil.getAppContext().getBean(RuleActionDetailService.class);
+		actionService = SpringUtil.getAppContext().getBean(RuleActionService.class);
+		logicService = SpringUtil.getAppContext().getBean(RuleLogicService.class);
+		senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
 		startTransaction();
 		try {
 			loadRuleDataTypeAndValues();

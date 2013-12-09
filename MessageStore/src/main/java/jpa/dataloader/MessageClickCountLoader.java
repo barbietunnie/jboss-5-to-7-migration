@@ -39,7 +39,7 @@ public class MessageClickCountLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (MessageClickCountService) SpringUtil.getAppContext().getBean("messageClickCountService");
+		service = SpringUtil.getAppContext().getBean(MessageClickCountService.class);
 		startTransaction();
 		try {
 			loadMessageClickCount();
@@ -52,12 +52,12 @@ public class MessageClickCountLoader extends AbstractDataLoader {
 	}
 
 	private void loadMessageClickCount() {
-		MessageInboxService inboxService = (MessageInboxService) SpringUtil.getAppContext().getBean("messageInboxService");
-		EmailAddressService addrService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
-		SenderDataService senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
-		RuleLogicService logicService = (RuleLogicService) SpringUtil.getAppContext().getBean("ruleLogicService");
-		MailingListService listService = (MailingListService) SpringUtil.getAppContext().getBean("mailingListService");
-		MessageHeaderService headerService = (MessageHeaderService) SpringUtil.getAppContext().getBean("messageHeaderService");
+		MessageInboxService inboxService = SpringUtil.getAppContext().getBean(MessageInboxService.class);
+		EmailAddressService addrService = SpringUtil.getAppContext().getBean(EmailAddressService.class);
+		SenderDataService senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
+		RuleLogicService logicService = SpringUtil.getAppContext().getBean(RuleLogicService.class);
+		MailingListService listService = SpringUtil.getAppContext().getBean(MailingListService.class);
+		MessageHeaderService headerService = SpringUtil.getAppContext().getBean(MessageHeaderService.class);
 
 		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 		

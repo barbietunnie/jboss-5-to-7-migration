@@ -18,7 +18,7 @@ public class MobileCarrierLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (MobileCarrierService) SpringUtil.getAppContext().getBean("mobileCarrierService");
+		service = SpringUtil.getAppContext().getBean(MobileCarrierService.class);
 		startTransaction();
 		try {
 			loadMobileCarriers();

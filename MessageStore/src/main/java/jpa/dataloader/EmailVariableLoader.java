@@ -20,7 +20,7 @@ public class EmailVariableLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (EmailVariableService) SpringUtil.getAppContext().getBean("emailVariableService");
+		service = SpringUtil.getAppContext().getBean(EmailVariableService.class);
 		startTransaction();
 		try {
 			loadEmailVariables();

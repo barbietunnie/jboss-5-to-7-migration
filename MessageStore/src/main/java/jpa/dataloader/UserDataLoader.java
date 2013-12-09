@@ -28,9 +28,9 @@ public class UserDataLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (UserDataService) SpringUtil.getAppContext().getBean("userDataService");
-		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
-		uploadService = (SessionUploadService) SpringUtil.getAppContext().getBean("sessionUploadService");
+		service = SpringUtil.getAppContext().getBean(UserDataService.class);
+		senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
+		uploadService = SpringUtil.getAppContext().getBean(SessionUploadService.class);
 		startTransaction();
 		try {
 			loadUserData();

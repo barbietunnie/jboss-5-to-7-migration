@@ -40,11 +40,11 @@ public class MessageRenderedLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (MessageRenderedService) SpringUtil.getAppContext().getBean("messageRenderedService");
-		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
-		sourceService = (MessageSourceService) SpringUtil.getAppContext().getBean("messageSourceService");
-		variableService = (RenderVariableService) SpringUtil.getAppContext().getBean("renderVariableService");
-		attachmentService = (RenderAttachmentService) SpringUtil.getAppContext().getBean("renderAttachmentService");
+		service = SpringUtil.getAppContext().getBean(MessageRenderedService.class);
+		senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
+		sourceService = SpringUtil.getAppContext().getBean(MessageSourceService.class);
+		variableService = SpringUtil.getAppContext().getBean(RenderVariableService.class);
+		attachmentService = SpringUtil.getAppContext().getBean(RenderAttachmentService.class);
 		startTransaction();
 		try {
 			loadMessageRendered();
