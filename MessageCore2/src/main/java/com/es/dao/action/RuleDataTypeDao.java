@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
@@ -73,22 +75,17 @@ public class RuleDataTypeDao extends AbstractDao {
 	}
 	
 	public int update(RuleDataTypeVo msgDataTypeVo) {
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgDataTypeVo.getDataType());
-		fields.add(msgDataTypeVo.getDataTypeValue());
-		fields.add(msgDataTypeVo.getMiscProperties());
-		fields.add(msgDataTypeVo.getRowId());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgDataTypeVo);
 		
 		String sql =
 			"update Rule_Data_Type set " +
-				"DataType=?, " +
-				"DataTypeValue=?, " +
-				"MiscProperties=? "+
+				"DataType=:dataType, " +
+				"DataTypeValue=:dataTypeValue, " +
+				"MiscProperties=:miscProperties "+
 			" where " +
-				" RowId=? ";
+				" RowId=:rowId ";
 		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -121,15 +118,12 @@ public class RuleDataTypeDao extends AbstractDao {
 			"DataTypeValue, " +
 			"MiscProperties " +
 			") VALUES (" +
-				" ?, ?, ? " +
+				" :dataType, :dataTypeValue, :miscProperties " +
 				")";
 		
-		ArrayList<String> fields = new ArrayList<String>();
-		fields.add(msgDataTypeVo.getDataType());
-		fields.add(msgDataTypeVo.getDataTypeValue());
-		fields.add(msgDataTypeVo.getMiscProperties());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgDataTypeVo);
 		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgDataTypeVo.setRowId(retrieveRowId());
 		return rowsInserted;
 	}

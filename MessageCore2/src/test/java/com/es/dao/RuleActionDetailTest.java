@@ -25,13 +25,13 @@ import com.es.vo.action.RuleActionDetailVo;
 public class RuleActionDetailTest {
 	final static String LF = System.getProperty("line.separator","\n");
 	@Resource
-	private RuleActionDetailDao msgActionDetailDao;
+	private RuleActionDetailDao ruleActionDetailDao;
 	final String testActionId = "CLOSE";
 	@BeforeClass
 	public static void MsgActionDetailPrepare() {
 	}
 	@Test
-	public void testMsgActionDetail() throws Exception {
+	public void testRuleActionDetail() throws Exception {
 		try {
 			RuleActionDetailVo vo0 = selectByActionId("SUSPEND");
 			assertNotNull(vo0);
@@ -60,7 +60,7 @@ public class RuleActionDetailTest {
 	}
 	
 	private RuleActionDetailVo selectByPrimaryKey(int rowId) {
-		RuleActionDetailVo vo = msgActionDetailDao.getByPrimaryKey(rowId);
+		RuleActionDetailVo vo = ruleActionDetailDao.getByPrimaryKey(rowId);
 		if (vo!=null) {
 			System.out.println("MsgActionDetailDao - selectByPrimaryKey: "+LF+vo);
 		}
@@ -68,25 +68,25 @@ public class RuleActionDetailTest {
 	}
 	
 	private RuleActionDetailVo selectByActionId(String actionId) {
-		RuleActionDetailVo vo = msgActionDetailDao.getByActionId(actionId);
+		RuleActionDetailVo vo = ruleActionDetailDao.getByActionId(actionId);
 		if (vo!=null) {
 			System.out.println("MsgActionDetailDao - selectByActionId: "+vo);
 		}
 		return vo;
 	}
 	
-	private int update(RuleActionDetailVo msgActionDetailVo) {
-		msgActionDetailVo.setDescription("Close the Email");
-		int rows = msgActionDetailDao.update(msgActionDetailVo);
+	private int update(RuleActionDetailVo ruleActionDetailVo) {
+		ruleActionDetailVo.setDescription("Close the Email");
+		int rows = ruleActionDetailDao.update(ruleActionDetailVo);
 		System.out.println("MsgActionDetailDao - update: "+rows);
 		return rows;
 	}
 	
 	private RuleActionDetailVo insert(String actionId) {
-		RuleActionDetailVo msgActionDetailVo = msgActionDetailDao.getByActionId(actionId);
+		RuleActionDetailVo msgActionDetailVo = ruleActionDetailDao.getByActionId(actionId);
 		if (msgActionDetailVo!=null) {
 			msgActionDetailVo.setActionId(msgActionDetailVo.getActionId()+"_v2");
-			int rows = msgActionDetailDao.insert(msgActionDetailVo);
+			int rows = ruleActionDetailDao.insert(msgActionDetailVo);
 			System.out.println("MsgActionDetailDao - insert: rows inserted "+rows);
 			return selectByActionId(msgActionDetailVo.getActionId());
 		}
@@ -94,7 +94,7 @@ public class RuleActionDetailTest {
 	}
 	
 	private int deleteByActionId(RuleActionDetailVo vo) {
-		int rows = msgActionDetailDao.deleteByActionId(vo.getActionId());
+		int rows = ruleActionDetailDao.deleteByActionId(vo.getActionId());
 		System.out.println("MsgActionDetailDao - deleteByPrimaryKey: Rows Deleted: "+rows);
 		return rows;
 	}

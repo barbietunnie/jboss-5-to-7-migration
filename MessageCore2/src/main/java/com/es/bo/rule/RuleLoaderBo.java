@@ -352,10 +352,10 @@ public class RuleLoaderBo implements java.io.Serializable {
 	private final Map<String, Pattern> loadAddressPatterns() {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		// make sure the default sender is the first on the list
-		SenderDataVo sender0 = getSenderDao().getBySenderId(Constants.DEFAULT_SENDER_ID);
-		if (sender0 != null) {
-			String senderId = sender0.getSenderId();
-			String returnPath = buildReturnPath(sender0);
+		SenderDataVo senderDefault = getSenderDao().getBySenderId(Constants.DEFAULT_SENDER_ID);
+		if (senderDefault != null) {
+			String senderId = senderDefault.getSenderId();
+			String returnPath = buildReturnPath(senderDefault);
 			map.put(senderId, returnPath);
 		}
 		List<SenderDataVo> senders = getSenderDao().getAll();
