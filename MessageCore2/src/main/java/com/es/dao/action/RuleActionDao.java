@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
@@ -168,28 +170,19 @@ public class RuleActionDao extends AbstractDao {
 	}
 	
 	public synchronized int update(RuleActionVo msgActionVo) {
-		Object[] parms = {
-				msgActionVo.getRuleName(),
-				msgActionVo.getActionSeq(),
-				msgActionVo.getStartTime(),
-				msgActionVo.getSenderId(),
-				msgActionVo.getActionId(),
-				msgActionVo.getStatusId(),
-				msgActionVo.getDataTypeValues(),
-				msgActionVo.getRowId()
-				};
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionVo);
 		
 		String sql = "update Rule_Action set " +
-			"ruleName=?, " +
-			"actionSeq=?, " +
-			"startTime=?, " +
-			"senderId=?, " +
-			"actionId=?, " +
-			"statusId=?, " +
-			"dataTypeValues=? " +
-			" where rowId=? ";
+			"ruleName=:ruleName, " +
+			"actionSeq=:actionSeq, " +
+			"startTime=:startTime, " +
+			"senderId=:senderId, " +
+			"actionId=:actionId, " +
+			"statusId=:statusId, " +
+			"dataTypeValues=:dataTypeValues " +
+			" where rowId=:rowId ";
 		
-		int rowsUpadted = getJdbcTemplate().update(sql, parms);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		updateReloadFlags();
 		return rowsUpadted;
 	}
@@ -239,16 +232,8 @@ public class RuleActionDao extends AbstractDao {
 	}
 	
 	public synchronized int insert(RuleActionVo msgActionVo) {
-		Object[] parms = {
-				msgActionVo.getRuleName(),
-				msgActionVo.getActionSeq(),
-				msgActionVo.getStartTime(),
-				msgActionVo.getSenderId(),
-				msgActionVo.getActionId(),
-				msgActionVo.getStatusId(),
-				msgActionVo.getDataTypeValues()
-			};
-		
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionVo);
+
 		String sql = 
 			"INSERT INTO Rule_Action ( " +
 			"ruleName, " +
@@ -258,8 +243,8 @@ public class RuleActionDao extends AbstractDao {
 			"actionId," +
 			"statusId," +
 			"dataTypeValues " +
-			") VALUES (?, ?, ?, ?, ?, ?, ?)";
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+			") VALUES (:ruleName, :actionSeq, :startTime, :senderId, :actionId, :statusId, :dataTypeValues)";
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgActionVo.setRowId(retrieveRowId());
 		updateReloadFlags();
 		return rowsInserted;
