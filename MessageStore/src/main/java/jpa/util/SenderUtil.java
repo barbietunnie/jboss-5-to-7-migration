@@ -31,7 +31,7 @@ public final class SenderUtil {
 
 	private static SenderDataService getSenderDataService() {
 		if(senderService == null) {
-			senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
+			senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
 		}
 		return senderService;
 	}

@@ -77,7 +77,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	private long start_idling = 0;
 
 	public static void main(String[] args) {
-		MailInboxService mailBoxDao = (MailInboxService) SpringUtil.getAppContext().getBean("mailInboxService");
+		MailInboxService mailBoxDao = SpringUtil.getAppContext().getBean(MailInboxService.class);
 		MailInboxPK pk = new MailInboxPK("testto", "localhost");
 		try {
 			MailInbox vo = mailBoxDao.getByPrimaryKey(pk);
@@ -522,7 +522,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 		if (msgs == null || msgs.length == 0) return;
 		SpringUtil.beginTransaction();
 		try {
-			MailProcessorBo processor = (MailProcessorBo) SpringUtil.getAppContext().getBean("mailProcessorBo");
+			MailProcessorBo processor = SpringUtil.getAppContext().getBean(MailProcessorBo.class);
 			MessageContext ctx = new MessageContext(msgs, mInbox);
 			processor.process(ctx);
 			SpringUtil.commitTransaction();

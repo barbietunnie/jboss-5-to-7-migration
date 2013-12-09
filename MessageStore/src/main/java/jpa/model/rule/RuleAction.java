@@ -192,7 +192,7 @@ public class RuleAction extends BaseModel implements java.io.Serializable {
 
 	private RuleDataValueService getRuleDataValueService() {
 		if (dataValueService == null) {
-			dataValueService = (RuleDataValueService) SpringUtil.getAppContext().getBean("ruleDataValueService");
+			dataValueService = SpringUtil.getAppContext().getBean(RuleDataValueService.class);
 		}
 		return dataValueService;
 	}
@@ -202,7 +202,7 @@ public class RuleAction extends BaseModel implements java.io.Serializable {
 	
 	private SenderDataService getSenderDataService() {
 		if (senderDataService == null) {
-			senderDataService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
+			senderDataService = SpringUtil.getAppContext().getBean(SenderDataService.class);
 		}
 		return senderDataService;
 	}
@@ -212,7 +212,7 @@ public class RuleAction extends BaseModel implements java.io.Serializable {
 	
 	private RuleActionDetailService getRuleActionDetailService() {
 		if (actionDetailService == null) {
-			actionDetailService = (RuleActionDetailService) SpringUtil.getAppContext().getBean("ruleActionDetailService");
+			actionDetailService = SpringUtil.getAppContext().getBean(RuleActionDetailService.class);
 		}
 		return actionDetailService;
 	}

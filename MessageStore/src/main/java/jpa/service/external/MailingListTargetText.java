@@ -30,7 +30,7 @@ public class MailingListTargetText implements TargetTextProc {
 			logger.debug("Entering process() method...");
 		}
 		StringBuffer sb = new StringBuffer();
-		MailingListService dao = (MailingListService) SpringUtil.getAppContext().getBean("mailingListService");
+		MailingListService dao = SpringUtil.getAppContext().getBean(MailingListService.class);
 		List<MailingList> list = dao.getAll(false);
 		for (int i = 0; i < list.size(); i++) {
 			MailingList item = list.get(i);

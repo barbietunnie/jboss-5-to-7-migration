@@ -39,11 +39,11 @@ public class TemplateDataLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
-		templateService = (TemplateDataService) SpringUtil.getAppContext().getBean("templateDataService");
-		variableService = (TemplateVariableService) SpringUtil.getAppContext().getBean("templateVariableService");
-		sourceService = (MessageSourceService) SpringUtil.getAppContext().getBean("messageSourceService");
-		addrService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
+		senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
+		templateService = SpringUtil.getAppContext().getBean(TemplateDataService.class);
+		variableService = SpringUtil.getAppContext().getBean(TemplateVariableService.class);
+		sourceService = SpringUtil.getAppContext().getBean(MessageSourceService.class);
+		addrService = SpringUtil.getAppContext().getBean(EmailAddressService.class);
 		startTransaction();
 		try {
 			loadTemplateData();

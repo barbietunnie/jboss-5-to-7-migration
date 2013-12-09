@@ -29,7 +29,7 @@ public class PostmasterTargetText implements TargetTextProc {
 			logger.debug("Entering process() method...");
 		}
 		StringBuffer sb = new StringBuffer();
-		EmailAddressService dao = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
+		EmailAddressService dao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
 		List<EmailAddress> list = dao.getByAddressUser("(postmaster|mailmaster|mailadmin|administrator|mailer-(daemon|deamon)|smtp.gateway|majordomo)");
 		for (int i = 0; i < list.size(); i++) {
 			EmailAddress item = list.get(i);

@@ -89,8 +89,8 @@ public class IdTokens2Test {
 
 	@Ignore // ignored due to dead lock when running pom test using derby.
 	public void idTokensService1() {
-		IdTokensService service = (IdTokensService) SpringUtil.getAppContext().getBean("idTokensService");
-		SenderDataService cdService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");;
+		IdTokensService service = SpringUtil.getAppContext().getBean(IdTokensService.class);
+		SenderDataService cdService = SpringUtil.getAppContext().getBean(SenderDataService.class);;
 
 		List<IdTokens> list = service.getAll();
 		assertFalse(list.isEmpty());
@@ -138,8 +138,8 @@ public class IdTokens2Test {
 	
 	@Test(expected=javax.persistence.NoResultException.class)
 	public void idTokensService2() {
-		IdTokensService service = (IdTokensService) SpringUtil.getAppContext().getBean("idTokensService");
-		SenderDataService cdService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");;
+		IdTokensService service = SpringUtil.getAppContext().getBean(IdTokensService.class);
+		SenderDataService cdService = SpringUtil.getAppContext().getBean(SenderDataService.class);;
 
 		IdTokens tkn0 = service.getBySenderId(Constants.DEFAULT_SENDER_ID);
 		assertNotNull(tkn0);

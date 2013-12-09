@@ -48,7 +48,7 @@ public class TaskSchedulerBo implements java.io.Serializable {
 		}
 		
 		MessageBean msgBean = ctx.getMessageBean();
-		RuleActionService ruleActionDao = (RuleActionService) SpringUtil.getAppContext().getBean("ruleActionService");
+		RuleActionService ruleActionDao = SpringUtil.getAppContext().getBean(RuleActionService.class);
 		List<RuleAction> actions = ruleActionDao.getByBestMatch(msgBean.getRuleName(), null, msgBean.getSenderId());
 		if (actions == null || actions.isEmpty()) {
 			// actions not defined, save the message.
@@ -103,7 +103,7 @@ public class TaskSchedulerBo implements java.io.Serializable {
 	}
 
 	public static void main(String[] args) {
-		TaskSchedulerBo bo = (TaskSchedulerBo) SpringUtil.getAppContext().getBean("taskSchedulerBo");
+		TaskSchedulerBo bo = SpringUtil.getAppContext().getBean(TaskSchedulerBo.class);
 		MessageBean mBean = new MessageBean();
 		try {
 			mBean.setFrom(InternetAddress.parse("event.alert@localhost", false));

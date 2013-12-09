@@ -25,8 +25,8 @@ public class IdTokensDataLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		itService = (IdTokensService) SpringUtil.getAppContext().getBean("idTokensService");
-		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
+		itService = SpringUtil.getAppContext().getBean(IdTokensService.class);
+		senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
 		startTransaction();
 		try {
 			loadIdTokens();

@@ -47,9 +47,9 @@ public class MailFileReader implements java.io.Serializable {
 			IOException, DataValidationException, TemplateException {
 		MessageBean msgBean = readIntoMessageBean(filePath, fileName);
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
-		MessageParserBo parser = (MessageParserBo) SpringUtil.getAppContext().getBean("messageParserBo");
+		MessageParserBo parser = SpringUtil.getAppContext().getBean(MessageParserBo.class);
 		msgBean.setRuleName(parser.parse(msgBean));
-		TaskSchedulerBo taskBo = (TaskSchedulerBo) SpringUtil.getAppContext().getBean("taskSchedulerBo");
+		TaskSchedulerBo taskBo = SpringUtil.getAppContext().getBean(TaskSchedulerBo.class);
 		taskBo.scheduleTasks(new MessageContext(msgBean));
 		return msgBean;
 	}

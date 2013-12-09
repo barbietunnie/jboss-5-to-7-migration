@@ -24,7 +24,7 @@ public class SenderDataLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
+		service = SpringUtil.getAppContext().getBean(SenderDataService.class);
 		startTransaction();
 		try {
 			loadSenderData(true);

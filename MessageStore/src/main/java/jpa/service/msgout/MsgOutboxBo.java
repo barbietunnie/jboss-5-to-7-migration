@@ -93,9 +93,9 @@ public class MsgOutboxBo implements java.io.Serializable {
 	}
 	
 	public static void main(String[] args) {
-		MsgOutboxBo msgOutboxBo = (MsgOutboxBo) SpringUtil.getAppContext().getBean("msgOutboxBo");
-		RenderBo renderBo = (RenderBo) SpringUtil.getAppContext().getBean("renderBo");
-		MessageRenderedService rndrDao = (MessageRenderedService) SpringUtil.getAppContext().getBean("messageRenderedService");
+		MsgOutboxBo msgOutboxBo = SpringUtil.getAppContext().getBean(MsgOutboxBo.class);
+		RenderBo renderBo = SpringUtil.getAppContext().getBean(RenderBo.class);
+		MessageRenderedService rndrDao = SpringUtil.getAppContext().getBean(MessageRenderedService.class);
 		SpringUtil.beginTransaction();
 		try {
 			MessageRendered mr = rndrDao.getFirstRecord();

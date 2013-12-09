@@ -142,7 +142,7 @@ public class RuleDataService implements java.io.Serializable {
 	}
 	
 	public static void main(String[] args) {
-		RuleDataService bo = (RuleDataService) SpringUtil.getAppContext().getBean("ruleDataService");
+		RuleDataService bo = SpringUtil.getAppContext().getBean(RuleDataService.class);
 		bo.getCurrentRules();
 	}
 }

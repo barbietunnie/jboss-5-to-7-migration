@@ -33,10 +33,10 @@ public class MailingListDataLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		mlistService = (MailingListService) SpringUtil.getAppContext().getBean("mailingListService");
-		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
-		emailService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
-		subService = (SubscriptionService) SpringUtil.getAppContext().getBean("subscriptionService");
+		mlistService = SpringUtil.getAppContext().getBean(MailingListService.class);
+		senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
+		emailService = SpringUtil.getAppContext().getBean(EmailAddressService.class);
+		subService = SpringUtil.getAppContext().getBean(SubscriptionService.class);
 		startTransaction();
 		try {
 			loadMailingLists();

@@ -44,9 +44,9 @@ public class MailSenderBo extends MailSenderBase {
 	}
 
 	public static void main(String[] args) {
-		MailSenderBo sender = (MailSenderBo) SpringUtil.getAppContext().getBean("mailSenderBo");
-		MsgOutboxBo msgOutboxBo = (MsgOutboxBo) SpringUtil.getAppContext().getBean("msgOutboxBo");
-		MessageRenderedService msgRenderedService = (MessageRenderedService) SpringUtil.getAppContext().getBean("messageRenderedService");
+		MailSenderBo sender = SpringUtil.getAppContext().getBean(MailSenderBo.class);
+		MsgOutboxBo msgOutboxBo = SpringUtil.getAppContext().getBean(MsgOutboxBo.class);
+		MessageRenderedService msgRenderedService = SpringUtil.getAppContext().getBean(MessageRenderedService.class);
 		SpringUtil.beginTransaction();
 		try {
 			MessageRendered mr = msgRenderedService.getFirstRecord();

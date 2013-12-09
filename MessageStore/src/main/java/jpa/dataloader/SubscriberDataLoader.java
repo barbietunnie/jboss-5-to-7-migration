@@ -29,9 +29,9 @@ public class SubscriberDataLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (SubscriberDataService) SpringUtil.getAppContext().getBean("subscriberDataService");
-		emailAddrService = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
-		senderService = (SenderDataService) SpringUtil.getAppContext().getBean("senderDataService");
+		service = SpringUtil.getAppContext().getBean(SubscriberDataService.class);
+		emailAddrService = SpringUtil.getAppContext().getBean(EmailAddressService.class);
+		senderService = SpringUtil.getAppContext().getBean(SenderDataService.class);
 		startTransaction();
 		try {
 			loadSubscriberData();

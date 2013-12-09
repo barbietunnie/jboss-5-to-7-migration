@@ -13,7 +13,7 @@ public class MailReaderMain {
 	static final Logger logger = Logger.getLogger( MailReaderMain.class);
 
 	public static void main(String[] args) {
-		MailInboxService mailBoxDao = (MailInboxService) SpringUtil.getAppContext().getBean("mailInboxService");
+		MailInboxService mailBoxDao = SpringUtil.getAppContext().getBean(MailInboxService.class);
 		List<MailInbox> mboxes = mailBoxDao.getAll(true);
 		List<Thread> threads = new ArrayList<Thread>();
 		Random random = new Random();

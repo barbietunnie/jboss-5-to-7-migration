@@ -22,7 +22,7 @@ public class EmailAddressLoader extends AbstractDataLoader {
 
 	@Override
 	public void loadData() {
-		service = (EmailAddressService) SpringUtil.getAppContext().getBean("emailAddressService");
+		service = SpringUtil.getAppContext().getBean(EmailAddressService.class);
 		startTransaction();
 		try {
 			loadEmailAddress();
