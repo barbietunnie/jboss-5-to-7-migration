@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.core.util.BlobUtil;
@@ -19,6 +21,7 @@ import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.StatusId;
 import com.es.data.constant.VariableType;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.comm.SenderDataVo;
 import com.es.vo.template.SenderVariableVo;
 
@@ -107,78 +110,19 @@ public class SenderDataDao extends AbstractDao {
 	}
 
 	public synchronized int update(SenderDataVo senderVo) {
-		senderVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+		senderVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		validateSenderVo(senderVo);
-		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(senderVo.getSenderId());
-		keys.add(senderVo.getSenderName());
-		keys.add(senderVo.getSenderType());
-		keys.add(senderVo.getDomainName());
-		keys.add(senderVo.getStatusId());
-		keys.add(senderVo.getIrsTaxId());
-		keys.add(senderVo.getWebSiteUrl());
-		keys.add(senderVo.getSaveRawMsg());
-		keys.add(senderVo.getContactName());
-		keys.add(senderVo.getContactPhone());
-		keys.add(senderVo.getContactEmail());
-		keys.add(senderVo.getSecurityEmail());
-		keys.add(senderVo.getCustcareEmail());
-		keys.add(senderVo.getRmaDeptEmail());
-		keys.add(senderVo.getSpamCntrlEmail());
-		keys.add(senderVo.getChaRspHndlrEmail());
-		keys.add(senderVo.getEmbedEmailId());
-		keys.add(senderVo.getReturnPathLeft());
-		keys.add(senderVo.getUseTestAddr());
-		keys.add(senderVo.getTestFromAddr());
-		keys.add(senderVo.getTestToAddr());
-		keys.add(senderVo.getTestReplytoAddr());
-		keys.add(senderVo.getIsVerpEnabled());
-		keys.add(senderVo.getVerpSubDomain());
-		keys.add(senderVo.getVerpInboxName());
-		keys.add(senderVo.getVerpRemoveInbox());
-		keys.add(senderVo.getSystemKey());
-		keys.add(senderVo.getUpdtTime());
-		keys.add(senderVo.getUpdtUserId());
-		keys.add(senderVo.getRowId());
 		
-		String sql = "update Sender_Data set " +
-			"SenderId=?," +
-			"SenderName=?," +
-			"SenderType=?," +
-			"DomainName=?," +
-			"StatusId=?," +
-			"IrsTaxId=?," +
-			"WebSiteUrl=?," +
-			"SaveRawMsg=?," +
-			"ContactName=?," +
-			"ContactPhone=?," +
-			"ContactEmail=?," +
-			"SecurityEmail=?," +
-			"CustcareEmail=?," +
-			"RmaDeptEmail=?," +
-			"SpamCntrlEmail=?," +
-			"ChaRspHndlrEmail=?," +
-			"EmbedEmailId=?," +
-			"ReturnPathLeft=?," +
-			"UseTestAddr=?," +
-			"TestFromAddr=?," +
-			"TestToAddr=?," +
-			"TestReplytoAddr=?," +
-			"IsVerpEnabled=?," +
-			"VerpSubDomain=?," +
-			"VerpInboxName=?," +
-			"VerpRemoveInbox=?," +
-			"SystemKey=?," +
-			"UpdtTime=?," +
-			"UpdtUserId=? " +
-			" where RowId=?";
-		
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(senderVo);
+				
+		String sql = MetaDataUtil.buildUpdateStatement("Sender_Data", senderVo);
 		if (senderVo.getOrigUpdtTime() != null) {
 			// optimistic locking
-			sql += " and UpdtTime=?";
-			keys.add(senderVo.getOrigUpdtTime());
+			sql += " and UpdtTime=:origUpdtTime";
 		}
-		int rowsUpadted = getJdbcTemplate().update(sql, keys.toArray());
+
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
+		
 		synchronized (senderCache) {
 			senderCache.remove(senderVo.getSenderId()); // remove from cache
 		}
@@ -205,79 +149,16 @@ public class SenderDataDao extends AbstractDao {
 	}
 	
 	public synchronized int insert(SenderDataVo senderVo) {
-		senderVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+		senderVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		validateSenderVo(senderVo);
 		String systemId = TimestampUtil.db2ToDecimalString(TimestampUtil.getCurrentDb2Tms());
-		Object[] parms = {
-				senderVo.getSenderId(),
-				senderVo.getSenderName(),
-				senderVo.getSenderType(),
-				senderVo.getDomainName(),
-				senderVo.getStatusId(),
-				senderVo.getIrsTaxId(),
-				senderVo.getWebSiteUrl(),
-				senderVo.getSaveRawMsg(),
-				senderVo.getContactName(),
-				senderVo.getContactPhone(),
-				senderVo.getContactEmail(),
-				senderVo.getSecurityEmail(),
-				senderVo.getCustcareEmail(),
-				senderVo.getRmaDeptEmail(),
-				senderVo.getSpamCntrlEmail(),
-				senderVo.getChaRspHndlrEmail(),
-				senderVo.getEmbedEmailId(),
-				senderVo.getReturnPathLeft(),
-				senderVo.getUseTestAddr(),
-				senderVo.getTestFromAddr(),
-				senderVo.getTestToAddr(),
-				senderVo.getTestReplytoAddr(),
-				senderVo.getIsVerpEnabled(),
-				senderVo.getVerpSubDomain(),
-				senderVo.getVerpInboxName(),
-				senderVo.getVerpRemoveInbox(),
-				systemId,
-				senderVo.getSystemKey(),
-				senderVo.getUpdtTime(),
-				senderVo.getUpdtUserId()
-			};
-		String sql = 
-			"INSERT INTO Sender_Data " +
-			"(SenderId, " +
-			"SenderName," +
-			"SenderType," +
-			"DomainName," +
-			"StatusId," +
-			"IrsTaxId," +
-			"WebSiteUrl," +
-			"SaveRawMsg," +
-			"ContactName," +
-			"ContactPhone," +
-			"ContactEmail," +
-			"SecurityEmail," +
-			"CustcareEmail," +
-			"RmaDeptEmail," +
-			"SpamCntrlEmail," +
-			"ChaRspHndlrEmail," +
-			"EmbedEmailId," +
-			"ReturnPathLeft," +
-			"UseTestAddr," +
-			"TestFromAddr," +
-			"TestToAddr," +
-			"TestReplytoAddr," +
-			"IsVerpEnabled," +
-			"VerpSubDomain," +
-			"VerpInboxName," +
-			"VerpRemoveInbox," +
-			"SystemId," +
-			"SystemKey," +
-			"UpdtTime," +
-			"UpdtUserId) " +
-			"VALUES (" +
-				"?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
-				"?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
-				"?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+		senderVo.setSystemId(systemId);
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(senderVo);
 		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+		String sql = MetaDataUtil.buildInsertStatement("Sender_Data", senderVo);
+
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
+		
 		senderVo.setRowId(retrieveRowId());
 		senderVo.setOrigUpdtTime(senderVo.getUpdtTime());
 		senderVo.setOrigSenderId(senderVo.getSenderId());

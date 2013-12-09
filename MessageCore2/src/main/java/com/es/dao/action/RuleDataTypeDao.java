@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.action.RuleDataTypeVo;
 
 @Component("ruleDataTypeDao")
@@ -74,16 +75,10 @@ public class RuleDataTypeDao extends AbstractDao {
 		return list;
 	}
 	
-	public int update(RuleDataTypeVo msgDataTypeVo) {
-		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgDataTypeVo);
+	public int update(RuleDataTypeVo ruleDataTypeVo) {
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleDataTypeVo);
 		
-		String sql =
-			"update Rule_Data_Type set " +
-				"DataType=:dataType, " +
-				"DataTypeValue=:dataTypeValue, " +
-				"MiscProperties=:miscProperties "+
-			" where " +
-				" RowId=:rowId ";
+		String sql = MetaDataUtil.buildUpdateStatement("Rule_Data_Type", ruleDataTypeVo);
 		
 		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
@@ -111,20 +106,13 @@ public class RuleDataTypeDao extends AbstractDao {
 		return rowsDeleted;
 	}
 	
-	public int insert(RuleDataTypeVo msgDataTypeVo) {
-		String sql = 
-			"INSERT INTO Rule_Data_Type (" +
-			"DataType, " +
-			"DataTypeValue, " +
-			"MiscProperties " +
-			") VALUES (" +
-				" :dataType, :dataTypeValue, :miscProperties " +
-				")";
-		
-		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgDataTypeVo);
+	public int insert(RuleDataTypeVo ruleDataTypeVo) {
+		String sql = MetaDataUtil.buildInsertStatement("Rule_Data_Type", ruleDataTypeVo);
+
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleDataTypeVo);
 		
 		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
-		msgDataTypeVo.setRowId(retrieveRowId());
+		ruleDataTypeVo.setRowId(retrieveRowId());
 		return rowsInserted;
 	}
 	

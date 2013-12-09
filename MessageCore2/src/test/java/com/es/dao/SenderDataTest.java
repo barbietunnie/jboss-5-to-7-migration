@@ -53,6 +53,7 @@ public class SenderDataTest {
 			vo.setPrimaryKey(vo2.getPrimaryKey());
 			// end of sync-up
 			assertTrue(vo.equalsTo(vo2));
+			vo2.setOrigUpdtTime(vo2.getUpdtTime()); // triggers optimistic locking
 			int rowsUpdated = update(vo2);
 			assertEquals(rowsUpdated, 1);
 			delete(vo);
@@ -74,7 +75,7 @@ public class SenderDataTest {
 	}
 	
 	private int update(SenderDataVo vo) {
-		SenderDataVo senderVo = senderDao.getBySenderId(vo.getSenderId());
+		SenderDataVo senderVo = vo; //senderDao.getBySenderId(vo.getSenderId());
 		int rows = 0;
 		if (senderVo!=null) {
 			senderVo.setStatusId("A");

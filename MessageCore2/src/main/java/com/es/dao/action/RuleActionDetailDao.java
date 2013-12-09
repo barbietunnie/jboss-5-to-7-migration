@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
 import com.es.dao.sender.ReloadFlagsDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.action.RuleActionDetailVo;
 
 @Component("msgActionDetailDao")
@@ -73,27 +74,17 @@ public class RuleActionDetailDao extends AbstractDao {
 		return list;
 	}
 	
-	public synchronized int update(RuleActionDetailVo msgActionDetailVo) {
-		msgActionDetailVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
-		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionDetailVo);
+	public synchronized int update(RuleActionDetailVo ruleActionDetailVo) {
+		ruleActionDetailVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleActionDetailVo);
 		
-		String sql =
-			"update Rule_Action_Detail set " +
-				"ActionId=:actionId, " +
-				"Description=:description, " +
-				"ProcessBeanId=:processBeanId, " +
-				"ProcessClassName=:processClassName, " +
-				"DataType=:dataType, " +
-				"UpdtTime=:updtTime, " +
-				"UpdtUserId=:updtUserId " +
-			" where " +
-				" RowId=:rowId ";
+		String sql = MetaDataUtil.buildUpdateStatement("Rule_Action_Detail", ruleActionDetailVo);
 		
-		if (msgActionDetailVo.getOrigUpdtTime() != null) {
+		if (ruleActionDetailVo.getOrigUpdtTime() != null) {
 			sql += " and UpdtTime=:origUpdtTime";
 		}
 		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
-		msgActionDetailVo.setOrigUpdtTime(msgActionDetailVo.getUpdtTime());
+		ruleActionDetailVo.setOrigUpdtTime(ruleActionDetailVo.getUpdtTime());
 		updateReloadFlags();
 		return rowsUpadted;
 	}
@@ -122,26 +113,16 @@ public class RuleActionDetailDao extends AbstractDao {
 		return rowsDeleted;
 	}
 	
-	public synchronized int insert(RuleActionDetailVo msgActionDetailVo) {
-		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionDetailVo);
-		String sql = 
-			"INSERT INTO Rule_Action_Detail (" +
-			"ActionId, " +
-			"Description, " +
-			"ProcessBeanId, " +
-			"ProcessClassName, " +
-			"DataType, " +
-			"UpdtTime, " +
-			"UpdtUserId " +
-			") VALUES (" +
-				" :actionId, :description, :processBeanId, :processClassName, :dataType, :updtTime, :updtUserId " +
-				")";
+	public synchronized int insert(RuleActionDetailVo ruleActionDetailVo) {
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleActionDetailVo);
 		
-		msgActionDetailVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		String sql = MetaDataUtil.buildInsertStatement("Rule_Action_Detail", ruleActionDetailVo);
+		
+		ruleActionDetailVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		
 		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
-		msgActionDetailVo.setRowId(retrieveRowId());
-		msgActionDetailVo.setOrigUpdtTime(msgActionDetailVo.getUpdtTime());
+		ruleActionDetailVo.setRowId(retrieveRowId());
+		ruleActionDetailVo.setOrigUpdtTime(ruleActionDetailVo.getUpdtTime());
 		updateReloadFlags();
 		return rowsInserted;
 	}

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.CodeType;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.address.EmailVariableVo;
 
 @Component("emailVariableDao")
@@ -94,18 +95,7 @@ public class EmailVariableDao extends AbstractDao {
 	}
 	
 	public int update(EmailVariableVo emailVariableVo) {
-
-		String sql = "update Email_Variable set " +
-			"VariableName=:variableName," +
-			"VariableType=:variableType," +
-			"TableName=:tableName," +
-			"ColumnName=:columnName," +
-			"StatusId=:statusId," +
-			"IsBuiltIn=:isBuiltIn," +
- 			"DefaultValue=:defaultValue," +
-			"VariableQuery=:variableQuery," +
-			"VariableProc=:variableProc " +
-			" where RowId=:rowId";
+		String sql =  MetaDataUtil.buildUpdateStatement("Email_Variable", emailVariableVo);
 		
 		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(emailVariableVo);
 
@@ -122,20 +112,7 @@ public class EmailVariableDao extends AbstractDao {
 	}
 	
 	public int insert(EmailVariableVo emailVariableVo) {
-		String sql = "INSERT INTO Email_Variable (" +
-			"VariableName," +
-			"VariableType," +
-			"TableName," +
-			"ColumnName," +
-			"StatusId," +
-			"IsBuiltIn," +
-			"DefaultValue," +
-			"VariableQuery," +
-			"VariableProc " +
-			") VALUES (" +
-				" :variableName, :variableType, :tableName, :columnName, :statusId, :isBuiltIn, :defaultValue, :variableQuery, :variableProc " +
-				")";
-		
+		String sql =  MetaDataUtil.buildInsertStatement("Email_Variable", emailVariableVo);
 		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(emailVariableVo);
 		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		emailVariableVo.setRowId(retrieveRowId());

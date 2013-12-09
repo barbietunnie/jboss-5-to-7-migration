@@ -8,10 +8,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.StatusId;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.address.MailingListVo;
 
 @Component("mailingListDao")
@@ -147,32 +150,11 @@ public class MailingListDao extends AbstractDao {
 	}
 
 	public int update(MailingListVo mailingListVo) {
-		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(mailingListVo.getListId());
-		keys.add(mailingListVo.getDisplayName());
-		keys.add(mailingListVo.getAcctUserName());
-		keys.add(mailingListVo.getDescription());
-		keys.add(mailingListVo.getSenderId());
-		keys.add(mailingListVo.getStatusId());
-		keys.add(mailingListVo.getIsBuiltIn());
-		keys.add(mailingListVo.getIsSendText());
-		keys.add(mailingListVo.getListMasterEmailAddr());
-		keys.add(mailingListVo.getRowId());
-		String sql = "update Mailing_List set " +
-			"ListId=?," +
-			"DisplayName=?," +
-			"AcctUserName=?," +
-			"Description=?," +
-			"SenderId=?," +
-			"StatusId=?," +
-			"IsBuiltIn=?, " +
-			"IsSendText=?, " +
-			"ListMasterEmailAddr=?" +
-			" where RowId=?";
-		
-		Object[] parms = keys.toArray();
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(mailingListVo);
 
-		int rowsUpadted = getJdbcTemplate().update(sql, parms);
+		String sql = MetaDataUtil.buildUpdateStatement("Mailing_List", mailingListVo);
+		
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		mailingListVo.setOrigListId(mailingListVo.getListId());
 		return rowsUpadted;
 	}
@@ -192,36 +174,13 @@ public class MailingListDao extends AbstractDao {
 	}
 	
 	public int insert(MailingListVo mailingListVo) {
-		mailingListVo.setCreateTime(new Timestamp(new java.util.Date().getTime()));
-		Object[] parms = {
-				mailingListVo.getListId(),
-				mailingListVo.getDisplayName(),
-				mailingListVo.getAcctUserName(),
-				mailingListVo.getDescription(),
-				mailingListVo.getSenderId(),
-				mailingListVo.getStatusId(),
-				mailingListVo.getIsBuiltIn(),
-				mailingListVo.getIsSendText(),
-				mailingListVo.getCreateTime(),
-				mailingListVo.getListMasterEmailAddr()
-			};
+		mailingListVo.setCreateTime(new Timestamp(System.currentTimeMillis()));
 		
-		String sql = "INSERT INTO Mailing_List (" +
-			"ListId," +
-			"DisplayName," +
-			"AcctUserName," +
-			"Description," +
-			"SenderId," +
-			"StatusId," +
-			"IsBuiltIn," +
-			"IsSendText," +
-			"CreateTime, " +
-			"ListMasterEmailAddr " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ? "+
-				")";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(mailingListVo);
+				
+		String sql = MetaDataUtil.buildInsertStatement("Mailing_List", mailingListVo);
 		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		mailingListVo.setRowId(retrieveRowId());
 		mailingListVo.setOrigListId(mailingListVo.getListId());
 		return rowsInserted;
