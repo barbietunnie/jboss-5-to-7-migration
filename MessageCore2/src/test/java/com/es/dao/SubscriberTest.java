@@ -52,6 +52,7 @@ public class SubscriberTest {
 			vo.setPrimaryKey(vo2.getPrimaryKey());
 			// end of sync-up
 			assertTrue(vo.equalsTo(vo2));
+			vo2.setOrigUpdtTime(vo2.getUpdtTime());
 			int rowsUpdated = update(vo2);
 			assertEquals(rowsUpdated, 1);
 			int rowsDeleted = delete(vo2);
@@ -66,17 +67,17 @@ public class SubscriberTest {
 	}
 
 	private SubscriberVo selectBySubrId(SubscriberVo vo) {
-		SubscriberVo customer = subscriberDao.getBySubscriberId(vo.getSubrId());
-		if (customer!=null) {
-			System.out.println("CustomerDao - selectBySubrId: "+LF+customer);
+		SubscriberVo subr = subscriberDao.getBySubscriberId(vo.getSubrId());
+		if (subr!=null) {
+			System.out.println("SubscriberDao - selectBySubrId: "+LF+subr);
 		}
-		return customer;
+		return subr;
 	}
 	
 	private SubscriberVo selectByEmailAddrId(long emailId) {
 		SubscriberVo vo = subscriberDao.getByEmailAddrId(emailId);
 		if (vo != null) {
-			System.out.println("CustomerDao - selectEmailAddrId: "+LF+vo);
+			System.out.println("SubscriberDao - selectEmailAddrId: "+LF+vo);
 		}
 		return vo;
 	}
@@ -84,39 +85,39 @@ public class SubscriberTest {
 	private List<SubscriberVo> selectBySenderId(String senderId) {
 		List<SubscriberVo> list = (List<SubscriberVo>)subscriberDao.getBySenderId(senderId);
 		for (int i=0; i<list.size(); i++) {
-			SubscriberVo customer = list.get(i);
-			System.out.println("CustomerDao - selectSenderId: "+LF+customer);
+			SubscriberVo subr = list.get(i);
+			System.out.println("SubscriberDao - selectSenderId: "+LF+subr);
 		}
 		return list;
 	}
 	
 	private int update(SubscriberVo vo) {
-		SubscriberVo customer = subscriberDao.getBySubscriberId(vo.getSubrId());
+		SubscriberVo subr = vo; //subscriberDao.getBySubscriberId(vo.getSubrId());
 		int rows = 0;
-		if (customer!=null) {
-			customer.setStatusId("A");
-			rows = subscriberDao.update(customer);
-			System.out.println("CustomerDao - update: rows updated: "+ rows);
+		if (subr!=null) {
+			subr.setStatusId("A");
+			rows = subscriberDao.update(subr);
+			System.out.println("SubscriberDao - update: rows updated: "+ rows);
 		}
 		return rows;
 	}
 	
 	private SubscriberVo insert() {
-		SubscriberVo customer = subscriberDao.getBySubscriberId(defaultSubrId);
-		if (customer!=null) {
-			customer.setSubrId(customer.getSubrId()+"_1");
-			customer.setEmailAddr("test."+customer.getEmailAddr());
-			customer.setBirthDate(new java.util.Date());
-			subscriberDao.insert(customer);
-			System.out.println("CustomerDao - insert: "+customer);
-			return customer;
+		SubscriberVo subr = subscriberDao.getBySubscriberId(defaultSubrId);
+		if (subr!=null) {
+			subr.setSubrId(subr.getSubrId()+"_1");
+			subr.setEmailAddr("test."+subr.getEmailAddr());
+			subr.setBirthDate(new java.util.Date());
+			subscriberDao.insert(subr);
+			System.out.println("SubscriberDao - insert: "+subr);
+			return subr;
 		}
 		throw new IllegalStateException("Should not be here, programming error!");
 	}
 	
 	private int delete(SubscriberVo customerVo) {
 		int rowsDeleted = subscriberDao.delete(customerVo.getSubrId());
-		System.out.println("CustomerDao - delete: Rows Deleted: "+rowsDeleted);
+		System.out.println("SubscriberDao - delete: Rows Deleted: "+rowsDeleted);
 		return rowsDeleted;
 	}
 }

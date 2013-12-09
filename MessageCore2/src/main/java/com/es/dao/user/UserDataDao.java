@@ -5,10 +5,13 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.StatusId;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.comm.UserDataVo;
 
 @Component("userDataDao")
@@ -53,48 +56,13 @@ public class UserDataDao extends AbstractDao {
 	
 	public int update(UserDataVo userVo) {
 		if (userVo.getCreateTime()==null) {
-			userVo.setCreateTime(new Timestamp(new java.util.Date().getTime()));
+			userVo.setCreateTime(new Timestamp(System.currentTimeMillis()));
 		}
-		Object[] parms = {
-				userVo.getUserId(),
-				userVo.getPassword(),
-				userVo.getSessionId(),
-				userVo.getFirstName(),
-				userVo.getLastName(),
-				userVo.getMiddleInit(),
-				userVo.getCreateTime(),
-				userVo.getLastVisitTime(),
-				userVo.getHits(),
-				userVo.getStatusId(),
-				userVo.getRole(),
-				userVo.getEmailAddr(),
-				userVo.getDefaultFolder(),
-				userVo.getDefaultRuleName(),
-				userVo.getDefaultToAddr(),
-				userVo.getSenderId(),
-				userVo.getRowId()
-				};
 		
-		String sql = "update User_Data set " +
-			"UserId=?," +
-			"Password=?," +
-			"SessionId=?," +
-			"FirstName=?," +
-			"LastName=?," +
-			"MiddleInit=?," +
-			"CreateTime=?," +
-			"LastVisitTime=?," +
-			"Hits=?," +
-			"StatusId=?," +
-			"Role=?," +
-			"EmailAddr=?," +
-			"DefaultFolder=?," +
-			"DefaultRuleName=?," +
-			"DefaultToAddr=?," +
-			"SenderId=?" +
-			" where RowId=?";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(userVo);
 		
-		int rowsUpadted = getJdbcTemplate().update(sql, parms);
+		String sql = MetaDataUtil.buildUpdateStatement("User_Data", userVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -125,49 +93,13 @@ public class UserDataDao extends AbstractDao {
 	
 	public int insert(UserDataVo userVo) {
 		if (userVo.getCreateTime()==null) {
-			userVo.setCreateTime(new Timestamp(new java.util.Date().getTime()));
+			userVo.setCreateTime(new Timestamp(System.currentTimeMillis()));
 		}
-		Object[] parms = {
-				userVo.getUserId(),
-				userVo.getPassword(),
-				userVo.getSessionId(),
-				userVo.getFirstName(),
-				userVo.getLastName(),
-				userVo.getMiddleInit(),
-				userVo.getCreateTime(),
-				userVo.getLastVisitTime(),
-				userVo.getHits(),
-				userVo.getStatusId(),
-				userVo.getRole(),
-				userVo.getEmailAddr(),
-				userVo.getDefaultFolder(),
-				userVo.getDefaultRuleName(),
-				userVo.getDefaultToAddr(),
-				userVo.getSenderId()
-			};
 		
-		String sql = "INSERT INTO User_Data (" +
-			"UserId," +
-			"Password," +
-			"SessionId," +
-			"FirstName," +
-			"LastName," +
-			"MiddleInit," +
-			"CreateTime," +
-			"LastVisitTime," +
-			"Hits," +
-			"StatusId," +
-			"Role," +
-			"EmailAddr," +
-			"DefaultFolder," +
-			"DefaultRuleName," +
-			"DefaultToAddr," +
-			"SenderId" +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?" +
-				", ?, ?, ?, ?, ?, ?)";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(userVo);
 		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+		String sql = MetaDataUtil.buildInsertStatement("User_Data", userVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		userVo.setRowId(retrieveRowId());
 		return rowsInserted;
 	}

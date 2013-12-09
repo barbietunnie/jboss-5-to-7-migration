@@ -8,10 +8,13 @@ import java.util.Map;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.StatusId;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.template.TemplateVariableVo;
 
 @Component("templateVariableDao")
@@ -82,10 +85,12 @@ public class TemplateVariableDao extends AbstractDao {
 		Object[] parms = keys.toArray();
 		List<TemplateVariableVo> list = getJdbcTemplate().query(sql, parms, 
 				new BeanPropertyRowMapper<TemplateVariableVo>(TemplateVariableVo.class));
-		if (list.size()>0)
+		if (list.size()>0) {
 			return list.get(0);
-		else
+		}
+		else {
 			return null;
+		}
 	}
 	
 	public List<TemplateVariableVo> getByVariableName(String variableName) {
@@ -151,36 +156,11 @@ public class TemplateVariableDao extends AbstractDao {
 	}
 	
 	public int update(TemplateVariableVo templateVariableVo) {
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(templateVariableVo);
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(templateVariableVo.getTemplateId());
-		fields.add(templateVariableVo.getSenderId());
-		fields.add(templateVariableVo.getVariableName());
-		fields.add(templateVariableVo.getStartTime());
-		fields.add(templateVariableVo.getVariableValue());
-		fields.add(templateVariableVo.getVariableFormat());
-		fields.add(templateVariableVo.getVariableType());
-		fields.add(templateVariableVo.getStatusId());
-		fields.add(templateVariableVo.getAllowOverride());
-		fields.add(templateVariableVo.getRequired());
-		fields.add(templateVariableVo.getRowId());
+		String sql = MetaDataUtil.buildUpdateStatement("Template_Variable", templateVariableVo);
 		
-		String sql =
-			"update Template_Variable set " +
-				"TemplateId=?, " +
-				"SenderId=?, " +
-				"VariableName=?, " +
-				"StartTime=?, " +
-				"VariableValue=?, " +
-				"VariableFormat=?, " +
-				"VariableType=?, " +
-				"StatusId=?, " +
-				"AllowOverride=?, " +
-				"Required=? " +
-			"where " +
-				" RowId=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		if (rowsUpadted>0) {
 			currentVariablesCache.remove(templateVariableVo.getTemplateId() + "."
 					+ templateVariableVo.getSenderId());
@@ -220,8 +200,9 @@ public class TemplateVariableDao extends AbstractDao {
 		fields.add(variableName);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
-		if (rowsDeleted>0)
+		if (rowsDeleted>0) {
 			currentVariablesCache.clear();
+		}
 		return rowsDeleted;
 	}
 	
@@ -233,8 +214,9 @@ public class TemplateVariableDao extends AbstractDao {
 		fields.add(senderId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
-		if (rowsDeleted>0)
+		if (rowsDeleted>0) {
 			currentVariablesCache.clear();
+		}
 		return rowsDeleted;
 	}
 	
@@ -246,41 +228,18 @@ public class TemplateVariableDao extends AbstractDao {
 		fields.add(templateId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
-		if (rowsDeleted>0)
+		if (rowsDeleted>0) {
 			currentVariablesCache.clear();
+		}
 		return rowsDeleted;
 	}
 	
 	public int insert(TemplateVariableVo templateVariableVo) {
-		String sql = 
-			"INSERT INTO Template_Variable (" +
-			"TemplateId, " +
-			"SenderId, " +
-			"VariableName, " +
-			"StartTime, " +
-			"VariableValue, " +
-			"VariableFormat, " +
-			"VariableType, " +
-			"StatusId, " +
-			"AllowOverride, " +
-			"Required " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ? ,?, ?, ? " +
-				")";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(templateVariableVo);
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(templateVariableVo.getTemplateId());
-		fields.add(templateVariableVo.getSenderId());
-		fields.add(templateVariableVo.getVariableName());
-		fields.add(templateVariableVo.getStartTime());
-		fields.add(templateVariableVo.getVariableValue());
-		fields.add(templateVariableVo.getVariableFormat());
-		fields.add(templateVariableVo.getVariableType());
-		fields.add(templateVariableVo.getStatusId());
-		fields.add(templateVariableVo.getAllowOverride());
-		fields.add(templateVariableVo.getRequired());
+		String sql = MetaDataUtil.buildInsertStatement("Template_Variable", templateVariableVo);
 		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		templateVariableVo.setRowId(retrieveRowId());
 		if (rowsInserted>0) {
 			currentVariablesCache.remove(templateVariableVo.getTemplateId() + "."
