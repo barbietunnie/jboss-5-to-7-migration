@@ -31,11 +31,11 @@ public class RuleActionTest {
 	final static String LF = System.getProperty("line.separator","\n");
 	// this instance will be dependency injected by name
 	@Resource
-	private RuleActionDao msgActionDao;
+	private RuleActionDao ruleActionDao;
 	final String testRuleName = RuleNameEnum.HARD_BOUNCE.getValue();
 	
 	@BeforeClass
-	public static void MsgActionPrepare() throws Exception {
+	public static void RuleActionPrepare() throws Exception {
 	}
 
 	@Test
@@ -53,82 +53,82 @@ public class RuleActionTest {
 	@Test
 	@Rollback(true)
 	public void insertSelectDelete() {
-		RuleActionVo msgActionVo = insert();
-		assertNotNull(msgActionVo);
-		assertEquals(RuleNameEnum.CC_USER.getValue(), msgActionVo.getRuleName());
-		RuleActionVo msgActionVo2 = select(msgActionVo);
-		assertNotNull(msgActionVo2);
-		assertTrue(msgActionVo.equalsTo(msgActionVo2));
-		int rowsUpdated = update(msgActionVo);
+		RuleActionVo ruleActionVo = insert();
+		assertNotNull(ruleActionVo);
+		assertEquals(RuleNameEnum.CC_USER.getValue(), ruleActionVo.getRuleName());
+		RuleActionVo ruleActionVo2 = select(ruleActionVo);
+		assertNotNull(ruleActionVo2);
+		assertTrue(ruleActionVo.equalsTo(ruleActionVo2));
+		int rowsUpdated = update(ruleActionVo);
 		assertEquals(1, rowsUpdated);
-		int rowsDeleted = delete(msgActionVo);
+		int rowsDeleted = delete(ruleActionVo);
 		assertEquals(1, rowsDeleted);
 	}
 	
 	private List<RuleActionVo> selectByRuleName(String ruleName) {
-		List<RuleActionVo> actions = msgActionDao.getByRuleName(ruleName);
+		List<RuleActionVo> actions = ruleActionDao.getByRuleName(ruleName);
 		for (Iterator<RuleActionVo> it=actions.iterator(); it.hasNext();) {
-			RuleActionVo msgActionVo = it.next();
-			System.out.println("MsgActionDao - selectByRuleName: "+LF+msgActionVo);
+			RuleActionVo ruleActionVo = it.next();
+			System.out.println("RuleActionDao - selectByRuleName: "+LF+ruleActionVo);
 		}
 		return actions;
 	}
 	
 	private RuleActionVo selectByUniqueKey(String ruleName, int actionSeq, String senderId) {
-		RuleActionVo msgActionVo = msgActionDao.getMostCurrent(ruleName, actionSeq, senderId);
-		System.out.println("MsgActionDao - selectByUniqueKey: "+LF+msgActionVo);
-		return msgActionVo;
+		RuleActionVo ruleActionVo = ruleActionDao.getMostCurrent(ruleName, actionSeq, senderId);
+		System.out.println("RuleActionDao - selectByUniqueKey: "+LF+ruleActionVo);
+		return ruleActionVo;
 	}
 	
 	private List<RuleActionVo> selectByBestMatch() {
-		List<RuleActionVo> list = msgActionDao.getByBestMatch(RuleNameEnum.GENERIC.getValue(), null, "JBatchCorp");
+		List<RuleActionVo> list = ruleActionDao.getByBestMatch(RuleNameEnum.GENERIC.getValue(), null, "JBatchCorp");
 		for (int i=0; i<list.size(); i++) {
-			RuleActionVo msgActionVo = list.get(i);
-			System.out.println("MsgActionDao - selectByBestMatch: "+LF+msgActionVo);
+			RuleActionVo ruleActionVo = list.get(i);
+			System.out.println("RuleActionDao - selectByBestMatch: "+LF+ruleActionVo);
 		}
 		return list;
 	}
 
-	private RuleActionVo select(RuleActionVo msgActionVo) {
-		RuleActionVo msgActionVo2 = msgActionDao.getByUniqueKey(msgActionVo.getRuleName(),
-				msgActionVo.getActionSeq(), msgActionVo.getStartTime(), msgActionVo.getSenderId());
-		System.out.println("MsgActionDao - select: "+msgActionVo2);
-		return msgActionVo2;
+	private RuleActionVo select(RuleActionVo ruleActionVo) {
+		RuleActionVo ruleActionVo2 = ruleActionDao.getByUniqueKey(ruleActionVo.getRuleName(),
+				ruleActionVo.getActionSeq(), ruleActionVo.getStartTime(), ruleActionVo.getSenderId());
+		System.out.println("RuleActionDao - select: "+ruleActionVo2);
+		return ruleActionVo2;
 	}
 	
-	private int update(RuleActionVo msgActionVo) {
+	private int update(RuleActionVo ruleActionVo) {
 		int rowsUpdated = 0;
-		if (msgActionVo!=null) {
-			if (!StatusId.ACTIVE.getValue().equals(msgActionVo.getStatusId())) {
-				msgActionVo.setStatusId(StatusId.ACTIVE.getValue());
+		if (ruleActionVo!=null) {
+			if (!StatusId.ACTIVE.getValue().equals(ruleActionVo.getStatusId())) {
+				ruleActionVo.setStatusId(StatusId.ACTIVE.getValue());
 			}
-			rowsUpdated = msgActionDao.update(msgActionVo);
-			System.out.println("MsgActionDao - update: Rows updated: "+rowsUpdated);
+			rowsUpdated = ruleActionDao.update(ruleActionVo);
+			System.out.println("RuleActionDao - update: Rows updated: "+rowsUpdated);
 		}
 		return rowsUpdated;
 	}
 	
 	private int deleteByRuleName(String ruleName) {
-		int rowsDeleted = msgActionDao.deleteByRuleName(ruleName);
-		System.out.println("MsgActionDao - deleteByRuleName: Rows Deleted: "+rowsDeleted);
+		int rowsDeleted = ruleActionDao.deleteByRuleName(ruleName);
+		System.out.println("RuleActionDao - deleteByRuleName: Rows Deleted: "+rowsDeleted);
 		return rowsDeleted;
 	}
 	
-	private int delete(RuleActionVo msgActionVo) {
-		int rowsDeleted = msgActionDao.deleteByUniqueKey(msgActionVo.getRuleName(),
-				msgActionVo.getActionSeq(), msgActionVo.getStartTime(), msgActionVo.getSenderId());
-		System.out.println("MsgActionDao - delete: Rows Deleted: "+rowsDeleted);
+	private int delete(RuleActionVo ruleActionVo) {
+		int rowsDeleted = ruleActionDao.deleteByUniqueKey(ruleActionVo.getRuleName(),
+				ruleActionVo.getActionSeq(), ruleActionVo.getStartTime(), ruleActionVo.getSenderId());
+		System.out.println("RuleActionDao - delete: Rows Deleted: "+rowsDeleted);
 		return rowsDeleted;
 	}
 
 	private RuleActionVo insert() {
-		List<RuleActionVo> list = msgActionDao.getByRuleName(RuleNameEnum.CC_USER.getValue());
+		List<RuleActionVo> list = ruleActionDao.getByRuleName(RuleNameEnum.CC_USER.getValue());
 		if (list.size()>0) {
-			RuleActionVo msgActionVo = list.get(list.size()-1);
-			msgActionVo.setActionSeq((msgActionVo.getActionSeq()+1));
-			msgActionDao.insert(msgActionVo);
-			System.out.println("MsgActionDao - insert: "+msgActionVo);
-			return msgActionVo;
+			RuleActionVo ruleActionVo = list.get(list.size()-1);
+			ruleActionVo.setActionSeq((ruleActionVo.getActionSeq()+1));
+			ruleActionDao.insert(ruleActionVo);
+			System.out.println("RuleActionDao - insert: "+ruleActionVo);
+			return ruleActionVo;
 		}
 		throw new IllegalStateException("Should not be here, programming error!");
 	}

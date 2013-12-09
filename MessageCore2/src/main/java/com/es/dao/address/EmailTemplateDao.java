@@ -215,7 +215,7 @@ public class EmailTemplateDao extends AbstractDao {
 	/*
 	 * define methods that sync up template id to RuleDataTypeEnum table.
 	 */
-	private final String DataType = RuleDataTypeEnum.TEMPLATE_ID.getDescription();
+	private final String DataType = RuleDataTypeEnum.TEMPLATE_ID.name();
 	private int insertRuleDataTypeEnum(EmailTemplateVo vo) {
 		int rowsInserted = 0;
 		// 1) retrieve the record

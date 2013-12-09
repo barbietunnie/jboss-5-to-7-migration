@@ -428,9 +428,12 @@ public class EmailAddressDao extends AbstractDao {
 	}
 
 	public EmailAddressVo getFromByMsgRefId(Long msgRefId) {
-		String sql = "select a.*, b.RuleName " + " from " + " Email_Address a "
+		String sql = "select a.*, b.RuleName "
+				+ " from "
+				+ " Email_Address a "
 				+ " inner join Msg_Inbox b on a.EmailAddrId = b.FromAddrId "
-				+ " where" + " b.MsgId = ?";
+				+ " where"
+				+ " b.MsgId = ?";
 		Object[] parms = new Object[] { msgRefId };
 		List<EmailAddressVo> list = getJdbcTemplate().query(sql, parms,
 				new BeanPropertyRowMapper<EmailAddressVo>(EmailAddressVo.class));
@@ -442,9 +445,12 @@ public class EmailAddressDao extends AbstractDao {
 	}
 
 	public EmailAddressVo getToByMsgRefId(Long msgRefId) {
-		String sql = "select a.*, b.RuleName " + " from " + " Email_Address a "
+		String sql = "select a.*, b.RuleName "
+				+ " from "
+				+ " Email_Address a "
 				+ " inner join Msg_Inbox b on a.EmailAddrId = b.ToAddrId "
-				+ " where" + " b.MsgId = ?";
+				+ " where"
+				+ " b.MsgId = ?";
 		Object[] parms = new Object[] { msgRefId };
 		List<EmailAddressVo> list = getJdbcTemplate().query(sql, parms,
 				new BeanPropertyRowMapper<EmailAddressVo>(EmailAddressVo.class));
@@ -477,11 +483,19 @@ public class EmailAddressDao extends AbstractDao {
 		keys.add(emailAddrVo.getUpdtUserId());
 		keys.add(emailAddrVo.getEmailAddrId());
 
-		String sql = "update Email_Address set " + "EmailAddr=?,"
-				+ "OrigEmailAddr=?," + "StatusId=?," + "StatusChangeTime=?,"
-				+ "StatusChangeUserId=?," + "BounceCount=?,"
-				+ "LastBounceTime=?," + "LastSentTime=?," + "LastRcptTime=?,"
-				+ "AcceptHtml=?," + "UpdtTime=?," + "UpdtUserId=? "
+		String sql = "update Email_Address set "
+				+ "EmailAddr=?,"
+				+ "OrigEmailAddr=?,"
+				+ "StatusId=?," 
+				+ "StatusChangeTime=?,"
+				+ "StatusChangeUserId=?,"
+				+ "BounceCount=?,"
+				+ "LastBounceTime=?,"
+				+ "LastSentTime=?,"
+				+ "LastRcptTime=?,"
+				+ "AcceptHtml=?,"
+				+ "UpdtTime=?,"
+				+ "UpdtUserId=? "
 				+ " where emailAddrId=?";
 
 		if (emailAddrVo.getOrigUpdtTime() != null) {
@@ -501,7 +515,8 @@ public class EmailAddressDao extends AbstractDao {
 		keys.add(new Timestamp(System.currentTimeMillis()));
 		keys.add(addrId);
 
-		String sql = "update Email_Address set " + " LastRcptTime=? "
+		String sql = "update Email_Address set "
+				+ " LastRcptTime=? "
 				+ " where emailAddrId=?";
 
 		int rowsUpadted = getJdbcTemplate().update(sql, keys.toArray());
@@ -513,7 +528,8 @@ public class EmailAddressDao extends AbstractDao {
 		keys.add(new Timestamp(System.currentTimeMillis()));
 		keys.add(addrId);
 
-		String sql = "update Email_Address set " + " LastSentTime=? "
+		String sql = "update Email_Address set "
+				+ " LastSentTime=? "
 				+ " where emailAddrId=?";
 
 		int rowsUpadted = getJdbcTemplate().update(sql, keys.toArray());
@@ -525,7 +541,8 @@ public class EmailAddressDao extends AbstractDao {
 		keys.add(acceptHtml ? CodeType.YES_CODE.getValue() : CodeType.NO_CODE.getValue());
 		keys.add(addrId);
 
-		String sql = "update Email_Address set " + " AcceptHtml=? "
+		String sql = "update Email_Address set "
+				+ " AcceptHtml=? "
 				+ " where emailAddrId=?";
 
 		int rowsUpadted = getJdbcTemplate().update(sql, keys.toArray());
@@ -549,7 +566,8 @@ public class EmailAddressDao extends AbstractDao {
 					emailAddrVo.setStatusChangeUserId(Constants.DEFAULT_USER_ID);
 				}
 				emailAddrVo.setStatusChangeTime(emailAddrVo.getUpdtTime());
-				sql += "StatusId=?," + "StatusChangeUserId=?,"
+				sql += "StatusId=?,"
+						+ "StatusChangeUserId=?,"
 						+ "StatusChangeTime=?,";
 				keys.add(emailAddrVo.getStatusId());
 				keys.add(emailAddrVo.getStatusChangeUserId());
@@ -557,7 +575,9 @@ public class EmailAddressDao extends AbstractDao {
 			}
 		}
 
-		sql += "UpdtTime=?," + "UpdtUserId=? " + " where emailAddrId=?";
+		sql += "UpdtTime=?,"
+				+ "UpdtUserId=? "
+				+ " where emailAddrId=?";
 
 		keys.add(emailAddrVo.getUpdtTime());
 		keys.add(emailAddrVo.getUpdtUserId());
@@ -611,12 +631,23 @@ public class EmailAddressDao extends AbstractDao {
 		keys.add(emailAddrVo.getUpdtTime());
 		keys.add(emailAddrVo.getUpdtUserId());
 
-		String sql = "INSERT INTO Email_Address (" + "EmailAddr,"
-				+ "OrigEmailAddr," + "StatusId," + "StatusChangeTime,"
-				+ "StatusChangeUserId," + "BounceCount," + "LastBounceTime,"
-				+ "LastSentTime," + "LastRcptTime," + "AcceptHtml,"
-				+ "UpdtTime," + "UpdtUserId " + ") VALUES ("
-				+ " ?, ?, ?, ?, ?, ?, ?, ?, ?, ? " + ",?, ? " + ")";
+		String sql = "INSERT INTO Email_Address ("
+				+ "EmailAddr,"
+				+ "OrigEmailAddr,"
+				+ "StatusId,"
+				+ "StatusChangeTime,"
+				+ "StatusChangeUserId,"
+				+ "BounceCount,"
+				+ "LastBounceTime,"
+				+ "LastSentTime,"
+				+ "LastRcptTime,"
+				+ "AcceptHtml,"
+				+ "UpdtTime,"
+				+ "UpdtUserId "
+				+ ") VALUES ("
+				+ " ?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
+				+ ",?, ? "
+				+ ")";
 
 		if (withUpdate) {
 			sql += " ON duplicate KEY UPDATE UpdtTime=?";
@@ -654,13 +685,23 @@ public class EmailAddressDao extends AbstractDao {
 				keys.add(emailAddrVo.getUpdtTime());
 				keys.add(emailAddrVo.getUpdtUserId());
 
-				String sql = "INSERT INTO Email_Address (" + "EmailAddr,"
-						+ "OrigEmailAddr," + "StatusId," + "StatusChangeTime,"
-						+ "StatusChangeUserId," + "BounceCount,"
-						+ "LastBounceTime," + "LastSentTime," + "LastRcptTime,"
-						+ "AcceptHtml," + "UpdtTime," + "UpdtUserId "
-						+ ") VALUES (" + " ?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
-						+ ",?, ? " + ")";
+				String sql = "INSERT INTO Email_Address (" 
+						+ "EmailAddr,"
+						+ "OrigEmailAddr,"
+						+ "StatusId,"
+						+ "StatusChangeTime,"
+						+ "StatusChangeUserId,"
+						+ "BounceCount,"
+						+ "LastBounceTime,"
+						+ "LastSentTime,"
+						+ "LastRcptTime,"
+						+ "AcceptHtml,"
+						+ "UpdtTime,"
+						+ "UpdtUserId "
+						+ ") VALUES ("
+						+ " ?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
+						+ ",?, ? "
+						+ ")";
 				if (withUpdate) {
 					sql += " ON duplicate KEY UPDATE UpdtTime=?";
 					keys.add(emailAddrVo.getUpdtTime());

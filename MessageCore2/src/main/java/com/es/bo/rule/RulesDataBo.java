@@ -32,7 +32,7 @@ public class RulesDataBo {
 	}
 	
 	public RuleVo getRuleByPrimaryKey(String key) {
-		RuleVo ruleVo = (RuleVo) ruleDao.getByPrimaryKey(key);
+		RuleVo ruleVo = ruleDao.getByPrimaryKey(key);
 		substituteTargetProc(ruleVo);
 		substituteExclListProc(ruleVo);
 		return ruleVo;
