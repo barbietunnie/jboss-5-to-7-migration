@@ -38,6 +38,8 @@ public class BounceUpAddressTest {
 	private BounceUpAddress task;
 	@Resource
 	private EmailAddressDao emailDao;
+	
+	private String alertAddr = "event.alert@localhost";
 
 	@BeforeClass
 	public static void BounceUpPrepare() {
@@ -65,7 +67,6 @@ public class BounceUpAddressTest {
 		}
 		mBean.setFinalRcpt("testbounce@test.com");
 
-		String alertAddr = "event.alert@localhost";
 		int fromCount = getBounceCount(fromaddr);
 		int toCount = getBounceCount(toaddr);
 		int alertCount = getBounceCount(alertAddr);
@@ -97,7 +98,7 @@ public class BounceUpAddressTest {
 		if (addr.getBounceCount()>=Constants.BOUNCE_SUSPEND_THRESHOLD) {
 			assertTrue(StatusId.SUSPENDED.getValue().equals(addr.getStatusId()));
 		}
-		else {
+		else if (!alertAddr.equals(addr.getEmailAddr())) {
 			assertTrue(!StatusId.SUSPENDED.getValue().equals(addr.getStatusId()));
 		}
 	}
