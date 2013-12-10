@@ -75,7 +75,7 @@ public class UserTable extends AbstractTableBase {
 			"UserId varchar(10) NOT NULL, " +
 			"CreateTime datetime NOT NULL, " +
 			"INDEX (UserId), " +
-			"UNIQUE INDEX (SessionId, SessionName) " +
+			"PRIMARY KEY (SessionId, SessionName) " +
 			") ENGINE=InnoDB");
 			System.out.println("Created SESSION_DATA Table...");
 		} catch (DataAccessException e) {
@@ -95,7 +95,7 @@ public class UserTable extends AbstractTableBase {
 			"CreateTime datetime NOT NULL, " +
 			"SessionValue mediumblob, " +
 			"INDEX (UserId), " +
-			"UNIQUE INDEX (SessionId, SessionSeq) " +
+			"PRIMARY KEY (SessionId, SessionSeq) " +
 			") ENGINE=InnoDB");
 			System.out.println("Created SESSION_UPLOAD Table...");
 		} catch (DataAccessException e)

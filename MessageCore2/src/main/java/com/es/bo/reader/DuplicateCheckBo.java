@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -104,7 +105,7 @@ public class DuplicateCheckBo {
 	 */
 	public synchronized boolean isDuplicate(String smtpMsgId) {
 		String sql = "insert into MSGID_DUPCHK values (?, ?)";
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(smtpMsgId);
 		fields.add(new java.sql.Timestamp(System.currentTimeMillis()));
 		try {
@@ -159,7 +160,7 @@ public class DuplicateCheckBo {
 		calendar.add(Calendar.HOUR, -hours);
 		Date go_back=calendar.getTime();
 
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(new java.sql.Timestamp(go_back.getTime()));
 		int rows = getJdbcTemplate().update(sql, fields.toArray());
 		logger.info("purge() - number of records purged: "+rows);

@@ -88,7 +88,7 @@ public class RuleDataTypeDao extends AbstractDao {
 		String sql = 
 			"delete from Rule_Data_Type where RowId=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(rowId+"");
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -99,7 +99,7 @@ public class RuleDataTypeDao extends AbstractDao {
 		String sql = 
 			"delete from Rule_Data_Type where DataType=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(dataType);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());

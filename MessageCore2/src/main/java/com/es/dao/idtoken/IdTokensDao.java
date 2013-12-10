@@ -5,9 +5,12 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.comm.IdTokensVo;
 
 @Component("idTokensDao")
@@ -44,35 +47,14 @@ public class IdTokensDao extends AbstractDao {
 	}
 	
 	public int update(IdTokensVo idTokensVo) {
-		idTokensVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		Object[] parms = {
-				idTokensVo.getDescription(),
-				idTokensVo.getBodyBeginToken(),
-				idTokensVo.getBodyEndToken(),
-				idTokensVo.getXHeaderName(),
-				idTokensVo.getXhdrBeginToken(),
-				idTokensVo.getXhdrEndToken(),
-				""+idTokensVo.getMaxLength(),
-				idTokensVo.getUpdtTime(),
-				idTokensVo.getUpdtUserId(),
-				idTokensVo.getSenderId()
-				};
-		
-		String sql = "update Id_Tokens set " +
-			"Description=?," +
-			"BodyBeginToken=?," +
-			"BodyEndToken=?," +
-			"XHeaderName=?," +
-			"XhdrBeginToken=?," +
-			"XhdrEndToken=?," +
-			"MaxLength=?," +
-			"UpdtTime=?," +
-			"UpdtUserId=? " +
-			" where senderId=?";
+		idTokensVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		
 		idTokensVo.setOrigUpdtTime(idTokensVo.getUpdtTime());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(idTokensVo);
+
+		String sql = MetaDataUtil.buildUpdateStatement("Id_Tokens", idTokensVo);
 		synchronized (cache) {
-			int rowsUpadted = getJdbcTemplate().update(sql, parms);
+			int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 			removeFromCache(idTokensVo.getSenderId());
 			return rowsUpadted;
 		}
@@ -89,37 +71,13 @@ public class IdTokensDao extends AbstractDao {
 	}
 	
 	public int insert(IdTokensVo idTokensVo) {
-		idTokensVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		Object[] parms = {
-			idTokensVo.getSenderId(),
-			idTokensVo.getDescription(),
-			idTokensVo.getBodyBeginToken(),
-			idTokensVo.getBodyEndToken(),
-			idTokensVo.getXHeaderName(),
-			idTokensVo.getXhdrBeginToken(),
-			idTokensVo.getXhdrEndToken(),
-			""+idTokensVo.getMaxLength(),
-			idTokensVo.getUpdtTime(),
-			idTokensVo.getUpdtUserId()
-			};
-		
-		String sql = 
-			"INSERT INTO Id_Tokens " +
-				"(SenderId," +
-				"Description," +
-				"BodyBeginToken," +
-				"BodyEndToken," +
-				"XHeaderName," +
-				"XhdrBeginToken," +
-				"XhdrEndToken," +
-				"MaxLength," +
-				"UpdtTime," +
-				"UpdtUserId " +
-			") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		
+		idTokensVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		idTokensVo.setOrigUpdtTime(idTokensVo.getUpdtTime());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(idTokensVo);
+
+		String sql = MetaDataUtil.buildInsertStatement("Id_Tokens", idTokensVo);
 		synchronized (cache) {
-			int rowsInserted = getJdbcTemplate().update(sql, parms);
+			int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 			idTokensVo.setRowId(retrieveRowId());
 			removeFromCache(idTokensVo.getSenderId());
 			return rowsInserted;

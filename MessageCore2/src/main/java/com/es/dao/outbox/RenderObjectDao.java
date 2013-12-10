@@ -44,7 +44,7 @@ public class RenderObjectDao extends AbstractDao {
 	
 	public int update(RenderObjectVo renderVariableVo) {
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(renderVariableVo.getVariableFormat());
 		fields.add(renderVariableVo.getVariableType());
 		fields.add(renderVariableVo.getVariableValue());
@@ -67,7 +67,7 @@ public class RenderObjectDao extends AbstractDao {
 		String sql = 
 			"delete from Render_Object where renderId=? and variableName=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(msgId+"");
 		fields.add(variableName);
 		
@@ -79,7 +79,7 @@ public class RenderObjectDao extends AbstractDao {
 		String sql = 
 			"delete from Render_Object where renderId=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(msgId+"");
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -98,7 +98,7 @@ public class RenderObjectDao extends AbstractDao {
 				" ?, ?, ?, ?, ? " +
 				")";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(renderVariableVo.getRenderId());
 		fields.add(renderVariableVo.getVariableName());
 		fields.add(renderVariableVo.getVariableFormat());

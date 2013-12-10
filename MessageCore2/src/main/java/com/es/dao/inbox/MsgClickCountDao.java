@@ -137,7 +137,7 @@ public class MsgClickCountDao extends AbstractDao {
 	}
 	
 	public int updateSentCount(long msgId, int count) {
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		String sql =
 			"update Msg_Click_Count set " +
@@ -150,7 +150,7 @@ public class MsgClickCountDao extends AbstractDao {
 	}
 	
 	public int updateOpenCount(long msgId, int count) {
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		String sql =
 			"update Msg_Click_Count set " +

@@ -181,7 +181,7 @@ public class BaseVo implements java.io.Serializable, Cloneable {
 		Object[] params = {};
 		StringBuffer sb = new StringBuffer();
 		HashMap<String, Method> methodMap = new HashMap<String, Method>();
-		ArrayList<String> methodList = new ArrayList<String>();
+		List<String> methodList = new ArrayList<String>();
 		Method methods[] = vo.getClass().getMethods();
 
 		// sort the attributes by name

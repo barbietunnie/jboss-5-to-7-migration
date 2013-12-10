@@ -111,7 +111,7 @@ public class GlobalVariableDao extends AbstractDao {
 		Object[] parms = new Object[] { statusId,
 				new Timestamp(new java.util.Date().getTime()) };
 		List<GlobalVariableVo> list =  getJdbcTemplate().query(sql, parms, new BeanPropertyRowMapper<GlobalVariableVo>(GlobalVariableVo.class));
-		ArrayList<GlobalVariableVo> list2 = new ArrayList<GlobalVariableVo>();
+		List<GlobalVariableVo> list2 = new ArrayList<GlobalVariableVo>();
 		String varName = null;
 		for (Iterator<GlobalVariableVo> it=list.iterator(); it.hasNext(); ) {
 			GlobalVariableVo vo = it.next();

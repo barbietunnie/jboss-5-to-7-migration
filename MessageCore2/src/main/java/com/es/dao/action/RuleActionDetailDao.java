@@ -93,7 +93,7 @@ public class RuleActionDetailDao extends AbstractDao {
 		String sql = 
 			"delete from Rule_Action_Detail where actionId=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(actionId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -105,7 +105,7 @@ public class RuleActionDetailDao extends AbstractDao {
 		String sql = 
 			"delete from Rule_Action_Detail where RowId=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(rowId+"");
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());

@@ -185,7 +185,7 @@ public class EmailAddrTables extends AbstractTableBase {
 					+ "LastClickTime datetime, "
 					+ "FOREIGN KEY (EmailAddrId) REFERENCES EMAIL_ADDRESS (EmailAddrId) ON DELETE CASCADE ON UPDATE CASCADE, "
 					+ "FOREIGN KEY (ListId) REFERENCES MAILING_LIST (ListId) ON DELETE CASCADE ON UPDATE CASCADE, "
-					+ "UNIQUE INDEX (EmailAddrId,ListId) "
+					+ "PRIMARY KEY (EmailAddrId,ListId) "
 					+ ") ENGINE=InnoDB");
 			System.out.println("Created SUBSCRIPTION Table...");
 		}
