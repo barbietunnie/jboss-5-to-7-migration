@@ -551,7 +551,7 @@ public class EmailAddressDao extends AbstractDao {
 
 	public int updateBounceCount(EmailAddressVo emailAddrVo) {
 		emailAddrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 
 		String sql = "update Email_Address set BounceCount=?,";
 		emailAddrVo.setBounceCount(emailAddrVo.getBounceCount() + 1);
