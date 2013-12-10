@@ -40,7 +40,7 @@ public class ReloadFlagsDao extends AbstractDao {
 			"Actions=?," +
 			"Templates=?," +
 			"Schedules=?";
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(vo.getSenders());
 		fields.add(vo.getRules());
 		fields.add(vo.getActions());

@@ -1,7 +1,6 @@
 package com.es.data.loader;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataAccessException;
 
 import com.es.core.util.SpringUtil;
@@ -46,8 +45,9 @@ public class MailboxTable extends AbstractTableBase {
 							for exchange server, it must be 10 or greater
 			- MessageCount: for test only, number of messages to be processed. 0=unlimited.
 		 	- ToPlainText: yes/no, convert message body from HTML to plain text, default to no
-			- ToAddrDomain: if present, scan "received" address chain until a match is found. The
-							email address with the matching domain becomes the real TO address.
+			- ToAddrDomain: Derived from domains of all Senders, scan "received" address chain 
+							until a match is found. The	email address with the matching domain
+							becomes the real TO address.
 			- CheckDuplicate: yes/no, check for duplicates, only one is processed
 			- AlertDuplicate: yes/no, send out alert if found duplicate
 			- LogDuplicate: yes/no, log duplicate messages
@@ -75,7 +75,6 @@ public class MailboxTable extends AbstractTableBase {
 			"MinimumWait integer, " +
 			"MessageCount integer NOT NULL, " +
 			"ToPlainText varchar(3), " +
-			"ToAddrDomain varchar(500), " +
 			"CheckDuplicate varchar(3), " +
 			"AlertDuplicate varchar(3), " +
 			"LogDuplicate varchar(3), " +
@@ -121,10 +120,6 @@ public class MailboxTable extends AbstractTableBase {
 			in.setMinimumWait(mc.getMinimumWait());
 			in.setMessageCount(mc.getMessageCount());
 			in.setToPlainText(mc.getIsToPlainText()?CodeType.YES.getValue():CodeType.NO.getValue());
-			in.setToAddrDomain(mc.getToAddressDomain());
-			if (StringUtils.isBlank(in.getToAddrDomain())) {
-				in.setToAddrDomain(in.getHostName());
-			}
 			in.setCheckDuplicate(mc.getIsCheckDuplicate()?CodeType.YES.getValue():CodeType.NO.getValue());
 			in.setAlertDuplicate(mc.getIsAlertDuplicate()?CodeType.YES.getValue():CodeType.NO.getValue());
 			in.setLogDuplicate(mc.getIsLogDuplicate()?CodeType.YES.getValue():CodeType.NO.getValue());

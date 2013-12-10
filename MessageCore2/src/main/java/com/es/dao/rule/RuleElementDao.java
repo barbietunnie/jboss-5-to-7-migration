@@ -73,7 +73,7 @@ public class RuleElementDao extends AbstractDao {
 		String sql = 
 			"delete from Rule_Element where ruleName=? and elementSeq=?";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(ruleName);
 		fields.add(elementSeq+"");
 		
@@ -86,7 +86,7 @@ public class RuleElementDao extends AbstractDao {
 		String sql = 
 			"delete from Rule_Element where ruleName=?";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(ruleName);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());

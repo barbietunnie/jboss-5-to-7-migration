@@ -30,10 +30,16 @@ public class MetaDataUtil {
 		return tableMetaData.get(StringUtils.lowerCase(tableName));
 	}
 	
+	/*
+	 * Primary Key must be defined for the table for this method to work correctly.
+	 */
 	public static String buildUpdateStatement(String tableName, BaseVo vo) {
 		Table table = getTableMetaData(tableName);
 		if (table == null) {
-			throw new RuntimeException("Table name (" + tableName + ") does not exist in database!");
+			throw new IllegalStateException("Table name (" + tableName + ") does not exist in database!");
+		}
+		if (table.getPrimaryKeyList().isEmpty()) {
+			throw new IllegalStateException("Primary Key must be defined for Table name (" + tableName + ")!");
 		}
 		StringBuffer columnSetter = new StringBuffer(); 
 		String updateClause = "Update " + tableName + " set ";
@@ -77,7 +83,7 @@ public class MetaDataUtil {
 	public static String buildInsertStatement(String tableName, BaseVo vo) {
 		Table table = getTableMetaData(tableName);
 		if (table == null) {
-			throw new RuntimeException("Table name (" + tableName + ") does not exist in database!");
+			throw new IllegalStateException("Table name (" + tableName + ") does not exist in database!");
 		}
 		StringBuffer columnList = new StringBuffer();
 		StringBuffer valueList = new StringBuffer();

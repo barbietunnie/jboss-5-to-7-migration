@@ -7,9 +7,12 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.comm.PagingVo;
 import com.es.vo.inbox.MsgClickCountVo;
 
@@ -125,40 +128,11 @@ public class MsgClickCountDao extends AbstractDao {
 	}
 
 	public int update(MsgClickCountVo msgClickCountVo) {
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgClickCountVo.getListId());
-		fields.add(msgClickCountVo.getDeliveryOption());
-		fields.add(msgClickCountVo.getSentCount());
-		fields.add(msgClickCountVo.getOpenCount());
-		fields.add(msgClickCountVo.getClickCount());
-		fields.add(msgClickCountVo.getLastOpenTime());
-		fields.add(msgClickCountVo.getLastClickTime());
-		fields.add(msgClickCountVo.getStartTime());
-		fields.add(msgClickCountVo.getEndTime());
-		fields.add(msgClickCountVo.getUnsubscribeCount());
-		fields.add(msgClickCountVo.getComplaintCount());
-		fields.add(msgClickCountVo.getReferralCount());
-		fields.add(msgClickCountVo.getMsgId());
-		
-		String sql =
-			"update Msg_Click_Count set " +
-				"ListId=?, " +
-				"DeliveryOption=?, " +
-				"SentCount=?, " +
-				"OpenCount=?, " +
-				"ClickCount=?, " +
-				"LastOpenTime=?, " +
-				"LastClickTime=?, " +
-				"StartTime=?, " +
-				"EndTime=?, " +
-				"UnsubscribeCount=?, " +
-				"ComplaintCount=?, " +
-				"ReferralCount=? " +
-			" where " +
-				" MsgId=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgClickCountVo);
+
+		String sql = MetaDataUtil.buildUpdateStatement("Msg_Click_Count", msgClickCountVo);
+
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -194,7 +168,7 @@ public class MsgClickCountDao extends AbstractDao {
 
 	public int updateClickCount(long msgId, int count) {
 		Timestamp currTime = new Timestamp(new java.util.Date().getTime());
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(currTime);
 		fields.add(msgId);
 		String sql =
@@ -212,7 +186,7 @@ public class MsgClickCountDao extends AbstractDao {
 	}
 
 	public int updateReferalCount(long msgId, int count) {
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		String sql =
 			"update Msg_Click_Count set " +
@@ -229,7 +203,7 @@ public class MsgClickCountDao extends AbstractDao {
 
 	public int updateStartTime(long msgId) {
 		Timestamp currTime = new Timestamp(new java.util.Date().getTime());
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(currTime);
 		fields.add(msgId);
 		String sql =
@@ -242,7 +216,7 @@ public class MsgClickCountDao extends AbstractDao {
 	}
 	
 	public int updateUnsubscribeCount(long msgId, int count) {
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		String sql =
 			"update Msg_Click_Count set " +
@@ -254,7 +228,7 @@ public class MsgClickCountDao extends AbstractDao {
 	}
 	
 	public int updateComplaintCount(long msgId, int count) {
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		String sql =
 			"update Msg_Click_Count set " +
@@ -269,7 +243,7 @@ public class MsgClickCountDao extends AbstractDao {
 		String sql = 
 			"delete from Msg_Click_Count where msgid=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -277,31 +251,11 @@ public class MsgClickCountDao extends AbstractDao {
 	}
 	
 	public int insert(MsgClickCountVo msgClickCountVo) {
-		String sql = 
-			"INSERT INTO Msg_Click_Count (" +
-			"MsgId, " +
-			"ListId, " +
-			"DeliveryOption, " +
-			"SentCount, " +
-			"OpenCount, " +
-			"ClickCount, " +
-			"LastOpenTime, " +
-			"LastClickTime " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ? " +
-				")";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgClickCountVo.getMsgId());
-		fields.add(msgClickCountVo.getListId());
-		fields.add(msgClickCountVo.getDeliveryOption());
-		fields.add(msgClickCountVo.getSentCount());
-		fields.add(msgClickCountVo.getOpenCount());
-		fields.add(msgClickCountVo.getClickCount());
-		fields.add(msgClickCountVo.getLastOpenTime());
-		fields.add(msgClickCountVo.getLastClickTime());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgClickCountVo);
+
+		String sql = MetaDataUtil.buildInsertStatement("Msg_Click_Count", msgClickCountVo);
+
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
 	}
 	

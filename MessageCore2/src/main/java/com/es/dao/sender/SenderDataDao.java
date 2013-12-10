@@ -100,7 +100,7 @@ public class SenderDataDao extends AbstractDao {
 	}
 
 	public synchronized int updateSystemKey(String key) {
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(key);
 		String sql = "update Sender_Data set " +
 			"SystemKey=? " +

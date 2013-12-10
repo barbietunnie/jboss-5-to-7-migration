@@ -6,9 +6,12 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.inbox.MsgActionLogVo;
 
 @Component("msgActionLogDao")
@@ -19,7 +22,7 @@ public class MsgActionLogDao extends AbstractDao {
 			"select * " +
 			"from " +
 				"Msg_Action_Log where msgId=? and actionSeq=? ";
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		fields.add(actionSeq);
 		
@@ -46,21 +49,11 @@ public class MsgActionLogDao extends AbstractDao {
 	}
 	
 	public int update(MsgActionLogVo msgActionLogsVo) {
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgActionLogsVo.getActionBo());
-		fields.add(msgActionLogsVo.getParameters());
-		fields.add(msgActionLogsVo.getMsgId());
-		fields.add(msgActionLogsVo.getActionSeq());
-		
-		String sql =
-			"update Msg_Action_Log set " +
-				"ActionBo=?, " +
-				"Parameters=? " +
-			" where " +
-				" MsgId=? and ActionSeq=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionLogsVo);
+
+		String sql = MetaDataUtil.buildUpdateStatement("Msg_Action_Log", msgActionLogsVo);
+
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -68,7 +61,7 @@ public class MsgActionLogDao extends AbstractDao {
 		String sql = 
 			"delete from Msg_Action_Log where msgId=? and actionSeq=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		fields.add(actionSeq);
 		
@@ -80,7 +73,7 @@ public class MsgActionLogDao extends AbstractDao {
 		String sql = 
 			"delete from Msg_Action_Log where msgId=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -91,26 +84,11 @@ public class MsgActionLogDao extends AbstractDao {
 		Timestamp addTime = new Timestamp(System.currentTimeMillis());
 		msgActionLogsVo.setAddTime(addTime);
 		msgActionLogsVo.setActionSeq(getNextActionSeq(msgActionLogsVo.getMsgId()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionLogsVo);
+
+		String sql = MetaDataUtil.buildInsertStatement("Msg_Action_Log", msgActionLogsVo);
 		
-		String sql = 
-			"INSERT INTO Msg_Action_Log (" +
-			"MsgId, " +
-			"ActionSeq, " +
-			"AddTime, " +
-			"ActionBo, " +
-			"Parameters " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ? " +
-				")";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgActionLogsVo.getMsgId());
-		fields.add(msgActionLogsVo.getActionSeq());
-		fields.add(msgActionLogsVo.getAddTime());
-		fields.add(msgActionLogsVo.getActionBo());
-		fields.add(msgActionLogsVo.getParameters());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
 	}
 	

@@ -74,7 +74,7 @@ public class MsgSourceDao extends AbstractDao {
 		String sql = 
 			"delete from Msg_Source where msgSourceId=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgSourceId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -85,7 +85,7 @@ public class MsgSourceDao extends AbstractDao {
 		String sql = 
 			"delete from Msg_Source where fromAddrId=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(Long.valueOf(fromAddrId));
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());

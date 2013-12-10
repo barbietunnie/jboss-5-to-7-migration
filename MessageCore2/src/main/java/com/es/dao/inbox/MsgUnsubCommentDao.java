@@ -1,15 +1,17 @@
 package com.es.dao.inbox;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.inbox.MsgUnsubCommentVo;
 
 @Component("msgUnsubCommentDao")
@@ -66,23 +68,12 @@ public class MsgUnsubCommentDao extends AbstractDao {
 	}
 	
 	public int update(MsgUnsubCommentVo msgUnsubCommentsVo) {
-		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(msgUnsubCommentsVo.getMsgId());
-		keys.add(msgUnsubCommentsVo.getEmailAddrId());
-		keys.add(msgUnsubCommentsVo.getListId());
-		keys.add(msgUnsubCommentsVo.getComments());
-		keys.add(msgUnsubCommentsVo.getRowId());
-
-		String sql = "update Msg_Unsub_Comment set " +
-			"MsgId=?," +
-			"EmailAddrId=?," +
-			"ListId=?," +
-			"Comments=?" +
-			" where RowId=?";
-		
-		Object[] parms = keys.toArray();
-
-		int rowsUpadted = getJdbcTemplate().update(sql, parms);
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgUnsubCommentsVo);
+		if (msgUnsubCommentsVo.getAddTime() == null) {
+			msgUnsubCommentsVo.setAddTime(new Timestamp(System.currentTimeMillis()));
+		}
+		String sql = MetaDataUtil.buildUpdateStatement("Msg_Unsub_Comment", msgUnsubCommentsVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -108,26 +99,10 @@ public class MsgUnsubCommentDao extends AbstractDao {
 	}
 	
 	public int insert(MsgUnsubCommentVo msgUnsubCommentsVo) {
-		msgUnsubCommentsVo.setAddTime(new Timestamp(new java.util.Date().getTime()));
-		Object[] parms = {
-				msgUnsubCommentsVo.getMsgId(),
-				msgUnsubCommentsVo.getEmailAddrId(),
-				msgUnsubCommentsVo.getListId(),
-				msgUnsubCommentsVo.getComments(),
-				msgUnsubCommentsVo.getAddTime()
-			};
-		
-		String sql = "INSERT INTO Msg_Unsub_Comment (" +
-			"MsgId," +
-			"EmailAddrId," +
-			"ListId," +
-			"Comments," +
-			"AddTime " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ? " +
-				")";
-		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+		msgUnsubCommentsVo.setAddTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgUnsubCommentsVo);
+		String sql = MetaDataUtil.buildInsertStatement("Msg_Unsub_Comment", msgUnsubCommentsVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgUnsubCommentsVo.setRowId(retrieveRowId());
 		return rowsInserted;
 	}

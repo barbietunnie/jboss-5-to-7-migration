@@ -57,7 +57,7 @@ public class TemplateDataDao extends AbstractDao {
 			"from " +
 				"Template_Data where templateId=? ";
 		
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(templateId);
 		if (senderId==null) {
 			sql += " and senderId is null ";
@@ -119,7 +119,7 @@ public class TemplateDataDao extends AbstractDao {
 		String sql = 
 			"delete from Template_Data where templateId=? and senderId=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(templateId);
 		fields.add(senderId);
 		if (startTime!=null) {
@@ -138,7 +138,7 @@ public class TemplateDataDao extends AbstractDao {
 		String sql = 
 			"delete from Template_Data where templateId=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(templateId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -149,7 +149,7 @@ public class TemplateDataDao extends AbstractDao {
 		String sql = 
 			"delete from Template_Data where senderId=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(senderId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());

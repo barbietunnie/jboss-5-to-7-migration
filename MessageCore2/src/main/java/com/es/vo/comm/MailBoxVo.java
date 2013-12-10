@@ -22,7 +22,7 @@ public class MailBoxVo extends ServerBaseVo implements Serializable {
 	private Integer retryMax = null;
 	private Integer minimumWait = null;
 	private String toPlainText = null;
-	private String toAddrDomain = null;
+	private String toAddrDomain = null; // derived from Sender_Data
 	private String checkDuplicate = null;
 	private String alertDuplicate = null;
 	private String logDuplicate = null;

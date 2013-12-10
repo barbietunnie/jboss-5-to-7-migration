@@ -447,7 +447,7 @@ public class InboxTables extends AbstractTableBase {
 			"MsgSubject varchar(255), " +
 			"AddTime datetime, " +
 			"MsgStream mediumblob, " +
-			"UNIQUE INDEX (MsgId), " +
+			"PRIMARY KEY (MsgId), " +
 			"FOREIGN KEY (MsgId) REFERENCES MSG_INBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE " +
 			") ENGINE=InnoDB");
 			System.out.println("Created MSG_STREAM Table...");
@@ -524,7 +524,7 @@ public class InboxTables extends AbstractTableBase {
 			"ComplaintCount int NOT NULL DEFAULT 0, " +
 			"ReferralCount int NOT NULL DEFAULT 0, " +
 			"FOREIGN KEY (MsgId) REFERENCES MSG_INBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE, " +
-			"UNIQUE INDEX (MsgId) " +
+			"PRIMARY KEY (MsgId) " +
 			") ENGINE=InnoDB");
 			System.out.println("Created MSG_CLICK_COUNT Table...");
 		}

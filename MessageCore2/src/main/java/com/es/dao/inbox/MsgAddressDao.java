@@ -5,9 +5,12 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.inbox.MsgAddressVo;
 
 @Component("msgAddressDao")
@@ -55,20 +58,11 @@ public class MsgAddressDao extends AbstractDao {
 	}
 	
 	public int update(MsgAddressVo msgAddrVo) {
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgAddrVo);
+
+		String sql = MetaDataUtil.buildUpdateStatement("Msg_Address", msgAddrVo);
 		
-		ArrayList<String> fields = new ArrayList<String>();
-		fields.add(msgAddrVo.getAddrValue());
-		fields.add(msgAddrVo.getMsgId()+"");
-		fields.add(msgAddrVo.getAddrType());
-		fields.add(msgAddrVo.getAddrSeq()+"");
-		
-		String sql =
-			"update Msg_Address set " +
-				"AddrValue=? " +
-			" where " +
-				" msgid=? and addrType=? and addrSeq=?  ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -76,7 +70,7 @@ public class MsgAddressDao extends AbstractDao {
 		String sql = 
 			"delete from Msg_Address where msgid=? and addrType=? and addrSeq=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(msgId+"");
 		fields.add(addrType);
 		fields.add(addrSeq+"");
@@ -89,7 +83,7 @@ public class MsgAddressDao extends AbstractDao {
 		String sql = 
 			"delete from Msg_Address where msgid=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(msgId+"");
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -97,23 +91,11 @@ public class MsgAddressDao extends AbstractDao {
 	}
 	
 	public int insert(MsgAddressVo msgAddrVo) {
-		String sql = 
-			"INSERT INTO Msg_Address (" +
-			"MsgId, " +
-			"AddrType, " +
-			"AddrSeq, " +
-			"Addrvalue " +
-			") VALUES (" +
-				" ?, ?, ?, ? " +
-				")";
-		
-		ArrayList<String> fields = new ArrayList<String>();
-		fields.add(msgAddrVo.getMsgId()+"");
-		fields.add(msgAddrVo.getAddrType());
-		fields.add(msgAddrVo.getAddrSeq()+"");
-		fields.add(msgAddrVo.getAddrValue());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgAddrVo);
+
+		String sql = MetaDataUtil.buildInsertStatement("Msg_Address", msgAddrVo);
+
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
 	}
 }
