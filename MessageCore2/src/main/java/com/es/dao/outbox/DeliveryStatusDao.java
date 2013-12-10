@@ -7,9 +7,12 @@ import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.outbox.DeliveryStatusVo;
 
 @Component("deliveryStatusDao")
@@ -45,38 +48,14 @@ public class DeliveryStatusDao extends AbstractDao {
 	}
 	
 	public int update(DeliveryStatusVo deliveryStatusVo) {
-		
 		if (deliveryStatusVo.getAddTime()==null) {
-			deliveryStatusVo.setAddTime(new Timestamp(new java.util.Date().getTime()));
+			deliveryStatusVo.setAddTime(new Timestamp(System.currentTimeMillis()));
 		}
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(deliveryStatusVo.getFinalRecipient());
-		fields.add(deliveryStatusVo.getOriginalRecipientId());
-		fields.add(deliveryStatusVo.getMessageId());
-		fields.add(deliveryStatusVo.getDsnStatus());
-		fields.add(deliveryStatusVo.getDsnReason());
-		fields.add(deliveryStatusVo.getDsnText());
-		fields.add(deliveryStatusVo.getDsnRfc822());
-		fields.add(deliveryStatusVo.getDeliveryStatus());
-		fields.add(deliveryStatusVo.getAddTime());
-		fields.add(deliveryStatusVo.getMsgId());
-		fields.add(deliveryStatusVo.getFinalRecipientId());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(deliveryStatusVo);
 		
-		String sql =
-			"update Delivery_Status set " +
-				"FinalRecipient=?, " +
-				"OriginalRecipientId=?, " +
-				"MessageId=?, " +
-				"DsnStatus=?, " +
-				"DsnReason=?, " +
-				"DsnText=?, " +
-				"DsnRfc822=?, " +
-				"DeliveryStatus=?, " +
-				"AddTime=? " +
-			" where " +
-				" msgid=? and finalRecipientId=? ";
+		String sql = MetaDataUtil.buildUpdateStatement("Delivery_Status", deliveryStatusVo);
 		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -119,41 +98,13 @@ public class DeliveryStatusDao extends AbstractDao {
 	}
 	
 	public int insert(DeliveryStatusVo deliveryStatusVo) {
-		String sql = 
-			"INSERT INTO Delivery_Status (" +
-				"MsgId, " +
-				"FinalRecipientId, " +
-				"FinalRecipient, " +
-				"OriginalRecipientId, " +
-				"MessageId, " +
-				"DsnStatus, " +
-				"DsnReason, " +
-				"DsnText, " +
-				"DsnRfc822, " +
-				"DeliveryStatus, " +
-				"AddTime " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ? " +
-				",? " +
-				")";
-		
 		if (deliveryStatusVo.getAddTime()==null) {
-			deliveryStatusVo.setAddTime(new Timestamp(new java.util.Date().getTime()));
+			deliveryStatusVo.setAddTime(new Timestamp(System.currentTimeMillis()));
 		}
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(deliveryStatusVo.getMsgId());
-		fields.add(deliveryStatusVo.getFinalRecipientId());
-		fields.add(deliveryStatusVo.getFinalRecipient());
-		fields.add(deliveryStatusVo.getOriginalRecipientId());
-		fields.add(deliveryStatusVo.getMessageId());
-		fields.add(deliveryStatusVo.getDsnStatus());
-		fields.add(deliveryStatusVo.getDsnReason());
-		fields.add(deliveryStatusVo.getDsnText());
-		fields.add(deliveryStatusVo.getDsnRfc822());
-		fields.add(deliveryStatusVo.getDeliveryStatus());
-		fields.add(deliveryStatusVo.getAddTime());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(deliveryStatusVo);
 		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		String sql = MetaDataUtil.buildInsertStatement("Delivery_Status", deliveryStatusVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
 	}
 	

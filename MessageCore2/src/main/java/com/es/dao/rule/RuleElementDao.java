@@ -6,10 +6,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
 import com.es.dao.sender.ReloadFlagsDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.rule.RuleElementVo;
 
 @Component("ruleElementDao")
@@ -57,39 +60,11 @@ public class RuleElementDao extends AbstractDao {
 	}
 	
 	public synchronized int update(RuleElementVo ruleElementVo) {
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleElementVo);
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		String sql = MetaDataUtil.buildUpdateStatement("Rule_Element", ruleElementVo);
 		
-		fields.add(ruleElementVo.getRuleName());
-		fields.add(ruleElementVo.getElementSeq());
-		fields.add(ruleElementVo.getDataName());
-		fields.add(ruleElementVo.getHeaderName());
-		fields.add(ruleElementVo.getCriteria());
-		fields.add(ruleElementVo.getCaseSensitive());
-		fields.add(ruleElementVo.getTargetText());
-		fields.add(ruleElementVo.getTargetProc());
-		fields.add(ruleElementVo.getExclusions());
-		fields.add(ruleElementVo.getExclListProc());
-		fields.add(ruleElementVo.getDelimiter());
-		fields.add(ruleElementVo.getRowId());
-		
-		String sql =
-			"update Rule_Element set " +
-				"RuleName=?, " +
-				"ElementSeq=?, " +
-				"DataName=?, " +
-				"HeaderName=?, " +
-				"Criteria=?, " +
-				"CaseSensitive=?, " +
-				"TargetText=?, " +
-				"TargetProc=?, " +
-				"Exclusions=?, " +
-				"ExclListProc=?, " +
-				"Delimiter=? " +
-			" where " +
-				" RowId=?";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		updateReloadFlags();
 		return rowsUpadted;
 	}
@@ -120,37 +95,12 @@ public class RuleElementDao extends AbstractDao {
 	}
 	
 	public synchronized int insert(RuleElementVo ruleElementVo) {
-		String sql = 
-			"INSERT INTO Rule_Element (" +
-			"RuleName, " +
-			"ElementSeq, " +
-			"DataName, " +
-			"HeaderName, " +
-			"Criteria, " +
-			"CaseSensitive, " +
-			"TargetText, " +
-			"TargetProc, " +
-			"Exclusions, " +
-			"ExclListProc, " +
-			"Delimiter " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ? " +
-				",?)";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleElementVo);
 		
-		ArrayList<String> fields = new ArrayList<String>();
-		fields.add(ruleElementVo.getRuleName());
-		fields.add(ruleElementVo.getElementSeq()+"");
-		fields.add(ruleElementVo.getDataName());
-		fields.add(ruleElementVo.getHeaderName());
-		fields.add(ruleElementVo.getCriteria());
-		fields.add(ruleElementVo.getCaseSensitive());
-		fields.add(ruleElementVo.getTargetText());
-		fields.add(ruleElementVo.getTargetProc());
-		fields.add(ruleElementVo.getExclusions());
-		fields.add(ruleElementVo.getExclListProc());
-		fields.add(ruleElementVo.getDelimiter());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		String sql = MetaDataUtil.buildInsertStatement("Rule_Element", ruleElementVo);
+
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
+
 		ruleElementVo.setRowId(retrieveRowId());
 		updateReloadFlags();
 		return rowsInserted;

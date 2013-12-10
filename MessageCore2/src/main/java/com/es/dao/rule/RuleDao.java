@@ -25,7 +25,6 @@ public class RuleDao extends AbstractDao {
 	@Autowired
 	private RuleSubRuleMapDao ruleSubRuleMapDao;
 	
-	// TODO
 	private static final class RuleMapper implements RowMapper<RuleVo> {
 		
 		public RuleVo mapRow(ResultSet rs, int rowNum) throws SQLException {

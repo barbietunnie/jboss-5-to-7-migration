@@ -5,9 +5,12 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.outbox.RenderAttachmentVo;
 
 @Component("renderAttachmentDao")
@@ -43,25 +46,9 @@ public class RenderAttachmentDao extends AbstractDao {
 	}
 	
 	public int update(RenderAttachmentVo renderAttachmentVo) {
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(renderAttachmentVo.getAttchmntName());
-		fields.add(renderAttachmentVo.getAttchmntType());
-		fields.add(renderAttachmentVo.getAttchmntDisp());
-		fields.add(renderAttachmentVo.getAttchmntValue());
-		fields.add(renderAttachmentVo.getRenderId());
-		fields.add(renderAttachmentVo.getAttchmntSeq());
-		
-		String sql =
-			"update Render_Attachment set " +
-				"AttchmntName=?, " +
-				"AttchmntType=?, " +
-				"AttchmntDisp=?, " +
-				"AttchmntValue=? " +
-			" where " +
-				" renderId=? and attchmntSeq=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(renderAttachmentVo);
+		String sql = MetaDataUtil.buildInsertStatement("Render_Attachment", renderAttachmentVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -89,27 +76,9 @@ public class RenderAttachmentDao extends AbstractDao {
 	}
 	
 	public int insert(RenderAttachmentVo renderAttachmentVo) {
-		String sql = 
-			"INSERT INTO Render_Attachment (" +
-			"RenderId, " +
-			"AttchmntSeq, " +
-			"AttchmntName, " +
-			"AttchmntType, " +
-			"AttchmntDisp, " +
-			"AttchmntValue " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ? " +
-				")";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(renderAttachmentVo.getRenderId());
-		fields.add(renderAttachmentVo.getAttchmntSeq());
-		fields.add(renderAttachmentVo.getAttchmntName());
-		fields.add(renderAttachmentVo.getAttchmntType());
-		fields.add(renderAttachmentVo.getAttchmntDisp());
-		fields.add(renderAttachmentVo.getAttchmntValue());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(renderAttachmentVo);
+		String sql = MetaDataUtil.buildUpdateStatement("Render_Attachment", renderAttachmentVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
 	}
 	
