@@ -45,7 +45,7 @@ public class MsgHeaderDao extends AbstractDao {
 	
 	public int update(MsgHeaderVo msgHeadersVo) {
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(StringUtils.left(msgHeadersVo.getHeaderName(), 100));
 		fields.add(msgHeadersVo.getHeaderValue());
 		fields.add(msgHeadersVo.getMsgId()+"");
@@ -66,7 +66,7 @@ public class MsgHeaderDao extends AbstractDao {
 		String sql = 
 			"delete from Msg_Header where msgid=? and headerSeq=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(msgId+"");
 		fields.add(headerSeq+"");
 		
@@ -78,7 +78,7 @@ public class MsgHeaderDao extends AbstractDao {
 		String sql = 
 			"delete from Msg_Header where msgid=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(msgId+"");
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -96,7 +96,7 @@ public class MsgHeaderDao extends AbstractDao {
 				" ?, ?, ?, ? " +
 				")";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(msgHeadersVo.getMsgId()+"");
 		fields.add(msgHeadersVo.getHeaderSeq()+"");
 		fields.add(StringUtils.left(msgHeadersVo.getHeaderName(), 100));

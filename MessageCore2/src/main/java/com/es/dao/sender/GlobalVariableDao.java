@@ -7,10 +7,13 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.StatusId;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.template.GlobalVariableVo;
 
 @Component("globalVariableDao")
@@ -121,34 +124,14 @@ public class GlobalVariableDao extends AbstractDao {
 	}
 	
 	public int update(GlobalVariableVo globalVariableVo) {
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(globalVariableVo.getVariableName());
-		fields.add(globalVariableVo.getStartTime());
-		fields.add(globalVariableVo.getVariableValue());
-		fields.add(globalVariableVo.getVariableFormat());
-		fields.add(globalVariableVo.getVariableType());
-		fields.add(globalVariableVo.getStatusId());
-		fields.add(globalVariableVo.getAllowOverride());
-		fields.add(globalVariableVo.getRequired());
-		fields.add(globalVariableVo.getRowId());
-		
-		String sql =
-			"update Global_Variable set " +
-				"VariableName=?, " +
-				"StartTime=?, " +
-				"VariableValue=?, " +
-				"VariableFormat=?, " +
-				"VariableType=?, " +
-				"StatusId=?, " +
-				"AllowOverride=?, " +
-				"Required=? " +
-			"where " +
-				" RowId=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
-		if (rowsUpadted>0)
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(globalVariableVo);
+
+		String sql = MetaDataUtil.buildUpdateStatement("Global_Variable", globalVariableVo);
+
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
+		if (rowsUpadted>0) {
 			currentVariablesCache.clear();
+		}
 		return rowsUpadted;
 	}
 	
@@ -156,7 +139,7 @@ public class GlobalVariableDao extends AbstractDao {
 		String sql = 
 			"delete from Global_Variable where variableName=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(variableName);
 		if (startTime!=null) {
 			sql += " and startTime=? ";
@@ -167,8 +150,9 @@ public class GlobalVariableDao extends AbstractDao {
 		}
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
-		if (rowsDeleted>0)
+		if (rowsDeleted>0) {
 			currentVariablesCache.clear();
+		}
 		return rowsDeleted;
 	}
 	
@@ -176,44 +160,26 @@ public class GlobalVariableDao extends AbstractDao {
 		String sql = 
 			"delete from Global_Variable where variableName=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(variableName);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
-		if (rowsDeleted>0)
+		if (rowsDeleted>0) {
 			currentVariablesCache.clear();
+		}
 		return rowsDeleted;
 	}
 	
 	public int insert(GlobalVariableVo globalVariableVo) {
-		String sql = 
-			"INSERT INTO Global_Variable (" +
-			"VariableName, " +
-			"StartTime, " +
-			"VariableValue, " +
-			"VariableFormat, " +
-			"VariableType, " +
-			"StatusId, " +
-			"AllowOverride, " +
-			"Required " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ? ,?, ?, ? " +
-				")";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(globalVariableVo);
+
+		String sql = MetaDataUtil.buildInsertStatement("Global_Variable", globalVariableVo);
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(globalVariableVo.getVariableName());
-		fields.add(globalVariableVo.getStartTime());
-		fields.add(globalVariableVo.getVariableValue());
-		fields.add(globalVariableVo.getVariableFormat());
-		fields.add(globalVariableVo.getVariableType());
-		fields.add(globalVariableVo.getStatusId());
-		fields.add(globalVariableVo.getAllowOverride());
-		fields.add(globalVariableVo.getRequired());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		globalVariableVo.setRowId(retrieveRowId());
-		if (rowsInserted>0)
+		if (rowsInserted>0) {
 			currentVariablesCache.clear();
+		}
 		return rowsInserted;
 	}
 	

@@ -234,12 +234,12 @@ public class EmailAddressDao extends AbstractDao {
 	}
 
 	public long getEmailAddrIdForPreview() {
-		String sql = "SELECT Floor(max(e.emailaddrid) * RAND()) as emailaddrid "
+		String sql = "SELECT Ceil(max(e.emailaddrid) * RAND()) as emailaddrid "
 				+ " FROM email_address e, subscriber c "
 				+ " where e.emailaddrid=c.emailaddrid ";
 		Long emailAddrId = getJdbcTemplate().queryForObject(sql, Long.class);
 		if (emailAddrId == null || emailAddrId == 0) {
-			sql = "SELECT Floor(max(e.emailaddrid) * RAND()) as emailaddrid "
+			sql = "SELECT Ceil(max(e.emailaddrid) * RAND()) as emailaddrid "
 					+ " FROM email_address e ";
 			emailAddrId = getJdbcTemplate().queryForObject(sql, Long.class);
 		}

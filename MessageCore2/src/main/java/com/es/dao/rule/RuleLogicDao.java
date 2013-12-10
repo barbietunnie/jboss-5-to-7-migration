@@ -117,7 +117,7 @@ public class RuleLogicDao extends AbstractDao {
 		}
 		sql += groupByCluse;
 		sql += " order by r.ruleCategory asc, r.ruleSeq asc, r.ruleName asc ";
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(CodeType.YES_CODE.getValue());
 		List<RuleLogicVo> list = getJdbcTemplate().query(sql, fields.toArray(), 
 				new BeanPropertyRowMapper<RuleLogicVo>(RuleLogicVo.class));
@@ -144,7 +144,7 @@ public class RuleLogicDao extends AbstractDao {
 			" where BuiltInRule=? and IsSubRule!=? and RuleCategory=? " +
 			" order by RuleName ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(CodeType.YES_CODE.getValue());
 		fields.add(CodeType.YES_CODE.getValue());
 		fields.add(RuleCategory.MAIN_RULE.getValue());
@@ -159,7 +159,7 @@ public class RuleLogicDao extends AbstractDao {
 			" where BuiltInRule!=? and IsSubRule!=? and RuleCategory=? " +
 			" order by RuleName ";
 
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(CodeType.YES_CODE.getValue());
 		fields.add(CodeType.YES_CODE.getValue());
 		fields.add(RuleCategory.MAIN_RULE.getValue());
@@ -183,7 +183,7 @@ public class RuleLogicDao extends AbstractDao {
 		String sql = 
 			"delete from Rule_Logic where RuleName=? and RuleSeq=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(ruleName);
 		fields.add(ruleSeq);
 		

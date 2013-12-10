@@ -8,10 +8,13 @@ import java.util.Map;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.StatusId;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.template.SenderVariableVo;
 
 @Component("senderVariableDao")
@@ -50,7 +53,7 @@ public class SenderVariableDao extends AbstractDao {
 			"from " +
 				"Sender_Variable where senderId=? and variableName=? ";
 		
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(senderId);
 		keys.add(variableName);
 		if (startTime!=null) {
@@ -63,10 +66,12 @@ public class SenderVariableDao extends AbstractDao {
 		Object[] parms = keys.toArray();
 		List<SenderVariableVo> list = getJdbcTemplate().query(sql, parms, 
 				new BeanPropertyRowMapper<SenderVariableVo>(SenderVariableVo.class));
-		if (list.size()>0)
+		if (list.size()>0) {
 			return list.get(0);
-		else
+		}
+		else {
 			return null;
+		}
 	}
 	
 	public List<SenderVariableVo> getByVariableName(String variableName) {
@@ -108,36 +113,14 @@ public class SenderVariableDao extends AbstractDao {
 	}
 	
 	public int update(SenderVariableVo senderVariableVo) {
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(senderVariableVo);
+
+		String sql = MetaDataUtil.buildUpdateStatement("Sender_Variable", senderVariableVo);
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(senderVariableVo.getSenderId());
-		fields.add(senderVariableVo.getVariableName());
-		fields.add(senderVariableVo.getStartTime());
-		fields.add(senderVariableVo.getVariableValue());
-		fields.add(senderVariableVo.getVariableFormat());
-		fields.add(senderVariableVo.getVariableType());
-		fields.add(senderVariableVo.getStatusId());
-		fields.add(senderVariableVo.getAllowOverride());
-		fields.add(senderVariableVo.getRequired());
-		fields.add(senderVariableVo.getRowId());
-		
-		String sql =
-			"update Sender_Variable set " +
-				"SenderId=?, " +
-				"VariableName=?, " +
-				"StartTime=?, " +
-				"VariableValue=?, " +
-				"VariableFormat=?, " +
-				"VariableType=?, " +
-				"StatusId=?, " +
-				"AllowOverride=?, " +
-				"Required=? " +
-			"where " +
-				" RowId=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
-		if (rowsUpadted>0)
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
+		if (rowsUpadted>0) {
 			currentVariablesCache.remove(senderVariableVo.getSenderId());
+		}
 		return rowsUpadted;
 	}
 	
@@ -145,7 +128,7 @@ public class SenderVariableDao extends AbstractDao {
 		String sql = 
 			"delete from Sender_Variable where senderId=? and variableName=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(senderId);
 		fields.add(variableName);
 		if (startTime!=null) {
@@ -157,8 +140,9 @@ public class SenderVariableDao extends AbstractDao {
 		}
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
-		if (rowsDeleted>0)
+		if (rowsDeleted>0) {
 			currentVariablesCache.remove(senderId);
+		}
 		return rowsDeleted;
 	}
 	
@@ -166,12 +150,13 @@ public class SenderVariableDao extends AbstractDao {
 		String sql = 
 			"delete from Sender_Variable where variableName=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(variableName);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
-		if (rowsDeleted>0)
+		if (rowsDeleted>0) {
 			currentVariablesCache.clear();
+		}
 		return rowsDeleted;
 	}
 	
@@ -179,46 +164,25 @@ public class SenderVariableDao extends AbstractDao {
 		String sql = 
 			"delete from Sender_Variable where senderId=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(senderId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
-		if (rowsDeleted>0)
+		if (rowsDeleted>0) {
 			currentVariablesCache.remove(senderId);
+		}
 		return rowsDeleted;
 	}
 	
 	public int insert(SenderVariableVo senderVariableVo) {
-		String sql = 
-			"INSERT INTO Sender_Variable (" +
-			"SenderId, " +
-			"VariableName, " +
-			"StartTime, " +
-			"VariableValue, " +
-			"VariableFormat, " +
-			"VariableType, " +
-			"StatusId, " +
-			"AllowOverride, " +
-			"Required " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ? ,?, ?, ? " +
-				")";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(senderVariableVo.getSenderId());
-		fields.add(senderVariableVo.getVariableName());
-		fields.add(senderVariableVo.getStartTime());
-		fields.add(senderVariableVo.getVariableValue());
-		fields.add(senderVariableVo.getVariableFormat());
-		fields.add(senderVariableVo.getVariableType());
-		fields.add(senderVariableVo.getStatusId());
-		fields.add(senderVariableVo.getAllowOverride());
-		fields.add(senderVariableVo.getRequired());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(senderVariableVo);
+
+		String sql = MetaDataUtil.buildInsertStatement("Sender_Variable", senderVariableVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		senderVariableVo.setRowId(retrieveRowId());
-		if (rowsInserted>0)
+		if (rowsInserted>0) {
 			currentVariablesCache.remove(senderVariableVo.getSenderId());
+		}
 		return rowsInserted;
 	}
 

@@ -5,9 +5,12 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.inbox.MsgRfcFieldVo;
 
 @Component("msgRfcFieldDao")
@@ -43,37 +46,9 @@ public class MsgRfcFieldDao extends AbstractDao {
 	}
 	
 	public int update(MsgRfcFieldVo rfcFieldsVo) {
-
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(rfcFieldsVo.getRfcStatus());
-		fields.add(rfcFieldsVo.getRfcAction());
-		fields.add(rfcFieldsVo.getFinalRcpt());
-		fields.add(rfcFieldsVo.getFinalRcptId());
-		fields.add(rfcFieldsVo.getOrigRcpt());
-		fields.add(rfcFieldsVo.getOrigMsgSubject());
-		fields.add(rfcFieldsVo.getMessageId());
-		fields.add(rfcFieldsVo.getDsnText());
-		fields.add(rfcFieldsVo.getDsnRfc822());
-		fields.add(rfcFieldsVo.getDlvrStatus());
-		fields.add(rfcFieldsVo.getMsgId()+"");
-		fields.add(rfcFieldsVo.getRfcType());
-		
-		String sql =
-			"update Msg_Rfc_Field set " +
-				"RfcStatus=?, " +
-				"RfcAction=?, " +
-				"FinalRcpt=?, " +
-				"FinalRcptId=?, " +
-				"OrigRcpt=?, " +
-				"OrigMsgSubject=?, " +
-				"MessageId=?, " +
-				"DsnText=?, " +
-				"DsnRfc822=?, " +
-				"DlvrStatus=? " +
-			" where " +
-				" msgid=? and rfcType=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(rfcFieldsVo);
+		String sql = MetaDataUtil.buildUpdateStatement("Msg_Rfc_Field", rfcFieldsVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -81,7 +56,7 @@ public class MsgRfcFieldDao extends AbstractDao {
 		String sql = 
 			"delete from Msg_Rfc_Field where msgid=? and rfcType=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId+"");
 		fields.add(rfcType);
 		
@@ -93,7 +68,7 @@ public class MsgRfcFieldDao extends AbstractDao {
 		String sql = 
 			"delete from Msg_Rfc_Field where msgid=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId+"");
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -101,39 +76,9 @@ public class MsgRfcFieldDao extends AbstractDao {
 	}
 	
 	public int insert(MsgRfcFieldVo rfcFieldsVo) {
-		String sql = 
-			"INSERT INTO Msg_Rfc_Field (" +
-				"MsgId, " +
-				"RfcType, " +
-				"RfcStatus, " +
-				"RfcAction, " +
-				"FinalRcpt, " +
-				"FinalRcptId, " +
-				"OrigRcpt, " +
-				"OrigMsgSubject, " +
-				"MessageId, " +
-				"DsnText, " +
-				"DsnRfc822, " +
-				"DlvrStatus " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
-				" ?, ?)";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(rfcFieldsVo.getMsgId()+"");
-		fields.add(rfcFieldsVo.getRfcType());
-		fields.add(rfcFieldsVo.getRfcStatus());
-		fields.add(rfcFieldsVo.getRfcAction());
-		fields.add(rfcFieldsVo.getFinalRcpt());
-		fields.add(rfcFieldsVo.getFinalRcptId());
-		fields.add(rfcFieldsVo.getOrigRcpt());
-		fields.add(rfcFieldsVo.getOrigMsgSubject());
-		fields.add(rfcFieldsVo.getMessageId());
-		fields.add(rfcFieldsVo.getDsnText());
-		fields.add(rfcFieldsVo.getDsnRfc822());
-		fields.add(rfcFieldsVo.getDlvrStatus());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(rfcFieldsVo);
+		String sql = MetaDataUtil.buildInsertStatement("Msg_Rfc_Field", rfcFieldsVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
 	}
 }

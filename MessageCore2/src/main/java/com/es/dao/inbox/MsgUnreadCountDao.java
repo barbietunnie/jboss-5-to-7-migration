@@ -1,6 +1,7 @@
 package com.es.dao.inbox;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,7 @@ public class MsgUnreadCountDao extends AbstractDao {
 	}
 
 	public int resetInboxUnreadCount(int inboxUnreadCount) {
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(inboxUnreadCount);
 
 		String sql = "update Msg_Unread_Count set " +
@@ -37,7 +38,7 @@ public class MsgUnreadCountDao extends AbstractDao {
 	}
 
 	public int resetSentUnreadCount(int sentUnreadCount) {
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(sentUnreadCount);
 
 		String sql = "update Msg_Unread_Count set " +
@@ -48,7 +49,7 @@ public class MsgUnreadCountDao extends AbstractDao {
 	}
 
 	public int resetUnreadCounts(int inboxUnreadCount, int sentUnreadCount) {
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(inboxUnreadCount);
 		fields.add(sentUnreadCount);
 

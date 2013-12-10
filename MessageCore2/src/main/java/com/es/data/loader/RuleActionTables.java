@@ -164,7 +164,9 @@ public class RuleActionTables extends AbstractTableBase {
 					else {
 						tp = new RuleDataTypeVo(RuleDataTypeEnum.TEMPLATE_ID.name(), tmp.name(), null);
 					}
-					typeService.insert(tp);
+					if (typeService.getByTypeValuePair(RuleDataTypeEnum.TEMPLATE_ID.name(), tmp.name())==null) {
+						typeService.insert(tp);
+					}
 				}
 			}
 			else if (RuleDataTypeEnum.RULE_NAME.equals(type)) {
