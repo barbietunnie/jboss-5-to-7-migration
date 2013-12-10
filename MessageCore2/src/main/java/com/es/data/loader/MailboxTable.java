@@ -82,7 +82,7 @@ public class MailboxTable extends AbstractTableBase {
 			"ProcessorName varchar(100) NOT NULL, " +
 			"UpdtTime datetime NOT NULL, " +
 			"UpdtUserId char(10) NOT NULL, " +
-			"Constraint MAIL_BOX_PK1 primary key (RowId), " +
+			"PRIMARY KEY (RowId), " +
 			"Constraint UNIQUE INDEX MAIL_BOX_IDX1 (UserId, HostName) " +
 			") ENGINE=InnoDB");
 			System.out.println("Created MAIL_BOX Table...");

@@ -23,7 +23,7 @@ public class TemplateDataDao extends AbstractDao {
 			"from " +
 				"Template_Data where templateId=? ";
 		
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(templateId);
 		if (senderId!=null) {
 			sql += " and senderId=? ";

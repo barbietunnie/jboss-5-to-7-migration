@@ -112,7 +112,7 @@ public class EmailTemplateDao extends AbstractDao {
 	}
 
 	public synchronized int update(EmailTemplateVo emailTemplateVo) {
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(emailTemplateVo.getTemplateId());
 		keys.add(emailTemplateVo.getListId());
 		keys.add(emailTemplateVo.getSubject());

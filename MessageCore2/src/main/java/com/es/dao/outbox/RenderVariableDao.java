@@ -56,7 +56,7 @@ public class RenderVariableDao extends AbstractDao {
 		String sql = 
 			"delete from Render_Variable where renderId=? and variableName=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(msgId+"");
 		fields.add(variableName);
 		
@@ -68,7 +68,7 @@ public class RenderVariableDao extends AbstractDao {
 		String sql = 
 			"delete from Render_Variable where renderId=? ";
 		
-		ArrayList<String> fields = new ArrayList<String>();
+		List<String> fields = new ArrayList<String>();
 		fields.add(msgId+"");
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());

@@ -265,7 +265,7 @@ public class RenderBoTest {
 //				"Y",
 //				Boolean.FALSE
 //			);
-//		ArrayList<Map<String, RenderVariable>> collection = new ArrayList<Map<String, RenderVariable>>();
+//		List<Map<String, RenderVariable>> collection = new ArrayList<Map<String, RenderVariable>>();
 //		Map<String, RenderVariable> row1 = new HashMap<String, RenderVariable>();	// a row
 //		row1.put(req2.getVariableName(), req2_row1);
 //		row1.put(req3.getVariableName(), req3);

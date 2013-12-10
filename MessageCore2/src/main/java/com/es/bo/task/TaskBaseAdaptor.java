@@ -8,7 +8,7 @@ public abstract class TaskBaseAdaptor implements AbstractTaskBo, java.io.Seriali
 	private static final long serialVersionUID = -8159784802650360342L;
 
 	public List<String> getArgumentList(String taskArguments) {
-		ArrayList<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<String>();
 		if (taskArguments != null) {
 			StringTokenizer st = new StringTokenizer(taskArguments, ",");
 			while (st.hasMoreTokens()) {

@@ -68,7 +68,7 @@ public final class StringUtil {
 	 * @param list -
 	 *            a list objects
 	 */
-	public static void stripAll(ArrayList<Object> list) {
+	public static void stripAll(List<Object> list) {
 		if (list==null) return;
 		for (int i=0; i<list.size(); i++) {
 			Object obj = list.get(i);

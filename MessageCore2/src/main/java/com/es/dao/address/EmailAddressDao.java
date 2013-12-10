@@ -24,6 +24,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -38,6 +40,7 @@ import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.StatusId;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.address.EmailAddressVo;
 import com.es.vo.comm.PagingVo;
 
@@ -467,51 +470,25 @@ public class EmailAddressDao extends AbstractDao {
 
 	public int update(EmailAddressVo emailAddrVo) {
 		emailAddrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		emailAddrVo.setOrigEmailAddr(emailAddrVo.getEmailAddr());
+		emailAddrVo.setEmailAddr(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
 
-		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
-		keys.add(emailAddrVo.getEmailAddr());
-		keys.add(emailAddrVo.getStatusId());
-		keys.add(emailAddrVo.getStatusChangeTime());
-		keys.add(emailAddrVo.getStatusChangeUserId());
-		keys.add(emailAddrVo.getBounceCount());
-		keys.add(emailAddrVo.getLastBounceTime());
-		keys.add(emailAddrVo.getLastSentTime());
-		keys.add(emailAddrVo.getLastRcptTime());
-		keys.add(emailAddrVo.getAcceptHtml());
-		keys.add(emailAddrVo.getUpdtTime());
-		keys.add(emailAddrVo.getUpdtUserId());
-		keys.add(emailAddrVo.getEmailAddrId());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(emailAddrVo);
 
-		String sql = "update Email_Address set "
-				+ "EmailAddr=?,"
-				+ "OrigEmailAddr=?,"
-				+ "StatusId=?," 
-				+ "StatusChangeTime=?,"
-				+ "StatusChangeUserId=?,"
-				+ "BounceCount=?,"
-				+ "LastBounceTime=?,"
-				+ "LastSentTime=?,"
-				+ "LastRcptTime=?,"
-				+ "AcceptHtml=?,"
-				+ "UpdtTime=?,"
-				+ "UpdtUserId=? "
-				+ " where emailAddrId=?";
+		String sql = MetaDataUtil.buildUpdateStatement("Email_Address", emailAddrVo);
 
 		if (emailAddrVo.getOrigUpdtTime() != null) {
-			sql += " and UpdtTime=?";
-			keys.add(emailAddrVo.getOrigUpdtTime());
+			sql += " and UpdtTime=:origUpdtTime ";
 		}
-		Object[] parms = keys.toArray();
 
-		int rowsUpadted = getJdbcTemplate().update(sql, parms);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		emailAddrVo.setCurrEmailAddr(emailAddrVo.getEmailAddr());
 		emailAddrVo.setOrigUpdtTime(emailAddrVo.getUpdtTime());
 		return rowsUpadted;
 	}
 
 	public int updateLastRcptTime(long addrId) {
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(new Timestamp(System.currentTimeMillis()));
 		keys.add(addrId);
 
@@ -524,7 +501,7 @@ public class EmailAddressDao extends AbstractDao {
 	}
 
 	public int updateLastSentTime(long addrId) {
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(new Timestamp(System.currentTimeMillis()));
 		keys.add(addrId);
 
@@ -537,7 +514,7 @@ public class EmailAddressDao extends AbstractDao {
 	}
 
 	public int updateAcceptHtml(long addrId, boolean acceptHtml) {
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(acceptHtml ? CodeType.YES_CODE.getValue() : CodeType.NO_CODE.getValue());
 		keys.add(addrId);
 
@@ -617,44 +594,18 @@ public class EmailAddressDao extends AbstractDao {
 	 */
 	private int insert(EmailAddressVo emailAddrVo, boolean withUpdate) {
 		emailAddrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
-		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
-		keys.add(emailAddrVo.getEmailAddr());
-		keys.add(emailAddrVo.getStatusId());
-		keys.add(emailAddrVo.getStatusChangeTime());
-		keys.add(emailAddrVo.getStatusChangeUserId());
-		keys.add(emailAddrVo.getBounceCount());
-		keys.add(emailAddrVo.getLastBounceTime());
-		keys.add(emailAddrVo.getLastSentTime());
-		keys.add(emailAddrVo.getLastRcptTime());
-		keys.add(emailAddrVo.getAcceptHtml());
-		keys.add(emailAddrVo.getUpdtTime());
-		keys.add(emailAddrVo.getUpdtUserId());
+		emailAddrVo.setOrigEmailAddr(emailAddrVo.getEmailAddr());
+		emailAddrVo.setEmailAddr(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
 
-		String sql = "INSERT INTO Email_Address ("
-				+ "EmailAddr,"
-				+ "OrigEmailAddr,"
-				+ "StatusId,"
-				+ "StatusChangeTime,"
-				+ "StatusChangeUserId,"
-				+ "BounceCount,"
-				+ "LastBounceTime,"
-				+ "LastSentTime,"
-				+ "LastRcptTime,"
-				+ "AcceptHtml,"
-				+ "UpdtTime,"
-				+ "UpdtUserId "
-				+ ") VALUES ("
-				+ " ?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
-				+ ",?, ? "
-				+ ")";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(emailAddrVo);
+
+		String sql = MetaDataUtil.buildInsertStatement("Email_Address", emailAddrVo);
 
 		if (withUpdate) {
-			sql += " ON duplicate KEY UPDATE UpdtTime=?";
-			keys.add(emailAddrVo.getUpdtTime());
+			sql += " ON duplicate KEY UPDATE UpdtTime=:updtTime";
 		}
 
-		int rowsInserted = getJdbcTemplate().update(sql, keys.toArray());
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		emailAddrVo.setEmailAddrId(retrieveRowId());
 		emailAddrVo.setCurrEmailAddr(emailAddrVo.getEmailAddr());
 		emailAddrVo.setOrigUpdtTime(emailAddrVo.getUpdtTime());
@@ -671,7 +622,7 @@ public class EmailAddressDao extends AbstractDao {
 			public PreparedStatement createPreparedStatement(
 					Connection connection) throws SQLException {
 				emailAddrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
-				ArrayList<Object> keys = new ArrayList<Object>();
+				List<Object> keys = new ArrayList<Object>();
 				keys.add(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
 				keys.add(emailAddrVo.getEmailAddr());
 				keys.add(emailAddrVo.getStatusId());

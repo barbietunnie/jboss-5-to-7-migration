@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.core.util.SpringUtil;
@@ -17,6 +19,7 @@ import com.es.dao.abst.AbstractDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.MsgStatusCode;
 import com.es.data.constant.StatusId;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.address.EmailAddressVo;
 import com.es.vo.address.SubscriptionVo;
 import com.es.vo.comm.PagingVo;
@@ -367,35 +370,16 @@ public class SubscriptionDao extends AbstractDao {
 	}
 
 	public int update(SubscriptionVo subscriptionVo) {
-		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(subscriptionVo.getSubscribed());
-		keys.add(subscriptionVo.getSentCount());
-		keys.add(subscriptionVo.getLastSentTime());
-		keys.add(subscriptionVo.getOpenCount());
-		keys.add(subscriptionVo.getLastOpenTime());
-		keys.add(subscriptionVo.getClickCount());
-		keys.add(subscriptionVo.getLastClickTime());
-		keys.add(subscriptionVo.getEmailAddrId());
-		keys.add(subscriptionVo.getListId());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(subscriptionVo);
 
-		String sql = "update Subscription set " +
-			"Subscribed=?," +
-			"SentCount=?," +
-			"LastSentTime=?," +
-			"OpenCount=?," +
-			"LastOpenTime=?," +
-			"ClickCount=?," +
-			"LastClickTime=?" +
-			" where EmailAddrId=? and ListId=?";
-		
-		Object[] parms = keys.toArray();
+		String sql = MetaDataUtil.buildUpdateStatement("Subscription", subscriptionVo);
 
-		int rowsUpadted = getJdbcTemplate().update(sql, parms);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
 	public int updateSentCount(long emailAddrId, String listId) {
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(new Timestamp(new java.util.Date().getTime()));
 		keys.add(emailAddrId);
 		keys.add(listId);
@@ -410,7 +394,7 @@ public class SubscriptionDao extends AbstractDao {
 	}
 	
 	public int updateOpenCount(long emailAddrId, String listId) {
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(new Timestamp(new java.util.Date().getTime()));
 		keys.add(emailAddrId);
 		keys.add(listId);
@@ -425,7 +409,7 @@ public class SubscriptionDao extends AbstractDao {
 	}
 	
 	public int updateClickCount(long emailAddrId, String listId) {
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(new Timestamp(new java.util.Date().getTime()));
 		keys.add(emailAddrId);
 		keys.add(listId);
@@ -464,35 +448,10 @@ public class SubscriptionDao extends AbstractDao {
 		if (subscriptionVo.getCreateTime()==null) {
 			subscriptionVo.setCreateTime(new Timestamp(System.currentTimeMillis()));
 		}
-		Object[] parms = {
-				subscriptionVo.getEmailAddrId(),
-				subscriptionVo.getListId(),
-				subscriptionVo.getSubscribed(),
-				subscriptionVo.getCreateTime(),
-				subscriptionVo.getSentCount(),
-				subscriptionVo.getLastSentTime(),
-				subscriptionVo.getOpenCount(),
-				subscriptionVo.getLastOpenTime(),
-				subscriptionVo.getClickCount(),
-				subscriptionVo.getLastClickTime()
-			};
-		
-		String sql = "INSERT INTO Subscription (" +
-			"EmailAddrId," +
-			"ListId," +
-			"Subscribed," +
-			"CreateTime, " +
-			"SentCount, " +
-			"LastSentTime, " +
-			"OpenCount, " +
-			"LastOpenTime, " +
-			"ClickCount, " +
-			"LastClickTime " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ? " +
-				")";
-		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(subscriptionVo);
+
+		String sql = MetaDataUtil.buildInsertStatement("Subscription", subscriptionVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
 	}
 	

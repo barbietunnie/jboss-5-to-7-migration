@@ -32,8 +32,8 @@ public class IdTokensTable extends AbstractTableBase {
 			"MaxLength integer NOT NULL, " +
 			"UpdtTime datetime NOT NULL, " +
 			"UpdtUserId char(10) NOT NULL, " +
+			"PRIMARY KEY (RowId), " +
 			"FOREIGN KEY (SenderId) REFERENCES Sender_Data(SenderId) ON DELETE CASCADE ON UPDATE CASCADE, " +
-			"Constraint ID_TOKENS_PK1 primary key (RowId), " +
 			"Constraint UNIQUE INDEX ID_TOKENS_IDX1 (SenderId) " +
 			") ENGINE=InnoDB");
 			System.out.println("Created ID_TOKENS Table...");

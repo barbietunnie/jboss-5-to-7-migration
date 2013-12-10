@@ -63,7 +63,7 @@ public class DeliveryStatusDao extends AbstractDao {
 		String sql = 
 			"delete from Delivery_Status where msgid=? and finalRecipientId=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		fields.add(finalRecipientId);
 		
@@ -75,7 +75,7 @@ public class DeliveryStatusDao extends AbstractDao {
 		String sql = 
 			"delete from Delivery_Status where msgid=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(msgId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());

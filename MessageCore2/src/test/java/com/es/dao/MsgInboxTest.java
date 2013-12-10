@@ -61,8 +61,11 @@ public class MsgInboxTest {
 		try {
 			MsgInboxVo msgInboxVo = selectByMsgId(testMsgId);
 			if (msgInboxVo == null) {
-				msgInboxVo = msgInboxDao.getFirstRecord();
+				msgInboxVo = msgInboxDao.getRandomRecord();
 				testMsgId = msgInboxVo.getMsgId();
+			}
+			else {
+				assertNotNull(msgInboxDao.getRandomRecord());
 			}
 			assertNotNull(msgInboxVo);
 			EmailAddressVo emailAddressVo = emailAddressDao.getByAddrId(testFromMsgId);
@@ -70,14 +73,14 @@ public class MsgInboxTest {
 				emailAddressVo = emailAddressDao.findSertAddress(msgInboxVo.getFromAddress());
 				testFromMsgId = emailAddressVo.getEmailAddrId();
 			}
-			List<MsgInboxVo> list = selectByFromAddrId(testFromMsgId);
-			assertTrue(list.size()>0);
+			List<MsgInboxVo> list1 = selectByFromAddrId(testFromMsgId);
+			assertTrue(list1.size()>0);
 			List<MsgInboxVo> list2 = selectByToAddrId(msgInboxVo.getToAddrId());
 			assertTrue(list2.size()>0);
-			MsgInboxWebVo webvo = selectInboundGenericMsg();
-			int unreadCountBefore = unreadCountDao.selectInboxUnreadCount();
+			MsgInboxWebVo webvo = selectGenericMessage();
+			int unreadCountBefore = unreadCountDao.selectInboxUnreadCount()  + unreadCountDao.selectSentUnreadCount();
 			MsgInboxVo msgvo = insert(webvo.getMsgId());
-			int unreadCountAfter = unreadCountDao.selectInboxUnreadCount();
+			int unreadCountAfter = unreadCountDao.selectInboxUnreadCount()  + unreadCountDao.selectSentUnreadCount();
 			assertNotNull(msgvo);
 			if (msgvo.getReadCount() == 0) {
 				assertTrue(unreadCountAfter == (unreadCountBefore + 1));
@@ -89,7 +92,7 @@ public class MsgInboxTest {
 			assertEquals(rowsUpdated, 1);
 			int rowsDeleted = deleteByPrimaryKey(msgvo.getMsgId());
 			assertEquals(rowsDeleted, 1);
-			int unreadCountAfterDelete = unreadCountDao.selectInboxUnreadCount();
+			int unreadCountAfterDelete = unreadCountDao.selectInboxUnreadCount() + unreadCountDao.selectSentUnreadCount();
 			assertTrue(unreadCountAfterDelete == unreadCountBefore);
 		}
 		catch (Exception e) {
@@ -104,10 +107,6 @@ public class MsgInboxTest {
 		try {
 			// get "Closed" Broadcast messages
 			MsgInboxWebVo webvo = selectBroadcastMsg(SearchFieldsVo.MsgType.Closed);
-			if (webvo == null) {
-				// did not find any, get any "Broadcast" messages
-				webvo = selectBroadcastMsg(null);
-			}
 			assertNotNull(webvo);
 			int unreadCountBefore = unreadCountDao.selectInboxUnreadCount();
 			MsgInboxVo msgvo = insert(webvo.getMsgId());
@@ -167,6 +166,11 @@ public class MsgInboxTest {
 		vo.setRuleName(RuleNameEnum.BROADCAST.getValue());
 		vo.setMsgType(msgType);
 		List<MsgInboxWebVo> list = msgInboxDao.getListForWeb(vo);
+		if (list.isEmpty()) {
+			// did not find any, get any "Broadcast" messages
+			vo.setMsgType(null);
+			list = msgInboxDao.getListForWeb(vo);
+		}
 		for (MsgInboxWebVo webVo : list) {
 			System.out.println("MsgInboxWebVo - selectBroadcastMsg: " + LF + webVo);
 			return webVo;
@@ -174,16 +178,21 @@ public class MsgInboxTest {
 		return null;
 	}
 
-	private MsgInboxWebVo selectInboundGenericMsg() {
+	private MsgInboxWebVo selectGenericMessage() {
 		SearchFieldsVo vo = new SearchFieldsVo();
 		vo.setRuleName(RuleNameEnum.GENERIC.getValue());
 		vo.setMsgType(SearchFieldsVo.MsgType.Received);
 		List<MsgInboxWebVo> list = msgInboxDao.getListForWeb(vo);
+		if (list.isEmpty()) {
+			// did not find any, get any "Generic" messages
+			vo.setMsgType(null);
+			list = msgInboxDao.getListForWeb(vo);
+		}
 		for (MsgInboxWebVo webVo : list) {
-			System.out.println("MsgInboxWebVo - selectInboundGenericMsg: " + LF + webVo);
+			System.out.println("MsgInboxWebVo - selectGenericMessage: " + LF + webVo);
 			return webVo;
 		}
-		throw new IllegalStateException("Failed to fetch any Generic inbound messages.");
+		throw new IllegalStateException("Failed to fetch any Generic messages.");
 	}
 
 	private int update(long msgId) {
@@ -211,10 +220,10 @@ public class MsgInboxTest {
 		if (msgInboxVo!=null) {
 			long nextVal = msgSequenceDao.findNextValue();
 			msgInboxVo.setMsgId(nextVal);
-			System.out.println("InboxUnreadCount before: "+ unreadCountDao.selectInboxUnreadCount());
+			System.out.println("UnreadCount before: "+ (unreadCountDao.selectInboxUnreadCount() + unreadCountDao.selectSentUnreadCount()));
 			msgInboxDao.insert(msgInboxVo);
 			System.out.println("MsgInboxDao - insert: "+LF+msgInboxVo);
-			System.out.println("InboxUnreadCount after: "+ unreadCountDao.selectInboxUnreadCount());
+			System.out.println("UnreadCount after: "+ (unreadCountDao.selectInboxUnreadCount() + unreadCountDao.selectSentUnreadCount()));
 			return msgInboxVo;
 		}
 		throw new IllegalStateException("Failed to fetch message by MsgId (" + msgId + ")!");

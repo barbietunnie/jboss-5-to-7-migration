@@ -56,7 +56,7 @@ public class RenderAttachmentDao extends AbstractDao {
 		String sql = 
 			"delete from Render_Attachment where renderId=? and attchmntSeq=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(renderId+"");
 		fields.add(attchmntSeq+"");
 		
@@ -68,7 +68,7 @@ public class RenderAttachmentDao extends AbstractDao {
 		String sql = 
 			"delete from Render_Attachment where renderId=? ";
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
+		List<Object> fields = new ArrayList<Object>();
 		fields.add(renderId+"");
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());

@@ -60,7 +60,7 @@ public class RuleActionDao extends AbstractDao {
 				" where a.ActionId = b.ActionId " +
 				" and RuleName=? and StartTime<=? and StatusId=? ";
 		
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(ruleName);
 		keys.add(startTime);
 		keys.add(StatusId.ACTIVE.getValue());
@@ -145,7 +145,7 @@ public class RuleActionDao extends AbstractDao {
 				" where a.ActionId = b.ActionId " +
 				" and RuleName=? and ActionSeq=? and StartTime<=? and StatusId=? ";
 		
-		ArrayList<Object> keys = new ArrayList<Object>();
+		List<Object> keys = new ArrayList<Object>();
 		keys.add(ruleName);
 		keys.add(actionSeq);
 		keys.add(startTime);
