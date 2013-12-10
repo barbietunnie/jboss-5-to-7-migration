@@ -6,10 +6,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
 import com.es.dao.sender.ReloadFlagsDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.rule.RuleSubRuleMapVo;
 
 @Component("ruleSubRuleMapDao")
@@ -71,41 +74,21 @@ public class RuleSubRuleMapDao extends AbstractDao {
 	}
 	
 	public synchronized int update(RuleSubRuleMapVo ruleSubRuleMapVo) {
-		String sql = 
-			"update Rule_Subrule_Map set " +
-			"SubRuleSeq=?, " +
-			"RuleName=?, " +
-			"SubRuleName=? " +
-			" where" +
-				" RowId=?";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleSubRuleMapVo);
+	
+		String sql = MetaDataUtil.buildUpdateStatement("Rule_Subrule_Map", ruleSubRuleMapVo);
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(ruleSubRuleMapVo.getSubRuleSeq());
-		fields.add(ruleSubRuleMapVo.getRuleName());
-		fields.add(ruleSubRuleMapVo.getSubRuleName());
-		fields.add(ruleSubRuleMapVo.getRowId());
-		
-		int rowsUpdated = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpdated = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		updateReloadFlags();
 		return rowsUpdated;
 	}
 	
 	public synchronized int insert(RuleSubRuleMapVo ruleSubRuleMapVo) {
-		String sql = 
-			"INSERT INTO Rule_Subrule_Map (" +
-			"RuleName, " +
-			"SubRuleName, " +
-			"SubRuleSeq " +
-			") VALUES (" +
-				" ?, ?, ? " +
-				")";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleSubRuleMapVo);
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(ruleSubRuleMapVo.getRuleName());
-		fields.add(ruleSubRuleMapVo.getSubRuleName());
-		fields.add(ruleSubRuleMapVo.getSubRuleSeq());
+		String sql = MetaDataUtil.buildInsertStatement("Rule_Subrule_Map", ruleSubRuleMapVo);
 		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		ruleSubRuleMapVo.setRowId(retrieveRowId());
 		updateReloadFlags();
 		return rowsInserted;

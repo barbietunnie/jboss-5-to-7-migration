@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
@@ -14,6 +16,7 @@ import com.es.dao.sender.ReloadFlagsDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.RuleCategory;
 import com.es.data.constant.StatusId;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.rule.RuleLogicVo;
 
 @Component("ruleLogicDao")
@@ -165,49 +168,11 @@ public class RuleLogicDao extends AbstractDao {
 	}
 	
 	public synchronized int update(RuleLogicVo ruleLogicVo) {
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleLogicVo);
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(ruleLogicVo.getRuleName());
-		fields.add(Integer.valueOf(ruleLogicVo.getRuleSeq()));
-		fields.add(ruleLogicVo.getRuleType());
-		fields.add(ruleLogicVo.getStatusId());
-		fields.add(ruleLogicVo.getStartTime());
-		fields.add(ruleLogicVo.getMailType());
-		fields.add(ruleLogicVo.getRuleCategory());
-		fields.add(ruleLogicVo.getIsSubRule());
-		fields.add(ruleLogicVo.getBuiltInRule());
-		fields.add(ruleLogicVo.getDescription());
-//		String origRuleName = ruleLogicVo.getOrigRuleName();
-//		if (StringUtil.isEmpty(origRuleName)) {
-//			fields.add(ruleLogicVo.getRuleName());
-//		}
-//		else { // Original rule name is valued.
-//			fields.add(ruleLogicVo.getOrigRuleName());
-//		}
-//		if (ruleLogicVo.getOrigRuleSeq() > -1) {
-//			fields.add(ruleLogicVo.getOrigRuleSeq());
-//		}
-//		else {
-//			fields.add(ruleLogicVo.getRuleSeq());
-//		}
-		fields.add(ruleLogicVo.getRowId());
-		
-		String sql =
-			"update Rule_Logic set " +
-				"RuleName=?, " +
-				"RuleSeq=?, " +
-				"RuleType=?, " +
-				"StatusId=?, " +
-				"StartTime=?, " +
-				"MailType=?, " +
-				"RuleCategory=?, " +
-				"IsSubRule=?, " +
-				"BuiltInRule=?, " +
-				"Description=? " +
-			" where " +
-				" RowId=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		String sql = MetaDataUtil.buildUpdateStatement("Rule_Logic", ruleLogicVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
+
 		ruleLogicVo.setOrigRuleName(ruleLogicVo.getRuleName());
 		ruleLogicVo.setOrigRuleSeq(ruleLogicVo.getRuleSeq());
 		updateReloadFlags();
@@ -228,35 +193,12 @@ public class RuleLogicDao extends AbstractDao {
 	}
 	
 	public synchronized int insert(RuleLogicVo ruleLogicVo) {
-		String sql = 
-			"INSERT INTO Rule_Logic (" +
-			"RuleName, " +
-			"RuleSeq, " +
-			"RuleType, " +
-			"StatusId, " +
-			"StartTime, " +
-			"MailType, " +
-			"RuleCategory, " +
-			"IsSubRule, " +
-			"BuiltInRule, " +
-			"Description " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ? " +
-				")";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleLogicVo);
 		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(ruleLogicVo.getRuleName());
-		fields.add(Integer.valueOf(ruleLogicVo.getRuleSeq()));
-		fields.add(ruleLogicVo.getRuleType());
-		fields.add(ruleLogicVo.getStatusId());
-		fields.add(ruleLogicVo.getStartTime());
-		fields.add(ruleLogicVo.getMailType());
-		fields.add(ruleLogicVo.getRuleCategory());
-		fields.add(ruleLogicVo.getIsSubRule());
-		fields.add(ruleLogicVo.getBuiltInRule());
-		fields.add(ruleLogicVo.getDescription());
+		String sql = MetaDataUtil.buildInsertStatement("Rule_Logic", ruleLogicVo);
 		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
+
 		ruleLogicVo.setRowId(retrieveRowId());
 		ruleLogicVo.setOrigRuleName(ruleLogicVo.getRuleName());
 		ruleLogicVo.setOrigRuleSeq(ruleLogicVo.getRuleSeq());

@@ -5,9 +5,12 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.outbox.RenderVariableVo;
 
 @Component("renderVariableDao")
@@ -43,23 +46,9 @@ public class RenderVariableDao extends AbstractDao {
 	}
 	
 	public int update(RenderVariableVo renderVariableVo) {
-		
-		ArrayList<String> fields = new ArrayList<String>();
-		fields.add(renderVariableVo.getVariableFormat());
-		fields.add(renderVariableVo.getVariableType());
-		fields.add(renderVariableVo.getVariableValue());
-		fields.add(renderVariableVo.getRenderId()+"");
-		fields.add(renderVariableVo.getVariableName());
-		
-		String sql =
-			"update Render_Variable set " +
-				"VariableFormat=?, " +
-				"VariableType=?, " +
-				"VariableValue=? " +
-			" where " +
-				" RenderId=? and VariableName=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(renderVariableVo);
+		String sql = MetaDataUtil.buildUpdateStatement("Render_Variable", renderVariableVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -87,25 +76,11 @@ public class RenderVariableDao extends AbstractDao {
 	}
 	
 	public int insert(RenderVariableVo renderVariableVo) {
-		String sql = 
-			"INSERT INTO Render_Variable (" +
-				"RenderId, " +
-				"VariableName, " +
-				"VariableFormat, " +
-				"VariableType, " +
-				"VariableValue " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ? " +
-				")";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(renderVariableVo);
+
+		String sql = MetaDataUtil.buildInsertStatement("Render_Variable", renderVariableVo);
 		
-		ArrayList<String> fields = new ArrayList<String>();
-		fields.add(renderVariableVo.getRenderId()+"");
-		fields.add(renderVariableVo.getVariableName());
-		fields.add(renderVariableVo.getVariableFormat());
-		fields.add(renderVariableVo.getVariableType());
-		fields.add(renderVariableVo.getVariableValue());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
 	}
 	

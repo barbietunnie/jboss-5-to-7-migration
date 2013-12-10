@@ -6,9 +6,12 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.outbox.MsgRenderedVo;
 
 @Component("msgRenderedDao")
@@ -67,37 +70,13 @@ public class MsgRenderedDao extends AbstractDao {
 	
 	
 	public int update(MsgRenderedVo msgRenderedVo) {
-		msgRenderedVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgRenderedVo.getMsgSourceId());
-		fields.add(msgRenderedVo.getTemplateId());
-		fields.add(msgRenderedVo.getStartTime());
-		fields.add(msgRenderedVo.getSenderId());
-		fields.add(msgRenderedVo.getSubrId());
-		fields.add(msgRenderedVo.getPurgeAfter());
-		fields.add(msgRenderedVo.getUpdtTime());
-		fields.add(msgRenderedVo.getUpdtUserId());
-		fields.add(msgRenderedVo.getRenderId());
-		
-		String sql =
-			"update Msg_Rendered set " +
-				"MsgSourceId=?, " +
-				"TemplateId=?, " +
-				"StartTime=?, " +
-				"SenderId=?, " +
-				"SubrId=?, " +
-				"PurgeAfter=?, " +
-				"UpdtTime=?, " +
-				"UpdtUserId=? " +
-			" where " +
-				" renderId=? ";
-		
+		msgRenderedVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgRenderedVo);
+		String sql = MetaDataUtil.buildUpdateStatement("Msg_Rendered", msgRenderedVo);
 		if (msgRenderedVo.getOrigUpdtTime() != null) {
-			sql += " and UpdtTime=?";
-			fields.add(msgRenderedVo.getOrigUpdtTime());
+			sql += " and UpdtTime=:origUpdtTime";
 		}
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgRenderedVo.setOrigUpdtTime(msgRenderedVo.getUpdtTime());
 		return rowsUpadted;
 	}
@@ -114,32 +93,10 @@ public class MsgRenderedDao extends AbstractDao {
 	}
 	
 	public int insert(MsgRenderedVo msgRenderedVo) {
-		String sql = 
-			"INSERT INTO Msg_Rendered (" +
-				"MsgSourceId, " +
-				"TemplateId, " +
-				"StartTime, " +
-				"SenderId, " +
-				"SubrId, " +
-				"PurgeAfter, " +
-				"UpdtTime, " +
-				"UpdtUserId " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ? " +
-				")";
-		
-		msgRenderedVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgRenderedVo.getMsgSourceId());
-		fields.add(msgRenderedVo.getTemplateId());
-		fields.add(msgRenderedVo.getStartTime());
-		fields.add(msgRenderedVo.getSenderId());
-		fields.add(msgRenderedVo.getSubrId());
-		fields.add(msgRenderedVo.getPurgeAfter());
-		fields.add(msgRenderedVo.getUpdtTime());
-		fields.add(msgRenderedVo.getUpdtUserId());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		msgRenderedVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgRenderedVo);
+		String sql = MetaDataUtil.buildInsertStatement("Msg_Rendered", msgRenderedVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgRenderedVo.setRenderId(getJdbcTemplate().queryForObject(getRowIdSql(), Integer.class));
 		msgRenderedVo.setOrigUpdtTime(msgRenderedVo.getUpdtTime());
 		return rowsInserted;
