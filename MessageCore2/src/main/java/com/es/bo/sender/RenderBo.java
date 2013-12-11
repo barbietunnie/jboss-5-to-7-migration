@@ -208,7 +208,8 @@ public class RenderBo implements java.io.Serializable {
 			RenderVariable var = rsp.getVariableFinal().get(VariableName.BODY_TEMPLATE.getValue());
 			if (VariableType.TEXT.equals(var.getVariableType())) {
 				bodyTemplate = (String) var.getVariableValue();
-				contentType = (var.getVariableFormat() == null ? (HtmlUtil.isHTML(bodyTemplate) ? Constants.TEXT_HTML : Constants.TEXT_PLAIN)
+				contentType = (var.getVariableFormat() == null ? 
+						(HtmlUtil.isHTML(bodyTemplate) ? Constants.TEXT_HTML : Constants.TEXT_PLAIN)
 						: var.getVariableFormat());
 			}
 		}
@@ -300,36 +301,41 @@ public class RenderBo implements java.io.Serializable {
 			RenderVariable r = it.next();
 			if (VariableType.ADDRESS.equals(r.getVariableType()) && r.getVariableValue() != null) {
 				if (EmailAddressType.FROM_ADDR.getValue().equals(r.getVariableName())) {
-					if (r.getVariableValue() instanceof String)
+					if (r.getVariableValue() instanceof String) {
 						mBean.setFrom(InternetAddress.parse((String) r.getVariableValue()));
+					}
 					else if (r.getVariableValue() instanceof InternetAddress) {
 						mBean.setFrom(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
 				else if (EmailAddressType.REPLYTO_ADDR.getValue().equals(r.getVariableName())) {
-					if (r.getVariableValue() instanceof String)
+					if (r.getVariableValue() instanceof String) {
 						mBean.setReplyto(InternetAddress.parse((String) r.getVariableValue()));
+					}
 					else if (r.getVariableValue() instanceof Address) {
 						mBean.setReplyto(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
 				else if (EmailAddressType.TO_ADDR.getValue().equals(r.getVariableName())) {
-					if (r.getVariableValue() instanceof String)
+					if (r.getVariableValue() instanceof String) {
 						mBean.setTo(InternetAddress.parse((String) r.getVariableValue()));
+					}
 					else if (r.getVariableValue() instanceof Address) {
 						mBean.setTo(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
 				else if (EmailAddressType.CC_ADDR.getValue().equals(r.getVariableName())) {
-					if (r.getVariableValue() instanceof String)
+					if (r.getVariableValue() instanceof String) {
 						mBean.setCc(InternetAddress.parse((String) r.getVariableValue()));
+					}
 					else if (r.getVariableValue() instanceof Address) {
 						mBean.setCc(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
 				else if (EmailAddressType.BCC_ADDR.getValue().equals(r.getVariableName())) {
-					if (r.getVariableValue() instanceof String)
+					if (r.getVariableValue() instanceof String) {
 						mBean.setBcc(InternetAddress.parse((String) r.getVariableValue()));
+					}
 					else if (r.getVariableValue() instanceof Address) {
 						mBean.setBcc(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
@@ -352,33 +358,45 @@ public class RenderBo implements java.io.Serializable {
 					String[] s = { (String) r.getVariableValue() };
 					mBean.setPriority(s);
 				}
-				else if (VariableName.RULE_NAME.getValue().equals(r.getVariableName()))
+				else if (VariableName.RULE_NAME.getValue().equals(r.getVariableName())) {
 					mBean.setRuleName((String)r.getVariableValue());
-				else if (VariableName.CARRIER_CODE.getValue().equals(r.getVariableName()))
+				}
+				else if (VariableName.CARRIER_CODE.getValue().equals(r.getVariableName())) {
 					mBean.setCarrierCode(CarrierCode.getByValue((String)r.getVariableValue()));
-				else if (VariableName.MAILBOX_HOST.getValue().equals(r.getVariableName()))
+				}
+				else if (VariableName.MAILBOX_HOST.getValue().equals(r.getVariableName())) {
 					mBean.setMailboxHost((String)r.getVariableValue());
-				else if (VariableName.MAILBOX_HOST.getValue().equals(r.getVariableName()))
+				}
+				else if (VariableName.MAILBOX_HOST.getValue().equals(r.getVariableName())) {
 					mBean.setMailboxHost((String)r.getVariableValue());
-				else if (VariableName.MAILBOX_NAME.getValue().equals(r.getVariableName()))
+				}
+				else if (VariableName.MAILBOX_NAME.getValue().equals(r.getVariableName())) {
 					mBean.setMailboxName((String)r.getVariableValue());
-				else if (VariableName.MAILBOX_USER.getValue().equals(r.getVariableName()))
+				}
+				else if (VariableName.MAILBOX_USER.getValue().equals(r.getVariableName())) {
 					mBean.setMailboxUser((String)r.getVariableValue());
-				else if (VariableName.FOLDER_NAME.getValue().equals(r.getVariableName()))
+				}
+				else if (VariableName.FOLDER_NAME.getValue().equals(r.getVariableName())) {
 					mBean.setFolderName((String)r.getVariableValue());
-				else if (VariableName.SENDER_ID.getValue().equals(r.getVariableName()))
+				}
+				else if (VariableName.SENDER_ID.getValue().equals(r.getVariableName())) {
 					mBean.setSenderId((String)r.getVariableValue());
-				else if (VariableName.SUBSCRIBER_ID.getValue().equals(r.getVariableName()))
+				}
+				else if (VariableName.SUBSCRIBER_ID.getValue().equals(r.getVariableName())) {
 					mBean.setSubrId((String)r.getVariableValue());
-				else if (VariableName.TO_PLAIN_TEXT.getValue().equals(r.getVariableName()))
+				}
+				else if (VariableName.TO_PLAIN_TEXT.getValue().equals(r.getVariableName())) {
 					mBean.setToPlainText(CodeType.YES_CODE.getValue().equals((String)r.getVariableValue()));
+				}
 			}
 			else if (r.getVariableValue() != null && VariableType.NUMERIC.equals(r.getVariableType())) {
 				if (VariableName.MSG_REF_ID.getValue().equals(r.getVariableName())) {
-					if (r.getVariableValue() instanceof BigDecimal)
+					if (r.getVariableValue() instanceof BigDecimal) {
 						mBean.setMsgRefId(((BigDecimal) r.getVariableValue()).longValue());
-					else if (r.getVariableValue() instanceof String)
+					}
+					else if (r.getVariableValue() instanceof String) {
 						mBean.setMsgRefId(Long.valueOf((String) r.getVariableValue()));
+					}
 				}
 			}
 			else if (VariableType.DATETIME.equals(r.getVariableType())) {
@@ -387,7 +405,7 @@ public class RenderBo implements java.io.Serializable {
 						mBean.setSendDate(new java.util.Date());
 					}
 					else {
-						SimpleDateFormat fmt = new SimpleDateFormat(RenderVariable.DEFAULT_DATETIME_FORMAT);
+						SimpleDateFormat fmt = new SimpleDateFormat(Constants.DEFAULT_DATETIME_FORMAT);
 						if (r.getVariableFormat()!=null) {
 							fmt.applyPattern(r.getVariableFormat());
 						}
@@ -417,10 +435,12 @@ public class RenderBo implements java.io.Serializable {
 			mBean.setEmBedEmailId(Boolean.valueOf(false));
 		}
 
-		if (CodeType.YES_CODE.getValue().equals(src.getSaveMsgStream()))
+		if (CodeType.YES_CODE.getValue().equals(src.getSaveMsgStream())) {
 			mBean.setSaveMsgStream(true);
-		else
+		}
+		else {
 			mBean.setSaveMsgStream(false);
+		}
 	}
 	
 	/*

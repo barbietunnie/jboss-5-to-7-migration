@@ -17,6 +17,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.es.dao.sender.SenderVariableDao;
+import com.es.data.preload.GlobalVariableEnum;
 import com.es.vo.template.SenderVariableVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -28,7 +29,7 @@ public class SenderVariableTest {
 	@Resource
 	private SenderVariableDao senderVariableDao;
 	Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
-	final String testVariableName = "CurrentDate";
+	final String testVariableName = GlobalVariableEnum.CurrentDate.name();
 
 	@BeforeClass
 	public static void SenderVariablePrepare() {

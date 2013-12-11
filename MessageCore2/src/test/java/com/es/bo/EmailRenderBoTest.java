@@ -27,6 +27,7 @@ import com.es.dao.address.EmailTemplateDao;
 import com.es.dao.sender.SenderDataDao;
 import com.es.dao.template.TemplateDataDao;
 import com.es.data.constant.Constants;
+import com.es.data.preload.GlobalVariableEnum;
 import com.es.exception.DataValidationException;
 import com.es.vo.comm.SenderDataVo;
 import com.es.vo.template.TemplateDataVo;
@@ -73,7 +74,7 @@ public class EmailRenderBoTest {
 			}
 			List<String> variables = RenderUtil.retrieveVariableNames(bodyVo.getBodyTemplate());
 			logger.info("Variables: " + variables);
-			assertTrue(variables.contains("CurrentDate"));
+			assertTrue(variables.contains(GlobalVariableEnum.CurrentDate.name()));
 			
 			Map<String, String> vars = new HashMap<String, String>();
 			vars.put("BroadcastMsgId","3");

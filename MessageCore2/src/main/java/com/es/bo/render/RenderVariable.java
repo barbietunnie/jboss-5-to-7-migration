@@ -14,12 +14,12 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import com.es.data.constant.CodeType;
+import com.es.data.constant.Constants;
 import com.es.data.constant.VariableType;
 import com.es.data.preload.GlobalVariableEnum;
 
 public class RenderVariable implements Serializable {
 	private static final long serialVersionUID = -1784984311808865823L;
-	public final static String DEFAULT_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	final static String LF = System.getProperty("line.separator", "\n");
 
 	private final String variableName;
@@ -27,7 +27,7 @@ public class RenderVariable implements Serializable {
 	// Data Type: T - Text, N - Numeric, D - Date time.
 	private final VariableType variableType;
 	// Data Format, used by Numeric and Date time data types.
-	private final String variableFormat;
+	private String variableFormat;
 
 	private final String allowOverride;
 	private final Boolean isRequired;
@@ -93,7 +93,10 @@ public class RenderVariable implements Serializable {
 				new DecimalFormat(variableFormat); // validate the format
 			}
 			if (variableValue != null) {
-				if (!(variableValue instanceof BigDecimal) && !(variableValue instanceof String)) {
+				if (!(variableValue instanceof BigDecimal)
+						&& !(variableValue instanceof Integer)
+						&& !(variableValue instanceof Long)
+						&& !(variableValue instanceof String)) {
 					throw new IllegalArgumentException("Invalid Value Type: "
 							+ variableValue.getClass().getName() + ", for " + variableName);
 				}
@@ -110,7 +113,7 @@ public class RenderVariable implements Serializable {
 			}
 		}
 		else if (VariableType.DATETIME.equals(variableType)) {
-			SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
+			SimpleDateFormat fmt = new SimpleDateFormat(Constants.DEFAULT_DATETIME_FORMAT);
 			if (variableFormat != null) {
 				fmt.applyPattern(variableFormat); // validate the format
 			}
@@ -119,6 +122,14 @@ public class RenderVariable implements Serializable {
 						|| GlobalVariableEnum.CurrentDate.name().equals(variableName)
 						|| GlobalVariableEnum.CurrentTime.name().equals(variableName)) {
 					this.variableValue = variableValue = new Date();
+					if (variableFormat == null) {
+						if (GlobalVariableEnum.CurrentDate.name().equals(variableName)) {
+							this.variableFormat = variableFormat = Constants.DEFAULT_DATE_FORMAT;
+						}
+						else if (GlobalVariableEnum.CurrentTime.name().equals(variableName)) {
+							this.variableFormat = variableFormat = Constants.DEFAULT_TIME_FORMAT;
+						}
+					}
 				}
 			}
 			if (variableValue != null) {
