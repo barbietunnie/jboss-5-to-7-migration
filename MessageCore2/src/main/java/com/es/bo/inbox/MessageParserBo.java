@@ -153,8 +153,8 @@ public class MessageParserBo {
 					msgBean.setDsnDlvrStat(new String(attchValue));
 				}
 			}
-			else if ((aNode = BodypartUtil.retrieveMDNReceipt(mNode.getBodypartNode(), mNode
-					.getLevel())) != null) {
+			else if ((aNode = BodypartUtil.retrieveMDNReceipt(mNode.getBodypartNode(), 
+					mNode.getLevel())) != null) {
 				// got message/disposition-notification
 				byte[] attchValue = (byte[]) aNode.getValue();
 				if (attchValue != null) {
@@ -172,8 +172,8 @@ public class MessageParserBo {
 			}
 			else {
 				// missing message/* section, try text/plain
-				List<BodypartBean> nodes = BodypartUtil.retrieveReportText(mNode
-						.getBodypartNode(), mNode.getLevel());
+				List<BodypartBean> nodes = BodypartUtil.retrieveReportText(
+						mNode.getBodypartNode(), mNode.getLevel());
 				if (!nodes.isEmpty()) {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
 					for (BodypartBean bodyPart : nodes) {
