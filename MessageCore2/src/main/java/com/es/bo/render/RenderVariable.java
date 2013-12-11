@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
@@ -24,7 +25,6 @@ public class RenderVariable implements Serializable {
 
 	private final String variableName;
 	private Object variableValue;
-	// Data Type: T - Text, N - Numeric, D - Date time.
 	private final VariableType variableType;
 	// Data Format, used by Numeric and Date time data types.
 	private String variableFormat;
@@ -63,9 +63,9 @@ public class RenderVariable implements Serializable {
 	 * <li>Numeric - String or BigDecimal</li>
 	 * <li>DateTime - String or java.util.Date</li>
 	 * </ul>
-	 * @param variableName - name
+	 * @param variableName - name, required
 	 * @param variableValue - value
-	 * @param variableType - type
+	 * @param variableType - type, required
 	 * @param variableFormat - ignored for Text type.
 	 */
 	public RenderVariable(String variableName, Object variableValue, VariableType variableType,
@@ -191,6 +191,16 @@ public class RenderVariable implements Serializable {
 					throw new IllegalArgumentException("Invalid Value Type: "
 						+ variableValue.getClass().getName() + ", by " + variableName);
 				}
+				else {
+					try {
+						@SuppressWarnings({ "unchecked", "unused" })
+						Object obj = (Collection<Map<String, RenderVariable>>) variableValue;
+					}
+					catch (ClassCastException e) {
+						throw new IllegalArgumentException("Failed to cast the Collection for "
+								+ variableName, e);
+					}
+ 				}
 			}
 		}
 		else {

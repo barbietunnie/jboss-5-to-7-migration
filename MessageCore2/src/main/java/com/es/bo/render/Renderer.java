@@ -157,23 +157,14 @@ public final class Renderer implements java.io.Serializable {
 				// only one table variable is supported with predefined name.
 				RenderVariable r = variables.get(TableVariableName);
 				if (r != null && r.getVariableValue() != null
-						&& VariableType.COLLECTION.equals(r.getVariableType())
-						&& r.getVariableValue() instanceof Collection) {
-					try {
-						@SuppressWarnings("unchecked")
-						Collection<Map<String, RenderVariable>> c = (Collection<Map<String, RenderVariable>>) r.getVariableValue();
-						for (Iterator<Map<String, RenderVariable>> it = c.iterator(); it.hasNext();) {
-							Map<String, RenderVariable> row = new HashMap<String, RenderVariable>();
-							row.putAll(variables); // add main variables first
-							row.putAll(it.next());
-							sb.append(renderTemplate(tableRow, row, errors, isOptionalSection));
-						}
-					}
-					catch (ClassCastException e) {
-						ErrorVariable err = buildErrorRecord(TableVariableName, 
-								r.getVariableValue().getClass().getName(),
-								"Failed to cast to Collection<Map<String, RenderVariable>>");
-						errors.put(err.getVariableName(), err);
+					&& VariableType.COLLECTION.equals(r.getVariableType())) {
+					@SuppressWarnings("unchecked")
+					Collection<Map<String, RenderVariable>> c = (Collection<Map<String, RenderVariable>>) r.getVariableValue();
+					for (Iterator<Map<String, RenderVariable>> it = c.iterator(); it.hasNext();) {
+						Map<String, RenderVariable> row = new HashMap<String, RenderVariable>();
+						row.putAll(variables); // add main variables first
+						row.putAll(it.next());
+						sb.append(renderTemplate(tableRow, row, errors, isOptionalSection));
 					}
 				}
 				else {
@@ -193,12 +184,6 @@ public final class Renderer implements java.io.Serializable {
 						ErrorVariable err = buildErrorRecord(TableVariableName, 
 								r.getVariableType().name(),
 								"Variable Type is not a Collection for a Table");
-						errors.put(err.getVariableName(), err);
-					}
-					else if (!(r.getVariableValue() instanceof Collection)) {
-						ErrorVariable err = buildErrorRecord(TableVariableName, 
-								r.getVariableValue().getClass().getName(),
-								"Variable Value is not a Collection for a Table");
 						errors.put(err.getVariableName(), err);
 					}
 				}
