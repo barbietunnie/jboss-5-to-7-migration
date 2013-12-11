@@ -21,6 +21,7 @@ import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.StatusId;
 import com.es.data.constant.VariableType;
+import com.es.data.preload.GlobalVariableEnum;
 import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.comm.SenderDataVo;
 import com.es.vo.template.SenderVariableVo;
@@ -198,7 +199,7 @@ public class SenderDataDao extends AbstractDao {
 		SenderVariableVo vo = new SenderVariableVo();
 		vo.setSenderId(senderVo.getSenderId());
 		vo.setStatusId(StatusId.ACTIVE.getValue());
-		vo.setStartTime(new Timestamp(new java.util.Date().getTime()));
+		vo.setStartTime(new Timestamp(System.currentTimeMillis()));
 		
 		vo.setVariableName("DomainName");
 		vo.setVariableValue(senderVo.getDomainName());
@@ -258,7 +259,7 @@ public class SenderDataDao extends AbstractDao {
 		getSenderVariableDao().insert(vo);
 		rowsInserted++;
 		
-		vo.setVariableName("CurrentDateTime");
+		vo.setVariableName(GlobalVariableEnum.CurrentDateTime.name());
 		vo.setVariableValue(null);
 		vo.setVariableFormat(null);
 		vo.setVariableType(VariableType.DATETIME.getValue());
@@ -267,7 +268,7 @@ public class SenderDataDao extends AbstractDao {
 		getSenderVariableDao().insert(vo);
 		rowsInserted++;
 		
-		vo.setVariableName("CurrentDate");
+		vo.setVariableName(GlobalVariableEnum.CurrentDate.name());
 		vo.setVariableValue(null);
 		vo.setVariableFormat("yyyy-MM-dd");
 		vo.setVariableType(VariableType.DATETIME.getValue());
@@ -276,7 +277,7 @@ public class SenderDataDao extends AbstractDao {
 		getSenderVariableDao().insert(vo);
 		rowsInserted++;
 		
-		vo.setVariableName("CurrentTime");
+		vo.setVariableName(GlobalVariableEnum.CurrentTime.name());
 		vo.setVariableValue(null);
 		vo.setVariableFormat("hh:mm:ss a");
 		vo.setVariableType(VariableType.DATETIME.getValue());

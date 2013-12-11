@@ -258,7 +258,7 @@ public class TemplateTables extends AbstractTableBase {
 		TemplateVariableVo var1 = new TemplateVariableVo();
 		var1.setSenderId(sender.getSenderId());
 		var1.setTemplateId(varTmpltId);
-		var1.setVariableName("CurrentDateTime");
+		var1.setVariableName(GlobalVariableEnum.CurrentDateTime.name());
 		var1.setStartTime(tms);
 		
 		var1.setVariableType(VariableType.DATETIME.getValue());
@@ -269,7 +269,7 @@ public class TemplateTables extends AbstractTableBase {
 		TemplateVariableVo var2 = new TemplateVariableVo();
 		var2.setSenderId(sender.getSenderId());
 		var2.setTemplateId(varTmpltId);
-		var2.setVariableName("CurrentDate");
+		var2.setVariableName(GlobalVariableEnum.CurrentDate.name());
 		var2.setStartTime(tms);
 		var2.setVariableFormat("yyyy-MM-dd");
 		var2.setVariableType(VariableType.DATETIME.getValue());

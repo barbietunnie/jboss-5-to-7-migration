@@ -23,6 +23,7 @@ import com.es.dao.sender.GlobalVariableDao;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.StatusId;
 import com.es.data.constant.VariableType;
+import com.es.data.preload.GlobalVariableEnum;
 import com.es.vo.template.GlobalVariableVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -34,7 +35,7 @@ public class GlobalVariableTest {
 	@Resource
 	private GlobalVariableDao globalVariableDao;
 	Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
-	final String testVariableName = "CurrentDate";
+	final String testVariableName = GlobalVariableEnum.CurrentDate.name();
 
 	@BeforeClass
 	public static void GlobalVariablePrepare() {

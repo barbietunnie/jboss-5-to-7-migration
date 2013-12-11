@@ -17,6 +17,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.es.dao.template.TemplateVariableDao;
+import com.es.data.preload.GlobalVariableEnum;
 import com.es.vo.template.TemplateVariableVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -28,7 +29,7 @@ public class TemplateVariableTest {
 	@Resource
 	private TemplateVariableDao templateVariableDao;
 	Timestamp updtTime = new Timestamp(new java.util.Date().getTime());
-	final String testVariableName = "CurrentDate";
+	final String testVariableName = GlobalVariableEnum.CurrentDate.name();
 
 	@BeforeClass
 	public static void TemplateVariablePrepare() {
