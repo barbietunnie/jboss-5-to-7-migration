@@ -279,8 +279,7 @@ public class MsgOutboxBo {
 								}
 							}
 							else if (req.getVariableValue() instanceof java.util.Date) {
-								renderVariableVo.setVariableValue(fmt
-										.format((java.util.Date) req.getVariableValue()));
+								renderVariableVo.setVariableValue(fmt.format(req.getVariableValue()));
 							}
 						}
 					}
