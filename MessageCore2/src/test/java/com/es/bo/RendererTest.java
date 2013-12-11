@@ -29,28 +29,29 @@ public final class RendererTest {
 	static final Logger logger = Logger.getLogger(RendererTest.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
+	private String dateTimeFormat = Constants.DEFAULT_DATE_FORMAT;
+	private java.util.Date currDate = new java.util.Date();
+
 	@Test
 	public void testRenderer() {
 		String template = "BeginTemplate\n"
-			+ "Current Date: ${CurrentDate} ${0}\n"
+			+ "Current Date: ${CurrentDate} ${0} ${invalidVariableName}\n"
 			+ "${name1}, ${name2} Some Text ${name3} More Text\n"
 			+ "Some Numberic values: ${numeric1}, ${numeric2}, ${numeric3}\n"
 			+ "Some Datetime values: ${datetime1}, ${datetime2}, ${datetime3}, ${datetime4}\n"
 			+ "${name4.recurrsive}\n"
 			+ "$EndTemplate\n";
 		
-		java.util.Date currDate = new java.util.Date();
-		String dateTimeFormat1 = "yyyy-MM-dd";
-		SimpleDateFormat fmt = new SimpleDateFormat(dateTimeFormat1);
+		SimpleDateFormat fmt = new SimpleDateFormat(dateTimeFormat);
 		String expected = "BeginTemplate\n"
-			+ "Current Date: " + fmt.format(currDate) + " ${0}\n"
-			+ "Jack Wang, John Smith Some Text Joe Jones More Text\n"
+			+ "Current Date: " + fmt.format(currDate) + " ${0} ${invalidVariableName}\n"
+			+ "Jack Wang, Rendered User2 Some Text Rendered User3 More Text\n"
 			+ "Some Numberic values: 12,345.678, (-000,012,345.68), -$99,999.99\n"
 			+ "Some Datetime values: 2007-10-01 15:23:12, 12/01/2007, , 2009-07-29 13.04\n"
 			+ "Recursive Variable Jack Wang End\n"
 			+ "$EndTemplate\n";
 		
-		Map<String, RenderVariable> map = createVariableMap(currDate, dateTimeFormat1);
+		Map<String, RenderVariable> map = createVariableMap();
 		
 		Renderer renderer = Renderer.getInstance();
 		try {
@@ -80,12 +81,12 @@ public final class RendererTest {
 	@Test
 	public void testTableSection() {
 		String template="BeginTemplate\n"
-				+ "Current Date: ${CurrentDate}\n"
+				+ "Current Date: ${CurrentDateTime}\n"
 				+ "${name1}${name2} Some Text ${name3}More Text\n"
-				+ "Some Numberic values: ${numeric1}   ${numeric2}   ${numeric3}\n"
+				+ "Some Numberic values: ${numeric1\n}   ${numeric2}   ${numeric4}\n"
 				+ "Some Datetime values: ${datetime1}  ${datetime2}  ${datetime3}\n"
 				+ "Some Email Addresses: ${address1}  ${address2}\n"
-				+ "${TABLE_SECTION_BEGIN}TableRowBegin <${name2}> TableRowEnd\n"
+				+ "${TABLE_SECTION_BEGIN}TableRowBegin <${name2}> - ${name3} TableRowEnd\n"
 				+ "${TABLE_SECTION_END}text\n"
 				+ "<<<<< Optional Sections Begin\n"
 				+ "${OPTIONAL_SECTION_BEGIN}Level 1-1 ${name1}\n"
@@ -95,15 +96,17 @@ public final class RendererTest {
 				+ "${OPTIONAL_SECTION_END}"
 				+ "${OPTIONAL_SECTION_BEGIN}Level 1-2 ${datetime1}\n${OPTIONAL_SECTION_END}"
 				+ ">>>>> Optional Sections End.\n"
-				+ "${name4}\n"
+				+ "${name4.recurrsive}\n"
 				+ "$EndTemplate\n";
-		Map<String, RenderVariable> map = createVariableMapWithTableSection();
+		Map<String, RenderVariable> map = createVariableMap();
 		Renderer renderer = Renderer.getInstance();
 		try {
 			Map<String, ErrorVariable> errors = new HashMap<String, ErrorVariable>();
 			String renderedText = renderer.render(template, map, errors);
 			assertNotNull(renderedText);
-			SimpleDateFormat sdf = new SimpleDateFormat(Constants.DEFAULT_DATE_FORMAT);
+			logger.info("testTableSection()\n++++++++++ Rendered Text++++++++++\n" + renderedText);
+			assertTrue(errors.isEmpty());
+			SimpleDateFormat sdf = new SimpleDateFormat(Constants.DEFAULT_DATETIME_FORMAT);
 			String currDateStr = "Current Date: " + sdf.format(new java.util.Date());
 			assertTrue(StringUtils.contains(renderedText, currDateStr));
 			// verify table section
@@ -122,7 +125,7 @@ public final class RendererTest {
 
 	@Test
 	public void testBadTemplate() {
-		Map<String, RenderVariable> map = createVariableMap(new java.util.Date(), "yyyy-MM-dd");
+		Map<String, RenderVariable> map = createVariableMap();
 		Renderer renderer = Renderer.getInstance();
 		int exceptionCaught = 0;
 		
@@ -135,6 +138,7 @@ public final class RendererTest {
 			renderer.render(template1, map, errors);
 		}
 		catch (Exception e) {
+			logger.error("Error 1 - " + e.getMessage());
 			assertTrue(e.getMessage().indexOf("${numeric1,") > 0);
 			exceptionCaught++;
 		}
@@ -147,6 +151,7 @@ public final class RendererTest {
 			renderer.render(template2, map, errors);
 		}
 		catch (Exception e) {
+			logger.error("Error 2 - " + e.getMessage());
 			assertTrue(e.getMessage().indexOf("${numeric2,") > 0);
 			exceptionCaught++;
 		}
@@ -160,6 +165,7 @@ public final class RendererTest {
 			fail();
 		}
 		catch (Exception e) {
+			logger.error("Error 3 - " + e.getMessage());
 			assertTrue(e.getMessage().indexOf("${numeric3") > 0);
 			exceptionCaught++;
 		}
@@ -167,28 +173,38 @@ public final class RendererTest {
 		assertTrue(exceptionCaught == 3);
 	}
 
-	private Map<String, RenderVariable> createVariableMap(java.util.Date currDate, String dateTimeFormat1) {
+	private Map<String, RenderVariable> createVariableMap() {
 		Map<String, RenderVariable> map = new HashMap<String, RenderVariable>();
 		
 		RenderVariable currentDate = new RenderVariable(
 				GlobalVariableEnum.CurrentDate.name(), 
 				currDate, 
 				VariableType.DATETIME,
-				dateTimeFormat1
+				dateTimeFormat
 			);
 		map.put(currentDate.getVariableName(), currentDate);
 		
+		RenderVariable currentDateTime = new RenderVariable(
+				GlobalVariableEnum.CurrentDateTime.name(), 
+				null, 
+				null, 
+				VariableType.DATETIME, 
+				CodeType.YES_CODE.getValue(),
+				Boolean.FALSE
+			);
+		map.put(currentDateTime.getVariableName(), currentDateTime);
+
 		RenderVariable req1 = new RenderVariable(
 				"name1", 
 				"Jack Wang"
 			);
 		RenderVariable req2 = new RenderVariable(
 				"name2", 
-				"John Smith"
+				"Rendered User2"
 			);
 		RenderVariable req3 = new RenderVariable(
 				"name3", 
-				"Joe Jones"
+				"Rendered User3"
 			);
 		RenderVariable req4 = new RenderVariable(
 				"name4.recurrsive", 
@@ -197,7 +213,7 @@ public final class RendererTest {
 			);
 		RenderVariable req5 = new RenderVariable(
 				"name5", 
-				"Roger Banner", 
+				"Rendered User5", 
 				VariableType.TEXT
 			);
 		
@@ -216,11 +232,20 @@ public final class RendererTest {
 		
 		RenderVariable req6_3 = new RenderVariable(
 				"numeric3", 
-				new BigDecimal(-99999.99),
+				BigDecimal.valueOf(-99999.99),
 				VariableType.NUMERIC,
 				"$###,###,##0.00;-$###,###,##0.00"
 			);
 		
+		RenderVariable req6_4 = new RenderVariable(
+				"numeric4", 
+				Integer.valueOf(122),
+				null,
+				VariableType.NUMERIC, 
+				CodeType.YES_CODE.getValue(),
+				Boolean.FALSE
+			);
+
 		RenderVariable req7_1 = new RenderVariable(
 				"datetime1", 
 				"2007-10-01 15:23:12", // use default format
@@ -256,6 +281,7 @@ public final class RendererTest {
 		map.put(req6_1.getVariableName(), req6_1);
 		map.put(req6_2.getVariableName(), req6_2);
 		map.put(req6_3.getVariableName(), req6_3);
+		map.put(req6_4.getVariableName(), req6_4);
 		map.put(req7_1.getVariableName(), req7_1);
 		map.put(req7_2.getVariableName(), req7_2);
 		map.put(req7_3.getVariableName(), req7_3);
@@ -268,118 +294,7 @@ public final class RendererTest {
 				"yyyy-MM-dd HH.mm" // custom format
 			);
 		map.put(req7_4.getVariableName(), req7_4);
-		
-		return map;
-	}
-	
-	Map<String, RenderVariable> createVariableMapWithTableSection() {
-		Map<String, RenderVariable> map = new HashMap<String, RenderVariable>();
-		
-		RenderVariable currentDate = new RenderVariable(
-				GlobalVariableEnum.CurrentDate.name(), 
-				null, 
-				"yyyy-MM-dd", 
-				VariableType.DATETIME, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		map.put(currentDate.getVariableName(), currentDate);
-		
-		RenderVariable req1 = new RenderVariable(
-				"name1", 
-				"Jack Wang", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		RenderVariable req2 = new RenderVariable(
-				"name2", 
-				"Rendered User2", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		RenderVariable req3 = new RenderVariable(
-				"name3", 
-				"Rendered User3", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		RenderVariable req4 = new RenderVariable(
-				"name4", 
-				"Recursive Variable ${name1} End", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		RenderVariable req5 = new RenderVariable(
-				"name5", 
-				"Rendered User5", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req6_1 = new RenderVariable(
-				"numeric1", 
-				"12345.678", 
-				null, 
-				VariableType.NUMERIC, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req6_2 = new RenderVariable(
-				"numeric2", 
-				"-12345.678",
-				"000,000,000.0#;(-000,000,000.0#)",
-				VariableType.NUMERIC, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req6_3 = new RenderVariable(
-				"numeric3", 
-				Integer.valueOf(122),
-				null,
-				VariableType.NUMERIC, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req7_1 = new RenderVariable(
-				"datetime1", 
-				"2007-10-01 15:23:12",
-				null,  // default format
-				VariableType.DATETIME, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req7_2 = new RenderVariable(
-				"datetime2", 
-				"12/01/2007", 
-				"MM/dd/yyyy", // custom format
-				VariableType.DATETIME,
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req7_3 = new RenderVariable(
-				"datetime3", 
-				null, // use current time
-				"yyyy-MM-dd:hh.mm.ss a", // custom format
-				VariableType.DATETIME,
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
+
 		RenderVariable req8_1 = new RenderVariable(
 				"address1", 
 				"str.address@legacytojava.com",
@@ -407,20 +322,16 @@ public final class RendererTest {
 		
 		// build a Collection for Table
 		RenderVariable req2_row1 = new RenderVariable(
-				"name2", 
+				req2.getVariableName(), 
 				"Rendered User2 - Row 1", 
-				null, 
 				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
+				null
 			);
 		RenderVariable req2_row2 = new RenderVariable(
-				"name2", 
+				req2.getVariableName(), 
 				"Rendered User2 - Row 2", 
-				null, 
 				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
+				null
 			);
 		TableSection table = new TableSection();
 		Map<String, RenderVariable> row1 = table.getEmptyRow(); // a row
@@ -439,21 +350,9 @@ public final class RendererTest {
 				CodeType.YES_CODE.getValue(),
 				Boolean.FALSE
 			);
-		// end of Collection
-		
-		map.put(req1.getVariableName(), req1);
-		map.put(req2.getVariableName(), req2);
-		map.put(req3.getVariableName(), req3);
-		map.put(req4.getVariableName(), req4);
-		map.put(req5.getVariableName(), req5);
-		map.put(req6_1.getVariableName(), req6_1);
-		map.put(req6_2.getVariableName(), req6_2);
-		map.put(req6_3.getVariableName(), req6_3);
-		map.put(req7_1.getVariableName(), req7_1);
-		map.put(req7_2.getVariableName(), req7_2);
-		map.put(req7_3.getVariableName(), req7_3);
 		map.put(Renderer.TableVariableName, array);
-		
+		// end of Collection
+
 		return map;
 	}
 }

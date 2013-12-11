@@ -9,20 +9,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.mail.Address;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
 
-import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
 import com.es.data.constant.VariableType;
-import com.es.data.preload.GlobalVariableEnum;
 import com.es.exception.TemplateException;
 
 /**
@@ -37,15 +32,16 @@ import com.es.exception.TemplateException;
  * intact, logs an error and continues the scanning.
  * <p>
  * A template could contain a "Table Section". To render many rows on a table, the
- * variables defined within the table section should be provided by calling program
- * with a collection of maps, each map represents a row on the table and is indexed
- * by variable names.<br>
+ * variables defined within the table section should be provided by the calling
+ * program using a collection of maps. Each map in the collection represents a row
+ * on the table and the map is keyed by variable names. The calling program should 
+ * use a predefined name to pass the collection.<br>
  * <pre>
  * For example: a table section is defined as following:
  * ${TABLE_SECTION_BEGIN} RowTitle - ${var1} RowValue - ${var2} ${TABLE_SECTION_END}
  * 
- * and the calling program provides the following:
- * An array object contains the following two maps:
+ * the calling program provides the following:
+ * A RenderVariable with name of "TableRows" and a list of following two maps:
  *   1. Map one contains variables var1, var2 and their values Title1 and Value1
  *   2. Map two contains variables var1, var2 and their values Title2 and Value2
  *   
@@ -54,9 +50,10 @@ import com.es.exception.TemplateException;
  *  RowTitle - Title2 RowValue - Value2
  * </pre>
  * <p>
- * A template could also contain one or more "Optional Sections". If a match could not
- * be found for any variable within an optional section, the variable is ignored and
- * the section is replaced by a blank.
+ * A template could also contain one or more "Optional Sections". In order for an
+ * optional section to get rendered, all of the variables within the section must be 
+ * supplied by the calling program. If a match could not be found for any variable
+ * within an optional section, the entire section is replaced by a blank.
  */
 public final class Renderer implements java.io.Serializable {
 	private static final long serialVersionUID = -1670472296238983560L;
@@ -67,6 +64,10 @@ public final class Renderer implements java.io.Serializable {
 	final static String CloseDelimiter="}";
 	final static int DelimitersLen=OpenDelimiter.length()+CloseDelimiter.length();
 	final static int VARIABLE_NAME_LENGTH = 26;
+
+	// Controls how white spaces in variable names are treated.
+	private static boolean RemoveWhiteSpacesFromVariableName = false;
+	private static boolean TrimWhiteSpacesFromVariableName = true;
 	
 	final static int MAX_LOOP_COUNT = 10; // maximum depth of recursive variables
 	
@@ -103,7 +104,6 @@ public final class Renderer implements java.io.Serializable {
 		return renderTemplate(templateText, variables, errors, isOptionalSection, 0);
 	}
 
-	@SuppressWarnings("unchecked")
 	private String renderTemplate(String templateText, Map<String, RenderVariable> variables,
 			Map<String, ErrorVariable> errors, boolean isOptionalSection, int loopCount)
 			throws ParseException, TemplateException {
@@ -121,25 +121,27 @@ public final class Renderer implements java.io.Serializable {
 		int currPos = 0;
 		StringBuffer sb = new StringBuffer();
 		VarProperties varProps;
-		while ((varProps = getVariableName(templateText, currPos)) != null) {
+		while ((varProps = getNextVariable(templateText, currPos)) != null) {
 			logger.info("varname:" + varProps.name + ", bgnPos:" + varProps.bgnPos + ", endPos:"
 					+ varProps.endPos);
 			sb.append(templateText.substring(currPos, varProps.bgnPos));
-			if (OptionalTagBgn.equals(varProps.name)) { // optional section
-				int optEndPos = getEndTagPosition(templateText, varProps.endPos);
-				if (optEndPos < varProps.endPos) {
+			// optional section
+			if (OptionalTagBgn.equals(varProps.name)) {
+				int optlEndPos = getEndTagPosition(templateText, varProps.endPos);
+				if (optlEndPos < varProps.endPos) {
 					ErrorVariable err = buildErrorRecord(varProps.name, "" + varProps.bgnPos,
 							OptionalTagEnd + " Missing");
 					errors.put(err.getVariableName(), err);
 					break;
 				}
-				String optTmplt = templateText.substring(varProps.bgnPos + OptionalTagBgn.length()
-						+ DelimitersLen, optEndPos);
-				varProps.endPos = optEndPos + OptionalTagEnd.length() + DelimitersLen;
-				logger.info("Optional Section <" + optTmplt + ">");
-				sb.append(renderTemplate(optTmplt, variables, errors, true, loopCount));
+				String optlTmplt = templateText.substring(varProps.bgnPos + OptionalTagBgn.length()
+						+ DelimitersLen, optlEndPos);
+				varProps.endPos = optlEndPos + OptionalTagEnd.length() + DelimitersLen;
+				logger.info("Optional Section <" + optlTmplt + ">");
+				sb.append(renderTemplate(optlTmplt, variables, errors, true, loopCount));
 			}
-			else if (TableTagBgn.equals(varProps.name)) { // table section
+			// table section - experimental
+			else if (TableTagBgn.equals(varProps.name)) {
 				int tableEndPos = templateText.indexOf(OpenDelimiter + TableTagEnd + CloseDelimiter,
 						varProps.endPos);
 				if (tableEndPos < varProps.endPos) {
@@ -148,41 +150,72 @@ public final class Renderer implements java.io.Serializable {
 					errors.put(err.getVariableName(), err);
 					break;
 				}
-				String arrayRow = templateText.substring(varProps.bgnPos + TableTagBgn.length()
+				String tableRow = templateText.substring(varProps.bgnPos + TableTagBgn.length()
 						+ DelimitersLen, tableEndPos);
 				varProps.endPos = tableEndPos + TableTagEnd.length() + DelimitersLen;
-				logger.info("Table Row <" + arrayRow + ">");
-				if (variables != null) {
-					RenderVariable r = variables.get(TableVariableName);
-					if (r != null && r.getVariableValue() != null
-							&& VariableType.COLLECTION.equals(r.getVariableType())
-							&& r.getVariableValue() instanceof Collection) {
+				logger.info("Table Row <" + tableRow + ">");
+				// only one table variable is supported with predefined name.
+				RenderVariable r = variables.get(TableVariableName);
+				if (r != null && r.getVariableValue() != null
+						&& VariableType.COLLECTION.equals(r.getVariableType())
+						&& r.getVariableValue() instanceof Collection) {
+					try {
+						@SuppressWarnings("unchecked")
 						Collection<Map<String, RenderVariable>> c = (Collection<Map<String, RenderVariable>>) r.getVariableValue();
 						for (Iterator<Map<String, RenderVariable>> it = c.iterator(); it.hasNext();) {
 							Map<String, RenderVariable> row = new HashMap<String, RenderVariable>();
 							row.putAll(variables); // add main variables first
 							row.putAll(it.next());
-							sb.append(renderTemplate(arrayRow, row, errors, isOptionalSection));
+							sb.append(renderTemplate(tableRow, row, errors, isOptionalSection));
 						}
 					}
-					else {
-						ErrorVariable err = buildErrorRecord(varProps.name, TableVariableName,
+					catch (ClassCastException e) {
+						ErrorVariable err = buildErrorRecord(TableVariableName, 
+								r.getVariableValue().getClass().getName(),
+								"Failed to cast to Collection<Map<String, RenderVariable>>");
+						errors.put(err.getVariableName(), err);
+					}
+				}
+				else {
+					if (r == null) {
+						ErrorVariable err = buildErrorRecord(TableVariableName, 
+								"Position: " + varProps.bgnPos + ", not rendered",
+								"Variable name not on Render Variables list.");
+						errors.put(err.getVariableName(), err);
+					}
+					else if (r.getVariableValue()==null) {
+						ErrorVariable err = buildErrorRecord(TableVariableName, 
+								"Position: " + varProps.bgnPos + ", not rendered",
+								"Variable value is null in the Variable instance.");
+						errors.put(err.getVariableName(), err);
+					}
+					else if (!VariableType.COLLECTION.equals(r.getVariableType())) {
+						ErrorVariable err = buildErrorRecord(TableVariableName, 
+								r.getVariableType().name(),
+								"Variable Type is not a Collection for a Table");
+						errors.put(err.getVariableName(), err);
+					}
+					else if (!(r.getVariableValue() instanceof Collection)) {
+						ErrorVariable err = buildErrorRecord(TableVariableName, 
+								r.getVariableValue().getClass().getName(),
 								"Variable Value is not a Collection for a Table");
 						errors.put(err.getVariableName(), err);
 					}
 				}
 			}
-			else if (variables.get(varProps.name) != null) { // main section
-				RenderVariable r = (RenderVariable) variables.get(varProps.name);
+			// main section
+			else if (variables.get(varProps.name) != null) {
+				RenderVariable r = variables.get(varProps.name);
 				if (VariableType.TEXT.equals(r.getVariableType())
 						|| VariableType.X_HEADER.equals(r.getVariableType())) {
 					if (r.getVariableValue() != null) {
-						if (getVariableName((String) r.getVariableValue(), 0) != null) {
+						if (getNextVariable((String) r.getVariableValue(), 0) != null) {
 							// recursive variable
 							// this variable contains other variable(s), render it
-							if (loopCount <= MAX_LOOP_COUNT) // check infinite loop
+							if (loopCount <= MAX_LOOP_COUNT) { // check infinite loop
 								sb.append(renderTemplate((String) r.getVariableValue(), variables,
 										errors, false, ++loopCount));
+							}
 						}
 						else {
 							sb.append(r.getVariableValue());
@@ -280,7 +313,7 @@ public final class Renderer implements java.io.Serializable {
 		return err;
 	}
 	
-	private VarProperties getVariableName(String text, int pos) throws TemplateException {
+	private VarProperties getNextVariable(String text, int pos) throws TemplateException {
 		VarProperties varProps = new VarProperties();
 		int nextPos;
 		if ((varProps.bgnPos = text.indexOf(OpenDelimiter, pos)) >= 0) {
@@ -288,6 +321,12 @@ public final class Renderer implements java.io.Serializable {
 					&& (nextPos + OpenDelimiter.length() - varProps.bgnPos) <= VARIABLE_NAME_LENGTH) {
 				varProps.endPos = nextPos + CloseDelimiter.length();
 				varProps.name = text.substring(varProps.bgnPos + OpenDelimiter.length(), nextPos);
+				if (RemoveWhiteSpacesFromVariableName) {
+					varProps.name = varProps.name.replaceAll("\\s+","");
+				}
+				else if (TrimWhiteSpacesFromVariableName) {
+					varProps.name = varProps.name.trim();
+				}
 				if (varProps.name.indexOf(OpenDelimiter) >= 0) {
 					throw new TemplateException("Missing the Closing Delimiter from position "
 							+ varProps.bgnPos + ": " + OpenDelimiter
@@ -347,228 +386,5 @@ public final class Renderer implements java.io.Serializable {
 		int bgnPos = 0;
 		int endPos = 0;
 		String name = null;
-	}
-
-	public static void main(String[] atgv) {
-		//String contentType = "text/plain";
-		String tmplt="BeginTemplate\n"
-			+ "Current Date: ${CurrentDate}\n"
-			+ "${name1}${name2} Some Text ${name3}More Text\n"
-			+ "Some Numberic values: ${numeric1}   ${numeric2}   ${numeric3}\n"
-			+ "Some Datetime values: ${datetime1}  ${datetime2}  ${datetime3}\n"
-			+ "Some Email Addresses: ${address1}  ${address2}\n"
-			+ "${TABLE_SECTION_BEGIN}TableRowBegin <${name2}> TableRowEnd\n"
-			+ "${TABLE_SECTION_END}text\n"
-			+ "<<<<< Optional Sections Begin\n"
-			+ "${OPTIONAL_SECTION_BEGIN}Level 1-1 ${name1}\n"
-			+ "${OPTIONAL_SECTION_BEGIN}  Level 2-1 No variable in this section\n${OPTIONAL_SECTION_END}"
-			+ "${OPTIONAL_SECTION_BEGIN}  Level 2-2 ${name1} ${SectionDropped} ${name2}\n${OPTIONAL_SECTION_END}"
-			+ "${OPTIONAL_SECTION_BEGIN}  Level 2-3 ${name2}\n${OPTIONAL_SECTION_END}"
-			+ "${OPTIONAL_SECTION_END}"
-			+ "${OPTIONAL_SECTION_BEGIN}Level 1-2 ${datetime1}\n${OPTIONAL_SECTION_END}"
-			+ ">>>>> Optional Sections End.\n"
-			+ "${name4}\n"
-			+ "$EndTemplate\n";
-		
-		Map<String, RenderVariable> map=new HashMap<String, RenderVariable>();
-		
-		RenderVariable currentDate = new RenderVariable(
-				GlobalVariableEnum.CurrentDate.name(), 
-				null, 
-				"yyyy-MM-dd", 
-				VariableType.DATETIME, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		map.put(currentDate.getVariableName(), currentDate);
-		
-		RenderVariable req1 = new RenderVariable(
-				"name1", 
-				"Jack Wang", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		RenderVariable req2 = new RenderVariable(
-				"name2", 
-				"Rendered User2", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		RenderVariable req3 = new RenderVariable(
-				"name3", 
-				"Rendered User3", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		RenderVariable req4 = new RenderVariable(
-				"name4", 
-				"Recursive Variable ${name1} End", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		RenderVariable req5 = new RenderVariable(
-				"name5", 
-				"Rendered User5", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req6_1 = new RenderVariable(
-				"numeric1", 
-				"12345.678", 
-				null, 
-				VariableType.NUMERIC, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req6_2 = new RenderVariable(
-				"numeric2", 
-				"-12345.678",
-				"000,000,000.0#;(-000,000,000.0#)",
-				VariableType.NUMERIC, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req6_3 = new RenderVariable(
-				"numeric3", 
-				Integer.valueOf(122),
-				null,
-				VariableType.NUMERIC, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req7_1 = new RenderVariable(
-				"datetime1", 
-				"2007-10-01 15:23:12",
-				null,  // default format
-				VariableType.DATETIME, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req7_2 = new RenderVariable(
-				"datetime2", 
-				"12/01/2007", 
-				"MM/dd/yyyy", // custom format
-				VariableType.DATETIME,
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req7_3 = new RenderVariable(
-				"datetime3", 
-				null, // use current time
-				"yyyy-MM-dd:hh.mm.ss a", // custom format
-				VariableType.DATETIME,
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		
-		RenderVariable req8_1 = new RenderVariable(
-				"address1", 
-				"str.address@legacytojava.com",
-				null,
-				VariableType.ADDRESS,
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		map.put(req8_1.getVariableName(), req8_1);
-		
-		try {
-			RenderVariable req8_2 = new RenderVariable(
-					"address2", 
-					new InternetAddress("inet.address@legacytojava.com"),
-					null,
-					VariableType.ADDRESS,
-					CodeType.YES_CODE.getValue(),
-					Boolean.FALSE
-				);
-			map.put(req8_2.getVariableName(), req8_2);
-		}
-		catch (AddressException e) {
-			logger.error("AddressException caught", e);
-		}
-		
-		// build a Collection for Table
-		RenderVariable req2_row1 = new RenderVariable(
-				"name2", 
-				"Rendered User2 - Row 1", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		RenderVariable req2_row2 = new RenderVariable(
-				"name2", 
-				"Rendered User2 - Row 2", 
-				null, 
-				VariableType.TEXT, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		TableSection table = new TableSection();
-		Map<String, RenderVariable> row1 = table.getEmptyRow(); // a row
-		row1.put(req2.getVariableName(), req2_row1);
-		row1.put(req3.getVariableName(), req3);
-		table.addRow(row1);
-		Map<String, RenderVariable> row2 = table.getEmptyRow(); // a row
-		row2.put(req2.getVariableName(), req2_row2);
-		row2.put(req3.getVariableName(), req3);
-		table.addRow(row2);
-		RenderVariable array = new RenderVariable(
-				TableVariableName, 
-				table.getCollection(),
-				null, 
-				VariableType.COLLECTION, 
-				CodeType.YES_CODE.getValue(),
-				Boolean.FALSE
-			);
-		// end of Collection
-		
-		map.put(req1.getVariableName(), req1);
-		map.put(req2.getVariableName(), req2);
-		map.put(req3.getVariableName(), req3);
-		map.put(req4.getVariableName(), req4);
-		map.put(req5.getVariableName(), req5);
-		map.put(req6_1.getVariableName(), req6_1);
-		map.put(req6_2.getVariableName(), req6_2);
-		map.put(req6_3.getVariableName(), req6_3);
-		map.put(req7_1.getVariableName(), req7_1);
-		map.put(req7_2.getVariableName(), req7_2);
-		map.put(req7_3.getVariableName(), req7_3);
-		map.put(TableVariableName, array);
-
-		Renderer tmp=new Renderer();
-		try {
-			Map<String, ErrorVariable> errors = new HashMap<String, ErrorVariable>();
-			String text = tmp.render(tmplt, map, errors);
-			logger.info("++++++++++ Rendered Text++++++++++\n" + text);
-			if (!errors.isEmpty()) {
-				logger.info("Display Error Variables..........");
-				Set<String> set = errors.keySet();
-				for (Iterator<String> it=set.iterator(); it.hasNext();) {
-					String key = it.next();
-					ErrorVariable req = errors.get(key);
-					logger.info(req.toString());
-				}
-			}
-		}
-		catch (Exception e) {
-			logger.error("Exception caught", e);
-		}
-		System.exit(0);
 	}
 }
