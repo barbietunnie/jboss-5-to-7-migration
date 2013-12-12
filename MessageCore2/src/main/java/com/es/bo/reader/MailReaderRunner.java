@@ -191,8 +191,8 @@ public class MailReaderRunner implements Serializable, Runnable, ConnectionListe
 		if (CodeType.YES.getValue().equals(mboxVo.getUseSsl())) {
 			m_props.setProperty("mail.pop3.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 			m_props.setProperty("mail.pop3.socketFactory.fallback", "false");
-			m_props.setProperty("mail.pop3.port", mboxVo.getPortNumber()+"");
-			m_props.setProperty("mail.pop3.socketFactory.port", mboxVo.getPortNumber()+"");
+			m_props.setProperty("mail.pop3.port", String.valueOf(mboxVo.getPortNumber()));
+			m_props.setProperty("mail.pop3.socketFactory.port", String.valueOf(mboxVo.getPortNumber()));
 			m_props.setProperty("mail.pop3.ssl.enable", "false"); 
 				/* default is "false" for "pop3" protocol, set to "true" for pop3s protocol */
 			//m_props.setProperty("mail.imap.ssl.enable", "true");

@@ -149,7 +149,7 @@ public class TimestampUtil implements java.io.Serializable {
 			tms.setNanos((int)(timeInNanos % 1000000000));
 		}
 		String dateString = db2SdfPart1.format(tms);
-		return (dateString + "." + fillWithTrailingZeros(tms.getNanos()+"", 6));
+		return (dateString + "." + fillWithTrailingZeros(String.valueOf(tms.getNanos()), 6));
 	}
 
 	/** return true if db2ts is a valid db2 time stamp, false otherwise. */

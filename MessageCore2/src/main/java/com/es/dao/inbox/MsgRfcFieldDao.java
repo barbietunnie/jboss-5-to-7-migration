@@ -22,7 +22,7 @@ public class MsgRfcFieldDao extends AbstractDao {
 			"from " +
 				"Msg_Rfc_Field where msgid=? and rfcType=? ";
 		
-		Object[] parms = new Object[] {msgId+"",rfcType};
+		Object[] parms = new Object[] {msgId,rfcType};
 		try {
 			MsgRfcFieldVo vo = getJdbcTemplate().queryForObject(sql, parms, 
 					new BeanPropertyRowMapper<MsgRfcFieldVo>(MsgRfcFieldVo.class));
@@ -39,7 +39,7 @@ public class MsgRfcFieldDao extends AbstractDao {
 			" from " +
 				" Msg_Rfc_Field where msgId=? " +
 			" order by rfcType";
-		Object[] parms = new Object[] {msgId+""};
+		Object[] parms = new Object[] {msgId};
 		List<MsgRfcFieldVo> list = getJdbcTemplate().query(sql, parms,
 				new BeanPropertyRowMapper<MsgRfcFieldVo>(MsgRfcFieldVo.class));
 		return list;
@@ -57,7 +57,7 @@ public class MsgRfcFieldDao extends AbstractDao {
 			"delete from Msg_Rfc_Field where msgid=? and rfcType=? ";
 		
 		List<Object> fields = new ArrayList<Object>();
-		fields.add(msgId+"");
+		fields.add(msgId);
 		fields.add(rfcType);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -69,7 +69,7 @@ public class MsgRfcFieldDao extends AbstractDao {
 			"delete from Msg_Rfc_Field where msgid=? ";
 		
 		List<Object> fields = new ArrayList<Object>();
-		fields.add(msgId+"");
+		fields.add(msgId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;

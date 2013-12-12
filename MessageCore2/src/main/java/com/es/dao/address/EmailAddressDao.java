@@ -327,7 +327,7 @@ public class EmailAddressDao extends AbstractDao {
 			catch (DataIntegrityViolationException e) {
 				// shouldn't reach here, should be caught by DuplicateKeyException
 				logger.error("findByAddress() - DataIntegrityViolationException caught", e);
-				String err = e.toString() + "";
+				String err = e.toString();
 				if (err.toLowerCase().indexOf("duplicate entry") > 0
 						&& retries < 0) {
 					// retry once may overcome concurrency issue. (the retry
@@ -572,7 +572,7 @@ public class EmailAddressDao extends AbstractDao {
 
 	public int deleteByAddrId(long addrId) {
 		String sql = "delete from Email_Address where emailAddrId=?";
-		Object[] parms = new Object[] { addrId + "" };
+		Object[] parms = new Object[] { addrId };
 		int rowsDeleted = getJdbcTemplate().update(sql, parms);
 		return rowsDeleted;
 	}

@@ -75,7 +75,7 @@ public class DeliveryErrorTest {
 		}
 		else {
 			mBean.setMsgRefId(inbox.getMsgId());
-			id_xhdr = inbox.getMsgId()+"";
+			id_xhdr = String.valueOf(inbox.getMsgId());
 		}
 		
 		if (inboxDao.getByPrimaryKey(mBean.getMsgRefId())==null) {
@@ -119,7 +119,7 @@ public class DeliveryErrorTest {
 					assertTrue(id_ibox.equals(inbox.getMsgRefId().toString()));
 				}
 				else {
-					assertTrue(id_ibox.equals(inbox.getLeadMsgId()+""));
+					assertTrue(id_ibox.equals(String.valueOf(inbox.getLeadMsgId())));
 				}
 			}
 			else {
@@ -131,10 +131,10 @@ public class DeliveryErrorTest {
 		}
 		if (MsgDirectionCode.SENT.getValue().equals(inbox.getMsgDirection())) {
 			if (isUpdatingSameRecord) {
-				assertTrue(id_xhdr.equals(inbox.getMsgId()+""));
+				assertTrue(id_xhdr.equals(String.valueOf(inbox.getMsgId())));
 			}
 			else {
-				assertTrue(id_xhdr.equals(minbox.getMsgId()+""));
+				assertTrue(id_xhdr.equals(String.valueOf(minbox.getMsgId())));
 			}
 		}
 		else if (MsgDirectionCode.RECEIVED.getValue().equals(inbox.getMsgDirection())) {

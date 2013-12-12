@@ -22,7 +22,7 @@ public class MsgAttachmentDao extends AbstractDao {
 			"from " +
 				"Msg_Attachment where msgid=? and attchmntDepth=? and attchmntSeq=? ";
 		
-		Object[] parms = new Object[] {msgId+"",attchmntDepth+"",attchmntSeq+""};
+		Object[] parms = new Object[] {msgId,attchmntDepth,attchmntSeq};
 		try {
 			MsgAttachmentVo vo = getJdbcTemplate().queryForObject(sql, parms,
 					new BeanPropertyRowMapper<MsgAttachmentVo>(MsgAttachmentVo.class));
@@ -39,7 +39,7 @@ public class MsgAttachmentDao extends AbstractDao {
 			" from " +
 				" Msg_Attachment where msgId=? " +
 			" order by attchmntDepth, attchmntSeq";
-		Object[] parms = new Object[] {msgId+""};
+		Object[] parms = new Object[] {msgId};
 		List<MsgAttachmentVo> list = getJdbcTemplate().query(sql, parms,
 				new BeanPropertyRowMapper<MsgAttachmentVo>(MsgAttachmentVo.class));
 		return list;
@@ -58,9 +58,9 @@ public class MsgAttachmentDao extends AbstractDao {
 			"delete from Msg_Attachment where msgid=? and attchmntDepth=? and attchmntSeq=? ";
 		
 		List<Object> fields = new ArrayList<Object>();
-		fields.add(msgId+"");
-		fields.add(attchmntDepth+"");
-		fields.add(attchmntSeq+"");
+		fields.add(msgId);
+		fields.add(attchmntDepth);
+		fields.add(attchmntSeq);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;
@@ -71,7 +71,7 @@ public class MsgAttachmentDao extends AbstractDao {
 			"delete from Msg_Attachment where msgid=? ";
 		
 		List<Object> fields = new ArrayList<Object>();
-		fields.add(msgId+"");
+		fields.add(msgId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;

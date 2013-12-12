@@ -129,7 +129,7 @@ public final class Renderer implements java.io.Serializable {
 			if (OptionalTagBgn.equals(varProps.name)) {
 				int optlEndPos = getEndTagPosition(templateText, varProps.endPos);
 				if (optlEndPos < varProps.endPos) {
-					ErrorVariable err = buildErrorRecord(varProps.name, "" + varProps.bgnPos,
+					ErrorVariable err = buildErrorRecord(varProps.name, String.valueOf(varProps.bgnPos),
 							OptionalTagEnd + " Missing");
 					errors.put(err.getVariableName(), err);
 					break;
@@ -145,7 +145,7 @@ public final class Renderer implements java.io.Serializable {
 				int tableEndPos = templateText.indexOf(OpenDelimiter + TableTagEnd + CloseDelimiter,
 						varProps.endPos);
 				if (tableEndPos < varProps.endPos) {
-					ErrorVariable err = buildErrorRecord(varProps.name, "" + varProps.bgnPos,
+					ErrorVariable err = buildErrorRecord(varProps.name, String.valueOf(varProps.bgnPos),
 							TableTagEnd + " Missing");
 					errors.put(err.getVariableName(), err);
 					break;

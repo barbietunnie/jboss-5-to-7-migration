@@ -22,7 +22,7 @@ public class MsgAddressDao extends AbstractDao {
 			"from " +
 				"Msg_Address where msgid=? and addrType=? and addrSeq=? ";
 		
-		Object[] parms = new Object[] {msgId+"",addrType,addrSeq+""};
+		Object[] parms = new Object[] {msgId,addrType,addrSeq};
 		try {
 			MsgAddressVo vo = getJdbcTemplate().queryForObject(sql, parms, 
 					new BeanPropertyRowMapper<MsgAddressVo>(MsgAddressVo.class));
@@ -39,7 +39,7 @@ public class MsgAddressDao extends AbstractDao {
 			" from " +
 				" Msg_Address where msgId=? " +
 			" order by addrType, addrSeq";
-		Object[] parms = new Object[] {msgId+""};
+		Object[] parms = new Object[] {msgId};
 		List<MsgAddressVo> list = getJdbcTemplate().query(sql, parms, 
 				new BeanPropertyRowMapper<MsgAddressVo>(MsgAddressVo.class));
 		return list;
@@ -51,7 +51,7 @@ public class MsgAddressDao extends AbstractDao {
 			" from " +
 				" Msg_Address where msgId=? and addrType=? " +
 			" order by addrSeq";
-		Object[] parms = new Object[] {msgId+"",addrType};
+		Object[] parms = new Object[] {msgId,addrType};
 		List<MsgAddressVo> list = getJdbcTemplate().query(sql, parms,
 				new BeanPropertyRowMapper<MsgAddressVo>(MsgAddressVo.class));
 		return list;
@@ -71,9 +71,9 @@ public class MsgAddressDao extends AbstractDao {
 			"delete from Msg_Address where msgid=? and addrType=? and addrSeq=? ";
 		
 		List<String> fields = new ArrayList<String>();
-		fields.add(msgId+"");
+		fields.add(String.valueOf(msgId));
 		fields.add(addrType);
-		fields.add(addrSeq+"");
+		fields.add(String.valueOf(addrSeq));
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;
@@ -84,7 +84,7 @@ public class MsgAddressDao extends AbstractDao {
 			"delete from Msg_Address where msgid=? ";
 		
 		List<String> fields = new ArrayList<String>();
-		fields.add(msgId+"");
+		fields.add(String.valueOf(msgId));
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;

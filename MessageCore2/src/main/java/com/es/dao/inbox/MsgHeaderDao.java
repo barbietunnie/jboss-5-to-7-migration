@@ -20,7 +20,7 @@ public class MsgHeaderDao extends AbstractDao {
 			"from " +
 				"Msg_Header where msgid=? and headerSeq=? ";
 		
-		Object[] parms = new Object[] {msgId+"",headerSeq+""};
+		Object[] parms = new Object[] {msgId,headerSeq};
 		try {
 			MsgHeaderVo vo = getJdbcTemplate().queryForObject(sql, parms, 
 					new BeanPropertyRowMapper<MsgHeaderVo>(MsgHeaderVo.class));
@@ -37,7 +37,7 @@ public class MsgHeaderDao extends AbstractDao {
 			" from " +
 				" Msg_Header where msgId=? " +
 			" order by headerSeq";
-		Object[] parms = new Object[] {msgId+""};
+		Object[] parms = new Object[] {msgId};
 		List<MsgHeaderVo> list = getJdbcTemplate().query(sql, parms, 
 				new BeanPropertyRowMapper<MsgHeaderVo>(MsgHeaderVo.class));
 		return list;
@@ -48,8 +48,8 @@ public class MsgHeaderDao extends AbstractDao {
 		List<String> fields = new ArrayList<String>();
 		fields.add(StringUtils.left(msgHeadersVo.getHeaderName(), 100));
 		fields.add(msgHeadersVo.getHeaderValue());
-		fields.add(msgHeadersVo.getMsgId()+"");
-		fields.add(msgHeadersVo.getHeaderSeq()+"");
+		fields.add(String.valueOf(msgHeadersVo.getMsgId()));
+		fields.add(String.valueOf(msgHeadersVo.getHeaderSeq()));
 		
 		String sql =
 			"update Msg_Header set " +
@@ -67,8 +67,8 @@ public class MsgHeaderDao extends AbstractDao {
 			"delete from Msg_Header where msgid=? and headerSeq=? ";
 		
 		List<String> fields = new ArrayList<String>();
-		fields.add(msgId+"");
-		fields.add(headerSeq+"");
+		fields.add(String.valueOf(msgId));
+		fields.add(String.valueOf(headerSeq));
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;
@@ -79,7 +79,7 @@ public class MsgHeaderDao extends AbstractDao {
 			"delete from Msg_Header where msgid=? ";
 		
 		List<String> fields = new ArrayList<String>();
-		fields.add(msgId+"");
+		fields.add(String.valueOf(msgId));
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;
@@ -97,8 +97,8 @@ public class MsgHeaderDao extends AbstractDao {
 				")";
 		
 		List<String> fields = new ArrayList<String>();
-		fields.add(msgHeadersVo.getMsgId()+"");
-		fields.add(msgHeadersVo.getHeaderSeq()+"");
+		fields.add(String.valueOf(msgHeadersVo.getMsgId()));
+		fields.add(String.valueOf(msgHeadersVo.getHeaderSeq()));
 		fields.add(StringUtils.left(msgHeadersVo.getHeaderName(), 100));
 		fields.add(msgHeadersVo.getHeaderValue());
 		

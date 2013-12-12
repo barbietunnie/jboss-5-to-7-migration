@@ -110,7 +110,7 @@ public class BroadcastToListTest {
 			if (emailId_body != null) { // in case of text message
 				assertTrue(emailId_body.equals(emailId_xhdr));
 			}
-			assertTrue(emailId_xhdr.equals(minbox.getMsgId()+""));
+			assertTrue(emailId_xhdr.equals(String.valueOf(minbox.getMsgId())));
 			
 			String to_sent = minbox.getToAddress();
 			RenderVariable vo = new RenderVariable(
