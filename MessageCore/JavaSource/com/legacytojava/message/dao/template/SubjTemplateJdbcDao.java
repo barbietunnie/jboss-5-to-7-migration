@@ -1,50 +1,21 @@
 package com.legacytojava.message.dao.template;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.template.SubjTemplateVo;
 
 @Component("subjTemplateDao")
-public class SubjTemplateJdbcDao implements SubjTemplateDao {
-	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-	
-	private static final class SubjTemplateMapper implements RowMapper<SubjTemplateVo> {
-		
-		public SubjTemplateVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			SubjTemplateVo subjTemplateVo = new SubjTemplateVo();
-			
-			subjTemplateVo.setRowId(rs.getInt("RowId"));
-			subjTemplateVo.setTemplateId(rs.getString("TemplateId"));
-			subjTemplateVo.setClientId(rs.getString("ClientId"));
-			subjTemplateVo.setStartTime(rs.getTimestamp("StartTime"));
-			subjTemplateVo.setDescription(rs.getString("Description"));
-			subjTemplateVo.setStatusId(rs.getString("StatusId"));
-			subjTemplateVo.setTemplateValue(rs.getString("TemplateValue"));
-			
-			return subjTemplateVo;
-		}
-	}
+public class SubjTemplateJdbcDao extends AbstractDao implements SubjTemplateDao {
 
 	public SubjTemplateVo getByPrimaryKey(String templateId, String clientId, Timestamp startTime) {
 		String sql = 
@@ -62,12 +33,14 @@ public class SubjTemplateJdbcDao implements SubjTemplateDao {
 			parms = new Object[] {templateId,clientId};
 		}
 		sql += " order by startTime asc ";
-		
-		List<?> list = getJdbcTemplate().query(sql, parms, new SubjTemplateMapper());
-		if (list.size()>0)
-			return (SubjTemplateVo)list.get(0);
-		else
+		try {
+			SubjTemplateVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<SubjTemplateVo>(SubjTemplateVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public SubjTemplateVo getByBestMatch(String templateId, String clientId, Timestamp startTime) {
@@ -93,9 +66,10 @@ public class SubjTemplateJdbcDao implements SubjTemplateDao {
 		sql += " order by clientId desc, startTime desc ";
 		
 		Object[] parms = keys.toArray();
-		List<?> list = getJdbcTemplate().query(sql, parms, new SubjTemplateMapper());
+		List<SubjTemplateVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<SubjTemplateVo>(SubjTemplateVo.class));
 		if (list.size()>0)
-			return (SubjTemplateVo)list.get(0);
+			return list.get(0);
 		else
 			return null;
 	}
@@ -107,7 +81,8 @@ public class SubjTemplateJdbcDao implements SubjTemplateDao {
 				" SubjTemplate where templateId=? " +
 			" order by clientId, startTime asc ";
 		Object[] parms = new Object[] {templateId};
-		List<SubjTemplateVo> list = (List<SubjTemplateVo>)getJdbcTemplate().query(sql, parms, new SubjTemplateMapper());
+		List<SubjTemplateVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<SubjTemplateVo>(SubjTemplateVo.class));
 		return list;
 	}
 	
@@ -118,33 +93,15 @@ public class SubjTemplateJdbcDao implements SubjTemplateDao {
 				" SubjTemplate where clientId=? " +
 			" order by templateId, startTime asc ";
 		Object[] parms = new Object[] {clientId};
-		List<SubjTemplateVo> list = (List<SubjTemplateVo>)getJdbcTemplate().query(sql, parms, new SubjTemplateMapper());
+		List<SubjTemplateVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<SubjTemplateVo>(SubjTemplateVo.class));
 		return list;
 	}
 	
 	public int update(SubjTemplateVo subjTemplateVo) {
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(subjTemplateVo.getTemplateId());
-		fields.add(subjTemplateVo.getClientId());
-		fields.add(subjTemplateVo.getStartTime());
-		fields.add(subjTemplateVo.getDescription());
-		fields.add(subjTemplateVo.getStatusId());
-		fields.add(subjTemplateVo.getTemplateValue());
-		fields.add(subjTemplateVo.getRowId());
-		
-		String sql =
-			"update SubjTemplate set " +
-				"TemplateId=?, " +
-				"ClientId=?, " +
-				"StartTime=?, " +
-				"Description=?, " +
-				"StatusId=?, " +
-				"TemplateValue=? " +
-			"where " +
-				" RowId=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(subjTemplateVo);
+		String sql = MetaDataUtil.buildUpdateStatement("SubjTemplate", subjTemplateVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -190,36 +147,10 @@ public class SubjTemplateJdbcDao implements SubjTemplateDao {
 	}
 	
 	public int insert(SubjTemplateVo subjTemplateVo) {
-		String sql = 
-			"INSERT INTO SubjTemplate (" +
-			"TemplateId, " +
-			"ClientId, " +
-			"StartTime, " +
-			"Description, " +
-			"StatusId, " +
-			"TemplateValue " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ? " +
-				")";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(subjTemplateVo.getTemplateId());
-		fields.add(subjTemplateVo.getClientId());
-		fields.add(subjTemplateVo.getStartTime());
-		fields.add(subjTemplateVo.getDescription());
-		fields.add(subjTemplateVo.getStatusId());
-		fields.add(subjTemplateVo.getTemplateValue());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(subjTemplateVo);
+		String sql = MetaDataUtil.buildInsertStatement("SubjTemplate", subjTemplateVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		subjTemplateVo.setRowId(retrieveRowId());
 		return rowsInserted;
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

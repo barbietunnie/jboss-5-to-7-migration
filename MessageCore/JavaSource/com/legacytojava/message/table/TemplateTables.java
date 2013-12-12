@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.template;
+package com.legacytojava.message.table;
 
 import java.sql.SQLException;
 

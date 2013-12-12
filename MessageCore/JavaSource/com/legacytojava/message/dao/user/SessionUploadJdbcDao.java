@@ -1,59 +1,31 @@
 package com.legacytojava.message.dao.user;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.SessionUploadVo;
 
 @Component("sessionUploadDao")
-public class SessionUploadJdbcDao implements SessionUploadDao {
-	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static final class SessionUploadMapper implements RowMapper<SessionUploadVo> {
-		
-		public SessionUploadVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			SessionUploadVo sessVo = new SessionUploadVo();
-			
-			sessVo.setSessionId(rs.getString("SessionId"));
-			sessVo.setSessionSeq(rs.getInt("SessionSeq"));
-			sessVo.setFileName(rs.getString("FileName"));
-			sessVo.setContentType(rs.getString("ContentType"));
-			sessVo.setUserId(rs.getString("UserId"));
-			sessVo.setCreateTime(rs.getTimestamp("CreateTime"));
-			sessVo.setSessionValue(rs.getBytes("SessionValue"));
-			
-			return sessVo;
-		}
-	}
+public class SessionUploadJdbcDao extends AbstractDao implements SessionUploadDao {
 	
 	public SessionUploadVo getByPrimaryKey(String sessionId, int sessionSeq) {
 		String sql = "select * from SessionUploads where SessionId=? and sessionSeq=?";
 		Object[] parms = new Object[] {sessionId, sessionSeq};
-		List<?> list = getJdbcTemplate().query(sql, parms, new SessionUploadMapper());
-		if (list.size()>0) {
-			return (SessionUploadVo)list.get(0);
+		try {
+			SessionUploadVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<SessionUploadVo>(SessionUploadVo.class));
+			return vo;
 		}
-		else {
+		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}
@@ -61,7 +33,8 @@ public class SessionUploadJdbcDao implements SessionUploadDao {
 	public List<SessionUploadVo> getBySessionId(String sessionId) {
 		String sql = "select * from SessionUploads where SessionId=?";
 		Object[] parms = new Object[] {sessionId};
-		List<SessionUploadVo> list = getJdbcTemplate().query(sql, parms, new SessionUploadMapper());
+		List<SessionUploadVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<SessionUploadVo>(SessionUploadVo.class));
 		return list;
 	}
 	
@@ -87,28 +60,18 @@ public class SessionUploadJdbcDao implements SessionUploadDao {
 	public List<SessionUploadVo> getByUserId(String userId) {
 		String sql = "select * from SessionUploads where UserId=?";
 		Object[] parms = new Object[] {userId};
-		List<SessionUploadVo> list = getJdbcTemplate().query(sql, parms, new SessionUploadMapper());
+		List<SessionUploadVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<SessionUploadVo>(SessionUploadVo.class));
 		return list;
 	}
 	
 	public int update(SessionUploadVo sessVo) {
-		Object[] parms = {
-				sessVo.getFileName(),
-				sessVo.getContentType(),
-				sessVo.getUserId(),
-				sessVo.getSessionValue(),
-				sessVo.getSessionId(),
-				sessVo.getSessionSeq()
-				};
-		
-		String sql = "update SessionUploads set " +
-			"FileName=?," +
-			"ContentType=?," +
-			"UserId=?," +
-			"SessionValue=?" +
-			" where SessionId=? and SessionSeq=?";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, parms);
+		if (sessVo.getCreateTime() == null) {
+			sessVo.setCreateTime(new Timestamp(System.currentTimeMillis()));
+		}
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(sessVo);
+		String sql = MetaDataUtil.buildUpdateStatement("SessionUploads", sessVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -150,27 +113,11 @@ public class SessionUploadJdbcDao implements SessionUploadDao {
 	}
 
 	public int insert(SessionUploadVo sessVo) {
-		Object[] parms = {
-				sessVo.getSessionId(),
-				sessVo.getSessionSeq(),
-				sessVo.getFileName(),
-				sessVo.getContentType(),
-				sessVo.getUserId(),
-				sessVo.getSessionValue()
-			};
+		sessVo.setCreateTime(new Timestamp(System.currentTimeMillis()));
 		
-		String sql = "INSERT INTO SessionUploads (" +
-			"SessionId," +
-			"SessionSeq," +
-			"FileName," +
-			"ContentType," +
-			"UserId," +
-			"CreateTime," +
-			"SessionValue" +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, current_timestamp, ?)";
-		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(sessVo);
+		String sql = MetaDataUtil.buildInsertStatement("SessionUploads", sessVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
 	}
 	
@@ -178,35 +125,7 @@ public class SessionUploadJdbcDao implements SessionUploadDao {
 		String lastSeq = "select max(SessionSeq) from SessionUploads where SessionId = '"
 				+ sessVo.getSessionId() + "'";
 		int sessSeq = getJdbcTemplate().queryForInt(lastSeq) + 1;
-		Object[] parms = {
-				sessVo.getSessionId(),
-				sessSeq,
-				sessVo.getFileName(),
-				sessVo.getContentType(),
-				sessVo.getUserId(),
-				sessVo.getSessionValue()
-			};
-		
-		String sql = "INSERT INTO SessionUploads (" +
-			"SessionId," +
-			"SessionSeq," +
-			"FileName," +
-			"ContentType," +
-			"UserId," +
-			"CreateTime," +
-			"SessionValue" +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, current_timestamp, ?)";
-		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
-		return rowsInserted;
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
+		sessVo.setSessionSeq(sessSeq);
+		return insert(sessVo);
 	}
 }

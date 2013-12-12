@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.action;
+package com.legacytojava.message.table;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -10,6 +10,9 @@ import com.legacytojava.message.constant.EmailAddressType;
 import com.legacytojava.message.constant.MsgDataType;
 import com.legacytojava.message.constant.RuleNameType;
 import com.legacytojava.message.constant.TableColumnName;
+import com.legacytojava.message.dao.action.MsgActionDao;
+import com.legacytojava.message.dao.action.MsgActionDetailDao;
+import com.legacytojava.message.dao.action.MsgDataTypeDao;
 import com.legacytojava.message.vo.action.MsgActionDetailVo;
 import com.legacytojava.message.vo.action.MsgActionVo;
 import com.legacytojava.message.vo.action.MsgDataTypeVo;

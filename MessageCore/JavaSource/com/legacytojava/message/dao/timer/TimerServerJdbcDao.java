@@ -1,63 +1,31 @@
 package com.legacytojava.message.dao.timer;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.constant.StatusIdCode;
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.TimerServerVo;
 
 @Component("timerServerDao")
-public class TimerServerJdbcDao implements TimerServerDao {
-	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static final class TimerMapper implements RowMapper<TimerServerVo> {
-		
-		public TimerServerVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			TimerServerVo timerServerVo = new TimerServerVo();
-			
-			timerServerVo.setRowId(rs.getInt("RowId"));
-			timerServerVo.setServerName(rs.getString("ServerName"));
-			timerServerVo.setTimerInterval(rs.getInt("TimerInterval"));
-			timerServerVo.setTimerIntervalUnit(rs.getString("TimerIntervalUnit"));
-			timerServerVo.setInitialDelay(rs.getInt("InitialDelay"));
-			timerServerVo.setStartTime(rs.getTimestamp("StartTime"));
-			timerServerVo.setThreads(rs.getInt("Threads"));
-			timerServerVo.setStatusId(rs.getString("StatusId"));
-			timerServerVo.setProcessorName(rs.getString("ProcessorName"));
-			timerServerVo.setUpdtTime(rs.getTimestamp("UpdtTime"));
-			timerServerVo.setUpdtUserId(rs.getString("UpdtUserId"));
-			
-			return timerServerVo;
-		}
-	}
+public class TimerServerJdbcDao extends AbstractDao implements TimerServerDao {
 	
 	public TimerServerVo getByPrimaryKey(String serverName) {
 		String sql = "select * from TimerServers where ServerName=?";
 		Object[] parms = new Object[] {serverName};
-		List<?> list = getJdbcTemplate().query(sql, parms, new TimerMapper());
-		if (list.size()>0) {
-			return (TimerServerVo)list.get(0);
+		try {
+			TimerServerVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<TimerServerVo>(TimerServerVo.class));
+			return vo;
 		}
-		else {
+		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}
@@ -68,42 +36,19 @@ public class TimerServerJdbcDao implements TimerServerDao {
 		if (onlyActive) {
 			sql += " where StatusId='" + StatusIdCode.ACTIVE + "'";
 		}
-		List<TimerServerVo> list = (List<TimerServerVo>)getJdbcTemplate().query(sql, new TimerMapper());
+		List<TimerServerVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<TimerServerVo>(TimerServerVo.class));
 		return list;
 	}
 	
 	public int update(TimerServerVo timerServerVo) {
 		if (timerServerVo.getUpdtTime()==null) {
-			timerServerVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+			timerServerVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		}
-		Object[] parms = {
-				timerServerVo.getServerName(),
-				timerServerVo.getTimerInterval(),
-				timerServerVo.getTimerIntervalUnit(),
-				timerServerVo.getInitialDelay(),
-				timerServerVo.getStartTime(),
-				timerServerVo.getThreads(),
-				timerServerVo.getStatusId(),
-				timerServerVo.getProcessorName(),
-				timerServerVo.getUpdtTime(),
-				timerServerVo.getUpdtUserId(),
-				timerServerVo.getRowId()
-				};
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(timerServerVo);
+		String sql = MetaDataUtil.buildUpdateStatement("TimerServers", timerServerVo);
 		
-		String sql = "update TimerServers set " +
-			"ServerName=?," +
-			"TimerInterval=?," +
-			"TimerIntervalUnit=?," +
-			"InitialDelay=?," +
-			"StartTime=?," +
-			"Threads=?," +
-			"StatusId=?," +
-			"ProcessorName=?," +
-			"UpdtTime=?," +
-			"UpdtUserId=?" +
-			" where RowId=?";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, parms);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -116,45 +61,12 @@ public class TimerServerJdbcDao implements TimerServerDao {
 	
 	public int insert(TimerServerVo timerServerVo) {
 		if (timerServerVo.getUpdtTime()==null) {
-			timerServerVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+			timerServerVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		}
-		Object[] parms = {
-				timerServerVo.getServerName(),
-				timerServerVo.getTimerInterval(),
-				timerServerVo.getTimerIntervalUnit(),
-				timerServerVo.getInitialDelay(),
-				timerServerVo.getStartTime(),
-				timerServerVo.getThreads(),
-				timerServerVo.getStatusId(),
-				timerServerVo.getProcessorName(),
-				timerServerVo.getUpdtTime(),
-				timerServerVo.getUpdtUserId()
-			};
-		
-		String sql = "INSERT INTO TimerServers (" +
-			"ServerName," +
-			"TimerInterval," +
-			"TimerIntervalUnit," +
-			"InitialDelay," +
-			"StartTime," +
-			"Threads," +
-			"StatusId," +
-			"ProcessorName," +
-			"UpdtTime," +
-			"UpdtUserId" +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(timerServerVo);
+		String sql = MetaDataUtil.buildInsertStatement("TimerServers", timerServerVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		timerServerVo.setRowId(retrieveRowId());
 		return rowsInserted;
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }
