@@ -180,7 +180,7 @@ public class RenderVariable implements Serializable {
 						+ variableValue.getClass().getName() + ", by " + variableName);
 				}
 			}
-			if (variableFormat==null) {
+			if (variableFormat==null) { // MIME type: text/plain, application/octet-stream, etc
 				throw new IllegalArgumentException(
 						"VariableFormat must be provided for LOB variable, by " + variableName);
 			}
