@@ -23,7 +23,7 @@ public class MsgStreamDao extends AbstractDao {
 			"from " +
 				"Msg_Stream where msgid=? ";
 		
-		Object[] parms = new Object[] {msgId+""};
+		Object[] parms = new Object[] {msgId};
 		try {
 			MsgStreamVo vo = getJdbcTemplate().queryForObject(sql, parms,
 					new BeanPropertyRowMapper<MsgStreamVo>(MsgStreamVo.class));
@@ -40,7 +40,7 @@ public class MsgStreamDao extends AbstractDao {
 			"from " +
 				"Msg_Stream where fromAddrId=? ";
 		
-		Object[] parms = new Object[] {fromAddrId+""};
+		Object[] parms = new Object[] {fromAddrId};
 		List<MsgStreamVo> list = getJdbcTemplate().query(sql, parms,
 				new BeanPropertyRowMapper<MsgStreamVo>(MsgStreamVo.class));
 		return list;
@@ -73,7 +73,7 @@ public class MsgStreamDao extends AbstractDao {
 			"delete from Msg_Stream where msgid=? ";
 		
 		List<Object> fields = new ArrayList<Object>();
-		fields.add(msgId+"");
+		fields.add(msgId);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;

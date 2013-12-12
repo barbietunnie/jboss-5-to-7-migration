@@ -89,7 +89,7 @@ public class RuleDataTypeDao extends AbstractDao {
 			"delete from Rule_Data_Type where RowId=? ";
 		
 		List<String> fields = new ArrayList<String>();
-		fields.add(rowId+"");
+		fields.add(String.valueOf(rowId));
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;

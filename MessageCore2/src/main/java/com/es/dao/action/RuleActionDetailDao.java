@@ -106,7 +106,7 @@ public class RuleActionDetailDao extends AbstractDao {
 			"delete from Rule_Action_Detail where RowId=? ";
 		
 		List<String> fields = new ArrayList<String>();
-		fields.add(rowId+"");
+		fields.add(String.valueOf(rowId));
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		updateReloadFlags();

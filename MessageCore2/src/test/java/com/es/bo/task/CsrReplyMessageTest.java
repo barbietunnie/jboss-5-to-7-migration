@@ -103,6 +103,6 @@ public class CsrReplyMessageTest {
 		String id_bean = parser.parseMsg(mBean.getBody());
 		String id_ibox = parser.parseMsg(minbox.getMsgBody());
 		assertTrue(id_bean.equals(id_ibox));
-		assertTrue(id_bean.equals(minbox.getMsgId()+""));
+		assertTrue(id_bean.equals(String.valueOf(minbox.getMsgId())));
 	}
 }

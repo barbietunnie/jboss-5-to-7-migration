@@ -85,6 +85,6 @@ public class SendMessageTest {
 		assertTrue(mBean.getBody().equals(minbox.getMsgBody()));
 		
 		String id = parser.parseMsg(mBean.getBody());
-		assertTrue(id.equals(minbox.getMsgId()+""));
+		assertTrue(id.equals(String.valueOf(minbox.getMsgId())));
 	}
 }

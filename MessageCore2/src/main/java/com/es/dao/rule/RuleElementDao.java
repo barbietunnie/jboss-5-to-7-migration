@@ -75,7 +75,7 @@ public class RuleElementDao extends AbstractDao {
 		
 		List<String> fields = new ArrayList<String>();
 		fields.add(ruleName);
-		fields.add(elementSeq+"");
+		fields.add(String.valueOf(elementSeq));
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		updateReloadFlags();

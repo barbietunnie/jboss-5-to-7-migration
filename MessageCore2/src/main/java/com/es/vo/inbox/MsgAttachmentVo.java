@@ -29,7 +29,7 @@ public class MsgAttachmentVo extends BaseVo implements Serializable {
 	public String getSizeAsString() {
 		int len = getAttachmentSize();
 		if (len < 1024) {
-			return 1024 + "";
+			return String.valueOf(1024);
 		}
 		else {
 			return (int) Math.ceil((double)len / 1024.0) + "K";

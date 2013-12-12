@@ -68,7 +68,7 @@ public class RenderObjectDao extends AbstractDao {
 			"delete from Render_Object where renderId=? and variableName=? ";
 		
 		List<String> fields = new ArrayList<String>();
-		fields.add(msgId+"");
+		fields.add(String.valueOf(msgId));
 		fields.add(variableName);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -80,7 +80,7 @@ public class RenderObjectDao extends AbstractDao {
 			"delete from Render_Object where renderId=? ";
 		
 		List<String> fields = new ArrayList<String>();
-		fields.add(msgId+"");
+		fields.add(String.valueOf(msgId));
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;

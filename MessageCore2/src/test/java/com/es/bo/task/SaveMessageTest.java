@@ -80,6 +80,6 @@ public class SaveMessageTest {
 		assertTrue(mBean.getBody().equals(minbox.getMsgBody()));
 		String emailIdBody = parser.parseMsg(minbox.getMsgBody());
 		assertNotNull(emailIdBody);
-		assertTrue(emailIdBody.equals(randomRec.getMsgId()+""));
+		assertTrue(emailIdBody.equals(String.valueOf(randomRec.getMsgId())));
 	}
 }

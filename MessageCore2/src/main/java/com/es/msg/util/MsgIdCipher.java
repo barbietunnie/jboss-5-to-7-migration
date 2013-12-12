@@ -29,7 +29,7 @@ public final class MsgIdCipher {
 		//plainText = 10L;
 		logger.info("plainText:      " + plainText);
 		
-		String withOnes = insertOnes(plainText+"");
+		String withOnes = insertOnes(String.valueOf(plainText));
 		logger.info("After InsertZeros: "+withOnes);
 		String withoutOnes = removeOnes(withOnes);
 		logger.info("After RemoveZeros: "+withoutOnes);
@@ -51,7 +51,7 @@ public final class MsgIdCipher {
 	 * @return cipher text
 	 */
 	public static String encode(long msgId) throws NumberFormatException {
-		String plainText = msgId + "" + getCheckDigit(msgId);
+		String plainText = String.valueOf(msgId) + getCheckDigit(msgId);
 		// insert ones to make sure the value of each block is less than n
 		// for example: 956789876 (after insert 1's) -> 195617891867
 		plainText = insertOnes(plainText);
@@ -138,7 +138,7 @@ public final class MsgIdCipher {
 	}
 	
 	private static int getCheckDigit(long msgId) {
-		String numberStr = msgId+"";
+		String numberStr = String.valueOf(msgId);
 		if (numberStr.length()>30)
 			throw new NumberFormatException("Input number exceeded size limit: [" + numberStr + "]");
 		//Calculate the check digit

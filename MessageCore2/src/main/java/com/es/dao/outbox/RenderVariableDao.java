@@ -22,7 +22,7 @@ public class RenderVariableDao extends AbstractDao {
 			"from " +
 				"Render_Variable where RenderId=? and variableName=? ";
 		
-		Object[] parms = new Object[] {renderId+"", variableName};
+		Object[] parms = new Object[] {renderId, variableName};
 		try {
 			RenderVariableVo vo = getJdbcTemplate().queryForObject(sql, parms, 
 					new BeanPropertyRowMapper<RenderVariableVo>(RenderVariableVo.class));
@@ -57,7 +57,7 @@ public class RenderVariableDao extends AbstractDao {
 			"delete from Render_Variable where renderId=? and variableName=? ";
 		
 		List<String> fields = new ArrayList<String>();
-		fields.add(msgId+"");
+		fields.add(String.valueOf(msgId));
 		fields.add(variableName);
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
@@ -69,7 +69,7 @@ public class RenderVariableDao extends AbstractDao {
 			"delete from Render_Variable where renderId=? ";
 		
 		List<String> fields = new ArrayList<String>();
-		fields.add(msgId+"");
+		fields.add(String.valueOf(msgId));
 		
 		int rowsDeleted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsDeleted;
