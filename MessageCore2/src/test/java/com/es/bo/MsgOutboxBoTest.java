@@ -53,7 +53,7 @@ public class MsgOutboxBoTest {
 			RenderRequest req = new RenderRequest(
 					"testMsgSource",
 					Constants.DEFAULT_SENDER_ID,
-					new Timestamp(new java.util.Date().getTime()),
+					new Timestamp(System.currentTimeMillis()),
 					buildTestVariables()
 					);
 			RenderResponse rsp = renderBo.getRenderedEmail(req);
@@ -77,7 +77,7 @@ public class MsgOutboxBoTest {
 	}
 	
 	private static Map<String, RenderVariable> buildTestVariables() {
-		HashMap<String, RenderVariable> map=new HashMap<String, RenderVariable>();
+		Map<String, RenderVariable> map=new HashMap<String, RenderVariable>();
 		
 		RenderVariable toAddr = new RenderVariable(
 				EmailAddressType.TO_ADDR.getValue(), 
