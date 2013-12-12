@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.user;
+package com.legacytojava.message.table;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -87,7 +87,7 @@ public class UserTable extends CreateTableBase
 			"UserId varchar(10) NOT NULL, " +
 			"CreateTime datetime NOT NULL, " +
 			"INDEX (UserId), " +
-			"UNIQUE INDEX (SessionId, SessionName) " +
+			"PRIMARY KEY (SessionId, SessionName) " +
 			") ENGINE=InnoDB");
 			System.out.println("Created SESSIONS Table...");
 		} catch (SQLException e)
@@ -110,7 +110,7 @@ public class UserTable extends CreateTableBase
 			"CreateTime datetime NOT NULL, " +
 			"SessionValue mediumblob, " +
 			"INDEX (UserId), " +
-			"UNIQUE INDEX (SessionId, SessionSeq) " +
+			"PRIMARY KEY (SessionId, SessionSeq) " +
 			") ENGINE=InnoDB");
 			System.out.println("Created SESSIONUPLOADS Table...");
 		} catch (SQLException e)

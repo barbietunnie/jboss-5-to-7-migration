@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.client;
+package com.legacytojava.message.table;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -12,6 +12,7 @@ import com.legacytojava.jbatch.common.ProductKey;
 import com.legacytojava.jbatch.common.TimestampUtil;
 import com.legacytojava.message.constant.Constants;
 import com.legacytojava.message.constant.StatusIdCode;
+import com.legacytojava.message.dao.client.ClientDao;
 import com.legacytojava.message.main.CreateTableBase;
 import com.legacytojava.message.vo.ClientVo;
 

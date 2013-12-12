@@ -1,61 +1,22 @@
 package com.legacytojava.message.dao.template;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.template.MsgSourceVo;
 
 @Component("msgSourceDao")
-public class MsgSourceJdbcDao implements MsgSourceDao {
+public class MsgSourceJdbcDao extends AbstractDao implements MsgSourceDao {
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-	
-	private static final class MsgSourceMapper implements RowMapper<MsgSourceVo> {
-		
-		public MsgSourceVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			MsgSourceVo msgSourceVo = new MsgSourceVo();
-			
-			msgSourceVo.setRowId(rs.getInt("RowId"));
-			msgSourceVo.setMsgSourceId(rs.getString("MsgSourceId"));
-			msgSourceVo.setDescription(rs.getString("Description"));
-			msgSourceVo.setStatusId(rs.getString("StatusId"));
-			msgSourceVo.setFromAddrId((Long)rs.getObject("FromAddrId"));
-			msgSourceVo.setReplyToAddrId((Long)rs.getObject("ReplyToAddrId"));
-			msgSourceVo.setSubjTemplateId(rs.getString("SubjTemplateId"));
-			msgSourceVo.setBodyTemplateId(rs.getString("BodyTemplateId"));
-			msgSourceVo.setTemplateVariableId(rs.getString("TemplateVariableId"));
-			msgSourceVo.setExcludingIdToken(rs.getString("ExcludingIdToken"));
-			msgSourceVo.setCarrierCode(rs.getString("CarrierCode"));
-			msgSourceVo.setAllowOverride(rs.getString("AllowOverride"));
-			msgSourceVo.setSaveMsgStream(rs.getString("SaveMsgStream"));
-			msgSourceVo.setArchiveInd(rs.getString("ArchiveInd"));
-			msgSourceVo.setPurgeAfter((Integer)rs.getObject("PurgeAfter"));
-			msgSourceVo.setUpdtTime(rs.getTimestamp("UpdtTime"));
-			msgSourceVo.setUpdtUserId(rs.getString("UpdtUserId"));
-			msgSourceVo.setOrigUpdtTime(msgSourceVo.getUpdtTime());
-			return msgSourceVo;
-		}
-	}
-
 	public MsgSourceVo getByPrimaryKey(String msgSourceId) {
 		String sql = 
 			"select * " +
@@ -63,12 +24,14 @@ public class MsgSourceJdbcDao implements MsgSourceDao {
 				"MsgSource where msgSourceId=? ";
 		
 		Object[] parms = new Object[] {msgSourceId};
-		
-		List<?> list = getJdbcTemplate().query(sql, parms, new MsgSourceMapper());
-		if (list.size()>0)
-			return (MsgSourceVo)list.get(0);
-		else
+		try {
+			MsgSourceVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<MsgSourceVo>(MsgSourceVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public List<MsgSourceVo> getByFromAddrId(long fromAddrId) {
@@ -77,57 +40,21 @@ public class MsgSourceJdbcDao implements MsgSourceDao {
 			" from " +
 				" MsgSource where fromAddrId=? ";
 		Object[] parms = new Object[] {Long.valueOf(fromAddrId)};
-		List<MsgSourceVo> list = (List<MsgSourceVo>)getJdbcTemplate().query(sql, parms, new MsgSourceMapper());
+		List<MsgSourceVo> list = getJdbcTemplate().query(sql, parms,
+				new BeanPropertyRowMapper<MsgSourceVo>(MsgSourceVo.class));
 		return list;
 	}
 	
 	public int update(MsgSourceVo msgSourceVo) {
-		msgSourceVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgSourceVo.getMsgSourceId());
-		fields.add(msgSourceVo.getDescription());
-		fields.add(msgSourceVo.getStatusId());
-		fields.add(msgSourceVo.getFromAddrId());
-		fields.add(msgSourceVo.getReplyToAddrId());
-		fields.add(msgSourceVo.getSubjTemplateId());
-		fields.add(msgSourceVo.getBodyTemplateId());
-		fields.add(msgSourceVo.getTemplateVariableId());
-		fields.add(msgSourceVo.getExcludingIdToken());
-		fields.add(msgSourceVo.getCarrierCode());
-		fields.add(msgSourceVo.getAllowOverride());
-		fields.add(msgSourceVo.getSaveMsgStream());
-		fields.add(msgSourceVo.getArchiveInd());
-		fields.add(msgSourceVo.getPurgeAfter());
-		fields.add(msgSourceVo.getUpdtTime());
-		fields.add(msgSourceVo.getUpdtUserId());
-		fields.add(msgSourceVo.getRowId());
+		msgSourceVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		
-		String sql =
-			"update MsgSource set " +
-				"MsgSourceId=?, " +
-				"Description=?, " +
-				"StatusId=?, " +
-				"FromAddrId=?, " +
-				"ReplyToAddrId=?, " +
-				"SubjTemplateId=?, " +
-				"BodyTemplateId=?, " +
-				"TemplateVariableId=?, " +
-				"ExcludingIdToken=?, " +
-				"CarrierCode=?, " +
-				"AllowOverride=?, " +
-				"SaveMsgStream=?, " +
-				"ArchiveInd=?, " +
-				"PurgeAfter=?, " +
-				"UpdtTime=?, " +
-				"UpdtUserId=? " +
-			"where " +
-				" RowId=? ";
-		
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgSourceVo);
+		String sql = MetaDataUtil.buildUpdateStatement("MsgSource", msgSourceVo);
+
 		if (msgSourceVo.getOrigUpdtTime() != null) {
-			sql += " and UpdtTime=?";
-			fields.add(msgSourceVo.getOrigUpdtTime());
+			sql += " and UpdtTime=:origUpdtTime ";
 		}
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgSourceVo.setOrigUpdtTime(msgSourceVo.getUpdtTime());
 		return rowsUpadted;
 	}
@@ -155,59 +82,14 @@ public class MsgSourceJdbcDao implements MsgSourceDao {
 	}
 	
 	public int insert(MsgSourceVo msgSourceVo) {
-		String sql = 
-			"INSERT INTO MsgSource (" +
-			"MsgSourceId, " +
-			"Description, " +
-			"StatusId, " +
-			"FromAddrId, " +
-			"ReplyToAddrId, " +
-			"SubjTemplateId, " +
-			"BodyTemplateId, " +
-			"TemplateVariableId, " +
-			"ExcludingIdToken, " +
-			"CarrierCode, " +
-			"AllowOverride, " +
-			"SaveMsgStream, " +
-			"ArchiveInd, " +
-			"PurgeAfter, " +
-			"UpdtTime, " +
-			"UpdtUserId " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ? ,?, ?, ?, " +
-				" ?, ?, ?, ?, ? ,?, ?, ? " +
-				")";
+		msgSourceVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		
-		msgSourceVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgSourceVo.getMsgSourceId());
-		fields.add(msgSourceVo.getDescription());
-		fields.add(msgSourceVo.getStatusId());
-		fields.add(msgSourceVo.getFromAddrId());
-		fields.add(msgSourceVo.getReplyToAddrId());
-		fields.add(msgSourceVo.getSubjTemplateId());
-		fields.add(msgSourceVo.getBodyTemplateId());
-		fields.add(msgSourceVo.getTemplateVariableId());
-		fields.add(msgSourceVo.getExcludingIdToken());
-		fields.add(msgSourceVo.getCarrierCode());
-		fields.add(msgSourceVo.getAllowOverride());
-		fields.add(msgSourceVo.getSaveMsgStream());
-		fields.add(msgSourceVo.getArchiveInd());
-		fields.add(msgSourceVo.getPurgeAfter());
-		fields.add(msgSourceVo.getUpdtTime());
-		fields.add(msgSourceVo.getUpdtUserId());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgSourceVo);
+		String sql = MetaDataUtil.buildInsertStatement("MsgSource", msgSourceVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgSourceVo.setRowId(retrieveRowId());
 		msgSourceVo.setOrigUpdtTime(msgSourceVo.getUpdtTime());
 		return rowsInserted;
 	}
 
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
 }

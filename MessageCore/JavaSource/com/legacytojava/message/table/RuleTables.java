@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.rule;
+package com.legacytojava.message.table;
 /**
  * The RuleBean referenced by ActionBean with a FOREIGN key restraint.
  */

@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.emailaddr;
+package com.legacytojava.message.table;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -12,6 +12,9 @@ import com.legacytojava.message.constant.Constants;
 import com.legacytojava.message.constant.MailingListDeliveryOption;
 import com.legacytojava.message.constant.MailingListType;
 import com.legacytojava.message.constant.StatusIdCode;
+import com.legacytojava.message.dao.emailaddr.EmailTemplateDao;
+import com.legacytojava.message.dao.emailaddr.EmailVariableDao;
+import com.legacytojava.message.dao.emailaddr.SchedulesBlob;
 import com.legacytojava.message.main.CreateTableBase;
 import com.legacytojava.message.util.BlobUtil;
 import com.legacytojava.message.vo.emailaddr.EmailTemplateVo;
@@ -77,7 +80,7 @@ public class EmailAddrTable extends CreateTableBase {
 	void createEmailTable() throws SQLException {
 		try {
 			stm.execute("CREATE TABLE EMAILADDR ( "
-					+ "EmailAddrId bigint AUTO_INCREMENT NOT NULL PRIMARY KEY, "
+					+ "EmailAddrId bigint AUTO_INCREMENT NOT NULL, "
 					+ "EmailAddr varchar(255) NOT NULL, "
 					+ "OrigEmailAddr varchar(255) NOT NULL, "
 					+ "StatusId char(1) NOT NULL DEFAULT '" + StatusIdCode.ACTIVE + "', " // A - active, S - suspended, I - Inactive
@@ -90,6 +93,7 @@ public class EmailAddrTable extends CreateTableBase {
 					+ "AcceptHtml char(1) not null default '" + Constants.YES_CODE + "', "
 					+ "UpdtTime datetime NOT NULL, "
 					+ "UpdtUserId char(10) NOT NULL, "
+					+ "PRIMARY KEY (EmailAddrId), "
 					+ "UNIQUE INDEX (EmailAddr) "
 					+ ") ENGINE=InnoDB");
 			System.out.println("Created EMAILADDR Table...");
@@ -145,7 +149,7 @@ public class EmailAddrTable extends CreateTableBase {
 					+ "LastClickTime datetime, "
 					+ "FOREIGN KEY (EmailAddrId) REFERENCES EMAILADDR (EmailAddrId) ON DELETE CASCADE ON UPDATE CASCADE, "
 					+ "FOREIGN KEY (ListId) REFERENCES MAILINGLIST (ListId) ON DELETE CASCADE ON UPDATE CASCADE, "
-					+ "UNIQUE INDEX (EmailAddrId,ListId) "
+					+ "PRIMARY KEY (EmailAddrId,ListId) "
 					+ ") ENGINE=InnoDB");
 			System.out.println("Created SUBSCRIPTION Table...");
 		}

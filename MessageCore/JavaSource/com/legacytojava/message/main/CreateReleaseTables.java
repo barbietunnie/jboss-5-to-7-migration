@@ -4,20 +4,20 @@ import java.sql.SQLException;
 
 import org.springframework.context.ApplicationContext;
 
-import com.legacytojava.message.dao.action.ActionTables;
-import com.legacytojava.message.dao.action.LoadActionTables;
-import com.legacytojava.message.dao.client.ClientTable;
-import com.legacytojava.message.dao.customer.CustomerTable;
-import com.legacytojava.message.dao.emailaddr.EmailAddrTable;
-import com.legacytojava.message.dao.idtokens.IdTokensTable;
-import com.legacytojava.message.dao.inbox.InboxTables;
-import com.legacytojava.message.dao.inbox.LoadInboxTables;
-import com.legacytojava.message.dao.mailbox.MailboxTable;
-import com.legacytojava.message.dao.smtp.SmtpTable;
-import com.legacytojava.message.dao.template.LoadTemplateTables;
-import com.legacytojava.message.dao.template.TemplateTables;
-import com.legacytojava.message.dao.timer.TimerTable;
-import com.legacytojava.message.dao.user.UserTable;
+import com.legacytojava.message.table.ActionTables;
+import com.legacytojava.message.table.ClientTable;
+import com.legacytojava.message.table.CustomerTable;
+import com.legacytojava.message.table.EmailAddrTable;
+import com.legacytojava.message.table.IdTokensTable;
+import com.legacytojava.message.table.InboxTables;
+import com.legacytojava.message.table.LoadActionTables;
+import com.legacytojava.message.table.LoadInboxTables;
+import com.legacytojava.message.table.LoadTemplateTables;
+import com.legacytojava.message.table.MailboxTable;
+import com.legacytojava.message.table.SmtpTable;
+import com.legacytojava.message.table.TemplateTables;
+import com.legacytojava.message.table.TimerTable;
+import com.legacytojava.message.table.UserTable;
 
 public class CreateReleaseTables {
 

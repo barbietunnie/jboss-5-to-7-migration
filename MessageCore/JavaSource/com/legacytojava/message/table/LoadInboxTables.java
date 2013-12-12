@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.inbox;
+package com.legacytojava.message.table;
 
 import java.sql.Timestamp;
 
@@ -17,6 +17,12 @@ import com.legacytojava.message.constant.VariableName;
 import com.legacytojava.message.constant.XHeaderName;
 import com.legacytojava.message.dao.client.ClientUtil;
 import com.legacytojava.message.dao.emailaddr.EmailAddrDao;
+import com.legacytojava.message.dao.inbox.AttachmentsDao;
+import com.legacytojava.message.dao.inbox.MsgAddrsDao;
+import com.legacytojava.message.dao.inbox.MsgClickCountsDao;
+import com.legacytojava.message.dao.inbox.MsgHeadersDao;
+import com.legacytojava.message.dao.inbox.MsgInboxDao;
+import com.legacytojava.message.dao.inbox.RfcFieldsDao;
 import com.legacytojava.message.dao.outbox.MsgSequenceDao;
 import com.legacytojava.message.vo.ClientVo;
 import com.legacytojava.message.vo.emailaddr.EmailAddrVo;

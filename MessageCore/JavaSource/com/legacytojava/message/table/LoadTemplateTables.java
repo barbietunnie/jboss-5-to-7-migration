@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.template;
+package com.legacytojava.message.table;
 
 import java.sql.Timestamp;
 
@@ -13,6 +13,12 @@ import com.legacytojava.message.constant.VariableName;
 import com.legacytojava.message.constant.VariableStatus;
 import com.legacytojava.message.constant.VariableType;
 import com.legacytojava.message.constant.XHeaderName;
+import com.legacytojava.message.dao.template.BodyTemplateDao;
+import com.legacytojava.message.dao.template.ClientVariableDao;
+import com.legacytojava.message.dao.template.GlobalVariableDao;
+import com.legacytojava.message.dao.template.MsgSourceDao;
+import com.legacytojava.message.dao.template.SubjTemplateDao;
+import com.legacytojava.message.dao.template.TemplateVariableDao;
 import com.legacytojava.message.vo.template.BodyTemplateVo;
 import com.legacytojava.message.vo.template.ClientVariableVo;
 import com.legacytojava.message.vo.template.GlobalVariableVo;

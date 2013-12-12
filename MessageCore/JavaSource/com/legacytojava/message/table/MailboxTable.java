@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.mailbox;
+package com.legacytojava.message.table;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -13,6 +13,7 @@ import com.legacytojava.message.constant.MailProtocol;
 import com.legacytojava.message.constant.MailServerType;
 import com.legacytojava.message.constant.StatusIdCode;
 import com.legacytojava.message.dao.emailaddr.EmailAddrDao;
+import com.legacytojava.message.dao.mailbox.MailBoxDao;
 import com.legacytojava.message.main.CreateTableBase;
 import com.legacytojava.message.vo.MailBoxVo;
 public class MailboxTable extends CreateTableBase
@@ -93,8 +94,8 @@ public class MailboxTable extends CreateTableBase
 			"ProcessorName varchar(100) NOT NULL, " +
 			"UpdtTime datetime NOT NULL, " +
 			"UpdtUserId char(10) NOT NULL, " +
-			"Constraint MAILBOXES_PK1 primary key (RowId), " +
-			"Constraint UNIQUE INDEX MAILBOXES_IDX1 (UserId, HostName) " +
+			"PRIMARY KEY (RowId), " +
+			"UNIQUE INDEX (UserId, HostName) " +
 			") ENGINE=InnoDB");
 			System.out.println("Created MAILBOXES Table...");
 		} catch (SQLException e)

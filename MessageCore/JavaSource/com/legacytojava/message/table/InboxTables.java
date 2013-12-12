@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.inbox;
+package com.legacytojava.message.table;
 import java.sql.SQLException;
 
 import com.legacytojava.message.constant.CarrierCode;
@@ -143,7 +143,7 @@ public class InboxTables extends CreateTableBase
 	void createMSGRENDEREDTable() throws SQLException {
 		try {
 			stm.execute("CREATE TABLE MSGRENDERED ( " +
-			"RenderId bigint NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+			"RenderId bigint NOT NULL AUTO_INCREMENT, " +
 			"MsgSourceId varchar(16) NOT NULL, " +
 			"SubjTemplateId varchar(16) NOT NULL, " +
 			"BodyTemplateId varchar(16) NOT NULL, " +
@@ -153,6 +153,7 @@ public class InboxTables extends CreateTableBase
 			"PurgeAfter int, " +
 			"UpdtTime datetime NOT NULL, " +
 			"UpdtUserId varchar(10) NOT NULL, " +
+			"PRIMARY KEY (RenderId), " +
 			"INDEX (MsgSourceId) " +
 			") ENGINE=InnoDB"); // row-level locking
 			System.out.println("Created MSGRENDERED Table...");
@@ -257,7 +258,7 @@ public class InboxTables extends CreateTableBase
 	void createMSGINBOXTable() throws SQLException {
 		try {
 			stm.execute("CREATE TABLE MSGINBOX ( " +
-			"MsgId bigint NOT NULL PRIMARY KEY, " +
+			"MsgId bigint NOT NULL, " +
 			"MsgRefId bigint, " + // link to another MSGINBOX record (a reply or a bounce)
 			"LeadMsgId bigint NOT NULL, " +
 			"CarrierCode char(1) NOT NULL DEFAULT '" + CarrierCode.SMTPMAIL + "', " + // S - SmtpMail, W - WebMail
@@ -291,6 +292,7 @@ public class InboxTables extends CreateTableBase
 			"MsgContentType varchar(100) NOT NULL, " +
 			"BodyContentType varchar(50), " +
 			"MsgBody mediumtext, " +
+			"PRIMARY KEY (MsgId), " +
 			"INDEX (LeadMsgId), " +
 			"FOREIGN KEY (RenderId) REFERENCES MSGRENDERED (RenderId) ON DELETE CASCADE ON UPDATE CASCADE, " +
 			"INDEX (RenderId), " +
@@ -405,7 +407,7 @@ public class InboxTables extends CreateTableBase
 			"MsgSubject varchar(255), " +
 			"AddTime datetime, " +
 			"MsgStream mediumblob, " +
-			"UNIQUE INDEX (MsgId), " +
+			"PRIMARY KEY (MsgId), " +
 			"FOREIGN KEY (MsgId) REFERENCES MSGINBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE " +
 			") ENGINE=InnoDB");
 			System.out.println("Created MSGSTREAM Table...");
@@ -457,7 +459,7 @@ public class InboxTables extends CreateTableBase
 			//"FOREIGN KEY (MsgRefId) REFERENCES MSGINBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE, " +
 			//"FOREIGN KEY (LeadMsgId) REFERENCES MSGINBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE, " +
 			"INDEX (LeadMsgId), " +
-			"UNIQUE INDEX (MsgId, MsgRefId) " + // use index to make MsgRefId nullable
+			"PRIMARY KEY (MsgId, MsgRefId) " + // use index to make MsgRefId nullable
 			") ENGINE=InnoDB");
 			System.out.println("Created MSGACTIONLOGS Table...");
 		}
@@ -484,7 +486,7 @@ public class InboxTables extends CreateTableBase
 			"ComplaintCount int NOT NULL DEFAULT 0, " +
 			"ReferralCount int NOT NULL DEFAULT 0, " +
 			"FOREIGN KEY (MsgId) REFERENCES MSGINBOX (MsgId) ON DELETE CASCADE ON UPDATE CASCADE, " +
-			"UNIQUE INDEX (MsgId) " +
+			"PRIMARY KEY (MsgId) " +
 			") ENGINE=InnoDB");
 			System.out.println("Created MSGCLICKCOUNTS Table...");
 		}

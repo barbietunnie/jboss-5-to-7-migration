@@ -1,9 +1,8 @@
-package com.legacytojava.message.dao.action;
+package com.legacytojava.message.table;
 
 import java.sql.SQLException;
 
 import com.legacytojava.message.constant.StatusIdCode;
-import com.legacytojava.message.dao.rule.RuleTables;
 import com.legacytojava.message.main.CreateTableBase;
 
 /**

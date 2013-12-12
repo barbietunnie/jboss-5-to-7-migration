@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.timer;
+package com.legacytojava.message.table;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;

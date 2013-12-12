@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.idtokens;
+package com.legacytojava.message.table;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -41,8 +41,8 @@ public class IdTokensTable extends CreateTableBase
 			"UpdtTime datetime NOT NULL, " +
 			"UpdtUserId char(10) NOT NULL, " +
 			"FOREIGN KEY (ClientId) REFERENCES Clients(ClientId) ON DELETE CASCADE ON UPDATE CASCADE, " +
-			"Constraint IDTOKENS_PK1 primary key (RowId), " +
-			"Constraint UNIQUE INDEX IDTOKENS_IDX1 (ClientId) " +
+			"PRIMARY KEY (RowId), " +
+			"UNIQUE INDEX (ClientId) " +
 			") ENGINE=InnoDB");
 			System.out.println("Created IDTOKENS Table...");
 		} catch (SQLException e)

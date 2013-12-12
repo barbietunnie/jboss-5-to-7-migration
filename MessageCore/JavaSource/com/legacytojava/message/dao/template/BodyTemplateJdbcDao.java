@@ -1,53 +1,22 @@
 package com.legacytojava.message.dao.template;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.template.BodyTemplateVo;
 
 @Component("bodyTemplateDao")
-public class BodyTemplateJdbcDao implements BodyTemplateDao {
+public class BodyTemplateJdbcDao extends AbstractDao implements BodyTemplateDao {
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-	
-	private static final class BodyTemplateMapper implements RowMapper<BodyTemplateVo> {
-		
-		public BodyTemplateVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			BodyTemplateVo bodyTemplateVo = new BodyTemplateVo();
-			
-			
-			bodyTemplateVo.setRowId(rs.getInt("RowId"));
-			bodyTemplateVo.setTemplateId(rs.getString("TemplateId"));
-			bodyTemplateVo.setClientId(rs.getString("ClientId"));
-			bodyTemplateVo.setStartTime(rs.getTimestamp("StartTime"));
-			bodyTemplateVo.setDescription(rs.getString("Description"));
-			bodyTemplateVo.setStatusId(rs.getString("StatusId"));
-			bodyTemplateVo.setTemplateValue(rs.getString("TemplateValue"));
-			bodyTemplateVo.setContentType(rs.getString("ContentType"));
-			
-			return bodyTemplateVo;
-		}
-	}
-
 	public BodyTemplateVo getByPrimaryKey(String templateId, String clientId, Timestamp startTime) {
 		String sql = 
 			"select * " +
@@ -72,11 +41,14 @@ public class BodyTemplateJdbcDao implements BodyTemplateDao {
 		}
 		
 		Object[] parms = keys.toArray();
-		List<?> list = getJdbcTemplate().query(sql, parms, new BodyTemplateMapper());
-		if (list.size()>0)
-			return (BodyTemplateVo)list.get(0);
-		else
+		try {
+			BodyTemplateVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<BodyTemplateVo>(BodyTemplateVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public BodyTemplateVo getByBestMatch(String templateId, String clientId, Timestamp startTime) {
@@ -103,9 +75,10 @@ public class BodyTemplateJdbcDao implements BodyTemplateDao {
 		sql += " order by clientId desc, startTime desc ";
 		
 		Object[] parms = keys.toArray();
-		List<?> list = getJdbcTemplate().query(sql, parms, new BodyTemplateMapper());
+		List<BodyTemplateVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<BodyTemplateVo>(BodyTemplateVo.class));
 		if (list.size()>0)
-			return (BodyTemplateVo)list.get(0);
+			return list.get(0);
 		else
 			return null;
 	}
@@ -117,7 +90,8 @@ public class BodyTemplateJdbcDao implements BodyTemplateDao {
 				" BodyTemplate where templateId=? " +
 			" order by clientId, startTime asc ";
 		Object[] parms = new Object[] {templateId};
-		List<BodyTemplateVo> list = (List<BodyTemplateVo>)getJdbcTemplate().query(sql, parms, new BodyTemplateMapper());
+		List<BodyTemplateVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<BodyTemplateVo>(BodyTemplateVo.class));
 		return list;
 	}
 	
@@ -128,35 +102,15 @@ public class BodyTemplateJdbcDao implements BodyTemplateDao {
 				" BodyTemplate where clientId=? " +
 			" order by templateId, startTime asc ";
 		Object[] parms = new Object[] {clientId};
-		List<BodyTemplateVo> list = (List<BodyTemplateVo>)getJdbcTemplate().query(sql, parms, new BodyTemplateMapper());
+		List<BodyTemplateVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<BodyTemplateVo>(BodyTemplateVo.class));
 		return list;
 	}
 	
 	public int update(BodyTemplateVo bodyTemplateVo) {
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(bodyTemplateVo.getTemplateId());
-		fields.add(bodyTemplateVo.getClientId());
-		fields.add(bodyTemplateVo.getStartTime());
-		fields.add(bodyTemplateVo.getDescription());
-		fields.add(bodyTemplateVo.getStatusId());
-		fields.add(bodyTemplateVo.getTemplateValue());
-		fields.add(bodyTemplateVo.getContentType());
-		fields.add(bodyTemplateVo.getRowId());
-		
-		String sql =
-			"update BodyTemplate set " +
-				"TemplateId=?, " +
-				"ClientId=?, " +
-				"StartTime=?, " +
-				"Description=?, " +
-				"StatusId=?, " +
-				"TemplateValue=?, " +
-				"ContentType=? " +
-			"where " +
-				" RowId=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(bodyTemplateVo);
+		String sql = MetaDataUtil.buildUpdateStatement("BodyTemplate", bodyTemplateVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -202,38 +156,11 @@ public class BodyTemplateJdbcDao implements BodyTemplateDao {
 	}
 	
 	public int insert(BodyTemplateVo bodyTemplateVo) {
-		String sql = 
-			"INSERT INTO BodyTemplate (" +
-			"TemplateId, " +
-			"ClientId, " +
-			"StartTime, " +
-			"Description, " +
-			"StatusId, " +
-			"TemplateValue, " +
-			"ContentType" +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ? " +
-				")";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(bodyTemplateVo.getTemplateId());
-		fields.add(bodyTemplateVo.getClientId());
-		fields.add(bodyTemplateVo.getStartTime());
-		fields.add(bodyTemplateVo.getDescription());
-		fields.add(bodyTemplateVo.getStatusId());
-		fields.add(bodyTemplateVo.getTemplateValue());
-		fields.add(bodyTemplateVo.getContentType());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(bodyTemplateVo);
+		String sql = MetaDataUtil.buildInsertStatement("BodyTemplate", bodyTemplateVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		bodyTemplateVo.setRowId(retrieveRowId());
 		return rowsInserted;
 	}
 	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
 }

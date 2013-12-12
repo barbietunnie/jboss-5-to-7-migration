@@ -13,43 +13,12 @@
     <tx:annotation-driven transaction-manager="mysqlTransactionManager"/>
     
      <!-- Transaction Managers -->
-	<bean id="mysqlTransactionManager_v0"
+	<bean id="mysqlTransactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="mysqlDataSource"/>
 		<property name="globalRollbackOnParticipationFailure" value="true"/>
 	</bean>
-
-	<bean id="mysqlTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"> 
-	    <property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
     <!-- end of Transaction Managers -->
-
-
-	<!-- Spring JPA Entity Manager Factory -->
-	<bean id="entityManager" 
-	    class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
-	    <property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
-
-	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="persistenceXmlLocation" value="classpath:META-INF/persistence-jpa.xml" />
-	    <property name="persistenceUnitName" value="MessageDB" />
-	    <property name="dataSource" ref="mysqlDataSource" />
-	    <property name="jpaVendorAdapter">
-	        <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-	            <property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
-	            <property name="showSql" value="true" />
-	            <property name="generateDdl" value="false" />
-	        </bean>
-	    </property>
-	</bean>
-
-	<!-- bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect"/>  
-    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/ -->  
-
-	<bean id="jpaTemplate" class="org.springframework.orm.jpa.JpaTemplate">
-	    <property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
 
 	<!-- Data Sources -->
 	<bean id="mysqlDataSource"

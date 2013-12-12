@@ -1,4 +1,4 @@
-package com.legacytojava.message.dao.smtp;
+package com.legacytojava.message.table;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -101,7 +101,7 @@ public class SmtpTable extends CreateTableBase
 			"IsVerpEnabled varchar(3) NOT NULL, " +
 			"UpdtTime datetime NOT NULL, " +
 			"UpdtUserId char(10) NOT NULL, " +
-			"Constraint MAILSENDERPROPS_PK1 primary key (RowId) " +
+			"PRIMARY KEY (RowId) " +
 			") ENGINE=InnoDB");
 			System.out.println("Created MAILSENDERPROPS Table...");
 		} catch (SQLException e)
