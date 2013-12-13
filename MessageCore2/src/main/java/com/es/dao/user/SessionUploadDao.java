@@ -6,9 +6,12 @@ import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.es.dao.abst.AbstractDao;
+import com.es.db.metadata.MetaDataUtil;
 import com.es.vo.comm.SessionUploadVo;
 
 @Component("sessionUploadDao")
@@ -63,23 +66,12 @@ public class SessionUploadDao extends AbstractDao {
 	}
 	
 	public int update(SessionUploadVo sessVo) {
-		Object[] parms = {
-				sessVo.getFileName(),
-				sessVo.getContentType(),
-				sessVo.getUserId(),
-				sessVo.getSessionValue(),
-				sessVo.getSessionId(),
-				sessVo.getSessionSeq()
-				};
-		
-		String sql = "update Session_Upload set " +
-			"FileName=?," +
-			"ContentType=?," +
-			"UserId=?," +
-			"SessionValue=?" +
-			" where SessionId=? and SessionSeq=?";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, parms);
+		if (sessVo.getCreateTime() == null) {
+			sessVo.setCreateTime(new Timestamp(System.currentTimeMillis()));
+		}
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(sessVo);
+		String sql = MetaDataUtil.buildUpdateStatement("Session_Upload", sessVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -121,27 +113,11 @@ public class SessionUploadDao extends AbstractDao {
 	}
 
 	public int insert(SessionUploadVo sessVo) {
-		Object[] parms = {
-				sessVo.getSessionId(),
-				sessVo.getSessionSeq(),
-				sessVo.getFileName(),
-				sessVo.getContentType(),
-				sessVo.getUserId(),
-				sessVo.getSessionValue()
-			};
+		sessVo.setCreateTime(new Timestamp(System.currentTimeMillis()));
 		
-		String sql = "INSERT INTO Session_Upload (" +
-			"SessionId," +
-			"SessionSeq," +
-			"FileName," +
-			"ContentType," +
-			"UserId," +
-			"CreateTime," +
-			"SessionValue" +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, current_timestamp, ?)";
-		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(sessVo);
+		String sql = MetaDataUtil.buildInsertStatement("Session_Upload", sessVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
 	}
 	
@@ -149,28 +125,8 @@ public class SessionUploadDao extends AbstractDao {
 		String lastSeq = "select max(SessionSeq) from Session_Upload where SessionId = '"
 				+ sessVo.getSessionId() + "'";
 		int sessSeq = getJdbcTemplate().queryForObject(lastSeq, Integer.class) + 1;
-		Object[] parms = {
-				sessVo.getSessionId(),
-				sessSeq,
-				sessVo.getFileName(),
-				sessVo.getContentType(),
-				sessVo.getUserId(),
-				sessVo.getSessionValue()
-			};
-		
-		String sql = "INSERT INTO Session_Upload (" +
-			"SessionId," +
-			"SessionSeq," +
-			"FileName," +
-			"ContentType," +
-			"UserId," +
-			"CreateTime," +
-			"SessionValue" +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, current_timestamp, ?)";
-		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
-		return rowsInserted;
+		sessVo.setSessionSeq(sessSeq);
+		return insert(sessVo);
 	}
 	
 }
