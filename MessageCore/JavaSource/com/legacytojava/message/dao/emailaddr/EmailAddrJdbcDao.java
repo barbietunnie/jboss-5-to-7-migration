@@ -3,7 +3,6 @@ package com.legacytojava.message.dao.emailaddr;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -16,14 +15,15 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -33,105 +33,41 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.legacytojava.message.constant.Constants;
 import com.legacytojava.message.constant.StatusIdCode;
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.util.EmailAddrUtil;
 import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.PagingVo;
 import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
 
 @Component("emailAddrDao")
-public class EmailAddrJdbcDao implements EmailAddrDao {
+public class EmailAddrJdbcDao extends AbstractDao implements EmailAddrDao {
 	static final Logger logger = Logger.getLogger(EmailAddrJdbcDao.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static class EmailAddrMapper implements RowMapper<EmailAddrVo> {
-
-		public EmailAddrVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			EmailAddrVo emailAddrVo = new EmailAddrVo();
-
-			emailAddrVo.setEmailAddrId(rs.getInt("EmailAddrId"));
-			emailAddrVo.setEmailAddr(rs.getString("OrigEmailAddr"));
-			emailAddrVo.setStatusId(rs.getString("StatusId"));
-			emailAddrVo
-					.setStatusChangeTime(rs.getTimestamp("StatusChangeTime"));
-			emailAddrVo.setStatusChangeUserId(rs
-					.getString("StatusChangeUserId"));
-			emailAddrVo.setBounceCount(rs.getInt("BounceCount"));
-			emailAddrVo.setLastBounceTime(rs.getTimestamp("LastBounceTime"));
-			emailAddrVo.setLastSentTime(rs.getTimestamp("LastSentTime"));
-			emailAddrVo.setLastRcptTime(rs.getTimestamp("LastRcptTime"));
-			emailAddrVo.setAcceptHtml(rs.getString("AcceptHtml"));
-			emailAddrVo.setUpdtTime(rs.getTimestamp("UpdtTime"));
-			emailAddrVo.setUpdtUserId(rs.getString("UpdtUserId"));
-
-			emailAddrVo.setCurrEmailAddr(emailAddrVo.getEmailAddr());
-			emailAddrVo.setOrigUpdtTime(emailAddrVo.getUpdtTime());
-			return emailAddrVo;
-		}
-	}
-
-	private static final class EmailAddrMapper2 extends EmailAddrMapper {
-		public EmailAddrVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			EmailAddrVo emailAddrVo = (EmailAddrVo) super.mapRow(rs, rowNum);
-			emailAddrVo.setRuleName(rs.getString("RuleName"));
-			return emailAddrVo;
-		}
-	}
-
-	private static final class EmailAddrMapper3 extends EmailAddrMapper {
-		public EmailAddrVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			EmailAddrVo emailAddrVo = (EmailAddrVo) super.mapRow(rs, rowNum);
-			emailAddrVo.setCustId(rs.getString("CustId"));
-			emailAddrVo.setFirstName(rs.getString("FirstName"));
-			emailAddrVo.setMiddleName(rs.getString("MiddleName"));
-			emailAddrVo.setLastName(rs.getString("LastName"));
-			emailAddrVo.setSentCount(toInteger(rs.getObject("SentCount")));
-			emailAddrVo.setOpenCount(toInteger(rs.getObject("OpenCount")));
-			emailAddrVo.setClickCount(toInteger(rs.getObject("ClickCount")));
-			return emailAddrVo;
-		}
-	}
-
-	private static Integer toInteger(Object count) {
-		Integer intCount = null;
-		if (count instanceof BigDecimal) {
-			intCount = count == null ? null : ((BigDecimal) count).intValue();
-		} else if (count instanceof Integer) {
-			intCount = (Integer) count;
-		}
-		return intCount;
-	}
-
 	public EmailAddrVo getByAddrId(long addrId) {
-		String sql = "select * from EmailAddr where emailAddrId=?";
+		String sql = "select *, EmailAddr as CurrEmailAddr, UpdtTime as OrigUpdtTime " +
+				"from EmailAddr where emailAddrId=?";
 		Object[] parms = new Object[] { addrId + "" };
-		List<?> list = (List<?>) getJdbcTemplate().query(sql, parms,
-				new EmailAddrMapper());
-		if (list.size() > 0) {
-			return (EmailAddrVo) list.get(0);
-		} else {
+		try {
+			EmailAddrVo vo = getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<EmailAddrVo>(EmailAddrVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}
 
 	public EmailAddrVo getByAddress(String address) {
-		String sql = "select * from EmailAddr where EmailAddr=?";
+		String sql = "select *, EmailAddr as CurrEmailAddr, UpdtTime as OrigUpdtTime " +
+				"from EmailAddr where EmailAddr=?";
 		String emailAddress = EmailAddrUtil.removeDisplayName(address);
 		Object[] parms = new Object[] { emailAddress };
-		List<?> list = (List<?>) getJdbcTemplate().query(sql, parms,
-				new EmailAddrMapper());
+		List<EmailAddrVo> list = getJdbcTemplate().query(sql, parms,
+				new BeanPropertyRowMapper<EmailAddrVo>(EmailAddrVo.class));
 		if (list.size() > 0) {
-			return (EmailAddrVo) list.get(0);
+			return list.get(0);
 		} else {
 			return null;
 		}
@@ -188,7 +124,7 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 		String sql = "select a.EmailAddrId, a.EmailAddr, a.OrigEmailAddr, a.StatusId, "
 				+ " a.StatusChangeTime, a.StatusChangeUserId, a.BounceCount, "
 				+ " a.LastBounceTime, a.LastSentTime, a.LastRcptTime, a.AcceptHtml, "
-				+ " a.UpdtTime, a.UpdtUserId, "
+				+ " a.UpdtTime, a.UpdtUserId, , a.EmailAddr as CurrEmailAddr, a.UpdtTime as OrigUpdtTime"
 				+ " b.CustId, b.FirstName, b.MiddleName, b.LastName, "
 				+ " sum(c.SentCount) as SentCount, sum(c.OpenCount) as OpenCount, "
 				+ " sum(c.ClickCount) as ClickCount "
@@ -209,8 +145,8 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 		int maxRows = getJdbcTemplate().getMaxRows();
 		getJdbcTemplate().setFetchSize(vo.getPageSize());
 		getJdbcTemplate().setMaxRows(vo.getPageSize());
-		List<EmailAddrVo> list = (List<EmailAddrVo>) getJdbcTemplate().query(sql,
-				parms.toArray(), new EmailAddrMapper3());
+		List<EmailAddrVo> list = getJdbcTemplate().query(sql, parms.toArray(), 
+				new BeanPropertyRowMapper<EmailAddrVo>(EmailAddrVo.class));
 		getJdbcTemplate().setFetchSize(fetchSize);
 		getJdbcTemplate().setMaxRows(maxRows);
 		if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
@@ -451,10 +387,10 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 				+ " inner join MsgInbox b on a.EmailAddrId = b.FromAddrId "
 				+ " where" + " b.MsgId = ?";
 		Object[] parms = new Object[] { msgRefId };
-		List<?> list = (List<?>) getJdbcTemplate().query(sql, parms,
-				new EmailAddrMapper2());
+		List<EmailAddrVo> list = getJdbcTemplate().query(sql, parms,
+				new BeanPropertyRowMapper<EmailAddrVo>(EmailAddrVo.class));
 		if (list.size() > 0) {
-			return (EmailAddrVo) list.get(0);
+			return list.get(0);
 		} else {
 			return null;
 		}
@@ -465,10 +401,10 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 				+ " inner join MsgInbox b on a.EmailAddrId = b.ToAddrId "
 				+ " where" + " b.MsgId = ?";
 		Object[] parms = new Object[] { msgRefId };
-		List<?> list = (List<?>) getJdbcTemplate().query(sql, parms,
-				new EmailAddrMapper2());
+		List<EmailAddrVo> list = getJdbcTemplate().query(sql, parms,
+				new BeanPropertyRowMapper<EmailAddrVo>(EmailAddrVo.class));
 		if (list.size() > 0) {
-			return (EmailAddrVo) list.get(0);
+			return list.get(0);
 		} else {
 			return null;
 		}
@@ -479,37 +415,16 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 	}
 
 	public int update(EmailAddrVo emailAddrVo) {
-		emailAddrVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-
-		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
-		keys.add(emailAddrVo.getEmailAddr());
-		keys.add(emailAddrVo.getStatusId());
-		keys.add(emailAddrVo.getStatusChangeTime());
-		keys.add(emailAddrVo.getStatusChangeUserId());
-		keys.add(emailAddrVo.getBounceCount());
-		keys.add(emailAddrVo.getLastBounceTime());
-		keys.add(emailAddrVo.getLastSentTime());
-		keys.add(emailAddrVo.getLastRcptTime());
-		keys.add(emailAddrVo.getAcceptHtml());
-		keys.add(emailAddrVo.getUpdtTime());
-		keys.add(emailAddrVo.getUpdtUserId());
-		keys.add(emailAddrVo.getEmailAddrId());
-
-		String sql = "update EmailAddr set " + "EmailAddr=?,"
-				+ "OrigEmailAddr=?," + "StatusId=?," + "StatusChangeTime=?,"
-				+ "StatusChangeUserId=?," + "BounceCount=?,"
-				+ "LastBounceTime=?," + "LastSentTime=?," + "LastRcptTime=?,"
-				+ "AcceptHtml=?," + "UpdtTime=?," + "UpdtUserId=? "
-				+ " where emailAddrId=?";
-
+		emailAddrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		emailAddrVo.setOrigEmailAddr(emailAddrVo.getEmailAddr());
+		emailAddrVo.setEmailAddr(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(emailAddrVo);
+		String sql = MetaDataUtil.buildUpdateStatement("EmailAddr", emailAddrVo);
 		if (emailAddrVo.getOrigUpdtTime() != null) {
-			sql += " and UpdtTime=?";
-			keys.add(emailAddrVo.getOrigUpdtTime());
+			sql += " and UpdtTime=:origUpdtTime ";
 		}
-		Object[] parms = keys.toArray();
 
-		int rowsUpadted = getJdbcTemplate().update(sql, parms);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		emailAddrVo.setCurrEmailAddr(emailAddrVo.getEmailAddr());
 		emailAddrVo.setOrigUpdtTime(emailAddrVo.getUpdtTime());
 		return rowsUpadted;
@@ -617,34 +532,16 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 	 * exists, but the "update" will not return the RowId. Use with caution.
 	 */
 	private int insert(EmailAddrVo emailAddrVo, boolean withUpdate) {
-		emailAddrVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
-		keys.add(emailAddrVo.getEmailAddr());
-		keys.add(emailAddrVo.getStatusId());
-		keys.add(emailAddrVo.getStatusChangeTime());
-		keys.add(emailAddrVo.getStatusChangeUserId());
-		keys.add(emailAddrVo.getBounceCount());
-		keys.add(emailAddrVo.getLastBounceTime());
-		keys.add(emailAddrVo.getLastSentTime());
-		keys.add(emailAddrVo.getLastRcptTime());
-		keys.add(emailAddrVo.getAcceptHtml());
-		keys.add(emailAddrVo.getUpdtTime());
-		keys.add(emailAddrVo.getUpdtUserId());
-
-		String sql = "INSERT INTO EmailAddr (" + "EmailAddr,"
-				+ "OrigEmailAddr," + "StatusId," + "StatusChangeTime,"
-				+ "StatusChangeUserId," + "BounceCount," + "LastBounceTime,"
-				+ "LastSentTime," + "LastRcptTime," + "AcceptHtml,"
-				+ "UpdtTime," + "UpdtUserId " + ") VALUES ("
-				+ " ?, ?, ?, ?, ?, ?, ?, ?, ?, ? " + ",?, ? " + ")";
-
+		emailAddrVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		emailAddrVo.setOrigEmailAddr(emailAddrVo.getEmailAddr());
+		emailAddrVo.setEmailAddr(EmailAddrUtil.removeDisplayName(emailAddrVo.getEmailAddr()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(emailAddrVo);
+		String sql = MetaDataUtil.buildInsertStatement("EmailAddr", emailAddrVo);
 		if (withUpdate) {
-			sql += " ON duplicate KEY UPDATE UpdtTime=?";
-			keys.add(emailAddrVo.getUpdtTime());
+			sql += " ON duplicate KEY UPDATE UpdtTime=:updtTime ";
 		}
 
-		int rowsInserted = getJdbcTemplate().update(sql, keys.toArray());
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		emailAddrVo.setEmailAddrId(retrieveRowId());
 		emailAddrVo.setCurrEmailAddr(emailAddrVo.getEmailAddr());
 		emailAddrVo.setOrigUpdtTime(emailAddrVo.getUpdtTime());
@@ -701,13 +598,5 @@ public class EmailAddrJdbcDao implements EmailAddrDao {
 		emailAddrVo.setCurrEmailAddr(emailAddrVo.getEmailAddr());
 		emailAddrVo.setOrigUpdtTime(emailAddrVo.getUpdtTime());
 		return rowsInserted;
-	}
-
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

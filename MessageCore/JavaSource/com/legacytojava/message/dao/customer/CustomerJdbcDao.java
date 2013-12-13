@@ -1,20 +1,20 @@
 package com.legacytojava.message.dao.customer;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.dao.emailaddr.EmailAddrDao;
 import com.legacytojava.message.util.EmailAddrUtil;
 import com.legacytojava.message.util.StringUtil;
@@ -25,134 +25,73 @@ import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
 
 @Repository
 @Component("customerDao")
-public class CustomerJdbcDao implements CustomerDao {
+public class CustomerJdbcDao extends AbstractDao implements CustomerDao {
 
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static final class CustomerMapper implements RowMapper<CustomerVo> {
-		
-		public CustomerVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			CustomerVo customerVo = new CustomerVo();
-			
-			customerVo.setPrimaryKey(rs.getString("CustId"));
-			
-			customerVo.setRowId(rs.getInt("RowId"));
-			customerVo.setCustId(rs.getString("CustId"));
-			customerVo.setClientId(rs.getString("ClientId"));
-			customerVo.setSsnNumber(rs.getString("SsnNumber"));
-			customerVo.setTaxId(rs.getString("TaxId"));
-			customerVo.setProfession(rs.getString("Profession"));
-			customerVo.setFirstName(rs.getString("FirstName"));
-			customerVo.setMiddleName(rs.getString("MiddleName"));
-			customerVo.setLastName(rs.getString("LastName"));
-			customerVo.setAlias(rs.getString("Alias"));
-			customerVo.setStreetAddress(rs.getString("StreetAddress"));
-			customerVo.setStreetAddress2(rs.getString("StreetAddress2"));
-			customerVo.setCityName(rs.getString("CityName"));
-			customerVo.setStateCode(rs.getString("StateCode"));
-			customerVo.setZipCode5(rs.getString("ZipCode5"));
-			customerVo.setZipCode4(rs.getString("ZipCode4"));
-			customerVo.setProvinceName(rs.getString("ProvinceName"));
-			customerVo.setPostalCode(rs.getString("PostalCode"));
-			customerVo.setCountry(rs.getString("Country"));
-			customerVo.setDayPhone(rs.getString("DayPhone"));
-			customerVo.setEveningPhone(rs.getString("EveningPhone"));
-			customerVo.setMobilePhone(rs.getString("MobilePhone"));
-			customerVo.setBirthDate(rs.getDate("BirthDate"));
-			customerVo.setStartDate(rs.getDate("StartDate"));
-			customerVo.setEndDate(rs.getDate("EndDate"));
-			customerVo.setMobileCarrier(rs.getString("MobileCarrier"));
-			customerVo.setMsgHeader(rs.getString("MsgHeader"));
-			customerVo.setMsgDetail(rs.getString("MsgDetail"));
-			customerVo.setMsgOptional(rs.getString("MsgOptional"));
-			customerVo.setMsgFooter(rs.getString("MsgFooter"));
-			customerVo.setTimeZoneCode(rs.getString("TimeZoneCode"));
-			customerVo.setMemoText(rs.getString("MemoText"));
-			customerVo.setStatusId(rs.getString("StatusId"));
-			customerVo.setSecurityQuestion(rs.getString("SecurityQuestion"));
-			customerVo.setSecurityAnswer(rs.getString("SecurityAnswer"));
-			customerVo.setEmailAddr(rs.getString("EmailAddr"));
-			customerVo.setEmailAddrId(rs.getLong("EmailAddrId"));
-			customerVo.setPrevEmailAddr(rs.getString("PrevEmailAddr"));
-			customerVo.setPasswordChangeTime(rs.getTimestamp("PasswordChangeTime"));
-			customerVo.setUserPassword(rs.getString("UserPassword"));
-			customerVo.setUpdtTime(rs.getTimestamp("UpdtTime"));
-			customerVo.setUpdtUserId(rs.getString("UpdtUserId"));
-			
-			customerVo.setOrigUpdtTime(customerVo.getUpdtTime());
-			customerVo.setOrigCustId(customerVo.getCustId());
-			
-			return customerVo;
-		}
-	}
-	
 	public CustomerVo getByCustId(String custId) {
 		String sql = 
-			"select * " +
+			"select *, CustId as OrigCustId, UpdtTime as OrigUpdtTime " +
 				"from Customers where custid=? ";
 		
 		Object[] parms = new Object[] {custId};
-		List<?> list =  getJdbcTemplate().query(sql, parms, new CustomerMapper());
-		if (list.size()>0)
-			return (CustomerVo)list.get(0);
-		else
+		try {
+			CustomerVo vo =  getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<CustomerVo>(CustomerVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public List<CustomerVo> getByClientId(String clientId) {
 		String sql = 
-			"select * " +
+			"select *, CustId as OrigCustId, UpdtTime as OrigUpdtTime " +
 				"from Customers where clientid=? ";
 		Object[] parms = new Object[] {clientId};
-		List<CustomerVo> list = (List<CustomerVo>)getJdbcTemplate().query(sql, parms, new CustomerMapper());
+		List<CustomerVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<CustomerVo>(CustomerVo.class));
 		return list;
 	}
 	
 	public CustomerVo getByEmailAddrId(long emailAddrId) {
 		String sql = 
-			"select * " +
+			"select *, CustId as OrigCustId, UpdtTime as OrigUpdtTime " +
 			" from customers where emailAddrId=? ";
 		Object[] parms = new Object[] {Long.valueOf(emailAddrId)};
-		List<CustomerVo> list = (List<CustomerVo>)getJdbcTemplate().query(sql, parms, new CustomerMapper());
+		List<CustomerVo> list =getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<CustomerVo>(CustomerVo.class));
 		if (list == null || list.isEmpty()) {
 			return null;
 		}
 		else {
-			return (CustomerVo) list.get(0);
+			return list.get(0);
 		}
 	}
 	
 	public CustomerVo getByEmailAddress(String emailAddr) {
 		String sql = 
-			"select a.* " +
+			"select a.*, a.CustId as OrigCustId, a.UpdtTime as OrigUpdtTime " +
 			" from Customers a, EmailAddr b " +
 			" where a.EmailAddrId=b.EmailAddrId " +
 			" and a.EmailAddr=? ";
 		Object[] parms = new Object[] {EmailAddrUtil.removeDisplayName(emailAddr)};
-		List<CustomerVo> list = (List<CustomerVo>)getJdbcTemplate().query(sql, parms, new CustomerMapper());
+		List<CustomerVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<CustomerVo>(CustomerVo.class));
 		if (list == null || list.isEmpty()) {
 			return null;
 		}
 		else {
-			return (CustomerVo) list.get(0);
+			return list.get(0);
 		}
 	}
 	
 	public List<CustomerVo> getAll() {
 		String sql = 
-			"select * " +
+			"select *, CustId as OrigCustId, UpdtTime as OrigUpdtTime " +
 				"from Customers";
 		
-		List<CustomerVo> list = (List<CustomerVo>)getJdbcTemplate().query(sql, new CustomerMapper());
+		List<CustomerVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<CustomerVo>(CustomerVo.class));
 		return list;
 	}
 	
@@ -211,7 +150,8 @@ public class CustomerJdbcDao implements CustomerDao {
 			}
 		}
 		String sql = 
-			"select a.*, b.StatusId as EmailStatusId, b.BounceCount, b.AcceptHtml " +
+			"select a.*, a.CustId as OrigCustId, a.UpdtTime as OrigUpdtTime, " +
+			"b.StatusId as EmailStatusId, b.BounceCount, b.AcceptHtml " +
 			" from Customers a " +
 				" LEFT OUTER JOIN EmailAddr b on a.EmailAddrId=b.EmailAddrId " +
 			whereSql +
@@ -221,8 +161,8 @@ public class CustomerJdbcDao implements CustomerDao {
 		int maxRows = getJdbcTemplate().getMaxRows();
 		getJdbcTemplate().setFetchSize(vo.getPageSize());
 		getJdbcTemplate().setMaxRows(vo.getPageSize());
-		List<CustomerVo> list = (List<CustomerVo>) getJdbcTemplate().query(sql, parms.toArray(),
-				new CustomerMapper());
+		List<CustomerVo> list = getJdbcTemplate().query(sql, parms.toArray(),
+				new BeanPropertyRowMapper<CustomerVo>(CustomerVo.class));
 		getJdbcTemplate().setFetchSize(fetchSize);
 		getJdbcTemplate().setMaxRows(maxRows);
 		if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
@@ -276,101 +216,15 @@ public class CustomerJdbcDao implements CustomerDao {
 	}
 	
 	public int update(CustomerVo customerVo) {
-		customerVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+		customerVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		syncupEmailFields(customerVo);
-		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(customerVo.getCustId());
-		keys.add(customerVo.getClientId());
-		keys.add(customerVo.getSsnNumber());
-		keys.add(customerVo.getTaxId());
-		keys.add(customerVo.getProfession());
-		keys.add(customerVo.getFirstName());
-		keys.add(customerVo.getMiddleName());
-		keys.add(customerVo.getLastName());
-		keys.add(customerVo.getAlias());
-		keys.add(customerVo.getStreetAddress());
-		keys.add(customerVo.getStreetAddress2());
-		keys.add(customerVo.getCityName());
-		keys.add(customerVo.getStateCode());
-		keys.add(customerVo.getZipCode5());
-		keys.add(customerVo.getZipCode4());
-		keys.add(customerVo.getProvinceName());
-		keys.add(customerVo.getPostalCode());
-		keys.add(customerVo.getCountry());
-		keys.add(customerVo.getDayPhone());
-		keys.add(customerVo.getEveningPhone());
-		keys.add(customerVo.getMobilePhone());
-		keys.add(customerVo.getBirthDate());
-		keys.add(customerVo.getStartDate());
-		keys.add(customerVo.getEndDate());
-		keys.add(customerVo.getMobileCarrier());
-		keys.add(customerVo.getMsgHeader());
-		keys.add(customerVo.getMsgDetail());
-		keys.add(customerVo.getMsgOptional());
-		keys.add(customerVo.getMsgFooter());
-		keys.add(customerVo.getTimeZoneCode());
-		keys.add(customerVo.getMemoText());
-		keys.add(customerVo.getStatusId());
-		keys.add(customerVo.getSecurityQuestion());
-		keys.add(customerVo.getSecurityAnswer());
-		keys.add(customerVo.getEmailAddr());
-		keys.add(customerVo.getEmailAddrId());
-		keys.add(customerVo.getPrevEmailAddr());
-		keys.add(customerVo.getPasswordChangeTime());
-		keys.add(customerVo.getUserPassword());
-		keys.add(customerVo.getUpdtTime());
-		keys.add(customerVo.getUpdtUserId());
-		keys.add(customerVo.getRowId());
-		
-		String sql = "update Customers set "
-			+ "CustId=?, "
-			+ "ClientId=?, "
-			+ "SsnNumber=?, "
-			+ "TaxId=?, "
-			+ "Profession=?, "	//5
-			+ "FirstName=?, "
-			+ "MiddleName=?, "
-			+ "LastName=?, "
-			+ "Alias=?, "
-			+ "StreetAddress=?, "	//10
-			+ "StreetAddress2=?, "
-			+ "CityName=?, "
-			+ "StateCode=?, "
-			+ "ZipCode5=?, "
-			+ "ZipCode4=?, "	//15
-			+ "ProvinceName=?, "
-			+ "PostalCode=?, "
-			+ "Country=?, "
-			+ "DayPhone=?, "
-			+ "EveningPhone=?, "	//20
-			+ "MobilePhone=?, "
-			+ "BirthDate=?, "
-			+ "StartDate=?, "
-			+ "EndDate=?, "
-			+ "MobileCarrier=?, " // 25
-			+ "MsgHeader=?, "
-			+ "MsgDetail=?, "
-			+ "MsgOptional=?, "
-			+ "MsgFooter=?, "
-			+ "TimeZoneCode=?, " // 30
-			+ "MemoText=?, "
-			+ "StatusId=?, "
-			+ "SecurityQuestion=?, "
-			+ "SecurityAnswer=?, "
-			+ "EmailAddr=?, " // 35
-			+ "EmailAddrId=?, "
-			+ "PrevEmailAddr=?, "
-			+ "PasswordChangeTime=?, "
-			+ "UserPassword=?, "
-			+ "UpdtTime=?," // 40
-			+ "UpdtUserId=? "
-			+ " where Rowid=?";
-		
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(customerVo);
+		String sql = MetaDataUtil.buildUpdateStatement("Customers", customerVo);
+
 		if (customerVo.getOrigUpdtTime() != null) {
-			sql += " and UpdtTime=?";
-			keys.add(customerVo.getOrigUpdtTime());
+			sql += " and UpdtTime=:origUpdtTime ";
 		}
-		int rowsUpadted = getJdbcTemplate().update(sql, keys.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		customerVo.setOrigUpdtTime(customerVo.getUpdtTime());
 		customerVo.setOrigCustId(customerVo.getCustId());
 		return rowsUpadted;
@@ -397,101 +251,11 @@ public class CustomerJdbcDao implements CustomerDao {
 	}
 
 	public int insert(CustomerVo customerVo) {
-		customerVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
+		customerVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		syncupEmailFields(customerVo);
-		Object[] parms = {
-				customerVo.getCustId(),
-				customerVo.getClientId(),
-				customerVo.getSsnNumber(),
-				customerVo.getTaxId(),
-				customerVo.getProfession(),
-				customerVo.getFirstName(),
-				customerVo.getMiddleName(),
-				customerVo.getLastName(),
-				customerVo.getAlias(),
-				customerVo.getStreetAddress(),
-				customerVo.getStreetAddress2(),
-				customerVo.getCityName(),
-				customerVo.getStateCode(),
-				customerVo.getZipCode5(),
-				customerVo.getZipCode4(),
-				customerVo.getProvinceName(),
-				customerVo.getPostalCode(),
-				customerVo.getCountry(),
-				customerVo.getDayPhone(),
-				customerVo.getEveningPhone(),
-				customerVo.getMobilePhone(),
-				customerVo.getBirthDate(),
-				customerVo.getStartDate(),
-				customerVo.getEndDate(),
-				customerVo.getMobileCarrier(),
-				customerVo.getMsgHeader(),
-				customerVo.getMsgDetail(),
-				customerVo.getMsgOptional(),
-				customerVo.getMsgFooter(),
-				customerVo.getTimeZoneCode(),
-				customerVo.getMemoText(),
-				customerVo.getStatusId(),
-				customerVo.getSecurityQuestion(),
-				customerVo.getSecurityAnswer(),
-				customerVo.getEmailAddr(),
-				customerVo.getEmailAddrId(),
-				customerVo.getPrevEmailAddr(),
-				customerVo.getPasswordChangeTime(),
-				customerVo.getUserPassword(),
-				customerVo.getUpdtTime(),
-				customerVo.getUpdtUserId()
-			};
-		
-		String sql = "insert into Customers ("
-			+ "CustId, "
-			+ "ClientId, "
-			+ "SsnNumber, "
-			+ "TaxId, "
-			+ "Profession, "	//5
-			+ "FirstName, "
-			+ "MiddleName, "
-			+ "LastName, "
-			+ "Alias, "
-			+ "StreetAddress, "	//10
-			+ "StreetAddress2, "
-			+ "CityName, "
-			+ "StateCode, "
-			+ "ZipCode5, "
-			+ "ZipCode4, "	//15
-			+ "ProvinceName, "
-			+ "PostalCode, "
-			+ "Country, "
-			+ "DayPhone, "
-			+ "EveningPhone, "	//20
-			+ "MobilePhone, "
-			+ "BirthDate, "
-			+ "StartDate, "
-			+ "EndDate, "
-			+ "MobileCarrier, " // 25
-			+ "MsgHeader, "
-			+ "MsgDetail, "
-			+ "MsgOptional, "
-			+ "MsgFooter, "
-			+ "TimeZoneCode, " //30
-			+ "MemoText, "
-			+ "StatusId, "
-			+ "SecurityQuestion, "
-			+ "SecurityAnswer, "
-			+ "EmailAddr, " // 35
-			+ "EmailAddrId, "
-			+ "PrevEmailAddr, "
-			+ "PasswordChangeTime, "
-			+ "UserPassword, "
-			+ "UpdtTime," //40
-			+ "UpdtUserId) "
-			+ " VALUES ( "
-			+ " ?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
-			+ ",?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
-			+ ",?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
-			+ ",?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? )";
-		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(customerVo);
+		String sql = MetaDataUtil.buildInsertStatement("Customers", customerVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		customerVo.setRowId(retrieveRowId());
 		customerVo.setOrigUpdtTime(customerVo.getUpdtTime());
 		customerVo.setOrigCustId(customerVo.getCustId());
@@ -512,17 +276,8 @@ public class CustomerJdbcDao implements CustomerDao {
 	}
 	
 	@Autowired
-	private EmailAddrDao emailAddrDao = null;
+	private EmailAddrDao emailAddrDao;
 	private EmailAddrDao getEmailAddrDao() {
 		return emailAddrDao;
 	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
-		
 }

@@ -1,7 +1,5 @@
 package com.legacytojava.message.dao.inbox;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,200 +7,106 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.constant.Constants;
 import com.legacytojava.message.constant.MsgDirectionCode;
 import com.legacytojava.message.constant.MsgStatusCode;
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.inbox.MsgInboxVo;
 import com.legacytojava.message.vo.inbox.MsgInboxWebVo;
 import com.legacytojava.message.vo.inbox.SearchFieldsVo;
 
 @Component("msgInboxDao")
-public class MsgInboxJdbcDao implements MsgInboxDao {
-	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
+public class MsgInboxJdbcDao extends AbstractDao implements MsgInboxDao {
 
-	private static class MsgInboxMapper implements RowMapper<MsgInboxVo> {
-		
-		public MsgInboxVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			MsgInboxVo msgInboxVo = setRowValues(rs);
-			
-			return msgInboxVo;
-		}
-		
-		protected static MsgInboxVo setRowValues(ResultSet rs) throws SQLException {
-			MsgInboxVo msgInboxVo = populateVo(rs);
-			
-			return msgInboxVo;
-		}
-		
-		protected static final MsgInboxVo populateVo(ResultSet rs) throws SQLException {
-			MsgInboxVo msgInboxVo = new MsgInboxVo();
-			
-			msgInboxVo.setMsgId(rs.getLong("MsgId"));
-			msgInboxVo.setMsgRefId((Long)rs.getObject("MsgRefId"));
-			msgInboxVo.setLeadMsgId(rs.getLong("LeadMsgId"));
-			msgInboxVo.setCarrierCode(rs.getString("CarrierCode"));
-			msgInboxVo.setMsgSubject(rs.getString("MsgSubject"));
-			msgInboxVo.setMsgPriority(rs.getString("MsgPriority"));
-			msgInboxVo.setReceivedTime(rs.getTimestamp("ReceivedTime"));
-			msgInboxVo.setFromAddrId((Long)rs.getObject("FromAddrId"));
-			msgInboxVo.setReplyToAddrId((Long)rs.getObject("ReplyToAddrId"));
-			msgInboxVo.setToAddrId((Long)rs.getObject("ToAddrId"));
-			msgInboxVo.setClientId(rs.getString("ClientId"));
-			msgInboxVo.setCustId(rs.getString("CustId"));
-			msgInboxVo.setPurgeDate((java.sql.Date)rs.getObject("PurgeDate"));
-			msgInboxVo.setUpdtTime(rs.getTimestamp("UpdtTime"));
-			msgInboxVo.setUpdtUserId(rs.getString("UpdtUserId"));
-			msgInboxVo.setLockTime(rs.getTimestamp("LockTime"));
-			msgInboxVo.setLockId(rs.getString("LockId"));
-			msgInboxVo.setRuleName(rs.getString("RuleName"));
-			msgInboxVo.setReadCount(rs.getInt("ReadCount"));
-			msgInboxVo.setReplyCount(rs.getInt("ReplyCount"));
-			msgInboxVo.setForwardCount(rs.getInt("ForwardCount"));
-			msgInboxVo.setFlagged(rs.getString("Flagged"));
-			
-			msgInboxVo.setMsgDirection(rs.getString("MsgDirection"));
-			msgInboxVo.setDeliveryTime(rs.getTimestamp("DeliveryTime"));
-			msgInboxVo.setStatusId(rs.getString("StatusId"));
-			msgInboxVo.setSmtpMessageId(rs.getString("SmtpMessageId"));
-			msgInboxVo.setRenderId((Long)rs.getObject("RenderId"));
-			msgInboxVo.setOverrideTestAddr(rs.getString("OverrideTestAddr"));
-			
-			msgInboxVo.setAttachmentCount(rs.getInt("AttachmentCount"));
-			msgInboxVo.setAttachmentSize(rs.getInt("AttachmentSize"));
-			msgInboxVo.setMsgBodySize(rs.getInt("MsgBodySize"));
-			
-			msgInboxVo.setMsgContentType(rs.getString("MsgContentType"));
-			msgInboxVo.setBodyContentType(rs.getString("BodyContentType"));
-			msgInboxVo.setMsgBody(rs.getString("MsgBody"));
-			
-			msgInboxVo.setOrigUpdtTime(msgInboxVo.getUpdtTime());
-			msgInboxVo.setOrigReadCount(msgInboxVo.getReadCount());
-			msgInboxVo.setOrigStatusId(msgInboxVo.getStatusId());
-			return msgInboxVo;
-		}
-	}
-
-	private static class MsgInboxMapperWeb implements RowMapper<MsgInboxWebVo> {
-		
-		public MsgInboxWebVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			MsgInboxWebVo msgInboxVo = new MsgInboxWebVo();
-			
-			msgInboxVo.setMsgId(rs.getLong("MsgId"));
-			msgInboxVo.setMsgRefId((Long)rs.getObject("MsgRefId"));
-			msgInboxVo.setLeadMsgId(rs.getLong("LeadMsgId"));
-			msgInboxVo.setMsgSubject(rs.getString("MsgSubject"));
-			msgInboxVo.setReceivedTime(rs.getTimestamp("ReceivedTime"));
-			msgInboxVo.setFromAddrId((Long)rs.getObject("FromAddrId"));
-			msgInboxVo.setToAddrId((Long)rs.getObject("ToAddrId"));
-			msgInboxVo.setRuleName(rs.getString("RuleName"));
-			msgInboxVo.setReadCount(rs.getInt("ReadCount"));
-			msgInboxVo.setReplyCount(rs.getInt("ReplyCount"));
-			msgInboxVo.setForwardCount(rs.getInt("ForwardCount"));
-			msgInboxVo.setFlagged(rs.getString("Flagged"));
-			msgInboxVo.setMsgDirection(rs.getString("MsgDirection"));
-			msgInboxVo.setStatusId(rs.getString("StatusId"));
-			
-			msgInboxVo.setAttachmentCount(rs.getInt("AttachmentCount"));
-			msgInboxVo.setAttachmentSize(rs.getInt("AttachmentSize"));
-			msgInboxVo.setMsgBodySize(rs.getInt("MsgBodySize"));
-			
-			msgInboxVo.setOrigReadCount(msgInboxVo.getReadCount());
-			msgInboxVo.setOrigStatusId(msgInboxVo.getStatusId());
-			
-			return msgInboxVo;
-		}
-	}
-	
 	public MsgInboxVo getByPrimaryKey(long msgId) {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			"from " +
 				"MsgInbox " +
 			" where msgId=? ";
 		Object[] parms = new Object[] {msgId};
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, parms, new MsgInboxMapper());
-		if (list.size()>0)
-			return (MsgInboxVo)list.get(0);
-		else
+		try {
+			MsgInboxVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<MsgInboxVo>(MsgInboxVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public MsgInboxVo getLastRecord() {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			"from " +
 				"MsgInbox " +
 			" where msgId = (select max(MsgId) from MsgInbox) ";
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, new MsgInboxMapper());
+		List<MsgInboxVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<MsgInboxVo>(MsgInboxVo.class));
 		if (list.size()>0)
-			return (MsgInboxVo)list.get(0);
+			return list.get(0);
 		else
 			return null;
 	}
 	
 	public List<MsgInboxWebVo> getByLeadMsgId(long leadMsgId) {
 		String sql = 
-			"select * " +
+			"select *, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			" from " +
 				" MsgInbox " +
 			" where leadMsgId=? " +
 			" order by msgId";
 		Object[] parms = new Object[] {leadMsgId};
-		List<MsgInboxWebVo> list = (List<MsgInboxWebVo>)getJdbcTemplate().query(sql, parms, new MsgInboxMapperWeb());
+		List<MsgInboxWebVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgInboxWebVo>(MsgInboxWebVo.class));
 		return list;
 	}
 	
 	public List<MsgInboxWebVo> getByMsgRefId(long msgRefId) {
 		String sql = 
-			"select * " +
+			"select *, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			" from " +
 				" MsgInbox " +
 			" where MsgRefId=? " +
 			" order by msgId";
 		Object[] parms = new Object[] {msgRefId};
-		List<MsgInboxWebVo> list = (List<MsgInboxWebVo>)getJdbcTemplate().query(sql, parms, new MsgInboxMapperWeb());
+		List<MsgInboxWebVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgInboxWebVo>(MsgInboxWebVo.class));
 		return list;
 	}
 	
 	public List<MsgInboxVo> getByFromAddrId(long addrId) {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			" from " +
 				" MsgInbox " +
 			" where fromAddrId=? " +
 			" order by msgId";
 		Object[] parms = new Object[] {addrId};
-		List<MsgInboxVo> list = (List<MsgInboxVo>)getJdbcTemplate().query(sql, parms, new MsgInboxMapper());
+		List<MsgInboxVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgInboxVo>(MsgInboxVo.class));
 		return list;
 	}
 	
 	public List<MsgInboxVo> getByToAddrId(long addrId) {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			" from " +
 				" MsgInbox " +
 			" where toAddrId=? " +
 			" order by msgId";
 		Object[] parms = new Object[] {addrId};
-		List<MsgInboxVo> list = (List<MsgInboxVo>)getJdbcTemplate().query(sql, parms, new MsgInboxMapper());
+		List<MsgInboxVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgInboxVo>(MsgInboxVo.class));
 		return list;
 	}
 	
@@ -221,13 +125,14 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 			date = new java.util.Date();
 		}
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			" from " +
 				" MsgInbox " +
 			" where receivedTime>=? " +
 			" order by receivedTime desc limit 100";
 		Object[] parms = new Object[] {new Timestamp(date.getTime())};
-		List<MsgInboxVo> list = (List<MsgInboxVo>)getJdbcTemplate().query(sql, parms, new MsgInboxMapper());
+		List<MsgInboxVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgInboxVo>(MsgInboxVo.class));
 		return list;
 	}
 	
@@ -353,7 +258,9 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 				"a.StatusId, " +
 				"AttachmentCount, " +
 				"AttachmentSize, " +
-				"MsgBodySize " +
+				"MsgBodySize, " +
+				"ReadCount as OrigReadCount, " +
+				"a.StatusId as OrigStatusId " +
 			" FROM " +
 				"MsgInbox a " +
 				" JOIN EmailAddr b ON a.FromAddrId=b.EmailAddrId " +
@@ -365,7 +272,8 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 		int maxRows = getJdbcTemplate().getMaxRows();
 		getJdbcTemplate().setFetchSize(vo.getPageSize());
 		getJdbcTemplate().setMaxRows(vo.getPageSize());
-		List<MsgInboxWebVo> list = (List<MsgInboxWebVo>)getJdbcTemplate().query(sql, parms.toArray(), new MsgInboxMapperWeb());
+		List<MsgInboxWebVo> list = getJdbcTemplate().query(sql, parms.toArray(),
+				new BeanPropertyRowMapper<MsgInboxWebVo>(MsgInboxWebVo.class));
 		getJdbcTemplate().setFetchSize(fetchSize);
 		getJdbcTemplate().setMaxRows(maxRows);
 		if (vo.getPageAction().equals(SearchFieldsVo.PageAction.PREVIOUS)) {
@@ -475,59 +383,15 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 	}
 
 	public int update(MsgInboxWebVo msgInboxVo) {
-		msgInboxVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgInboxVo.getMsgRefId());
-		fields.add(msgInboxVo.getLeadMsgId());
-		fields.add(msgInboxVo.getMsgSubject());
-		fields.add(msgInboxVo.getReceivedTime());
-		fields.add(msgInboxVo.getFromAddrId());
-		fields.add(msgInboxVo.getToAddrId());
-		fields.add(msgInboxVo.getUpdtTime());
-		fields.add(msgInboxVo.getUpdtUserId());
-		fields.add(msgInboxVo.getRuleName());
-		fields.add(msgInboxVo.getReadCount());
-		fields.add(msgInboxVo.getReplyCount());
-		fields.add(msgInboxVo.getForwardCount());
-		fields.add(msgInboxVo.getFlagged());
-		fields.add(msgInboxVo.getMsgDirection());
-		fields.add(msgInboxVo.getStatusId());
-		fields.add(msgInboxVo.getAttachmentCount());
-		fields.add(msgInboxVo.getAttachmentSize());
-		fields.add(msgInboxVo.getMsgBodySize());
-		
-		fields.add(msgInboxVo.getMsgId());
-		
-		String sql =
-			"update MsgInbox set " +
-				"MsgRefId=?, " +
-				"LeadMsgId=?, " +
-				"MsgSubject=?, " +
-				"ReceivedTime=?, " +
-				"FromAddrId=?, " +
-				"ToAddrId=?, " +
-				"UpdtTime=?, " +
-				"UpdtUserId=?, " +
-				"RuleName=?, " +
-				"ReadCount=?, " +
-				"ReplyCount=?, " +
-				"ForwardCount=?, " +
-				"Flagged=?, " +
-				"MsgDirection=?, " +
-				"StatusId=?, " + 
-				"AttachmentCount=?, " +
-				"AttachmentSize=?, " +
-				"MsgBodySize=? " +
-			" where " +
-				" msgId=? ";
+		msgInboxVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgInboxVo);
+		String sql = MetaDataUtil.buildUpdateStatement("MsgInbox", msgInboxVo);
 		
 		if (msgInboxVo.getOrigUpdtTime() != null) {
-			sql += " and UpdtTime=?";
-			fields.add(msgInboxVo.getOrigUpdtTime());
+			sql += " and UpdtTime=:origUpdtTime ";
 		}
 
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		if (rowsUpadted > 0) {
 			adjustUnreadCounts(msgInboxVo);
 			msgInboxVo.setOrigReadCount(msgInboxVo.getReadCount());
@@ -727,92 +591,14 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 	}
 	
 	public int update(MsgInboxVo msgInboxVo) {
-		msgInboxVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgInboxVo.getMsgRefId());
-		fields.add(msgInboxVo.getLeadMsgId());
-		fields.add(msgInboxVo.getCarrierCode());
-		fields.add(msgInboxVo.getMsgSubject());
-		fields.add(msgInboxVo.getMsgPriority());
-		fields.add(msgInboxVo.getReceivedTime());
-		fields.add(msgInboxVo.getFromAddrId());
-		fields.add(msgInboxVo.getReplyToAddrId());
-		fields.add(msgInboxVo.getToAddrId());
-		fields.add(msgInboxVo.getClientId());
-		fields.add(msgInboxVo.getCustId());
-		fields.add(msgInboxVo.getPurgeDate());
-		fields.add(msgInboxVo.getUpdtTime());
-		fields.add(msgInboxVo.getUpdtUserId());
-		fields.add(msgInboxVo.getLockTime());
-		fields.add(msgInboxVo.getLockId());
-		fields.add(msgInboxVo.getRuleName());
-		fields.add(msgInboxVo.getReadCount());
-		fields.add(msgInboxVo.getReplyCount());
-		fields.add(msgInboxVo.getForwardCount());
-		fields.add(msgInboxVo.getFlagged());
-		
-		fields.add(msgInboxVo.getMsgDirection());
-		fields.add(msgInboxVo.getDeliveryTime());
-		fields.add(msgInboxVo.getStatusId());
-		fields.add(msgInboxVo.getSmtpMessageId());
-		fields.add(msgInboxVo.getRenderId());
-		fields.add(msgInboxVo.getOverrideTestAddr());
-		
-		fields.add(msgInboxVo.getAttachmentCount());
-		fields.add(msgInboxVo.getAttachmentSize());
-		fields.add(msgInboxVo.getMsgBodySize());
-		
-		fields.add(msgInboxVo.getMsgContentType());
-		fields.add(msgInboxVo.getBodyContentType());
-		fields.add(msgInboxVo.getMsgBody());
-		
-		fields.add(msgInboxVo.getMsgId());
-		
-		String sql =
-			"update MsgInbox set " +
-				"MsgRefId=?, " +
-				"LeadMsgId=?, " +
-				"CarrierCode=?, " +
-				"MsgSubject=?, " +
-				"MsgPriority=?, " +
-				"ReceivedTime=?, " +
-				"FromAddrId=?, " +
-				"ReplyToAddrId=?, " +
-				"ToAddrId=?, " +
-				"ClientId=?, " +
-				"CustId=?, " +
-				"PurgeDate=?, " +
-				"UpdtTime=?, " +
-				"UpdtUserId=?, " +
-				"LockTime=?, " +
-				"LockId=?, " +
-				"RuleName=?, " +
-				"ReadCount=?, " +
-				"ReplyCount=?, " +
-				"ForwardCount=?, " +
-				"Flagged=?, " +
-				"MsgDirection=?, " +
-				"DeliveryTime=?, " +
-				"StatusId=?, " +
-				"SmtpMessageId=?, " +
-				"RenderId=?, " +
-				"OverrideTestAddr=?, " +
-				"AttachmentCount=?, " +
-				"AttachmentSize=?, " +
-				"MsgBodySize=?, " +
-				"MsgContentType=?, " +
-				"BodyContentType=?, " +
-				"MsgBody=? " +
-			" where " +
-				" msgId=? ";
-		
+		msgInboxVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgInboxVo);
+		String sql = MetaDataUtil.buildUpdateStatement("MsgInbox", msgInboxVo);
 		if (msgInboxVo.getOrigUpdtTime() != null) {
-			sql += " and UpdtTime=?";
-			fields.add(msgInboxVo.getOrigUpdtTime());
+			sql += " and UpdtTime=:origUpdtTime ";
 		}
 
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		if (rowsUpadted > 0) {
 			adjustUnreadCounts(msgInboxVo);
 			msgInboxVo.setOrigReadCount(msgInboxVo.getReadCount());
@@ -848,87 +634,10 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 	}
 	
 	public int insert(MsgInboxVo msgInboxVo) {
-		String sql = 
-			"INSERT INTO MsgInbox (" +
-			"MsgId, " +
-			"MsgRefId, " +
-			"LeadMsgId, " +
-			"CarrierCode, " +
-			"MsgSubject, " +
-			"MsgPriority, " +
-			"ReceivedTime, " +
-			"FromAddrId, " +
-			"ReplyToAddrId, " +
-			"ToAddrId, " +
-			"ClientId, " +
-			"CustId, " +
-			"PurgeDate, " +
-			"UpdtTime, " +
-			"UpdtUserId, " +
-			"LockTime, " +
-			"LockId, " +
-			"RuleName, " +
-			"ReadCount, " +
-			"ReplyCount, " +
-			"ForwardCount, " +
-			"Flagged, " +
-			"MsgDirection, " +
-			"DeliveryTime, " +
-			"StatusId, " +
-			"SmtpMessageId, " +
-			"RenderId, " +
-			"OverrideTestAddr, " +
-			"AttachmentCount, " +
-			"AttachmentSize, " +
-			"MsgBodySize, " +
-			"MsgContentType, " +
-			"BodyContentType, " +
-			"MsgBody " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
-				" ?, ?, ?, ?)";
-		
-		msgInboxVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgInboxVo.getMsgId());
-		fields.add(msgInboxVo.getMsgRefId());
-		fields.add(msgInboxVo.getLeadMsgId());
-		fields.add(msgInboxVo.getCarrierCode());
-		fields.add(msgInboxVo.getMsgSubject());
-		fields.add(msgInboxVo.getMsgPriority());
-		fields.add(msgInboxVo.getReceivedTime());
-		fields.add(msgInboxVo.getFromAddrId());
-		fields.add(msgInboxVo.getReplyToAddrId());
-		fields.add(msgInboxVo.getToAddrId());
-		fields.add(msgInboxVo.getClientId());
-		fields.add(msgInboxVo.getCustId());
-		fields.add(msgInboxVo.getPurgeDate());
-		fields.add(msgInboxVo.getUpdtTime());
-		fields.add(msgInboxVo.getUpdtUserId());
-		fields.add(msgInboxVo.getLockTime());
-		fields.add(msgInboxVo.getLockId());
-		fields.add(msgInboxVo.getRuleName());
-		fields.add(msgInboxVo.getReadCount());
-		fields.add(msgInboxVo.getReplyCount());
-		fields.add(msgInboxVo.getForwardCount());
-		fields.add(msgInboxVo.getFlagged());
-		fields.add(msgInboxVo.getMsgDirection());
-		fields.add(msgInboxVo.getDeliveryTime());
-		fields.add(msgInboxVo.getStatusId());
-		fields.add(msgInboxVo.getSmtpMessageId());
-		fields.add(msgInboxVo.getRenderId());
-		fields.add(msgInboxVo.getOverrideTestAddr());
-		fields.add(msgInboxVo.getAttachmentCount());
-		fields.add(msgInboxVo.getAttachmentSize());
-		fields.add(msgInboxVo.getMsgBodySize());
-		fields.add(msgInboxVo.getMsgContentType());
-		fields.add(msgInboxVo.getBodyContentType());
-		fields.add(msgInboxVo.getMsgBody());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		msgInboxVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgInboxVo);
+		String sql = MetaDataUtil.buildInsertStatement("MsgInbox", msgInboxVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgInboxVo.setOrigUpdtTime(msgInboxVo.getUpdtTime());
 		//msgInboxVo.setMsgId(getJdbcTemplate().queryForInt(getRowIdSql()));
 		if (rowsInserted > 0 && msgInboxVo.getReadCount() == 0
@@ -947,9 +656,5 @@ public class MsgInboxJdbcDao implements MsgInboxDao {
 	private MsgUnreadCountDao msgUnreadCountDao = null;
 	MsgUnreadCountDao getMsgUnreadCountDao() {
 		return msgUnreadCountDao;
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

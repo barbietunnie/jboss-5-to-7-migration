@@ -1,56 +1,24 @@
 package com.legacytojava.message.dao.action;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.constant.StatusIdCode;
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.dao.client.ReloadFlagsDao;
 import com.legacytojava.message.vo.action.MsgActionVo;
 
 @Component("msgActionDao")
-public class MsgActionJdbcDao implements MsgActionDao {
-	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	static final class MsgActionMapper implements RowMapper<MsgActionVo> {
-		
-		public MsgActionVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			MsgActionVo msgActionVo = new MsgActionVo();
-			
-			msgActionVo.setRowId(rs.getInt("RowId"));
-			msgActionVo.setRuleName(rs.getString("RuleName"));
-			msgActionVo.setActionSeq(rs.getInt("ActionSeq"));
-			msgActionVo.setStartTime(rs.getTimestamp("StartTime"));
-			msgActionVo.setClientId(rs.getString("ClientId"));
-			msgActionVo.setActionId(rs.getString("ActionId"));
-			msgActionVo.setStatusId(rs.getString("StatusId"));
-			msgActionVo.setDataTypeValues(rs.getString("DataTypeValues"));
-			
-			msgActionVo.setProcessBeanId(rs.getString("ProcessBeanId"));
-			msgActionVo.setProcessClassName(rs.getString("ProcessClassName"));
-			msgActionVo.setDataType(rs.getString("DataType"));
-			return msgActionVo;
-		}
-	}
+public class MsgActionJdbcDao extends AbstractDao implements MsgActionDao {
 	
 	public List<MsgActionVo> getByRuleName(String ruleName) {
 		String sql = 
@@ -60,7 +28,8 @@ public class MsgActionJdbcDao implements MsgActionDao {
 			" order by actionSeq, clientId, startTime";
 		
 		Object[] parms = new Object[] {ruleName};
-		List<MsgActionVo> list = (List<MsgActionVo>)getJdbcTemplate().query(sql, parms, new MsgActionMapper());
+		List<MsgActionVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgActionVo>(MsgActionVo.class));
 		return list;
 	}
 	
@@ -71,11 +40,14 @@ public class MsgActionJdbcDao implements MsgActionDao {
 			" where a.ActionId = b.ActionId and RowId=? ";
 		
 		Object[] parms = new Object[] {rowId};
-		List<MsgActionVo> list = (List<MsgActionVo>)getJdbcTemplate().query(sql, parms, new MsgActionMapper());
-		if (list != null && list.size() > 0)
-			return (MsgActionVo) list.get(0);
-		else
+		try {
+			MsgActionVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<MsgActionVo>(MsgActionVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public List<MsgActionVo> getByBestMatch(String ruleName, Timestamp startTime, String clientId) {
@@ -102,7 +74,8 @@ public class MsgActionJdbcDao implements MsgActionDao {
 		sql += " order by actionSeq, clientId desc, startTime desc ";
 		
 		Object[] parms = keys.toArray();
-		List<MsgActionVo> list = (List<MsgActionVo>)getJdbcTemplate().query(sql, parms, new MsgActionMapper());
+		List<MsgActionVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgActionVo>(MsgActionVo.class));
 		// remove duplicates
 		list = removeDuplicates(list);
 		return list;
@@ -128,7 +101,8 @@ public class MsgActionJdbcDao implements MsgActionDao {
 			" where a.ActionId = b.ActionId " +
 			" order by actionSeq";
 		
-		List<MsgActionVo> list = (List<MsgActionVo>)getJdbcTemplate().query(sql, new MsgActionMapper());
+		List<MsgActionVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<MsgActionVo>(MsgActionVo.class));
 		return list;	
 	}
 	
@@ -152,12 +126,14 @@ public class MsgActionJdbcDao implements MsgActionDao {
 			sql += " and clientId=? ";
 			keys.add(clientId);
 		}
-		
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, keys.toArray(), new MsgActionMapper());
-		if (list.size()>0)
-			return (MsgActionVo)list.get(0);
-		else
+		try {
+			MsgActionVo vo = getJdbcTemplate().queryForObject(sql, keys.toArray(), 
+					new BeanPropertyRowMapper<MsgActionVo>(MsgActionVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public MsgActionVo getMostCurrent(String ruleName, int actionSeq, String clientId) {
@@ -184,36 +160,18 @@ public class MsgActionJdbcDao implements MsgActionDao {
 		sql += " order by clientId desc, startTime desc ";
 		
 		Object[] parms = keys.toArray();
-		List<MsgActionVo> list =  (List<MsgActionVo>)getJdbcTemplate().query(sql, parms, new MsgActionMapper());
+		List<MsgActionVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgActionVo>(MsgActionVo.class));
 		if (list.size() > 0)
-			return (MsgActionVo) list.get(0);
+			return list.get(0);
 		else
 			return null;
 	}
 	
 	public synchronized int update(MsgActionVo msgActionVo) {
-		Object[] parms = {
-				msgActionVo.getRuleName(),
-				msgActionVo.getActionSeq(),
-				msgActionVo.getStartTime(),
-				msgActionVo.getClientId(),
-				msgActionVo.getActionId(),
-				msgActionVo.getStatusId(),
-				msgActionVo.getDataTypeValues(),
-				msgActionVo.getRowId()
-				};
-		
-		String sql = "update MsgAction set " +
-			"ruleName=?, " +
-			"actionSeq=?, " +
-			"startTime=?, " +
-			"clientId=?, " +
-			"actionId=?, " +
-			"statusId=?, " +
-			"dataTypeValues=? " +
-			" where rowId=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, parms);
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionVo);
+		String sql = MetaDataUtil.buildUpdateStatement("MsgAction", msgActionVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		updateReloadFlags();
 		return rowsUpadted;
 	}
@@ -263,27 +221,9 @@ public class MsgActionJdbcDao implements MsgActionDao {
 	}
 	
 	public synchronized int insert(MsgActionVo msgActionVo) {
-		Object[] parms = {
-				msgActionVo.getRuleName(),
-				msgActionVo.getActionSeq(),
-				msgActionVo.getStartTime(),
-				msgActionVo.getClientId(),
-				msgActionVo.getActionId(),
-				msgActionVo.getStatusId(),
-				msgActionVo.getDataTypeValues()
-			};
-		
-		String sql = 
-			"INSERT INTO MsgAction ( " +
-			"ruleName, " +
-			"actionSeq," +
-			"startTime," +
-			"clientId," +
-			"actionId," +
-			"statusId," +
-			"dataTypeValues " +
-			") VALUES (?, ?, ?, ?, ?, ?, ?)";
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionVo);
+		String sql = MetaDataUtil.buildInsertStatement("MsgAction", msgActionVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgActionVo.setRowId(retrieveRowId());
 		updateReloadFlags();
 		return rowsInserted;
@@ -297,12 +237,5 @@ public class MsgActionJdbcDao implements MsgActionDao {
 	private ReloadFlagsDao reloadFlagsDao;
 	private synchronized ReloadFlagsDao getReloadFlagsDao() {
 		return reloadFlagsDao;
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

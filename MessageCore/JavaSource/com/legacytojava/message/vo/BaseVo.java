@@ -25,8 +25,6 @@ public class BaseVo implements java.io.Serializable, Cloneable {
 	
 	final static String LF = System.getProperty("line.separator", "\n");
 	@XmlElement
-	protected int rowId = -1;
-	@XmlElement
 	protected String primaryKey = null;
 	@XmlElement
 	private String statusId = StatusIdCode.ACTIVE;
@@ -53,7 +51,6 @@ public class BaseVo implements java.io.Serializable, Cloneable {
 	protected boolean markedForEdition = false;
 	
 	public BaseVo() {
-		rowId = -1;
 		primaryKey = null;	
 		statusId = StatusIdCode.ACTIVE;
 		updtTime = null;
@@ -326,12 +323,6 @@ public class BaseVo implements java.io.Serializable, Cloneable {
 		}
 	}
 	
-	public int getRowId() {
-		return rowId;
-	}
-	public void setRowId(int rowId) {
-		this.rowId = rowId;
-	}
 	public String getPrimaryKey() {
 		return primaryKey;
 	}

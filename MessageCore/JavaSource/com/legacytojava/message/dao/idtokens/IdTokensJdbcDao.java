@@ -1,56 +1,24 @@
 package com.legacytojava.message.dao.idtokens;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.IdTokensVo;
 
 @Component("idTokensDao")
-public class IdTokensJdbcDao implements IdTokensDao {
+public class IdTokensJdbcDao extends AbstractDao implements IdTokensDao {
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate = null;
-	
-	private static final Hashtable<String, Object> cache = new Hashtable<String, Object>();
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
+	private static final Hashtable<String, IdTokensVo> cache = new Hashtable<String, IdTokensVo>();
 
-	private static final class IdTokensMapper implements RowMapper<IdTokensVo> {
-		
-		public IdTokensVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			IdTokensVo idTokensVo = new IdTokensVo();
-			
-			idTokensVo.setRowId(rs.getInt("RowId"));
-			idTokensVo.setClientId(rs.getString("ClientId"));
-			idTokensVo.setDescription(rs.getString("Description"));
-			idTokensVo.setBodyBeginToken(rs.getString("BodyBeginToken"));
-			idTokensVo.setBodyEndToken(rs.getString("BodyEndToken"));
-			idTokensVo.setXHeaderName(rs.getString("XHeaderName"));
-			idTokensVo.setXhdrBeginToken(rs.getString("XhdrBeginToken"));
-			idTokensVo.setXhdrEndToken(rs.getString("XhdrEndToken"));
-			idTokensVo.setMaxLength(rs.getInt("MaxLength"));
-			idTokensVo.setUpdtTime(rs.getTimestamp("UpdtTime"));
-			idTokensVo.setUpdtUserId(rs.getString("UpdtUserId"));
-			idTokensVo.setOrigUpdtTime(idTokensVo.getUpdtTime());
-			return idTokensVo;
-		}
-	}
 	public IdTokensVo getByClientId(String clientId) {
 		/*
 		 * This method is not thread safe as the "cache" is not locked.
@@ -60,53 +28,32 @@ public class IdTokensJdbcDao implements IdTokensDao {
 		if (!cache.containsKey(clientId)) {
 			String sql = "select * from IdTokens where clientId=?";
 			Object[] parms = new Object[] {clientId};
-			List<?> list = (List<?>)getJdbcTemplate().query(sql, parms, new IdTokensMapper());
-			if (list.size()>0) {
-				cache.put(clientId, list.get(0));
+			try {
+			IdTokensVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<IdTokensVo>(IdTokensVo.class));
+				cache.put(clientId, vo);
 			}
-			else {
+			catch (EmptyResultDataAccessException e) {
 				cache.put(clientId, null);
 			}
 		}
-		return (IdTokensVo)cache.get(clientId);
+		return cache.get(clientId);
 	}
 	
 	public List<IdTokensVo> getAll() {
 		String sql = "select * from IdTokens order by clientId";
-		List<IdTokensVo> list = (List<IdTokensVo>)getJdbcTemplate().query(sql, new IdTokensMapper());
+		List<IdTokensVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<IdTokensVo>(IdTokensVo.class));
 		return list;
 	}
 	
 	public int update(IdTokensVo idTokensVo) {
-		idTokensVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		Object[] parms = {
-				idTokensVo.getDescription(),
-				idTokensVo.getBodyBeginToken(),
-				idTokensVo.getBodyEndToken(),
-				idTokensVo.getXHeaderName(),
-				idTokensVo.getXhdrBeginToken(),
-				idTokensVo.getXhdrEndToken(),
-				""+idTokensVo.getMaxLength(),
-				idTokensVo.getUpdtTime(),
-				idTokensVo.getUpdtUserId(),
-				idTokensVo.getClientId()
-				};
-		
-		String sql = "update IdTokens set " +
-			"Description=?," +
-			"BodyBeginToken=?," +
-			"BodyEndToken=?," +
-			"XHeaderName=?," +
-			"XhdrBeginToken=?," +
-			"XhdrEndToken=?," +
-			"MaxLength=?," +
-			"UpdtTime=?," +
-			"UpdtUserId=? " +
-			" where clientId=?";
-		
+		idTokensVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		idTokensVo.setOrigUpdtTime(idTokensVo.getUpdtTime());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(idTokensVo);
+		String sql = MetaDataUtil.buildUpdateStatement("IdTokens", idTokensVo);
 		synchronized (cache) {
-			int rowsUpadted = getJdbcTemplate().update(sql, parms);
+			int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 			removeFromCache(idTokensVo.getClientId());
 			return rowsUpadted;
 		}
@@ -123,37 +70,12 @@ public class IdTokensJdbcDao implements IdTokensDao {
 	}
 	
 	public int insert(IdTokensVo idTokensVo) {
-		idTokensVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		Object[] parms = {
-			idTokensVo.getClientId(),
-			idTokensVo.getDescription(),
-			idTokensVo.getBodyBeginToken(),
-			idTokensVo.getBodyEndToken(),
-			idTokensVo.getXHeaderName(),
-			idTokensVo.getXhdrBeginToken(),
-			idTokensVo.getXhdrEndToken(),
-			""+idTokensVo.getMaxLength(),
-			idTokensVo.getUpdtTime(),
-			idTokensVo.getUpdtUserId()
-			};
-		
-		String sql = 
-			"INSERT INTO IdTokens " +
-				"(ClientId," +
-				"Description," +
-				"BodyBeginToken," +
-				"BodyEndToken," +
-				"XHeaderName," +
-				"XhdrBeginToken," +
-				"XhdrEndToken," +
-				"MaxLength," +
-				"UpdtTime," +
-				"UpdtUserId " +
-			") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		
+		idTokensVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		idTokensVo.setOrigUpdtTime(idTokensVo.getUpdtTime());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(idTokensVo);
+		String sql = MetaDataUtil.buildInsertStatement("IdTokens", idTokensVo);
 		synchronized (cache) {
-			int rowsInserted = getJdbcTemplate().update(sql, parms);
+			int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 			idTokensVo.setRowId(retrieveRowId());
 			removeFromCache(idTokensVo.getClientId());
 			return rowsInserted;
@@ -164,13 +86,5 @@ public class IdTokensJdbcDao implements IdTokensDao {
 		if (cache.containsKey(clientId)) {
 			cache.remove(clientId);
 		}
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

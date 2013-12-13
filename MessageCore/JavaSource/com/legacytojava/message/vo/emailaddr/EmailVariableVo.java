@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 import com.legacytojava.message.constant.Constants;
 import com.legacytojava.message.dao.emailaddr.EmailVariableDao;
-import com.legacytojava.message.vo.BaseVo;
+import com.legacytojava.message.vo.BaseVoWithRowId;
 
-public class EmailVariableVo extends BaseVo implements Serializable {
+public class EmailVariableVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -1851563259118001846L;
 	private String variableName = "";
 	private String variableType = "";

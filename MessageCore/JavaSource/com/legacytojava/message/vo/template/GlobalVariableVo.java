@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import com.legacytojava.message.constant.Constants;
-import com.legacytojava.message.vo.BaseVo;
+import com.legacytojava.message.vo.BaseVoWithRowId;
 
-public class GlobalVariableVo extends BaseVo implements Serializable
+public class GlobalVariableVo extends BaseVoWithRowId implements Serializable
 {
 	private static final long serialVersionUID = 8887386091033102579L;
 	private String variableName = "";

@@ -6,7 +6,7 @@ import java.util.Date;
 
 import com.legacytojava.message.util.StringUtil;
 
-public class CustomerVo extends BaseVo implements Serializable {
+public class CustomerVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -1028823392338670111L;
 	
 	private String custId = "";

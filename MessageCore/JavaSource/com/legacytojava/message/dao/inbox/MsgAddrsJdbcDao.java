@@ -1,46 +1,20 @@
 package com.legacytojava.message.dao.inbox;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.inbox.MsgAddrsVo;
 
 @Component("msgAddrsDao")
-public class MsgAddrsJdbcDao implements MsgAddrsDao {
-	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static final class MsgAddrsMapper implements RowMapper<MsgAddrsVo> {
-		
-		public MsgAddrsVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			MsgAddrsVo msgAddrsVo = new MsgAddrsVo();
-			
-			msgAddrsVo.setMsgId(rs.getLong("MsgId"));
-			msgAddrsVo.setAddrType(rs.getString("AddrType"));
-			msgAddrsVo.setAddrSeq(rs.getInt("AddrSeq"));
-			msgAddrsVo.setAddrValue(rs.getString("AddrValue"));
-			
-			return msgAddrsVo;
-		}
-	}
+public class MsgAddrsJdbcDao extends AbstractDao implements MsgAddrsDao {
 
 	public MsgAddrsVo getByPrimaryKey(long msgId, String addrType, int addrSeq) {
 		String sql = 
@@ -49,11 +23,14 @@ public class MsgAddrsJdbcDao implements MsgAddrsDao {
 				"MsgAddrs where msgid=? and addrType=? and addrSeq=? ";
 		
 		Object[] parms = new Object[] {msgId+"",addrType,addrSeq+""};
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, parms, new MsgAddrsMapper());
-		if (list.size()>0)
-			return (MsgAddrsVo)list.get(0);
-		else
+		try {
+			MsgAddrsVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<MsgAddrsVo>(MsgAddrsVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public List<MsgAddrsVo> getByMsgId(long msgId) {
@@ -63,7 +40,8 @@ public class MsgAddrsJdbcDao implements MsgAddrsDao {
 				" MsgAddrs where msgId=? " +
 			" order by addrType, addrSeq";
 		Object[] parms = new Object[] {msgId+""};
-		List<MsgAddrsVo> list =  (List<MsgAddrsVo>)getJdbcTemplate().query(sql, parms, new MsgAddrsMapper());
+		List<MsgAddrsVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgAddrsVo>(MsgAddrsVo.class));
 		return list;
 	}
 	
@@ -74,25 +52,15 @@ public class MsgAddrsJdbcDao implements MsgAddrsDao {
 				" MsgAddrs where msgId=? and addrType=? " +
 			" order by addrSeq";
 		Object[] parms = new Object[] {msgId+"",addrType};
-		List<MsgAddrsVo> list =  (List<MsgAddrsVo>)getJdbcTemplate().query(sql, parms, new MsgAddrsMapper());
+		List<MsgAddrsVo> list = getJdbcTemplate().query(sql, parms,
+				new BeanPropertyRowMapper<MsgAddrsVo>(MsgAddrsVo.class));
 		return list;
 	}
 	
 	public int update(MsgAddrsVo msgAddrsVo) {
-		
-		ArrayList<String> fields = new ArrayList<String>();
-		fields.add(msgAddrsVo.getAddrValue());
-		fields.add(msgAddrsVo.getMsgId()+"");
-		fields.add(msgAddrsVo.getAddrType());
-		fields.add(msgAddrsVo.getAddrSeq()+"");
-		
-		String sql =
-			"update MsgAddrs set " +
-				"AddrValue=? " +
-			" where " +
-				" msgid=? and addrType=? and addrSeq=?  ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgAddrsVo);
+		String sql = MetaDataUtil.buildUpdateStatement("MsgAddrs", msgAddrsVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -121,27 +89,9 @@ public class MsgAddrsJdbcDao implements MsgAddrsDao {
 	}
 	
 	public int insert(MsgAddrsVo msgAddrsVo) {
-		String sql = 
-			"INSERT INTO MsgAddrs (" +
-			"MsgId, " +
-			"AddrType, " +
-			"AddrSeq, " +
-			"Addrvalue " +
-			") VALUES (" +
-				" ?, ?, ?, ? " +
-				")";
-		
-		ArrayList<String> fields = new ArrayList<String>();
-		fields.add(msgAddrsVo.getMsgId()+"");
-		fields.add(msgAddrsVo.getAddrType());
-		fields.add(msgAddrsVo.getAddrSeq()+"");
-		fields.add(msgAddrsVo.getAddrValue());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgAddrsVo);
+		String sql = MetaDataUtil.buildInsertStatement("MsgAddrs", msgAddrsVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

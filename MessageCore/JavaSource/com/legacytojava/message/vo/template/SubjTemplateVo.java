@@ -3,9 +3,9 @@ package com.legacytojava.message.vo.template;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.legacytojava.message.vo.BaseVo;
+import com.legacytojava.message.vo.BaseVoWithRowId;
 
-public class SubjTemplateVo extends BaseVo implements Serializable
+public class SubjTemplateVo extends BaseVoWithRowId implements Serializable
 {
 	private static final long serialVersionUID = -1913573551779574674L;
 	private String templateId = "";

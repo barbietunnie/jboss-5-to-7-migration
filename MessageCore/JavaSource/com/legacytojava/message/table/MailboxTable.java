@@ -56,8 +56,9 @@ public class MailboxTable extends CreateTableBase
 							for exchange server, it must be 10 or greater
 			- MessageCount: for test only, number of messages to be processed. 0=unlimited.
 		 	- ToPlainText: yes/no, convert message body from HTML to plain text, default to no
-			- ToAddrDomain: if present, scan "received" address chain until a match is found. The
-							email address with the matching domain becomes the real TO address.
+			- ToAddrDomain: Derived from Client_Data table. If present, scan "received" address
+			 				chain until a match is found. The email address with the matching 
+			 				domain becomes the real TO address.
 			- CheckDuplicate: yes/no, check for duplicates, only one is processed
 			- AlertDuplicate: yes/no, send out alert if found duplicate
 			- LogDuplicate: yes/no, log duplicate messages

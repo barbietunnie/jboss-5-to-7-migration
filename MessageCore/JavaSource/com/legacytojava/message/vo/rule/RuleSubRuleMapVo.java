@@ -1,9 +1,10 @@
 package com.legacytojava.message.vo.rule;
 
 import java.io.Serializable;
-import com.legacytojava.message.vo.BaseVo;
 
-public class RuleSubRuleMapVo extends BaseVo implements Serializable {
+import com.legacytojava.message.vo.BaseVoWithRowId;
+
+public class RuleSubRuleMapVo extends BaseVoWithRowId implements Serializable {
 
 	private static final long serialVersionUID = 5397520412552955484L;
 	private String ruleName = "";

@@ -5,9 +5,9 @@ import java.sql.Timestamp;
 
 import com.legacytojava.message.constant.Constants;
 import com.legacytojava.message.constant.StatusIdCode;
-import com.legacytojava.message.vo.BaseVo;
+import com.legacytojava.message.vo.BaseVoWithRowId;
 
-public class MailingListVo extends BaseVo implements Serializable {
+public class MailingListVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = 3125836080929462525L;
 	private String listId = "";
 	private String displayName = null;

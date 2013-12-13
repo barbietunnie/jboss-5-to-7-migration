@@ -1,82 +1,49 @@
 package com.legacytojava.message.dao.rule;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bo.rule.RuleBase;
 import com.legacytojava.message.constant.Constants;
 import com.legacytojava.message.constant.StatusIdCode;
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.dao.client.ReloadFlagsDao;
 import com.legacytojava.message.vo.rule.RuleLogicVo;
 
 @Component("ruleLogicDao")
-public class RuleLogicJdbcDao implements RuleLogicDao {
+public class RuleLogicJdbcDao extends AbstractDao implements RuleLogicDao {
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
+	private String getSelectClause() {
+		String select = 
+				"select " +
+					"r.RowId, " +
+					"r.RuleName, " +
+					"r.RuleSeq, " +
+					"r.RuleType, " +
+					"r.StatusId, " +
+					"r.StartTime, " +
+					"r.MailType, " +
+					"r.RuleCategory, " +
+					"r.IsSubRule, " +
+					"r.BuiltinRule, " +
+					"r.Description, " +
+					"count(s.SubRuleName) as SubRuleCount " +
+				" from RuleLogic r " +
+					" left outer join RuleSubRuleMap s on r.RuleName=s.RuleName ";
+		return select;
 	}
 	
-	static final class RuleLogicMapper implements RowMapper<RuleLogicVo> {
-		
-		public RuleLogicVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			RuleLogicVo ruleLogicVo = new RuleLogicVo();
-			
-			ruleLogicVo.setRowId(rs.getInt("RowId"));
-			ruleLogicVo.setRuleName(rs.getString("RuleName"));
-			ruleLogicVo.setRuleSeq(rs.getInt("RuleSeq"));
-			ruleLogicVo.setRuleType(rs.getString("RuleType"));
-			ruleLogicVo.setStatusId(rs.getString("StatusId"));
-			ruleLogicVo.setStartTime(rs.getTimestamp("StartTime"));
-			ruleLogicVo.setMailType(rs.getString("MailType"));
-			ruleLogicVo.setRuleCategory(rs.getString("RuleCategory"));
-			ruleLogicVo.setIsSubRule(rs.getString("IsSubRule"));
-			ruleLogicVo.setBuiltInRule(rs.getString("BuiltInRule"));
-			ruleLogicVo.setDescription(rs.getString("Description"));
-			ruleLogicVo.setSubRuleCount(rs.getInt("SubRuleCount"));
-			// for updates that change rule name
-			ruleLogicVo.setOrigRuleName(ruleLogicVo.getRuleName());
-			ruleLogicVo.setOrigRuleSeq(ruleLogicVo.getRuleSeq());
-			
-			return ruleLogicVo;
-		}
-	}
-
-	public RuleLogicVo getByPrimaryKey(String ruleName, int ruleSeq) {
-		String sql = 
-			"select " +
-				"r.RowId, " +
-				"r.RuleName, " +
-				"r.RuleSeq, " +
-				"r.RuleType, " +
-				"r.StatusId, " +
-				"r.StartTime, " +
-				"r.MailType, " +
-				"r.RuleCategory, " +
-				"r.IsSubRule, " +
-				"r.BuiltinRule, " +
-				"r.Description, " +
-				"count(s.SubRuleName) as SubRuleCount " +
-			" from RuleLogic r " +
-				" left outer join RuleSubRuleMap s on r.RuleName=s.RuleName " +
-			" where r.ruleName=? and r.RuleSeq=? " +
-			" group by " +
+	private String getGroupByClause() {
+		String groupBy = " group by " +
 				"r.RowId, " +
 				"r.RuleName, " +
 				"r.RuleSeq, " +
@@ -88,53 +55,36 @@ public class RuleLogicJdbcDao implements RuleLogicDao {
 				"r.IsSubRule, " +
 				"r.BuiltinRule, " +
 				"r.Description ";
+		return groupBy;
+	}
+
+	public RuleLogicVo getByPrimaryKey(String ruleName, int ruleSeq) {
+		String sql = getSelectClause() +
+			" where r.ruleName=? and r.RuleSeq=? " +
+			getGroupByClause();
 		
 		Object[] parms = new Object[] {ruleName};
-		
-		List<?> list = getJdbcTemplate().query(sql, parms, new RuleLogicMapper());
-		if (list.size()>0)
-			return (RuleLogicVo)list.get(0);
-		else
+		try {
+			RuleLogicVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<RuleLogicVo>(RuleLogicVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<RuleLogicVo> getByRuleName(String ruleName) {
-		String sql = 
-			"select " +
-				"r.RowId, " +
-				"r.RuleName, " +
-				"r.RuleSeq, " +
-				"r.RuleType, " +
-				"r.StatusId, " +
-				"r.StartTime, " +
-				"r.MailType, " +
-				"r.RuleCategory, " +
-				"r.IsSubRule, " +
-				"r.BuiltinRule, " +
-				"r.Description, " +
-				"count(s.SubRuleName) as SubRuleCount " +
-			" from RuleLogic r " +
-				" left outer join RuleSubRuleMap s on r.RuleName=s.RuleName " +
+		String sql = getSelectClause() +
 			" where r.ruleName=? " +
-			" group by " +
-				"r.RowId, " +
-				"r.RuleName, " +
-				"r.RuleSeq, " +
-				"r.RuleType, " +
-				"r.StatusId, " +
-				"r.StartTime, " +
-				"r.MailType, " +
-				"r.RuleCategory, " +
-				"r.IsSubRule, " +
-				"r.BuiltinRule, " +
-				"r.Description " +
+			getGroupByClause() +
 			" order by r.RuleSeq ";
 		
 		Object[] parms = new Object[] {ruleName};
 		
-		List<?> list = getJdbcTemplate().query(sql, parms, new RuleLogicMapper());
-		return (List<RuleLogicVo>) list;
+		List<RuleLogicVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<RuleLogicVo>(RuleLogicVo.class));
+		return list;
 	}
 	
 	public int getNextRuleSequence() {
@@ -146,58 +96,18 @@ public class RuleLogicJdbcDao implements RuleLogicDao {
 	}
 	
 	public List<RuleLogicVo> getActiveRules() {
-		String sql = 
-			"select " +
-				"r.RowId, " +
-				"r.RuleName, " +
-				"r.RuleSeq, " +
-				"r.RuleType, " +
-				"r.StatusId, " +
-				"r.StartTime, " +
-				"r.MailType, " +
-				"r.RuleCategory, " +
-				"r.IsSubRule, " +
-				"r.BuiltinRule, " +
-				"r.Description, " +
-				"count(s.SubRuleName) as SubRuleCount " +
-			" from RuleLogic r " +
-				" left outer join RuleSubRuleMap s on r.RuleName=s.RuleName " +
+		String sql = getSelectClause() +
 			" where r.statusId=? and r.startTime<=? " +
-			" group by " +
-				"r.RowId, " +
-				"r.RuleName, " +
-				"r.RuleSeq, " +
-				"r.RuleType, " +
-				"r.StatusId, " +
-				"r.StartTime, " +
-				"r.MailType, " +
-				"r.RuleCategory, " +
-				"r.IsSubRule, " +
-				"r.BuiltinRule, " +
-				"r.Description " +
+			getGroupByClause() +
 			" order by r.ruleCategory asc, r.ruleSeq asc, r.ruleName asc ";
 		Object[] parms = new Object[] {StatusIdCode.ACTIVE, new Timestamp(System.currentTimeMillis())};
-		List<RuleLogicVo> list = (List<RuleLogicVo>)getJdbcTemplate().query(sql, parms, new RuleLogicMapper());
+		List<RuleLogicVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<RuleLogicVo>(RuleLogicVo.class));
 		return list;
 	}
 	
 	public List<RuleLogicVo> getAll(boolean builtInRule) {
-		String sql = 
-			"select " +
-				"r.RowId, " +
-				"r.RuleName, " +
-				"r.RuleSeq, " +
-				"r.RuleType, " +
-				"r.StatusId, " +
-				"r.StartTime, " +
-				"r.MailType, " +
-				"r.RuleCategory, " +
-				"r.IsSubRule, " +
-				"r.BuiltinRule, " +
-				"r.Description, " +
-				"count(s.SubRuleName) as SubRuleCount " +
-			" from RuleLogic r " +
-				" left outer join RuleSubRuleMap s on r.RuleName=s.RuleName ";
+		String sql = getSelectClause();
 		
 		if (builtInRule) {
 			sql += " where r.BuiltInRule=? and r.IsSubRule!='" + Constants.YES_CODE + "' ";
@@ -205,22 +115,12 @@ public class RuleLogicJdbcDao implements RuleLogicDao {
 		else {
 			sql += " where r.BuiltInRule!=? ";
 		}
-		sql += " group by " +
-			"r.RowId, " +
-			"r.RuleName, " +
-			"r.RuleSeq, " +
-			"r.RuleType, " +
-			"r.StatusId, " +
-			"r.StartTime, " +
-			"r.MailType, " +
-			"r.RuleCategory, " +
-			"r.IsSubRule, " +
-			"r.BuiltinRule, " +
-			"r.Description ";
+		sql += getGroupByClause();
 		sql += " order by r.ruleCategory asc, r.ruleSeq asc, r.ruleName asc ";
 		ArrayList<String> fields = new ArrayList<String>();
 		fields.add(Constants.YES_CODE);
-		List<RuleLogicVo> list = (List<RuleLogicVo>)getJdbcTemplate().query(sql, fields.toArray(), new RuleLogicMapper());
+		List<RuleLogicVo> list = getJdbcTemplate().query(sql, fields.toArray(), 
+				new BeanPropertyRowMapper<RuleLogicVo>(RuleLogicVo.class));
 		return list;
 	}
 	
@@ -233,7 +133,8 @@ public class RuleLogicJdbcDao implements RuleLogicDao {
 			sql += " and BuiltInRule!='" + Constants.YES_CODE + "' ";
 		}
 		
-		List<RuleLogicVo> list = (List<RuleLogicVo>)getJdbcTemplate().query(sql, new RuleLogicMapper());
+		List<RuleLogicVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<RuleLogicVo>(RuleLogicVo.class));
 		return list;
 	}
 	
@@ -268,49 +169,9 @@ public class RuleLogicJdbcDao implements RuleLogicDao {
 	}
 	
 	public synchronized int update(RuleLogicVo ruleLogicVo) {
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(ruleLogicVo.getRuleName());
-		fields.add(Integer.valueOf(ruleLogicVo.getRuleSeq()));
-		fields.add(ruleLogicVo.getRuleType());
-		fields.add(ruleLogicVo.getStatusId());
-		fields.add(ruleLogicVo.getStartTime());
-		fields.add(ruleLogicVo.getMailType());
-		fields.add(ruleLogicVo.getRuleCategory());
-		fields.add(ruleLogicVo.getIsSubRule());
-		fields.add(ruleLogicVo.getBuiltInRule());
-		fields.add(ruleLogicVo.getDescription());
-//		String origRuleName = ruleLogicVo.getOrigRuleName();
-//		if (StringUtil.isEmpty(origRuleName)) {
-//			fields.add(ruleLogicVo.getRuleName());
-//		}
-//		else { // Original rule name is valued.
-//			fields.add(ruleLogicVo.getOrigRuleName());
-//		}
-//		if (ruleLogicVo.getOrigRuleSeq() > -1) {
-//			fields.add(ruleLogicVo.getOrigRuleSeq());
-//		}
-//		else {
-//			fields.add(ruleLogicVo.getRuleSeq());
-//		}
-		fields.add(ruleLogicVo.getRowId());
-		
-		String sql =
-			"update RuleLogic set " +
-				"RuleName=?, " +
-				"RuleSeq=?, " +
-				"RuleType=?, " +
-				"StatusId=?, " +
-				"StartTime=?, " +
-				"MailType=?, " +
-				"RuleCategory=?, " +
-				"IsSubRule=?, " +
-				"BuiltInRule=?, " +
-				"Description=? " +
-			" where " +
-				" RowId=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleLogicVo);
+		String sql = MetaDataUtil.buildUpdateStatement("RuleLogic", ruleLogicVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		ruleLogicVo.setOrigRuleName(ruleLogicVo.getRuleName());
 		ruleLogicVo.setOrigRuleSeq(ruleLogicVo.getRuleSeq());
 		updateReloadFlags();
@@ -331,35 +192,9 @@ public class RuleLogicJdbcDao implements RuleLogicDao {
 	}
 	
 	public synchronized int insert(RuleLogicVo ruleLogicVo) {
-		String sql = 
-			"INSERT INTO RuleLogic (" +
-			"RuleName, " +
-			"RuleSeq, " +
-			"RuleType, " +
-			"StatusId, " +
-			"StartTime, " +
-			"MailType, " +
-			"RuleCategory, " +
-			"IsSubRule, " +
-			"BuiltInRule, " +
-			"Description " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?, ? " +
-				")";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(ruleLogicVo.getRuleName());
-		fields.add(Integer.valueOf(ruleLogicVo.getRuleSeq()));
-		fields.add(ruleLogicVo.getRuleType());
-		fields.add(ruleLogicVo.getStatusId());
-		fields.add(ruleLogicVo.getStartTime());
-		fields.add(ruleLogicVo.getMailType());
-		fields.add(ruleLogicVo.getRuleCategory());
-		fields.add(ruleLogicVo.getIsSubRule());
-		fields.add(ruleLogicVo.getBuiltInRule());
-		fields.add(ruleLogicVo.getDescription());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(ruleLogicVo);
+		String sql = MetaDataUtil.buildInsertStatement("RuleLogic", ruleLogicVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		ruleLogicVo.setRowId(retrieveRowId());
 		ruleLogicVo.setOrigRuleName(ruleLogicVo.getRuleName());
 		ruleLogicVo.setOrigRuleSeq(ruleLogicVo.getRuleSeq());
@@ -375,13 +210,5 @@ public class RuleLogicJdbcDao implements RuleLogicDao {
 	private ReloadFlagsDao reloadFlagsDao;
 	private synchronized ReloadFlagsDao getReloadFlagsDao() {
 		return reloadFlagsDao;
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

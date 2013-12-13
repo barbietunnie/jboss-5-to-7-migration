@@ -22,6 +22,7 @@ public class EmailAddrVo extends BaseVo implements Serializable {
 	private long emailAddrId = -1;
 	@XmlElement
 	private String emailAddr = "";
+	private String origEmailAddr = "";
 	@XmlElement
     @XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp statusChangeTime = null;
@@ -76,6 +77,14 @@ public class EmailAddrVo extends BaseVo implements Serializable {
 
 	public void setEmailAddr(String address) {
 		this.emailAddr = address;
+	}
+
+	public String getOrigEmailAddr() {
+		return origEmailAddr;
+	}
+
+	public void setOrigEmailAddr(String origEmailAddr) {
+		this.origEmailAddr = origEmailAddr;
 	}
 
 	public long getEmailAddrId() {

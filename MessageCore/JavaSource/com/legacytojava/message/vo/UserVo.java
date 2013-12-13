@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.legacytojava.message.constant.Constants;
 
-public class UserVo extends BaseVo implements Serializable {
+public class UserVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = 5066188503284566018L;
 	private String userId = "";
 	private String password = "";

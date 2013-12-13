@@ -1,67 +1,32 @@
 package com.legacytojava.message.dao.inbox;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.PagingVo;
 import com.legacytojava.message.vo.inbox.MsgClickCountsVo;
 
 @Component("msgClickCountsDao")
-public class MsgClickCountsJdbcDao implements MsgClickCountsDao {
+public class MsgClickCountsJdbcDao extends AbstractDao implements MsgClickCountsDao {
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static final class MsgClickCountsMapper implements RowMapper<MsgClickCountsVo> {
-		
-		public MsgClickCountsVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			MsgClickCountsVo msgClickCountsVo = new MsgClickCountsVo();
-			
-			msgClickCountsVo.setMsgId(rs.getLong("MsgId"));
-			msgClickCountsVo.setListId(rs.getString("ListId"));
-			msgClickCountsVo.setDeliveryOption(rs.getString("DeliveryOption"));
-			msgClickCountsVo.setSentCount(rs.getInt("SentCount"));
-			msgClickCountsVo.setOpenCount(rs.getInt("OpenCount"));
-			msgClickCountsVo.setClickCount(rs.getInt("ClickCount"));
-			msgClickCountsVo.setLastOpenTime(rs.getTimestamp("LastOpenTime"));
-			msgClickCountsVo.setLastClickTime(rs.getTimestamp("LastClickTime"));
-			msgClickCountsVo.setStartTime(rs.getTimestamp("StartTime"));
-			msgClickCountsVo.setEndTime(rs.getTimestamp("EndTime"));
-			msgClickCountsVo.setUnsubscribeCount(rs.getInt("UnsubscribeCount"));
-			msgClickCountsVo.setComplaintCount(rs.getInt("ComplaintCount"));
-			msgClickCountsVo.setReferralCount(rs.getInt("ReferralCount"));
-			
-			return msgClickCountsVo;
-		}
-	}
-
 	public List<MsgClickCountsVo> getAll() {
 		String sql = 
 			"select * " +
 			"from " +
 				"MsgClickCounts order by MsgId ";
 		
-		List<MsgClickCountsVo> list = (List<MsgClickCountsVo>) getJdbcTemplate().query(sql,
-				new MsgClickCountsMapper());
+		List<MsgClickCountsVo> list = getJdbcTemplate().query(sql,
+				new BeanPropertyRowMapper<MsgClickCountsVo>(MsgClickCountsVo.class));
 		return list;
 	}
 	
@@ -81,11 +46,14 @@ public class MsgClickCountsJdbcDao implements MsgClickCountsDao {
 				"MsgClickCounts where msgid=? ";
 		
 		Object[] parms = new Object[] {msgId};
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, parms, new MsgClickCountsMapper());
-		if (list.size()>0)
-			return (MsgClickCountsVo)list.get(0);
-		else
+		try {
+			MsgClickCountsVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<MsgClickCountsVo>(MsgClickCountsVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	static String[] CRIT = { " where ", " and ", " and ", " and ", " and ", " and " };
@@ -148,8 +116,8 @@ public class MsgClickCountsJdbcDao implements MsgClickCountsDao {
 		int maxRows = getJdbcTemplate().getMaxRows();
 		getJdbcTemplate().setFetchSize(vo.getPageSize());
 		getJdbcTemplate().setMaxRows(vo.getPageSize());
-		List<MsgClickCountsVo> list = (List<MsgClickCountsVo>) getJdbcTemplate().query(sql, parms
-				.toArray(), new MsgClickCountsMapper());
+		List<MsgClickCountsVo> list = getJdbcTemplate().query(sql, parms.toArray(), 
+				new BeanPropertyRowMapper<MsgClickCountsVo>(MsgClickCountsVo.class));
 		getJdbcTemplate().setFetchSize(fetchSize);
 		getJdbcTemplate().setMaxRows(maxRows);
 		if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
@@ -160,40 +128,9 @@ public class MsgClickCountsJdbcDao implements MsgClickCountsDao {
 	}
 
 	public int update(MsgClickCountsVo msgClickCountsVo) {
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgClickCountsVo.getListId());
-		fields.add(msgClickCountsVo.getDeliveryOption());
-		fields.add(msgClickCountsVo.getSentCount());
-		fields.add(msgClickCountsVo.getOpenCount());
-		fields.add(msgClickCountsVo.getClickCount());
-		fields.add(msgClickCountsVo.getLastOpenTime());
-		fields.add(msgClickCountsVo.getLastClickTime());
-		fields.add(msgClickCountsVo.getStartTime());
-		fields.add(msgClickCountsVo.getEndTime());
-		fields.add(msgClickCountsVo.getUnsubscribeCount());
-		fields.add(msgClickCountsVo.getComplaintCount());
-		fields.add(msgClickCountsVo.getReferralCount());
-		fields.add(msgClickCountsVo.getMsgId());
-		
-		String sql =
-			"update MsgClickCounts set " +
-				"ListId=?, " +
-				"DeliveryOption=?, " +
-				"SentCount=?, " +
-				"OpenCount=?, " +
-				"ClickCount=?, " +
-				"LastOpenTime=?, " +
-				"LastClickTime=?, " +
-				"StartTime=?, " +
-				"EndTime=?, " +
-				"UnsubscribeCount=?, " +
-				"ComplaintCount=?, " +
-				"ReferralCount=? " +
-			" where " +
-				" MsgId=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgClickCountsVo);
+		String sql = MetaDataUtil.buildUpdateStatement("MsgClickCounts", msgClickCountsVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -312,35 +249,9 @@ public class MsgClickCountsJdbcDao implements MsgClickCountsDao {
 	}
 	
 	public int insert(MsgClickCountsVo msgClickCountsVo) {
-		String sql = 
-			"INSERT INTO MsgClickCounts (" +
-			"MsgId, " +
-			"ListId, " +
-			"DeliveryOption, " +
-			"SentCount, " +
-			"OpenCount, " +
-			"ClickCount, " +
-			"LastOpenTime, " +
-			"LastClickTime " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ? " +
-				")";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgClickCountsVo.getMsgId());
-		fields.add(msgClickCountsVo.getListId());
-		fields.add(msgClickCountsVo.getDeliveryOption());
-		fields.add(msgClickCountsVo.getSentCount());
-		fields.add(msgClickCountsVo.getOpenCount());
-		fields.add(msgClickCountsVo.getClickCount());
-		fields.add(msgClickCountsVo.getLastOpenTime());
-		fields.add(msgClickCountsVo.getLastClickTime());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgClickCountsVo);
+		String sql = MetaDataUtil.buildInsertStatement("MsgClickCounts", msgClickCountsVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

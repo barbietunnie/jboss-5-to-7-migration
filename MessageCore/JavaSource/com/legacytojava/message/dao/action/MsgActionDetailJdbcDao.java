@@ -6,30 +6,22 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.dao.client.ReloadFlagsDao;
 import com.legacytojava.message.vo.action.MsgActionDetailVo;
 
 @Component("msgActionDetailDao")
-public class MsgActionDetailJdbcDao implements MsgActionDetailDao {
+public class MsgActionDetailJdbcDao extends AbstractDao implements MsgActionDetailDao {
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	static final class MsgActionDetailMapper implements RowMapper<MsgActionDetailVo> {
 		
 		public MsgActionDetailVo mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -50,41 +42,47 @@ public class MsgActionDetailJdbcDao implements MsgActionDetailDao {
 
 	public MsgActionDetailVo getByActionId(String actionId) {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime " +
 			"from " +
 				"MsgActionDetail where actionId=? ";
 		
 		Object[] parms = new Object[] {actionId};
-		
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, parms, new MsgActionDetailMapper());
-		if (list.size()>0)
-			return (MsgActionDetailVo)list.get(0);
-		else
+		try {
+			MsgActionDetailVo vo = getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<MsgActionDetailVo>(MsgActionDetailVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public MsgActionDetailVo getByPrimaryKey(int rowId) {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime " +
 			"from " +
 				"MsgActionDetail where RowId=? ";
 		
 		Object[] parms = new Object[] {rowId};
 		
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, parms, new MsgActionDetailMapper());
-		if (list.size()>0)
-			return (MsgActionDetailVo)list.get(0);
-		else
+		try {
+			MsgActionDetailVo vo = getJdbcTemplate().queryForObject(sql, parms,
+					new BeanPropertyRowMapper<MsgActionDetailVo>(MsgActionDetailVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public List<MsgActionDetailVo> getAll() {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime " +
 			" from " +
 				" MsgActionDetail " +
 			" order by actionId asc ";
-		List<MsgActionDetailVo> list = (List<MsgActionDetailVo>)getJdbcTemplate().query(sql, new MsgActionDetailMapper());
+		List<MsgActionDetailVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<MsgActionDetailVo>(MsgActionDetailVo.class));
 		return list;
 	}
 	
@@ -98,34 +96,13 @@ public class MsgActionDetailJdbcDao implements MsgActionDetailDao {
 	}
 	
 	public synchronized int update(MsgActionDetailVo msgActionDetailVo) {
-		msgActionDetailVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgActionDetailVo.getActionId());
-		fields.add(msgActionDetailVo.getDescription());
-		fields.add(msgActionDetailVo.getProcessBeanId());
-		fields.add(msgActionDetailVo.getProcessClassName());
-		fields.add(msgActionDetailVo.getDataType());
-		fields.add(msgActionDetailVo.getUpdtTime());
-		fields.add(msgActionDetailVo.getUpdtUserId());
-		fields.add(msgActionDetailVo.getRowId());
-		
-		String sql =
-			"update MsgActionDetail set " +
-				"ActionId=?, " +
-				"Description=?, " +
-				"ProcessBeanId=?, " +
-				"ProcessClassName=?, " +
-				"DataType=?, " +
-				"UpdtTime=?, " +
-				"UpdtUserId=? " +
-			" where " +
-				" RowId=? ";
-		
+		msgActionDetailVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionDetailVo);
+		String sql = MetaDataUtil.buildUpdateStatement("MsgActionDetail", msgActionDetailVo);
 		if (msgActionDetailVo.getOrigUpdtTime() != null) {
-			sql += " and UpdtTime=?";
-			fields.add(msgActionDetailVo.getOrigUpdtTime());
+			sql += " and UpdtTime=:origUpdtTime ";
 		}
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgActionDetailVo.setOrigUpdtTime(msgActionDetailVo.getUpdtTime());
 		updateReloadFlags();
 		return rowsUpadted;
@@ -156,30 +133,10 @@ public class MsgActionDetailJdbcDao implements MsgActionDetailDao {
 	}
 	
 	public synchronized int insert(MsgActionDetailVo msgActionDetailVo) {
-		String sql = 
-			"INSERT INTO MsgActionDetail (" +
-			"ActionId, " +
-			"Description, " +
-			"ProcessBeanId, " +
-			"ProcessClassName, " +
-			"DataType, " +
-			"UpdtTime, " +
-			"UpdtUserId " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ? " +
-				")";
-		
-		msgActionDetailVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgActionDetailVo.getActionId());
-		fields.add(msgActionDetailVo.getDescription());
-		fields.add(msgActionDetailVo.getProcessBeanId());
-		fields.add(msgActionDetailVo.getProcessClassName());
-		fields.add(msgActionDetailVo.getDataType());
-		fields.add(msgActionDetailVo.getUpdtTime());
-		fields.add(msgActionDetailVo.getUpdtUserId());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		msgActionDetailVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionDetailVo);
+		String sql = MetaDataUtil.buildInsertStatement("MsgActionDetail", msgActionDetailVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		msgActionDetailVo.setRowId(retrieveRowId());
 		msgActionDetailVo.setOrigUpdtTime(msgActionDetailVo.getUpdtTime());
 		updateReloadFlags();
@@ -194,12 +151,5 @@ public class MsgActionDetailJdbcDao implements MsgActionDetailDao {
 	private ReloadFlagsDao reloadFlagsDao;
 	private synchronized ReloadFlagsDao getReloadFlagsDao() {
 		return reloadFlagsDao;
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

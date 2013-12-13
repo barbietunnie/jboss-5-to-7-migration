@@ -5,32 +5,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
 import com.legacytojava.message.vo.rule.RuleElementVo;
 import com.legacytojava.message.vo.rule.RuleLogicVo;
 import com.legacytojava.message.vo.rule.RuleSubRuleMapVo;
 import com.legacytojava.message.vo.rule.RuleVo;
 
 @Component("ruleDao")
-public class RuleJdbcDao implements RuleDao {
+public class RuleJdbcDao extends AbstractDao implements RuleDao {
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	@Autowired
 	private RuleLogicDao ruleLogicDao;
 	@Autowired
@@ -136,9 +123,5 @@ public class RuleJdbcDao implements RuleDao {
 
 	RuleLogicDao getRuleLogicDao() {
 		return ruleLogicDao;
-	}
-
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

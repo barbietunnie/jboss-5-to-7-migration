@@ -5,9 +5,9 @@ import java.sql.Timestamp;
 
 import com.legacytojava.message.constant.CarrierCode;
 import com.legacytojava.message.constant.Constants;
-import com.legacytojava.message.vo.BaseVo;
+import com.legacytojava.message.vo.BaseVoWithRowId;
 
-public class MsgSourceVo extends BaseVo implements Serializable {
+public class MsgSourceVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -8801080860617417345L;
 	private String msgSourceId = "";
 	private String description = null;

@@ -5,16 +5,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.constant.Constants;
 import com.legacytojava.message.constant.MsgDataType;
+import com.legacytojava.message.dao.abstrct.AbstractDao;
 import com.legacytojava.message.dao.action.MsgDataTypeDao;
 import com.legacytojava.message.dao.client.ReloadFlagsDao;
 import com.legacytojava.message.util.BlobUtil;
@@ -22,21 +20,10 @@ import com.legacytojava.message.vo.action.MsgDataTypeVo;
 import com.legacytojava.message.vo.emailaddr.EmailTemplateVo;
 
 @Component("emailTemplateDao")
-public class EmailTemplateJdbcDao implements EmailTemplateDao {
+public class EmailTemplateJdbcDao extends AbstractDao implements EmailTemplateDao {
 	static final Logger logger = Logger.getLogger(EmailTemplateJdbcDao.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	private static final class EmailTemplateMapper implements RowMapper<EmailTemplateVo> {
 		
 		public EmailTemplateVo mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -279,13 +266,5 @@ public class EmailTemplateJdbcDao implements EmailTemplateDao {
 	private MsgDataTypeDao msgDataTypeDao = null;
 	MsgDataTypeDao getMsgDataTypeDao() {
 		return msgDataTypeDao;
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

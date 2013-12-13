@@ -1,78 +1,36 @@
 package com.legacytojava.message.dao.emailaddr;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.constant.Constants;
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.emailaddr.EmailVariableVo;
 
 @Component("emailVariableDao")
-public class EmailVariableJdbcDao implements EmailVariableDao {
+public class EmailVariableJdbcDao extends AbstractDao implements EmailVariableDao {
 	static final Logger logger = Logger.getLogger(EmailVariableJdbcDao.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
-	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate; 
-	}
-
-	private NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
-		if (this.namedParameterJdbcTemplate == null) {
-			this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(mysqlDataSource);
-		}
-		return this.namedParameterJdbcTemplate; 
-	}
-
-	private static final class EmailVariableMapper implements RowMapper<EmailVariableVo> {
-		
-		public EmailVariableVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			EmailVariableVo emailVariableVo = new EmailVariableVo();
-			
-			emailVariableVo.setRowId(rs.getInt("RowId"));
-			emailVariableVo.setVariableName(rs.getString("VariableName"));
-			emailVariableVo.setVariableType(rs.getString("VariableType"));
-			emailVariableVo.setTableName(rs.getString("TableName"));
-			emailVariableVo.setColumnName(rs.getString("ColumnName"));
-			emailVariableVo.setStatusId(rs.getString("StatusId"));
-			emailVariableVo.setIsBuiltIn(rs.getString("IsBuiltIn"));
-			emailVariableVo.setDefaultValue(rs.getString("DefaultValue"));
-			emailVariableVo.setVariableQuery(rs.getString("VariableQuery"));
-			emailVariableVo.setVariableProc(rs.getString("VariableProc"));
-			
-			return emailVariableVo;
-		}
-	}
 	
 	public EmailVariableVo getByName(String variableName) {
 		String sql = "select * from EmailVariable where VariableName=:variableName";
 		SqlParameterSource namedParameters = new MapSqlParameterSource("variableName", variableName);
-		List<?> list = (List<?>)getNamedParameterJdbcTemplate().query(sql, namedParameters, new EmailVariableMapper());
-		if (list.size()>0) {
-			return (EmailVariableVo)list.get(0);
+		try {
+			EmailVariableVo vo = getNamedParameterJdbcTemplate().queryForObject(sql, namedParameters, 
+					new BeanPropertyRowMapper<EmailVariableVo>(EmailVariableVo.class));
+			return vo;
 		}
-		else {
+		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}
@@ -80,7 +38,8 @@ public class EmailVariableJdbcDao implements EmailVariableDao {
 	public List<EmailVariableVo> getAll() {
 		String sql = "select * from EmailVariable " +
 		" order by RowId";
-		List<EmailVariableVo> list = (List<EmailVariableVo>)getJdbcTemplate().query(sql, new EmailVariableMapper());
+		List<EmailVariableVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<EmailVariableVo>(EmailVariableVo.class));
 		return list;
 	}
 	
@@ -92,7 +51,8 @@ public class EmailVariableJdbcDao implements EmailVariableDao {
 		int maxRows = getJdbcTemplate().getMaxRows();
 		getJdbcTemplate().setFetchSize(50);
 		getJdbcTemplate().setMaxRows(50);
-		List<EmailVariableVo> list = (List<EmailVariableVo>)getJdbcTemplate().query(sql, new EmailVariableMapper());
+		List<EmailVariableVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<EmailVariableVo>(EmailVariableVo.class));
 		getJdbcTemplate().setFetchSize(fetchSize);
 		getJdbcTemplate().setMaxRows(maxRows);
 		return list;
@@ -102,7 +62,8 @@ public class EmailVariableJdbcDao implements EmailVariableDao {
 		String sql = "select * from EmailVariable " +
 			" where IsBuiltIn!='" + Constants.YES_CODE + "' " +
 			" order by RowId";
-		List<EmailVariableVo> list = (List<EmailVariableVo>)getJdbcTemplate().query(sql, new EmailVariableMapper());
+		List<EmailVariableVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<EmailVariableVo>(EmailVariableVo.class));
 		return list;
 	}
 	
@@ -110,7 +71,8 @@ public class EmailVariableJdbcDao implements EmailVariableDao {
 		String sql = "select * from EmailVariable " +
 			" where IsBuiltIn='" + Constants.YES_CODE + "' " +
 			" order by RowId";
-		List<EmailVariableVo> list = (List<EmailVariableVo>)getJdbcTemplate().query(sql, new EmailVariableMapper());
+		List<EmailVariableVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<EmailVariableVo>(EmailVariableVo.class));
 		return list;
 	}
 	
@@ -133,21 +95,8 @@ public class EmailVariableJdbcDao implements EmailVariableDao {
 	}
 	
 	public int update(EmailVariableVo emailVariableVo) {
-
-		String sql = "update EmailVariable set " +
-			"VariableName=:variableName," +
-			"VariableType=:variableType," +
-			"TableName=:tableName," +
-			"ColumnName=:columnName," +
-			"StatusId=:statusId," +
-			"IsBuiltIn=:isBuiltIn," +
- 			"DefaultValue=:defaultValue," +
-			"VariableQuery=:variableQuery," +
-			"VariableProc=:variableProc " +
-			" where RowId=:rowId";
-		
 		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(emailVariableVo);
-
+		String sql = MetaDataUtil.buildUpdateStatement("EmailVariable", emailVariableVo);
 		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		
 		return rowsUpadted;
@@ -161,31 +110,10 @@ public class EmailVariableJdbcDao implements EmailVariableDao {
 	}
 	
 	public int insert(EmailVariableVo emailVariableVo) {
-		String sql = "INSERT INTO EmailVariable (" +
-			"VariableName," +
-			"VariableType," +
-			"TableName," +
-			"ColumnName," +
-			"StatusId," +
-			"IsBuiltIn," +
-			"DefaultValue," +
-			"VariableQuery," +
-			"VariableProc " +
-			") VALUES (" +
-				" :variableName, :variableType, :tableName, :columnName, :statusId, :isBuiltIn, :defaultValue, :variableQuery, :variableProc " +
-				")";
-		
 		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(emailVariableVo);
+		String sql = MetaDataUtil.buildInsertStatement("EmailVariable", emailVariableVo);
 		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		emailVariableVo.setRowId(retrieveRowId());
 		return rowsInserted;
-	}
-
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }
