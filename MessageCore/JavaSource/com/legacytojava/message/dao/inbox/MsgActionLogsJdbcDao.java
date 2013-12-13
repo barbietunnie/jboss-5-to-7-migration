@@ -1,50 +1,22 @@
 package com.legacytojava.message.dao.inbox;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.inbox.MsgActionLogsVo;
 
 @Component("msgActionLogsDao")
-public class MsgActionLogsJdbcDao implements MsgActionLogsDao {
+public class MsgActionLogsJdbcDao extends AbstractDao implements MsgActionLogsDao {
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static final class MsgActionLogsMapper implements RowMapper<MsgActionLogsVo> {
-		
-		public MsgActionLogsVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			MsgActionLogsVo msgActionLogsVo = new MsgActionLogsVo();
-			
-			msgActionLogsVo.setMsgId(rs.getLong("MsgId"));
-			msgActionLogsVo.setMsgRefId((Long)rs.getObject("MsgRefId"));
-			msgActionLogsVo.setLeadMsgId(rs.getLong("LeadMsgId"));
-			msgActionLogsVo.setActionBo(rs.getString("ActionBo"));
-			msgActionLogsVo.setParameters(rs.getString("Parameters"));
-			msgActionLogsVo.setAddTime(rs.getTimestamp("AddTime"));
-			
-			return msgActionLogsVo;
-		}
-	}
-
 	public MsgActionLogsVo getByPrimaryKey(long msgId, Long msgRefId) {
 		String sql = 
 			"select * " +
@@ -59,13 +31,14 @@ public class MsgActionLogsJdbcDao implements MsgActionLogsDao {
 			fields.add(msgRefId);
 			sql += "and msgRefId=? ";
 		}
-		
-		List<?> list = (List<?>) getJdbcTemplate().query(sql, fields.toArray(),
-				new MsgActionLogsMapper());
-		if (list.size() > 0)
-			return (MsgActionLogsVo) list.get(0);
-		else
+		try {
+			MsgActionLogsVo vo = getJdbcTemplate().queryForObject(sql, fields.toArray(),
+					new BeanPropertyRowMapper<MsgActionLogsVo>(MsgActionLogsVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public List<MsgActionLogsVo> getByMsgId(long msgId) {
@@ -75,7 +48,8 @@ public class MsgActionLogsJdbcDao implements MsgActionLogsDao {
 				" MsgActionLogs where msgId=? " +
 			" order by msgRefId ";
 		Object[] parms = new Object[] {msgId+""};
-		List<MsgActionLogsVo> list =  (List<MsgActionLogsVo>)getJdbcTemplate().query(sql, parms, new MsgActionLogsMapper());
+		List<MsgActionLogsVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgActionLogsVo>(MsgActionLogsVo.class));
 		return list;
 	}
 	
@@ -86,36 +60,22 @@ public class MsgActionLogsJdbcDao implements MsgActionLogsDao {
 				" MsgActionLogs where leadMsgId=? " +
 			" order by addrTime";
 		Object[] parms = new Object[] {leadMsgId+""};
-		List<MsgActionLogsVo> list =  (List<MsgActionLogsVo>)getJdbcTemplate().query(sql, parms, new MsgActionLogsMapper());
+		List<MsgActionLogsVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgActionLogsVo>(MsgActionLogsVo.class));
 		return list;
 	}
 	
 	public int update(MsgActionLogsVo msgActionLogsVo) {
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgActionLogsVo.getLeadMsgId());
-		fields.add(msgActionLogsVo.getActionBo());
-		fields.add(msgActionLogsVo.getParameters());
-		fields.add(msgActionLogsVo.getAddTime());
-		fields.add(msgActionLogsVo.getMsgId());
-		
-		String sql =
-			"update MsgActionLogs set " +
-				"LeadMsgId=?, " +
-				"ActionBo=?, " +
-				"Parameters=?, " +
-				"AddTime=? " +
-			" where " +
-				" MsgId=? ";
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionLogsVo);
+		String sql = MetaDataUtil.buildUpdateStatement("MsgActionLogs", msgActionLogsVo);
 		if (msgActionLogsVo.getMsgRefId() == null) {
-			sql += "and MsgRefId is null ";
+			sql += " and MsgRefId is null ";
 		}
 		else {
-			fields.add(msgActionLogsVo.getMsgRefId());
-			sql += "and MsgRefId=? ";
+			sql += " and MsgRefId=:msgRfcId ";
 		}
 		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -160,34 +120,11 @@ public class MsgActionLogsJdbcDao implements MsgActionLogsDao {
 	}
 	
 	public int insert(MsgActionLogsVo msgActionLogsVo) {
-		Timestamp addTime = new Timestamp(new java.util.Date().getTime());
+		Timestamp addTime = new Timestamp(System.currentTimeMillis());
 		msgActionLogsVo.setAddTime(addTime);
-		
-		String sql = 
-			"INSERT INTO MsgActionLogs (" +
-			"MsgId, " +
-			"MsgRefId, " +
-			"LeadMsgId, " +
-			"ActionBo, " +
-			"Parameters, " +
-			"AddTime " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ? " +
-				")";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(msgActionLogsVo.getMsgId());
-		fields.add(msgActionLogsVo.getMsgRefId());
-		fields.add(msgActionLogsVo.getLeadMsgId());
-		fields.add(msgActionLogsVo.getActionBo());
-		fields.add(msgActionLogsVo.getParameters());
-		fields.add(msgActionLogsVo.getAddTime());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(msgActionLogsVo);
+		String sql = MetaDataUtil.buildInsertStatement("MsgActionLogs", msgActionLogsVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

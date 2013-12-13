@@ -1,49 +1,18 @@
 package com.legacytojava.message.dao.client;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
 import com.legacytojava.message.vo.ReloadFlagsVo;
 
 @Component("reloadFlagsDao")
-public class ReloadFlagsJdbcDao implements ReloadFlagsDao {
+public class ReloadFlagsJdbcDao extends AbstractDao implements ReloadFlagsDao {
 	protected static final Logger logger = Logger.getLogger(ReloadFlagsJdbcDao.class);
-	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static final class ReloadFlagsMapper implements RowMapper<ReloadFlagsVo> {
-		
-		public ReloadFlagsVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			ReloadFlagsVo vo = new ReloadFlagsVo();
-			
-			vo.setClients(rs.getInt("Clients"));
-			vo.setRules(rs.getInt("Rules"));
-			vo.setActions(rs.getInt("Actions"));
-			vo.setTemplates(rs.getInt("Templates"));
-			vo.setSchedules(rs.getInt("Schedules"));
-			
-			return vo;
-		}
-	}
 	
 	public ReloadFlagsVo select() {
 		return selectWithRepair(0);
@@ -51,9 +20,10 @@ public class ReloadFlagsJdbcDao implements ReloadFlagsDao {
 	
 	private ReloadFlagsVo selectWithRepair(int retry) {
 		String sql = "select * from ReloadFlags ";
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, new ReloadFlagsMapper());
+		List<ReloadFlagsVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<ReloadFlagsVo>(ReloadFlagsVo.class));
 		if (list.size()>0)
-			return (ReloadFlagsVo)list.get(0);
+			return list.get(0);
 		else if (retry < 1) {
 			repair();
 			return selectWithRepair(++retry);

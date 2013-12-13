@@ -4,12 +4,11 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import com.legacytojava.message.util.StringUtil;
-import com.legacytojava.message.vo.BaseVo;
+import com.legacytojava.message.vo.BaseVoWithRowId;
 
-public class MsgActionDetailVo extends BaseVo implements Serializable
+public class MsgActionDetailVo extends BaseVoWithRowId implements Serializable
 {
 	private static final long serialVersionUID = -3441560088153348986L;
-	private int rowId = -1;
 	private String actionId = "";
 	private String description = null;
 	private String processBeanId = "";
@@ -44,14 +43,6 @@ public class MsgActionDetailVo extends BaseVo implements Serializable
 	
 	/** end of UI component */
 
-	public int getRowId() {
-		return rowId;
-	}
-
-	public void setRowId(int rowId) {
-		this.rowId = rowId;
-	}
-	
 	public String getDescription() {
 		return description;
 	}

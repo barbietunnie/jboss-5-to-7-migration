@@ -1,48 +1,21 @@
 package com.legacytojava.message.dao.outbox;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.outbox.RenderVariableVo;
 
 @Component("renderVariableDao")
-public class RenderVariableJdbcDao implements RenderVariableDao {
+public class RenderVariableJdbcDao extends AbstractDao implements RenderVariableDao {
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-	
-	private static final class RenderVariableMapper implements RowMapper<RenderVariableVo> {
-		
-		public RenderVariableVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			RenderVariableVo renderVariableVo = new RenderVariableVo();
-
-			renderVariableVo.setRenderId(rs.getLong("RenderId"));
-			renderVariableVo.setVariableName(rs.getString("VariableName"));
-			renderVariableVo.setVariableFormat(rs.getString("VariableFormat"));
-			renderVariableVo.setVariableType(rs.getString("VariableType"));
-			renderVariableVo.setVariableValue(rs.getString("VariableValue"));
-			
-			return renderVariableVo;
-		}
-	}
-
 	public RenderVariableVo getByPrimaryKey(long renderId, String variableName) {
 		String sql = 
 			"select * " +
@@ -50,11 +23,14 @@ public class RenderVariableJdbcDao implements RenderVariableDao {
 				"RenderVariable where RenderId=? and variableName=? ";
 		
 		Object[] parms = new Object[] {renderId+"", variableName};
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, parms, new RenderVariableMapper());
-		if (list.size()>0)
-			return (RenderVariableVo)list.get(0);
-		else
+		try {
+			RenderVariableVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<RenderVariableVo>(RenderVariableVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public List<RenderVariableVo> getByRenderId(long renderId) {
@@ -64,28 +40,16 @@ public class RenderVariableJdbcDao implements RenderVariableDao {
 				" RenderVariable where RenderId=? " +
 			" order by variableName";
 		Object[] parms = new Object[] {renderId};
-		List<RenderVariableVo> list = (List<RenderVariableVo>)getJdbcTemplate().query(sql, parms, new RenderVariableMapper());
+		List<RenderVariableVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<RenderVariableVo>(RenderVariableVo.class));
 		return list;
 	}
 	
 	public int update(RenderVariableVo renderVariableVo) {
-		
-		ArrayList<String> fields = new ArrayList<String>();
-		fields.add(renderVariableVo.getVariableFormat());
-		fields.add(renderVariableVo.getVariableType());
-		fields.add(renderVariableVo.getVariableValue());
-		fields.add(renderVariableVo.getRenderId()+"");
-		fields.add(renderVariableVo.getVariableName());
-		
-		String sql =
-			"update RenderVariable set " +
-				"VariableFormat=?, " +
-				"VariableType=?, " +
-				"VariableValue=? " +
-			" where " +
-				" RenderId=? and VariableName=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(renderVariableVo);
+		String sql = MetaDataUtil.buildUpdateStatement("RenderVariable", renderVariableVo);
+
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -113,29 +77,10 @@ public class RenderVariableJdbcDao implements RenderVariableDao {
 	}
 	
 	public int insert(RenderVariableVo renderVariableVo) {
-		String sql = 
-			"INSERT INTO RenderVariable (" +
-				"RenderId, " +
-				"VariableName, " +
-				"VariableFormat, " +
-				"VariableType, " +
-				"VariableValue " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ? " +
-				")";
-		
-		ArrayList<String> fields = new ArrayList<String>();
-		fields.add(renderVariableVo.getRenderId()+"");
-		fields.add(renderVariableVo.getVariableName());
-		fields.add(renderVariableVo.getVariableFormat());
-		fields.add(renderVariableVo.getVariableType());
-		fields.add(renderVariableVo.getVariableValue());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(renderVariableVo);
+		String sql = MetaDataUtil.buildInsertStatement("RenderVariable", renderVariableVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
 	}
 	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
-	}
 }

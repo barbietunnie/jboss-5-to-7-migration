@@ -2,28 +2,15 @@ package com.legacytojava.message.dao.inbox;
 
 import java.util.ArrayList;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+
 @Component("msgUnreadCountDao")
-public class MsgUnreadCountJdbcDao implements MsgUnreadCountDao {
+public class MsgUnreadCountJdbcDao extends AbstractDao implements MsgUnreadCountDao {
 	protected static final Logger logger = Logger.getLogger(MsgUnreadCountJdbcDao.class);
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public int updateInboxUnreadCount(int delta) {
 		String sql = 
 			"update MsgUnreadCount set InboxUnreadCount = (InboxUnreadCount + " + delta + ")";

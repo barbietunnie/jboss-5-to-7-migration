@@ -1,49 +1,20 @@
 package com.legacytojava.message.dao.inbox;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.inbox.AttachmentsVo;
 
 @Component("attachmentsDao")
-public class AttachmentsJdbcDao implements AttachmentsDao {
-	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static final class AttachmentsMapper implements RowMapper<AttachmentsVo> {
-		
-		public AttachmentsVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			AttachmentsVo attachmentsVo = new AttachmentsVo();
-			
-			attachmentsVo.setMsgId(rs.getLong("MsgId"));
-			attachmentsVo.setAttchmntDepth(rs.getInt("AttchmntDepth"));
-			attachmentsVo.setAttchmntSeq(rs.getInt("AttchmntSeq"));
-			attachmentsVo.setAttchmntName(rs.getString("AttchmntName"));
-			attachmentsVo.setAttchmntType(rs.getString("AttchmntType"));
-			attachmentsVo.setAttchmntDisp(rs.getString("AttchmntDisp"));
-			attachmentsVo.setAttchmntValue(rs.getBytes("AttchmntValue"));
-			
-			return attachmentsVo;
-		}
-	}
+public class AttachmentsJdbcDao extends AbstractDao implements AttachmentsDao {
 
 	public AttachmentsVo getByPrimaryKey(long msgId, int attchmntDepth, int attchmntSeq) {
 		String sql = 
@@ -52,11 +23,14 @@ public class AttachmentsJdbcDao implements AttachmentsDao {
 				"Attachments where msgid=? and attchmntDepth=? and attchmntSeq=? ";
 		
 		Object[] parms = new Object[] {msgId+"",attchmntDepth+"",attchmntSeq+""};
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, parms, new AttachmentsMapper());
-		if (list.size()>0)
-			return (AttachmentsVo)list.get(0);
-		else
+		try {
+			AttachmentsVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<AttachmentsVo>(AttachmentsVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public List<AttachmentsVo> getByMsgId(long msgId) {
@@ -66,32 +40,15 @@ public class AttachmentsJdbcDao implements AttachmentsDao {
 				" Attachments where msgId=? " +
 			" order by attchmntDepth, attchmntSeq";
 		Object[] parms = new Object[] {msgId+""};
-		List<AttachmentsVo> list = (List<AttachmentsVo>) getJdbcTemplate().query(sql, parms,
-				new AttachmentsMapper());
+		List<AttachmentsVo> list = getJdbcTemplate().query(sql, parms,
+				new BeanPropertyRowMapper<AttachmentsVo>(AttachmentsVo.class));
 		return list;
 	}
 	
 	public int update(AttachmentsVo attachmentsVo) {
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(attachmentsVo.getAttchmntName());
-		fields.add(attachmentsVo.getAttchmntType());
-		fields.add(attachmentsVo.getAttchmntDisp());
-		fields.add(attachmentsVo.getAttchmntValue());
-		fields.add(attachmentsVo.getMsgId()+"");
-		fields.add(attachmentsVo.getAttchmntDepth()+"");
-		fields.add(attachmentsVo.getAttchmntSeq()+"");
-		
-		String sql =
-			"update Attachments set " +
-				"AttchmntName=?, " +
-				"AttchmntType=?, " +
-				"AttchmntDisp=?, " +
-				"AttchmntValue=? " +
-			" where " +
-				" msgid=? and attchmntDepth=? and attchmntSeq=? ";
-		
-		int rowsUpadted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(attachmentsVo);
+		String sql = MetaDataUtil.buildUpdateStatement("Attachments", attachmentsVo);
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsUpadted;
 	}
 	
@@ -120,33 +77,9 @@ public class AttachmentsJdbcDao implements AttachmentsDao {
 	}
 	
 	public int insert(AttachmentsVo attachmentsVo) {
-		String sql = 
-			"INSERT INTO Attachments (" +
-			"MsgId, " +
-			"AttchmntDepth, " +
-			"AttchmntSeq, " +
-			"AttchmntName, " +
-			"AttchmntType, " +
-			"AttchmntDisp, " +
-			"AttchmntValue " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ? ,?, ? " +
-				")";
-		
-		ArrayList<Object> fields = new ArrayList<Object>();
-		fields.add(attachmentsVo.getMsgId()+"");
-		fields.add(attachmentsVo.getAttchmntDepth()+"");
-		fields.add(attachmentsVo.getAttchmntSeq()+"");
-		fields.add(attachmentsVo.getAttchmntName());
-		fields.add(attachmentsVo.getAttchmntType());
-		fields.add(attachmentsVo.getAttchmntDisp());
-		fields.add(attachmentsVo.getAttchmntValue());
-		
-		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(attachmentsVo);
+		String sql = MetaDataUtil.buildInsertStatement("Attachments", attachmentsVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		return rowsInserted;
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

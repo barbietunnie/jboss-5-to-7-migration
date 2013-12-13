@@ -3,12 +3,11 @@ package com.legacytojava.message.vo.action;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.legacytojava.message.vo.BaseVo;
+import com.legacytojava.message.vo.BaseVoWithRowId;
 
-public class MsgActionVo extends BaseVo implements Serializable
+public class MsgActionVo extends BaseVoWithRowId implements Serializable
 {
 	private static final long serialVersionUID = 5576050695865725099L;
-	private int rowId = -1;
 	private String ruleName = "";
 	private int actionSeq = -1;
 	private Timestamp startTime;
@@ -40,12 +39,6 @@ public class MsgActionVo extends BaseVo implements Serializable
 		this.dataTypeValues = dataTypeValues;
 	}
 	
-	public int getRowId() {
-		return rowId;
-	}
-	public void setRowId(int rowId) {
-		this.rowId = rowId;
-	}
 	public String getRuleName() {
 		return ruleName;
 	}

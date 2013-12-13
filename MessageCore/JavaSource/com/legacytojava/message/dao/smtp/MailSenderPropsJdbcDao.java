@@ -1,63 +1,31 @@
 package com.legacytojava.message.dao.smtp;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.vo.MailSenderVo;
 
 @Component("mailSenderPropsDao")
-public class MailSenderPropsJdbcDao implements MailSenderPropsDao {
-	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static final class MailSenderPropsMapper implements RowMapper<MailSenderVo> {
-		
-		public MailSenderVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			MailSenderVo mailSenderVo = new MailSenderVo();
-			
-			mailSenderVo.setRowId(rs.getInt("RowId"));
-			mailSenderVo.setInternalLoopback(rs.getString("InternalLoopback"));
-			mailSenderVo.setExternalLoopback(rs.getString("ExternalLoopback"));
-			mailSenderVo.setUseTestAddr(rs.getString("UseTestAddr"));
-			mailSenderVo.setTestFromAddr(rs.getString("TestFromAddr"));
-			mailSenderVo.setTestToAddr(rs.getString("TestToAddr"));
-			mailSenderVo.setTestReplytoAddr(rs.getString("TestReplytoAddr"));
-			mailSenderVo.setIsVerpEnabled(rs.getString("IsVerpEnabled"));
-			mailSenderVo.setUpdtTime(rs.getTimestamp("UpdtTime"));
-			mailSenderVo.setUpdtUserId(rs.getString("UpdtUserId"));
-			mailSenderVo.setOrigUpdtTime(mailSenderVo.getUpdtTime());
-			return mailSenderVo;
-		}
-	}
+public class MailSenderPropsJdbcDao extends AbstractDao implements MailSenderPropsDao {
 	
 	public MailSenderVo getByPrimaryKey(int rowId) {
 		String sql = 
 			"select * from MailSenderProps where rowId=?";
 		Object[] parms = new Object[] {rowId};
-		List<?> list = getJdbcTemplate().query(sql, parms, new MailSenderPropsMapper());
-		if (list.size()>0) {
-			return (MailSenderVo)list.get(0);
+		try {
+			MailSenderVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<MailSenderVo>(MailSenderVo.class));
+			return vo;
 		}
-		else {
+		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
 	}
@@ -65,41 +33,19 @@ public class MailSenderPropsJdbcDao implements MailSenderPropsDao {
 	public List<MailSenderVo> getAll() {
 		
 		String sql = "select * from MailSenderProps ";
-		List<MailSenderVo> list = (List<MailSenderVo>)getJdbcTemplate().query(sql, new MailSenderPropsMapper());
+		List<MailSenderVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<MailSenderVo>(MailSenderVo.class));
 		return list;
 	}
 	
 	public int update(MailSenderVo mailSenderVo) {
-		mailSenderVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		ArrayList<Object> keys = new ArrayList<Object>();
-		keys.add(mailSenderVo.getInternalLoopback());
-		keys.add(mailSenderVo.getExternalLoopback());
-		keys.add(mailSenderVo.getUseTestAddr());
-		keys.add(mailSenderVo.getTestFromAddr());
-		keys.add(mailSenderVo.getTestToAddr());
-		keys.add(mailSenderVo.getTestReplytoAddr());
-		keys.add(mailSenderVo.getIsVerpEnabled());
-		keys.add(mailSenderVo.getUpdtTime());
-		keys.add(mailSenderVo.getUpdtUserId());
-		keys.add(mailSenderVo.getRowId());
-		
-		String sql = "update MailSenderProps set " +
-			"InternalLoopback=?," +
-			"ExternalLoopback=?," +
-			"UseTestAddr=?," +
-			"TestFromAddr=?," +
-			"TestToAddr=?," +
-			"TestReplytoAddr=?," +
-			"IsVerpEnabled=?," +
-			"UpdtTime=?," +
-			"UpdtUserId=? " +
-			" where RowId=?";
-		
+		mailSenderVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(mailSenderVo);
+		String sql = MetaDataUtil.buildUpdateStatement("MailSenderProps", mailSenderVo);
 		if (mailSenderVo.getOrigUpdtTime() != null) {
-			sql += " and UpdtTime=?";
-			keys.add(mailSenderVo.getOrigUpdtTime());
+			sql += " and UpdtTime=:origUpdtTime ";
 		}
-		int rowsUpadted = getJdbcTemplate().update(sql, keys.toArray());
+		int rowsUpadted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		mailSenderVo.setOrigUpdtTime(mailSenderVo.getUpdtTime());
 		return rowsUpadted;
 	}
@@ -113,43 +59,12 @@ public class MailSenderPropsJdbcDao implements MailSenderPropsDao {
 	}
 	
 	public int insert(MailSenderVo mailSenderVo) {
-		mailSenderVo.setUpdtTime(new Timestamp(new java.util.Date().getTime()));
-		Object[] parms = {
-				mailSenderVo.getInternalLoopback(),
-				mailSenderVo.getExternalLoopback(),
-				mailSenderVo.getUseTestAddr(),
-				mailSenderVo.getTestFromAddr(),
-				mailSenderVo.getTestToAddr(),
-				mailSenderVo.getTestReplytoAddr(),
-				mailSenderVo.getIsVerpEnabled(),
-				mailSenderVo.getUpdtTime(),
-				mailSenderVo.getUpdtUserId()
-			};
-		
-		String sql = "INSERT INTO MailSenderProps (" +
-			"InternalLoopback," +
-			"ExternalLoopback," +
-			"UseTestAddr," +
-			"TestFromAddr," +
-			"TestToAddr," +
-			"TestReplytoAddr," +
-			"IsVerpEnabled," +
-			"UpdtTime," +
-			"UpdtUserId " +
-			") VALUES (" +
-				" ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		
-		int rowsInserted = getJdbcTemplate().update(sql, parms);
+		mailSenderVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
+		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(mailSenderVo);
+		String sql = MetaDataUtil.buildInsertStatement("MailSenderProps", mailSenderVo);
+		int rowsInserted = getNamedParameterJdbcTemplate().update(sql, namedParameters);
 		mailSenderVo.setRowId(retrieveRowId());
 		mailSenderVo.setOrigUpdtTime(mailSenderVo.getUpdtTime());
 		return rowsInserted;
-	}
-	
-	protected int retrieveRowId() {
-		return getJdbcTemplate().queryForInt(getRowIdSql());
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

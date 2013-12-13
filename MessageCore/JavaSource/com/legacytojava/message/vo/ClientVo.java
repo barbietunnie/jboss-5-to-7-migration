@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.legacytojava.message.constant.Constants;
 
-public class ClientVo extends BaseVo implements Serializable {
+public class ClientVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -16795349179937720L;
 	private String clientId = "";
 	private String clientName = "";

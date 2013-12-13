@@ -6,9 +6,9 @@ import java.util.Calendar;
 
 import com.legacytojava.message.bo.rule.RuleBase;
 import com.legacytojava.message.constant.Constants;
-import com.legacytojava.message.vo.BaseVo;
+import com.legacytojava.message.vo.BaseVoWithRowId;
 
-public class RuleLogicVo extends BaseVo implements Serializable {
+public class RuleLogicVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -3318722130635767052L;
 	private String ruleName = "";
 	private int ruleSeq = -1;

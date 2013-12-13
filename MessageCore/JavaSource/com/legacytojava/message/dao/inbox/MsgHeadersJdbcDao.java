@@ -1,48 +1,19 @@
 package com.legacytojava.message.dao.inbox;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
 import com.legacytojava.message.vo.inbox.MsgHeadersVo;
 
 @Component("msgHeadersDao")
-public class MsgHeadersJdbcDao implements MsgHeadersDao {
+public class MsgHeadersJdbcDao extends AbstractDao implements MsgHeadersDao {
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static final class MsgHeadersMapper implements RowMapper<MsgHeadersVo> {
-		
-		public MsgHeadersVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			MsgHeadersVo msgHeadersVo = new MsgHeadersVo();
-			
-			msgHeadersVo.setMsgId(rs.getLong("MsgId"));
-			msgHeadersVo.setHeaderSeq(rs.getInt("HeaderSeq"));
-			msgHeadersVo.setHeaderName(rs.getString("HeaderName"));
-			msgHeadersVo.setHeaderValue(rs.getString("HeaderValue"));
-			
-			return msgHeadersVo;
-		}
-	}
-
 	public MsgHeadersVo getByPrimaryKey(long msgId, int headerSeq) {
 		String sql = 
 			"select * " +
@@ -50,11 +21,14 @@ public class MsgHeadersJdbcDao implements MsgHeadersDao {
 				"MsgHeaders where msgid=? and headerSeq=? ";
 		
 		Object[] parms = new Object[] {msgId+"",headerSeq+""};
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, parms, new MsgHeadersMapper());
-		if (list.size()>0)
-			return (MsgHeadersVo)list.get(0);
-		else
+		try {
+			MsgHeadersVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<MsgHeadersVo>(MsgHeadersVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public List<MsgHeadersVo> getByMsgId(long msgId) {
@@ -64,7 +38,8 @@ public class MsgHeadersJdbcDao implements MsgHeadersDao {
 				" MsgHeaders where msgId=? " +
 			" order by headerSeq";
 		Object[] parms = new Object[] {msgId+""};
-		List<MsgHeadersVo> list = (List<MsgHeadersVo>)getJdbcTemplate().query(sql, parms, new MsgHeadersMapper());
+		List<MsgHeadersVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgHeadersVo>(MsgHeadersVo.class));
 		return list;
 	}
 	
@@ -129,9 +104,5 @@ public class MsgHeadersJdbcDao implements MsgHeadersDao {
 		
 		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsInserted;
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

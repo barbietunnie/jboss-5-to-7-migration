@@ -1,29 +1,16 @@
 package com.legacytojava.message.dao.customer;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
+
 @Repository
 @Component("custSequenceDao")
-public class CustSequenceJdbcDao implements CustSequenceDao {
+public class CustSequenceJdbcDao extends AbstractDao implements CustSequenceDao {
 	protected static final Logger logger = Logger.getLogger(CustSequenceJdbcDao.class);
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
 	public long findNextValue() {
 		/* simulate a sequence table */
 		String sql1 = "update CustSequence set seqId = LAST_INSERT_ID(seqId + 1)";

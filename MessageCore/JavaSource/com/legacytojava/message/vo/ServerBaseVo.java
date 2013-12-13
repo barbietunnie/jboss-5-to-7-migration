@@ -2,7 +2,7 @@ package com.legacytojava.message.vo;
 
 import java.io.Serializable;
 
-public class ServerBaseVo extends BaseVo implements Serializable {
+public class ServerBaseVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = 8994725324194791222L;
 	private String serverName = "";
 	private String description = null; 

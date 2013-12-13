@@ -1,50 +1,19 @@
 package com.legacytojava.message.dao.inbox;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Component;
 
+import com.legacytojava.message.dao.abstrct.AbstractDao;
 import com.legacytojava.message.vo.outbox.MsgStreamVo;
 
 @Component("msgStreamDao")
-public class MsgStreamJdbcDao implements MsgStreamDao {
+public class MsgStreamJdbcDao extends AbstractDao implements MsgStreamDao {
 	
-	@Autowired
-	private DataSource mysqlDataSource;
-	private JdbcTemplate jdbcTemplate;
-	
-	private JdbcTemplate getJdbcTemplate() {
-		if (jdbcTemplate == null) {
-			jdbcTemplate = new JdbcTemplate(mysqlDataSource);
-		}
-		return jdbcTemplate;
-	}
-
-	private static final class MsgStreamMapper implements RowMapper<MsgStreamVo> {
-		
-		public MsgStreamVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			MsgStreamVo msgStreamVo = new MsgStreamVo();
-
-			msgStreamVo.setMsgId(rs.getLong("MsgId"));
-			msgStreamVo.setFromAddrId((Long)rs.getObject("FromAddrId"));
-			msgStreamVo.setToAddrId((Long)rs.getObject("ToAddrId"));
-			msgStreamVo.setMsgSubject(rs.getString("MsgSubject"));
-			msgStreamVo.setAddTime(rs.getTimestamp("AddTime"));
-			msgStreamVo.setMsgStream(rs.getBytes("MsgStream"));
-			
-			return msgStreamVo;
-		}
-	}
-
 	public MsgStreamVo getByPrimaryKey(long msgId) {
 		String sql = 
 			"select * " +
@@ -52,11 +21,14 @@ public class MsgStreamJdbcDao implements MsgStreamDao {
 				"MsgStream where msgid=? ";
 		
 		Object[] parms = new Object[] {msgId+""};
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, parms, new MsgStreamMapper());
-		if (list.size()>0)
-			return (MsgStreamVo)list.get(0);
-		else
+		try {
+			MsgStreamVo vo = getJdbcTemplate().queryForObject(sql, parms, 
+					new BeanPropertyRowMapper<MsgStreamVo>(MsgStreamVo.class));
+			return vo;
+		}
+		catch (EmptyResultDataAccessException e) {
 			return null;
+		}
 	}
 	
 	public List<MsgStreamVo> getByFromAddrId(long fromAddrId) {
@@ -66,7 +38,8 @@ public class MsgStreamJdbcDao implements MsgStreamDao {
 				"MsgStream where fromAddrId=? ";
 		
 		Object[] parms = new Object[] {fromAddrId+""};
-		List<MsgStreamVo> list = (List<MsgStreamVo>)getJdbcTemplate().query(sql, parms, new MsgStreamMapper());
+		List<MsgStreamVo> list = getJdbcTemplate().query(sql, parms, 
+				new BeanPropertyRowMapper<MsgStreamVo>(MsgStreamVo.class));
 		return list;
 	}
 	
@@ -76,9 +49,10 @@ public class MsgStreamJdbcDao implements MsgStreamDao {
 			"from " +
 				"MsgStream where msgid = (select max(MsgId) from MsgStream) ";
 		
-		List<?> list = (List<?>)getJdbcTemplate().query(sql, new MsgStreamMapper());
+		List<MsgStreamVo> list = getJdbcTemplate().query(sql, 
+				new BeanPropertyRowMapper<MsgStreamVo>(MsgStreamVo.class));
 		if (list.size()>0)
-			return (MsgStreamVo)list.get(0);
+			return list.get(0);
 		else
 			return null;
 	}
@@ -86,7 +60,7 @@ public class MsgStreamJdbcDao implements MsgStreamDao {
 	public int update(MsgStreamVo msgStreamVo) {
 		
 		if (msgStreamVo.getAddTime()==null) {
-			msgStreamVo.setAddTime(new Timestamp(new java.util.Date().getTime()));
+			msgStreamVo.setAddTime(new Timestamp(System.currentTimeMillis()));
 		}
 		ArrayList<Object> fields = new ArrayList<Object>();
 		fields.add(msgStreamVo.getFromAddrId());
@@ -135,7 +109,7 @@ public class MsgStreamJdbcDao implements MsgStreamDao {
 				")";
 		
 		if (msgStreamVo.getAddTime()==null) {
-			msgStreamVo.setAddTime(new Timestamp(new java.util.Date().getTime()));
+			msgStreamVo.setAddTime(new Timestamp(System.currentTimeMillis()));
 		}
 		ArrayList<Object> fields = new ArrayList<Object>();
 		fields.add(msgStreamVo.getMsgId()+"");
@@ -147,9 +121,5 @@ public class MsgStreamJdbcDao implements MsgStreamDao {
 		
 		int rowsInserted = getJdbcTemplate().update(sql, fields.toArray());
 		return rowsInserted;
-	}
-	
-	protected String getRowIdSql() {
-		return "select last_insert_id()";
 	}
 }

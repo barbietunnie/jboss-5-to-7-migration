@@ -8,9 +8,9 @@ import com.legacytojava.message.constant.Constants;
 import com.legacytojava.message.constant.MailingListDeliveryOption;
 import com.legacytojava.message.constant.MailingListType;
 import com.legacytojava.message.dao.emailaddr.SchedulesBlob;
-import com.legacytojava.message.vo.BaseVo;
+import com.legacytojava.message.vo.BaseVoWithRowId;
 
-public class EmailTemplateVo extends BaseVo implements Serializable {
+public class EmailTemplateVo extends BaseVoWithRowId implements Serializable {
 	private static final long serialVersionUID = -5007781927317135437L;
 	private String templateId = "";
 	private String listId = "";
