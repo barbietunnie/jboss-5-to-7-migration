@@ -12,5 +12,4 @@ public interface IdTokensRemote {
 	public int insert(IdTokensVo idTokensVo);
 	public int update(IdTokensVo idTokensVo);
 	public int delete(String senderId);
-	public com.legacytojava.message.jpa.model.IdTokens getByClientId(String senderId);
 }
