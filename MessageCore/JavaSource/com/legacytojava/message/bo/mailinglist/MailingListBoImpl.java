@@ -9,6 +9,10 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bean.MessageBean;
 import com.legacytojava.message.bo.TaskBaseBo;
@@ -32,16 +36,26 @@ import com.legacytojava.message.vo.emailaddr.EmailTemplateVo;
 import com.legacytojava.message.vo.emailaddr.MailingListVo;
 import com.legacytojava.message.vo.emailaddr.TemplateRenderVo;
 
+@Component("mailingListBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class MailingListBoImpl implements MailingListBo {
 	static final Logger logger = Logger.getLogger(MailingListBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private EmailTemplateDao emailTemplateDao;
+	@Autowired
 	private MailingListDao mailingListDao;
+	@Autowired
 	private EmailAddrDao emailAddrDao;
+	@Autowired
 	private SubscriptionDao subscriptionDao;
+	@Autowired
 	private MsgClickCountsDao msgClickCountsDao;
+	@Autowired
 	private TaskBaseBo assignRuleNameBo;
+	@Autowired
 	private TaskBaseBo sendMailBo;
 	
 	/**
@@ -379,55 +393,27 @@ public class MailingListBoImpl implements MailingListBo {
 		return emailTemplateDao;
 	}
 
-	public void setEmailTemplateDao(EmailTemplateDao emailTemplateDao) {
-		this.emailTemplateDao = emailTemplateDao;
-	}
-
 	public MailingListDao getMailingListDao() {
 		return mailingListDao;
-	}
-
-	public void setMailingListDao(MailingListDao mailingListDao) {
-		this.mailingListDao = mailingListDao;
 	}
 
 	public EmailAddrDao getEmailAddrDao() {
 		return emailAddrDao;
 	}
 
-	public void setEmailAddrDao(EmailAddrDao emailAddrDao) {
-		this.emailAddrDao = emailAddrDao;
-	}
-
 	public SubscriptionDao getSubscriptionDao() {
 		return subscriptionDao;
-	}
-
-	public void setSubscriptionDao(SubscriptionDao subscriptionDao) {
-		this.subscriptionDao = subscriptionDao;
 	}
 
 	public MsgClickCountsDao getMsgClickCountsDao() {
 		return msgClickCountsDao;
 	}
 
-	public void setMsgClickCountsDao(MsgClickCountsDao msgClickCountsDao) {
-		this.msgClickCountsDao = msgClickCountsDao;
-	}
-
 	public TaskBaseBo getSendMailBo() {
 		return sendMailBo;
 	}
 
-	public void setSendMailBo(TaskBaseBo sendMailBo) {
-		this.sendMailBo = sendMailBo;
-	}
-
 	public TaskBaseBo getAssignRuleNameBo() {
 		return assignRuleNameBo;
-	}
-
-	public void setAssignRuleNameBo(TaskBaseBo assignRuleNameBo) {
-		this.assignRuleNameBo = assignRuleNameBo;
 	}
 }

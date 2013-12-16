@@ -12,6 +12,10 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bean.MessageBean;
 import com.legacytojava.message.bean.MessageBeanBuilder;
@@ -25,11 +29,16 @@ import com.legacytojava.message.exception.DataValidationException;
 import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.ClientVo;
 
+@Component("forwardBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class ForwardBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(ForwardBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private MsgStreamDao msgStreamDao;
+	@Autowired
 	private ClientDao clientDao;
 
 	/**
@@ -169,21 +178,5 @@ public class ForwardBoImpl extends TaskBaseAdaptor {
 		if (isDebugEnabled)
 			logger.debug("Jms Message Id returned: " + jmsMsgId);
 		return Long.valueOf(addresses.length);
-	}
-	
-	public MsgStreamDao getMsgStreamDao() {
-		return msgStreamDao;
-	}
-
-	public void setMsgStreamDao(MsgStreamDao msgStreamDao) {
-		this.msgStreamDao = msgStreamDao;
-	}
-
-	public ClientDao getClientDao() {
-		return clientDao;
-	}
-
-	public void setClientDao(ClientDao clientDao) {
-		this.clientDao = clientDao;
 	}
 }

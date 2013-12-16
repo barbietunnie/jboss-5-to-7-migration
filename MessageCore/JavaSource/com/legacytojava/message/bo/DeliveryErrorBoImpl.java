@@ -4,7 +4,11 @@ import java.sql.Timestamp;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bean.MessageBean;
 import com.legacytojava.message.constant.Constants;
@@ -18,12 +22,18 @@ import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
 import com.legacytojava.message.vo.inbox.MsgInboxVo;
 import com.legacytojava.message.vo.outbox.DeliveryStatusVo;
 
+@Component("deliveryErrorBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class DeliveryErrorBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(DeliveryErrorBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private DeliveryStatusDao deliveryStatusDao;
+	@Autowired
 	private EmailAddrDao emailAddrDao;
+	@Autowired
 	private MsgInboxDao msgInboxDao;
 
 	/**
@@ -111,29 +121,5 @@ public class DeliveryErrorBoImpl extends TaskBaseAdaptor {
 		
 		msgInboxDao.update(msgInboxVo);
 		return Long.valueOf(msgId);
-	}
-	
-	public DeliveryStatusDao getDeliveryStatusDao() {
-		return deliveryStatusDao;
-	}
-
-	public void setDeliveryStatusDao(DeliveryStatusDao deliveryStatusDao) {
-		this.deliveryStatusDao = deliveryStatusDao;
-	}
-
-	public EmailAddrDao getEmailAddrDao() {
-		return emailAddrDao;
-	}
-
-	public void setEmailAddrDao(EmailAddrDao emailAddrDao) {
-		this.emailAddrDao = emailAddrDao;
-	}
-
-	public MsgInboxDao getMsgInboxDao() {
-		return msgInboxDao;
-	}
-
-	public void setMsgInboxDao(MsgInboxDao msgInboxDao) {
-		this.msgInboxDao = msgInboxDao;
 	}
 }

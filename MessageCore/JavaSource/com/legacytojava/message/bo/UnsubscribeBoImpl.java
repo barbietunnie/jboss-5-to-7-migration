@@ -5,6 +5,10 @@ import java.util.List;
 import javax.mail.Address;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bean.MessageBean;
 import com.legacytojava.message.dao.emailaddr.EmailAddrDao;
@@ -15,12 +19,18 @@ import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
 import com.legacytojava.message.vo.emailaddr.MailingListVo;
 
+@Component("unsubscribeBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class UnsubscribeBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(UnsubscribeBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private EmailAddrDao emailAddrDao;
+	@Autowired
 	private MailingListDao mailingListDao;
+	@Autowired
 	private SubscriptionDao subscriptionDao;
 
 	/**
@@ -72,29 +82,5 @@ public class UnsubscribeBoImpl extends TaskBaseAdaptor {
 			}
 		}
 		return Long.valueOf(addrsUpdated);
-	}
-
-	public EmailAddrDao getEmailAddrDao() {
-		return emailAddrDao;
-	}
-
-	public void setEmailAddrDao(EmailAddrDao emailAddrDao) {
-		this.emailAddrDao = emailAddrDao;
-	}
-	
-	public MailingListDao getMailingListDao() {
-		return mailingListDao;
-	}
-
-	public void setMailingListDao(MailingListDao mailingListDao) {
-		this.mailingListDao = mailingListDao;
-	}
-
-	public SubscriptionDao getSubscriptionDao() {
-		return subscriptionDao;
-	}
-
-	public void setSubscriptionDao(SubscriptionDao subscriptionDao) {
-		this.subscriptionDao = subscriptionDao;
 	}
 }

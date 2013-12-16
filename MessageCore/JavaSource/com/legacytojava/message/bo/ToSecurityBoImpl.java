@@ -9,6 +9,10 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bean.MessageBean;
 import com.legacytojava.message.constant.EmailAddressType;
@@ -18,10 +22,14 @@ import com.legacytojava.message.dao.client.ClientUtil;
 import com.legacytojava.message.exception.DataValidationException;
 import com.legacytojava.message.vo.ClientVo;
 
+@Component("toSecurityBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class ToSecurityBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(ToSecurityBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private ClientDao clientDao;
 	/**
 	 * Forward the message to security department by sending the message to Mail
@@ -140,13 +148,5 @@ public class ToSecurityBoImpl extends TaskBaseAdaptor {
 		if (isDebugEnabled)
 			logger.debug("Jms Message Id returned: " + jmsMsgId);
 		return Long.valueOf(addresses.length);
-	}
-	
-	public ClientDao getClientDao() {
-		return clientDao;
-	}
-
-	public void setClientDao(ClientDao clientDao) {
-		this.clientDao = clientDao;
 	}
 }

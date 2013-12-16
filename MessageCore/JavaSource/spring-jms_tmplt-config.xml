@@ -191,7 +191,7 @@
 	</bean>
 	<!-- end of SimpleEmailSender -->
 	
-	<bean id="mailingListBo" scope="prototype" lazy-init="true"
+	<!-- bean id="mailingListBo" scope="prototype" lazy-init="true"
 		class="com.legacytojava.message.bo.mailinglist.MailingListBoImpl">
 		<property name="emailTemplateDao" ref="emailTemplateDao"/>
 		<property name="mailingListDao" ref="mailingListDao"/>
@@ -200,98 +200,98 @@
 		<property name="msgClickCountsDao" ref="msgClickCountsDao"/>
 		<property name="assignRuleNameBo" ref="assignRuleNameBo"/>
 		<property name="sendMailBo" ref="sendMailBo"/>
-	</bean>
+	</bean -->
 	
 	<!-- Task BO's -->
-	<bean id="taskBaseBo" scope="prototype" abstract="true"
+	<!-- bean id="taskBaseBo" scope="prototype" abstract="true"
 		class="com.legacytojava.message.bo.TaskBaseAdaptor">
 		<property name="jmsProcessor" ref="jmsProcessor"/>
-	</bean>
-	<bean id="activateBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="activateBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.ActivateBoImpl">
 		<property name="emailAddrDao" ref="emailAddrDao"/>
-	</bean>
-	<bean id="assignRuleNameBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="assignRuleNameBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.AssignRuleNameBoImpl">
-	</bean>
-	<bean id="autoReplyBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="autoReplyBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.AutoReplyBoImpl">
 		<property name="emailAddrDao" ref="emailAddrDao"/>
 		<property name="emailTemplateDao" ref="emailTemplateDao"/>
 		<property name="mailingListDao" ref="mailingListDao"/>
-	</bean>
-	<bean id="bounceBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="bounceBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.BounceBoImpl">
 		<property name="emailAddrDao" ref="emailAddrDao"/>
-	</bean>
-	<bean id="broadcastBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="broadcastBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.BroadcastBoImpl">
 		<property name="mailingListDao" ref="mailingListDao"/>
 		<property name="subscriptionDao" ref="subscriptionDao"/>
 		<property name="msgClickCountsDao" ref="msgClickCountsDao"/>
 		<property name="customerDao" ref="customerDao"/>
-	</bean>
-	<bean id="closeBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="closeBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.CloseBoImpl">
 		<property name="msgInboxDao" ref="msgInboxDao"/>
-	</bean>
-	<bean id="csrReplyBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="csrReplyBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.CsrReplyBoImpl">
-	</bean>
-	<bean id="deliveryErrorBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="deliveryErrorBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.DeliveryErrorBoImpl">
 		<property name="deliveryStatusDao" ref="deliveryStatusDao"/>
 		<property name="emailAddrDao" ref="emailAddrDao"/>
 		<property name="msgInboxDao" ref="msgInboxDao"/>
-	</bean>
-	<bean id="dropBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="dropBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.DropBoImpl">
-	</bean>
-	<bean id="forwardBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="forwardBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.ForwardBoImpl">
 		<property name="msgStreamDao" ref="msgStreamDao"/>
 		<property name="clientDao" ref="clientDao"/>
-	</bean>
-	<bean id="mailingListRegExBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="mailingListRegExBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.MailingListRegExBoImpl">
 		<property name="mailingListDao" ref="mailingListDao"/>
-	</bean>
-	<bean id="openBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="openBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.OpenBoImpl">
 		<property name="msgInboxDao" ref="msgInboxDao"/>
-	</bean>
-	<bean id="saveBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="saveBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.SaveBoImpl">
 		<property name="msgInboxBo" ref="msgInboxBo"/>
-	</bean>
-	<bean id="sendMailBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="sendMailBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.SendMailBoImpl">
 		<property name="emailAddrDao" ref="emailAddrDao"/>
-	</bean>
-	<bean id="subscribeBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="subscribeBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.SubscribeBoImpl">
 		<property name="emailAddrDao" ref="emailAddrDao"/>
 		<property name="mailingListDao" ref="mailingListDao"/>
 		<property name="subscriptionDao" ref="subscriptionDao"/>
-	</bean>
-	<bean id="suspendBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="suspendBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.SuspendBoImpl">
 		<property name="emailAddrDao" ref="emailAddrDao"/>
 		<property name="msgInboxDao" ref="msgInboxDao"/>
-	</bean>
-	<bean id="toCsrBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="toCsrBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.ToCsrBoImpl">
 		<property name="msgDataTypeDao" ref="msgDataTypeDao"/>
-	</bean>
-	<bean id="toSecurityBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="toSecurityBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.ToSecurityBoImpl">
 		<property name="clientDao" ref="clientDao"/>
-	</bean>
-	<bean id="unsubscribeBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
+	</bean -->
+	<!-- bean id="unsubscribeBo" lazy-init="true" scope="prototype" parent="taskBaseBo"
 		class="com.legacytojava.message.bo.UnsubscribeBoImpl">
 		<property name="emailAddrDao" ref="emailAddrDao"/>
 		<property name="mailingListDao" ref="mailingListDao"/>
 		<property name="subscriptionDao" ref="subscriptionDao"/>
-	</bean>
+	</bean -->
 	
 </beans>

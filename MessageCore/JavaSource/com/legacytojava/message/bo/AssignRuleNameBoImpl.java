@@ -5,7 +5,10 @@ import java.util.List;
 import javax.jms.JMSException;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.jbatch.SpringUtil;
 import com.legacytojava.message.bean.MessageBean;
@@ -13,6 +16,9 @@ import com.legacytojava.message.bean.MsgHeader;
 import com.legacytojava.message.constant.XHeaderName;
 import com.legacytojava.message.exception.DataValidationException;
 
+@Component("assignRuleNameBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class AssignRuleNameBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(AssignRuleNameBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

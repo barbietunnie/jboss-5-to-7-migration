@@ -5,11 +5,17 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bean.MessageBean;
 import com.legacytojava.message.exception.DataValidationException;
 import com.legacytojava.message.util.StringUtil;
 
+@Component("csrReplyBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class CsrReplyBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(CsrReplyBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

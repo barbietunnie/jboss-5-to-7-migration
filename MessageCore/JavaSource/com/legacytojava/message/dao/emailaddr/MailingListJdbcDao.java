@@ -36,7 +36,7 @@ public class MailingListJdbcDao extends AbstractDao implements MailingListDao {
 				" a.CreateTime, " +
 				" a.ListMasterEmailAddr, " +
 				" '' as Subscribed, " +
-				" a.ListIs as OrigListId, " +
+				" a.ListId as OrigListId, " +
 				" sum(b.SentCount) as SentCount, sum(b.OpenCount) as OpenCount," +
 				" sum(b.ClickCount) as ClickCount " +
 				"from MailingList a " +

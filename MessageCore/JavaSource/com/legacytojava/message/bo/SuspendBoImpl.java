@@ -7,6 +7,10 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.jbatch.queue.JmsProcessor;
 import com.legacytojava.message.bean.MessageBean;
@@ -21,11 +25,16 @@ import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
 import com.legacytojava.message.vo.inbox.MsgInboxVo;
 
+@Component("suspendBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class SuspendBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(SuspendBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private EmailAddrDao emailAddrDao;
+	@Autowired
 	private MsgInboxDao msgInboxDao;
 
 	/**
@@ -150,23 +159,6 @@ public class SuspendBoImpl extends TaskBaseAdaptor {
 		}
 		return addrsSuspended;
 	}
-	
-	public EmailAddrDao getEmailAddrDao() {
-		return emailAddrDao;
-	}
-
-	public void setEmailAddrDao(EmailAddrDao emailAddrDao) {
-		this.emailAddrDao = emailAddrDao;
-	}
-
-	public MsgInboxDao getMsgInboxDao() {
-		return msgInboxDao;
-	}
-
-	public void setMsgInboxDao(MsgInboxDao msgInboxDao) {
-		this.msgInboxDao = msgInboxDao;
-	}
-	
 	public void setJmsProcessor(JmsProcessor jmsProcessor) {
 		// dummy implementation to satisfy the interface
 	}
