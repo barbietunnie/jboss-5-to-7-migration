@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import org.springframework.context.ApplicationContext;
 
+import com.legacytojava.message.dao.abstrct.MetaDataUtil;
 import com.legacytojava.message.table.ActionTables;
 import com.legacytojava.message.table.ClientTable;
 import com.legacytojava.message.table.CustomerTable;
@@ -116,9 +117,11 @@ public class CreateAllTables {
 		loadActionTables.loadData(ctx);
 		
 		templateTables.createTables();
+		MetaDataUtil.reloadMetaData();
 		loadTemplateTables.loadData(ctx);
 		
 		inboxTables.createTables();
+		MetaDataUtil.reloadMetaData();
 		loadInboxTables.loadData(ctx);
 		
 		idTokensTable.createTables();
