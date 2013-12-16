@@ -1,7 +1,5 @@
 package com.legacytojava.message.dao.action;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +7,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
@@ -22,24 +19,6 @@ import com.legacytojava.message.vo.action.MsgActionDetailVo;
 @Component("msgActionDetailDao")
 public class MsgActionDetailJdbcDao extends AbstractDao implements MsgActionDetailDao {
 	
-	static final class MsgActionDetailMapper implements RowMapper<MsgActionDetailVo> {
-		
-		public MsgActionDetailVo mapRow(ResultSet rs, int rowNum) throws SQLException {
-			MsgActionDetailVo msgActionDetailVo = new MsgActionDetailVo();
-			
-			msgActionDetailVo.setRowId(rs.getInt("RowId"));
-			msgActionDetailVo.setActionId(rs.getString("ActionId"));
-			msgActionDetailVo.setDescription(rs.getString("Description"));
-			msgActionDetailVo.setProcessBeanId(rs.getString("ProcessBeanId"));
-			msgActionDetailVo.setProcessClassName(rs.getString("ProcessClassName"));
-			msgActionDetailVo.setDataType(rs.getString("DataType"));
-			msgActionDetailVo.setUpdtTime(rs.getTimestamp("UpdtTime"));
-			msgActionDetailVo.setUpdtUserId(rs.getString("UpdtUserId"));
-			msgActionDetailVo.setOrigUpdtTime(msgActionDetailVo.getUpdtTime());
-			return msgActionDetailVo;
-		}
-	}
-
 	public MsgActionDetailVo getByActionId(String actionId) {
 		String sql = 
 			"select *, UpdtTime as OrigUpdtTime " +

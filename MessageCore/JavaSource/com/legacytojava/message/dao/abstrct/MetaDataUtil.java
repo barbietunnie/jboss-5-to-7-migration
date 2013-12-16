@@ -124,6 +124,13 @@ public class MetaDataUtil {
 		return (insertClause + columnList.toString() + valuesClause + valueList.toString() + ")");
 	}
 	
+	/**
+	 * Reload MetaData from database.
+	 */
+	public synchronized static void reloadMetaData() {
+		tableMetaData.clear();
+	}
+
 	private synchronized static void buildTableMetaData() {
 		DataSource ds = (DataSource) SpringUtil.getDaoAppContext().getBean("mysqlDataSource");
 		try {
