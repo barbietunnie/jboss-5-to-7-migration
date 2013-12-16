@@ -1,6 +1,10 @@
 package com.legacytojava.message.bo;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bean.MessageBean;
 import com.legacytojava.message.constant.MsgStatusCode;
@@ -8,10 +12,14 @@ import com.legacytojava.message.dao.inbox.MsgInboxDao;
 import com.legacytojava.message.exception.DataValidationException;
 import com.legacytojava.message.vo.inbox.MsgInboxVo;
 
+@Component("closeBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class CloseBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(CloseBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private MsgInboxDao msgInboxDao;
 
 	/**
@@ -39,13 +47,5 @@ public class CloseBoImpl extends TaskBaseAdaptor {
 				logger.debug("Rows updated to Closed status: " + rowsUpdated);
 		}
 		return Long.valueOf(msgId);
-	}
-	
-	public MsgInboxDao getMsgInboxDao() {
-		return msgInboxDao;
-	}
-
-	public void setMsgInboxDao(MsgInboxDao msgInboxDao) {
-		this.msgInboxDao = msgInboxDao;
 	}
 }

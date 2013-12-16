@@ -10,6 +10,10 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bean.MessageBean;
 import com.legacytojava.message.constant.Constants;
@@ -19,10 +23,14 @@ import com.legacytojava.message.dao.emailaddr.EmailAddrDao;
 import com.legacytojava.message.exception.DataValidationException;
 import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
 
+@Component("activateBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class ActivateBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(ActivateBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private EmailAddrDao emailAddrDao;
 	
 	/**
@@ -113,13 +121,5 @@ public class ActivateBoImpl extends TaskBaseAdaptor {
 			}
 		}
 		return Long.valueOf(addrsActiveted);
-	}
-
-	public EmailAddrDao getEmailAddrDao() {
-		return emailAddrDao;
-	}
-
-	public void setEmailAddrDao(EmailAddrDao emailAddrDao) {
-		this.emailAddrDao = emailAddrDao;
 	}
 }

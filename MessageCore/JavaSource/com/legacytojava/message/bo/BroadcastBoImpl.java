@@ -11,6 +11,10 @@ import javax.mail.internet.InternetAddress;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.htmlparser.util.ParserException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bean.HtmlConverter;
 import com.legacytojava.message.bean.MessageBean;
@@ -30,13 +34,20 @@ import com.legacytojava.message.vo.emailaddr.MailingListVo;
 import com.legacytojava.message.vo.emailaddr.SubscriptionVo;
 import com.legacytojava.message.vo.emailaddr.TemplateRenderVo;
 
+@Component("broadcastBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class BroadcastBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(BroadcastBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private MailingListDao mailingListDao;
+	@Autowired
 	private SubscriptionDao subscriptionDao;
+	@Autowired
 	private MsgClickCountsDao msgClickCountsDao;
+	@Autowired
 	private CustomerDao customerDao;
 
 	/**
@@ -226,35 +237,4 @@ public class BroadcastBoImpl extends TaskBaseAdaptor {
 		return mailsSent;
 	}
 
-	public MailingListDao getMailingListDao() {
-		return mailingListDao;
-	}
-
-	public void setMailingListDao(MailingListDao mailingListDao) {
-		this.mailingListDao = mailingListDao;
-	}
-
-	public SubscriptionDao getSubscriptionDao() {
-		return subscriptionDao;
-	}
-
-	public void setSubscriptionDao(SubscriptionDao subscriptionDao) {
-		this.subscriptionDao = subscriptionDao;
-	}
-
-	public MsgClickCountsDao getMsgClickCountsDao() {
-		return msgClickCountsDao;
-	}
-
-	public void setMsgClickCountsDao(MsgClickCountsDao msgClickCountsDao) {
-		this.msgClickCountsDao = msgClickCountsDao;
-	}
-
-	public CustomerDao getCustomerDao() {
-		return customerDao;
-	}
-
-	public void setCustomerDao(CustomerDao customerDao) {
-		this.customerDao = customerDao;
-	}
 }

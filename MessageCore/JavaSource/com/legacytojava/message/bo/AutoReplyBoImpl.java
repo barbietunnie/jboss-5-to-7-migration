@@ -12,6 +12,10 @@ import javax.mail.internet.AddressException;
 
 import org.apache.log4j.Logger;
 import org.htmlparser.util.ParserException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.jbatch.common.KeyGenerator;
 import com.legacytojava.message.bean.HtmlConverter;
@@ -27,12 +31,18 @@ import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
 import com.legacytojava.message.vo.emailaddr.TemplateRenderVo;
 
+@Component("autoReplyBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class AutoReplyBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(AutoReplyBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private EmailAddrDao emailAddrDao;
+	@Autowired
 	private EmailTemplateDao emailTemplateDao;
+	@Autowired
 	private MailingListDao mailingListDao;
 	/**
 	 * construct the reply text from the TaskArguments, render the text and send
@@ -153,23 +163,5 @@ public class AutoReplyBoImpl extends TaskBaseAdaptor {
 			}
 		}
 		return Long.valueOf(msgsSent);
-	}
-	public EmailAddrDao getEmailAddrDao() {
-		return emailAddrDao;
-	}
-	public void setEmailAddrDao(EmailAddrDao emailAddrDao) {
-		this.emailAddrDao = emailAddrDao;
-	}
-	public EmailTemplateDao getEmailTemplateDao() {
-		return emailTemplateDao;
-	}
-	public void setEmailTemplateDao(EmailTemplateDao emailTemplateDao) {
-		this.emailTemplateDao = emailTemplateDao;
-	}
-	public MailingListDao getMailingListDao() {
-		return mailingListDao;
-	}
-	public void setMailingListDao(MailingListDao mailingListDao) {
-		this.mailingListDao = mailingListDao;
 	}
 }

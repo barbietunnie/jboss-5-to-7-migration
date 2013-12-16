@@ -45,6 +45,16 @@ public class MsgSourceJdbcDao extends AbstractDao implements MsgSourceDao {
 		return list;
 	}
 	
+	public List<MsgSourceVo> getAll() {
+		String sql = 
+			"select * " +
+			" from " +
+				" MsgSource ";
+		List<MsgSourceVo> list = getJdbcTemplate().query(sql,
+				new BeanPropertyRowMapper<MsgSourceVo>(MsgSourceVo.class));
+		return list;
+	}
+	
 	public int update(MsgSourceVo msgSourceVo) {
 		msgSourceVo.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		

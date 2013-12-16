@@ -1,6 +1,7 @@
 package com.legacytojava.message.table;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.mail.Part;
 
@@ -22,8 +23,14 @@ import com.legacytojava.message.dao.inbox.MsgAddrsDao;
 import com.legacytojava.message.dao.inbox.MsgClickCountsDao;
 import com.legacytojava.message.dao.inbox.MsgHeadersDao;
 import com.legacytojava.message.dao.inbox.MsgInboxDao;
+import com.legacytojava.message.dao.inbox.MsgStreamDao;
 import com.legacytojava.message.dao.inbox.RfcFieldsDao;
+import com.legacytojava.message.dao.outbox.MsgRenderedDao;
 import com.legacytojava.message.dao.outbox.MsgSequenceDao;
+import com.legacytojava.message.dao.template.BodyTemplateDao;
+import com.legacytojava.message.dao.template.MsgSourceDao;
+import com.legacytojava.message.dao.template.SubjTemplateDao;
+import com.legacytojava.message.util.FileUtil;
 import com.legacytojava.message.vo.ClientVo;
 import com.legacytojava.message.vo.emailaddr.EmailAddrVo;
 import com.legacytojava.message.vo.inbox.AttachmentsVo;
@@ -32,6 +39,11 @@ import com.legacytojava.message.vo.inbox.MsgClickCountsVo;
 import com.legacytojava.message.vo.inbox.MsgHeadersVo;
 import com.legacytojava.message.vo.inbox.MsgInboxVo;
 import com.legacytojava.message.vo.inbox.RfcFieldsVo;
+import com.legacytojava.message.vo.outbox.MsgRenderedVo;
+import com.legacytojava.message.vo.outbox.MsgStreamVo;
+import com.legacytojava.message.vo.template.BodyTemplateVo;
+import com.legacytojava.message.vo.template.MsgSourceVo;
+import com.legacytojava.message.vo.template.SubjTemplateVo;
 
 public class LoadInboxTables
 {
@@ -71,12 +83,16 @@ public class LoadInboxTables
 		AttachmentsDao attachmentsDao = (AttachmentsDao)factory.getBean("attachmentsDao");
 		MsgHeadersDao msgHeadersDao = (MsgHeadersDao)factory.getBean("msgHeadersDao");
 		RfcFieldsDao rfcFieldsDao = (RfcFieldsDao)factory.getBean("rfcFieldsDao");
+		MsgStreamDao msgStreamDao = (MsgStreamDao)factory.getBean("msgStreamDao");
 		
 		msgId = load(msgInboxDao);
 		load(msgAddrsDao);
 		load(attachmentsDao);
 		load(msgHeadersDao);
 		load(rfcFieldsDao);
+		MsgInboxVo inbox = msgInboxDao.getByPrimaryKey(msgId);
+		loadMessageStream(msgStreamDao, inbox);
+		loadRenderTables(factory);
 	}
 	
 	long load(MsgInboxDao msgInboxDao) 
@@ -222,5 +238,41 @@ public class LoadInboxTables
 		rfcFieldsDao.insert(in);
 
 		System.out.println("load() completed.\n"+in);
-	}	
+	}
+	
+	private void loadMessageStream(MsgStreamDao dao, MsgInboxVo inbox) {
+		// test insert
+		MsgStreamVo strm1 = new MsgStreamVo();
+		strm1.setMsgId(inbox.getMsgId());
+		strm1.setMsgSubject(inbox.getMsgSubject());
+		strm1.setFromAddrId(inbox.getFromAddrId());
+		strm1.setToAddrId(inbox.getToAddrId());
+		strm1.setMsgStream(loadFromSamples("BouncedMail_1.txt"));
+		dao.insert(strm1);
+	}
+	
+	protected byte[] loadFromSamples(String fileName) {
+		return FileUtil.loadFromFile("com/legacytojava/message/bo/inbox/bouncedmails", fileName);
+	}
+
+	
+	private void loadRenderTables(ApplicationContext factory) {
+		MsgRenderedDao renderedDao = factory.getBean(MsgRenderedDao.class);
+		MsgSourceDao msgSourceDao = factory.getBean(MsgSourceDao.class);
+		BodyTemplateDao bodyTmpltDao = factory.getBean(BodyTemplateDao.class);
+		SubjTemplateDao subjTmpltDao = factory.getBean(SubjTemplateDao.class);
+		
+		List<MsgSourceVo> srcList = msgSourceDao.getAll();
+		MsgRenderedVo vo = new MsgRenderedVo();
+		vo.setMsgSourceId(srcList.get(0).getMsgSourceId());
+		vo.setClientId(Constants.DEFAULT_CLIENTID);
+		List<BodyTemplateVo> bodyTmpltList = bodyTmpltDao.getByClientId(Constants.DEFAULT_CLIENTID);
+		List<SubjTemplateVo> subjTmpltList = subjTmpltDao.getByClientId(Constants.DEFAULT_CLIENTID);;
+		vo.setBodyTemplateId(bodyTmpltList.get(0).getTemplateId());
+		vo.setSubjTemplateId(subjTmpltList.get(0).getTemplateId());
+		vo.setStartTime(new Timestamp(System.currentTimeMillis()));
+		vo.setUpdtUserId(Constants.DEFAULT_USER_ID);
+		renderedDao.insert(vo);
+	}
+
 }

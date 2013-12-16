@@ -714,7 +714,7 @@ public final class MessageBeanBuilder {
 		catch (UnsupportedEncodingException e) {
 			/* unsupported encoding found, use its raw data instead */
 			logger.error("processAttc(): UnsupportedEncodingException caught: " + contentType);
-			logger.error("UnsupportedEncodingException caught", e);
+			logger.error("UnsupportedEncodingException caught: " + e.getMessage());
 			if (contentType.trim().toLowerCase().startsWith("multipart/")
 					|| contentType.trim().toLowerCase().startsWith("message/rfc822")) {
 				aNode.setValue("reader004: UnsupportedEncodingException caught during process.");

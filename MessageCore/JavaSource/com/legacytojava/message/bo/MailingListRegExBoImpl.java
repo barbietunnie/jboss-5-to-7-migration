@@ -3,6 +3,10 @@ package com.legacytojava.message.bo;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bean.MessageBean;
 import com.legacytojava.message.dao.emailaddr.MailingListDao;
@@ -11,10 +15,14 @@ import com.legacytojava.message.util.EmailAddrUtil;
 import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.emailaddr.MailingListVo;
 
+@Component("mailingListRegExBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class MailingListRegExBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(MailingListRegExBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private MailingListDao mailingListDao;
 
 	/**
@@ -40,13 +48,5 @@ public class MailingListRegExBoImpl extends TaskBaseAdaptor {
 			sb.append("^" + emailAddr + "$");
 		}
 		return sb.toString();
-	}
-
-	public MailingListDao getMailingListDao() {
-		return mailingListDao;
-	}
-
-	public void setMailingListDao(MailingListDao mailingListDao) {
-		this.mailingListDao = mailingListDao;
 	}
 }

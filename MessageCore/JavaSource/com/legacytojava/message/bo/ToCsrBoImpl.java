@@ -3,7 +3,11 @@ package com.legacytojava.message.bo;
 import javax.jms.JMSException;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.jbatch.SpringUtil;
 import com.legacytojava.message.bean.MessageBean;
@@ -12,10 +16,14 @@ import com.legacytojava.message.exception.DataValidationException;
 import com.legacytojava.message.util.StringUtil;
 import com.legacytojava.message.vo.action.MsgDataTypeVo;
 
+@Component("toCsrBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class ToCsrBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(ToCsrBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 	
+	@Autowired
 	private MsgDataTypeDao msgDataTypeDao;
 
 	/**
@@ -88,13 +96,5 @@ public class ToCsrBoImpl extends TaskBaseAdaptor {
 			logger.debug("Jms Message Id returned: " + jmsMsgId);
 		}
 		return jmsMsgId;
-	}
-	
-	public MsgDataTypeDao getMsgDataTypeDao() {
-		return msgDataTypeDao;
-	}
-
-	public void setMsgDataTypeDao(MsgDataTypeDao msgDataTypeDao) {
-		this.msgDataTypeDao = msgDataTypeDao;
 	}
 }

@@ -1,10 +1,16 @@
 package com.legacytojava.message.bo;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.legacytojava.message.bean.MessageBean;
 import com.legacytojava.message.exception.DataValidationException;
 
+@Component("dropBo")
+@Scope(value="prototype")
+@Lazy(true)
 public class DropBoImpl extends TaskBaseAdaptor {
 	static final Logger logger = Logger.getLogger(DropBoImpl.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
