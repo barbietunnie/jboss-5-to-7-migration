@@ -30,7 +30,7 @@ public class MsgInboxDao extends AbstractDao {
 	
 	public MsgInboxVo getByPrimaryKey(long msgId) {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			"from " +
 				"Msg_Inbox " +
 			" where msgId=? ";
@@ -47,7 +47,7 @@ public class MsgInboxDao extends AbstractDao {
 	
 	public MsgInboxVo getFirstRecord() {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			"from " +
 				"Msg_Inbox " +
 			" where msgId = (select min(MsgId) from Msg_Inbox) ";
@@ -58,7 +58,7 @@ public class MsgInboxDao extends AbstractDao {
 	
 	public MsgInboxVo getLastRecord() {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			"from " +
 				"Msg_Inbox " +
 			" where msgId = (select max(MsgId) from Msg_Inbox) ";
@@ -70,7 +70,8 @@ public class MsgInboxDao extends AbstractDao {
 	
 	public MsgInboxVo getRandomRecord() {
 		String sql = 
-			"select * from Msg_Inbox " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
+			"from Msg_Inbox " +
 			" where msgId >= (select Floor(max(MsgId) * RAND()) from Msg_Inbox) limit 1 ";
 		MsgInboxVo vo = getJdbcTemplate().queryForObject(sql,
 				new BeanPropertyRowMapper<MsgInboxVo>(MsgInboxVo.class));
@@ -79,7 +80,7 @@ public class MsgInboxDao extends AbstractDao {
 	
 	public List<MsgInboxWebVo> getByLeadMsgId(long leadMsgId) {
 		String sql = 
-			"select * " +
+			"select *, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			" from " +
 				" Msg_Inbox " +
 			" where leadMsgId=? " +
@@ -92,7 +93,7 @@ public class MsgInboxDao extends AbstractDao {
 	
 	public List<MsgInboxWebVo> getByMsgRefId(long msgRefId) {
 		String sql = 
-			"select * " +
+			"select *, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			" from " +
 				" Msg_Inbox " +
 			" where MsgRefId=? " +
@@ -105,7 +106,7 @@ public class MsgInboxDao extends AbstractDao {
 	
 	public List<MsgInboxVo> getByFromAddrId(long addrId) {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			" from " +
 				" Msg_Inbox " +
 			" where fromAddrId=? " +
@@ -118,7 +119,7 @@ public class MsgInboxDao extends AbstractDao {
 	
 	public List<MsgInboxVo> getByToAddrId(long addrId) {
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			" from " +
 				" Msg_Inbox " +
 			" where toAddrId=? " +
@@ -144,7 +145,7 @@ public class MsgInboxDao extends AbstractDao {
 			date = new java.util.Date();
 		}
 		String sql = 
-			"select * " +
+			"select *, UpdtTime as OrigUpdtTime, ReadCount as OrigReadCount, StatusId as OrigStatusId " +
 			" from " +
 				" Msg_Inbox " +
 			" where receivedTime>=? " +
@@ -283,7 +284,9 @@ public class MsgInboxDao extends AbstractDao {
 				"a.StatusId, " +
 				"AttachmentCount, " +
 				"AttachmentSize, " +
-				"MsgBodySize " +
+				"MsgBodySize, " +
+				"ReadCount as OrigReadCount, " +
+				"a.StatusId as OrigStatusId " +
 			" FROM " +
 				"Msg_Inbox a " +
 				" JOIN Email_Address b ON a.FromAddrId=b.EmailAddrId " +
