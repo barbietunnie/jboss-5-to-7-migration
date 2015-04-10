@@ -9,15 +9,17 @@
 	<spring.version>3.2.4.RELEASE</spring.version>
 	<aspectjweaver.version>1.7.3</aspectjweaver.version>
 	<cglib.version>3.0</cglib.version>
-	<derby.version>10.9.1.0</derby.version>
+	<derby.version>10.11.1.1</derby.version>
 	<mysql.connector.version>5.1.26</mysql.connector.version>
 	<postgresql.jdbc.version>9.1-901.jdbc4</postgresql.jdbc.version>
 	<commons.dbcp.version>1.4</commons.dbcp.version>
 	<commons.pool.version>1.6</commons.pool.version>
-	<commons.lang.version>3.1</commons.lang.version>
+	<commons.lang.version>3.3.2</commons.lang.version>
 	<commons.io.version>2.4</commons.io.version>
 	<commons.beanutils.version>1.8.3</commons.beanutils.version>
     <java.version>1.6</java.version>
+    <javax.mail.version>1.4.7</javax.mail.version>
+    <log4j.version>1.2.17</log4j.version>
     <junit.version>4.10</junit.version>
   </properties>
 
@@ -145,7 +147,7 @@
 	<dependency>
 		<groupId>javax.mail</groupId>
 		<artifactId>mail</artifactId>
-		<version>1.4.7</version>
+		<version>${javax.mail.version}</version>
 	</dependency>
 
 	<dependency>
@@ -177,7 +179,7 @@
 	<dependency>
 		<groupId>log4j</groupId>
 		<artifactId>log4j</artifactId>
-		<version>1.2.17</version>
+		<version>${log4j.version}</version>
 	</dependency>
     
     <dependency>
@@ -197,7 +199,7 @@
           <target>${java.version}</target>
         </configuration>
       </plugin>
-      
+      <!-- 
      	<plugin>
 		  <artifactId>maven-assembly-plugin</artifactId>
 		  <configuration>
@@ -207,15 +209,15 @@
 		  </configuration>
 		  <executions>
 		    <execution>
-		      <id>make-assembly</id> <!-- this is used for inheritance merges -->
-		      <phase>package</phase> <!-- bind to the packaging phase -->
+		      <id>make-assembly</id>
+		      <phase>package</phase>
 		      <goals>
 		        <goal>attached</goal>
 		      </goals>
 		    </execution>
 		  </executions>
 		</plugin>
-      
+      -->
     </plugins>
   </build>
   
