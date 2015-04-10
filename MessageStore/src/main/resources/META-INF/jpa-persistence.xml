@@ -5,9 +5,13 @@
 
   <persistence-unit name="MessageDB" transaction-type="RESOURCE_LOCAL">
        
-    <!-- class>jpa.model.IdTokens</class>
+    <!-- class>jpa.model.IdTokens</class -->
     
 	<properties>
+		<!-- redirect EclipseLink output from console to a file -->
+		<property name="eclipselink.logging.file" value="./logs/eclipselink.log"/>
+
+	<!-- 
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/message" />
       <property name="javax.persistence.jdbc.user" value="email" />
@@ -15,6 +19,7 @@
 
       <property name="eclipselink.ddl-generation" value="create-tables" />
       <property name="eclipselink.ddl-generation.output-mode" value="database" />
-    </properties -->
+      -->
+    </properties>
    </persistence-unit>
 </persistence> 
