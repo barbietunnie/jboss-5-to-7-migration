@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -32,7 +33,12 @@ import jpa.util.StringUtil;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 @Entity
-@Table(name="message_inbox")
+@Table(name="message_inbox", indexes = {
+		@Index(columnList = "ReferringMsgRowId", name = "MsgInbox_RefMsg_Idx"),
+		@Index(columnList = "LeadMsgRowId", name = "MsgInbox_LeadMsg_Idx"),
+		@Index(columnList = "FromAddressRowId", name = "MsgInbox_FromAddr_Idx"),
+		@Index(columnList = "ToAddressRowId", name = "MsgInbox_ToAddr_Idx")
+})
 @SqlResultSetMappings({ // used by native queries
 	  @SqlResultSetMapping(name="MessageInboxNative",
 		entities={
@@ -51,21 +57,18 @@ public class MessageInbox extends BaseModel implements Serializable {
 	 * to simplify the implementation of cascade delete.
 	 */
 	@org.eclipse.persistence.annotations.Index
-	@org.hibernate.annotations.Index(name="ReferringMsgIndex")
 	@Column(name="ReferringMsgRowId", nullable=true, columnDefinition="Integer")
 	private Integer referringMessageRowId;
 	@Transient
 	private MessageInbox referringMessage;
 	
 	@org.eclipse.persistence.annotations.Index
-	@org.hibernate.annotations.Index(name="LeadMsgIndex")
 	@Column(name="LeadMsgRowId", nullable=true, columnDefinition="Integer")
 	private Integer leadMessageRowId;
 	@Transient
 	private MessageInbox leadMessage;
 
 	@org.eclipse.persistence.annotations.Index
-	@org.hibernate.annotations.Index(name="FromAddressIndex")
 	@Column(name="FromAddressRowId", nullable=true, columnDefinition="Integer")
 	private Integer fromAddrRowId;
 	@Transient
@@ -77,7 +80,6 @@ public class MessageInbox extends BaseModel implements Serializable {
 	private EmailAddress replytoAddress;
 
 	@org.eclipse.persistence.annotations.Index
-	@org.hibernate.annotations.Index(name="ToAddressIndex")
 	@Column(name="ToAddressRowId", nullable=true, columnDefinition="Integer")
 	private Integer toAddrRowId;
 	@Transient
