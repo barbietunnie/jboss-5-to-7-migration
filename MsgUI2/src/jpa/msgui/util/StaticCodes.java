@@ -116,6 +116,7 @@ public class StaticCodes {
 						JarEntry entry = entries.nextElement();
 						System.out.println("entry: " + entry);
 					}
+					jarFile.close();
 				}
 				catch (IOException e) {
 					e.printStackTrace();
