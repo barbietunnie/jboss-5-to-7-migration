@@ -14,7 +14,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.mail.internet.AddressException;
 
-import org.jboss.logging.Logger;
+import org.apache.log4j.Logger;
 
 import com.legacytojava.jbatch.SpringUtil;
 import com.legacytojava.message.bo.template.RenderBo;

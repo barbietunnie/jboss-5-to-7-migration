@@ -18,7 +18,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
-import org.jboss.logging.Logger;
+import org.apache.log4j.Logger;
 
 import com.legacytojava.jbatch.SpringUtil;
 import com.legacytojava.message.bean.MessageBean;
