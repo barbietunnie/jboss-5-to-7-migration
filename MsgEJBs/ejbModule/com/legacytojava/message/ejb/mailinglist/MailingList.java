@@ -13,7 +13,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 
-import org.jboss.logging.Logger;
+import org.apache.log4j.Logger;
 
 import com.legacytojava.jbatch.SpringUtil;
 import com.legacytojava.message.bo.mailinglist.MailingListBo;
