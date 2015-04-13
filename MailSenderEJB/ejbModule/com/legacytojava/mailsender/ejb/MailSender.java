@@ -17,7 +17,7 @@ import javax.ejb.TransactionManagementType;
 import javax.mail.MessagingException;
 import javax.mail.SendFailedException;
 
-import org.jboss.logging.Logger;
+import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
