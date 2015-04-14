@@ -3,6 +3,7 @@
 	<name>MsgUI2</name>
 	<comment></comment>
 	<projects>
+		<project>MessageStore</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

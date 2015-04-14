@@ -1,5 +1,7 @@
 package jpa.msgui.servlet;
 
+import javax.annotation.Resource;
+import javax.naming.Context;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,8 +12,14 @@ import jpa.dataloader.DataLoader;
 import jpa.msgui.util.SpringUtil;
 import jpa.service.SenderDataService;
 import jpa.util.JpaUtil;
+import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
+
+import com.es.subscriber.ejb.Subscriber;
+import com.es.subscriber.ejb.SubscriberLocal;
+import com.es.subscriber.ejb.SubscriberRemote;
+import com.es.tomee.util.TomeeCtxUtil;
 
 /**
  * Servlet implementation class DerbyInitServlet
@@ -21,11 +29,40 @@ public class DerbyInitServlet extends HttpServlet {
 	private static final long serialVersionUID = 1810496150486989387L;
 	static final Logger logger = Logger.getLogger(DerbyInitServlet.class);
 	
+	@javax.ejb.EJB
+	private Subscriber subscriber;
+	
+	@Resource 
+	private javax.sql.DataSource msgdb_pool;
+	
+	@Resource(name="msgdb_pool")
+	private  javax.sql.DataSource myDS;
+	
     @Override
 	public void init() throws ServletException {
 		ServletContext ctx = getServletContext();
 		logger.info("init() - ServerInfo: " + ctx.getServerInfo() + ", Context Path: "
 				+ ctx.getContextPath());
+		// test
+		logger.info("Subscriber EJB: " + StringUtil.prettyPrint(subscriber));
+		logger.info("msgdb_pool DataSource 1: " + StringUtil.prettyPrint(msgdb_pool));
+		logger.info("msgdb_pool DataSource 2: " + StringUtil.prettyPrint(myDS));
+		subscriber.getResources();
+		
+		try {
+			Context context = TomeeCtxUtil.getInitialContext();
+			SubscriberRemote subr_rmt = (SubscriberRemote) context.lookup("ejb/Subscriber");
+			logger.info("Context Subscriber 1: " + subr_rmt);
+			
+			SubscriberLocal subr_lcl = (SubscriberLocal) context.lookup("subscriberLocal");
+			logger.info("Context Subscriber 2: " + subr_lcl);
+
+			TomeeCtxUtil.listContext(context, "");
+		} catch (Exception e) {
+			logger.error("Exception caught", e);
+		}
+		// end test
+		
 		if (Constants.DB_PRODNAME_DERBY.equals(JpaUtil.getDBProductName())) {
 			SenderDataService sender = (SenderDataService) SpringUtil.getWebAppContext().getBean("senderDataService");
 			if (sender.getAll().isEmpty()) {
