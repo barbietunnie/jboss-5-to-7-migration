@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import jpa.constant.Constants;
@@ -15,6 +17,7 @@ import jpa.constant.StatusId;
 import jpa.model.EmailAddress;
 import jpa.msgui.vo.PagingVo;
 import jpa.util.EmailAddrUtil;
+import jpa.util.ExceptionUtil;
 import jpa.util.JpaUtil;
 import jpa.util.StringUtil;
 
@@ -23,15 +26,18 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("emailAddressService")
-@Transactional(propagation=Propagation.REQUIRED)
+@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED)
 public class EmailAddressService implements java.io.Serializable {
 	private static final long serialVersionUID = 4726327397885138151L;
 
 	static Logger logger = Logger.getLogger(EmailAddressService.class);
+	
+	static final boolean IsOptimisticLocking = false;
 	
 	@Autowired
 	EntityManager em;
@@ -57,7 +63,9 @@ public class EmailAddressService implements java.io.Serializable {
 			Query query = em.createQuery("select t from EmailAddress t where t.address = :address");
 			query.setParameter("address", EmailAddrUtil.removeDisplayName(addr));
 			EmailAddress emailAddr = (EmailAddress) query.getSingleResult();
-			//em.lock(emailAddr, LockModeType.OPTIMISTIC);
+			if (IsOptimisticLocking) {
+				em.lock(emailAddr, LockModeType.OPTIMISTIC);
+			}
 			return emailAddr;
 		}
 		finally {
@@ -283,6 +291,7 @@ public class EmailAddressService implements java.io.Serializable {
 		if (EmailAddrUtil.hasDisplayName(emailAddr.getAddress())) {
 			emailAddr.setAddress(EmailAddrUtil.removeDisplayName(emailAddr.getAddress()));
 		}
+		//em.setFlushMode(FlushModeType.AUTO);
 		try {
 			if (em.contains(emailAddr)) {
 				em.persist(emailAddr);
@@ -292,6 +301,9 @@ public class EmailAddressService implements java.io.Serializable {
 			}
 			em.flush();
 		}
+		catch (PersistenceException e) {
+			throw e;
+		}
 		finally {
 		}
 	}
@@ -299,10 +311,21 @@ public class EmailAddressService implements java.io.Serializable {
 	public void updateLastRcptTime(int rowId) {
 		try {
 			EmailAddress ea = getByRowId(rowId);
-			ea.setLastRcptTime(new java.sql.Timestamp(System.currentTimeMillis()));
-			update(ea);
+			if (ea.getLastRcptTime() == null || (System.currentTimeMillis() - ea.getLastRcptTime().getTime()) > 1000) {
+				ea.setLastRcptTime(new java.sql.Timestamp(System.currentTimeMillis()));
+				update(ea);
+			}
 		}
 		catch (NoResultException e) {}
+		catch (PersistenceException e) {
+			Exception ex = ExceptionUtil.findException(e, java.sql.SQLException.class);
+			if (ex != null && ex.getMessage().contains("Lock wait timeout exceeded")) {
+				logger.error("in updateLastRcptTime() - update failed due to deadlock, ignored.");
+			}
+			else {
+				throw e;
+			}
+		}
 		finally {
 		}
 	}
@@ -310,10 +333,21 @@ public class EmailAddressService implements java.io.Serializable {
 	public void updateLastSentTime(int rowId) {
 		try {
 			EmailAddress ea = getByRowId(rowId);
-			ea.setLastSentTime(new java.sql.Timestamp(System.currentTimeMillis()));
-			update(ea);
+			if (ea.getLastSentTime() == null || (System.currentTimeMillis() - ea.getLastSentTime().getTime()) > 1000) {
+				ea.setLastSentTime(new java.sql.Timestamp(System.currentTimeMillis()));
+				update(ea);
+			}
 		}
 		catch (NoResultException e) {}
+		catch (PersistenceException e) {
+			Exception ex = ExceptionUtil.findException(e, java.sql.SQLException.class);
+			if (ex != null && ex.getMessage().contains("Lock wait timeout exceeded")) {
+				logger.error("in updateLastSentTime() - update failed due to deadlock, ignored.");
+			}
+			else {
+				throw e;
+			}
+		}
 		finally {
 		}
 	}
@@ -331,7 +365,18 @@ public class EmailAddressService implements java.io.Serializable {
 				emailAddr.setStatusChangeTime(new java.sql.Timestamp(System.currentTimeMillis()));
 			}
 		}
-		update(emailAddr);
+		try {
+			update(emailAddr);
+		}
+		catch (PersistenceException e) {
+			Exception ex = ExceptionUtil.findException(e, java.sql.SQLException.class);
+			if (ex != null && ex.getMessage().contains("Lock wait timeout exceeded")) {
+				logger.error("in updateBounceCount() - update failed due to deadlock, ignored.");
+			}
+			else {
+				throw e;
+			}
+		}
 	}
 
 	static String[] CRIT = { " where ", " and ", " and ", " and ", " and ",

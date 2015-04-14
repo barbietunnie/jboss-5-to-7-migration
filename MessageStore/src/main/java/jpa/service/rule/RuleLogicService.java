@@ -3,6 +3,7 @@ package jpa.service.rule;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.Query;
@@ -11,19 +12,26 @@ import jpa.constant.RuleCategory;
 import jpa.constant.StatusId;
 import jpa.model.rule.RuleLogic;
 import jpa.service.ReloadFlagsService;
+import jpa.util.JpaUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.persistence.config.HintValues;
+import org.eclipse.persistence.config.QueryHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("ruleLogicService")
-@Transactional(propagation=Propagation.REQUIRED)
+@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED)
 public class RuleLogicService implements java.io.Serializable {
 	private static final long serialVersionUID = 2402907648611630261L;
 
 	static Logger logger = Logger.getLogger(RuleLogicService.class);
+	
+	static final boolean IsOptimisticLocking = false;
 	
 	//@PersistenceContext(unitName="MessageDB")
 	@Autowired
@@ -38,9 +46,14 @@ public class RuleLogicService implements java.io.Serializable {
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("ruleName", ruleName);
+			if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "EclipseLink")) {
+				query.setHint(QueryHints.READ_ONLY, HintValues.TRUE);
+			}
 			RuleLogic logic = (RuleLogic) query.getSingleResult();
-			//em.lock(logic, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-			//em.lock(logic, LockModeType.OPTIMISTIC);
+			if (IsOptimisticLocking) {
+				//em.lock(logic, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+				em.lock(logic, LockModeType.OPTIMISTIC);
+			}
 			return logic;
 		}
 		finally {
@@ -54,6 +67,9 @@ public class RuleLogicService implements java.io.Serializable {
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("builtinRules", builtinRules);
+			if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "EclipseLink")) {
+				query.setHint(QueryHints.READ_ONLY, HintValues.TRUE);
+			}
 			@SuppressWarnings("unchecked")
 			List<RuleLogic> list = query.getResultList();
 			return list;

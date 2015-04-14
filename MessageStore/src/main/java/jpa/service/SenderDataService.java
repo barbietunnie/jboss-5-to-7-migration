@@ -8,16 +8,20 @@ import javax.persistence.Query;
 
 import jpa.constant.Constants;
 import jpa.model.SenderData;
+import jpa.util.JpaUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.persistence.config.HintValues;
+import org.eclipse.persistence.config.QueryHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("senderDataService")
-@Transactional(propagation=Propagation.REQUIRED)
+@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED)
 public class SenderDataService implements java.io.Serializable {
 	private static final long serialVersionUID = -5718921335820858248L;
 
@@ -27,10 +31,14 @@ public class SenderDataService implements java.io.Serializable {
 	//@PersistenceContext(name="MessageDB")
 	EntityManager em;
 
+	@Transactional(isolation=Isolation.READ_UNCOMMITTED) // did not help with "Lock wait timeout exceeded"
 	public SenderData getBySenderId(String senderId) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from SenderData t where t.senderId = :senderId");
 			query.setParameter("senderId", senderId);
+			if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "EclipseLink")) {
+				query.setHint(QueryHints.READ_ONLY, HintValues.TRUE);
+			}
 			SenderData sender = (SenderData) query.getSingleResult();
 			return sender;
 		}
@@ -61,6 +69,7 @@ public class SenderDataService implements java.io.Serializable {
 		}
 	}
 
+	@Transactional(isolation=Isolation.READ_UNCOMMITTED)
 	public List<SenderData> getAll() {
 		try {
 			Query query = em.createQuery("select t from SenderData t");

@@ -29,6 +29,20 @@ public class JpaUtil {
 		return "UnKnown";
 	}
 
+	public static String getJpaDialect() {
+		 Object dialect = SpringUtil.getAppContext().getBean("jpaDialect");
+		 if (dialect != null) {
+			 return dialect.getClass().getSimpleName();
+		 }
+		 else {
+			 return "Unknown";
+		 }
+	}
+	
+	public static void main(String[] args) {
+		logger.info(getJpaDialect());
+	}
+
 	/**
 	 * @deprecated - use injection instead
 	 */
