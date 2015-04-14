@@ -61,7 +61,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	protected int MAX_SENDERS = 0;
 	protected int MESSAGE_COUNT = 0;
 	private final int MAX_MESSAGE_COUNT = 6000;
-	private final int MAX_READ_PER_PASS = 20;
+	private final int MAX_READ_PER_PASS = 100;
 	private int RETRY_MAX = 10; // , default to 10, -1 -> infinite retry
 	private final int readPerPass;
 	private int freq;
