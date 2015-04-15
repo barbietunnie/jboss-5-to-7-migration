@@ -2,7 +2,9 @@ package jpa.service.common;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
@@ -311,10 +313,9 @@ public class EmailAddressService implements java.io.Serializable {
 	public void updateLastRcptTime(int rowId) {
 		try {
 			EmailAddress ea = getByRowId(rowId);
-			if (ea.getLastRcptTime() == null || (System.currentTimeMillis() - ea.getLastRcptTime().getTime()) > 1000) {
-				ea.setLastRcptTime(new java.sql.Timestamp(System.currentTimeMillis()));
-				update(ea);
-			}
+			ea.setLastRcptTime(new java.sql.Timestamp(System.currentTimeMillis()));
+			update(ea);
+			//saveTimes(rowId, new java.sql.Timestamp(System.currentTimeMillis()), null);
 		}
 		catch (NoResultException e) {}
 		catch (PersistenceException e) {
@@ -333,10 +334,9 @@ public class EmailAddressService implements java.io.Serializable {
 	public void updateLastSentTime(int rowId) {
 		try {
 			EmailAddress ea = getByRowId(rowId);
-			if (ea.getLastSentTime() == null || (System.currentTimeMillis() - ea.getLastSentTime().getTime()) > 1000) {
-				ea.setLastSentTime(new java.sql.Timestamp(System.currentTimeMillis()));
-				update(ea);
-			}
+			ea.setLastSentTime(new java.sql.Timestamp(System.currentTimeMillis()));
+			update(ea);
+			//saveTimes(rowId, null, new java.sql.Timestamp(System.currentTimeMillis()));
 		}
 		catch (NoResultException e) {}
 		catch (PersistenceException e) {
@@ -349,6 +349,49 @@ public class EmailAddressService implements java.io.Serializable {
 			}
 		}
 		finally {
+		}
+	}
+
+	static class TimeUpdateVo {
+		int rowId;
+		java.sql.Timestamp lastRcptTime;
+		java.sql.Timestamp lastSentTime;
+	}
+	
+	static final Map<Integer, TimeUpdateVo> timesToUpdate = new HashMap<Integer, TimeUpdateVo>();
+	
+	synchronized void saveTimes(int rowId, java.sql.Timestamp lastRcptTime, java.sql.Timestamp lastSentTime) {
+		if (timesToUpdate.containsKey(rowId)) {
+			TimeUpdateVo vo = timesToUpdate.get(rowId);
+			if (lastRcptTime!=null) {
+				vo.lastRcptTime = lastRcptTime;
+			}
+			if (lastSentTime!=null) {
+				vo.lastSentTime = lastSentTime;
+			}
+		}
+		else {
+			TimeUpdateVo vo = new TimeUpdateVo();
+			vo.rowId = rowId;
+			vo.lastRcptTime = lastRcptTime;
+			vo.lastSentTime = lastSentTime;
+			timesToUpdate.put(rowId, vo);
+		}
+	}
+
+	public void updateTimes() {
+		for (TimeUpdateVo vo : timesToUpdate.values()) {
+			try {
+				EmailAddress ea = getByRowId(vo.rowId);
+				if (vo.lastRcptTime != null) {
+					ea.setLastRcptTime(vo.lastRcptTime);
+				}
+				if (vo.lastSentTime!=null) {
+					ea.setLastSentTime(vo.lastSentTime);
+				}
+				update(ea);
+			}
+			catch (NoResultException e) {}
 		}
 	}
 

@@ -12,8 +12,6 @@ import jpa.util.JpaUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.persistence.config.HintValues;
-import org.eclipse.persistence.config.QueryHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -35,10 +33,7 @@ public class SenderDataService implements java.io.Serializable {
 		try {
 			Query query = em.createQuery("select t from SenderData t where t.senderId = :senderId");
 			query.setParameter("senderId", senderId);
-			if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "EclipseLink_DoNotUse")) {
-				// setting to read-only mode caused transaction anomaly (Duplicate Key on insert).
-				query.setHint(QueryHints.READ_ONLY, HintValues.TRUE);
-			}
+			JpaUtil.setQueryHints(query);
 			SenderData sender = (SenderData) query.getSingleResult();
 			return sender;
 		}
