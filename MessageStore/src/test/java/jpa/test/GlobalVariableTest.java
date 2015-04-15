@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jpa.model.GlobalVariable;
 import jpa.model.GlobalVariablePK;
-import jpa.service.GlobalVariableService;
+import jpa.service.common.GlobalVariableService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)

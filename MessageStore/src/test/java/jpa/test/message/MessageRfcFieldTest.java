@@ -17,8 +17,8 @@ import jpa.model.message.MessageInbox;
 import jpa.model.message.MessageRfcField;
 import jpa.model.message.MessageRfcFieldPK;
 import jpa.model.rule.RuleLogic;
-import jpa.service.SenderDataService;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
+import jpa.service.common.SenderDataService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.message.MessageRfcFieldService;
 import jpa.service.rule.RuleLogicService;
@@ -168,7 +168,7 @@ public class MessageRfcFieldTest {
 			"You are receiving this e-mail because you subscribed to MSN Featured Offers. Microsoft respects your privacy. If you do not wish to receive this MSN Featured Offers e-mail, please click the \"Unsubscribe\" link below. This will not unsubscribe" + LF +
 			"you from e-mail communications from third-party advertisers that may appear in MSN Feature Offers. This shall not constitute an offer by MSN. MSN shall not be responsible or liable for the advertisers' content nor any of the goods or service" + LF +
 			"advertised. Prices and item availability subject to change without notice.<br><br>" + LF +
-			"<center>©2008 Microsoft | <A href=\"http://aep.seemparty.com\" target=\"_blank\">Unsubscribe</a> | <A href=\"http://gil.seemparty.com\" target=\"_blank\">More Newsletters</a> | <A href=\"http://dqh.seemparty.com\" target=\"_blank\">Privacy</a><br><br>" + LF +
+			"<center>ï¿½2008 Microsoft | <A href=\"http://aep.seemparty.com\" target=\"_blank\">Unsubscribe</a> | <A href=\"http://gil.seemparty.com\" target=\"_blank\">More Newsletters</a> | <A href=\"http://dqh.seemparty.com\" target=\"_blank\">Privacy</a><br><br>" + LF +
 			"<center>Microsoft Corporation, One Microsoft Way, Redmond, iy 193" + LF +
 			"</td>" + LF +
 			" </div>" + LF +
@@ -190,7 +190,7 @@ public class MessageRfcFieldTest {
 			"Message-Id: <03907644185382.773588432734.799319-7043@cimail571.msn.com>" + LF +
 			"To: <jackwnn@synnex.com.au>" + LF +
 			"Subject: May 74% OFF" + LF +
-			"From: Viagra ® Official Site <jackwnn@synnex.com.au>" + LF +
+			"From: Viagra ï¿½ Official Site <jackwnn@synnex.com.au>" + LF +
 			"MIME-Version: 1.0" + LF +
 			"Importance: High" + LF +
 			"Content-Type: text/html; charset=\"iso-8859-1\"" + LF +

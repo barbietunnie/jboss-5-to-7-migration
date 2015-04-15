@@ -10,7 +10,7 @@ import jpa.constant.EmailIdToken;
 import jpa.message.MsgHeader;
 import jpa.model.SenderData;
 import jpa.model.IdTokens;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 import jpa.util.SpringUtil;
 import jpa.util.StringUtil;
 

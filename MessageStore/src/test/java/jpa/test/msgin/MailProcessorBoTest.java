@@ -17,7 +17,7 @@ import jpa.message.MessageContext;
 import jpa.model.MailInbox;
 import jpa.model.MailInboxPK;
 import jpa.model.message.MessageInbox;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.msgin.MailInboxService;
 import jpa.service.msgin.MailProcessorBo;

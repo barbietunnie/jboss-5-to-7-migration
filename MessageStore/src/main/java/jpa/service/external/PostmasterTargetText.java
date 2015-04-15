@@ -3,7 +3,7 @@ package jpa.service.external;
 import java.util.List;
 
 import jpa.model.EmailAddress;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.util.EmailAddrUtil;
 import jpa.util.SpringUtil;
 

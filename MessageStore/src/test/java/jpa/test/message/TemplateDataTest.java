@@ -27,7 +27,7 @@ import jpa.model.SubscriberData;
 import jpa.model.UserData;
 import jpa.model.message.TemplateData;
 import jpa.model.message.TemplateDataPK;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 import jpa.service.message.TemplateDataService;
 import jpa.util.StringUtil;
 

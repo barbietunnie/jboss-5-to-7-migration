@@ -12,10 +12,10 @@ import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
 import jpa.msgui.vo.PagingVo;
-import jpa.service.EmailAddressService;
-import jpa.service.EntityManagerService;
-import jpa.service.MailingListService;
-import jpa.service.SubscriptionService;
+import jpa.service.common.EmailAddressService;
+import jpa.service.common.EntityManagerService;
+import jpa.service.common.MailingListService;
+import jpa.service.common.SubscriptionService;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;

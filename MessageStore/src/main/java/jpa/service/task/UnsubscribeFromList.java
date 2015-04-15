@@ -9,9 +9,9 @@ import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
-import jpa.service.EmailAddressService;
-import jpa.service.MailingListService;
-import jpa.service.SubscriptionService;
+import jpa.service.common.EmailAddressService;
+import jpa.service.common.MailingListService;
+import jpa.service.common.SubscriptionService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;

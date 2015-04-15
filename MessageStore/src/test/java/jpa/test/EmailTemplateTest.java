@@ -24,9 +24,9 @@ import jpa.constant.MailingListType;
 import jpa.model.SenderData;
 import jpa.model.EmailTemplate;
 import jpa.model.MailingList;
-import jpa.service.SenderDataService;
-import jpa.service.EmailTemplateService;
-import jpa.service.MailingListService;
+import jpa.service.common.EmailTemplateService;
+import jpa.service.common.MailingListService;
+import jpa.service.common.SenderDataService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)

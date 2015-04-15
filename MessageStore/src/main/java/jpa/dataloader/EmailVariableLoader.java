@@ -4,7 +4,7 @@ import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.data.preload.EmailVariableEnum;
 import jpa.model.EmailVariable;
-import jpa.service.EmailVariableService;
+import jpa.service.common.EmailVariableService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;

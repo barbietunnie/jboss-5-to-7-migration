@@ -3,7 +3,7 @@ package jpa.util;
 import java.util.Calendar;
 import java.util.Date;
 
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 
 import org.apache.log4j.Logger;
 

@@ -2,7 +2,7 @@ package jpa.dataloader;
 
 import jpa.constant.MobileCarrierEnum;
 import jpa.model.MobileCarrier;
-import jpa.service.MobileCarrierService;
+import jpa.service.common.MobileCarrierService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;

@@ -14,7 +14,7 @@ import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.message.util.EmailIdParser;
 import jpa.model.message.MessageInbox;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.task.AutoReplyMessage;
 

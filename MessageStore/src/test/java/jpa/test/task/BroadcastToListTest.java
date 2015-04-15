@@ -22,7 +22,7 @@ import jpa.message.MsgHeader;
 import jpa.message.util.EmailIdParser;
 import jpa.model.message.MessageHeader;
 import jpa.model.message.MessageInbox;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.task.BroadcastToList;
 import jpa.variable.ErrorVariableVo;

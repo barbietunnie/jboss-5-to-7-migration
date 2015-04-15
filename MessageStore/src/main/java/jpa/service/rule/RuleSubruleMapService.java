@@ -9,7 +9,7 @@ import javax.persistence.Query;
 
 import jpa.model.rule.RuleSubruleMap;
 import jpa.model.rule.RuleSubruleMapPK;
-import jpa.service.ReloadFlagsService;
+import jpa.service.common.ReloadFlagsService;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

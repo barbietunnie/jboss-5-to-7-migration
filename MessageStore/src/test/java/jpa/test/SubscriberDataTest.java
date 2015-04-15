@@ -11,9 +11,9 @@ import javax.persistence.EntityManager;
 import jpa.model.SenderData;
 import jpa.model.SubscriberData;
 import jpa.msgui.vo.PagingSubscriberData;
-import jpa.service.EmailAddressService;
-import jpa.service.SenderDataService;
-import jpa.service.SubscriberDataService;
+import jpa.service.common.EmailAddressService;
+import jpa.service.common.SenderDataService;
+import jpa.service.common.SubscriberDataService;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;

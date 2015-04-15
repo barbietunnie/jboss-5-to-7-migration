@@ -10,7 +10,7 @@ import javax.persistence.NoResultException;
 import javax.sql.DataSource;
 
 import jpa.model.UserData;
-import jpa.service.UserDataService;
+import jpa.service.common.UserDataService;
 import jpa.util.SpringUtil;
 
 import org.junit.BeforeClass;

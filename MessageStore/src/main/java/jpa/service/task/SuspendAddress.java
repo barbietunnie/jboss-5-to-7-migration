@@ -16,7 +16,7 @@ import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageInbox;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.message.MessageInboxService;
 
 import org.apache.commons.lang3.StringUtils;

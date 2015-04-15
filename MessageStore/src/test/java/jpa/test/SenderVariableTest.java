@@ -23,7 +23,7 @@ import jpa.constant.Constants;
 import jpa.model.SenderData;
 import jpa.model.SenderVariable;
 import jpa.model.SenderVariablePK;
-import jpa.service.SenderVariableService;
+import jpa.service.common.SenderVariableService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)

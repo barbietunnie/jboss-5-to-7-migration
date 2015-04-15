@@ -16,8 +16,8 @@ import jpa.data.preload.MailingListEnum;
 import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
-import jpa.service.EmailAddressService;
-import jpa.service.MailingListService;
+import jpa.service.common.EmailAddressService;
+import jpa.service.common.MailingListService;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;

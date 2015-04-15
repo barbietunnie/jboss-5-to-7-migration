@@ -21,7 +21,7 @@ import jpa.message.util.MsgHeaderUtil;
 import jpa.model.EmailAddress;
 import jpa.model.message.MessageAddress;
 import jpa.model.message.MessageInbox;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.msgin.MessageParserBo;
 import jpa.service.task.TaskSchedulerBo;

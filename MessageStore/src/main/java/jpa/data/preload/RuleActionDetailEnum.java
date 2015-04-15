@@ -10,7 +10,7 @@ public enum RuleActionDetailEnum {
 	CSR_REPLY("send off the reply from csr","csrReplyMessage",null,null),
 	AUTO_REPLY("reply to the message automatically","autoReplyMessage",null,RuleDataTypeEnum.TEMPLATE_ID),
 	MARK_DLVR_ERR("mark delivery error","deliveryError",null,null),
-	DROP("drop the message","dropMessage","jpa.service.task.DropMessage", null),
+	DROP("drop the message","dropMessage","jpa.service.common.task.DropMessage", null),
 	FORWARD("forward the message","forwardMessage",null,RuleDataTypeEnum.EMAIL_ADDRESS),
 	TO_CSR("redirect to message queue","forwardToCsr",null,RuleDataTypeEnum.EMAIL_ADDRESS),
 	SAVE("save the message","saveMessage",null,null),
