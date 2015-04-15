@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jpa.constant.Constants;
 import jpa.constant.EmailVariableType;
 import jpa.model.EmailVariable;
-import jpa.service.EmailVariableService;
+import jpa.service.common.EmailVariableService;
 import jpa.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)

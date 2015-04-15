@@ -13,7 +13,7 @@ import jpa.model.EmailAddress;
 import jpa.model.message.MessageDeliveryStatus;
 import jpa.model.message.MessageDeliveryStatusPK;
 import jpa.model.message.MessageInbox;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.message.MessageDeliveryStatusService;
 import jpa.service.message.MessageInboxService;
 import jpa.util.StringUtil;

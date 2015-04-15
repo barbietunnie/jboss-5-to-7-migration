@@ -5,8 +5,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import jpa.model.message.MessageRendered;
-import jpa.service.SenderDataService;
-import jpa.service.SubscriberDataService;
+import jpa.service.common.SenderDataService;
+import jpa.service.common.SubscriberDataService;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

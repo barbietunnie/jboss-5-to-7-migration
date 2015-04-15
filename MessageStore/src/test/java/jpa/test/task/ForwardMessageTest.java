@@ -19,8 +19,8 @@ import jpa.model.EmailAddress;
 import jpa.model.SenderData;
 import jpa.model.message.MessageAddress;
 import jpa.model.message.MessageInbox;
-import jpa.service.EmailAddressService;
-import jpa.service.SenderDataService;
+import jpa.service.common.EmailAddressService;
+import jpa.service.common.SenderDataService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.task.ForwardMessage;
 

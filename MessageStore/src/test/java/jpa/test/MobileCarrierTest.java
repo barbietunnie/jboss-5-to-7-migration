@@ -11,7 +11,7 @@ import javax.persistence.NoResultException;
 
 import jpa.constant.MobileCarrierEnum;
 import jpa.model.MobileCarrier;
-import jpa.service.MobileCarrierService;
+import jpa.service.common.MobileCarrierService;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.BeforeClass;

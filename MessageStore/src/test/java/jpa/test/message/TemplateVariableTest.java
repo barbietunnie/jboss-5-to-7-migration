@@ -32,7 +32,7 @@ import jpa.model.message.TemplateData;
 import jpa.model.message.TemplateDataPK;
 import jpa.model.message.TemplateVariable;
 import jpa.model.message.TemplateVariablePK;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 import jpa.service.message.TemplateDataService;
 import jpa.service.message.TemplateVariableService;
 import jpa.util.StringUtil;

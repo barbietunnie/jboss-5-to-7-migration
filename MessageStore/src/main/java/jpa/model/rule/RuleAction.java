@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 import jpa.data.preload.RuleDataTypeEnum;
 import jpa.model.BaseModel;
 import jpa.model.SenderData;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 import jpa.service.rule.RuleActionDetailService;
 import jpa.service.rule.RuleDataValueService;
 import jpa.util.SpringUtil;

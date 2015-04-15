@@ -18,9 +18,9 @@ import jpa.model.SenderVariable;
 import jpa.model.SenderVariablePK;
 import jpa.model.GlobalVariable;
 import jpa.model.GlobalVariablePK;
-import jpa.service.SenderDataService;
-import jpa.service.SenderVariableService;
-import jpa.service.GlobalVariableService;
+import jpa.service.common.GlobalVariableService;
+import jpa.service.common.SenderDataService;
+import jpa.service.common.SenderVariableService;
 import jpa.util.SpringUtil;
 
 public class VariableDataLoader extends AbstractDataLoader {

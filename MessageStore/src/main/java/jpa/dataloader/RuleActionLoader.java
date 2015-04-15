@@ -22,7 +22,7 @@ import jpa.model.rule.RuleDataType;
 import jpa.model.rule.RuleDataValue;
 import jpa.model.rule.RuleDataValuePK;
 import jpa.model.rule.RuleLogic;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 import jpa.service.rule.RuleActionDetailService;
 import jpa.service.rule.RuleActionService;
 import jpa.service.rule.RuleDataTypeService;

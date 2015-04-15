@@ -11,7 +11,7 @@ import javax.persistence.Query;
 import jpa.constant.RuleCategory;
 import jpa.constant.StatusId;
 import jpa.model.rule.RuleLogic;
-import jpa.service.ReloadFlagsService;
+import jpa.service.common.ReloadFlagsService;
 import jpa.util.JpaUtil;
 
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +46,7 @@ public class RuleLogicService implements java.io.Serializable {
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("ruleName", ruleName);
-			if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "EclipseLink")) {
+			if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "EclipseLink_DoNotUse")) {
 				query.setHint(QueryHints.READ_ONLY, HintValues.TRUE);
 			}
 			RuleLogic logic = (RuleLogic) query.getSingleResult();
@@ -67,7 +67,7 @@ public class RuleLogicService implements java.io.Serializable {
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("builtinRules", builtinRules);
-			if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "EclipseLink")) {
+			if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "EclipseLink_DoNotUse")) {
 				query.setHint(QueryHints.READ_ONLY, HintValues.TRUE);
 			}
 			@SuppressWarnings("unchecked")

@@ -104,7 +104,7 @@
 	
 	<aop:config proxy-target-class="true">
 		<aop:pointcut id="emailAddrOperation"
-			expression="execution(* jpa.service.EmailAddressService.*(..))"/>
+			expression="execution(* jpa.service.common.EmailAddressService.*(..))"/>
 		<aop:advisor advice-ref="dsTxAdviceEmailAddr" pointcut-ref="emailAddrOperation"/>
 	</aop:config>
 	

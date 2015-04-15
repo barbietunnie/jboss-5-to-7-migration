@@ -9,7 +9,7 @@ import jpa.constant.StatusId;
 import jpa.data.preload.MailInboxEnum;
 import jpa.model.MailInbox;
 import jpa.model.MailInboxPK;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.msgin.MailInboxService;
 import jpa.util.SpringUtil;
 

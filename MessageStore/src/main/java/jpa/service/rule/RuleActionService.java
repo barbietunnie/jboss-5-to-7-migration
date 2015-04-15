@@ -12,7 +12,7 @@ import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.model.rule.RuleAction;
 import jpa.model.rule.RuleActionPK;
-import jpa.service.ReloadFlagsService;
+import jpa.service.common.ReloadFlagsService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;

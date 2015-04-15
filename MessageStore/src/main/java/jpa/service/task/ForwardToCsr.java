@@ -12,7 +12,7 @@ import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.SenderData;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 import jpa.service.msgout.MailSenderBo;
 import jpa.service.msgout.SmtpException;
 

@@ -9,8 +9,8 @@ import javax.persistence.NoResultException;
 import jpa.model.SessionUpload;
 import jpa.model.SessionUploadPK;
 import jpa.model.UserData;
-import jpa.service.SessionUploadService;
-import jpa.service.UserDataService;
+import jpa.service.common.SessionUploadService;
+import jpa.service.common.UserDataService;
 import jpa.util.StringUtil;
 
 import org.junit.BeforeClass;

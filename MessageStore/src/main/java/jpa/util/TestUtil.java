@@ -19,7 +19,7 @@ import jpa.model.message.MessageAddress;
 import jpa.model.message.MessageDeliveryStatus;
 import jpa.model.message.MessageInbox;
 import jpa.model.message.MessageRfcField;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.message.MessageInboxService;
 
 import org.apache.log4j.Logger;

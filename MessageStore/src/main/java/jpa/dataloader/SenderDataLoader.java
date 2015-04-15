@@ -8,7 +8,7 @@ import jpa.constant.SenderType;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.model.SenderData;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 import jpa.util.ProductUtil;
 import jpa.util.SpringUtil;
 import jpa.util.TimestampUtil;

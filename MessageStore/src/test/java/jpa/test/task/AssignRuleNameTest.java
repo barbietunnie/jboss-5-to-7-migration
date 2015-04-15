@@ -10,7 +10,7 @@ import jpa.data.preload.RuleNameEnum;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.message.util.EmailIdParser;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.task.AssignRuleName;
 
 import org.apache.commons.lang3.StringUtils;

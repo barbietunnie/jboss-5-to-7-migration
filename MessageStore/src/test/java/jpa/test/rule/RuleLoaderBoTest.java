@@ -14,7 +14,7 @@ import jpa.constant.RuleType;
 import jpa.data.preload.RuleElementEnum;
 import jpa.data.preload.RuleNameEnum;
 import jpa.data.preload.RuleSubruleMapEnum;
-import jpa.service.ReloadFlagsService;
+import jpa.service.common.ReloadFlagsService;
 import jpa.service.external.MailingListTargetText;
 import jpa.service.external.PostmasterTargetText;
 import jpa.service.rule.RuleBase;

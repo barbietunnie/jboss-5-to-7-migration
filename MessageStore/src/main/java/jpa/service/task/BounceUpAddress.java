@@ -12,7 +12,7 @@ import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;

@@ -11,10 +11,10 @@ import jpa.data.preload.SubscriberEnum.Subscriber;
 import jpa.model.SenderData;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
-import jpa.service.SenderDataService;
-import jpa.service.EmailAddressService;
-import jpa.service.MailingListService;
-import jpa.service.SubscriptionService;
+import jpa.service.common.EmailAddressService;
+import jpa.service.common.MailingListService;
+import jpa.service.common.SenderDataService;
+import jpa.service.common.SubscriptionService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;

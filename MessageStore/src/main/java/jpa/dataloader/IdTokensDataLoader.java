@@ -7,8 +7,8 @@ import jpa.constant.Constants;
 import jpa.constant.EmailIdToken;
 import jpa.model.SenderData;
 import jpa.model.IdTokens;
-import jpa.service.SenderDataService;
-import jpa.service.IdTokensService;
+import jpa.service.common.IdTokensService;
+import jpa.service.common.SenderDataService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;

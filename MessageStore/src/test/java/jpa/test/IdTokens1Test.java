@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import jpa.constant.Constants;
 import jpa.model.SenderData;
 import jpa.model.IdTokens;
-import jpa.service.SenderDataService;
-import jpa.service.IdTokensService;
+import jpa.service.common.IdTokensService;
+import jpa.service.common.SenderDataService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/spring-jpa-config.xml"})

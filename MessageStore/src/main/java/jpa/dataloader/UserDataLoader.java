@@ -8,9 +8,9 @@ import jpa.model.SenderData;
 import jpa.model.SessionUpload;
 import jpa.model.SessionUploadPK;
 import jpa.model.UserData;
-import jpa.service.SenderDataService;
-import jpa.service.SessionUploadService;
-import jpa.service.UserDataService;
+import jpa.service.common.SenderDataService;
+import jpa.service.common.SessionUploadService;
+import jpa.service.common.UserDataService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;

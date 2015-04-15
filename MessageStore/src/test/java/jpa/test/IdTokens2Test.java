@@ -27,8 +27,8 @@ import jpa.util.SpringUtil;
 import jpa.constant.Constants;
 import jpa.model.SenderData;
 import jpa.model.IdTokens;
-import jpa.service.SenderDataService;
-import jpa.service.IdTokensService;
+import jpa.service.common.IdTokensService;
+import jpa.service.common.SenderDataService;
 
 public class IdTokens2Test {
 

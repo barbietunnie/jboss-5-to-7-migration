@@ -15,7 +15,7 @@ import jpa.model.SenderData;
 import jpa.model.SenderVariable;
 import jpa.model.SubscriberData;
 import jpa.model.UserData;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.BeforeClass;

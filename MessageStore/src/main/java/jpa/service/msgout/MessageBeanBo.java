@@ -27,9 +27,9 @@ import jpa.model.message.MessageHeader;
 import jpa.model.message.MessageInbox;
 import jpa.model.message.MessageRfcField;
 import jpa.model.rule.RuleLogic;
-import jpa.service.EmailAddressService;
-import jpa.service.SenderDataService;
-import jpa.service.SubscriberDataService;
+import jpa.service.common.EmailAddressService;
+import jpa.service.common.SenderDataService;
+import jpa.service.common.SubscriberDataService;
 import jpa.service.rule.RuleLogicService;
 import jpa.util.HtmlUtil;
 

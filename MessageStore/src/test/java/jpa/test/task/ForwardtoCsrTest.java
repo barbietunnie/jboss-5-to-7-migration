@@ -15,7 +15,7 @@ import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.SenderData;
 import jpa.model.message.MessageInbox;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 import jpa.service.message.MessageInboxService;
 import jpa.service.task.ForwardToCsr;
 

@@ -16,7 +16,7 @@ import jpa.model.message.MessageRendered;
 import jpa.model.message.MessageSource;
 import jpa.model.message.RenderVariable;
 import jpa.model.message.RenderVariablePK;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 import jpa.service.message.MessageRenderedService;
 import jpa.service.message.RenderVariableService;
 import jpa.service.message.MessageSourceService;

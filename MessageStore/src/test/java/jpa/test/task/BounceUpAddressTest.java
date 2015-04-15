@@ -14,7 +14,7 @@ import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.message.util.EmailIdParser;
 import jpa.model.EmailAddress;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.task.BounceUpAddress;
 
 import org.apache.commons.lang3.StringUtils;

@@ -1,7 +1,7 @@
 package jpa.service.external;
 
 import jpa.constant.Constants;
-import jpa.service.EmailVariableService;
+import jpa.service.common.EmailVariableService;
 import jpa.util.JpaUtil;
 import jpa.util.SpringUtil;
 

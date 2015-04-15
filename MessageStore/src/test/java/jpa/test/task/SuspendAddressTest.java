@@ -14,7 +14,7 @@ import jpa.constant.StatusId;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.task.SuspendAddress;
 
 import org.apache.log4j.Logger;
