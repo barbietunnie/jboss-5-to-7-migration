@@ -19,8 +19,8 @@ import javax.sql.DataSource;
 import jpa.exception.DataValidationException;
 import jpa.model.EmailAddress;
 import jpa.model.SubscriberData;
-import jpa.service.EmailAddressService;
-import jpa.service.SubscriberDataService;
+import jpa.service.common.EmailAddressService;
+import jpa.service.common.SubscriberDataService;
 import jpa.util.SpringUtil;
 import jpa.util.StringUtil;
 

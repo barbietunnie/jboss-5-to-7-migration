@@ -18,7 +18,7 @@ import jpa.msgui.util.SpringUtil;
 import jpa.msgui.vo.FolderType;
 import jpa.msgui.vo.SearchFieldsVo;
 import jpa.msgui.vo.SearchFieldsVo.RuleName;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.message.MessageInboxService;
 
 import org.apache.commons.lang3.StringUtils;

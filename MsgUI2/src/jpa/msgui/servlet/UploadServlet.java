@@ -26,8 +26,8 @@ import jpa.msgui.filter.MultipartFilter;
 import jpa.msgui.filter.SessionTimeoutFilter;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
-import jpa.service.SessionUploadService;
-import jpa.service.SubscriptionService;
+import jpa.service.common.SessionUploadService;
+import jpa.service.common.SubscriptionService;
 import jpa.util.EmailAddrUtil;
 import jpa.util.HtmlUtil;
 

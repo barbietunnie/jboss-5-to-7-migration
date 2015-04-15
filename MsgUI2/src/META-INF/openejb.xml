@@ -9,7 +9,7 @@
 		in any ongoing transactions.  Calling begin/commit/rollback or setAutoCommit
 		on the datasource or connection will not be allowed. Default value is true. 
 		-->
-		JtaManaged = false
+		JtaManaged = true
 		JdbcDriver = com.mysql.jdbc.Driver
 		JdbcUrl = jdbc:mysql://localhost:3306/emaildb
 		UserName = email

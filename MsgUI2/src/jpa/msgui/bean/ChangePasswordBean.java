@@ -9,7 +9,7 @@ import javax.servlet.http.HttpSession;
 import jpa.model.UserData;
 import jpa.msgui.filter.SessionTimeoutFilter;
 import jpa.msgui.util.SpringUtil;
-import jpa.service.UserDataService;
+import jpa.service.common.UserDataService;
 
 import org.apache.log4j.Logger;
 

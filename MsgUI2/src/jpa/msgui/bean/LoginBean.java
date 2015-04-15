@@ -13,7 +13,7 @@ import jpa.model.UserData;
 import jpa.msgui.filter.SessionTimeoutFilter;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
-import jpa.service.UserDataService;
+import jpa.service.common.UserDataService;
 import jpa.util.SenderUtil;
 
 import org.apache.log4j.Logger;

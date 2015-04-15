@@ -22,9 +22,9 @@ import jpa.model.SenderData;
 import jpa.model.UserData;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
-import jpa.service.EmailAddressService;
-import jpa.service.SenderDataService;
-import jpa.service.UserDataService;
+import jpa.service.common.EmailAddressService;
+import jpa.service.common.SenderDataService;
+import jpa.service.common.UserDataService;
 import jpa.util.EmailAddrUtil;
 
 import org.apache.commons.lang3.StringUtils;

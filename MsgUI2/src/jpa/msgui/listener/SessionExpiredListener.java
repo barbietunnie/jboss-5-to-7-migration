@@ -9,8 +9,8 @@ import javax.servlet.http.HttpSessionListener;
 import jpa.model.UserData;
 import jpa.msgui.filter.SessionTimeoutFilter;
 import jpa.msgui.util.SpringUtil;
-import jpa.service.SessionUploadService;
-import jpa.service.UserDataService;
+import jpa.service.common.SessionUploadService;
+import jpa.service.common.UserDataService;
 
 import org.apache.log4j.Logger;
 

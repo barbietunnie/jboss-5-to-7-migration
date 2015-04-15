@@ -16,7 +16,7 @@ import jpa.model.message.MessageInbox;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
 import jpa.msgui.vo.PagingVo;
-import jpa.service.EmailAddressService;
+import jpa.service.common.EmailAddressService;
 import jpa.service.message.MessageClickCountService;
 import jpa.service.message.MessageInboxService;
 
