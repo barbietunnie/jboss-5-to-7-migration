@@ -63,7 +63,7 @@ public class MailReader {
 
 	private final MailInboxService mailBoxDao;
 	private final ExecutorService pool;
-	final int MAX_POOL_SIZE = 1; // Greater than 1 will cause "Lock wait timeout exceeded." error.
+	final int MAX_POOL_SIZE = 8;
 	private int MINIMUM_WAIT = 5; // seconds
 	private int INTERVAL = 10;
 	
@@ -91,8 +91,8 @@ public class MailReader {
  		stopMailReader(); // stop pending timers
 		readers.clear();
 		readers.addAll(getMailReaders());
+		// at least 5 seconds
 		INTERVAL = interval < MINIMUM_WAIT ? MINIMUM_WAIT : interval;
-		 // at least 5 seconds
 		context.getTimerService().createSingleActionTimer(TimeUnit.SECONDS.toMillis(INTERVAL), mailReaderTC);
 		logger.info("startMailReader(): MailReader Timer created to expire after " + INTERVAL
 				+ " seconds.");
@@ -101,7 +101,7 @@ public class MailReader {
 //		logger.info("startMailReader(): duplicateCheck Timer created to expire after 1 hour.");
 //		
 		final TimerConfig duplicateCheck = new TimerConfig("duplicateCheck", false);
-		context.getTimerService().createIntervalTimer(TimeUnit.SECONDS.toMillis(60), TimeUnit.SECONDS.toMillis(60 ^ 2), duplicateCheck);
+		context.getTimerService().createIntervalTimer(TimeUnit.SECONDS.toMillis(60), TimeUnit.MINUTES.toMillis(60), duplicateCheck);
 		logger.info("startMailReader(): DuplicateCheck Interval Timer created to expire every 1 hour.");
 	}
 
@@ -123,6 +123,10 @@ public class MailReader {
 		return readerList;
 	}
 
+	public int getInterval() {
+		return INTERVAL;
+	}
+	
 	public void stopMailReader() {
 		TimerService timerService = context.getTimerService();
 		Collection<?> timers = timerService.getTimers();
@@ -192,7 +196,7 @@ public class MailReader {
 			}
 		}
 		java.util.Date currTime = new java.util.Date();
-		if ((currTime.getTime() - lastUpdtTime.getTime()) > (15*60*1000)) {
+		if ((currTime.getTime() - lastUpdtTime.getTime()) > (TimeUnit.MINUTES.toMillis(15))) {
 			// reload mailboxes every 15 minutes
 			readers.clear();
 			readers.addAll(getMailReaders());
