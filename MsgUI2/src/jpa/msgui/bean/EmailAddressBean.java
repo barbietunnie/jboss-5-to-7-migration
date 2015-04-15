@@ -22,8 +22,8 @@ import jpa.model.MailingList;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
 import jpa.msgui.vo.PagingVo;
-import jpa.service.EmailAddressService;
-import jpa.service.MailingListService;
+import jpa.service.common.EmailAddressService;
+import jpa.service.common.MailingListService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;

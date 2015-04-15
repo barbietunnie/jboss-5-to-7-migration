@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import jpa.constant.Constants;
 import jpa.dataloader.DataLoader;
 import jpa.msgui.util.SpringUtil;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 import jpa.util.JpaUtil;
 import jpa.util.StringUtil;
 

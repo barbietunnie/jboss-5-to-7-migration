@@ -22,7 +22,7 @@ import jpa.exception.DataValidationException;
 import jpa.model.EmailVariable;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
-import jpa.service.EmailVariableService;
+import jpa.service.common.EmailVariableService;
 import jpa.service.external.VariableResolver;
 import jpa.util.SenderUtil;
 import jpa.variable.RenderUtil;

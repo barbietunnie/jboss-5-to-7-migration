@@ -81,7 +81,7 @@ public class StaticCodes {
 				if (dir != null && dir.isDirectory()) {
 					String[] fileNames = dir.list();
 					for (String fileName : fileNames) {
-						String pkgName = "jpa.service.external";
+						String pkgName = "jpa.service.common.external";
 						String className = fileName.replaceAll("\\.class", "");
 						String fullName = pkgName + "." + className;
 						try {
@@ -148,7 +148,7 @@ public class StaticCodes {
 				if (dir != null && dir.isDirectory()) {
 					String[] fileNames = dir.list();
 					for (String fileName : fileNames) {
-						String pkgName = "jpa.service.external";
+						String pkgName = "jpa.service.common.external";
 						String className = fileName.replaceAll("\\.class", "");
 						String fullName = pkgName + "." + className;
 						try {

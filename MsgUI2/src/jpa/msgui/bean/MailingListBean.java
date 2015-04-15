@@ -27,9 +27,9 @@ import jpa.model.SenderData;
 import jpa.model.Subscription;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
-import jpa.service.MailingListService;
-import jpa.service.SenderDataService;
-import jpa.service.SubscriptionService;
+import jpa.service.common.MailingListService;
+import jpa.service.common.SenderDataService;
+import jpa.service.common.SubscriptionService;
 import jpa.util.EmailAddrUtil;
 import jpa.util.SenderUtil;
 

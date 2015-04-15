@@ -21,7 +21,7 @@ import jpa.constant.Constants;
 import jpa.model.SenderData;
 import jpa.msgui.util.FacesUtil;
 import jpa.msgui.util.SpringUtil;
-import jpa.service.SenderDataService;
+import jpa.service.common.SenderDataService;
 import jpa.util.EmailAddrUtil;
 import jpa.util.SenderUtil;
 
