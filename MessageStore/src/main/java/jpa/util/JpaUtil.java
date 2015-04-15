@@ -4,9 +4,13 @@ import java.sql.SQLException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.persistence.config.HintValues;
+import org.eclipse.persistence.config.QueryHints;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -39,6 +43,17 @@ public class JpaUtil {
 		 }
 	}
 	
+	public static void setQueryHints(Query query) {
+		if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "EclipseLink_DoNotUse")) {
+			// setting to read-only mode caused transaction anomaly (Duplicate Key on insert).
+			query.setHint(QueryHints.READ_ONLY, HintValues.TRUE);
+		}
+		else if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "Hibernate")) {
+			// TODO - complete unit test
+			query.setHint("org.hibernate.readOnly", Boolean.TRUE);
+		}
+	}
+
 	public static void main(String[] args) {
 		logger.info(getJpaDialect());
 	}

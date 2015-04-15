@@ -14,10 +14,7 @@ import jpa.model.rule.RuleLogic;
 import jpa.service.common.ReloadFlagsService;
 import jpa.util.JpaUtil;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.persistence.config.HintValues;
-import org.eclipse.persistence.config.QueryHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -46,9 +43,7 @@ public class RuleLogicService implements java.io.Serializable {
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("ruleName", ruleName);
-			if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "EclipseLink_DoNotUse")) {
-				query.setHint(QueryHints.READ_ONLY, HintValues.TRUE);
-			}
+			JpaUtil.setQueryHints(query);
 			RuleLogic logic = (RuleLogic) query.getSingleResult();
 			if (IsOptimisticLocking) {
 				//em.lock(logic, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
@@ -67,9 +62,7 @@ public class RuleLogicService implements java.io.Serializable {
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("builtinRules", builtinRules);
-			if (StringUtils.containsIgnoreCase(JpaUtil.getJpaDialect(), "EclipseLink_DoNotUse")) {
-				query.setHint(QueryHints.READ_ONLY, HintValues.TRUE);
-			}
+			JpaUtil.setQueryHints(query);
 			@SuppressWarnings("unchecked")
 			List<RuleLogic> list = query.getResultList();
 			return list;

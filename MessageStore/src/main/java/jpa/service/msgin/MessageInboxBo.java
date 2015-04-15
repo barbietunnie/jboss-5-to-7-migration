@@ -193,12 +193,16 @@ public class MessageInboxBo implements java.io.Serializable {
 			msgVo.setMsgBodySize(msgBody == null ? 0 : msgBody.length());
 			// update "Last Received" time
 			if (msgVo.getFromAddrRowId() != null) {
-				EmailAddress lastRcptVo = emailAddrDao.getByRowId(msgVo.getFromAddrRowId());
-				long minutes = 10 * 60 * 1000; // 10 minutes
-				if (lastRcptVo.getLastRcptTime() == null
-						|| lastRcptVo.getLastRcptTime().getTime() < (updtTime.getTime() - minutes)) {
-					emailAddrDao.updateLastRcptTime(msgVo.getFromAddrRowId());
-				}
+				// TODO revisit - was causing "Lock wait timeout exceeded" error
+//				try {
+//					EmailAddress lastRcptVo = emailAddrDao.getByRowId(msgVo.getFromAddrRowId());
+//					long minutes = 10 * 60 * 1000; // 10 minutes
+//					if (lastRcptVo.getLastRcptTime() == null
+//							|| lastRcptVo.getLastRcptTime().getTime() < (updtTime.getTime() - minutes)) {
+//						emailAddrDao.updateLastRcptTime(msgVo.getFromAddrRowId());
+//					}
+//				}
+//				catch (NoResultException ne) {}
 			}
 		}
 		else {
@@ -226,7 +230,16 @@ public class MessageInboxBo implements java.io.Serializable {
 			}
 			// update "Last Sent" time
 			if (msgVo.getToAddrRowId() != null) {
-				emailAddrDao.updateLastSentTime(msgVo.getToAddrRowId());
+				// TODO revisit - was causing "Lock wait timeout exceeded" error
+//				try {
+//					EmailAddress lastSentVo = emailAddrDao.getByRowId(msgVo.getToAddrRowId());
+//					long minutes = 10 * 60 * 1000; // 10 minutes
+//					if (lastSentVo.getLastSentTime() == null
+//							|| lastSentVo.getLastSentTime().getTime() < (updtTime.getTime() - minutes)) {
+//						emailAddrDao.updateLastSentTime(msgVo.getToAddrRowId());
+//					}
+//				}
+//				catch (NoResultException ne) {}
 			}
 		}
 		
