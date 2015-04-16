@@ -43,7 +43,7 @@ public class MailFileReader implements java.io.Serializable {
 		System.exit(0);
 	}
 	
-	MessageBean read(String filePath, String fileName) throws MessagingException,
+	public MessageBean read(String filePath, String fileName) throws MessagingException,
 			IOException, DataValidationException, TemplateException {
 		MessageBean msgBean = readIntoMessageBean(filePath, fileName);
 		msgBean.setCarrierCode(CarrierCode.SMTPMAIL);
