@@ -8,12 +8,14 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 import javax.persistence.NoResultException;
 
+import jpa.constant.Constants;
+import jpa.exception.TemplateException;
+import jpa.message.MessageBean;
 import jpa.model.EmailAddress;
-import jpa.util.StringUtil;
+import jpa.service.msgin.MailFileReader;
 
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -24,8 +26,6 @@ public class MailSenderTest {
 	
 	private static EJBContainer ejbContainer;
 	
-	private MailSender sender;
-	 
 	@BeforeClass
 	public static void startTheContainer() {
 		ejbContainer = EJBContainer.createEJBContainer();
@@ -67,6 +67,18 @@ public class MailSenderTest {
 					"java:global/WebContent/MailSender!com.es.mailsender.ejb.MailSenderLocal");
 			EmailAddress addr = lcl.findByAddress("test@test.com");
 			assertNotNull(addr);
+			
+			String filePath = "bouncedmails";
+			String fileName = "BouncedMail_4.txt";
+			MailFileReader fReader = new MailFileReader();
+			try {
+				MessageBean msgBean = fReader.read(filePath, fileName);
+				msgBean.setSenderId(Constants.DEFAULT_SENDER_ID);
+				lcl.send(msgBean);
+			}
+			catch (Exception te) {
+				logger.error("Exception caught", te);
+			}
 		}
 		catch (NamingException e) {
 			fail();
