@@ -371,7 +371,11 @@ public final class MessageBeanUtil {
 				// not sure why do this, consistency?
 				part.setDescription(MessageBeanBuilder.getFileName(aNode.getContentType()));
 			}
-			ByteArrayDataSource bads = new ByteArrayDataSource(aNode.getValue(), aNode.getContentType());
+			byte[] data = aNode.getValue();
+			if (data == null) {
+				data = new String("").getBytes();
+			}
+			ByteArrayDataSource bads = new ByteArrayDataSource(data, aNode.getContentType());
 			part.setDataHandler(new DataHandler(bads));
 		}
 	}
@@ -516,8 +520,11 @@ public final class MessageBeanUtil {
 			BodyPart img = new MimeBodyPart();
 			img.setHeader("Content-ID", "0001");
 			img.setDisposition(Part.INLINE);
-			ByteArrayDataSource bads = new ByteArrayDataSource(aNode.getValue(), aNode
-					.getContentType());
+			byte[] data = aNode.getValue();
+			if (data == null) {
+				data = new String("").getBytes();
+			}
+			ByteArrayDataSource bads = new ByteArrayDataSource(data, aNode.getContentType());
 			img.setDataHandler(new DataHandler(bads));
 			mr.addBodyPart(img);
 		}
