@@ -1,4 +1,4 @@
-package jpa.test;
+package jpa.test.common;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import org.junit.runner.notification.Failure;
 public class TestRunner {
 	static final Logger logger = Logger.getLogger(TestRunner.class);
 
-	static final String TestPackageName = "jpa.test";
+	static final String TestPackageName = "jpa.test.common";
 	public static void main(String[] args) {
 		Result result = JUnitCore.runClasses(getAllJpaTestClasses(TestPackageName));
 		if (!result.getFailures().isEmpty()) {

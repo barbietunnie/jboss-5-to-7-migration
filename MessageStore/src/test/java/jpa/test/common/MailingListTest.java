@@ -1,4 +1,4 @@
-package jpa.test;
+package jpa.test.common;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
