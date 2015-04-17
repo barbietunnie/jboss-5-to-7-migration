@@ -9,7 +9,6 @@ import javax.naming.NamingException;
 import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
-import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
 import jpa.model.EmailAddress;
 import jpa.service.msgin.MailFileReader;
@@ -69,7 +68,7 @@ public class MailSenderTest {
 			assertNotNull(addr);
 			
 			String filePath = "bouncedmails";
-			String fileName = "BouncedMail_4.txt";
+			String fileName = "BouncedMail_1.txt";
 			MailFileReader fReader = new MailFileReader();
 			try {
 				MessageBean msgBean = fReader.read(filePath, fileName);

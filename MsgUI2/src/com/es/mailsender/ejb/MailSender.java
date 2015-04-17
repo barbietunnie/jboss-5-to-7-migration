@@ -43,24 +43,24 @@ public class MailSender implements MailSenderRemote, MailSenderLocal {
 	protected final Logger logger = Logger.getLogger(MailSender.class);
 	@Resource
 	SessionContext ctx;
-	private MailSenderBo mailSenderBoImpl;
+	private MailSenderBo mailSenderBo;
 	private EmailAddressService emailAddrDao;
     /**
      * Default constructor. 
      */
     public MailSender() {
-    	mailSenderBoImpl = SpringUtil.getAppContext().getBean(MailSenderBo.class);
+    	mailSenderBo = SpringUtil.getAppContext().getBean(MailSenderBo.class);
     	emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
     }
 
 	public void send(MessageBean msgBean) throws MessagingException, IOException, SmtpException,
 			DataValidationException {
-		mailSenderBoImpl.process(new MessageContext(msgBean));
+		mailSenderBo.process(new MessageContext(msgBean));
 	}
 
 	public void send(byte[] msgStream) throws MessagingException, IOException, SmtpException,
 			DataValidationException {
-		mailSenderBoImpl.process(new MessageContext(msgStream));
+		mailSenderBo.process(new MessageContext(msgStream));
 	}
 
 	@Transactional(isolation=Isolation.REPEATABLE_READ,propagation=Propagation.REQUIRES_NEW)
