@@ -50,7 +50,7 @@ public class DerbyInitServlet extends HttpServlet {
 		subscriber.getResources();
 		
 		try {
-			Context context = TomeeCtxUtil.getInitialContext();
+			Context context = TomeeCtxUtil.getLocalContext();
 			SubscriberRemote subr_rmt = (SubscriberRemote) context.lookup("ejb/Subscriber");
 			logger.info("Context Subscriber 1: " + subr_rmt);
 			

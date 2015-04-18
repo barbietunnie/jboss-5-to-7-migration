@@ -129,9 +129,9 @@ public class MailSenderMDB implements MessageListener {
 		}
 		
 		MessageBean msgBean = null;
-		String jndiName = "java:global/WebContent/MailSender!com.es.mailsender.ejb.MailSenderLocal";
+		String jndiName = "MailSenderLocal";
 		try {
-			MailSenderLocal mailSender = (MailSenderLocal) TomeeCtxUtil.getInitialContext().lookup(jndiName);
+			MailSenderLocal mailSender = (MailSenderLocal) TomeeCtxUtil.getLocalContext().lookup(jndiName);
 			logger.info("MailSender instance: " + mailSender);
 			
 			if (message instanceof ObjectMessage) {

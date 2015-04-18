@@ -40,7 +40,7 @@ public class MailSenderTest {
 	@Test
 	public void testMailSenderRemote() {
 		try {
-			MailSenderRemote rmt = (MailSenderRemote) TomeeCtxUtil.getInitialContext().lookup(
+			MailSenderRemote rmt = (MailSenderRemote) TomeeCtxUtil.getLocalContext().lookup(
 					"java:global/WebContent/MailSender!com.es.mailsender.ejb.MailSenderRemote");
 			EmailAddress addr = rmt.findByAddress("test@test.com");
 			assertNotNull(addr);
@@ -63,7 +63,7 @@ public class MailSenderTest {
 	@Test
 	public void testMailSenderLocal() {
 		try {
-			MailSenderLocal lcl = (MailSenderLocal) TomeeCtxUtil.getInitialContext().lookup(
+			MailSenderLocal lcl = (MailSenderLocal) TomeeCtxUtil.getLocalContext().lookup(
 					"java:global/WebContent/MailSender!com.es.mailsender.ejb.MailSenderLocal");
 			EmailAddress addr = lcl.findByAddress("test@test.com");
 			assertNotNull(addr);
