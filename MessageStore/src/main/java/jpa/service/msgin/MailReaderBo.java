@@ -361,13 +361,13 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 				// purged more often
 				int msgsToRead = Math.min(msgCount, readPerPass);
 				// if we can't keep up, process more messages in each cycle
-				if (msgCount > msgsToRead * 50) {
-					msgsToRead *= 50;
+				if (msgCount > msgsToRead * 40) {
+					msgsToRead *= 20;
 				}
-				else if (msgCount > msgsToRead * 10) {
+				else if (msgCount > msgsToRead * 20) {
 					msgsToRead *= 10;
 				}
-				else if (msgCount > msgsToRead * 5) {
+				else if (msgCount > msgsToRead * 10) {
 					msgsToRead *= 5;
 				}
 				msgsToRead = msgsToRead > MAX_READ_PER_PASS ? MAX_READ_PER_PASS : msgsToRead;
