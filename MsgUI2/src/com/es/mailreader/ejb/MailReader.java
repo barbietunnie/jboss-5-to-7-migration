@@ -63,7 +63,7 @@ public class MailReader {
 
 	private final MailInboxService mailBoxDao;
 	private final ExecutorService pool;
-	final int MAX_POOL_SIZE = 8;
+	final int MAX_POOL_SIZE = 4;
 	private int MINIMUM_WAIT = 5; // seconds
 	private int INTERVAL = 10;
 	
