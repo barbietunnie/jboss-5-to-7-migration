@@ -3,7 +3,11 @@ package com.es.ejb.client;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
+import jpa.constant.Constants;
+import jpa.message.MessageBean;
+import jpa.message.MessageBeanUtil;
 import jpa.model.EmailAddress;
+import jpa.util.FileUtil;
 import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
@@ -41,5 +45,17 @@ public class MailSenderClient {
 		logger.info("MailSenderRemote instance: " + sender);
 		EmailAddress ea = sender.findByAddress("test@test.com");
 		logger.info(StringUtil.prettyPrint(ea, 1));
+		
+		String filePath = "bouncedmails";
+		String fileName = "BouncedMail_1.txt";
+		try {
+			byte[] mailStream = FileUtil.loadFromFile(filePath, fileName);
+			MessageBean msgBean = MessageBeanUtil.createBeanFromStream(mailStream);
+			msgBean.setSenderId(Constants.DEFAULT_SENDER_ID);
+			sender.send(msgBean);
+		}
+		catch (Exception te) {
+			logger.error("Exception caught", te);
+		}
 	}
 }

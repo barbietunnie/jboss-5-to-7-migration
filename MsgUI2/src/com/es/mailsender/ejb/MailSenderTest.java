@@ -10,8 +10,9 @@ import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
 import jpa.message.MessageBean;
+import jpa.message.MessageBeanUtil;
 import jpa.model.EmailAddress;
-import jpa.service.msgin.MailFileReader;
+import jpa.util.FileUtil;
 
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
@@ -70,9 +71,9 @@ public class MailSenderTest {
 			
 			String filePath = "bouncedmails";
 			String fileName = "BouncedMail_1.txt";
-			MailFileReader fReader = new MailFileReader();
 			try {
-				MessageBean msgBean = fReader.read(filePath, fileName);
+				byte[] mailStream = FileUtil.loadFromFile(filePath, fileName);
+				MessageBean msgBean = MessageBeanUtil.createBeanFromStream(mailStream);
 				msgBean.setSenderId(Constants.DEFAULT_SENDER_ID);
 				lcl.send(msgBean);
 			}
