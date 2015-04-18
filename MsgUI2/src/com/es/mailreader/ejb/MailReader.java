@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
  */
 /*
  * Use Startup annotation to ensures that bean is loaded when server is started
- * so that lifecycle callback methods (@PostConstruct) will be invoked.
+ * so that life cycle callback methods (@PostConstruct) will be invoked.
  */
 @Startup
 @Singleton(name="MailReader",mappedName="ejb/MailReader")

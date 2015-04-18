@@ -74,7 +74,7 @@ public class SubscriberTest {
 	@Test
 	public void testSubscriberRemote() {
 		try {
-			SubscriberRemote rmt = (SubscriberRemote) TomeeCtxUtil.getInitialContext().lookup(
+			SubscriberRemote rmt = (SubscriberRemote) TomeeCtxUtil.getLocalContext().lookup(
 					"java:global/WebContent/subscriber!com.es.subscriber.ejb.SubscriberRemote");
 			List<SubscriberData> subrList = rmt.getAllSubscribers();
 			assert(!subrList.isEmpty());
@@ -87,7 +87,7 @@ public class SubscriberTest {
 	@Test
 	public void testSubscriberLocal() {
 		try {
-			SubscriberLocal lcl = (SubscriberLocal) TomeeCtxUtil.getInitialContext().lookup(
+			SubscriberLocal lcl = (SubscriberLocal) TomeeCtxUtil.getLocalContext().lookup(
 					"java:global/WebContent/subscriber!com.es.subscriber.ejb.SubscriberLocal");
 			List<SubscriberData> subrList = lcl.getAllSubscribers();
 			assert(!subrList.isEmpty());

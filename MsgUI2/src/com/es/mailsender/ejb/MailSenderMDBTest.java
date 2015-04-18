@@ -40,6 +40,11 @@ public class MailSenderMDBTest extends TestCase {
 	        
 	        sendText("Hello World!", producer, session);
 	        logger.info("In MailSenderMDBTest.testMDB() - JMS Message Sent!");
+	        
+	        producer.close();
+			session.close();
+			connection.close();
+			
 	        Thread.sleep(TimeUnit.SECONDS.toMillis(30));
 		}
 		catch (Exception e) {
