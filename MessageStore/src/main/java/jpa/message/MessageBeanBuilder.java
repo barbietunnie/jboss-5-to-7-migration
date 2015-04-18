@@ -24,6 +24,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MailDateFormat;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import jpa.constant.Constants;
 import jpa.constant.XHeaderName;
@@ -589,16 +590,34 @@ public final class MessageBeanBuilder {
 				// multipart attachment(s) detected
 				logger.info("processAttc: level " + level + ", Recursive Multipart: "
 								+ contentType);
-				Multipart mp = (Multipart) p.getContent();
-				int count = mp.getCount();
-				for (int i = 0; i < count; i++) {
-					Part p1 = mp.getBodyPart(i);
-					// call itself to build up a child attachment tree
-					if (p1 != null) {
-						BodypartBean subNode = new BodypartBean();
-						processAttachment(subNode, p1, msgBean, level+1);
-						aNode.put(subNode);
+				if (p.getContent() instanceof Multipart) {
+					Multipart mp = (Multipart) p.getContent();
+					int count = mp.getCount();
+					for (int i = 0; i < count; i++) {
+						Part p1 = mp.getBodyPart(i);
+						// call itself to build up a child attachment tree
+						if (p1 != null) {
+							BodypartBean subNode = new BodypartBean();
+							processAttachment(subNode, p1, msgBean, level+1);
+							aNode.put(subNode);
+						}
 					}
+				}
+				else if (p.getContent() instanceof MimeMultipart) {
+					MimeMultipart mp = (MimeMultipart) p.getContent();
+					int count = mp.getCount();
+					for (int i = 0; i < count; i++) {
+						Part p1 = mp.getBodyPart(i);
+						// call itself to build up a child attachment tree
+						if (p1 != null) {
+							BodypartBean subNode = new BodypartBean();
+							processAttachment(subNode, p1, msgBean, level+1);
+							aNode.put(subNode);
+						}
+					}
+				}
+				else {
+					logger.error("Unknown class for multipart received: " + p.getContent().getClass().getName());
 				}
 			}
 			else if (p.isMimeType("message/rfc822"))
