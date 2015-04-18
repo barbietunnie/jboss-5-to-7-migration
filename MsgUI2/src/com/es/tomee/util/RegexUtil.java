@@ -9,16 +9,18 @@ public class RegexUtil {
 	final static Logger logger = Logger.getLogger(RegexUtil.class);
 	
 	public static void main(String[] args) {
-		parseJmsDeliveryCount("JMSXDeliveryCount");
+		logger.info("Is redelivery property? " + isJmsDeliveryCountProperty("JMSXDeliveryCount"));
 	}
 	
-	static void parseJmsDeliveryCount(String prop_name) {
+	public static boolean isJmsDeliveryCountProperty(String prop_name) {
 		Pattern p = Pattern.compile("(jms\\w{0,}delivery\\w{0,}count)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 		Matcher m = p.matcher(prop_name);
 		if (m.find()) {
 			for (int i=0; i<=m.groupCount(); i++) {
 				logger.info(i + " = " + m.group(i));
 			}
+			return true;
 		}
+		return false;
 	}
 }

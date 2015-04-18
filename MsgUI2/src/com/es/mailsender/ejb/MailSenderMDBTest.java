@@ -15,10 +15,10 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 
-public class MailSenderMDBTest extends TestCase{
+public class MailSenderMDBTest extends TestCase {
 	protected final static Logger logger = Logger.getLogger(MailSenderMDBTest.class);
 	
-	@Resource//(name = "jmsConnectionFactory")
+	@Resource //(name = "connectionFactory")
     private ConnectionFactory connectionFactory;
 
     @Resource(name = "mailOutboxQueue")

@@ -20,6 +20,7 @@ import javax.ejb.TransactionManagementType;
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageFormatException;
@@ -35,6 +36,7 @@ import jpa.message.MessageBean;
 import jpa.service.msgout.SmtpException;
 
 import org.apache.activemq.command.ActiveMQMessage;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -127,9 +129,9 @@ public class MailSenderMDB implements MessageListener {
 		}
 		
 		MessageBean msgBean = null;
+		String jndiName = "java:global/WebContent/MailSender!com.es.mailsender.ejb.MailSenderLocal";
 		try {
-			MailSenderLocal mailSender = (MailSenderLocal) TomeeCtxUtil.getInitialContext().lookup(
-					"java:global/WebContent/MailSender!com.es.mailsender.ejb.MailSenderLocal");
+			MailSenderLocal mailSender = (MailSenderLocal) TomeeCtxUtil.getInitialContext().lookup(jndiName);
 			logger.info("MailSender instance: " + mailSender);
 			
 			if (message instanceof ObjectMessage) {
@@ -169,29 +171,27 @@ public class MailSenderMDB implements MessageListener {
 		catch (NamingException ne) {
 			logger.error("NamingException caught", ne);
 			messageContext.setRollbackOnly();
-			throw new EJBException(ne.getMessage());
+			throw new EJBException("Failed to lookup jndi: " + jndiName, ne);
 		}
 		catch (IOException ie) {
 			logger.error("IOException caught", ie);
 			messageContext.setRollbackOnly();
-			throw new EJBException(ie.toString());
+			throw new EJBException(ie.toString(), ie);
 		}
 		catch (JMSException je) {
 			logger.error("JMSException caught", je);
-			// other JMS error, exiting MailSender
-			logger.error("JMSException caught", je);
 			Exception e = je.getLinkedException();
 			if (e != null) {
-				logger.error("linked errortion", e);
+				logger.error("linked error", e);
 			}
 			messageContext.setRollbackOnly();
-			throw new EJBException(je.getMessage());
+			throw new EJBException(je.getMessage(), je);
 		}
 		catch (SmtpException se) {
 			logger.error("SmtpException caught", se);
 			messageContext.setRollbackOnly();
 			// SMTP error, exiting MailSender
-			throw new EJBException(se.getMessage());
+			throw new EJBException(se.getMessage(), se);
 		}
     }
     
@@ -202,7 +202,7 @@ public class MailSenderMDB implements MessageListener {
 			message.setJMSCorrelationID(message.getJMSMessageID());
 
 			message.clearProperties();
-			message.setStringProperty("UnhandledError", exception.toString());
+			message.setStringProperty("UnhandledError", ExceptionUtils.getFullStackTrace(exception));
 			
 			final Connection connection = connectionFactory.createConnection();
 			
@@ -212,6 +212,7 @@ public class MailSenderMDB implements MessageListener {
 	        final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
 	        final MessageProducer producer = session.createProducer(errorQueue);
+	        producer.setDeliveryMode(DeliveryMode.PERSISTENT);
 	        
 	        producer.send(message);
 
