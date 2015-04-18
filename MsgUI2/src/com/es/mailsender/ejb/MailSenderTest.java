@@ -46,7 +46,8 @@ public class MailSenderTest {
 			assertNotNull(addr);
 			
 			try {
-				rmt.findByAddress("");
+				EmailAddress ea = rmt.findByAddress("test@test.com");
+				assertNotNull(ea);
 				//fail();
 			}
 			catch (EJBException e) {
@@ -83,6 +84,5 @@ public class MailSenderTest {
 			fail();
 		}
 	}
-
 
 }

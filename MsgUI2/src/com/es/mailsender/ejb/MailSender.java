@@ -12,9 +12,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.mail.MessagingException;
 
-import jpa.exception.DataValidationException;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
@@ -53,13 +51,11 @@ public class MailSender implements MailSenderRemote, MailSenderLocal {
     	emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
     }
 
-	public void send(MessageBean msgBean) throws MessagingException, IOException, SmtpException,
-			DataValidationException {
+	public void send(MessageBean msgBean) throws IOException, SmtpException {
 		mailSenderBo.process(new MessageContext(msgBean));
 	}
 
-	public void send(byte[] msgStream) throws MessagingException, IOException, SmtpException,
-			DataValidationException {
+	public void send(byte[] msgStream) throws IOException, SmtpException {
 		mailSenderBo.process(new MessageContext(msgStream));
 	}
 
