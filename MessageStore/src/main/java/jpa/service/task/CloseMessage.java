@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("closeMessage")
 @Transactional(propagation=Propagation.REQUIRED)
-public class CloseMessage extends TaskBaseAdaptor {
+public class CloseMessage extends TaskBaseAdapter {
 	private static final long serialVersionUID = 8626771378364657544L;
 	static final Logger logger = Logger.getLogger(CloseMessage.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

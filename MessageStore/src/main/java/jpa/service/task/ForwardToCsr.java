@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("forwardToCsr")
 @Transactional(propagation=Propagation.REQUIRED)
-public class ForwardToCsr extends TaskBaseAdaptor {
+public class ForwardToCsr extends TaskBaseAdapter {
 	private static final long serialVersionUID = 5057958462600056783L;
 	static final Logger logger = Logger.getLogger(ForwardToCsr.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
@@ -50,7 +50,7 @@ public class ForwardToCsr extends TaskBaseAdaptor {
 		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
-		if (getArgumentList(ctx.getTaskArguments()).size() == 0) {
+		if (convertArgumensTotList(ctx.getTaskArguments()).size() == 0) {
 			logger.warn("Arguments is not valued, use default csr address from SenderData");
 		}
 		else if (isDebugEnabled) {

@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("assignRuleName")
 @Transactional(propagation=Propagation.REQUIRED)
-public class AssignRuleName extends TaskBaseAdaptor {
+public class AssignRuleName extends TaskBaseAdapter {
 	private static final long serialVersionUID = 2835514922267686344L;
 	static final Logger logger = Logger.getLogger(AssignRuleName.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
@@ -45,7 +45,7 @@ public class AssignRuleName extends TaskBaseAdaptor {
 		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
-		if (getArgumentList(ctx.getTaskArguments()).size() == 0) {
+		if (convertArgumensTotList(ctx.getTaskArguments()).size() == 0) {
 			throw new DataValidationException("Arguments is not valued, can't proceed");
 		}
 		else if (isDebugEnabled) {
@@ -62,7 +62,7 @@ public class AssignRuleName extends TaskBaseAdaptor {
 			headers.add(newHeader);
 		}
 		// Assign a new Rule Name
-		messageBean.setRuleName(getArgumentList(ctx.getTaskArguments()).get(0));
+		messageBean.setRuleName(convertArgumensTotList(ctx.getTaskArguments()).get(0));
 		messageBean.setIsReceived(true);
 		if (messageBean.getMsgRefId() == null) {
 			// append to the thread
