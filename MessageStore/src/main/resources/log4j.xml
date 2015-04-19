@@ -12,10 +12,13 @@
       </layout>
    </appender>
 
-   <appender name="FILE" class="org.apache.log4j.FileAppender">
+   <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
       <param name="File" value="./logs/jpatest.log"/>
+      <param name="MaxFileSize" value="8MB"/>
+      <param name="MaxBackupIndex" value="3"/>
       <param name="Threshold" value="DEBUG"/>
       <param name="Append" value="false"/>
+      <param name="encoding" value="UTF-8"/>
 
       <layout class="org.apache.log4j.PatternLayout">
          <param name="ConversionPattern" value="[%d] [%p,%c:%L] %m%n"/>
