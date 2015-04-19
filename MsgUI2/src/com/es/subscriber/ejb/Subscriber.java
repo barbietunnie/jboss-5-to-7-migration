@@ -19,8 +19,10 @@ import javax.sql.DataSource;
 import jpa.exception.DataValidationException;
 import jpa.model.EmailAddress;
 import jpa.model.SubscriberData;
+import jpa.model.Subscription;
 import jpa.service.common.EmailAddressService;
 import jpa.service.common.SubscriberDataService;
+import jpa.service.common.SubscriptionService;
 import jpa.util.SpringUtil;
 import jpa.util.StringUtil;
 
@@ -45,6 +47,7 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
 	@Resource
 	SessionContext context;
 	private SubscriberDataService subscriberDao;
+	private SubscriptionService subscriptionBo;
 	private EmailAddressService emailAddrDao;
 
 	/**
@@ -52,6 +55,7 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
      */
     public Subscriber() {
 		subscriberDao = SpringUtil.getAppContext().getBean(SubscriberDataService.class);
+		subscriptionBo = SpringUtil.getAppContext().getBean(SubscriptionService.class);
 		emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
     }
 
@@ -89,6 +93,16 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
 		return customerVo;
 	}
 
+	public Subscription subscribe(String emailAddr, String listId) throws DataValidationException {
+		Subscription emailAdded = subscriptionBo.subscribe(emailAddr, listId);
+		return emailAdded;
+	}
+
+	public Subscription unSubscriber(String emailAddr, String listId) throws DataValidationException {
+		Subscription emailRemoved = subscriptionBo.unsubscribe(emailAddr, listId);
+		return emailRemoved;
+	}
+
 	public void insertSubscriber(SubscriberData vo) throws DataValidationException {
 		subscriberDao.insert(vo);
 	}
@@ -99,5 +113,15 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
 
 	public void deleteSubscriber(SubscriberData vo) throws DataValidationException {
 		subscriberDao.delete(vo);
+	}
+	
+	public Subscription optInRequest(String emailAddr, String listId) throws DataValidationException {
+		Subscription emailOptIned = subscriptionBo.optInRequest(emailAddr, listId);
+		return emailOptIned;
+	}
+
+	public Subscription optInConfirm(String emailAddr, String listId) throws DataValidationException {
+		Subscription emailOptIned = subscriptionBo.optInConfirm(emailAddr, listId);
+		return emailOptIned;
 	}
 }

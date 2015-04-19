@@ -87,10 +87,12 @@ public class SubscriberTest {
 	@Test
 	public void testSubscriberLocal() {
 		try {
-			SubscriberLocal lcl = (SubscriberLocal) TomeeCtxUtil.getLocalContext().lookup(
+			SubscriberLocal subr = (SubscriberLocal) TomeeCtxUtil.getLocalContext().lookup(
 					"java:global/WebContent/subscriber!com.es.subscriber.ejb.SubscriberLocal");
-			List<SubscriberData> subrList = lcl.getAllSubscribers();
+			List<SubscriberData> subrList = subr.getAllSubscribers();
 			assert(!subrList.isEmpty());
+			
+			subr.subscribe("", "");
 		}
 		catch (NamingException e) {
 			fail();
