@@ -33,7 +33,8 @@ public class JmsRemoteCleint {
 	}
 
 	void testProducer() throws NamingException, JMSException {
-		Context ctx = TomeeCtxUtil.getActiveMQContext("mailOutboxQueue");
+		String queueName = "mailOutboxQueue";
+		Context ctx = TomeeCtxUtil.getActiveMQContext(new String[] {queueName});
 		//TomeeCtxUtil.listContext(ctx, "");
 		ConnectionFactory cf = (ConnectionFactory) ctx.lookup("ConnectionFactory");
 		logger.info("ConnectionFactory instance: " + cf);
@@ -48,7 +49,7 @@ public class JmsRemoteCleint {
 			
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			
-			Destination queue = (Destination)ctx.lookup("mailOutboxQueue");
+			Destination queue = (Destination)ctx.lookup(queueName);
 			logger.info("Queue instance: " + queue);
 			
 			producer = session.createProducer(queue);
