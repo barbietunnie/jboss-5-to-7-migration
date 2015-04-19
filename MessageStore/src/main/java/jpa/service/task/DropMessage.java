@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("dropMessage")
 @Transactional(propagation=Propagation.REQUIRED)
-public class DropMessage extends TaskBaseAdaptor {
+public class DropMessage extends TaskBaseAdapter {
 	private static final long serialVersionUID = 8866276380038865588L;
 	static final Logger logger = Logger.getLogger(DropMessage.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

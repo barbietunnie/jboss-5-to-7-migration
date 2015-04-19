@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("unsubscribeFromList")
 @Transactional(propagation=Propagation.REQUIRED)
-public class UnsubscribeFromList extends TaskBaseAdaptor {
+public class UnsubscribeFromList extends TaskBaseAdapter {
 	private static final long serialVersionUID = -1655630086836497324L;
 	static final Logger logger = Logger.getLogger(UnsubscribeFromList.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

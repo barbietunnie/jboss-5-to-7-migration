@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("activateAddress")
 @Transactional(propagation=Propagation.REQUIRED)
-public class ActivateAddress extends TaskBaseAdaptor {
+public class ActivateAddress extends TaskBaseAdapter {
 	private static final long serialVersionUID = 7272826841955633003L;
 	static final Logger logger = Logger.getLogger(ActivateAddress.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
@@ -59,7 +59,7 @@ public class ActivateAddress extends TaskBaseAdaptor {
 		// example: $From,$To,myaddress@mydomain.com
 		int addrsActiveted = 0;
 		Timestamp updtTime = new Timestamp(System.currentTimeMillis());
-		List<String> list = getArgumentList(ctx.getTaskArguments());
+		List<String> list = convertArgumensTotList(ctx.getTaskArguments());
 		for (Iterator<String> it=list.iterator(); it.hasNext(); ) {
 			String addrs = null;
 			String token = it.next();

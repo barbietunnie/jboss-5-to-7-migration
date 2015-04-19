@@ -1,7 +1,7 @@
 package jpa.variable;
 
 import java.text.ParseException;
-import java.util.Map;
+import java.util.Properties;
 
 import jpa.exception.TemplateException;
 
@@ -46,13 +46,13 @@ public final class PropertyRenderer implements java.io.Serializable {
 	 * @throws TemplateException
 	 * @throws ParseException
 	 */
-	public String render(String templateText, Map<Object, Object> variables)
+	public String render(String templateText, Properties variables)
 			throws TemplateException, ParseException {
 		return renderTemplate(templateText, variables, 0);
 	}
 
 	private String renderTemplate(String templateText,
-			Map<Object, Object> variables, int loopCount)
+			Properties variables, int loopCount)
 			throws TemplateException, ParseException {
 		
 		if (templateText == null) {
@@ -71,9 +71,9 @@ public final class PropertyRenderer implements java.io.Serializable {
 			// move to next position
 			currPos = varProp.endPos;
 			if (variables.get(varProp.name) != null) { // main section
-				String value = (String) variables.get(varProp.name);
+				String value = variables.getProperty(varProp.name);
 				if (value != null) {
-					if (getNextVariableName((String) value, 0) != null) {
+					if (getNextVariableName(value, 0) != null) {
 						// recursive variable
 						if (loopCount <= MAX_LOOP_COUNT) { // check infinite loop
 							sb.append(renderTemplate(value, variables, ++loopCount));

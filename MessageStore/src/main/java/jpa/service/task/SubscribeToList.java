@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("subscribeToList")
 @Transactional(propagation=Propagation.REQUIRED)
-public class SubscribeToList extends TaskBaseAdaptor {
+public class SubscribeToList extends TaskBaseAdapter {
 	private static final long serialVersionUID = -2937512146339026716L;
 	static final Logger logger = Logger.getLogger(SubscribeToList.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();

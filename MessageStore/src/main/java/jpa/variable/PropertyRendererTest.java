@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public final class PropertyRendererTest {
 	public void testRender() throws Exception {
 		PropertyRenderer renderer = PropertyRenderer.getInstance();
 
-		Map<Object, Object> map = loadVariableMap();
+		Properties map = loadVariableMap();
 		String template = (String) map.get("dataSource.url");
 		try {
 			String renderedText = renderer.render(template, map);
@@ -69,7 +69,7 @@ public final class PropertyRendererTest {
 	public void testBadTemplate() throws Exception {
 		PropertyRenderer renderer = PropertyRenderer.getInstance();
 
-		Map<Object, Object> map = loadVariableMap();
+		Properties map = loadVariableMap();
 		
 		String template1 = "Missing first closing delimiter\n"
 			+ "Some Numberic values: ${numeric1, ${numeric2}, ${numeric3}\n"
@@ -84,7 +84,7 @@ public final class PropertyRendererTest {
 		}
 	}
 
-	private Map<Object, Object> loadVariableMap() {
+	private Properties loadVariableMap() {
 		String fileName = "META-INF/msgstore.mysql.properties";
 		return VarReplProperties.loadMyProperties(fileName);
 	}

@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component("forwardMessage")
 @Transactional(propagation=Propagation.REQUIRED)
-public class ForwardMessage extends TaskBaseAdaptor {
+public class ForwardMessage extends TaskBaseAdapter {
 	private static final long serialVersionUID = 4223082303129172619L;
 	static final Logger logger = Logger.getLogger(ForwardMessage.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
