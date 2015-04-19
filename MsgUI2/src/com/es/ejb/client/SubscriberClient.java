@@ -2,6 +2,7 @@ package com.es.ejb.client;
 
 import java.util.List;
 
+import javax.ejb.EJBException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
@@ -41,6 +42,14 @@ public class SubscriberClient {
 
 		// test EJB remote access
 		logger.info("SubscriberRemote instance: " + subr);
+		
+		try {
+			subr.getSubscriberByEmailAddress("");
+		}
+		catch (EJBException e) {
+			logger.error("EJBException" + e.getMessage());
+		}
+		
 		List<SubscriberData> subrlist = subr.getAllSubscribers();
 		for (SubscriberData data : subrlist) {
 			logger.info(StringUtil.prettyPrint(data, 1));
