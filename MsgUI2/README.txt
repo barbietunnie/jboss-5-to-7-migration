@@ -14,6 +14,6 @@ configuration to your WTP Tomcat 7.0 server.
 2.	Import the logging.properties file from the conf directory of your Tomcat 7.0 installation into this folder in your workspace.
 3.	In the server editor, click on the Open launch configuration link and in the launch configuration Properties dialog, switch to the Arguments tab.
 4.	In the VM Arguments field, add the following two system properties substituting the catalina.base path where noted:
-     -Djava.util.logging.config.file="<put catalina.base path here>/conf/logging.properties"
+     -Djava.util.logging.config.file="<put catalina.base path here>\conf\logging.properties"
      -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
 The imported logging.properties file can be used to control the JULI logging configuration for the Tomcat server.
