@@ -6,11 +6,10 @@ The solution is to add these flags to JVM runtime command line
 
 2) How do I enable the JULI logging in a Tomcat 7.0 Server instance?
 
-Tomcat 7.0 comes with an enhanced implementation of java.util.logging, called JULI, 
-which is configured by default in a standard Tomcat 7.0 installation. This JULI 
-logging configuration is not picked up automatically when creating a new Tomcat 7.0 
-server in WTP. Some manual steps are necessary to add this configuration to your 
-WTP Tomcat 7.0 server.
+Tomcat 7.0 comes with an enhanced implementation of java.util.logging, called JULI, which is configured
+by default in a standard Tomcat 7.0 installation. This JULI logging configuration is not picked up 
+automatically when creating a new Tomcat 7.0 server in WTP. Some manual steps are necessary to add this
+configuration to your WTP Tomcat 7.0 server.
 1.	Open the server editor for the Tomcat server and note the folder specified by the Server path field.
 2.	Import the logging.properties file from the conf directory of your Tomcat 7.0 installation into this folder in your workspace.
 3.	In the server editor, click on the Open launch configuration link and in the launch configuration Properties dialog, switch to the Arguments tab.
