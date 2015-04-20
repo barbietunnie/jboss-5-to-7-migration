@@ -301,7 +301,8 @@ public class MessageInboxService implements java.io.Serializable {
 			return isMessageIdDuplicateV2(smtpMessageId);
 		}
 		else {
-			return isMessageIdDuplicateV1(smtpMessageId);
+			//return isMessageIdDuplicateV1(smtpMessageId);
+			return isMessageIdDuplicateV2(smtpMessageId);
 		}
 	}
 	
@@ -318,6 +319,13 @@ public class MessageInboxService implements java.io.Serializable {
 			return true;
 		}
 		catch (PersistenceException e) { // thrown from EclipseLink
+			/*
+			 * The ConstraintViolationException happens at commit time, since it
+			 * can't commit, obviously, the transaction is rolled back. It can't
+			 * do anything else.
+			 * 
+			 * EntityManager will always set the rollbackOnly flag to true.
+			 */
 			return true;
 		}
 		finally {
