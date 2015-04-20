@@ -34,5 +34,5 @@ public class SpringUtil {
 		WebApplicationContext webContext = WebApplicationContextUtils
 				.getRequiredWebApplicationContext(sctx);
 		return webContext;
-	}	
+	}
 }
