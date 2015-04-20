@@ -1,5 +1,7 @@
 package com.es.tomee.util;
 
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -8,13 +10,8 @@ import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
-import jpa.model.EmailAddress;
-import jpa.util.StringUtil;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
-import com.es.mailsender.ejb.MailSenderRemote;
 
 public class TomeeCtxUtil {
 	protected final static Logger logger = Logger.getLogger(TomeeCtxUtil.class);
@@ -35,7 +32,8 @@ public class TomeeCtxUtil {
 		Properties p = new Properties();
 		p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
 		//p.put("java.naming.provider.url", "ejbd://localhost:4201"); // OpenEjb
-		p.put("java.naming.provider.url", "http://127.0.0.1:8080/tomee/ejb"); // TomEE
+		int port = findHttpPort(new int[] {8181,8080});
+		p.put("java.naming.provider.url", "http://127.0.0.1:" + port + "/tomee/ejb"); // TomEE
 		// user and pass optional
 		p.put("java.naming.security.principal", "tomee");
 		p.put("java.naming.security.credentials", "tomee");
@@ -82,15 +80,48 @@ public class TomeeCtxUtil {
 		}
     }
 
+	private static Integer tomcat_port = null;
+	
+	static int findHttpPort(int... ports) {
+		if (tomcat_port != null) {
+			return tomcat_port;
+		}
+		String hostIP = "127.0.0.1";
+		Socket socket = null;
+		long start = System.currentTimeMillis();
+		for (int port : ports) {
+			socket = new Socket();
+			try {
+				socket.connect(new InetSocketAddress(hostIP, port), 1000);
+				logger.info("Port (" + port + ") reachable.");
+				tomcat_port = port;
+				break;
+			}
+			catch (java.io.IOException e) {
+				logger.info("Port (" + port + ") unreachable, time spent: " + (System.currentTimeMillis() - start));
+			}
+			finally {
+				if (socket != null) {
+					try {
+						socket.close();
+					}
+					catch (java.io.IOException e) {}
+				}
+			}
+		}
+		return (tomcat_port==null?80:tomcat_port);
+	}
+
 	public static void main(String[] args) {
 		try {
+			logger.info("port found: " + findHttpPort(new int[] {8181,8080}));
 			// test EJB remote access
-			Context ctx = getRemoteContext();
-			listContext(ctx, "");
-			MailSenderRemote sender = (MailSenderRemote) ctx.lookup("MailSenderRemote");
-			logger.info("MailSenderRemote instance: " + sender);
-			EmailAddress ea = sender.findByAddress("test@test.com");
-			logger.info(StringUtil.prettyPrint(ea, 1));
+//			Context ctx = getRemoteContext();
+//			listContext(ctx, "");
+//			MailSenderRemote sender = (MailSenderRemote) ctx.lookup("MailSenderRemote");
+//			logger.info("MailSenderRemote instance: " + sender);
+//			EmailAddress ea = sender.findByAddress("test@test.com");
+//			logger.info(StringUtil.prettyPrint(ea, 1));
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);
