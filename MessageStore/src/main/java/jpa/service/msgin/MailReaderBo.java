@@ -520,15 +520,15 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	private void execute(Message[] msgs) throws IOException,
 			MessagingException, DataValidationException, TemplateException {
 		if (msgs == null || msgs.length == 0) return;
-		SpringUtil.beginTransaction();
+		//SpringUtil.beginTransaction();
 		try {
 			MailProcessorBo processor = SpringUtil.getAppContext().getBean(MailProcessorBo.class);
 			MessageContext ctx = new MessageContext(msgs, mInbox);
 			processor.process(ctx);
-			SpringUtil.commitTransaction();
+		//	SpringUtil.commitTransaction();
 		}
 		finally {
-			SpringUtil.clearTransaction();
+		//	SpringUtil.clearTransaction();
 		}
 	}
 	
