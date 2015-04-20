@@ -672,7 +672,7 @@ DELIMITER ;
 			ps.setString(5, StatusIdCode.ACTIVE);
 			ps.setString(6, Constants.NO_CODE);
 			ps.setString(7, "");
-			ps.setString(8, "SELECT CONTAC_WS(',',c.StateCode,c.ProvinceName) as ResultStr " +
+			ps.setString(8, "SELECT CONCAT_WS(',',c.StateCode,c.ProvinceName) as ResultStr " +
 					"FROM customers c, emailaddr e " +
 					"where e.emailaddrId=c.emailAddrId and e.emailAddrId=?;");
 			ps.setString(9, null);
