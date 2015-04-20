@@ -260,7 +260,7 @@ function refreshDatePicker(dateFieldName, year, month, day)
     
     // increment the day
     thisDay.setDate(thisDay.getDate() + 1);
-  } while (thisDay.getDate() > 1)
+  } while (thisDay.getDate() > 1);
  
   // fill in any trailing blanks
   if (thisDay.getDay() > 0) {
