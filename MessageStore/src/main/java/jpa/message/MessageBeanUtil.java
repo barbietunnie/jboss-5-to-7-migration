@@ -40,6 +40,7 @@ import jpa.util.EmailAddrUtil;
 import jpa.util.SpringUtil;
 import jpa.util.StringUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public final class MessageBeanUtil {
@@ -354,9 +355,9 @@ public final class MessageBeanUtil {
 		part.setDisposition(aNode.getDisposition());
 		part.setDescription(aNode.getDescription());
 
-		if (aNode.getMimeType().startsWith("text")) {
+		if (StringUtils.startsWith(aNode.getMimeType(), "text")) {
 			part.setContent(new String(aNode.getValue()), aNode.getContentType());
-			if (aNode.getMimeType().startsWith("text/html")) {
+			if (StringUtils.startsWith(aNode.getMimeType(), "text/html")) {
 				if (aNode.getDisposition() == null) {
 					//part.setDisposition(Part.INLINE);
 					/* 
