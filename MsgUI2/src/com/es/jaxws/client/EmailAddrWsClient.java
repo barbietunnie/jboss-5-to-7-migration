@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import com.es.ejb.emailaddr.EmailAddrVo;
 import com.es.ejb.emailaddr.EmailAddrWs;
+import com.es.tomee.util.TomeeCtxUtil;
 
 public class EmailAddrWsClient {
 	protected final static Logger logger = Logger.getLogger(EmailAddrWsClient.class);
@@ -22,8 +23,9 @@ public class EmailAddrWsClient {
 	}
 	
 	static void testEmailAddrWs() {
+		int port = TomeeCtxUtil.findHttpPort(new int[] {8181, 8080});
 		try {
-			Service service = Service.create(new URL("http://localhost:8181/MsgUI2/webservices/EmailAddr?wsdl"),
+			Service service = Service.create(new URL("http://localhost:" + port + "/MsgUI2/webservices/EmailAddr?wsdl"),
 				new QName("http://com.es.ws.emailaddr/wsdl", "EmailAddrService"));
 			assertNotNull(service);
 			EmailAddrWs addr = service.getPort(EmailAddrWs.class);

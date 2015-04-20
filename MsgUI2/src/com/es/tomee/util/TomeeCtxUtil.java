@@ -82,7 +82,7 @@ public class TomeeCtxUtil {
 
 	private static Integer tomcat_port = null;
 	
-	static int findHttpPort(int... ports) {
+	public static int findHttpPort(int... ports) {
 		if (tomcat_port != null) {
 			return tomcat_port;
 		}
