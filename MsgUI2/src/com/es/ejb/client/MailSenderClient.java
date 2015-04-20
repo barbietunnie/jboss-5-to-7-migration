@@ -12,7 +12,7 @@ import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 
-import com.es.mailsender.ejb.MailSenderRemote;
+import com.es.ejb.mailsender.MailSenderRemote;
 import com.es.tomee.util.TomeeCtxUtil;
 
 public class MailSenderClient {

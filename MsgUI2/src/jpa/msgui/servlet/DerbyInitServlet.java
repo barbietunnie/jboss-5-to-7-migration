@@ -16,9 +16,9 @@ import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 
-import com.es.subscriber.ejb.Subscriber;
-import com.es.subscriber.ejb.SubscriberLocal;
-import com.es.subscriber.ejb.SubscriberRemote;
+import com.es.ejb.subscriber.Subscriber;
+import com.es.ejb.subscriber.SubscriberLocal;
+import com.es.ejb.subscriber.SubscriberRemote;
 import com.es.tomee.util.TomeeCtxUtil;
 
 /**

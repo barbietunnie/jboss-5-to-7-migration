@@ -10,7 +10,7 @@ import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 
-import com.es.idtokens.ejb.IdTokensRemote;
+import com.es.ejb.idtokens.IdTokensRemote;
 import com.es.tomee.util.TomeeCtxUtil;
 
 public class IdTokensClient {
