@@ -24,7 +24,7 @@ import com.es.dao.inbox.MsgAddressDao;
 import com.es.dao.inbox.MsgInboxDao;
 import com.es.dao.sender.SenderDataDao;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.EmailAddrType;
 import com.es.data.constant.TableColumnName;
 import com.es.msgbean.MessageBean;
 import com.es.msgbean.MessageContext;
@@ -73,7 +73,7 @@ public class ForwardMessageTest {
 		mBean.setForward(InternetAddress.parse(forwardAddr));
 
 		MessageContext ctx = new MessageContext(mBean);
-		ctx.setTaskArguments("$" + EmailAddressType.FORWARD_ADDR.getValue() + ",$" + TableColumnName.SUBSCRIBER_CARE_ADDR.getValue());
+		ctx.setTaskArguments("$" + EmailAddrType.FORWARD_ADDR.getValue() + ",$" + TableColumnName.SUBSCRIBER_CARE_ADDR.getValue());
 		try {
 			task.process(ctx);
 		} catch (Exception e) {

@@ -19,7 +19,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.es.dao.address.EmailAddressDao;
-import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.EmailAddrType;
 import com.es.data.constant.StatusId;
 import com.es.msgbean.MessageBean;
 import com.es.msgbean.MessageContext;
@@ -61,7 +61,7 @@ public class SuspendAddressTest {
 		mBean.setFinalRcpt(finalRcptAddr);
 
 		MessageContext ctx = new MessageContext(mBean);
-		ctx.setTaskArguments("$" + EmailAddressType.FINAL_RCPT_ADDR.getValue() +",$" + EmailAddressType.FROM_ADDR.getValue());
+		ctx.setTaskArguments("$" + EmailAddrType.FINAL_RCPT_ADDR.getValue() +",$" + EmailAddrType.FROM_ADDR.getValue());
 		task.process(ctx);
 		
 		System.out.println("Verifying Results ##################################################################");

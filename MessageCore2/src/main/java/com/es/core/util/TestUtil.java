@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import com.es.dao.address.EmailAddressDao;
 import com.es.dao.inbox.MsgInboxDao;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.EmailAddrType;
 import com.es.data.preload.RuleNameEnum;
 import com.es.msgbean.BodypartBean;
 import com.es.msgbean.BodypartUtil;
@@ -38,7 +38,7 @@ public class TestUtil {
 		assertTrue("postmaster@synnex.com.au".equals(inbox.getFromAddress()));
 		assertTrue("Delivery Status Notification (Failure)".equals(inbox.getMsgSubject()));
 		for (MsgAddressVo addr : inbox.getMsgAddrs()) {
-			if (EmailAddressType.FINAL_RCPT_ADDR.getValue().equals(addr.getAddrType())) {
+			if (EmailAddrType.FINAL_RCPT_ADDR.getValue().equals(addr.getAddrType())) {
 				assertTrue("jackwnn@synnex.com.au".equals(addr.getAddrValue()));
 			}
 		}
@@ -65,7 +65,7 @@ public class TestUtil {
 		assertTrue("postmaster@mail.rr.com".equals(inbox.getFromAddress()));
 		assertTrue("Mail System Error - Returned Mail".equals(inbox.getMsgSubject()));
 		for (MsgAddressVo addr : inbox.getMsgAddrs()) {
-			if (EmailAddressType.FINAL_RCPT_ADDR.getValue().equals(addr.getAddrType())) {
+			if (EmailAddrType.FINAL_RCPT_ADDR.getValue().equals(addr.getAddrType())) {
 				assertTrue("unknown.useraddress@aim.com".equals(addr.getAddrValue()));
 			}
 		}

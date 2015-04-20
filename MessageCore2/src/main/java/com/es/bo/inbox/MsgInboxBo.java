@@ -28,7 +28,7 @@ import com.es.dao.outbox.MsgSequenceDao;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.EmailAddrType;
 import com.es.data.constant.MailingListDeliveryType;
 import com.es.data.constant.MsgDirectionCode;
 import com.es.data.constant.MsgStatusCode;
@@ -365,11 +365,11 @@ public class MsgInboxBo {
 		}
 		
 		// save addresses
-		saveAddress(msgBean.getFrom(), EmailAddressType.FROM_ADDR, msgVo.getMsgId());
-		saveAddress(msgBean.getTo(), EmailAddressType.TO_ADDR, msgVo.getMsgId());
-		saveAddress(msgBean.getReplyto(), EmailAddressType.REPLYTO_ADDR, msgVo.getMsgId());
-		saveAddress(msgBean.getCc(), EmailAddressType.CC_ADDR, msgVo.getMsgId());
-		saveAddress(msgBean.getBcc(), EmailAddressType.BCC_ADDR, msgVo.getMsgId());
+		saveAddress(msgBean.getFrom(), EmailAddrType.FROM_ADDR, msgVo.getMsgId());
+		saveAddress(msgBean.getTo(), EmailAddrType.TO_ADDR, msgVo.getMsgId());
+		saveAddress(msgBean.getReplyto(), EmailAddrType.REPLYTO_ADDR, msgVo.getMsgId());
+		saveAddress(msgBean.getCc(), EmailAddrType.CC_ADDR, msgVo.getMsgId());
+		saveAddress(msgBean.getBcc(), EmailAddrType.BCC_ADDR, msgVo.getMsgId());
 		
 		// save message raw stream if received by MailReader
 		if (msgBean.getHashMap().containsKey(JavaMailParser.MSG_RAW_STREAM)
@@ -455,7 +455,7 @@ public class MsgInboxBo {
 		return msgInboxVo;
 	}
 	
-	private void saveAddress(Address[] addrs, EmailAddressType addrType, long msgId) {
+	private void saveAddress(Address[] addrs, EmailAddrType addrType, long msgId) {
 		if (addrs == null || addrs.length == 0) {
 			return;
 		}

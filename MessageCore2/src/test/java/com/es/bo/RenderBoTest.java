@@ -31,7 +31,7 @@ import com.es.bo.render.RenderVariable;
 import com.es.bo.sender.RenderBo;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.EmailAddrType;
 import com.es.data.constant.VariableType;
 import com.es.data.constant.XHeaderName;
 import com.es.msgbean.BodypartBean;
@@ -149,7 +149,7 @@ public class RenderBoTest {
 		
 		try {
 			RenderVariable toAddr = new RenderVariable(
-					EmailAddressType.TO_ADDR.getValue(), 
+					EmailAddrType.TO_ADDR.getValue(), 
 					new InternetAddress("testto@localhost"),
 					null, 
 					VariableType.ADDRESS, 

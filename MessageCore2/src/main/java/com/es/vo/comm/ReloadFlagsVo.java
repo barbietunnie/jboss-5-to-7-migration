@@ -1,6 +1,7 @@
 package com.es.vo.comm;
 
 
+
 public class ReloadFlagsVo extends BaseVoWithRowId implements java.io.Serializable {	
 	private static final long serialVersionUID = 2746790651251857142L;
 	private int senders = 0;

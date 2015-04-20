@@ -4,11 +4,11 @@ import com.es.data.preload.RuleDataTypeEnum;
 
 /** define rule search field name for Internet mail */
 public enum RuleDataName {
-	FROM_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddressType.FROM_ADDR.getValue()),
-	TO_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddressType.TO_ADDR.getValue()),
-	REPLYTO_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddressType.REPLYTO_ADDR.getValue()),
-	CC_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddressType.CC_ADDR.getValue()),
-	BCC_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddressType.BCC_ADDR.getValue()),
+	FROM_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddrType.FROM_ADDR.getValue()),
+	TO_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddrType.TO_ADDR.getValue()),
+	REPLYTO_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddrType.REPLYTO_ADDR.getValue()),
+	CC_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddrType.CC_ADDR.getValue()),
+	BCC_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddrType.BCC_ADDR.getValue()),
 	
 	SUBJECT(RuleDataTypeEnum.EMAIL_PROPERTY, VariableName.SUBJECT.getValue()),
 	BODY(RuleDataTypeEnum.EMAIL_PROPERTY, VariableName.BODY.getValue()),
@@ -27,8 +27,8 @@ public enum RuleDataName {
 	MIME_TYPE(RuleDataTypeEnum.EMAIL_PROPERTY, "MimeType"),
 	FILE_NAME(RuleDataTypeEnum.EMAIL_PROPERTY, "FileName"),
 	// define other email address properties
-	FINAL_RCPT_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddressType.FINAL_RCPT_ADDR.getValue()),
-	ORIG_RCPT_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddressType.ORIG_RCPT_ADDR.getValue());
+	FINAL_RCPT_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddrType.FINAL_RCPT_ADDR.getValue()),
+	ORIG_RCPT_ADDR(RuleDataTypeEnum.EMAIL_ADDRESS, EmailAddrType.ORIG_RCPT_ADDR.getValue());
 
 	private RuleDataTypeEnum dataType;
 	private String value;

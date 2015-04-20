@@ -1,6 +1,7 @@
 package com.es.vo.address;
 
 import java.io.Serializable;
+
 import com.es.vo.comm.BaseVoWithRowId;
 
 public class MobileCarrierVo extends BaseVoWithRowId implements Serializable {
