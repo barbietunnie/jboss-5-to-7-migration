@@ -12,7 +12,7 @@ import com.es.dao.inbox.MsgStreamDao;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.EmailAddrType;
 import com.es.data.constant.MsgDirectionCode;
 import com.es.data.constant.MsgStatusCode;
 import com.es.msgbean.MessageBodyBuilder;
@@ -172,7 +172,7 @@ public class MsgInboxVo extends BaseVo implements Serializable {
 		// first locate To address from msg_header
 		List<MsgHeaderVo> headers = getMsgHeaders();
 		for (MsgHeaderVo header : headers) {
-			if (EmailAddressType.TO_ADDR.getValue().equalsIgnoreCase(header.getHeaderName())) {
+			if (EmailAddrType.TO_ADDR.getValue().equalsIgnoreCase(header.getHeaderName())) {
 				return header.getHeaderValue();
 			}
 		}
@@ -204,7 +204,7 @@ public class MsgInboxVo extends BaseVo implements Serializable {
 		StringBuffer sb = new StringBuffer();
 		for (int i=0; i<msgAddrs.size(); i++) {
 			MsgAddressVo vo = msgAddrs.get(i);
-			if (EmailAddressType.CC_ADDR.getValue().equals(vo.getAddrType())) {
+			if (EmailAddrType.CC_ADDR.getValue().equals(vo.getAddrType())) {
 				if (sb.length() > 0) {
 					sb.append(",");
 				}

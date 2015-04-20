@@ -1,5 +1,6 @@
 package com.es.vo.comm;
 
+
 public class IdTokensVo extends BaseVoWithRowId implements java.io.Serializable {	
 	private static final long serialVersionUID = -2226574685229227694L;
 	

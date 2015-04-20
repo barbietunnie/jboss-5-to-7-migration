@@ -19,7 +19,7 @@ import com.es.bo.sender.MailSenderBo;
 import com.es.bo.smtp.SmtpException;
 import com.es.dao.inbox.MsgStreamDao;
 import com.es.dao.sender.SenderDataDao;
-import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.EmailAddrType;
 import com.es.data.constant.TableColumnName;
 import com.es.exception.DataValidationException;
 import com.es.msgbean.MessageBean;
@@ -75,22 +75,22 @@ public class ForwardMessage extends TaskBaseAdaptor {
 			String token = st.nextToken();
 			if (token != null && token.startsWith("$")) { // address type
 				token = token.substring(1);
-				if (EmailAddressType.FROM_ADDR.getValue().equals(token)) {
+				if (EmailAddrType.FROM_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getFromAsString();
 				}
-				else if (EmailAddressType.FINAL_RCPT_ADDR.getValue().equals(token)) {
+				else if (EmailAddrType.FINAL_RCPT_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getFinalRcpt();
 				}
-				else if (EmailAddressType.ORIG_RCPT_ADDR.getValue().equals(token)) {
+				else if (EmailAddrType.ORIG_RCPT_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getOrigRcpt();
 				}
-				else if (EmailAddressType.FORWARD_ADDR.getValue().equals(token)) {
+				else if (EmailAddrType.FORWARD_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getForwardAsString();
 				}
-				else if (EmailAddressType.TO_ADDR.getValue().equals(token)) {
+				else if (EmailAddrType.TO_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getToAsString();
 				}
-				else if (EmailAddressType.REPLYTO_ADDR.getValue().equals(token)) {
+				else if (EmailAddrType.REPLYTO_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getReplytoAsString();
 				}
 				// E-mail addresses from Client table

@@ -43,7 +43,7 @@ import com.es.dao.template.TemplateVariableDao;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.EmailAddrType;
 import com.es.data.constant.VariableName;
 import com.es.data.constant.VariableType;
 import com.es.data.constant.XHeaderName;
@@ -97,7 +97,7 @@ public class RenderBo implements java.io.Serializable {
 			}
 			RenderRequest req = outboxBo.getRenderRequestByPK(mr.getRenderId());
 			RenderVariable vo = new RenderVariable(
-					EmailAddressType.TO_ADDR.getValue(),
+					EmailAddrType.TO_ADDR.getValue(),
 					"testto@localhost",
 					VariableType.ADDRESS);
 			req.getVariableOverrides().put(vo.getVariableName(), vo);
@@ -300,7 +300,7 @@ public class RenderBo implements java.io.Serializable {
 		for (Iterator<RenderVariable> it=c.iterator(); it.hasNext();) {
 			RenderVariable r = it.next();
 			if (VariableType.ADDRESS.equals(r.getVariableType()) && r.getVariableValue() != null) {
-				if (EmailAddressType.FROM_ADDR.getValue().equals(r.getVariableName())) {
+				if (EmailAddrType.FROM_ADDR.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof String) {
 						mBean.setFrom(InternetAddress.parse((String) r.getVariableValue()));
 					}
@@ -308,7 +308,7 @@ public class RenderBo implements java.io.Serializable {
 						mBean.setFrom(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
-				else if (EmailAddressType.REPLYTO_ADDR.getValue().equals(r.getVariableName())) {
+				else if (EmailAddrType.REPLYTO_ADDR.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof String) {
 						mBean.setReplyto(InternetAddress.parse((String) r.getVariableValue()));
 					}
@@ -316,7 +316,7 @@ public class RenderBo implements java.io.Serializable {
 						mBean.setReplyto(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
-				else if (EmailAddressType.TO_ADDR.getValue().equals(r.getVariableName())) {
+				else if (EmailAddrType.TO_ADDR.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof String) {
 						mBean.setTo(InternetAddress.parse((String) r.getVariableValue()));
 					}
@@ -324,7 +324,7 @@ public class RenderBo implements java.io.Serializable {
 						mBean.setTo(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
-				else if (EmailAddressType.CC_ADDR.getValue().equals(r.getVariableName())) {
+				else if (EmailAddrType.CC_ADDR.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof String) {
 						mBean.setCc(InternetAddress.parse((String) r.getVariableValue()));
 					}
@@ -332,7 +332,7 @@ public class RenderBo implements java.io.Serializable {
 						mBean.setCc(InternetAddress.parse(((Address)r.getVariableValue()).toString()));
 					}
 				}
-				else if (EmailAddressType.BCC_ADDR.getValue().equals(r.getVariableName())) {
+				else if (EmailAddrType.BCC_ADDR.getValue().equals(r.getVariableName())) {
 					if (r.getVariableValue() instanceof String) {
 						mBean.setBcc(InternetAddress.parse((String) r.getVariableValue()));
 					}
@@ -509,7 +509,7 @@ public class RenderBo implements java.io.Serializable {
 		s_ht.put(vreq.getVariableName(), vreq);
 		
 		vreq = new RenderVariable(
-			EmailAddressType.FROM_ADDR.getValue(),
+			EmailAddrType.FROM_ADDR.getValue(),
 			emailAddrDao.getByAddrId(msgSourceVo.getFromAddrId()).getEmailAddr(),
 			null,
 			VariableType.ADDRESS, 
@@ -519,7 +519,7 @@ public class RenderBo implements java.io.Serializable {
 		
 		if (msgSourceVo.getReplyToAddrId()!=null) {
 			vreq = new RenderVariable(
-				EmailAddressType.REPLYTO_ADDR.getValue(),
+				EmailAddrType.REPLYTO_ADDR.getValue(),
 				emailAddrDao.getByAddrId(msgSourceVo.getReplyToAddrId()).getEmailAddr(),
 				null,
 				VariableType.ADDRESS, 

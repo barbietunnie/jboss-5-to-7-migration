@@ -20,7 +20,7 @@ import com.es.dao.address.EmailAddressDao;
 import com.es.data.constant.CarrierCode;
 import com.es.data.constant.CodeType;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.EmailAddrType;
 import com.es.data.constant.MsgDirectionCode;
 import com.es.exception.DataValidationException;
 import com.es.msg.util.RfcHeaderParser;
@@ -225,7 +225,7 @@ public class MessageBeanBo implements java.io.Serializable {
 			String bccAddr = null;
 			for (int i = 0; i < addrsVo.size(); i++) {
 				MsgAddressVo addrVo = addrsVo.get(i);
-				if (EmailAddressType.FROM_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
+				if (EmailAddrType.FROM_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
 					if (fromAddr == null) {
 						fromAddr = addrVo.getAddrValue();
 					}
@@ -233,25 +233,25 @@ public class MessageBeanBo implements java.io.Serializable {
 						fromAddr += "," + addrVo.getAddrValue();
 					}
 				}
-				else if (EmailAddressType.TO_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
+				else if (EmailAddrType.TO_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
 					if (toAddr == null)
 						toAddr = addrVo.getAddrValue();
 					else
 						toAddr += "," + addrVo.getAddrValue();
 				}
-				else if (EmailAddressType.REPLYTO_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
+				else if (EmailAddrType.REPLYTO_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
 					if (replyToAddr == null)
 						replyToAddr = addrVo.getAddrValue();
 					else
 						replyToAddr += "," + addrVo.getAddrValue();
 				}
-				else if (EmailAddressType.CC_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
+				else if (EmailAddrType.CC_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
 					if (ccAddr == null)
 						ccAddr = addrVo.getAddrValue();
 					else
 						ccAddr += "," + addrVo.getAddrValue();
 				}
-				else if (EmailAddressType.BCC_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
+				else if (EmailAddrType.BCC_ADDR.getValue().equalsIgnoreCase(addrVo.getAddrType())) {
 					if (bccAddr == null)
 						bccAddr = addrVo.getAddrValue();
 					else

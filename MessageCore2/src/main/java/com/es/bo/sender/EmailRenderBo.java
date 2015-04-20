@@ -26,7 +26,7 @@ import com.es.dao.address.EmailTemplateDao;
 import com.es.dao.address.EmailVariableDao;
 import com.es.dao.address.MailingListDao;
 import com.es.data.constant.CodeType;
-import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.EmailAddrType;
 import com.es.data.constant.VariableType;
 import com.es.exception.DataValidationException;
 import com.es.exception.TemplateException;
@@ -280,9 +280,9 @@ public class EmailRenderBo implements java.io.Serializable {
 		catch (ParseException e) {
 			throw new DataValidationException("ParseException caught", e);
 		}
-		if (vars.containsKey(EmailAddressType.CC_ADDR.getValue())) {
+		if (vars.containsKey(EmailAddrType.CC_ADDR.getValue())) {
 			// set CC if it was passed as an input variable
-			RenderVariable cc = vars.get(EmailAddressType.CC_ADDR.getValue());
+			RenderVariable cc = vars.get(EmailAddrType.CC_ADDR.getValue());
 			if (cc != null && VariableType.TEXT.equals(cc.getVariableType())
 					&& cc.getVariableValue() != null) {
 				try {
@@ -295,9 +295,9 @@ public class EmailRenderBo implements java.io.Serializable {
 				}
 			}
 		}
-		if (vars.containsKey(EmailAddressType.BCC_ADDR.getValue())) {
+		if (vars.containsKey(EmailAddrType.BCC_ADDR.getValue())) {
 			// set BCC if it was passed as an input variable
-			RenderVariable bcc = vars.get(EmailAddressType.BCC_ADDR.getValue());
+			RenderVariable bcc = vars.get(EmailAddrType.BCC_ADDR.getValue());
 			if (bcc != null && VariableType.TEXT.equals(bcc.getVariableType())
 					&& bcc.getVariableValue() != null) {
 				try {

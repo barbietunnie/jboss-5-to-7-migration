@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.es.dao.address.EmailAddressDao;
 import com.es.dao.inbox.MsgInboxDao;
 import com.es.data.constant.Constants;
-import com.es.data.constant.EmailAddressType;
+import com.es.data.constant.EmailAddrType;
 import com.es.data.constant.StatusId;
 import com.es.data.preload.RuleNameEnum;
 import com.es.exception.DataValidationException;
@@ -69,22 +69,22 @@ public class SuspendAddress extends TaskBaseAdaptor {
 			String token = st.nextToken();
 			if (token != null && token.startsWith("$")) { // address type
 				token = token.substring(1);
-				if (EmailAddressType.FROM_ADDR.getValue().equals(token)) {
+				if (EmailAddrType.FROM_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getFromAsString();
 				}
-				else if (EmailAddressType.FINAL_RCPT_ADDR.getValue().equals(token)) {
+				else if (EmailAddrType.FINAL_RCPT_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getFinalRcpt();
 				}
-				else if (EmailAddressType.ORIG_RCPT_ADDR.getValue().equals(token)) {
+				else if (EmailAddrType.ORIG_RCPT_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getOrigRcpt();
 				}
-				else if (EmailAddressType.FORWARD_ADDR.getValue().equals(token)) {
+				else if (EmailAddrType.FORWARD_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getForwardAsString();
 				}
-				else if (EmailAddressType.TO_ADDR.getValue().equals(token)) {
+				else if (EmailAddrType.TO_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getToAsString();
 				}
-				else if (EmailAddressType.REPLYTO_ADDR.getValue().equals(token)) {
+				else if (EmailAddrType.REPLYTO_ADDR.getValue().equals(token)) {
 					addrs = messageBean.getReplytoAsString();
 				}
 			}
