@@ -54,12 +54,14 @@ public class EmailAddr implements EmailAddrRemote, EmailAddrLocal, EmailAddrWs {
 		TomeeCtxUtil.registerBeanUtilsConverters();
     }
 
+    @Override
     public EmailAddress findSertAddress(String address) {
     	EmailAddress addr = emailAddrDao.findSertAddress(address);
     	return addr;
     }
  
     @WebMethod
+    @Override
 	public EmailAddrVo getOrAddAddress(String address) {
     	EmailAddress addr = findSertAddress(address);
     	EmailAddrVo addr_vo = new EmailAddrVo();
@@ -73,6 +75,7 @@ public class EmailAddr implements EmailAddrRemote, EmailAddrLocal, EmailAddrWs {
 	}
 
     @WebMethod
+    @Override
 	public int delete(String address) {
 		int rowsDeleted = emailAddrDao.deleteByAddress(address);
 		return rowsDeleted;

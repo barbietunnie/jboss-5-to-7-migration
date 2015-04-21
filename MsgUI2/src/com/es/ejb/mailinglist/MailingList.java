@@ -44,18 +44,21 @@ public class MailingList implements MailingListRemote, MailingListLocal {
     	mailingListBo = SpringUtil.getAppContext().getBean(MailingListBo.class);
     }
 
+    @Override
 	public int sendMail(String toAddr, Map<String, String> variables, String templateId)
 			throws DataValidationException, TemplateNotFoundException, OutOfServiceException {
 		int mailsSent = mailingListBo.send(toAddr, variables, templateId);
 		return mailsSent;
 	}
 
+    @Override
 	public int broadcast(String templateId) throws OutOfServiceException,
 			TemplateNotFoundException, DataValidationException {
 		int mailsSent = mailingListBo.broadcast(templateId);
 		return mailsSent;
 	}
 
+    @Override
 	public int broadcast(String templateId, String listId) throws OutOfServiceException,
 			TemplateNotFoundException, DataValidationException {
 		int mailsSent = mailingListBo.broadcast(templateId, listId);
