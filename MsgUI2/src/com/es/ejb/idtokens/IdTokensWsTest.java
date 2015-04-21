@@ -1,9 +1,10 @@
-package com.es.ejb.emailaddr;
+package com.es.ejb.idtokens;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -18,9 +19,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class EmailAddrWsTest {
-	protected final static Logger logger = Logger.getLogger(EmailAddrWsTest.class);
+public class IdTokensWsTest {
 
+	protected final static Logger logger = Logger.getLogger(IdTokensWsTest.class);
+	
 	private static EJBContainer ejbContainer;
 	
 	@BeforeClass
@@ -40,19 +42,20 @@ public class EmailAddrWsTest {
 	}
 	
 	@Test
-	public void testEmailAddrWs() {
+	public void testIdTokensWs() {
 		try {
-			Service service = Service.create(new URL("http://127.0.0.1:4204/WebContent/EmailAddr?wsdl"),
-				new QName("http://com.es.ws.emailaddr/wsdl", "EmailAddrService"));
+			Service service = Service.create(new URL("http://127.0.0.1:4204/WebContent/IdTokens?wsdl"),
+				new QName("http://com.es.ws.idtokens/wsdl", "IdTokensService"));
 			assertNotNull(service);
-			EmailAddrWs addr = service.getPort(EmailAddrWs.class);
-			EmailAddrVo vo = addr.findSertAddress("test@test.com");
+			IdTokensWs addr = service.getPort(IdTokensWs.class);
+			List<IdTokensVo> volist = addr.findAll();
+			assert(!volist.isEmpty());
+			for (IdTokensVo vo : volist) {
+				logger.info(StringUtil.prettyPrint(vo));
+			}
+			IdTokensVo vo = addr.findBySenderId(volist.get(volist.size()-1).getSenderId());
 			assertNotNull(vo);
 			logger.info(StringUtil.prettyPrint(vo));
-			vo = addr.findSertAddress("emailaddr@soapws.test");
-			assertNotNull(vo);
-			int rows = addr.deleteByAddress(vo.getAddress());
-			assert(rows > 0);
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);
@@ -60,8 +63,9 @@ public class EmailAddrWsTest {
 		}
 		
 		try {
-			TimeUnit.SECONDS.sleep(2);
+			TimeUnit.SECONDS.sleep(0);
 		}
 		catch (InterruptedException e) {}
 	}
+
 }

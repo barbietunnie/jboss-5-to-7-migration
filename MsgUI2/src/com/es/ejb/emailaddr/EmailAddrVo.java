@@ -8,32 +8,29 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-@XmlAccessorType(XmlAccessType.NONE)
+import com.es.ejb.vo.BaseWsVo;
+import com.es.tomee.util.TimestampAdapter;
+
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "EmailAddrVo")
-public class EmailAddrVo implements java.io.Serializable {
+public class EmailAddrVo extends BaseWsVo {
 	private static final long serialVersionUID = -918554579365101630L;
 
-	@XmlElement()
+	@XmlElement(required=true)
 	private String address;
-	@XmlElement()
 	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp statusChangeTime;
-	@XmlElement()
  	private String statusChangeUserId;
-	@XmlElement()
+	@XmlElement(required=true)
 	private int bounceCount = 0;
-	@XmlElement()
 	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastBounceTime;
-	@XmlElement()
 	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastSentTime;
-	@XmlElement()
 	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastRcptTime;
-	@XmlElement()
+	@XmlElement(required=true)
 	private boolean isAcceptHtml;
-	@XmlElement()
 	private String origAddress;
 
 	public EmailAddrVo() {

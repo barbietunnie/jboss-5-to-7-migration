@@ -7,7 +7,7 @@ import javax.jws.WebService;
 public interface EmailAddrWs {
 
 	@WebMethod
-	public EmailAddrVo findByAddress(String address);
+	public EmailAddrVo findSertAddress(String address);
 	
 	@WebMethod
 	public int deleteByAddress(String address);

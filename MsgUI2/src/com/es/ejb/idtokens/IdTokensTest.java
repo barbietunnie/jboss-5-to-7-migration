@@ -11,6 +11,7 @@ import javax.naming.Context;
 import org.apache.log4j.Logger;
 
 import jpa.constant.Constants;
+import jpa.util.StringUtil;
 import junit.framework.TestCase;
 
 public class IdTokensTest extends TestCase {
@@ -42,14 +43,8 @@ public class IdTokensTest extends TestCase {
 			 fail("Failed to find Sender by Id: " + Constants.DEFAULT_SENDER_ID);
 		 }
 		 
-		 List<jpa.model.IdTokens> list = idTokens.findAll();
+		 List<IdTokensVo> list = idTokens.findAll();
 		 assertTrue(!list.isEmpty());
-		 
-		 jpa.model.IdTokens id = list.get(list.size() - 1);
-		 long newTime = System.currentTimeMillis();
-		 id.setUpdtTime(new java.sql.Timestamp(newTime));
-		 idTokens.update(id);
-		 id = idTokens.findBySenderId(id.getSenderData().getSenderId());
-		 assertEquals(newTime, id.getUpdtTime().getTime());
+		 logger.info(StringUtil.prettyPrint(list.get(0)));
 	 }
 }

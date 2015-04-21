@@ -1,5 +1,6 @@
 package com.es.ejb.idtokens;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
@@ -19,11 +20,17 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 import jpa.service.common.IdTokensService;
 import jpa.util.SpringUtil;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
+
+import com.es.tomee.util.TomeeCtxUtil;
 
 /**
  * Session Bean implementation class IdTokens
@@ -37,7 +44,10 @@ import org.apache.log4j.Logger;
 	authenticationType = AuthenticationType.CONTAINER)
 @Remote(IdTokensRemote.class)
 @Local(IdTokensLocal.class)
-public class IdTokens implements IdTokensRemote, IdTokensLocal {
+
+@WebService (portName = "IdTokens", serviceName = "IdTokensService", targetNamespace = "http://com.es.ws.idtokens/wsdl")
+@SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
+public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
 	protected static final Logger logger = Logger.getLogger(IdTokens.class);
 	@Resource
 	SessionContext context;
@@ -47,6 +57,7 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal {
      */
     public IdTokens() {
     	idTokensDao = SpringUtil.getAppContext().getBean(IdTokensService.class);
+    	TomeeCtxUtil.registerBeanUtilsConverters();
     }
 
     @Asynchronous
@@ -63,31 +74,37 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal {
     	return new AsyncResult<Long>(System.currentTimeMillis() - start);
     }
     
+    @WebMethod
     //@AccessTimeout(0)
     @AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
-	public jpa.model.IdTokens findBySenderId(String senderId) {
-		jpa.model.IdTokens idTokensVo = idTokensDao.getBySenderId(senderId);
+	public IdTokensVo findBySenderId(String senderId) {
+		jpa.model.IdTokens idTokens = idTokensDao.getBySenderId(senderId);
+		IdTokensVo idTokensVo = new IdTokensVo();
+		try {
+			BeanUtils.copyProperties(idTokensVo, idTokens);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("Failed to copy properties", e);
+		}
 		return idTokensVo;
 	}
 
+    @WebMethod
     @AccessTimeout(value = 10, unit = TimeUnit.SECONDS)
-	public List<jpa.model.IdTokens> findAll() {
+	public List<IdTokensVo> findAll() {
 		List<jpa.model.IdTokens> list = idTokensDao.getAll();
-		return list;
-	}
-
-    @AccessTimeout(-1)
-	public void insert(jpa.model.IdTokens idTokensVo) {
-		idTokensDao.insert(idTokensVo);
-	}
-
-    @AccessTimeout(-1)
-	public void update(jpa.model.IdTokens idTokensVo) {
-		idTokensDao.update(idTokensVo);
-	}
-
-	@AccessTimeout(-1)
-	public void delete(String senderId) {
-		idTokensDao.deleteBySenderId(senderId);
+		List<IdTokensVo> volist = new ArrayList<IdTokensVo>();
+		for (jpa.model.IdTokens idTokens : list) {
+			IdTokensVo idTokensVo = new IdTokensVo();
+			try {
+				BeanUtils.copyProperties(idTokensVo, idTokens);
+				idTokensVo.setSenderId(idTokens.getSenderData().getSenderId());
+				volist.add(idTokensVo);
+			}
+			catch (Exception e) {
+				throw new RuntimeException("Failed to copy properties", e);
+			}
+		}
+		return volist;
 	}
 }

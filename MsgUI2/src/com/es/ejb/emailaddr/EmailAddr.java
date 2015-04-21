@@ -19,10 +19,9 @@ import jpa.service.common.EmailAddressService;
 import jpa.util.SpringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.SqlDateConverter;
-import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 import org.apache.log4j.Logger;
+
+import com.es.tomee.util.TomeeCtxUtil;
 
 /**
  * Session Bean implementation class EmailAddr
@@ -52,14 +51,11 @@ public class EmailAddr implements EmailAddrRemote, EmailAddrLocal, EmailAddrWs {
     public EmailAddr() {
 		emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
 		// setup for BeanUtils.copyProperties() to handle null value
-		SqlDateConverter dateConverter = new SqlDateConverter(null);
-		SqlTimestampConverter timestampConverter = new SqlTimestampConverter(null);
-		ConvertUtils.register(dateConverter, java.util.Date.class);
-		ConvertUtils.register(timestampConverter, java.sql.Timestamp.class);
+		TomeeCtxUtil.registerBeanUtilsConverters();
     }
 
     @WebMethod
-	public EmailAddrVo findByAddress(String address) {
+	public EmailAddrVo findSertAddress(String address) {
     	EmailAddress addr = emailAddrDao.findSertAddress(address);
     	EmailAddrVo addr_vo = new EmailAddrVo();
     	try {

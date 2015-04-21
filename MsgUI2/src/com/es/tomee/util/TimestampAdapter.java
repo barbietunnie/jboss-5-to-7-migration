@@ -1,4 +1,4 @@
-package com.es.ejb.emailaddr;
+package com.es.tomee.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

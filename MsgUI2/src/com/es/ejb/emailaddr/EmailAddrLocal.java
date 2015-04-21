@@ -3,6 +3,6 @@ import javax.ejb.Local;
 
 @Local
 public interface EmailAddrLocal {
-	public EmailAddrVo findByAddress(String address);
+	public EmailAddrVo findSertAddress(String address);
 	public int deleteByAddress(String address);
 }

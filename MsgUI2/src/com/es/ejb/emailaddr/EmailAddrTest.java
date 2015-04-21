@@ -35,7 +35,7 @@ private static EJBContainer ejbContainer;
 			EmailAddrRemote rmt = (EmailAddrRemote) TomeeCtxUtil.getLocalContext().lookup(
 					"java:global/WebContent/EmailAddr!com.es.ejb.emailaddr.EmailAddrRemote");
 			
-			EmailAddrVo addr = rmt.findByAddress("emailaddr@remote.test");
+			EmailAddrVo addr = rmt.findSertAddress("emailaddr@remote.test");
 			assertNotNull(addr);
 			int rows = rmt.deleteByAddress(addr.getAddress());
 			assert(rows>0);
