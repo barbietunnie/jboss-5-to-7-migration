@@ -5,12 +5,12 @@ import java.util.List;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
-import jpa.model.IdTokens;
 import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 
 import com.es.ejb.idtokens.IdTokensRemote;
+import com.es.ejb.idtokens.IdTokensVo;
 import com.es.tomee.util.TomeeCtxUtil;
 
 public class IdTokensClient {
@@ -41,8 +41,8 @@ public class IdTokensClient {
 
 		// test EJB remote access
 		logger.info("IdTokensRemote instance: " + id);
-		List<IdTokens> idlist = id.findAll();
-		for (IdTokens it : idlist) {
+		List<IdTokensVo> idlist = id.findAll();
+		for (IdTokensVo it : idlist) {
 			logger.info(StringUtil.prettyPrint(it, 1));
 		}
 	}

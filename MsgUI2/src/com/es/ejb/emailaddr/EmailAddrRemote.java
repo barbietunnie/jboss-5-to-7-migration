@@ -3,6 +3,6 @@ import javax.ejb.Remote;
 
 @Remote
 public interface EmailAddrRemote {
-	public EmailAddrVo findByAddress(String address);
+	public EmailAddrVo findSertAddress(String address);
 	public int deleteByAddress(String address);
 }

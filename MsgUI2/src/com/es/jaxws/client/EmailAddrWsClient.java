@@ -29,10 +29,10 @@ public class EmailAddrWsClient {
 				new QName("http://com.es.ws.emailaddr/wsdl", "EmailAddrService"));
 			assertNotNull(service);
 			EmailAddrWs addr = service.getPort(EmailAddrWs.class);
-			EmailAddrVo vo = addr.findByAddress("test@test.com");
+			EmailAddrVo vo = addr.findSertAddress("test@test.com");
 			assertNotNull(vo);
 			logger.info(StringUtil.prettyPrint(vo));
-			vo = addr.findByAddress("emailaddr@soapws.test");
+			vo = addr.findSertAddress("emailaddr@soapws.test");
 			assertNotNull(vo);
 			int rows = addr.deleteByAddress(vo.getAddress());
 			assert(rows > 0);

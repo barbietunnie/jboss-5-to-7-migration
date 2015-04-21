@@ -2,6 +2,7 @@ package com.es.tomee.util;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -10,6 +11,9 @@ import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.SqlDateConverter;
+import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -95,7 +99,7 @@ public class TomeeCtxUtil {
 				socket.connect(new InetSocketAddress(hostIP, port), 1000);
 				logger.info("Port (" + port + ") reachable.");
 				tomcat_port = port;
-				break;
+				return tomcat_port;
 			}
 			catch (java.io.IOException e) {
 				logger.info("Port (" + port + ") unreachable, time spent: " + (System.currentTimeMillis() - start));
@@ -109,7 +113,16 @@ public class TomeeCtxUtil {
 				}
 			}
 		}
-		return (tomcat_port==null?80:tomcat_port);
+		throw new RuntimeException("Tomcat or TomEE is down or not listening to one of the ports: " + Arrays.toString(ports));
+	}
+
+	public static void registerBeanUtilsConverters() {
+		// setup for BeanUtils.copyProperties() to handle null value
+		SqlDateConverter dateConverter = new SqlDateConverter(null);
+		SqlTimestampConverter timestampConverter = new SqlTimestampConverter(null);
+		
+		ConvertUtils.register(dateConverter, java.util.Date.class);
+		ConvertUtils.register(timestampConverter, java.sql.Timestamp.class);
 	}
 
 	public static void main(String[] args) {
