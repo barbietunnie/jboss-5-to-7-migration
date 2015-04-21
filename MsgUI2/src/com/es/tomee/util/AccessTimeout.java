@@ -1,4 +1,4 @@
-package com.es.ejb.idtokens;
+package com.es.tomee.util;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

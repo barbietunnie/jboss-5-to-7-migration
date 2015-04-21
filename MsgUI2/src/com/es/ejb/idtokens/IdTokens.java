@@ -30,6 +30,7 @@ import jpa.util.SpringUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 
+import com.es.tomee.util.AccessTimeout;
 import com.es.tomee.util.TomeeCtxUtil;
 
 /**
@@ -62,6 +63,7 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
 
     @Asynchronous
     @AccessTimeout(-1)
+    @Override
     public Future<?> stayBusy(CountDownLatch ready) {
     	long start = System.currentTimeMillis();
     	try {
@@ -76,33 +78,39 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
     
     //@AccessTimeout(0)
     @AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
+    @Override
 	public jpa.model.IdTokens findBySenderId(String senderId) {
 		jpa.model.IdTokens idTokens = idTokensDao.getBySenderId(senderId);
 		return idTokens;
 	}
 
     @AccessTimeout(value = 10, unit = TimeUnit.SECONDS)
+    @Override
 	public List<jpa.model.IdTokens> findAll() {
 		List<jpa.model.IdTokens> list = idTokensDao.getAll();
 		return list;
 	}
     
     @AccessTimeout(-1)
+    @Override
     public void insert(jpa.model.IdTokens idTokens) {
     	idTokensDao.insert(idTokens);
     }
  
     @AccessTimeout(-1)
+    @Override
     public void update(jpa.model.IdTokens idTokens) {
     	idTokensDao.update(idTokens);
     }
  
     @AccessTimeout(-1)
+    @Override
     public int delete(String senderId) {
     	return idTokensDao.deleteBySenderId(senderId);
     }
  
     @WebMethod
+    @Override
 	public IdTokensVo getBySenderId(String senderId) {
 		jpa.model.IdTokens idTokens = findBySenderId(senderId);
 		IdTokensVo idTokensVo = new IdTokensVo();
@@ -116,6 +124,7 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
 	}
 
     @WebMethod
+    @Override
 	public List<IdTokensVo> getAll() {
 		List<jpa.model.IdTokens> list = findAll();
 		List<IdTokensVo> volist = new ArrayList<IdTokensVo>();

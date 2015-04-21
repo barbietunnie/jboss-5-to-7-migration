@@ -51,15 +51,18 @@ public class MailSender implements MailSenderRemote, MailSenderLocal {
     	emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
     }
 
+    @Override
 	public void send(MessageBean msgBean) throws IOException, SmtpException {
 		mailSenderBo.process(new MessageContext(msgBean));
 	}
 
+    @Override
 	public void send(byte[] msgStream) throws IOException, SmtpException {
 		mailSenderBo.process(new MessageContext(msgStream));
 	}
 
 	@Transactional(isolation=Isolation.REPEATABLE_READ,propagation=Propagation.REQUIRES_NEW)
+	@Override
 	public EmailAddress findByAddress(String address) {
 		EmailAddress emailAddrVo = emailAddrDao.findSertAddress(address);
 		return emailAddrVo;

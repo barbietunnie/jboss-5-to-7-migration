@@ -17,7 +17,7 @@ import com.es.tomee.util.TomeeCtxUtil;
 public class EmailAddrTest {
 	protected final static Logger logger = Logger.getLogger(EmailAddrTest.class);
 
-private static EJBContainer ejbContainer;
+	private static EJBContainer ejbContainer;
 	
 	@BeforeClass
 	public static void startTheContainer() {
