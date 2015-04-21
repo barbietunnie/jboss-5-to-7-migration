@@ -76,30 +76,4 @@ public final class SenderUtil {
 		return (ProductKey.validateKey(key) | ProductUtil.isProductKeyValid());
 	}
 
-//	public SenderVo getDefaultSenderVo() {
-//		return getSiteProfile(DEFAULT_SENDER_ID);
-//	}
-//	
-//	public SenderVo getSenderVo(String senderId) {
-//		return getSiteProfile(senderId);
-//	}
-//	
-//	public SenderVo getSiteProfile(String senderId) {
-//		if (StringUtil.isEmpty(senderId)) {
-//			senderId = DEFAULT_SENDER_ID;
-//		}
-//		SenderVo vo = getSenderDao().getBySenderId(senderId);
-//		if (vo != null) {
-//			return vo;
-//		}
-//		else {
-//			vo = getSenderDao().getBySenderId(DEFAULT_SENDER_ID);
-//			if (vo != null) {
-//				return vo;
-//			}
-//			else {
-//				throw new RuntimeException("Senders table missing: " + DEFAULT_SENDER_ID);
-//			}
-//		}
-//	}
 }

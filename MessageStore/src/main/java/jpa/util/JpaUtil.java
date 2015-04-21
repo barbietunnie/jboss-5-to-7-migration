@@ -54,6 +54,15 @@ public class JpaUtil {
 		}
 	}
 
+	public static boolean isDeadlockException(Exception e) {
+		Exception ex = ExceptionUtil.findException(e, java.sql.SQLException.class);
+		if (ex != null && ex.getMessage().contains("Lock wait timeout exceeded")) {
+			logger.error("Caught SQL Deadlock error: " + ex.getMessage());
+			return true;
+		}
+		return false;
+	}
+
 	public static void main(String[] args) {
 		logger.info(getJpaDialect());
 	}
