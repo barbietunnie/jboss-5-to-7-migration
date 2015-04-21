@@ -65,6 +65,12 @@ public class SenderDataWsTest {
 				// expected
 				logger.error("SOAPFaultException caught", se);
 			}
+			
+			java.sql.Timestamp updtTime = new java.sql.Timestamp(System.currentTimeMillis());
+			vo.setUpdtTime(updtTime);
+			senderDao.update(vo);
+			vo = senderDao.getBySenderId(vo.getSenderId());
+			assert(updtTime.equals(vo.getUpdtTime()));
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);

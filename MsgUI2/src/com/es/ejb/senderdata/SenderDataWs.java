@@ -13,4 +13,7 @@ public interface SenderDataWs {
 	
 	@WebMethod
 	public List<SenderDataVo> getAll();
+	
+	@WebMethod
+	public void update(SenderDataVo vo);
 }

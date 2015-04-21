@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 public class RegexUtil {
 	final static Logger logger = Logger.getLogger(RegexUtil.class);
+	final static String LF = System.getProperty("line.separator", "\n");
 	
 	public static void main(String[] args) {
 		logger.info("Is redelivery property? " + isJmsDeliveryCountProperty("JMSXDeliveryCount"));

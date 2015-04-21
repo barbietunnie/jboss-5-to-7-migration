@@ -133,4 +133,16 @@ public class SenderData implements SenderDataLocal, SenderDataRemote, SenderData
 		return volist;
 	}
 
+	@Override
+	public void update(SenderDataVo vo) {
+		jpa.model.SenderData sender = findBySenderId(vo.getSenderId());
+		try {
+			BeanUtils.copyProperties(sender, vo);
+			update(sender);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("Failed to copy properties", e);
+		}
+	}
+
 }

@@ -11,7 +11,9 @@ import java.util.concurrent.TimeUnit;
 import javax.ejb.embeddable.EJBContainer;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+import javax.xml.ws.soap.SOAPFaultException;
 
+import jpa.util.ExceptionUtil;
 import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
@@ -55,7 +57,27 @@ public class IdTokensWsTest {
 			}
 			IdTokensVo vo = idtkn.getBySenderId(volist.get(volist.size()-1).getSenderId());
 			assertNotNull(vo);
-		}
+			
+			java.sql.Timestamp updtTime = new java.sql.Timestamp(System.currentTimeMillis());
+			vo.setUpdtTime(updtTime);
+			idtkn.update(vo);
+			vo = idtkn.getBySenderId(vo.getSenderId());
+			assert(updtTime.equals(vo.getUpdtTime()));
+			
+			try {
+				idtkn.getBySenderId("FakeSender");
+				fail();
+			}
+			catch (SOAPFaultException e) {
+				String error = ExceptionUtil.findNestedStackTrace(e, "javax.persistence.NoResultException");
+				if (error != null) {
+					logger.error("NoResultException caught: " + error);
+				}
+				else {
+					logger.error("Exception caught", e);
+				}
+			}
+ 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);
 			fail();
