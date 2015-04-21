@@ -191,8 +191,9 @@ public class MultipartFilter implements Filter {
         List<FileItem> multipartItems = null;
         try {
         	DiskFileItemFactory factory = new DiskFileItemFactory();
-        	if (sizeThreshold > 0)
+        	if (sizeThreshold > 0) {
         		factory.setSizeThreshold(sizeThreshold);
+        	}
             // Parse the multipart request items.
             multipartItems = new ServletFileUpload(factory).parseRequest(request);
             // Note: we could use ServletFileUpload.setFileSizeMax() here, but that would throw a

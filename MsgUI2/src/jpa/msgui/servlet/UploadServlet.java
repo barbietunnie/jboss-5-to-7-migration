@@ -51,13 +51,10 @@ public class UploadServlet extends HttpServlet {
 		ServletContext ctx = getServletContext();
 		logger.info("init() - ServerInfo: " + ctx.getServerInfo() + ", Context Name: "
 				+ ctx.getServletContextName());
-		sessionUploadDao = (SessionUploadService) SpringUtil.getWebAppContext(ctx).getBean(
-				"sessionUploadService");
-		subscriptionDao = (SubscriptionService) SpringUtil.getWebAppContext(ctx).getBean(
-				"subscriptionService");
+		sessionUploadDao = SpringUtil.getWebAppContext(ctx).getBean(SessionUploadService.class);
+		subscriptionDao = SpringUtil.getWebAppContext(ctx).getBean(SubscriptionService.class);
 		// initialize unread counts
-//		MessageInboxService msgInboxDao = (MessageInboxService) SpringUtil.getWebAppContext(ctx).getBean(
-//				"messageInboxService");
+//		MessageInboxService msgInboxDao = SpringUtil.getWebAppContext(ctx).getBean(MessageInboxService.class);
 //		int initInboxCount = msgInboxDao.resetInboxUnreadCount(); // TODO
 //		int initSentCount = msgInboxDao.resetSentUnreadCount(); // TODO
 //		logger.info("init() - InboxUnreadCount = " + initInboxCount + ", SentUnreadCount = "

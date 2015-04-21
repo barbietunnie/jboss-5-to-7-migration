@@ -29,15 +29,17 @@ public class SessionExpiredListener implements HttpSessionListener {
 	}
 
 	public void sessionCreated(HttpSessionEvent event) {
-		if (isDebugEnabled)
+		if (isDebugEnabled) {
 			logger.debug("sessionCreated() - " + event.getSession().getId());
+		}
 	}
 
 	public void sessionDestroyed(HttpSessionEvent event) {
 		// get the session to be destroyed...
 		HttpSession session = event.getSession();
-		if (isDebugEnabled)
+		if (isDebugEnabled) {
 			logger.debug("sessionDestroyed() - " + session.getId() + " Logging out user...");
+		}
 		/*
 		 * nobody can reach user data after this point because session is
 		 * invalidated already. So, get the user data from session and save

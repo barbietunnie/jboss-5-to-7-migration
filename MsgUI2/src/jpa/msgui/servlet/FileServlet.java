@@ -36,10 +36,8 @@ public class FileServlet extends HttpServlet {
 		ServletContext ctx = getServletContext();
 		logger.info("init() - ServerInfo: " + ctx.getServerInfo() + ", Context Path: "
 				+ ctx.getContextPath());
-		//messageDao = (MessageInboxService) SpringUtil.getWebAppContext(ctx)
-		//		.getBean("messageInboxService");
-		attachmentsDao = (MessageAttachmentService) SpringUtil.getWebAppContext(ctx)
-				.getBean("messageAttachmentService");
+//		messageDao = SpringUtil.getWebAppContext(ctx).getBean(MessageInboxService.class);
+		attachmentsDao = SpringUtil.getWebAppContext(ctx).getBean(MessageAttachmentService.class);
 	}
 	
 	@Override
