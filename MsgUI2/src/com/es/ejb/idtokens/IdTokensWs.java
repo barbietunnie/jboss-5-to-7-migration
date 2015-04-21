@@ -13,4 +13,7 @@ public interface IdTokensWs {
 	
 	@WebMethod
 	public List<IdTokensVo> getAll();
+	
+	@WebMethod
+	public void update(IdTokensVo vo);
 }

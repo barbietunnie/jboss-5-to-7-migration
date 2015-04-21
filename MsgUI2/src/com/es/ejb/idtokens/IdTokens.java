@@ -116,6 +116,7 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
 		IdTokensVo idTokensVo = new IdTokensVo();
 		try {
 			BeanUtils.copyProperties(idTokensVo, idTokens);
+			idTokensVo.setSenderId(idTokens.getSenderData().getSenderId());
 		}
 		catch (Exception e) {
 			throw new RuntimeException("Failed to copy properties", e);
@@ -140,6 +141,19 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
 			}
 		}
 		return volist;
+	}
+
+    @WebMethod
+	@Override
+	public void update(IdTokensVo vo) {
+		jpa.model.IdTokens id = findBySenderId(vo.getSenderId());
+		try {
+			BeanUtils.copyProperties(id, vo);
+			update(id);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("Failed to copy properties", e);
+		}
 	}
 
 }
