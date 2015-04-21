@@ -47,15 +47,14 @@ public class IdTokensWsTest {
 			Service service = Service.create(new URL("http://127.0.0.1:4204/WebContent/IdTokens?wsdl"),
 				new QName("http://com.es.ws.idtokens/wsdl", "IdTokensService"));
 			assertNotNull(service);
-			IdTokensWs addr = service.getPort(IdTokensWs.class);
-			List<IdTokensVo> volist = addr.findAll();
+			IdTokensWs idtkn = service.getPort(IdTokensWs.class);
+			List<IdTokensVo> volist = idtkn.getAll();
 			assert(!volist.isEmpty());
 			for (IdTokensVo vo : volist) {
 				logger.info(StringUtil.prettyPrint(vo));
 			}
-			IdTokensVo vo = addr.findBySenderId(volist.get(volist.size()-1).getSenderId());
+			IdTokensVo vo = idtkn.getBySenderId(volist.get(volist.size()-1).getSenderId());
 			assertNotNull(vo);
-			logger.info(StringUtil.prettyPrint(vo));
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);

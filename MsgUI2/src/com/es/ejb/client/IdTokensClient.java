@@ -10,7 +10,6 @@ import jpa.util.StringUtil;
 import org.apache.log4j.Logger;
 
 import com.es.ejb.idtokens.IdTokensRemote;
-import com.es.ejb.idtokens.IdTokensVo;
 import com.es.tomee.util.TomeeCtxUtil;
 
 public class IdTokensClient {
@@ -41,8 +40,8 @@ public class IdTokensClient {
 
 		// test EJB remote access
 		logger.info("IdTokensRemote instance: " + id);
-		List<IdTokensVo> idlist = id.findAll();
-		for (IdTokensVo it : idlist) {
+		List<jpa.model.IdTokens> idlist = id.findAll();
+		for (jpa.model.IdTokens it : idlist) {
 			logger.info(StringUtil.prettyPrint(it, 1));
 		}
 	}

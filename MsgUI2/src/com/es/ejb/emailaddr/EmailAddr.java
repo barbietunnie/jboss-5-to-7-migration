@@ -46,7 +46,7 @@ public class EmailAddr implements EmailAddrRemote, EmailAddrLocal, EmailAddrWs {
 
 	private EmailAddressService emailAddrDao;
     /**
-     * Default constructor. 
+     * Default constructor.
      */
     public EmailAddr() {
 		emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
@@ -54,9 +54,14 @@ public class EmailAddr implements EmailAddrRemote, EmailAddrLocal, EmailAddrWs {
 		TomeeCtxUtil.registerBeanUtilsConverters();
     }
 
-    @WebMethod
-	public EmailAddrVo findSertAddress(String address) {
+    public EmailAddress findSertAddress(String address) {
     	EmailAddress addr = emailAddrDao.findSertAddress(address);
+    	return addr;
+    }
+ 
+    @WebMethod
+	public EmailAddrVo getOrAddAddress(String address) {
+    	EmailAddress addr = findSertAddress(address);
     	EmailAddrVo addr_vo = new EmailAddrVo();
     	try {
 			BeanUtils.copyProperties(addr_vo, addr);
@@ -68,7 +73,7 @@ public class EmailAddr implements EmailAddrRemote, EmailAddrLocal, EmailAddrWs {
 	}
 
     @WebMethod
-	public int deleteByAddress(String address) {
+	public int delete(String address) {
 		int rowsDeleted = emailAddrDao.deleteByAddress(address);
 		return rowsDeleted;
 	}
