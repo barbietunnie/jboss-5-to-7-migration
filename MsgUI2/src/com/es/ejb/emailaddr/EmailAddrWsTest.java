@@ -46,12 +46,12 @@ public class EmailAddrWsTest {
 				new QName("http://com.es.ws.emailaddr/wsdl", "EmailAddrService"));
 			assertNotNull(service);
 			EmailAddrWs addr = service.getPort(EmailAddrWs.class);
-			EmailAddrVo vo = addr.findSertAddress("test@test.com");
+			EmailAddrVo vo = addr.getOrAddAddress("test@test.com");
 			assertNotNull(vo);
 			logger.info(StringUtil.prettyPrint(vo));
-			vo = addr.findSertAddress("emailaddr@soapws.test");
+			vo = addr.getOrAddAddress("emailaddr@soapws.test");
 			assertNotNull(vo);
-			int rows = addr.deleteByAddress(vo.getAddress());
+			int rows = addr.delete(vo.getAddress());
 			assert(rows > 0);
 		}
 		catch (Exception e) {

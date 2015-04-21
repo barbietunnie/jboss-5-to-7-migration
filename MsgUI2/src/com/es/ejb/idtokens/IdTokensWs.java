@@ -9,8 +9,8 @@ import javax.jws.WebService;
 public interface IdTokensWs {
 
 	@WebMethod
-	public IdTokensVo findBySenderId(String senderId);
+	public IdTokensVo getBySenderId(String senderId);
 	
 	@WebMethod
-	public List<IdTokensVo> findAll();
+	public List<IdTokensVo> getAll();
 }

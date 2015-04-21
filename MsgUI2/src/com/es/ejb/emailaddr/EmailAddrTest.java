@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 
+import jpa.model.EmailAddress;
+
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -35,14 +37,13 @@ private static EJBContainer ejbContainer;
 			EmailAddrRemote rmt = (EmailAddrRemote) TomeeCtxUtil.getLocalContext().lookup(
 					"java:global/WebContent/EmailAddr!com.es.ejb.emailaddr.EmailAddrRemote");
 			
-			EmailAddrVo addr = rmt.findSertAddress("emailaddr@remote.test");
+			EmailAddress addr = rmt.findSertAddress("emailaddr@remote.test");
 			assertNotNull(addr);
-			int rows = rmt.deleteByAddress(addr.getAddress());
+			int rows = rmt.delete(addr.getAddress());
 			assert(rows>0);
 		}
 		catch (NamingException e) {
 			fail();
 		}
-
 	}
 }

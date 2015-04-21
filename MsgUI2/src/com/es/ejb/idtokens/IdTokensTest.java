@@ -1,5 +1,6 @@
 package com.es.ejb.idtokens;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
@@ -43,8 +44,15 @@ public class IdTokensTest extends TestCase {
 			 fail("Failed to find Sender by Id: " + Constants.DEFAULT_SENDER_ID);
 		 }
 		 
-		 List<IdTokensVo> list = idTokens.findAll();
+		 List<jpa.model.IdTokens> list = idTokens.findAll();
 		 assertTrue(!list.isEmpty());
 		 logger.info(StringUtil.prettyPrint(list.get(0)));
+		 
+		 jpa.model.IdTokens idvo = list.get(list.size() -1);
+		 Timestamp ts = new Timestamp(System.currentTimeMillis());
+		 idvo.setUpdtTime(ts);
+		 idTokens.update(idvo);
+		 idvo = idTokens.findBySenderId(idvo.getSenderData().getSenderId());
+		 assert(ts.equals(idvo.getUpdtTime()));
 	 }
 }

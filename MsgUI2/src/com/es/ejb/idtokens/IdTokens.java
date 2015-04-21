@@ -74,11 +74,37 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
     	return new AsyncResult<Long>(System.currentTimeMillis() - start);
     }
     
-    @WebMethod
     //@AccessTimeout(0)
     @AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
-	public IdTokensVo findBySenderId(String senderId) {
+	public jpa.model.IdTokens findBySenderId(String senderId) {
 		jpa.model.IdTokens idTokens = idTokensDao.getBySenderId(senderId);
+		return idTokens;
+	}
+
+    @AccessTimeout(value = 10, unit = TimeUnit.SECONDS)
+	public List<jpa.model.IdTokens> findAll() {
+		List<jpa.model.IdTokens> list = idTokensDao.getAll();
+		return list;
+	}
+    
+    @AccessTimeout(-1)
+    public void insert(jpa.model.IdTokens idTokens) {
+    	idTokensDao.insert(idTokens);
+    }
+ 
+    @AccessTimeout(-1)
+    public void update(jpa.model.IdTokens idTokens) {
+    	idTokensDao.update(idTokens);
+    }
+ 
+    @AccessTimeout(-1)
+    public int delete(String senderId) {
+    	return idTokensDao.deleteBySenderId(senderId);
+    }
+ 
+    @WebMethod
+	public IdTokensVo getBySenderId(String senderId) {
+		jpa.model.IdTokens idTokens = findBySenderId(senderId);
 		IdTokensVo idTokensVo = new IdTokensVo();
 		try {
 			BeanUtils.copyProperties(idTokensVo, idTokens);
@@ -90,9 +116,8 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
 	}
 
     @WebMethod
-    @AccessTimeout(value = 10, unit = TimeUnit.SECONDS)
-	public List<IdTokensVo> findAll() {
-		List<jpa.model.IdTokens> list = idTokensDao.getAll();
+	public List<IdTokensVo> getAll() {
+		List<jpa.model.IdTokens> list = findAll();
 		List<IdTokensVo> volist = new ArrayList<IdTokensVo>();
 		for (jpa.model.IdTokens idTokens : list) {
 			IdTokensVo idTokensVo = new IdTokensVo();
@@ -107,4 +132,5 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
 		}
 		return volist;
 	}
+
 }
