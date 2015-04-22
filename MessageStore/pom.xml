@@ -25,7 +25,7 @@
     <log4j.version>1.2.17</log4j.version>
     <junit.version>4.10</junit.version>
   </properties>
-
+<!-- 
 	<repositories>
 		<repository>
 			<id>oss.sonatype.org</id>
@@ -33,7 +33,7 @@
 			<url>https://oss.sonatype.org/content/groups/staging</url>
 		</repository>
 	</repositories>
-
+-->
   <dependencies>
 	<!-- Spring -->
 	<dependency>
