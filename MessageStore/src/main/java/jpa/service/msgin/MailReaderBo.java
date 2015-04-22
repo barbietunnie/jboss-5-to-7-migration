@@ -61,7 +61,7 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 	protected int MAX_SENDERS = 0;
 	protected int MESSAGE_COUNT = 0;
 	private final int MAX_MESSAGE_COUNT = 6000;
-	private final int MAX_READ_PER_PASS = 50; // the value also affects database unit of work
+	private final int MAX_READ_PER_PASS = 10; // the value also affects database unit of work
 	private int RETRY_MAX = 10; // , default to 10, -1 -> infinite retry
 	private final int readPerPass;
 	private int freq;
@@ -361,14 +361,14 @@ public class MailReaderBo implements Serializable, Runnable, ConnectionListener,
 				// purged more often
 				int msgsToRead = Math.min(msgCount, readPerPass);
 				// if we can't keep up, process more messages in each cycle
-				if (msgCount > msgsToRead * 40) {
-					msgsToRead *= 20;
-				}
-				else if (msgCount > msgsToRead * 20) {
-					msgsToRead *= 10;
-				}
-				else if (msgCount > msgsToRead * 10) {
+				if (msgCount > msgsToRead * 10) {
 					msgsToRead *= 5;
+				}
+				else if (msgCount > msgsToRead * 6) {
+					msgsToRead *= 3;
+				}
+				else if (msgCount > msgsToRead * 4) {
+					msgsToRead *= 2;
 				}
 				msgsToRead = msgsToRead > MAX_READ_PER_PASS ? MAX_READ_PER_PASS : msgsToRead;
 				logger.info("number of messages to be processed in this cycle: " + msgsToRead);
