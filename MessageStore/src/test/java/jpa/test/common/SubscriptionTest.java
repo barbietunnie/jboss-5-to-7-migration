@@ -1,6 +1,9 @@
 package jpa.test.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -137,7 +140,7 @@ public class SubscriptionTest {
 		assertFalse(service.getByAddress(emailAddr3.getAddress()).isEmpty());
 
 		assertTrue(1<=service.getByListIdSubscribersOnly(list.get(0).getListId()).size());
-		assertTrue(0<=service.getByListIdProsperctsOnly(list.get(0).getListId()).size());
+		assertTrue(1<=service.getByListIdProsperctsOnly(list.get(0).getListId()).size());
 		
 		//assertTrue(1==service.deleteByPrimaryKey(emailAddr3.getRowId(), list.get(0).getRowId()));
 		assertTrue(1==service.deleteByAddress(emailAddr3.getAddress()));
