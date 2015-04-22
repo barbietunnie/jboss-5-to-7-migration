@@ -71,9 +71,10 @@ public class SubscriptionService implements java.io.Serializable {
 	
 	public List<Subscription> getByListIdProsperctsOnly(String listId) {
 		String sql = "select t from Subscription t, MailingList l, " +
-				" SubscriberData sub, EmailAddress ea " +
+				" EmailAddress ea " +
 				" where l=t.mailingList and l.listId = :listId " +
-				" and ea=t.emailAddr and sub=ea.subscriberData and sub is null"; // TODO
+				" and ea=t.emailAddr and not exists "
+				+ "(select sub from SubscriberData sub where sub=ea.subscriberData)";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("listId", listId);

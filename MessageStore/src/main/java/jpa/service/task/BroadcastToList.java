@@ -74,8 +74,9 @@ public class BroadcastToList extends TaskBaseAdapter {
 	 */
 	public Integer process(MessageContext ctx) throws DataValidationException,
 			AddressException, TemplateException, IOException {
-		if (isDebugEnabled)
+		if (isDebugEnabled) {
 			logger.debug("Entering process() method...");
+		}
 		if (ctx==null || ctx.getMessageBean()==null) {
 			throw new DataValidationException("input MessageBean is null");
 		}
@@ -127,23 +128,25 @@ public class BroadcastToList extends TaskBaseAdapter {
 		}
 		// extract variables from message body
 		List<String> varNames = RenderUtil.retrieveVariableNames(bodyText);
-		if (isDebugEnabled)
+		if (isDebugEnabled) {
 			logger.debug("Body Variable names: " + varNames);
+		}
 		// extract variables from message subject
 		String subjText = messageBean.getSubject() == null ? "" : messageBean.getSubject();
 		List<String> subjVarNames = RenderUtil.retrieveVariableNames(subjText);
 		if (!subjVarNames.isEmpty()) {
 			varNames.addAll(subjVarNames);
-			if (isDebugEnabled)
+			if (isDebugEnabled) {
 				logger.debug("Subject Variable names: " + subjVarNames);
+			}
 		}
 		// get subscribers
 		List<Subscription> subrs = null;
 		if (messageBean.getToSubscribersOnly()) {
-			subrs = subscriptionDao.getByListId(listId);
+			subrs = subscriptionDao.getByListIdSubscribersOnly(listId);
 		}
 		else if (messageBean.getToProspectsOnly()) {
-			subrs = subscriptionDao.getByListId(listId);
+			subrs = subscriptionDao.getByListIdProsperctsOnly(listId);
 		}
 		else {
 			subrs = subscriptionDao.getByListId(listId);
@@ -224,6 +227,8 @@ public class BroadcastToList extends TaskBaseAdapter {
 		}
 		*/
 		Map<String, String> variables = new HashMap<String, String>();
+		// TODO MsgId is the primary key of the table and it will always be null at this point,
+		// since the message hasn't been sent and saved to the database yet.
 		if (msgBean.getMsgId() != null) {
 			String varName = VariableName.LIST_VARIABLE_NAME.BroadcastMsgId.name();
 			variables.put(varName, String.valueOf(msgBean.getMsgId()));
