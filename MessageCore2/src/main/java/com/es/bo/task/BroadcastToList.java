@@ -149,10 +149,10 @@ public class BroadcastToList extends TaskBaseAdaptor {
 		// get subscribers
 		List<SubscriptionVo> subrs = null;
 		if (messageBean.getToSubscribersOnly()) {
-			subrs = subscriptionDao.getByListId(listId);
+			subrs = subscriptionDao.getSubscribersWithRecord(listId);
 		}
 		else if (messageBean.getToProspectsOnly()) {
-			subrs = subscriptionDao.getByListId(listId);
+			subrs = subscriptionDao.getSubscribersWithoutRecord(listId);
 		}
 		else {
 			subrs = subscriptionDao.getByListId(listId);
