@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
@@ -35,7 +36,8 @@ public class MessageStream extends BaseModel implements Serializable
 	public static final String MAPPING_MESSAGE_STREAM = "MessageStreamNative";
 
 	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
-	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false,
+			table="message_stream", foreignKey=@ForeignKey(name="FK_message_stream_MessageInboxRowId"))
 	private MessageInbox messageInbox;
 
 	@Index
