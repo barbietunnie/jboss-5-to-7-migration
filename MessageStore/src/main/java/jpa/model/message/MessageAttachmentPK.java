@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -13,7 +14,8 @@ public class MessageAttachmentPK implements Serializable {
 	private static final long serialVersionUID = 1355582145272160790L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
-	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false,
+			foreignKey=@ForeignKey(name="FK_message_attachment_MessageInboxRowId"))
 	private MessageInbox messageInbox;
 
 	@Column(nullable=false, columnDefinition="decimal(2,0)")

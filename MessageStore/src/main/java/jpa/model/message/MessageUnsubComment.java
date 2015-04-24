@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -19,7 +20,8 @@ public class MessageUnsubComment extends BaseModel implements Serializable
 	private static final long serialVersionUID = -8816644697506979193L;
 
 	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
-	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false,
+			table="message_unsub_comment", foreignKey=@ForeignKey(name="FK_message_unsub_comment_MessageInboxRowId"))
 	private MessageInbox messageInbox;
 
 	@Column(name="MailingListRowId", nullable=true)

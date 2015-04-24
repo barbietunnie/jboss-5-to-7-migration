@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SqlResultSetMapping;
@@ -33,7 +34,8 @@ public class MessageClickCount extends BaseModel implements Serializable {
 	public static final String MAPPING_MSG_CLICK_COUNT_ENTITY = "MessageClickCountEntiry";
 
 	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
-	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false,
+			table="message_click_count", foreignKey=@ForeignKey(name="FK_message_click_count_MessageInboxRowId"))
 	private MessageInbox messageInbox;
 
 	@Column(name="MailingListRowId", nullable=false)

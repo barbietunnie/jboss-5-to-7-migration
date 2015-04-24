@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -13,7 +14,8 @@ public class RuleElementPK implements Serializable {
 	private static final long serialVersionUID = 4082282320803459127L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
-	@JoinColumn(name="RuleLogicRowId",insertable=true,referencedColumnName="Row_Id",nullable=false)
+	@JoinColumn(name="RuleLogicRowId",insertable=true,referencedColumnName="Row_Id",nullable=false,
+			foreignKey=@ForeignKey(name="FK_rule_element_RuleLogicRowId"))
 	private RuleLogic ruleLogic;
 	
 	@Column(name="elementSequence", nullable=false)
