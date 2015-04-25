@@ -346,6 +346,9 @@ public class EmailAddressService implements java.io.Serializable {
 		}
 	}
 
+	public void updateAcceptHtml(int rowId, boolean acceptHtml) {
+		// TODO to be implemented, for web app
+	}
 
 	public void updateBounceCount(EmailAddress emailAddr) {
 		emailAddr.setBounceCount(emailAddr.getBounceCount()+1);

@@ -51,6 +51,10 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	@CascadeOnDelete
 	private List<Subscription> subscriptions; // subscribers of this list
 	
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true, mappedBy="mailingList")
+	@CascadeOnDelete
+	private List<BroadcastData> broadcastDatas;
+	
 	@ManyToOne(fetch=FetchType.EAGER, optional=false, targetEntity=SenderData.class)
 	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	private SenderData senderData; // sender the list associated to
@@ -108,6 +112,14 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 
 	public void setSubscriptions(List<Subscription> subscriptions) {
 		this.subscriptions = subscriptions;
+	}
+
+	public List<BroadcastData> getBroadcastDatas() {
+		return broadcastDatas;
+	}
+
+	public void setBroadcastDatas(List<BroadcastData> broadcastDatas) {
+		this.broadcastDatas = broadcastDatas;
 	}
 
 	public String getListMasterEmailAddr() {
