@@ -22,7 +22,7 @@ public class SubscriberNameResolver implements VariableResolver,java.io.Serializ
 			logger.debug("Entering process() method...");
 		}
 		String query = "SELECT CONCAT(c.firstName,' ',c.lastName) as ResultStr ";
-		if (Constants.DB_PRODNAME_DERBY.equals(JpaUtil.getDBProductName())) {
+		if (Constants.isDerbyDatabase(JpaUtil.getDBProductName())) {
 			query = "SELECT (c.firstName || ' ' || c.lastName) as ResultStr ";
 		}
 		

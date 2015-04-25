@@ -1,6 +1,9 @@
 package jpa.util;
 
 import java.sql.SQLException;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -13,6 +16,7 @@ import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -30,6 +34,24 @@ public class JpaUtil {
 			return prodName;
 		}
 		catch (SQLException e) {}
+		// Failed to get Database name from data source, now inspecting JPA Vendor Adapter
+		JpaVendorAdapter adapter = (JpaVendorAdapter) SpringUtil.getAppContext().getBean("jpaVendorAdapter");
+		Set<String> keys = adapter.getJpaPropertyMap().keySet();
+		for (java.util.Iterator<String> it=keys.iterator(); it.hasNext();) {
+			String key = it.next();
+			if (StringUtils.containsIgnoreCase(key, "database")) {
+				Object obj = adapter.getJpaPropertyMap().get(key);
+				Pattern p = Pattern.compile("database\\.(\\w{1,20})Platform$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+				Matcher m = p.matcher(obj.toString());
+				if (m.find() && m.groupCount() >= 1) {
+					for (int i=0; i<=m.groupCount(); i++) {
+						//logger.info(i + " : " + m.group(i));
+					}
+					logger.info("Database platform name: " + m.group(1));
+					return m.group(1);
+				}
+			}
+		}
 		return "UnKnown";
 	}
 
@@ -64,7 +86,8 @@ public class JpaUtil {
 	}
 
 	public static void main(String[] args) {
-		logger.info(getJpaDialect());
+		getDBProductName();
+		logger.info("Jpa Dialect: " + getJpaDialect());
 	}
 
 	/**

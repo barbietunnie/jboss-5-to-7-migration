@@ -297,7 +297,7 @@ public class MessageInboxService implements java.io.Serializable {
 	 * @return true if the smtpMessageId exists.
 	 */
 	public synchronized boolean isMessageIdDuplicate(String smtpMessageId) {
-		if (Constants.DB_PRODNAME_PSQL.equalsIgnoreCase(JpaUtil.getDBProductName())) {
+		if (Constants.isPgSQLDatabase(JpaUtil.getDBProductName())) {
 			return isMessageIdDuplicateV2(smtpMessageId);
 		}
 		else {
@@ -371,8 +371,8 @@ public class MessageInboxService implements java.io.Serializable {
 		Timestamp go_back=new Timestamp(calendar.getTimeInMillis());
 
 		try {
-			if (Constants.DB_PRODNAME_MYSQL.equalsIgnoreCase(JpaUtil.getDBProductName())
-					|| Constants.DB_PRODNAME_DERBY.equalsIgnoreCase(JpaUtil.getDBProductName())) {
+			if (Constants.isMySQLDatabase(JpaUtil.getDBProductName())
+					|| Constants.isDerbyDatabase(JpaUtil.getDBProductName())) {
 				em.clear(); // to work around a weird problem (MySQL and Derby) where
 					// the query.executeUpdate() triggers an INSERT from em cache.
 			}
@@ -420,7 +420,7 @@ public class MessageInboxService implements java.io.Serializable {
 		}
 		finally {
 			em.flush();
-			if (Constants.DB_PRODNAME_DERBY.equalsIgnoreCase(JpaUtil.getDBProductName())) {
+			if (Constants.isDerbyDatabase(JpaUtil.getDBProductName())) {
 				em.clear();
 			}
 		}
@@ -474,12 +474,12 @@ public class MessageInboxService implements java.io.Serializable {
 	public int updateStatusIdByLeadMsgId(MessageInbox msgInbox) {
 		msgInbox.setUpdtTime(new Timestamp(System.currentTimeMillis()));
 		String sql =
-			"update Message_Inbox a set " +
-				"a.updtTime=?1, " +
-				"a.updtUserId=?2, " +
-				"a.statusId=?3 " +
+			"update Message_Inbox set " +
+				"updtTime=?1, " +
+				"updtUserId=?2, " +
+				"statusId=?3 " +
 			" where " +
-				" a.LeadMsgRowId=?4 ";
+				" LeadMsgRowId=?4 ";
 
 		try {
 			Query query = em.createNativeQuery(sql);
