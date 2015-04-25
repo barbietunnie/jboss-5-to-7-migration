@@ -36,20 +36,6 @@ public class AlterConstraints {
 		System.exit(0);
 	}
 	
-	private List<String> loadQueries(String sqlFileName) {
-		byte[] bytes = FileUtil.loadFromFile("META-INF", sqlFileName);
-		String sql = new String(bytes);
-		logger.info("Queries loaded: "+ sql);
-		String[] queries = sql.split(";");
-		List<String> queryList = new ArrayList<String>();
-		for (String query : queries) {
-			if (StringUtils.isNotBlank(query)) {
-				queryList.add(query.trim());
-			}
-		}
-		return queryList;
-	}
-
 	void executeQueries() {
 		String SQLFileName;
 		String db_name = JpaUtil.getDBProductName();
@@ -70,5 +56,19 @@ public class AlterConstraints {
 		JdbcTemplate jdbc = new JdbcTemplate(ds);
 		int[] results = jdbc.batchUpdate(queries.toArray(new String[] {}));
 		logger.info("Queries executed: " + Arrays.asList(ArrayUtils.toObject(results)));
+	}
+	
+	private List<String> loadQueries(String sqlFileName) {
+		byte[] bytes = FileUtil.loadFromFile("META-INF", sqlFileName);
+		String sql = new String(bytes);
+		logger.info("Queries loaded: "+ sql);
+		String[] queries = sql.split(";");
+		List<String> queryList = new ArrayList<String>();
+		for (String query : queries) {
+			if (StringUtils.isNotBlank(query)) {
+				queryList.add(query.trim());
+			}
+		}
+		return queryList;
 	}
 }
