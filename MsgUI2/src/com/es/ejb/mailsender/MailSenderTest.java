@@ -55,6 +55,12 @@ public class MailSenderTest {
 				assertNotNull(e.getCause());
 				assert(e.getCause() instanceof NoResultException);
 			}
+			
+			try {
+				rmt.send("testfrom@localhost", "testto@localhost", "Test from MailSender", "Message from MailSender EJB.");
+			} catch (Exception e) {
+				fail();
+			}
 		}
 		catch (NamingException e) {
 			fail();
