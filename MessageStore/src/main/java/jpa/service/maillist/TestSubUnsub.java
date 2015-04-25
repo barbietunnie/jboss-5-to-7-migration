@@ -1,13 +1,13 @@
-package jpa.service.msgin;
+package jpa.service.maillist;
 
 import javax.mail.MessagingException;
 
 import jpa.util.EmailSender;
 
-public class TestMailingList {
+public class TestSubUnsub {
 
 	public static void main(String[] args) {
-		TestMailingList test = new TestMailingList();
+		TestSubUnsub test = new TestSubUnsub();
 		try {
 			test.subscribe();
 			Thread.sleep(20000);

@@ -1,4 +1,4 @@
-package jpa.service.msgin;
+package jpa.service.maillist;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -23,11 +23,9 @@ import jpa.model.MailingList;
 import jpa.service.common.EmailAddressService;
 import jpa.service.common.EmailTemplateService;
 import jpa.service.common.EmailVariableService;
-import jpa.service.common.MailingListService;
 import jpa.service.common.SenderDataService;
 import jpa.service.external.VariableResolver;
 import jpa.service.message.TemplateDataService;
-import jpa.service.msgout.RenderBo;
 import jpa.util.EmailAddrUtil;
 import jpa.variable.RenderUtil;
 import jpa.variable.RenderVariableVo;

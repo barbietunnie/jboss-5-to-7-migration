@@ -1,4 +1,4 @@
-package jpa.service.msgout;
+package jpa.service.maillist;
 
 import java.io.IOException;
 import java.util.Map;
@@ -22,11 +22,9 @@ import jpa.model.MailingList;
 import jpa.model.Subscription;
 import jpa.service.common.EmailAddressService;
 import jpa.service.common.EmailTemplateService;
-import jpa.service.common.MailingListService;
 import jpa.service.common.SubscriptionService;
 import jpa.service.message.MessageClickCountService;
-import jpa.service.msgin.EmailTemplateBo;
-import jpa.service.msgin.TemplateRenderVo;
+import jpa.service.msgout.MessageBeanBo;
 import jpa.service.task.BroadcastToList;
 import jpa.service.task.SendMessage;
 import jpa.util.EmailAddrUtil;

@@ -1,4 +1,4 @@
-package jpa.service.msgout;
+package jpa.service.maillist;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -47,6 +47,7 @@ import jpa.service.message.MessageRenderedService;
 import jpa.service.message.MessageSourceService;
 import jpa.service.message.TemplateDataService;
 import jpa.service.message.TemplateVariableService;
+import jpa.service.msgout.MsgOutboxBo;
 import jpa.util.SpringUtil;
 import jpa.variable.ErrorVariableVo;
 import jpa.variable.RenderVariableVo;

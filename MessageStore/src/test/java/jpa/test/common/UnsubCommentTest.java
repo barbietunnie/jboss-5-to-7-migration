@@ -12,8 +12,8 @@ import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.UnsubComment;
 import jpa.service.common.EmailAddressService;
-import jpa.service.common.MailingListService;
 import jpa.service.common.UnsubCommentService;
+import jpa.service.maillist.MailingListService;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;

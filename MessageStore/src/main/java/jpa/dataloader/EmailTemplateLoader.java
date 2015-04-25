@@ -8,8 +8,8 @@ import jpa.model.EmailTemplate;
 import jpa.model.MailingList;
 import jpa.model.SchedulesBlob;
 import jpa.service.common.EmailTemplateService;
-import jpa.service.common.MailingListService;
 import jpa.service.common.SenderDataService;
+import jpa.service.maillist.MailingListService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
