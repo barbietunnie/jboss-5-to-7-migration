@@ -63,7 +63,7 @@ public class DerbyInitServlet extends HttpServlet {
 		}
 		// end test
 		
-		if (Constants.DB_PRODNAME_DERBY.equals(JpaUtil.getDBProductName())) {
+		if (Constants.isDerbyDatabase(JpaUtil.getDBProductName())) {
 			SenderDataService sender = SpringUtil.getWebAppContext().getBean(SenderDataService.class);
 			if (sender.getAll().isEmpty()) {
 				logger.warn("Initializing Derby database and load all the tables...");
