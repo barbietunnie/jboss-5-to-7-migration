@@ -4,17 +4,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import jpa.constant.Constants;
 import jpa.constant.EmailAddrType;
 import jpa.constant.VariableType;
 import jpa.data.preload.SenderVariableEnum;
 import jpa.data.preload.GlobalVariableEnum;
 import jpa.model.message.MessageRendered;
+import jpa.service.maillist.RenderRequest;
+import jpa.service.maillist.RenderResponse;
 import jpa.service.message.MessageRenderedService;
 import jpa.service.msgout.MsgOutboxBo;
-import jpa.service.msgout.RenderRequest;
-import jpa.service.msgout.RenderResponse;
 import jpa.variable.RenderVariableVo;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +38,7 @@ public class RenderBoTest {
 	}
 
 	@Autowired
-	jpa.service.msgout.RenderBo service;
+	jpa.service.maillist.RenderBo service;
 	@Autowired
 	MsgOutboxBo outboxBo;
 	@Autowired

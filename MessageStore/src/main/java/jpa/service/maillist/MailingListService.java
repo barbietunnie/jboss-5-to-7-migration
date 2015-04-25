@@ -1,4 +1,4 @@
-package jpa.service.common;
+package jpa.service.maillist;
 
 import java.util.ArrayList;
 import java.util.List;

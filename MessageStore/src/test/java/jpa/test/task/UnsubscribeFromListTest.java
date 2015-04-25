@@ -14,8 +14,8 @@ import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
-import jpa.service.common.MailingListService;
 import jpa.service.common.SubscriptionService;
+import jpa.service.maillist.MailingListService;
 import jpa.service.task.UnsubscribeFromList;
 import jpa.util.StringUtil;
 

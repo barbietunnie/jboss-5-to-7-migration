@@ -22,6 +22,7 @@ import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
 import jpa.msgui.vo.PagingVo;
+import jpa.service.maillist.MailingListService;
 import jpa.util.StringUtil;
 
 @Component("subscriptionService")

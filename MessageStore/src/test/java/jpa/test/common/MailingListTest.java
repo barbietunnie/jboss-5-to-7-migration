@@ -17,7 +17,7 @@ import jpa.model.EmailAddress;
 import jpa.model.MailingList;
 import jpa.model.Subscription;
 import jpa.service.common.EmailAddressService;
-import jpa.service.common.MailingListService;
+import jpa.service.maillist.MailingListService;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;

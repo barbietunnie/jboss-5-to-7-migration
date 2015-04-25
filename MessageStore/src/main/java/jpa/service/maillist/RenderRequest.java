@@ -1,4 +1,4 @@
-package jpa.service.msgout;
+package jpa.service.maillist;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

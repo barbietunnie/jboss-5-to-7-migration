@@ -17,8 +17,8 @@ import jpa.model.Subscription;
 import jpa.msgui.vo.PagingVo;
 import jpa.service.common.EmailAddressService;
 import jpa.service.common.EntityManagerService;
-import jpa.service.common.MailingListService;
 import jpa.service.common.SubscriptionService;
+import jpa.service.maillist.MailingListService;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;

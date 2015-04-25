@@ -22,9 +22,9 @@ import jpa.model.rule.RuleElement;
 import jpa.model.rule.RuleLogic;
 import jpa.model.rule.RuleSubruleMap;
 import jpa.service.common.EntityManagerService;
-import jpa.service.common.MailingListService;
 import jpa.service.common.ReloadFlagsService;
 import jpa.service.common.SenderDataService;
+import jpa.service.maillist.MailingListService;
 import jpa.util.SpringUtil;
 
 import org.apache.commons.lang3.StringUtils;

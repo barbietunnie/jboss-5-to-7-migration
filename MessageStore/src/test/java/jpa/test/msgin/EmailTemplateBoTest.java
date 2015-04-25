@@ -15,10 +15,10 @@ import jpa.model.message.TemplateData;
 import jpa.model.message.TemplateDataPK;
 import jpa.service.common.EmailTemplateService;
 import jpa.service.common.SenderDataService;
+import jpa.service.maillist.EmailTemplateBo;
+import jpa.service.maillist.RenderBo;
+import jpa.service.maillist.TemplateRenderVo;
 import jpa.service.message.TemplateDataService;
-import jpa.service.msgin.EmailTemplateBo;
-import jpa.service.msgin.TemplateRenderVo;
-import jpa.service.msgout.RenderBo;
 import jpa.variable.RenderUtil;
 
 import org.apache.log4j.Logger;

@@ -1,4 +1,4 @@
-package jpa.service.msgin;
+package jpa.service.maillist;
 
 import java.io.Serializable;
 
