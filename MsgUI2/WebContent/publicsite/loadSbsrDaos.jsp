@@ -1,14 +1,14 @@
-<%@page import="jpa.service.common.MailingListService"%>
+<%@page import="jpa.service.maillist.MailingListService"%>
 <%@page import="jpa.service.common.EmailAddressService"%>
 <%@page import="jpa.service.common.SubscriptionService"%>
-<%@page import="jpa.service.msgout.MailingListBo"%>
+<%@page import="jpa.service.maillist.MailingListBo"%>
 <%@page import="jpa.msgui.util.SpringUtil"%>
 <%@page import="jpa.model.MailingList"%>
 <%@page import="jpa.model.EmailVariable"%>
 <%@page import="jpa.service.common.EmailVariableService"%>
 <%@page import="jpa.service.message.MessageClickCountService"%>
 <%@page import="jpa.service.common.SubscriberDataService"%>
-<%@page import="jpa.service.msgout.RenderBo"%>
+<%@page import="jpa.service.maillist.RenderBo"%>
 <%@page import="jpa.constant.*"%>
 <%@page import="jpa.variable.*"%>
 <%@page import="org.apache.log4j.Logger" %>
