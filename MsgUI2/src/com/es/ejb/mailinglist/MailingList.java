@@ -16,7 +16,7 @@ import javax.ejb.TransactionManagementType;
 import jpa.exception.DataValidationException;
 import jpa.exception.OutOfServiceException;
 import jpa.exception.TemplateNotFoundException;
-import jpa.service.msgout.MailingListBo;
+import jpa.service.maillist.MailingListBo;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
