@@ -12,7 +12,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
+import jpa.constant.Constants;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
@@ -59,6 +62,26 @@ public class MailSender implements MailSenderRemote, MailSenderLocal {
     @Override
 	public void send(byte[] msgStream) throws IOException, SmtpException {
 		mailSenderBo.process(new MessageContext(msgStream));
+	}
+
+    @Override
+	public void send(String fromAddr, String toAddr, String subject, String body) throws IOException, SmtpException {
+		MessageBean msgBean = new MessageBean();
+		try {
+		msgBean.setFrom(InternetAddress.parse(fromAddr));
+		}
+		catch (AddressException e) {
+			throw new IllegalArgumentException("Invalid email FROM address: " + fromAddr);
+		}
+		try {
+			msgBean.setTo(InternetAddress.parse(toAddr));
+		} catch (AddressException e) {
+			throw new IllegalArgumentException("Invalid email TO address: " + toAddr);
+		}
+		msgBean.setSubject(subject);
+		msgBean.setBody(body);
+		msgBean.setSenderId(Constants.DEFAULT_SENDER_ID);
+		send(msgBean);
 	}
 
 	@Transactional(isolation=Isolation.REPEATABLE_READ,propagation=Propagation.REQUIRES_NEW)

@@ -13,5 +13,7 @@ public interface MailSenderRemote {
 
 	public void send(byte[] msgStream) throws IOException, SmtpException;
 
+	public void send(String fromAddr, String toAddr, String subject, String body) throws IOException, SmtpException;
+	
 	public EmailAddress findByAddress(String address);
 }
