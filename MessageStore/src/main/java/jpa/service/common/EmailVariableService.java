@@ -87,7 +87,7 @@ public class EmailVariableService implements java.io.Serializable {
 	}
 	
 	public String getByQuery(String queryStr, int addrId) {
-		if (Constants.DB_PRODNAME_DERBY.equalsIgnoreCase(JpaUtil.getDBProductName())) {
+		if (Constants.isDerbyDatabase(JpaUtil.getDBProductName())) {
 			// Derby, replace CONCAT function with concatenate operators
 			 Pattern p = Pattern.compile("^(\\w{1,20} )(CONCAT\\(.*\\))(.*)$",
 					 Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);

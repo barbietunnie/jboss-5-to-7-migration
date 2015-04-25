@@ -6,7 +6,9 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import jpa.constant.Constants;
 import jpa.util.FileUtil;
+import jpa.util.JpaUtil;
 import jpa.util.SpringUtil;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -18,7 +20,9 @@ public class AlterConstraints {
 	static final Logger logger = Logger.getLogger(AlterConstraints.class);
 	static final boolean isDebugEnabled = logger.isDebugEnabled();
 
-	static final String SQLFileName = "CascadeOnDeleteMySQL.sql";
+	static final String MySQLFileName = "CascadeOnDeleteMySQL.sql";
+	static final String PgSQLFileName = "CascadeOnDeletePgSQL.sql";
+	static final String DerbyFileName = "CascadeOnDeleteDerby.sql";
 
 	public static void main(String[] args) {
 		AlterConstraints alter = new AlterConstraints();
@@ -47,6 +51,20 @@ public class AlterConstraints {
 	}
 
 	void executeQueries() {
+		String SQLFileName;
+		String db_name = JpaUtil.getDBProductName();
+		if (Constants.isPgSQLDatabase(db_name)) {
+			SQLFileName = PgSQLFileName;
+		}
+		else if (Constants.isMySQLDatabase(db_name)) {
+			SQLFileName = MySQLFileName;
+		}
+		else if (Constants.isDerbyDatabase(db_name)) {
+			SQLFileName = DerbyFileName;
+		}
+		else {
+			throw new RuntimeException("Unsupported Database product: " + db_name);
+		}
 		List<String> queries = loadQueries(SQLFileName);
 		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("msgDataSource");
 		JdbcTemplate jdbc = new JdbcTemplate(ds);

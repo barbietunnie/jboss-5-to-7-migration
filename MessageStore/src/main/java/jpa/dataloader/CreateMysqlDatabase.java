@@ -163,7 +163,7 @@ public class CreateMysqlDatabase {
 
 	private boolean isDerby() {
 		String dbProdName = JpaUtil.getDBProductName();
-		if (Constants.DB_PRODNAME_DERBY.equals(dbProdName)) {
+		if (Constants.isDerbyDatabase(dbProdName)) {
 			return true;
 		}
 		return false;

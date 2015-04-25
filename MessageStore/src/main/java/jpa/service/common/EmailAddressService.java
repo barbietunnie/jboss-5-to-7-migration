@@ -183,10 +183,10 @@ public class EmailAddressService implements java.io.Serializable {
 	 */
 	public List<EmailAddress> getByAddressPattern(String addressPattern) {
 		String sql = "select t.* from Email_Address t where t.address REGEXP '" + addressPattern + "' ";
-		if (Constants.DB_PRODNAME_PSQL.equalsIgnoreCase(JpaUtil.getDBProductName())) {
+		if (Constants.isPgSQLDatabase(JpaUtil.getDBProductName())) {
 			sql = "select t.* from Email_Address t where t.address ~ '" + addressPattern + "' ";
 		}
-		else if (Constants.DB_PRODNAME_DERBY.equalsIgnoreCase(JpaUtil.getDBProductName())) {
+		else if (Constants.isDerbyDatabase(JpaUtil.getDBProductName())) {
 			String pattern = StringUtils.remove(addressPattern, "^");
 			pattern = StringUtils.remove(pattern, "$");
 			pattern = StringUtils.removeStart(pattern, "(");
