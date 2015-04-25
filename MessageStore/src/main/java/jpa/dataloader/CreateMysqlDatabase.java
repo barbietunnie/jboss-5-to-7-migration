@@ -47,8 +47,12 @@ public class CreateMysqlDatabase {
 	 */
 	public void createDatabase() throws ClassNotFoundException, SQLException {
 		logger.info("createDatabase() - Entering...");
-		if (isDerby()) {
+		if (Constants.isDerbyDatabase(JpaUtil.getDBProductName())) {
 			logger.info("Running with Derby database, Please run DataLoader instead...");
+			return;
+		}
+		else if (Constants.isPgSQLDatabase(JpaUtil.getDBProductName())) {
+			logger.info("Running with PgSQL database, Please read postgresql.txt then run DataLoader...");
 			return;
 		}
 		boolean dropDb = false;
@@ -159,14 +163,6 @@ public class CreateMysqlDatabase {
 		DataSource ds = (DataSource) SpringUtil.getAppContext().getBean("initDataSource");
 		Connection con = ds.getConnection("root", rootPassword);
 		return con;
-	}
-
-	private boolean isDerby() {
-		String dbProdName = JpaUtil.getDBProductName();
-		if (Constants.isDerbyDatabase(dbProdName)) {
-			return true;
-		}
-		return false;
 	}
 
 	private boolean isEmailDatabaseExist() {
