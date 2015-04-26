@@ -10,7 +10,10 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.persistence.NoResultException;
 
+import jpa.constant.Constants;
+import jpa.constant.MailingListDeliveryType;
 import jpa.constant.MobileCarrierEnum;
+import jpa.constant.StatusId;
 import jpa.constant.VariableName;
 import jpa.data.preload.RuleNameEnum;
 import jpa.exception.DataValidationException;
@@ -18,11 +21,14 @@ import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.message.util.EmailIdParser;
+import jpa.model.BroadcastData;
 import jpa.model.MailingList;
 import jpa.model.SubscriberData;
 import jpa.model.Subscription;
 import jpa.service.common.SubscriberDataService;
 import jpa.service.common.SubscriptionService;
+import jpa.service.maillist.BroadcastDataService;
+import jpa.service.maillist.EmailBroadcastService;
 import jpa.service.maillist.EmailTemplateBo;
 import jpa.service.maillist.MailingListService;
 import jpa.service.maillist.TemplateRenderVo;
@@ -61,6 +67,10 @@ public class BroadcastToList extends TaskBaseAdapter {
 	private EmailTemplateBo emailTemplateBo;
 	@Autowired
 	private MailSenderBo mailSenderBo;
+	@Autowired
+	private BroadcastDataService broardcastDao;
+	@Autowired
+	private EmailBroadcastService emailBroadcastDao;
 
 	/**
 	 * Send the email to the addresses on the Mailing List.
@@ -126,6 +136,28 @@ public class BroadcastToList extends TaskBaseAdapter {
 		if (bodyText == null) {
 			throw new DataValidationException("Message body is empty.");
 		}
+		// construct and save BroadcastData
+		BroadcastData broadcast = new BroadcastData();
+		broadcast.setMailingList(listVo);
+		broadcast.setEmailTemplate(null);
+		if (messageBean.getToSubscribersOnly()) {
+			broadcast.setDeliveryType(MailingListDeliveryType.SUBSCRIBERS_ONLY.getValue());
+		}
+		else if (messageBean.getToProspectsOnly()) {
+			broadcast.setDeliveryType(MailingListDeliveryType.PROSPECTS_ONLY.getValue());
+		}
+		else {
+			broadcast.setDeliveryType(MailingListDeliveryType.ALL_ON_LIST.getValue());
+		}
+		broadcast.setMsgBody(bodyText);
+		broadcast.setMsgSubject(messageBean.getSubject());
+		broadcast.setStatusId(StatusId.ACTIVE.getValue());
+		java.sql.Timestamp currTime = new java.sql.Timestamp(System.currentTimeMillis());
+		broadcast.setStartTime(currTime);
+		broadcast.setUpdtTime(currTime);
+		broadcast.setUpdtUserId(Constants.DEFAULT_USER_ID);
+		broardcastDao.insert(broadcast);
+		// end of BroadcastData
 		// extract variables from message body
 		List<String> varNames = RenderUtil.retrieveVariableNames(bodyText);
 		if (isDebugEnabled) {
@@ -155,22 +187,20 @@ public class BroadcastToList extends TaskBaseAdapter {
 		for (Subscription subr : subrs) {
 			//messageBean.setSubject(subjText);
 			//messageBean.getBodyNode().setValue(bodyText);
-			mailsSent += constructAndSendMessage(ctx, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, false);
+			mailsSent += constructAndSendMessage(ctx, broadcast, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, false);
 			if (listVo.isSendText()) {
-				mailsSent += constructAndSendMessage(ctx, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, true);
+				mailsSent += constructAndSendMessage(ctx, broadcast, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, true);
 			}
 		}
-		if (messageBean.getMsgId() != null) {
-			msgClickCountsDao.updateStartTime(messageBean.getMsgId());
-			if (mailsSent > 0) {
-				// update sent count to the Broadcasted message
-				msgClickCountsDao.updateSentCount(messageBean.getMsgId(), (int) mailsSent);
-			}
+		if (mailsSent > 0) {
+			// update sent count to the Broadcasted message
+			broadcast.setSentCount(mailsSent);
+			broardcastDao.update(broadcast);
 		}
 		return Integer.valueOf(mailsSent);
 	}
 	
-	private int constructAndSendMessage(MessageContext ctx, Subscription subr,
+	private int constructAndSendMessage(MessageContext ctx, BroadcastData broadcast, Subscription subr,
 			MailingList listVo, String subjText, String bodyText, List<String> varNames,
 			Boolean saveEmbedEmailId, boolean isText)
 			throws DataValidationException, TemplateException, IOException {
@@ -227,12 +257,8 @@ public class BroadcastToList extends TaskBaseAdapter {
 		}
 		*/
 		Map<String, String> variables = new HashMap<String, String>();
-		// TODO MsgId is the primary key of the table and it will always be null at this point,
-		// since the message hasn't been sent and saved to the database yet.
-		if (msgBean.getMsgId() != null) {
-			String varName = VariableName.LIST_VARIABLE_NAME.BroadcastMsgId.name();
-			variables.put(varName, String.valueOf(msgBean.getMsgId()));
-		}
+		String varName = VariableName.LIST_VARIABLE_NAME.BroadcastMsgId.name();
+		variables.put(varName, String.valueOf(broadcast.getRowId()));
 		logger.info("Sending Broadcast Email to: " + toAddress);
 		TemplateRenderVo renderVo = null;
 		renderVo = emailTemplateBo.renderEmailText(toAddress, variables, subjText,
@@ -265,6 +291,16 @@ public class BroadcastToList extends TaskBaseAdapter {
 		else {
 			msgBean.setEmBedEmailId(saveEmbedEmailId);
 			subscriptionDao.updateSentCount(subr.getRowId());
+			// construct EmailBroadcast and save the record
+			/* it seems that EmailBroadcast serves same purpose as Subscription
+			EmailBroadcast emailBroadcast = new EmailBroadcast();
+			emailBroadcast.setBroadcastData(broadcast);
+			emailBroadcast.setEmailAddress(subr.getEmailAddr());
+			emailBroadcast.setStatusId(StatusId.ACTIVE.getValue());
+			emailBroadcast.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			emailBroadcast.setUpdtTime(new java.sql.Timestamp(System.currentTimeMillis()));
+			emailBroadcastDao.insert(emailBroadcast);
+			*/
 		}
 		// invoke mail sender to send the mail off
 		try {

@@ -14,9 +14,10 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="email_broadcast")
+@Table(name="email_broadcast", uniqueConstraints=@UniqueConstraint(columnNames = {"BroadcastDataRowId", "EmailAddressRowId"}))
 @SqlResultSetMappings({ // used by native queries
 	  @SqlResultSetMapping(name="EmailBroadcastEntiry",
 		entities={
