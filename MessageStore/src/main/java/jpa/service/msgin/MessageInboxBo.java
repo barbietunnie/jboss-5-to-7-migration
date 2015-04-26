@@ -11,7 +11,6 @@ import javax.persistence.NoResultException;
 import jpa.constant.CarrierCode;
 import jpa.constant.Constants;
 import jpa.constant.EmailAddrType;
-import jpa.constant.MailingListDeliveryType;
 import jpa.constant.MsgDirectionCode;
 import jpa.constant.MsgStatusCode;
 import jpa.data.preload.RuleNameEnum;
@@ -25,7 +24,6 @@ import jpa.message.MessageBodyBuilder;
 import jpa.message.MessageNode;
 import jpa.message.MsgHeader;
 import jpa.model.EmailAddress;
-import jpa.model.MailingList;
 import jpa.model.SenderData;
 import jpa.model.SubscriberData;
 import jpa.model.message.MessageActionLog;
@@ -33,7 +31,6 @@ import jpa.model.message.MessageActionLogPK;
 import jpa.model.message.MessageAddress;
 import jpa.model.message.MessageAttachment;
 import jpa.model.message.MessageAttachmentPK;
-import jpa.model.message.MessageClickCount;
 import jpa.model.message.MessageDeliveryStatus;
 import jpa.model.message.MessageDeliveryStatusPK;
 import jpa.model.message.MessageHeader;
@@ -50,7 +47,6 @@ import jpa.service.maillist.MailingListService;
 import jpa.service.message.MessageActionLogService;
 import jpa.service.message.MessageAddressService;
 import jpa.service.message.MessageAttachmentService;
-import jpa.service.message.MessageClickCountService;
 import jpa.service.message.MessageDeliveryStatusService;
 import jpa.service.message.MessageHeaderService;
 import jpa.service.message.MessageInboxService;
@@ -66,7 +62,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 
 /**
  * save email data and properties into database.
@@ -98,8 +93,6 @@ public class MessageInboxBo implements java.io.Serializable {
 	private MessageRenderedService msgRenderedDao;
 	@Autowired
 	private MessageActionLogService msgActionLogsDao;
-	@Autowired
-	private MessageClickCountService msgClickCountsDao;
 	@Autowired
 	private SenderDataService senderService;
 	@Autowired
@@ -318,32 +311,6 @@ public class MessageInboxBo implements java.io.Serializable {
 			}
 		}
 
-		// insert click count record for Broadcasting e-mail
-		if (RuleNameEnum.BROADCAST.getValue().equals(msgBean.getRuleName())) {
-			MessageClickCount msgClickCountsVo = new MessageClickCount();
-			msgClickCountsVo.setMessageInbox(msgVo);
-			// msgBean.getMailingListId() should always returns a value. just for safety.
-			if (StringUtils.isNotBlank(msgBean.getMailingListId())) {
-				try {
-					MailingList mlist = mlistService.getByListId(msgBean.getMailingListId());
-					msgClickCountsVo.setMailingListRowId(mlist.getRowId());
-				}
-				catch (NoResultException e) {}
-			}
-			if (msgBean.getToSubscribersOnly()) {
-				msgClickCountsVo.setDeliveryType(MailingListDeliveryType.SUBSCRIBERS_ONLY.getValue());
-			}
-			else if (msgBean.getToProspectsOnly()) {
-				msgClickCountsVo.setDeliveryType(MailingListDeliveryType.PROSPECTS_ONLY.getValue());
-			}
-			else {
-				msgClickCountsVo.setDeliveryType(MailingListDeliveryType.ALL_ON_LIST.getValue());
-			}
-			msgClickCountsVo.setSentCount(0);
-			msgClickCountsVo.setClickCount(0);
-			msgVo.setMessageClickCount(msgClickCountsVo);
-		}
-		
 		// save message headers
 		List<MsgHeader> headers = msgBean.getHeaders();
 		if (headers != null) {

@@ -21,18 +21,18 @@ import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.message.util.EmailIdParser;
-import jpa.model.BroadcastData;
+import jpa.model.BroadcastMessage;
+import jpa.model.BroadcastTracking;
 import jpa.model.MailingList;
 import jpa.model.SubscriberData;
 import jpa.model.Subscription;
 import jpa.service.common.SubscriberDataService;
 import jpa.service.common.SubscriptionService;
-import jpa.service.maillist.BroadcastDataService;
-import jpa.service.maillist.EmailBroadcastService;
+import jpa.service.maillist.BroadcastMessageService;
+import jpa.service.maillist.BroadcastTrackingService;
 import jpa.service.maillist.EmailTemplateBo;
 import jpa.service.maillist.MailingListService;
 import jpa.service.maillist.TemplateRenderVo;
-import jpa.service.message.MessageClickCountService;
 import jpa.service.msgout.MailSenderBo;
 import jpa.service.msgout.SmtpException;
 import jpa.util.EmailSender;
@@ -60,17 +60,15 @@ public class BroadcastToList extends TaskBaseAdapter {
 	@Autowired
 	private SubscriptionService subscriptionDao;
 	@Autowired
-	private MessageClickCountService msgClickCountsDao;
-	@Autowired
 	private SubscriberDataService subscriberDao;
 	@Autowired
 	private EmailTemplateBo emailTemplateBo;
 	@Autowired
 	private MailSenderBo mailSenderBo;
 	@Autowired
-	private BroadcastDataService broardcastDao;
+	private BroadcastMessageService broardcastMsgDao;
 	@Autowired
-	private EmailBroadcastService emailBroadcastDao;
+	private BroadcastTrackingService broadcastTrackingDao;
 
 	/**
 	 * Send the email to the addresses on the Mailing List.
@@ -136,8 +134,8 @@ public class BroadcastToList extends TaskBaseAdapter {
 		if (bodyText == null) {
 			throw new DataValidationException("Message body is empty.");
 		}
-		// construct and save BroadcastData
-		BroadcastData broadcast = new BroadcastData();
+		// construct and save BroadcastMessage
+		BroadcastMessage broadcast = new BroadcastMessage();
 		broadcast.setMailingList(listVo);
 		broadcast.setEmailTemplate(null);
 		if (messageBean.getToSubscribersOnly()) {
@@ -156,8 +154,13 @@ public class BroadcastToList extends TaskBaseAdapter {
 		broadcast.setStartTime(currTime);
 		broadcast.setUpdtTime(currTime);
 		broadcast.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		broardcastDao.insert(broadcast);
-		// end of BroadcastData
+		broardcastMsgDao.insert(broadcast);
+		// end of BroadcastMessage
+		
+		/* 
+		 * TODO Search HTML links in message body and wrap them with the tracking link
+		 */
+		
 		// extract variables from message body
 		List<String> varNames = RenderUtil.retrieveVariableNames(bodyText);
 		if (isDebugEnabled) {
@@ -195,12 +198,12 @@ public class BroadcastToList extends TaskBaseAdapter {
 		if (mailsSent > 0) {
 			// update sent count to the Broadcasted message
 			broadcast.setSentCount(mailsSent);
-			broardcastDao.update(broadcast);
+			broardcastMsgDao.update(broadcast);
 		}
 		return Integer.valueOf(mailsSent);
 	}
 	
-	private int constructAndSendMessage(MessageContext ctx, BroadcastData broadcast, Subscription subr,
+	private int constructAndSendMessage(MessageContext ctx, BroadcastMessage broadcast, Subscription subr,
 			MailingList listVo, String subjText, String bodyText, List<String> varNames,
 			Boolean saveEmbedEmailId, boolean isText)
 			throws DataValidationException, TemplateException, IOException {
@@ -291,16 +294,15 @@ public class BroadcastToList extends TaskBaseAdapter {
 		else {
 			msgBean.setEmBedEmailId(saveEmbedEmailId);
 			subscriptionDao.updateSentCount(subr.getRowId());
-			// construct EmailBroadcast and save the record
-			/* it seems that EmailBroadcast serves same purpose as Subscription
-			EmailBroadcast emailBroadcast = new EmailBroadcast();
-			emailBroadcast.setBroadcastData(broadcast);
-			emailBroadcast.setEmailAddress(subr.getEmailAddr());
-			emailBroadcast.setStatusId(StatusId.ACTIVE.getValue());
-			emailBroadcast.setUpdtUserId(Constants.DEFAULT_USER_ID);
-			emailBroadcast.setUpdtTime(new java.sql.Timestamp(System.currentTimeMillis()));
-			emailBroadcastDao.insert(emailBroadcast);
-			*/
+			// construct BroadcastTracking and save the record
+			// it seems that BroadcastTracking serves same purpose as Subscription
+			BroadcastTracking tracking = new BroadcastTracking();
+			tracking.setBroadcastMessage(broadcast);
+			tracking.setEmailAddress(subr.getEmailAddr());
+			tracking.setStatusId(StatusId.ACTIVE.getValue());
+			tracking.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			tracking.setUpdtTime(new java.sql.Timestamp(System.currentTimeMillis()));
+			broadcastTrackingDao.insert(tracking);
 		}
 		// invoke mail sender to send the mail off
 		try {

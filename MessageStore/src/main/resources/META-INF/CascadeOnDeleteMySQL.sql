@@ -15,10 +15,6 @@ ALTER TABLE message_stream DROP FOREIGN KEY FK_message_stream_MessageInboxRowId;
 
 ALTER TABLE message_stream ADD CONSTRAINT FK_message_stream_MessageInboxRowId FOREIGN KEY (MessageInboxRowId) REFERENCES message_inbox (Row_Id) ON DELETE CASCADE;
 
-ALTER TABLE message_click_count DROP FOREIGN KEY FK_message_click_count_MessageInboxRowId;
-
-ALTER TABLE message_click_count ADD CONSTRAINT FK_message_click_count_MessageInboxRowId FOREIGN KEY (MessageInboxRowId) REFERENCES message_inbox (Row_Id) ON DELETE CASCADE;
-
 ALTER TABLE message_unsub_comment DROP FOREIGN KEY FK_message_unsub_comment_MessageInboxRowId;
 
 ALTER TABLE message_unsub_comment ADD CONSTRAINT FK_message_unsub_comment_MessageInboxRowId FOREIGN KEY (MessageInboxRowId) REFERENCES message_inbox (Row_Id) ON DELETE CASCADE;

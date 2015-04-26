@@ -15,10 +15,6 @@ ALTER TABLE email.message_stream DROP CONSTRAINT mssgstrmMssgnbxRwd;
 
 ALTER TABLE email.message_stream ADD CONSTRAINT mssgstrmMssgnbxRwd FOREIGN KEY (MessageInboxRowId) REFERENCES email.message_inbox (Row_Id) ON DELETE CASCADE;
 
-ALTER TABLE email.message_click_count DROP CONSTRAINT mssgclckMssgnbxRwd;
-
-ALTER TABLE email.message_click_count ADD CONSTRAINT mssgclckMssgnbxRwd FOREIGN KEY (MessageInboxRowId) REFERENCES email.message_inbox (Row_Id) ON DELETE CASCADE;
-
 ALTER TABLE email.message_unsub_comment DROP CONSTRAINT mssgnsbcMssgnbxRwd;
 
 ALTER TABLE email.message_unsub_comment ADD CONSTRAINT mssgnsbcMssgnbxRwd FOREIGN KEY (MessageInboxRowId) REFERENCES email.message_inbox (Row_Id) ON DELETE CASCADE;
