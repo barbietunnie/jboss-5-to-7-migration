@@ -6,7 +6,6 @@
 <%@page import="jpa.model.MailingList"%>
 <%@page import="jpa.model.EmailVariable"%>
 <%@page import="jpa.service.common.EmailVariableService"%>
-<%@page import="jpa.service.message.MessageClickCountService"%>
 <%@page import="jpa.service.common.SubscriberDataService"%>
 <%@page import="jpa.service.maillist.RenderBo"%>
 <%@page import="jpa.constant.*"%>
@@ -52,14 +51,6 @@
 			emailVariableDao = SpringUtil.getWebAppContext(ctx).getBean(EmailVariableService.class);
 		}
 		return emailVariableDao;
-	}
-
-	MessageClickCountService msgClickCountsDao = null;
-	MessageClickCountService getMessageClickCountService(ServletContext ctx) {
-		if (msgClickCountsDao == null) {
-			msgClickCountsDao = SpringUtil.getWebAppContext(ctx).getBean(MessageClickCountService.class);
-		}
-		return msgClickCountsDao;
 	}
 
 	private SubscriberDataService customerBo = null;

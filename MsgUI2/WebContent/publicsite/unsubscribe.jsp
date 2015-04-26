@@ -18,7 +18,7 @@ function checkEmail(myform) {
 	var regex = /^([a-z0-9\.\_\%\+\-])+\@([a-z0-9\-]+\.)+[a-z0-9]{2,4}$/i;
 	if (!regex.test(email.value)) {
 		alert('Please provide a valid email address');
-		email.focus
+		email.focus;
 		return false;
 	}
 	return validateListSelection(myform);
@@ -89,29 +89,29 @@ function checkLength(element, maxvalue) {
 		</table>
 		</td>
 	</tr>
-<%@page import="com.legacytojava.message.vo.emailaddr.EmailAddrVo"%>
-<%@page import="com.legacytojava.message.dao.idtokens.MsgIdCipher"%>
+<%@page import="jpa.model.EmailAddress"%>
+<%@page import="jpa.message.util.MsgIdCipher"%>
 <%
 	Logger logger = Logger.getLogger("com.legacytojava.jsp");
 	ServletContext ctx = application;
  	
 	String encodedSbsrId = request.getParameter("sbsrid");
 	String listIds = request.getParameter("listids");
-	List<MailingListVo> subedList = new ArrayList<MailingListVo>();
-	EmailAddrVo addrVo = null;
+	List<MailingList> subedList = new ArrayList<MailingList>();
+	EmailAddress addrVo = null;
 	StringBuffer sbListNames = new StringBuffer();
 	StringBuffer sbListIds = new StringBuffer();
 	int listCount = 0;
 	try {
-		long sbsrId = MsgIdCipher.decode(encodedSbsrId);
-		addrVo = getEmailAddrDao(ctx).getByAddrId(sbsrId);
+		int sbsrId = MsgIdCipher.decode(encodedSbsrId);
+		addrVo = getEmailAddressService(ctx).getByRowId(sbsrId);
 		if (listIds != null && listIds.length() > 0 && addrVo != null) {
 			StringTokenizer st = new StringTokenizer(listIds, ",");
 			listCount = st.countTokens();
 			int count = 0;
 			while (st.hasMoreTokens()) {
 				String listId = st.nextToken();
-				MailingListVo vo = getMailingListDao(ctx).getByListId(listId);
+				MailingList vo = getMailingListService(ctx).getByListId(listId);
 				if (count > 0) {
 					sbListIds.append(",");
 				}
@@ -261,7 +261,7 @@ function checkLength(element, maxvalue) {
 <%	} %>
 </table>
 <input type="hidden" name="listCount" value="<c:out value="${fn:length(subList)}"/>">
-<input type="hidden" id="realSbsrAddr" value="<%= addrVo == null ? "" : addrVo.getEmailAddr() %>">
+<input type="hidden" id="realSbsrAddr" value="<%= addrVo == null ? "" : addrVo.getAddress() %>">
 </form>
 </div>
 </body>

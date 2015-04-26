@@ -29,6 +29,8 @@ function checkInput(myform) {
 <body>
 <div align="center">
 
+<%@page import="jpa.service.maillist.MailingListBo"%>
+
 <%@ include file="./loadSbsrDaos.jsp" %>
 
 <form action="userprofile.jsp" method="post" onsubmit="return checkInput(this);">

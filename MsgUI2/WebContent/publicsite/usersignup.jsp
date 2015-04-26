@@ -25,6 +25,8 @@
 <jsp:useBean id="staticCodes"
 	class="jpa.msgui.util.StaticCodes" scope="request" />
 
+<%@page import="jpa.service.maillist.MailingListBo"%>
+
 <%@ include file="./loadSbsrDaos.jsp" %>
 
 <form action="usersignup.jsp" method="post" onsubmit="return validateInputs(this);">
