@@ -1,5 +1,7 @@
 package jpa.service.maillist;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -8,6 +10,7 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.Query;
 
 import jpa.model.BroadcastMessage;
+import jpa.msgui.vo.PagingVo;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +79,87 @@ public class BroadcastMessageService implements java.io.Serializable {
 		}
 	}
 	
+	public int getMessageCountForWeb() {
+		String sql = "select count(t) from " +
+				"BroadcastMessage t where t.sentCount > 0 and t.startTime is not null ";
+		try {
+			Query query = em.createQuery(sql);
+			Long count = (Long) query.getSingleResult();
+			return count.intValue();
+		}
+		finally {
+		}
+	}
+	
+	static String[] CRIT = { " where ", " and ", " and ", " and ", " and ", " and " };
+	
+	public List<BroadcastMessage> getBroadcastsWithPaging(PagingVo vo) {
+		List<Object> parms = new ArrayList<Object>();
+		String whereSql = "";
+		/*
+		 * paging logic
+		 */
+		String fetchOrder = "desc";
+		if (vo.getPageAction().equals(PagingVo.PageAction.FIRST)) {
+			// do nothing
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.NEXT)) {
+			if (vo.getIdLast() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id < ? ";
+				parms.add(vo.getIdLast());
+			}
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
+			if (vo.getIdFirst() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id > ? ";
+				parms.add(vo.getIdFirst());
+				fetchOrder = "asc";
+			}
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.LAST)) {
+			List<BroadcastMessage> lastList = new ArrayList<BroadcastMessage>();
+			vo.setPageAction(PagingVo.PageAction.NEXT);
+			while (true) {
+				List<BroadcastMessage> nextList = getBroadcastsWithPaging(vo);
+				if (!nextList.isEmpty()) {
+					lastList = nextList;
+					vo.setIdLast(nextList.get(nextList.size() - 1).getRowId());
+				}
+				else {
+					break;
+				}
+			}
+			return lastList;
+		}
+		else if (vo.getPageAction().equals(PagingVo.PageAction.CURRENT)) {
+			if (vo.getIdFirst() > -1) {
+				whereSql += CRIT[parms.size()] + " a.Row_Id <= ? ";
+				parms.add(vo.getIdFirst());
+			}
+		}
+		whereSql += CRIT[parms.size()] + " a.SentCount > ? ";
+		parms.add(0);
+		
+		String sql = "select a.* " +
+			" from Broadcast_Message a " +
+			whereSql +
+			" and a.StartTime is not null " +
+			" order by a.Row_Id " + fetchOrder;
+		Query query = em.createNativeQuery(sql, BroadcastMessage.MAPPING_BROADCAST_MESSAGE_ENTITY);
+		for (int i=0; i<parms.size(); i++) {
+			query.setParameter(i+1, parms.get(i));
+		}
+		//query.setFirstResult(0);
+		query.setMaxResults(vo.getPageSize());
+		@SuppressWarnings("unchecked")
+		List<BroadcastMessage> list = query.getResultList();
+		if (vo.getPageAction().equals(PagingVo.PageAction.PREVIOUS)) {
+			// reverse the list
+			Collections.reverse(list);
+		}
+		return list;
+	}
+
 	public void delete(BroadcastMessage broadcast) {
 		if (broadcast == null) return;
 		try {

@@ -12,6 +12,7 @@ import jpa.constant.Constants;
 import jpa.constant.MailingListDeliveryType;
 import jpa.constant.StatusId;
 import jpa.model.BroadcastMessage;
+import jpa.msgui.vo.PagingVo;
 import jpa.service.common.EmailAddressService;
 import jpa.service.maillist.BroadcastMessageService;
 import jpa.util.StringUtil;
@@ -96,4 +97,20 @@ public class BroadcastMessageTest {
 		}		
 	}
 
+	@Test
+	public void testBroadcastMessageForWeb() {
+		List<BroadcastMessage> bdlist = service.getAll();
+		assertFalse(bdlist.isEmpty());
+		
+		BroadcastMessage bd1 = bdlist.get(0);
+		bd1.setSentCount(bd1.getSentCount()+1);
+		service.update(bd1);
+		
+		int count = service.getMessageCountForWeb();
+		assertTrue(count>=1);
+		
+		PagingVo vo = new PagingVo();
+		List<BroadcastMessage> pageList = service.getBroadcastsWithPaging(vo);
+		assertFalse(pageList.isEmpty());
+	}
 }
