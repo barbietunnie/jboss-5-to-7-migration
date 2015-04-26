@@ -23,7 +23,6 @@ import jpa.model.Subscription;
 import jpa.service.common.EmailAddressService;
 import jpa.service.common.EmailTemplateService;
 import jpa.service.common.SubscriptionService;
-import jpa.service.message.MessageClickCountService;
 import jpa.service.msgout.MessageBeanBo;
 import jpa.service.task.BroadcastToList;
 import jpa.service.task.SendMessage;
@@ -55,8 +54,6 @@ public class MailingListBo {
 	private EmailAddressService emailAddrDao;
 	@Autowired
 	private SubscriptionService subscriptionDao;
-	@Autowired
-	private MessageClickCountService msgClickCountsDao;
 	@Autowired
 	private BroadcastToList broadcastBo;
 	@Autowired
@@ -282,13 +279,6 @@ public class MailingListBo {
 		if (isDebugEnabled)
 			logger.debug("optInConfirm() -  emailAddr: " + emailAddr + ", listAddr: " + listId);
 		return optInOrConfirm(emailAddr, listId, true);
-	}
-
-	public int updateSentCount(int msgId, int count) {
-		if (isDebugEnabled)
-			logger.debug("updateSentCount() - MsgId: " + msgId);
-		int recsUpdated = msgClickCountsDao.updateSentCount(msgId, count);
-		return recsUpdated;
 	}
 
 	private Subscription addOrRemove(String emailAddr, String listId, boolean addToList)

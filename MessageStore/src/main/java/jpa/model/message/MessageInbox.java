@@ -132,10 +132,6 @@ public class MessageInbox extends BaseModel implements Serializable {
 	@CascadeOnDelete
 	private MessageUnsubComment messageUnsubComment;
 
-	@OneToOne(cascade={CascadeType.ALL},fetch=FetchType.LAZY,mappedBy="messageInbox", orphanRemoval=true, optional=true)
-	@CascadeOnDelete
-	private MessageClickCount messageClickCount;
-
 	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY,mappedBy="messageActionLogPK.messageInbox", orphanRemoval=true)
 	@CascadeOnDelete
 	private List<MessageActionLog> messageActionLogList;
@@ -455,14 +451,6 @@ public class MessageInbox extends BaseModel implements Serializable {
 
 	public void setMessageUnsubComment(MessageUnsubComment messageUnsubComment) {
 		this.messageUnsubComment = messageUnsubComment;
-	}
-
-	public MessageClickCount getMessageClickCount() {
-		return messageClickCount;
-	}
-
-	public void setMessageClickCount(MessageClickCount messageClickCount) {
-		this.messageClickCount = messageClickCount;
 	}
 
 	public List<MessageActionLog> getMessageActionLogList() {
