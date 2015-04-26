@@ -3,6 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%@page import="jpa.model.EmailAddress"%>
+<%@page import="javax.persistence.NoResultException"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -19,7 +20,7 @@ function checkEmail(myform) {
 	var regex = /^([a-z0-9\.\_\%\+\-])+\@([a-z0-9\-]+\.)+[a-z0-9]{2,4}$/i;
 	if (!regex.test(email.value)) {
 		alert('Please provide a valid email address');
-		email.focus
+		email.focus;
 		return false;
 	}
 	return validateListSelection(myform);
@@ -60,10 +61,10 @@ function validateListSelection(myform) {
 
 <form action="subscribeResp.jsp" method="post" onsubmit="return checkEmail(this);">
 <input type="hidden" name="frompage" value="<c:out value="${param.frompage}"/>">
-<input type="hidden" name="editMode" value="<%= subscribersBean.getEditMode() %>">
+<input type="hidden" name="editMode" value="<%= subscribersBean.isEditMode() %>">
 <input type="hidden" name="msgid" value="<%= subscribersBean.getMsgid() %>">
 <input type="hidden" name="listid" value="<%= subscribersBean.getListid() %>">
-<input type="hidden" name="sbsrid" value="<%= subscribersBean.getSbsrid() %>">
+<input type="hidden" name="sbsrid" value="<%= subscribersBean.getSubscriber().getRowId() %>">
 
 <%
 	Logger logger = Logger.getLogger("com.legacytojava.jsp");
@@ -71,15 +72,15 @@ function validateListSelection(myform) {
 	ServletContext ctx = application;
  	
 	String emailAddr = "";
-	EmailAddrVo sbsrAddrVo = null;
+	EmailAddress sbsrAddrVo = null;
 	try {
- 		long emailAddrId = Long.parseLong(subscribersBean.getSbsrid());
- 		sbsrAddrVo = getEmailAddrDao(ctx).getByAddrId(emailAddrId);
- 		if (sbsrAddrVo != null) {
- 			emailAddr = sbsrAddrVo.getEmailAddr();
- 			pageContext.setAttribute("sbsrAddr", sbsrAddrVo.getEmailAddr());
+ 		int emailAddrId = Integer.parseInt(subscribersBean.getSbsrid());
+ 		try {
+			sbsrAddrVo = getEmailAddressService(ctx).getByRowId(emailAddrId);
+ 			emailAddr = sbsrAddrVo.getAddress();
+ 			pageContext.setAttribute("sbsrAddr", sbsrAddrVo.getAddress());
  		}
- 		else {
+ 		catch (NoResultException e) {
  			logger.error("subscribe.jsp - Subscriber Id " + emailAddrId + " not found");
  		}
  	}
@@ -137,16 +138,16 @@ function validateListSelection(myform) {
 	 	</td>
  	</tr>
 <%
-	List<MailingListVo> subList = null;
+	List<MailingList> subList = null;
 	Long sbsrIdLong = null;
  	try {
  		long emailAddrId = Long.parseLong(subscribersBean.getSbsrid());
  		sbsrIdLong = Long.valueOf(emailAddrId);
  		//sbsrAddrVo = getEmailAddrDao(ctx).getByAddrId(emailAddrId);
  		if (sbsrAddrVo != null) {
- 			emailAddr = sbsrAddrVo.getEmailAddr();
- 			pageContext.setAttribute("sbsrAddr", sbsrAddrVo.getEmailAddr());
- 	 		subList = getSbsrMailingLists(ctx, emailAddrId);
+ 			emailAddr = sbsrAddrVo.getAddress();
+ 			pageContext.setAttribute("sbsrAddr", sbsrAddrVo.getAddress());
+ 	 		subList = getSbsrMailingLists(ctx, emailAddr);
 		}
  		else {
  			logger.error("subscribe.jsp - Subscriber Id " + emailAddrId + " not found");
@@ -156,7 +157,7 @@ function validateListSelection(myform) {
  		logger.error("subscribe.jsp - " + e.toString());
  	}
  	if (sbsrAddrVo == null || subList == null) {
-		subList = getMailingListDao(ctx).getAll(true);
+		subList = getMailingListService(ctx).getAll(true);
  	}
  	pageContext.setAttribute("subList", subList);
 	%>

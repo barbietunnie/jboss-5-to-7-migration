@@ -4,7 +4,6 @@
 <%@ include file="./loadSbsrDaos.jsp" %>
 
 <%@page import="jpa.model.EmailAddress"%>
-<%@page import="jpa.model.message.MessageClickCount"%>
 <%@page import="jpa.util.StringUtil"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
