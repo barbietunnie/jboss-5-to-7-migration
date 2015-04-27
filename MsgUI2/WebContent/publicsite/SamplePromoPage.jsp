@@ -17,6 +17,7 @@
 	vlink="#00364a" link="#00364a" alink="#ff9900">
 <div align="left">
 
+<%@page import="jpa.service.maillist.MailingListBo"%>
 <%@ include file="./loadSbsrDaos.jsp" %>
 <%@page import="jpa.util.StringUtil"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
