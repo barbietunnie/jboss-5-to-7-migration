@@ -9,7 +9,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="com.legacytojava.msgui.publicsite.messages" var="bndl"/>
+<fmt:setBundle basename="jpa.msgui.publicsite.messages" var="bndl"/>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <link href="./styles.css" rel="stylesheet" type="text/css">
@@ -54,17 +54,16 @@ function validateListSelection(myform) {
 </script>
 <div align="center">
 <jsp:useBean id="subscribersBean"
-	class="jpa.msgui.bean.SubscriberDataBean" scope="request" />
+	class="jpa.msgui.publicsite.SubscriberEditBean" scope="request" />
 <jsp:setProperty name="subscribersBean" property="*" />
 
 <%@ include file="./loadSbsrDaos.jsp" %>
 
 <form action="subscribeResp.jsp" method="post" onsubmit="return checkEmail(this);">
 <input type="hidden" name="frompage" value="<c:out value="${param.frompage}"/>">
-<input type="hidden" name="editMode" value="<%= subscribersBean.isEditMode() %>">
-<input type="hidden" name="msgid" value="<%= subscribersBean.getMsgid() %>">
+<input type="hidden" name="editMode" value="<%= subscribersBean.getEditMode() %>">
 <input type="hidden" name="listid" value="<%= subscribersBean.getListid() %>">
-<input type="hidden" name="sbsrid" value="<%= subscribersBean.getSubscriber().getRowId() %>">
+<input type="hidden" name="sbsrid" value="<%= subscribersBean.getSbsrid() %>">
 
 <%
 	Logger logger = Logger.getLogger("com.legacytojava.jsp");

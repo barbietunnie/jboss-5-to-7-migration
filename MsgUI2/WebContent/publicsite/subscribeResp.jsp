@@ -7,7 +7,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="com.legacytojava.msgui.publicsite.messages" var="bndl"/>
+<fmt:setBundle basename="jpa.msgui.publicsite.messages" var="bndl"/>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <link href="./styles.css" rel="stylesheet" type="text/css">
@@ -52,8 +52,8 @@
 			</table>
 	 	</td>
  	</tr>
-<%@page import="com.legacytojava.message.dao.idtokens.MsgIdCipher"%>
-<%@page import="com.legacytojava.message.vo.emailaddr.EmailAddrVo"%>
+<%@page import="jpa.message.util.MsgIdCipher"%>
+<%@page import="jpa.model.EmailAddress"%>
 <%
 	Logger logger = Logger.getLogger("com.legacytojava.jsp");
 	ServletContext ctx = application;
@@ -61,7 +61,7 @@
 	String emailAddr = request.getParameter("sbsrAddr");
 	String emailType = request.getParameter("emailtype");
 	Long sbsrIdLong = null;
-	List<MailingListVo> subList = null;
+	List<MailingList> subList = null;
 	String submit = request.getParameter("submit");
 	if (submit != null && submit.length() > 0) { // submit button pressed
 		List<String> subedList = new ArrayList<String>();
@@ -76,8 +76,8 @@
 						sbListIds.append(",");
 					}
 					sbListIds.append(listId);
-					getSubscriptionDao(ctx).optInRequest(emailAddr, listId);
-					MailingListVo vo = getMailingListDao(ctx).getByListId(listId);
+					getSubscriptionService(ctx).optInRequest(emailAddr, listId);
+					MailingList vo = getMailingListService(ctx).getByListId(listId);
 					if (vo != null) {
 						subedList.add(listId + " - " + vo.getDisplayName());
 						if (i > 0) {
@@ -94,22 +94,22 @@
 				logger.error("subscribeResp.jsp - " + e.toString());
 			}
  		}
-		EmailAddrVo addrVo = getEmailAddrDao(ctx).getByAddress(emailAddr);
+		EmailAddress addrVo = getEmailAddressService(ctx).getByAddress(emailAddr);
 		if (chosens.length > 0 && addrVo != null) {
 			// update "AcceptHTML" flag if needed
-			String acceptHtml = Constants.YES_CODE;
+			boolean acceptHtml = true;
 			if ("text".equals(emailType)) {
-				acceptHtml = Constants.NO_CODE;
+				acceptHtml = false;
 			}
-			if (!acceptHtml.equals(addrVo.getAcceptHtml())) {
+			if (!acceptHtml != addrVo.isAcceptHtml()) {
 				addrVo.setAcceptHtml(acceptHtml);
-				getEmailAddrDao(ctx).update(addrVo);
+				getEmailAddressService(ctx).update(addrVo);
 			}
 			// send confirmation email
 			Map<String, String> listMap = new HashMap<String, String>();
 			listMap.put("_RequestedMailingLists", sbListNames.toString());
-			String sbsrIdEncoded = MsgIdCipher.encode(addrVo.getEmailAddrId());
-			sbsrIdLong = Long.valueOf(addrVo.getEmailAddrId());
+			String sbsrIdEncoded = MsgIdCipher.encode(addrVo.getRowId());
+			sbsrIdLong = Long.valueOf(addrVo.getRowId());
 			listMap.put("_EncodedSubcriberId", sbsrIdEncoded);
 			listMap.put("_SubscribedListIds", sbListIds.toString());
 			getMailingListBo(ctx).send(emailAddr, listMap, "SubscriptionConfirmation");

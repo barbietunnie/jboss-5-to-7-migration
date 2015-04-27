@@ -34,7 +34,7 @@
 			// add the following at the end of JSP page to avoid the IllegalStateException:
 			// java.lang.IllegalStateException: getOutputStream() has already been called for this response
 			out.clear();
-			out = pageContext.pushBody(); 
+			out = pageContext.pushBody();
 		}
 	}
 %><%!

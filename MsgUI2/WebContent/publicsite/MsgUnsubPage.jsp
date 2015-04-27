@@ -1,3 +1,4 @@
+<%@page import="javax.persistence.NoResultException"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -7,7 +8,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="com.legacytojava.msgui.publicsite.messages" var="bndl"/>
+<fmt:setBundle basename="jpa.msgui.publicsite.messages" var="bndl"/>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <link href="./styles.css" rel="stylesheet" type="text/css">
@@ -18,7 +19,7 @@ function checkEmail(myform) {
 	var regex = /^([a-z0-9\.\_\%\+\-])+\@([a-z0-9\-]+\.)+[a-z0-9]{2,4}$/i;
 	if (!regex.test(email.value)) {
 		alert('Please provide a valid email address');
-		email.focus
+		email.focus;
 		return false;
 	}
 	return validateSbsrAddress(myform);
@@ -76,38 +77,37 @@ function checkLength(element, maxvalue) {
 		</table>
 		</td>
 	</tr>
-<%@page import="com.legacytojava.message.vo.emailaddr.EmailAddrVo"%>
-<%@page import="com.legacytojava.message.vo.inbox.MsgClickCountsVo"%>
+<%@page import="jpa.model.EmailAddress"%>
+<%@page import="jpa.model.BroadcastMessage"%>
+<%@page import="jpa.model.BroadcastTracking"%>
+<%@page import="jpa.service.common.UnsubCommentService"%>
 <%
 	Logger logger = Logger.getLogger("com.legacytojava.jsp");
 	ServletContext ctx = application;
  	
-	String sbsrId = request.getParameter("sbsrid");
-	EmailAddrVo addrVo = null;
+	String sbsrId = request.getParameter("sbsrid"); // subscriber email address id
+	EmailAddress addrVo = null;
 	try {
-		addrVo = getEmailAddrDao(ctx).getByAddrId(Long.parseLong(sbsrId));
-		if (addrVo == null) {
- 			logger.error("MsgUnsubPage.jsp - Subscriber Id " + sbsrId + " not found");
- 		}
+		addrVo = getEmailAddressService(ctx).getByRowId(Integer.parseInt(sbsrId));
  	}
- 	catch (Exception e) {
- 		logger.error("MsgUnsubPage.jsp - sbsrid: " + e.toString());
+ 	catch (NoResultException e) {
+ 		logger.error("MsgUnsubPage.jsp - Subscriber Id (email address) " + sbsrId + " not found");
  	}
 
 	String listId = request.getParameter("listid");
 	String listName = listId;
 	String listDesc = "";
-	MailingListVo listVo = null;
+	MailingList listVo = null;
 	try {
 		if (listId != null && listId.trim().length() > 0) {
-			listVo = getMailingListDao(ctx).getByListId(listId);
-			if (listVo != null) {
-				listName = listVo.getDisplayName();
-				listDesc = " - " + listVo.getDescription();
-			}
-			else {
-				logger.error("MsgUnsubPage.jsp - Failed to find mailing list by Id: " + listId);
-			}
+	try {
+		listVo = getMailingListService(ctx).getByListId(listId);
+		listName = listVo.getDisplayName();
+		listDesc = " - " + listVo.getDescription();
+	}
+	catch (NoResultException e) {
+		logger.error("MsgUnsubPage.jsp - Failed to find mailing list by Id: " + listId);
+	}
  		}
  		else {
  			logger.error("MsgUnsubPage.jsp - Mailing List Id " + listId + " is blank");
@@ -119,20 +119,25 @@ function checkLength(element, maxvalue) {
 	pageContext.setAttribute("listName", listName);
 	pageContext.setAttribute("listDesc", listDesc);
 
-	String msgId = request.getParameter("msgid");
-	MsgClickCountsVo countVo = null;
+	String msgId = request.getParameter("msgid"); // broadcast message id
+	BroadcastTracking countVo = null;
 	try {
-		countVo = getMsgClickCountsDao(ctx).getByPrimaryKey(Long.parseLong(msgId));
-		if (countVo == null) {
-			logger.error("MsgUnsubPage.jsp - Newsletter MsgId " + msgId + " not found");
+		BroadcastMessage bmsg = getBroadcastMessageService(ctx).getByRowId(Integer.parseInt(msgId));
+		bmsg.setUnsubscribeCount(bmsg.getUnsubscribeCount()+1);
+		getBroadcastMessageService(ctx).update(bmsg);
+		try {
+			countVo = getBroadcastTrackingService(ctx).getByPrimaryKey(addrVo.getRowId(), bmsg.getRowId());
 		}
+	 	catch (NoResultException e1) {
+	 		logger.error("MsgUnsubPage.jsp - Failed to find broadcast tracking by emailAddrRowId/broadcastMsgRowId: " + sbsrId + "/" + msgId);
+	 	}
 	}
- 	catch (Exception e) {
- 		logger.error("MsgUnsubPage.jsp - msgid: " + e.toString());
- 	}
+	catch (NoResultException e) {
+		logger.error("MsgUnsubPage.jsp - Failed to find broadcast message by Id: " + msgId);
+	}
  	
  	if (addrVo != null && listVo != null) {
- 	%>
+%>
  	<tr>
 	 	<td align="center" colspan="2">
 		 	<table width="90%" border="0">
@@ -247,7 +252,7 @@ function checkLength(element, maxvalue) {
 	</tr>
 <%	} %>
 </table>
-<input type="hidden" id="realSbsrAddr" value="<%= addrVo == null ? "" : addrVo.getEmailAddr() %>">
+<input type="hidden" id="realSbsrAddr" value="<%= addrVo == null ? "" : addrVo.getAddress() %>">
 </form>
 </div>
 </body>

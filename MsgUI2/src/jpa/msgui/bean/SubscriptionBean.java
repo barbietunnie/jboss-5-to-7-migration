@@ -352,6 +352,10 @@ public class SubscriptionBean implements java.io.Serializable {
 		this.editMode = editMode;
 	}
 
+	public String getListId() {
+		return listId;
+	}
+
 	public String getSearchString() {
 		return searchString;
 	}
