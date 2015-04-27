@@ -30,6 +30,7 @@ import jpa.constant.StatusId;
 		 @EntityResult(entityClass=MailingList.class),
 	  	},
 	  	columns={
+		 @ColumnResult(name="isSubscribed"),
 		 @ColumnResult(name="sentCount"),
 		 @ColumnResult(name="openCount"),
 		 @ColumnResult(name="clickCount"),
@@ -79,6 +80,8 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	@Transient
 	private String origListId = null;
 
+	@Transient
+	private Boolean isSubscribed;
 	@Transient
 	private Integer sentCount;
 	@Transient
@@ -200,6 +203,14 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 
 	public void setOrigListId(String origListId) {
 		this.origListId = origListId;
+	}
+
+	public Boolean getIsSubscribed() {
+		return isSubscribed;
+	}
+
+	public void setIsSubscribed(Boolean isSubscribed) {
+		this.isSubscribed = isSubscribed;
 	}
 
 	public Integer getSentCount() {

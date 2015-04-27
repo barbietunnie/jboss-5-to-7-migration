@@ -42,6 +42,7 @@ public class MailingListService implements java.io.Serializable {
 				" a.UpdtTime, " +
 				" a.SenderDataRowId, " +
 				" a.ListMasterEmailAddr ";
+				//" b.isSubscribed ";
 	
 	public MailingList getByListId(String listId) throws NoResultException {
 		try {
@@ -91,7 +92,7 @@ public class MailingListService implements java.io.Serializable {
 
 	public List<MailingList> getByEmailAddress(String address) throws NoResultException {
 		String sql =
-			"select a.*, " +
+			"select a.*, b.isSubscribed, " +
 			" sum(b.SentCount) as sentCount, " +
 			" sum(b.OpenCount) as openCount, " +
 			" sum(b.ClickCount) as clickCount " +
@@ -125,7 +126,7 @@ public class MailingListService implements java.io.Serializable {
 	 * 2) through 4) BigDecimal (MySQL) or BigInteger (PostgreSQL)
 	 */
 	public MailingList getByListIdWithCounts(String listId) throws NoResultException {
-		String sql = "select a.*, " +
+		String sql = "select a.*, '' as isSubscribed, " +
 				" sum(b.SentCount) as sentCount, sum(b.OpenCount) as openCount," +
 				" sum(b.ClickCount) as clickCount " +
 				"from Mailing_List a " +
