@@ -66,7 +66,7 @@ function validateListSelection(myform) {
 <input type="hidden" name="sbsrid" value="<%= subscribersBean.getSbsrid() %>">
 
 <%
-	Logger logger = Logger.getLogger("com.legacytojava.jsp");
+	Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
 	//String serverInfo = application.getServerInfo();
 	ServletContext ctx = application;
  	
@@ -140,15 +140,15 @@ function validateListSelection(myform) {
 	List<MailingList> subList = null;
 	Long sbsrIdLong = null;
  	try {
- 		long emailAddrId = Long.parseLong(subscribersBean.getSbsrid());
+ 		int emailAddrId = Integer.parseInt(subscribersBean.getSbsrid());
  		sbsrIdLong = Long.valueOf(emailAddrId);
- 		//sbsrAddrVo = getEmailAddrDao(ctx).getByAddrId(emailAddrId);
- 		if (sbsrAddrVo != null) {
+ 		try {
+ 			sbsrAddrVo = getEmailAddressService(ctx).getByRowId(emailAddrId);
  			emailAddr = sbsrAddrVo.getAddress();
  			pageContext.setAttribute("sbsrAddr", sbsrAddrVo.getAddress());
  	 		subList = getSbsrMailingLists(ctx, emailAddr);
-		}
- 		else {
+ 		}
+ 		catch (NoResultException e) {
  			logger.error("subscribe.jsp - Subscriber Id " + emailAddrId + " not found");
  		}
  	}

@@ -36,7 +36,7 @@
 <%@page import="jpa.model.EmailAddress"%>
 <%@page import="jpa.util.EmailAddrUtil"%>
 <%
-	Logger logger = Logger.getLogger("com.legacytojava.jsp");
+	Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
 	ServletContext ctx = application;
 	
 	String encodedSbsrId = request.getParameter("sbsrid");

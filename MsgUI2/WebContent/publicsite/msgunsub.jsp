@@ -9,7 +9,7 @@
 <%@page import="jpa.util.StringUtil"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
-	Logger logger = Logger.getLogger("com.legacytojava.jsp");
+	Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
 	ServletContext ctx = application;
 	String sbsrId = request.getParameter("sbsrid"); // email address id
 	String listId = request.getParameter("listid");
@@ -18,16 +18,10 @@
 		// update subscriber click count
 		try {
 			EmailAddress addrVo = getEmailAddressService(ctx).getByRowId(Integer.parseInt(sbsrId));
-			if (addrVo != null) {
-				rowsUpdated += getSubscriptionService(ctx).updateClickCount(
-						addrVo.getRowId(), listId);
-			}
+			rowsUpdated += getSubscriptionService(ctx).updateClickCount(addrVo.getRowId(), listId);
 		}
-		catch (NumberFormatException e) {
-			logger.error("NumberFormatException caught: " + e.getMessage());
-		}
-		catch (Exception e) {
-			logger.error("Exception caught", e);
+		catch (NoResultException e) {
+			logger.error("msgopen.jsp - Failed to find email address by id: " + sbsrId);
 		}
 	}
 	else {
@@ -53,7 +47,13 @@
 	}
 	
 	logger.info("msgunsub.jsp - rows updated: " + rowsUpdated);
+	
+	out.println("<H2>Records Updated: " + rowsUpdated + "</H2>");
+	response.setStatus(200);
+	response.setContentType("text/html");
+	response.flushBuffer();
 	%>
 
-<%-- Now serve the space.gif file --%>
+<%-- Now serve the space.gif file
 <%@ include file="./serveImage.jsp" %>
+ --%>

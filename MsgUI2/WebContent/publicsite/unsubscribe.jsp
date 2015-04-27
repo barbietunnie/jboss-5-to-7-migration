@@ -92,7 +92,7 @@ function checkLength(element, maxvalue) {
 <%@page import="jpa.model.EmailAddress"%>
 <%@page import="jpa.message.util.MsgIdCipher"%>
 <%
-	Logger logger = Logger.getLogger("com.legacytojava.jsp");
+	Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
 	ServletContext ctx = application;
  	
 	String encodedSbsrId = request.getParameter("sbsrid");

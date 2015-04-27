@@ -82,7 +82,7 @@ function checkLength(element, maxvalue) {
 <%@page import="jpa.model.BroadcastTracking"%>
 <%@page import="jpa.service.common.UnsubCommentService"%>
 <%
-	Logger logger = Logger.getLogger("com.legacytojava.jsp");
+	Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
 	ServletContext ctx = application;
  	
 	String sbsrId = request.getParameter("sbsrid"); // subscriber email address id
@@ -100,14 +100,14 @@ function checkLength(element, maxvalue) {
 	MailingList listVo = null;
 	try {
 		if (listId != null && listId.trim().length() > 0) {
-	try {
-		listVo = getMailingListService(ctx).getByListId(listId);
-		listName = listVo.getDisplayName();
-		listDesc = " - " + listVo.getDescription();
-	}
-	catch (NoResultException e) {
-		logger.error("MsgUnsubPage.jsp - Failed to find mailing list by Id: " + listId);
-	}
+			try {
+				listVo = getMailingListService(ctx).getByListId(listId);
+				listName = listVo.getDisplayName();
+				listDesc = " - " + listVo.getDescription();
+			}
+			catch (NoResultException e) {
+				logger.error("MsgUnsubPage.jsp - Failed to find mailing list by Id: " + listId);
+			}
  		}
  		else {
  			logger.error("MsgUnsubPage.jsp - Mailing List Id " + listId + " is blank");
