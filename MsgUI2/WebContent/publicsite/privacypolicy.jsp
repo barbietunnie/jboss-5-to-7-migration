@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setBundle basename="com.legacytojava.msgui.publicsite.messages" var="bndl"/>
+<fmt:setBundle basename="jpa.msgui.publicsite.messages" var="bndl"/>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <link href="./styles.css" rel="stylesheet" type="text/css">

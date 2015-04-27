@@ -7,7 +7,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="com.legacytojava.msgui.publicsite.messages" var="bndl"/>
+<fmt:setBundle basename="jpa.msgui.publicsite.messages" var="bndl"/>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <link href="./styles.css" rel="stylesheet" type="text/css">
@@ -66,10 +66,11 @@ function checkLength(element, maxvalue) {
 <input type="hidden" name="sbsrid" value="<%= request.getParameter("sbsrid") %>"/>
 <input type="hidden" name="listid" value="<%= request.getParameter("listid") %>"/>
 
-<%@page import="com.legacytojava.message.vo.emailaddr.EmailAddrVo"%>
-<%@page import="com.legacytojava.message.util.StringUtil"%>
-<%@page import="com.legacytojava.message.constant.Constants"%>
-<%@page import="com.legacytojava.message.constant.EmailAddressType"%>
+<%@page import="jpa.model.EmailAddress"%>
+<%@page import="jpa.util.StringUtil"%>
+<%@page import="jpa.constant.Constants"%>
+<%@page import="jpa.constant.EmailAddrType"%>
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
 	Logger logger = Logger.getLogger("com.legacytojava.jsp");
 	//String serverInfo = application.getServerInfo();
@@ -79,11 +80,11 @@ function checkLength(element, maxvalue) {
 	String submitButtonText = "Send";
  	if (submitButtonText.equals(request.getParameter("submit"))) {
 		String rcptEmail = request.getParameter("rcptEmail");
-		EmailAddrVo addrVo = getEmailAddrDao(ctx).findByAddress(rcptEmail);
+		EmailAddress addrVo = getEmailAddressService(ctx).findSertAddress(rcptEmail);
 		// update accept HTML flag if changed
 		boolean acceptHtml = "html".equals(request.getParameter("emailtype"))?true:false;
-		if (acceptHtml != "Y".equals(addrVo.getAcceptHtml())) {
-			getEmailAddrDao(ctx).updateAcceptHtml(addrVo.getEmailAddrId(), acceptHtml);
+		if (acceptHtml != addrVo.isAcceptHtml()) {
+			getEmailAddressService(ctx).updateAcceptHtml(addrVo.getRowId(), acceptHtml);
 			logger.info("referral.jsp - Accept HTML flag changed to: " + acceptHtml);
 		}
 		String yourName = request.getParameter("yourName");
@@ -95,24 +96,23 @@ function checkLength(element, maxvalue) {
 	 	listMap.put("_ReferrerName", yourName);
 	 	listMap.put("_ReferrerEmailAddress", yourEmail);
 	 	listMap.put("_FriendsEmailAddress", rcptEmail);
-	 	if (!StringUtil.isEmpty(comments)) {
+	 	if (!StringUtils.isEmpty(comments)) {
 	 		listMap.put("_ReferrerComments", yourName + " wrote: " + comments + "<p/>\n");
 	 	}
 	 	else {
 	 		listMap.put("_ReferrerComments", "");
 	 	}
 	 	if ("yes".equals(sendCopy)) {
-	 		listMap.put(EmailAddressType.CC_ADDR, yourEmail);
+	 		listMap.put(EmailAddrType.CC_ADDR.getValue(), yourEmail);
 	 	}
 	 	// send the notification email off
 		getMailingListBo(ctx).send(rcptEmail, listMap, "TellAFriendLetter");
 		logger.info("referral.jsp - Referral letter sent to: " + rcptEmail);
 		// update referral count
 		String msgId = request.getParameter("msgid");
-		if (!StringUtil.isEmpty(msgId)) {
+		if (!StringUtils.isEmpty(msgId)) {
 			try {
-				long msgIdLong = Long.parseLong(msgId);
-				int rowsUpdated = getMsgClickCountsDao(ctx).updateReferalCount(msgIdLong);
+				int rowsUpdated = getBroadcastMessageService(ctx).updateReferalCount(Integer.parseInt(msgId));
 				logger.info("referralResp.jsp - updated MsgClickCounts: " + rowsUpdated);
 			}
 			catch (Exception e) {

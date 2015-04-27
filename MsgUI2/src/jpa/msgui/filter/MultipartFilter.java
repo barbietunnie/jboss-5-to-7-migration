@@ -75,7 +75,7 @@ public class MultipartFilter implements Filter {
 	 * 		FileItem or FileUploadException.
 	 *  	</description>
 	 * 		<filter-name>multipartFilter</filter-name>
-	 * 		<filter-class>com.legacytojava.msgui.filter.MultipartFilter</filter-class>
+	 * 		<filter-class>jpa.msgui.filter.MultipartFilter</filter-class>
 	 * 		<init-param>
 	 * 			<description>
 	 * 			Sets the maximum file size of the uploaded file	in bytes. Set

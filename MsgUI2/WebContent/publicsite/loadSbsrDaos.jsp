@@ -7,6 +7,8 @@
 <%@page import="jpa.model.EmailVariable"%>
 <%@page import="jpa.service.common.EmailVariableService"%>
 <%@page import="jpa.service.common.SubscriberDataService"%>
+<%@page import="jpa.service.maillist.BroadcastMessageService"%>
+<%@page import="jpa.service.maillist.BroadcastTrackingService"%>
 <%@page import="jpa.service.maillist.RenderBo"%>
 <%@page import="jpa.constant.*"%>
 <%@page import="jpa.variable.*"%>
@@ -61,6 +63,22 @@
 		return customerBo;
 	}
 	
+	BroadcastMessageService broadcastMsgDao = null;
+	BroadcastMessageService getBroadcastMessageService(ServletContext ctx) {
+		if (broadcastMsgDao == null) {
+			broadcastMsgDao = SpringUtil.getWebAppContext(ctx).getBean(BroadcastMessageService.class);
+		}
+		return broadcastMsgDao;
+	}
+
+	BroadcastTrackingService broadcastTrkDao = null;
+	BroadcastTrackingService getBroadcastTrackingService(ServletContext ctx) {
+		if (broadcastTrkDao == null) {
+			broadcastTrkDao = SpringUtil.getWebAppContext(ctx).getBean(BroadcastTrackingService.class);
+		}
+		return broadcastTrkDao;
+	}
+
 	private RenderBo renderBo = null;
 	RenderBo getRenderBo(ServletContext ctx) {
 		if (renderBo == null) {

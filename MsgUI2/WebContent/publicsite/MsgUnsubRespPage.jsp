@@ -1,3 +1,4 @@
+<%@page import="javax.persistence.NoResultException"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -7,7 +8,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="com.legacytojava.msgui.publicsite.messages" var="bndl"/>
+<fmt:setBundle basename="jpa.msgui.publicsite.messages" var="bndl"/>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <link href="./styles.css" rel="stylesheet" type="text/css">
@@ -32,15 +33,17 @@
 
 <%@ include file="./loadSbsrDaos.jsp" %>
 
-<%@page import="com.legacytojava.message.vo.emailaddr.EmailAddrVo"%>
-<%@page import="com.legacytojava.message.vo.inbox.MsgClickCountsVo"%>
-<%@page import="com.legacytojava.message.dao.inbox.MsgUnsubCommentsDao"%>
-<%@page import="com.legacytojava.message.vo.inbox.MsgUnsubCommentsVo"%>
+<%@page import="jpa.model.EmailAddress"%>
+<%@page import="jpa.model.Subscription"%>
+<%@page import="jpa.model.UnsubComment"%>
+<%@page import="jpa.model.BroadcastMessage"%>
+<%@page import="jpa.model.BroadcastTracking"%>
+<%@page import="jpa.service.common.UnsubCommentService"%>
 <%!
-MsgUnsubCommentsDao unsubCommentsDao = null;
-MsgUnsubCommentsDao getMsgUnsubCommentsDao(ServletContext ctx) {
+UnsubCommentService unsubCommentsDao = null;
+UnsubCommentService getUnsubCommentService(ServletContext ctx) {
 	if (unsubCommentsDao == null) {
-		unsubCommentsDao = (MsgUnsubCommentsDao) SpringUtil.getWebAppContext(ctx).getBean("msgUnsubCommentsDao");
+		unsubCommentsDao = SpringUtil.getWebAppContext(ctx).getBean(UnsubCommentService.class);
 	}
 	return unsubCommentsDao;
 }
@@ -49,28 +52,28 @@ MsgUnsubCommentsDao getMsgUnsubCommentsDao(ServletContext ctx) {
 	Logger logger = Logger.getLogger("com.legacytojava.jsp");
 	ServletContext ctx = application;
 	
-	String sbsrId = request.getParameter("sbsrid");
+	String sbsrId = request.getParameter("sbsrid"); // subscriber email address id
 	Long sbsrIdLong = null;
-	String msgId = request.getParameter("msgid");
+	String msgId = request.getParameter("msgid"); // broadcast message id
 	String listId = request.getParameter("listid");
 	String comments = request.getParameter("comments");
 	String submit = request.getParameter("submit");
-	EmailAddrVo addrVo = null;
-	MailingListVo listVo = null;
+	EmailAddress addrVo = null;
+	MailingList listVo = null;
 	int unsubscribed = 0;
 	String unsubListName = listId;
 	try {
 		sbsrIdLong = Long.valueOf(sbsrId);
-		addrVo = getEmailAddrDao(ctx).getByAddrId(Long.parseLong(sbsrId));
-		listVo = getMailingListDao(ctx).getByListId(listId);
+		addrVo = getEmailAddressService(ctx).getByRowId(Integer.parseInt(sbsrId));
+		listVo = getMailingListService(ctx).getByListId(listId);
 		if (submit != null && submit.length() > 0 && addrVo != null && listVo != null) {
-			unsubscribed = getSubscriptionDao(ctx).unsubscribe(addrVo.getEmailAddrId(), listId);
-			if (unsubscribed > 0) {
-				MailingListVo vo = getMailingListDao(ctx).getByListId(listId);
-				if (vo != null) {
+			Subscription sub = getSubscriptionService(ctx).unsubscribe(addrVo.getAddress(), listId);
+			if (sub != null) {
+				try {
+					MailingList vo = getMailingListService(ctx).getByListId(listId);
 					unsubListName += " - " + vo.getDisplayName();
 				}
-				else {
+				catch (NoResultException e) {
 					logger.error("MsgUnsubRespPage.jsp - Failed to find mailing list by Id: " + listId);
 				}
 			}
@@ -78,13 +81,12 @@ MsgUnsubCommentsDao getMsgUnsubCommentsDao(ServletContext ctx) {
 			// add user comments
 			if (unsubscribed > 0 && comments != null && comments.trim().length() > 0) {
 				try {
-					MsgUnsubCommentsVo commVo = new MsgUnsubCommentsVo();
-					commVo.setMsgId(Long.parseLong(msgId));
-					commVo.setEmailAddrId(addrVo.getEmailAddrId());
-					commVo.setListId(listId);
+					UnsubComment commVo = new UnsubComment();
+					commVo.setEmailAddr(addrVo);
+					commVo.setMailingList(listVo);
 					commVo.setComments(comments.trim());
-					int rowsInsrted = getMsgUnsubCommentsDao(ctx).insert(commVo);
-					logger.info("MsgUnsubRespPage.jsp - unsubcription commonts added: " + rowsInsrted);
+					getUnsubCommentService(ctx).insert(commVo);
+					logger.info("MsgUnsubRespPage.jsp - unsubcription commonts added: " + 1);
 				}
 			 	catch (Exception e) {
 			 		logger.error("MsgUnsubRespPage.jsp - add comments: " + e.toString());
@@ -96,26 +98,28 @@ MsgUnsubCommentsDao getMsgUnsubCommentsDao(ServletContext ctx) {
 		logger.error("MsgUnsubRespPage.jsp", e);
 	}
 	
-	MsgClickCountsVo countVo = null;
+	BroadcastTracking countVo = null;
 	try {
-		countVo = getMsgClickCountsDao(ctx).getByPrimaryKey(Long.parseLong(msgId));
-		if (countVo == null) {
-			logger.error("MsgUnsubRespPage.jsp - Newsletter MsgId " + msgId + " not found");
+		BroadcastMessage bmsg = getBroadcastMessageService(ctx).getByRowId(Integer.parseInt(msgId));
+		bmsg.setUnsubscribeCount(bmsg.getUnsubscribeCount()+1);
+		getBroadcastMessageService(ctx).update(bmsg);
+		try {
+			countVo = getBroadcastTrackingService(ctx).getByPrimaryKey(addrVo.getRowId(), bmsg.getRowId());
 		}
-		else {
-			int rows = getMsgClickCountsDao(ctx).updateUnsubscribeCount(countVo.getMsgId(), 1);
-			logger.info("MsgUnsubRespPage.jsp - un-subscribe count updated: " + rows);
-		}
+	 	catch (NoResultException e1) {
+	 		logger.error("MsgUnsubPage.jsp - Failed to find broadcast tracking by emailAddrRowId/broadcastMsgRowId: " + sbsrId + "/" + msgId);
+	 	}
 	}
- 	catch (Exception e) {
- 		logger.error("MsgUnsubRespPage.jsp - msgid: " + e.toString());
- 	}
+	catch (NoResultException e) {
+		logger.error("MsgUnsubPage.jsp - Failed to find broadcast message by Id: " + msgId);
+	}
+
 
 	if (unsubscribed > 0 && addrVo != null && listVo != null) {
 		Map<String, String> listMap = new HashMap<String, String>();
 		listMap.put("_UnsubscribedMailingLists", unsubListName);
 		//listMap.put("SubscriberAddressId", addrVo.getEmailAddrId());
-		getMailingListBo(ctx).send(addrVo.getEmailAddr(), listMap, "UnsubscriptionLetter");
+		getMailingListBo(ctx).send(addrVo.getAddress(), listMap, "UnsubscriptionLetter");
 	%>
  	<tr>
 	 	<td align="center" colspan="2">
@@ -157,7 +161,7 @@ MsgUnsubCommentsDao getMsgUnsubCommentsDao(ServletContext ctx) {
 				<td>
 					<span style="font-weight: bold; font-size: 1.0em;">&nbsp;
 					<fmt:message key="subscriberEmailAddress" bundle="${bndl}"/></span>&nbsp;
-					<b><%= addrVo == null ? "" : addrVo.getEmailAddr() %></b>
+					<b><%= addrVo == null ? "" : addrVo.getAddress() %></b>
 				</td>
 			</tr>
 		</table>

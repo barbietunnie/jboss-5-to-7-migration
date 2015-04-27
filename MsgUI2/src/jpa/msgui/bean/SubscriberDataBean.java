@@ -289,6 +289,8 @@ public class SubscriberDataBean implements java.io.Serializable {
 		}
 		reset();
 		// update database
+		//emailAddrInput.getValue();
+		// TODO need to check email address from input field
 		EmailAddress email = getEmailAddressService().findSertAddress(subscriber.getEmailAddr().getAddress());
 		subscriber.setEmailAddr(email);
 		SenderData sender = getSenderDataService().getBySenderId(subscriber.getSenderData().getSenderId());

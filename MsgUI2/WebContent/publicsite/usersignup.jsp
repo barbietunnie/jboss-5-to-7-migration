@@ -7,8 +7,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="com.legacytojava.msgui.publicsite.messages" var="bndl"/>
-<fmt:setBundle basename="com.legacytojava.msgui.messages" var="bndl2"/>
+<fmt:setBundle basename="jpa.msgui.publicsite.messages" var="bndl"/>
+<fmt:setBundle basename="jpa.msgui.messages" var="bndl2"/>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <link href="./styles.css" rel="stylesheet" type="text/css">
