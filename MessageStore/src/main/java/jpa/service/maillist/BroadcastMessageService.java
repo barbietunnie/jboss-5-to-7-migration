@@ -79,6 +79,38 @@ public class BroadcastMessageService implements java.io.Serializable {
 		}
 	}
 	
+	public int updateOpenCount(int rowId) {
+		String sql = "update BroadcastMessage t set t.openCount = (t.openCount + 1) where t.rowId = :rowId";
+		Query query = em.createQuery(sql);
+		query.setParameter("rowId", rowId);
+		int rowsupdated = query.executeUpdate();
+		return rowsupdated;
+	}
+	
+	public int updateClickCount(int rowId) {
+		String sql = "update BroadcastMessage t set t.clickCount = (t.clickCount + 1) where t.rowId = :rowId";
+		Query query = em.createQuery(sql);
+		query.setParameter("rowId", rowId);
+		int rowsupdated = query.executeUpdate();
+		return rowsupdated;
+	}
+	
+	public int updateReferalCount(int rowId) {
+		String sql = "update BroadcastMessage t set t.referralCount = (t.referralCount + 1) where t.rowId = :rowId";
+		Query query = em.createQuery(sql);
+		query.setParameter("rowId", rowId);
+		int rowsupdated = query.executeUpdate();
+		return rowsupdated;
+	}
+	
+	public int updateUnsubscribeCount(int rowId) {
+		String sql = "update BroadcastMessage t set t.unsubscribeCount = (t.unsubscribeCount + 1) where t.rowId = :rowId";
+		Query query = em.createQuery(sql);
+		query.setParameter("rowId", rowId);
+		int rowsupdated = query.executeUpdate();
+		return rowsupdated;
+	}
+	
 	public int getMessageCountForWeb() {
 		String sql = "select count(t) from " +
 				"BroadcastMessage t where t.sentCount > 0 and t.startTime is not null ";

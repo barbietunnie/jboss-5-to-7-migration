@@ -65,6 +65,8 @@ public class BroadcastMessageTest {
 		bd1.setMsgBody("Test Broadcast message body here.\n" + bd1.getMsgBody());
 		service.update(bd1);
 		
+		assertTrue(1<=service.updateReferalCount(bd1.getRowId()));
+		
 		BroadcastMessage bd2 = service.getByRowId(bd1.getRowId());
 		assertTrue(ts.equals(bd2.getUpdtTime()));
 		System.out.println(StringUtil.prettyPrint(bd2, 2));

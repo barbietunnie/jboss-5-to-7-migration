@@ -399,6 +399,40 @@ public class SubscriptionService implements java.io.Serializable {
 		}
 	}
 
+	public int updateClickCount(int emailAddrRowId, String listId) {
+		String sql = 
+				"update Subscription " +
+				" set clickCount = (clickCount + 1) " +
+				"where emailAddrRowId = ?1 "
+				+ "and mailingListRowId = (select row_id from mailing_list where listId = ?2)";
+		try {
+			Query query = em.createNativeQuery(sql);
+			query.setParameter(1, emailAddrRowId);
+			query.setParameter(2, listId);
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
+
+	public int updateOpenCount(int emailAddrRowId, String listId) {
+		String sql = 
+				"update Subscription " +
+				" set openCount = (openCount + 1) " +
+				"where emailAddrRowId = ?1 "
+				+ "and mailingListRowId = (select row_id from mailing_list where listId = ?2)";
+		try {
+			Query query = em.createNativeQuery(sql);
+			query.setParameter(1, emailAddrRowId);
+			query.setParameter(2, listId);
+			int rows = query.executeUpdate();
+			return rows;
+		}
+		finally {
+		}
+	}
+
 	static String[] CRIT = { " where ", " and ", " and ", " and ", " and ", " and ", " and ",
 		" and ", " and ", " and ", " and " };
 
