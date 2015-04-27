@@ -12,50 +12,28 @@
 <h:panelGrid columns="2" styleClass="smtpHeaders" 
 	columnClasses="smtpLabelColumn, smtpTextColumn">
 	
-	<h:outputText value="#{msgs.fromAddressPrompt}" />
-	<h:outputText value="#{emailAddress.findAddressByRowId(broadcastMsg.broadcastMsg.fromAddrRowId)}"/>
-
-	<h:outputText value="#{msgs.toAddressPrompt}" />
-	<h:outputText value="#{emailAddress.findAddressByRowId(broadcastMsg.broadcastMsg.toAddrRowId)}"/>
-
 	<h:outputText value="#{msgs.msgSubjectPrompt}" />
 	<h:outputText value="#{broadcastMsg.broadcastMsg.msgSubject}" />
 
 	<h:outputText value="#{msgs.receivedDatePrompt}" />
-	<h:outputText value="#{broadcastMsg.broadcastMsg.receivedTime}">
+	<h:outputText value="#{broadcastMsg.broadcastMsg.startTime}">
 		<f:convertDateTime dateStyle="default"/>
 	</h:outputText>
 
 	<h:outputText value="#{msgs.siteIdPrompt}" 
-		rendered="#{broadcastMsg.broadcastMsg.senderData != null}" />
-	<h:outputText value="#{broadcastMsg.broadcastMsg.senderData.senderId}" 
-		rendered="#{broadcastMsg.broadcastMsg.senderData != null}" />
+		rendered="#{broadcastMsg.broadcastMsg.mailingList.senderData != null}" />
+	<h:outputText value="#{broadcastMsg.broadcastMsg.mailingList.senderData.senderId}" 
+		rendered="#{broadcastMsg.broadcastMsg.mailingList.senderData != null}" />
 	
-	<h:outputText value="#{msgs.ruleNamePrompt}" />
-	<h:outputText value="#{ruleLogic.findRuleNameByRowId(broadcastMsg.broadcastMsg.ruleLogicRowId)}" />
-
-	<h:outputText value="#{msgs.bodyContentTypePrompt}" />
-	<h:outputText value="#{broadcastMsg.broadcastMsg.bodyContentType}" />
+	<h:outputText value="#{msgs.emailTemplatePrompt}" 
+		rendered="#{broadcastMsg.broadcastMsg.emailTemplate != null}" />
+	<h:outputText value="#{broadcastMsg.broadcastMsg.emailTemplate.templateId}" 
+		rendered="#{broadcastMsg.broadcastMsg.emailTemplate != null}" />
 </h:panelGrid>
-
-<h:dataTable value="#{broadcastMsg.msgHeaderList}" var="hdr" 
- 			styleClass="smtpHeaders"
- 			columnClasses="smtpLabelColumn, smtpTextColumn"
- 			rendered="#{broadcastMsg.broadcastMsg.showAllHeaders and (broadcastMsg.msgHeaderList !=null and broadcastMsg.msgHeaderList.rowCount > 0)}">
-   <h:column>
-      <h:outputText value="#{hdr.headerName}:"/>
-   </h:column>
-   <h:column>
-      <h:outputText value="#{hdr.headerValue}"/>
-   </h:column>
-</h:dataTable>
 
 <f:verbatim><br/></f:verbatim>
 <h:panelGrid columns="1" styleClass="smtpBody">
-	<h:outputText value="#{broadcastMsg.broadcastMsg.displayBody}" escape="false" 
-		rendered="#{not broadcastMsg.broadcastMsg.showRawMessage}"/>
-	<h:outputText value="#{broadcastMsg.broadcastMsg.rawMessage}" escape="false" 
-		rendered="#{broadcastMsg.broadcastMsg.showRawMessage}"/>
+	<h:outputText value="#{broadcastMsg.broadcastMsg.msgBody}" escape="false" />
 </h:panelGrid>
 
 <h:panelGrid columns="2"

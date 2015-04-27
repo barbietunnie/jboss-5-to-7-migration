@@ -49,7 +49,7 @@ UnsubCommentService getUnsubCommentService(ServletContext ctx) {
 }
 %>
 <%
-	Logger logger = Logger.getLogger("com.legacytojava.jsp");
+	Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
 	ServletContext ctx = application;
 	
 	String sbsrId = request.getParameter("sbsrid"); // subscriber email address id
