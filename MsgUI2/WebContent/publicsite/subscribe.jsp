@@ -138,10 +138,10 @@ function validateListSelection(myform) {
  	</tr>
 <%
 	List<MailingList> subList = null;
-	Long sbsrIdLong = null;
+	int sbsrId = 0;
  	try {
  		int emailAddrId = Integer.parseInt(subscribersBean.getSbsrid());
- 		sbsrIdLong = Long.valueOf(emailAddrId);
+ 		sbsrId = emailAddrId;
  		try {
  			sbsrAddrVo = getEmailAddressService(ctx).getByRowId(emailAddrId);
  			emailAddr = sbsrAddrVo.getAddress();
@@ -207,7 +207,7 @@ function validateListSelection(myform) {
 			<tr>
 				<td class="footNote">&nbsp;<br/>
 				If you subscribed already and want to edit your profile or un-subscribe, 
-				<a href="<%= renderURLVariable(ctx, "UserProfileURL", sbsrIdLong) %>">click here.</a>
+				<a href="<%= renderURLVariable(ctx, "UserProfileURL", String.valueOf(sbsrId)) %>">click here.</a>
 				</td>
 			</tr>
 			<tr>

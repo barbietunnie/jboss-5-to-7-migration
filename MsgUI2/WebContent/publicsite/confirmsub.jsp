@@ -42,15 +42,14 @@
 	String encodedSbsrId = request.getParameter("sbsrid");
 	String listIds = request.getParameter("listids");
 	String sbsrAddr = request.getParameter("sbsraddr");
-	Long sbsrIdLong = null;
 	List<String> subedList = new ArrayList<String>();
 	int confirmCount = 0;
 	EmailAddress addrVo = null;
 	StringBuffer sbListNames = new StringBuffer();
 	StringBuffer sbListIds = new StringBuffer();
+	int sbsrId = 0;
 	try {
-		int sbsrId = MsgIdCipher.decode(encodedSbsrId);
-		sbsrIdLong = Long.valueOf(sbsrId);
+		sbsrId = MsgIdCipher.decode(encodedSbsrId);
 		addrVo = getEmailAddressService(ctx).getByRowId(sbsrId);
 		if (listIds != null && listIds.length() > 0 && addrVo != null) {
 			String decodedSbsdAddr = EmailAddrUtil.removeDisplayName(addrVo.getAddress());
@@ -155,7 +154,7 @@
 			<tr>
 				<td style="footNote">&nbsp;<br/>
 				If you subscribed already and want to edit your profile or un-subscribe, 
-				<a href="<%= renderURLVariable(ctx, "UserProfileURL", sbsrIdLong) %>">click here.</a>
+				<a href="<%= renderURLVariable(ctx, "UserProfileURL", String.valueOf(sbsrId)) %>">click here.</a>
 				</td>
 			</tr>
 			<tr>

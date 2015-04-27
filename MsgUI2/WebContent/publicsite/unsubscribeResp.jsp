@@ -41,14 +41,13 @@ Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
 	String encodedSbsrId = request.getParameter("sbsrid");
 	//String enteredEmailAddr = request.getParameter("sbsrAddr");
 	String comments = request.getParameter("comments");
-	Long sbsrIdLong = null;
 	List<String> unsubedList = new ArrayList<String>();
 	int unsubscribed = 0;
 	EmailAddress addrVo = null;
 	StringBuffer sbListNames = new StringBuffer();
+	int sbsrId = 0;
 	try {
-		int sbsrId = MsgIdCipher.decode(encodedSbsrId);
-		sbsrIdLong = Long.valueOf(sbsrId);
+		sbsrId = MsgIdCipher.decode(encodedSbsrId);
 		addrVo = getEmailAddressService(ctx).getByRowId(sbsrId);
 		String submit = request.getParameter("submit");
 		if (submit != null && submit.length() > 0 && addrVo != null) {
@@ -177,7 +176,7 @@ Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
 			<tr>
 				<td style="footNote">&nbsp;<br/>
 				If you did this by mistake and want to edit your user profile or re-subscribe, 
-				<a href="<%= renderURLVariable(ctx, "UserProfileURL", sbsrIdLong) %>">click here.</a>
+				<a href="<%= renderURLVariable(ctx, "UserProfileURL", String.valueOf(sbsrId)) %>">click here.</a>
 				</td>
 			</tr>
 			<tr>

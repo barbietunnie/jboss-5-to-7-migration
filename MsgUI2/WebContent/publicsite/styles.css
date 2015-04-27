@@ -84,6 +84,8 @@ body {
 	width: 980px; /* 100%; */
 	height: auto;
 	border: thin solid LightGray;
+	border-spacing: 0; /* cellspacing="5" */
+	padding: 0;	/* cellpadding */
 }
 
 .gettingStartedHeader {
@@ -268,6 +270,8 @@ body {
 .jsfDataTable {
 	border: thin solid LightGray;
 	width: 100%;
+	border-spacing: 0; /* cellspacing="5" */
+	padding: 8px;	/* cellpadding */
 }
 
 .jsfDataTable A {
@@ -524,4 +528,10 @@ body {
 	padding: 2px;
 	border: thin solid WhiteSmoke;
 	width: 70%;
+}
+
+table {
+	border-spacing: 2px; /* cellspacing="5" */
+	padding: 2px;	/* cellpadding */
+	border: 0;
 }

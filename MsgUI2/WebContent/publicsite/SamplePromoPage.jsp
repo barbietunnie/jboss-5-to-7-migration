@@ -28,26 +28,8 @@
 	Logger logger = Logger.getLogger("jpa.service.jsp");
 	ServletContext ctx = application;
 	String sbsrId = request.getParameter("sbsrid");
-	Long sbsrIdLong = null;
-	if (!StringUtils.isBlank(sbsrId)) {
-		try {
-			sbsrIdLong = Long.valueOf(sbsrId);
-		}
-		catch (NumberFormatException e) {
-			logger.warn("Invalied SbsrId from http request: " + sbsrId);
-		}
-	}
 	String listId = request.getParameter("listid");
 	String msgId = request.getParameter("msgid");
-	Long msgIdLong = null;
-	if (!StringUtils.isBlank(msgId)) {
-		try {
-			msgIdLong = Long.valueOf(msgId);
-		}
-		catch (NumberFormatException e) {
-			logger.warn("Invalid MsgId from http request: " + msgId);
-		}
-	}
 	%>
 <p/>
 <table width="980" border="0" cellpadding="0" cellspacing="0">
@@ -78,7 +60,7 @@
 	</tr>
 </table>
 <p/>
-<%= renderURLVariable(ctx, "EmailClickCountImgTag", sbsrIdLong, listId, msgIdLong) %>
+<%= renderURLVariable(ctx, "EmailClickCountImgTag", sbsrId, listId, msgId) %>
 </div>
 </body>
 </html>

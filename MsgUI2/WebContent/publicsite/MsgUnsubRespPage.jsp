@@ -53,7 +53,6 @@ UnsubCommentService getUnsubCommentService(ServletContext ctx) {
 	ServletContext ctx = application;
 	
 	String sbsrId = request.getParameter("sbsrid"); // subscriber email address id
-	Long sbsrIdLong = null;
 	String msgId = request.getParameter("msgid"); // broadcast message id
 	String listId = request.getParameter("listid");
 	String comments = request.getParameter("comments");
@@ -63,7 +62,6 @@ UnsubCommentService getUnsubCommentService(ServletContext ctx) {
 	int unsubscribed = 0;
 	String unsubListName = listId;
 	try {
-		sbsrIdLong = Long.valueOf(sbsrId);
 		addrVo = getEmailAddressService(ctx).getByRowId(Integer.parseInt(sbsrId));
 		listVo = getMailingListService(ctx).getByListId(listId);
 		if (submit != null && submit.length() > 0 && addrVo != null && listVo != null) {
@@ -176,7 +174,7 @@ UnsubCommentService getUnsubCommentService(ServletContext ctx) {
 			<tr>
 				<td style="footNote">&nbsp;<br/>
 				If you did this by mistake and want to edit your user profile or re-subscribe, 
-				<a href="<%= renderURLVariable(ctx, "UserProfileURL", sbsrIdLong) %>">click here.</a>
+				<a href="<%= renderURLVariable(ctx, "UserProfileURL", sbsrId) %>">click here.</a>
 				</td>
 			</tr>
 			<tr>
