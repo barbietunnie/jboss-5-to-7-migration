@@ -121,6 +121,8 @@ public class SubscriptionTest {
 		Subscription rcd2 = service.getByAddressAndListId(emailAddr1.getAddress(), list.get(0).getListId());
 		assertNotNull(rcd2);
 		
+		assert(1<=service.updateClickCount(emailAddr1.getRowId(), list.get(0).getListId()));
+		
 		// test paging for UI application
 		PagingVo vo = new PagingVo();
 		vo.setStatusId(StatusId.ACTIVE.getValue());

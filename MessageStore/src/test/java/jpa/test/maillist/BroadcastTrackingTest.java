@@ -54,8 +54,15 @@ public class BroadcastTrackingTest {
 		
 		List<BroadcastTracking> eblist = service.getByBroadcastDataRowId(bd1.getRowId());
 		assertFalse(eblist.isEmpty());
-
+		
 		BroadcastTracking eb1 = eblist.get(0);
+		
+		try {
+			service.getByPrimaryKey(eb1.getEmailAddress().getRowId(), eb1.getBroadcastMessage().getRowId());
+		}
+		catch (NoResultException e) {
+			fail();
+		}
 		
 		java.sql.Timestamp ts = new java.sql.Timestamp(System.currentTimeMillis());
 		eb1.setUpdtTime(ts);

@@ -37,6 +37,21 @@ public class BroadcastTrackingService implements java.io.Serializable {
 		}
 	}
 	
+	public BroadcastTracking getByPrimaryKey(int emailAddrRowId, int broadcastMsgRowId) throws NoResultException {
+		try {
+			Query query = em.createQuery("select t from BroadcastTracking t, EmailAddress ea, BroadcastMessage bm "
+					+ " where ea=t.emailAddress and ea.rowId = :emailAddrRowId"
+					+ " and bm=t.broadcastMessage and bm.rowId = :broadcastMsgRowId ");
+			query.setParameter("emailAddrRowId", emailAddrRowId);
+			query.setParameter("broadcastMsgRowId", broadcastMsgRowId);
+			BroadcastTracking broadcast = (BroadcastTracking) query.getSingleResult();
+			//em.lock(broadcast, LockModeType.OPTIMISTIC);
+			return broadcast;
+		}
+		finally {
+		}
+	}
+	
 	public List<BroadcastTracking> getByEmailAddress(String address) throws NoResultException {
 		try {
 			Query query = em.createQuery("select t from BroadcastTracking t, EmailAddress ea " +
