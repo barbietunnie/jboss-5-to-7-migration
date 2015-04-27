@@ -60,7 +60,7 @@
 	
 	String emailAddr = request.getParameter("sbsrAddr");
 	String emailType = request.getParameter("emailtype");
-	Long sbsrIdLong = null;
+	int sbsrId = 0;
 	List<MailingList> subList = null;
 	String submit = request.getParameter("submit");
 	if (submit != null && submit.length() > 0) { // submit button pressed
@@ -109,7 +109,7 @@
 			Map<String, String> listMap = new HashMap<String, String>();
 			listMap.put("_RequestedMailingLists", sbListNames.toString());
 			String sbsrIdEncoded = MsgIdCipher.encode(addrVo.getRowId());
-			sbsrIdLong = Long.valueOf(addrVo.getRowId());
+			sbsrId = addrVo.getRowId();
 			listMap.put("_EncodedSubcriberId", sbsrIdEncoded);
 			listMap.put("_SubscribedListIds", sbListIds.toString());
 			getMailingListBo(ctx).send(emailAddr, listMap, "SubscriptionConfirmation");
@@ -160,7 +160,7 @@
 			<tr>
 				<td style="footNote">&nbsp;<br/>
 				If you subscribed already and want to edit your profile or un-subscribe,
-				<a href="<%= renderURLVariable(ctx, "UserProfileURL", sbsrIdLong) %>">click here.</a>
+				<a href="<%= renderURLVariable(ctx, "UserProfileURL", String.valueOf(sbsrId)) %>">click here.</a>
 				</td>
 			</tr>
 			<tr>

@@ -14,6 +14,8 @@
 <%@page import="jpa.variable.*"%>
 <%@page import="org.apache.log4j.Logger" %>
 <%@page import="java.util.*" %>
+<%@page import="org.apache.commons.lang3.StringUtils"%>
+
 <%!
 	MailingListService mailingListDao = null;
 	MailingListService getMailingListService(ServletContext ctx) {
@@ -108,26 +110,26 @@
 		return renderURLVariable(ctx, emailVariableName, null);
 	}
 	
-	String renderURLVariable(ServletContext ctx, String emailVariableName, Long sbsrId) {
+	String renderURLVariable(ServletContext ctx, String emailVariableName, String sbsrId) {
 		return renderURLVariable(ctx, emailVariableName, sbsrId, null, null);
 	}
 	
-	String renderURLVariable(ServletContext ctx, String emailVariableName, Long sbsrId, String listId, Long msgId) {
+	String renderURLVariable(ServletContext ctx, String emailVariableName, String sbsrId, String listId, String msgId) {
 		Logger logger = Logger.getLogger("jpa.service.jsp");
 		String renderedValue = "";
 		EmailVariable vo = getEmailVariableService(ctx).getByVariableName(emailVariableName);
 		HashMap<String, RenderVariableVo> vars = new HashMap<String, RenderVariableVo>();
-		if (sbsrId != null) {
+		if (StringUtils.isNotBlank(sbsrId)) {
 			RenderVariableVo var = new RenderVariableVo(
 					"SubscriberAddressId",
-					sbsrId.toString(),
+					sbsrId,
 					null,
 					VariableType.TEXT,
 					CodeType.YES_CODE.getValue(),
 					Boolean.FALSE);
 			vars.put(var.getVariableName(), var);
 		}
-		if (listId != null && listId.trim().length() > 0) {
+		if (StringUtils.isNotBlank(listId)) {
 			RenderVariableVo var = new RenderVariableVo(
 					"MailingListId",
 					listId,
@@ -137,10 +139,10 @@
 					Boolean.FALSE);
 			vars.put(var.getVariableName(), var);
 		}
-		if (msgId != null) {
+		if (StringUtils.isNotBlank(msgId)) {
 			RenderVariableVo var = new RenderVariableVo(
 					"BroadcastMsgId",
-					msgId.toString(),
+					msgId,
 					null,
 					VariableType.TEXT,
 					CodeType.YES_CODE.getValue(),
