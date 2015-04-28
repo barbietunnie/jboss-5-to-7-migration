@@ -9,10 +9,14 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.log4j.Logger;
@@ -47,10 +51,10 @@ public class MailingListRS {
 			String key = it.next();
 			logger.info("Header Key: " + key + ", Values: " + headerParams.get(key));
 		}
-		Map<String, Cookie> pathParams = hh.getCookies();
-		for (Iterator<String> it = pathParams.keySet().iterator(); it.hasNext();) {
+		Map<String, Cookie> cookieParams = hh.getCookies();
+		for (Iterator<String> it = cookieParams.keySet().iterator(); it.hasNext();) {
 			String key = it.next();
-			logger.info("Cookie Key: " + key + ", Values: " + pathParams.get(key));
+			logger.info("Cookie Key: " + key + ", Values: " + cookieParams.get(key));
 		}
 		return null;
 	}
@@ -78,6 +82,20 @@ public class MailingListRS {
 			logger.info("Form Key: " + key + ", Values: " + formParams.get(key));
 		}
 		// store the message
+		return null;
+	}
+
+	@Path("/get3")
+	@GET
+	@Produces("application/xml")
+	public String doGet3(@Context Request req, @Context UriInfo ui) {
+		ui.getRequestUri();
+		if (req.getMethod().equals("GET")) {
+			Response.ResponseBuilder rb = req.evaluatePreconditions();
+			if (rb != null) {
+                throw new WebApplicationException(rb.build());
+            }
+		}
 		return null;
 	}
 

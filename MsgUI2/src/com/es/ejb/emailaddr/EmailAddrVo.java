@@ -8,8 +8,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import jpa.msgui.vo.TimestampAdapter;
+
 import com.es.ejb.vo.BaseWsVo;
-import com.es.tomee.util.TimestampAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "EmailAddrVo")
