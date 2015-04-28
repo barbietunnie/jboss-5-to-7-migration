@@ -19,6 +19,7 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.MsgDirectionCode;
@@ -28,6 +29,7 @@ import jpa.model.EmailAddress;
 import jpa.model.SenderData;
 import jpa.model.SubscriberData;
 import jpa.model.rule.RuleLogic;
+import jpa.msgui.vo.TimestampAdapter;
 import jpa.util.StringUtil;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
@@ -149,10 +151,12 @@ public class MessageInbox extends BaseModel implements Serializable {
 	@Column(nullable=true, length=16)
 	private String msgPriority = null;
 	@Column(nullable=false)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp receivedTime;
 	@Column(nullable=true)
 	private java.sql.Date purgeDate = null;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lockTime = null;
 	@Column(nullable=true,length=26)
 	private String lockId = null;
@@ -166,6 +170,7 @@ public class MessageInbox extends BaseModel implements Serializable {
 	private boolean isFlagged = false;
 	@Column(nullable=true)
 	private Timestamp deliveryTime;
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	@Column(nullable=true, length=255)
 	private String smtpMessageId = null;
 	@Column(nullable=true, columnDefinition="Integer")

@@ -8,8 +8,11 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.model.SenderData;
+import jpa.msgui.vo.TimestampAdapter;
 
 @Embeddable
 public class TemplateVariablePK implements Serializable {
@@ -17,6 +20,7 @@ public class TemplateVariablePK implements Serializable {
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=SenderData.class)
 	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private SenderData senderData;
 	
 	@Column(name="VariableId", nullable=false, length=26)
@@ -24,6 +28,7 @@ public class TemplateVariablePK implements Serializable {
 	@Column(name="VariableName", nullable=false, length=26)
 	protected String variableName = "";
 	@Column(name="StartTime", nullable=false)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	protected Timestamp startTime = new Timestamp(System.currentTimeMillis());
 
 	public TemplateVariablePK() {}

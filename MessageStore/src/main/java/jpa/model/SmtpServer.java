@@ -3,9 +3,11 @@ package jpa.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name="smtp_server")
+@XmlRootElement(name="smtpServer")
 public class SmtpServer extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -5853276462328429525L;
 

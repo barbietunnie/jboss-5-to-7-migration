@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Embeddable
 public class RuleDataValuePK implements Serializable {
@@ -14,6 +15,7 @@ public class RuleDataValuePK implements Serializable {
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="RuleDataTypeRowId",insertable=true,referencedColumnName="Row_Id",nullable=false)
+	@XmlTransient
 	private RuleDataType ruleDataType;
 	
 	@Column(nullable=false, length=100)

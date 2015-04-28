@@ -7,11 +7,12 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name="global_variable", uniqueConstraints=@UniqueConstraint(columnNames = {"variableName", "startTime"}))
-public class GlobalVariable extends BaseVariableModel implements Serializable
-{
+@XmlRootElement(name="globalVariable")
+public class GlobalVariable extends BaseVariableModel implements Serializable {
 	private static final long serialVersionUID = 7381275253094081485L;
 	
 	@Embedded

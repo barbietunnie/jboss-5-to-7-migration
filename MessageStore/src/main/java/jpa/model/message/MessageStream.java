@@ -15,6 +15,7 @@ import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlTransient;
 
 import jpa.model.BaseModel;
 
@@ -38,6 +39,7 @@ public class MessageStream extends BaseModel implements Serializable
 	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false,
 			table="message_stream", foreignKey=@ForeignKey(name="FK_message_stream_MessageInboxRowId"))
+	@XmlTransient
 	private MessageInbox messageInbox;
 
 	@Index

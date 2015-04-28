@@ -3,9 +3,11 @@ package jpa.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name="mobile_carrier")
+@XmlRootElement(name="mobileCarrier")
 public class MobileCarrier extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 7097456266336019504L;
 	

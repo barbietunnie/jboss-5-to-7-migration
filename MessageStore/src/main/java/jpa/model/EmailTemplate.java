@@ -8,21 +8,26 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import jpa.constant.MailingListDeliveryType;
 import jpa.constant.MailingListType;
 
 @Entity
 @Table(name="email_template")
+@XmlRootElement(name="emailTemplate")
 public class EmailTemplate extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -4595181759983336810L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="SenderDataRowId",insertable=true,referencedColumnName="Row_Id",nullable=false)
+	@XmlTransient
 	private SenderData senderData;
 	
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="MailingListRowId",insertable=true,referencedColumnName="Row_Id",nullable=false)
+	@XmlTransient
 	private MailingList mailingList;
 	
 	@Column(nullable=false, length=26, unique=true)

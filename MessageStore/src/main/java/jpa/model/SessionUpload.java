@@ -10,14 +10,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="session_upload", uniqueConstraints=@UniqueConstraint(columnNames = {"sessionId", "sessionSequence"}))
+@XmlRootElement(name="sessionUpload")
 public class SessionUpload extends BaseModel implements java.io.Serializable {
 private static final long serialVersionUID = 2468665095583100932L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="UserDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private UserData userData;
 	
 	@Embedded

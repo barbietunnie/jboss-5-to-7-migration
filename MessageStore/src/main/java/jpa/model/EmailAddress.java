@@ -13,6 +13,10 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import jpa.msgui.vo.TimestampAdapter;
 
 @Entity
 @Table(name="email_address")
@@ -31,7 +35,7 @@ import javax.persistence.Transient;
 		 @ColumnResult(name="clickCount"),
 	  	}),
 	})
-
+@XmlRootElement(name="emailAddress")
 public class EmailAddress extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -6508051650541209578L;
 
@@ -43,16 +47,20 @@ public class EmailAddress extends BaseModel implements java.io.Serializable {
 	@Column(nullable=false, length=255, unique=true)
 	private String address = "";
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp statusChangeTime = null;
 	@Column(nullable=true, length=20)
  	private String statusChangeUserId = null;
 	@Column(nullable=false)
 	private int bounceCount = 0;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastBounceTime = null;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastSentTime = null;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastRcptTime= null;
 	@Column(nullable=false,length=1,columnDefinition="boolean not null")
 	private boolean isAcceptHtml = true;

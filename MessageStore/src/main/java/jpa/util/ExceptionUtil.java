@@ -25,6 +25,18 @@ public class ExceptionUtil {
 		return exception;
 	}
 	
+	public static Exception findRootCause(Exception ex) {
+		if (ex == null) {
+			throw new IllegalArgumentException("Input parameter must not be null");
+		}
+		Exception exception = ex;
+		while (ex.getCause()!=null) {
+			exception = (Exception)ex.getCause();
+			ex = exception;
+		}
+		return exception;
+	}
+	
 	public static String findNestedStackTrace(Exception ex, String className) {
 		Exception exception = ex;
 		if (ex == null || StringUtils.isBlank(className)) {

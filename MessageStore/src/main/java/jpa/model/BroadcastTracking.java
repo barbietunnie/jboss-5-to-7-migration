@@ -15,6 +15,11 @@ import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import jpa.msgui.vo.TimestampAdapter;
 
 @Entity
 @Table(name="broadcast_tracking", uniqueConstraints=@UniqueConstraint(columnNames = {"BroadcastMessageRowId", "EmailAddressRowId"}))
@@ -24,6 +29,7 @@ import javax.persistence.UniqueConstraint;
 		 @EntityResult(entityClass=BroadcastTracking.class),
 	  	}),
 	})
+@XmlRootElement(name="broadcastTracking")
 public class BroadcastTracking extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 8041670636070073207L;
 
@@ -33,11 +39,13 @@ public class BroadcastTracking extends BaseModel implements Serializable {
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="EmailAddressRowId",insertable=true,referencedColumnName="Row_Id",nullable=false,
 			foreignKey=@ForeignKey(name="FK_email_broadcast_EmailAddressRowId"))
+	@XmlTransient
 	private EmailAddress emailAddress;
 	
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="BroadcastMessageRowId",insertable=true,referencedColumnName="Row_Id",nullable=false,
 			foreignKey=@ForeignKey(name="FK_broadcast_tracking_BroadcastMessageRowId"))
+	@XmlTransient
 	private BroadcastMessage broadcastMessage;
 
 	@Column(nullable=false, columnDefinition="int")
@@ -47,8 +55,10 @@ public class BroadcastTracking extends BaseModel implements Serializable {
 	@Column(nullable=false, columnDefinition="int")
 	private int clickCount = 0;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastOpenTime = null;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastClickTime = null;
 
 	public BroadcastTracking() {}

@@ -13,8 +13,12 @@ import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.constant.CodeType;
+import jpa.msgui.vo.TimestampAdapter;
 import jpa.util.StringUtil;
 
 @Entity
@@ -25,6 +29,7 @@ import jpa.util.StringUtil;
 		 @EntityResult(entityClass=Subscription.class),
 	  	}),
 	})
+@XmlRootElement(name="subscription")
 public class Subscription extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 5306761711116978942L;
 
@@ -33,10 +38,12 @@ public class Subscription extends BaseModel implements java.io.Serializable {
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private EmailAddress emailAddr; // subscriber email address
 	
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="MailingListRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private MailingList mailingList; // mailing list isSubscribed to
 	
 	@Column(length=1,nullable=false,columnDefinition="boolean not null")
@@ -44,18 +51,22 @@ public class Subscription extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true,columnDefinition="Boolean")
 	private Boolean isOptIn = null;
 	@Column(nullable=false)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp CreateTime;
 	@Column(nullable=false)
 	private int sentCount = 0;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastSentTime = null;
 	@Column(nullable=false)
 	private int openCount = 0;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastOpenTime = null;
 	@Column(nullable=false)
 	private int clickCount = 0;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastClickTime = null;
 
 	public Subscription() {

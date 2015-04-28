@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlTransient;
 
 import jpa.model.BaseModel;
 
@@ -22,6 +23,7 @@ public class MessageUnsubComment extends BaseModel implements Serializable
 	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false,
 			table="message_unsub_comment", foreignKey=@ForeignKey(name="FK_message_unsub_comment_MessageInboxRowId"))
+	@XmlTransient
 	private MessageInbox messageInbox;
 
 	@Column(name="MailingListRowId", nullable=true)

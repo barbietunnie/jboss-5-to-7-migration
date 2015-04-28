@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Embeddable
 public class MessageRfcFieldPK implements Serializable {
@@ -14,6 +15,7 @@ public class MessageRfcFieldPK implements Serializable {
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private MessageInbox messageInbox;
 
 	@Column(length=50, nullable=false)

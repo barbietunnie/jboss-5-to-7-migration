@@ -17,10 +17,14 @@ import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import jpa.constant.StatusId;
+import jpa.msgui.vo.TimestampAdapter;
 
 @Entity
 @Table(name="mailing_list", uniqueConstraints=@UniqueConstraint(columnNames = {"SenderDataRowId", "acctUserName"}))
@@ -40,6 +44,7 @@ import jpa.constant.StatusId;
 			 @EntityResult(entityClass=MailingList.class),
 		  }),
 	})
+@XmlRootElement(name="mailingList")
 public class MailingList extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -1314842144892847007L;
 
@@ -58,6 +63,7 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	
 	@ManyToOne(fetch=FetchType.EAGER, optional=false, targetEntity=SenderData.class)
 	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private SenderData senderData; // sender the list associated to
 	
 	@Column(nullable=false, length=20, unique=true)
@@ -73,6 +79,7 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	@Column(nullable=false, columnDefinition="boolean not null")
 	private boolean isSendText = false;
 	@Column(nullable=false)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp createTime;
 	@Column(nullable=false, length=255)
 	private String listMasterEmailAddr = "";
