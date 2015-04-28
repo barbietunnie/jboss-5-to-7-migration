@@ -14,9 +14,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.naming.InitialContext;
+import javax.persistence.NoResultException;
 import javax.sql.DataSource;
 
-import jpa.exception.DataValidationException;
 import jpa.model.EmailAddress;
 import jpa.model.SubscriberData;
 import jpa.model.Subscription;
@@ -82,45 +82,55 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
     	return subscriberDao.getAll();
     }
     
-    public SubscriberData getSubscriberById(String subrId) throws DataValidationException {
-		SubscriberData vo = subscriberDao.getBySubscriberId(subrId);
-		return vo;
+    public SubscriberData getSubscriberById(String subrId) {
+    	try {
+    		SubscriberData vo = subscriberDao.getBySubscriberId(subrId);
+    		return vo;
+    	}
+    	catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	public SubscriberData getSubscriberByEmailAddress(String emailAddr) {
 		EmailAddress emailAddrVo = emailAddrDao.findSertAddress(emailAddr);
-		SubscriberData customerVo = subscriberDao.getByEmailAddress(emailAddrVo.getAddress());
-		return customerVo;
+		try {
+			SubscriberData sbsrVo = subscriberDao.getByEmailAddress(emailAddrVo.getAddress());
+			return sbsrVo;
+		}
+		catch (NoResultException e) {
+			return null;
+		}
 	}
 
-	public Subscription subscribe(String emailAddr, String listId) throws DataValidationException {
+	public Subscription subscribe(String emailAddr, String listId) {
 		Subscription emailAdded = subscriptionBo.subscribe(emailAddr, listId);
 		return emailAdded;
 	}
 
-	public Subscription unSubscriber(String emailAddr, String listId) throws DataValidationException {
+	public Subscription unSubscriber(String emailAddr, String listId) {
 		Subscription emailRemoved = subscriptionBo.unsubscribe(emailAddr, listId);
 		return emailRemoved;
 	}
 
-	public void insertSubscriber(SubscriberData vo) throws DataValidationException {
+	public void insertSubscriber(SubscriberData vo) {
 		subscriberDao.insert(vo);
 	}
 
-	public void updateSubscriber(SubscriberData vo) throws DataValidationException {
+	public void updateSubscriber(SubscriberData vo) {
 		subscriberDao.update(vo);
 	}
 
-	public void deleteSubscriber(SubscriberData vo) throws DataValidationException {
+	public void deleteSubscriber(SubscriberData vo) {
 		subscriberDao.delete(vo);
 	}
 	
-	public Subscription optInRequest(String emailAddr, String listId) throws DataValidationException {
+	public Subscription optInRequest(String emailAddr, String listId) {
 		Subscription emailOptIned = subscriptionBo.optInRequest(emailAddr, listId);
 		return emailOptIned;
 	}
 
-	public Subscription optInConfirm(String emailAddr, String listId) throws DataValidationException {
+	public Subscription optInConfirm(String emailAddr, String listId) {
 		Subscription emailOptIned = subscriptionBo.optInConfirm(emailAddr, listId);
 		return emailOptIned;
 	}
