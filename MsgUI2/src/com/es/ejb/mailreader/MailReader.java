@@ -58,6 +58,7 @@ public class MailReader {
 	@Resource
 	private SessionContext context;
 	
+	private int readMailInterval = 60 * 60; // 60 minutes
 //	@Resource
 //	private TimerService timerService;
 
@@ -84,7 +85,7 @@ public class MailReader {
     @PostConstruct
 	public void startUp() {
 		logger.info("Entering startUp() method, starting Mail Readers...");
-		startMailReader(60);
+		startMailReader(readMailInterval);
 	}
 
 	public void startMailReader(int interval) {

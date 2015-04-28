@@ -1,6 +1,8 @@
 package com.es.ejb.subscriber;
 
-import javax.naming.Context;
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.naming.NamingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -10,13 +12,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import jpa.model.SubscriberData;
 import jpa.model.Subscription;
+import jpa.util.ExceptionUtil;
 import jpa.util.StringUtil;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 
 import com.es.tomee.util.TomeeCtxUtil;
@@ -24,7 +32,7 @@ import com.es.tomee.util.TomeeCtxUtil;
 @Path("/msgapi/subscription")
 @Produces({"text/xml", "application/json"})
 public class SubscriptionRS {
-	static final Logger logger = Logger.getLogger(SubscriptionVo.class);
+	static final Logger logger = Logger.getLogger(SubscriptionRS.class);
 
 	@javax.ejb.EJB
 	private SubscriberLocal subscriber;
@@ -35,7 +43,7 @@ public class SubscriptionRS {
 	
 	SubscriberLocal getSubscriberLocal() throws NamingException {
 		if (subscriber == null) {
-			Context context = TomeeCtxUtil.getLocalContext();
+			javax.naming.Context context = TomeeCtxUtil.getLocalContext();
 			subscriber = (SubscriberLocal) context.lookup("subscriberLocal");
 		}
 		return subscriber;
@@ -43,32 +51,41 @@ public class SubscriptionRS {
 	
 	@Path("/getSubscriber")
 	@GET
-	@Produces("text/plain")
+	@Produces("application/json")
 	public Response getSubscriberByEmailAddress(@QueryParam("emailAddr") String emailAddr) {
 		try {
 			SubscriberData sd = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
 			if (sd != null) {
 				logger.info(StringUtil.prettyPrint(sd));
-				return Response.ok(sd.getSubscriberId()).build();
-				//return sd.getSubscriberId();
+				return Response.ok(sd).build();
 			}
 			else {
 				return Response.ok("Subscriber not found").build();
-				//return "Failed to find the subscriber";
 			}
 		}
 		catch (NamingException e) {
-			//throw new RuntimeException("Failed to lookup subscriberLocal", e);
-			return Response.serverError().build();
-			//return "Failed to lookup";
+			// produce HTTP 500 Internal Server Error
+			throw new WebApplicationException(Response.serverError().build());
 		}
 	}
 	
-	@Path("/subscriber/{sbsrId}")
+	@Path("/subscriber/{emailAddr}")
 	@GET
-	@Produces("text/html")
-	public String getSubscriberByEmailAddressAsXml(@PathParam("sbsrId") String sbsrId, @QueryParam("emailAddr") String emailAddr) {
-		return null;
+	@Produces("application/xml")
+	public SubscriberData getSubscriberByEmailAddressAsXml(@PathParam("emailAddr") String emailAddr) {
+		try {
+			SubscriberData sd = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
+			if (sd != null) {
+				logger.info(StringUtil.prettyPrint(sd,1));
+				return sd;
+			}
+			else {
+				throw new WebApplicationException(Response.ok("Subscriber not found").build());
+			}
+		}
+		catch (NamingException e) {
+			throw new WebApplicationException(Response.serverError().build());
+		}
 	}
 
 	@GET
@@ -79,33 +96,78 @@ public class SubscriptionRS {
 
 	@Path("/subscribe")
     @PUT
-	public SubscriptionVo subscribe(@QueryParam("emailAddr") String emailAddr, @QueryParam("listId") String listId) {
+	public Subscription subscribe(@QueryParam("emailAddr") String emailAddr, @QueryParam("listId") String listId) {
 		try {
 			Subscription sub = getSubscriberLocal().subscribe(emailAddr, listId);
-			SubscriptionVo vo = new SubscriptionVo();
-			try {
-				BeanUtils.copyProperties(vo, sub);
-				vo.setEmailAddrRowId(sub.getEmailAddr().getRowId());
-				vo.setAddress(sub.getEmailAddr().getAddress());
-				vo.setMailingListRowId(sub.getMailingList().getRowId());
-				vo.setListId(sub.getMailingList().getListId());
-				return vo;
-			}
-			catch (Exception e) {
-				throw new RuntimeException("Failed to copy properties", e);
-			}
+			return sub;
 		}
 		catch (NamingException e) {
-			throw new RuntimeException(e);
+			throw new WebApplicationException(Response.serverError().build());
+		}
+		catch (Exception e) {
+			Exception cause = ExceptionUtil.findRootCause(e);
+			if (cause instanceof IllegalArgumentException) {
+				throw new WebApplicationException(Response.ok(cause.getMessage()).build());
+			}
+			throw new WebApplicationException(Response.serverError().build());
+		}
+	}
+
+	@Path("/unsubscribe")
+	@PUT
+	public Subscription unSubscribe(@QueryParam("emailAddr") String emailAddr, @QueryParam("listId") String listId) {
+		try {
+			Subscription sub = getSubscriberLocal().unSubscriber(emailAddr, listId);
+			return sub;
+		}
+		catch (NamingException e) {
+			throw new WebApplicationException(Response.serverError().build());
+		}
+		catch (Exception e) {
+			Exception cause = ExceptionUtil.findRootCause(e);
+			if (cause instanceof IllegalArgumentException) {
+				throw new WebApplicationException(Response.ok(cause.getMessage()).build());
+			}
+			throw new WebApplicationException(Response.serverError().build());
 		}
 	}
 	
 	@Path("/update")
 	@POST
-	@Consumes("text/plain")
-	public SubscriptionVo unSubscribe(String emailAddr, String listId) {
+	@Consumes("application/x-www-form-urlencoded")
+	public Subscription update(@Context UriInfo ui, @Context HttpHeaders hh, MultivaluedMap<String, String> formParams) {
+		// print out UriInfo
+		MultivaluedMap<String, String> pathParams = ui.getPathParameters();
+		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
+		for (Iterator<String> it = pathParams.keySet().iterator(); it.hasNext();) {
+			String key = it.next();
+			logger.info("Path Key: " + key + ", Values: " + pathParams.get(key));
+		}
+		for (Iterator<String> it = queryParams.keySet().iterator(); it
+				.hasNext();) {
+			String key = it.next();
+			logger.info("Query Key: " + key + ", Values: " + queryParams.get(key));
+		}
+		
+		// print out headers and cookies
+		MultivaluedMap<String, String> headerParams = hh.getRequestHeaders();
+		for (Iterator<String> it = headerParams.keySet().iterator(); it
+				.hasNext();) {
+			String key = it.next();
+			logger.info("Header Key: " + key + ", Values: " + headerParams.get(key));
+		}
+		Map<String, Cookie> cookieParams = hh.getCookies();
+		for (Iterator<String> it = cookieParams.keySet().iterator(); it.hasNext();) {
+			String key = it.next();
+			logger.info("Cookie Key: " + key + ", Values: " + cookieParams.get(key));
+		}
+
+		// print out Form Parameters
+		for (Iterator<String> it = formParams.keySet().iterator(); it.hasNext();) {
+			String key = it.next();
+			logger.info("Form Key: " + key + ", Values: " + formParams.get(key));
+		}
 		return null;
 	}
-	
 
 }

@@ -6,9 +6,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.es.tomee.util.TimestampAdapter;
-
 import jpa.constant.Constants;
+import jpa.msgui.vo.TimestampAdapter;
 
 @XmlTransient
 public abstract class BaseWsVo implements java.io.Serializable {

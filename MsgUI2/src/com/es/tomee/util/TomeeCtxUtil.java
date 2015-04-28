@@ -5,7 +5,6 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Properties;
 
-import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
@@ -20,7 +19,7 @@ import org.apache.log4j.Logger;
 public class TomeeCtxUtil {
 	protected final static Logger logger = Logger.getLogger(TomeeCtxUtil.class);
 
-	public static Context getLocalContext() throws NamingException {
+	public static javax.naming.Context getLocalContext() throws NamingException {
 		Properties p = new Properties();
 		p.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
 		try {
@@ -32,7 +31,7 @@ public class TomeeCtxUtil {
 		}
 	}
 	
-	public static Context getRemoteContext() throws NamingException {
+	public static javax.naming.Context getRemoteContext() throws NamingException {
 		Properties p = new Properties();
 		p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
 		//p.put("java.naming.provider.url", "ejbd://localhost:4201"); // OpenEjb
@@ -50,10 +49,11 @@ public class TomeeCtxUtil {
 		}
 	}
 
-	public static Context getActiveMQContext(String... queueNames) throws NamingException {
+	public static javax.naming.Context getActiveMQContext(String... queueNames) throws NamingException {
 		Properties props = new Properties();
-		props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-		props.setProperty(Context.PROVIDER_URL, "tcp://127.0.0.1:61616");
+		props.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY,
+				"org.apache.activemq.jndi.ActiveMQInitialContextFactory");
+		props.setProperty(javax.naming.Context.PROVIDER_URL, "tcp://127.0.0.1:61616");
 		
 		//specify queue property name as queue.jndiname
 		for (String queueName : queueNames) {
@@ -61,7 +61,7 @@ public class TomeeCtxUtil {
 		}
 		
 		try {
-			Context context = new InitialContext(props);
+			javax.naming.Context context = new InitialContext(props);
 			return context;
 		} catch (NamingException e) {
 			logger.error("NamingException caught", e);
@@ -69,7 +69,7 @@ public class TomeeCtxUtil {
 		}
 	}
 
-	public static void listContext(Context context, String listName) {
+	public static void listContext(javax.naming.Context context, String listName) {
     	try {
 			NamingEnumeration<NameClassPair> list = context.list(listName);
 			while (list!=null && list.hasMore()) {
