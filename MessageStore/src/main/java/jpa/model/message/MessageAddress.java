@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlTransient;
 
 import jpa.constant.EmailAddrType;
 import jpa.model.BaseModel;
@@ -21,6 +22,7 @@ public class MessageAddress extends BaseModel implements Serializable
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private MessageInbox messageInbox;
 
 	@Column(length=12, nullable=false)

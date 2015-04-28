@@ -2,12 +2,14 @@ package jpa.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name="reload_flags")
 /*
  * XXX !!!!! Rollback will not work since this table is defined with MyISAM engine
  */
+@XmlRootElement(name="reloadFlags")
 public class ReloadFlags extends BaseModel {	
 	private static final long serialVersionUID = -5657762883755527124L;
 

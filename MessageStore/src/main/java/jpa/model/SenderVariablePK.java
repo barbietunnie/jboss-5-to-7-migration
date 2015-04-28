@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Embeddable
 public class SenderVariablePK implements Serializable {
@@ -17,6 +18,12 @@ public class SenderVariablePK implements Serializable {
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=SenderData.class)
 	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	/*
+	 * Add annotation to exclude the parent element to prevent a cycle.
+	 * 
+	 * SAXException: A cycle is detected in the object graph...
+	 */
+	@XmlTransient
 	private SenderData senderData;
 	
 	@Column(name="VariableName", nullable=false, length=26)

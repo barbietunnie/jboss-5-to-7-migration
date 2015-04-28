@@ -10,24 +10,31 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import jpa.constant.Constants;
+import jpa.msgui.vo.TimestampAdapter;
 
 @Entity
 @Table(name="user_data")
+@XmlRootElement(name="userData")
 public class UserData extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 14989739185873317L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="SenderDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
 	@OnDelete( action = OnDeleteAction.CASCADE )
+	@XmlTransient
 	private SenderData senderData; // sender user is associated to
 
 	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL, optional=true, targetEntity=EmailAddress.class)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
+	@XmlTransient
 	private EmailAddress emailAddr; // user email address - optional
 	
 	@Column(nullable=false, length=20, unique=true)
@@ -43,8 +50,10 @@ public class UserData extends BaseModel implements java.io.Serializable {
 	@Column(length=1,columnDefinition="char")
 	private String middleInit = null;
 	@Column(nullable=false)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp createTime;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastVisitTime;
 	@Column(nullable=false)
 	private int hits = 0;

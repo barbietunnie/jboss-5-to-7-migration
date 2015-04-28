@@ -17,6 +17,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -41,6 +42,7 @@ public class RuleAction extends BaseModel implements java.io.Serializable {
 	
 	@ManyToOne(targetEntity=RuleActionDetail.class, fetch=FetchType.EAGER, optional=false)
 	@JoinColumn(name="RuleActionDetailRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private RuleActionDetail ruleActionDetail;
 
 	@Column(nullable=true, length=4054)

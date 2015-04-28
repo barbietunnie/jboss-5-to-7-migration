@@ -6,6 +6,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Embeddable
 public class RuleSubruleMapPK implements Serializable {
@@ -13,10 +14,12 @@ public class RuleSubruleMapPK implements Serializable {
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=RuleLogic.class)
 	@JoinColumn(name="RuleLogicRowId",insertable=true,referencedColumnName="Row_Id",nullable=false)
+	@XmlTransient
 	private RuleLogic ruleLogic;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=RuleLogic.class)
 	@JoinColumn(name="SubruleLogicRowId",insertable=true,referencedColumnName="Row_Id",nullable=false)
+	@XmlTransient
 	private RuleLogic subruleLogic;
 
 	public RuleSubruleMapPK() {}

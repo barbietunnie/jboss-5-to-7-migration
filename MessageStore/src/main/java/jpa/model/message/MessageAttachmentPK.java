@@ -8,6 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Embeddable
 public class MessageAttachmentPK implements Serializable {
@@ -16,6 +17,7 @@ public class MessageAttachmentPK implements Serializable {
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageInbox.class)
 	@JoinColumn(name="MessageInboxRowId", insertable=true, referencedColumnName="Row_Id", nullable=false,
 			foreignKey=@ForeignKey(name="FK_message_attachment_MessageInboxRowId"))
+	@XmlTransient
 	private MessageInbox messageInbox;
 
 	@Column(nullable=false, columnDefinition="decimal(2,0)")

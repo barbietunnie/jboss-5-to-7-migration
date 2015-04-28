@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlTransient;
 
 import jpa.constant.CodeType;
 import jpa.model.BaseModel;
@@ -27,14 +28,17 @@ public class MessageSource extends BaseModel implements Serializable
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddress.class)
 	@JoinColumn(name="FromAddressRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private EmailAddress fromAddress;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=true, targetEntity=EmailAddress.class)
 	@JoinColumn(name="ReplyToAddressRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
+	@XmlTransient
 	private EmailAddress replyToAddress;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=TemplateData.class)
 	@JoinColumn(name="TemplateDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private TemplateData templateData;
 
 	@JoinTable(name="source_to_variable",

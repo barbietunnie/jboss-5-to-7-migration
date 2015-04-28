@@ -6,14 +6,18 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="id_tokens")
+@XmlRootElement(name="idTokens")
 public class IdTokens extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -632308305179136081L;
 
 	@OneToOne(targetEntity=SenderData.class, fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false, unique=true)
+	@XmlTransient
 	private SenderData senderData;
 
 	@Column(nullable=true, length=100)

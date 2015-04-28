@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
 
 
 @Embeddable
@@ -15,6 +16,7 @@ public class RenderVariablePK implements Serializable {
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=MessageRendered.class)
 	@JoinColumn(name="MessageRenderedRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private MessageRendered messageRendered;
 
 	@Column(nullable=false,length=26)

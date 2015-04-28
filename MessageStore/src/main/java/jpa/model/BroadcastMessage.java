@@ -18,10 +18,14 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import jpa.constant.MailingListDeliveryType;
+import jpa.msgui.vo.TimestampAdapter;
 
 @Entity
 @Table(name="broadcast_message")
@@ -31,6 +35,7 @@ import jpa.constant.MailingListDeliveryType;
 		 @EntityResult(entityClass=BroadcastMessage.class),
 	  	}),
 	})
+@XmlRootElement(name="broadcastMessage")
 public class BroadcastMessage extends BaseModel implements Serializable {
 	private static final long serialVersionUID = -2366817532593091084L;
 
@@ -40,11 +45,13 @@ public class BroadcastMessage extends BaseModel implements Serializable {
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="MailingListRowId",insertable=true,referencedColumnName="Row_Id",nullable=false,
 			foreignKey=@ForeignKey(name="FK_broadcast_mesage_MailingListRowId"))
+	@XmlTransient
 	private MailingList mailingList;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=true)
 	@JoinColumn(name="EmailTemplateRowId",insertable=true,referencedColumnName="Row_Id",nullable=true,
 			foreignKey=@ForeignKey(name="FK_broadcast_message_EmailTemplateRowId"))
+	@XmlTransient
 	private EmailTemplate emailTemplate;
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true, mappedBy="broadcastMessage")
@@ -67,12 +74,16 @@ public class BroadcastMessage extends BaseModel implements Serializable {
 	@Column(nullable=false, columnDefinition="int")
 	private int clickCount = 0;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastOpenTime = null;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp lastClickTime = null;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp startTime = null;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp endTime = null;
 	@Column(nullable=false, columnDefinition="int")
 	private int unsubscribeCount = 0;

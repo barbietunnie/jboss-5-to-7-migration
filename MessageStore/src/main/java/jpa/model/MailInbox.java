@@ -6,12 +6,14 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.MailServerType;
 
 @Entity
 @Table(name="mail_inbox", uniqueConstraints=@UniqueConstraint(columnNames = {"userId", "hostName"}))
+@XmlRootElement(name="mailInbox")
 public class MailInbox extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -2636716589190853166L;
 

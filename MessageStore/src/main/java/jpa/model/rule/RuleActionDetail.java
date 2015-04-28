@@ -6,6 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
 
 import jpa.model.BaseModel;
 
@@ -16,6 +17,7 @@ public class RuleActionDetail extends BaseModel implements java.io.Serializable 
 
 	@ManyToOne(targetEntity=RuleDataType.class, fetch=FetchType.LAZY, optional=true)
 	@JoinColumn(name="RuleDataTypeRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=true)
+	@XmlTransient
 	private RuleDataType ruleDataType;
 
 	@Column(nullable=false, length=26, unique=true)

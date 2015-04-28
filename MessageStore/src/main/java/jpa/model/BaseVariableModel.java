@@ -2,6 +2,8 @@ package jpa.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,14 +11,17 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import jpa.constant.CodeType;
 import jpa.constant.StatusId;
 
 @MappedSuperclass
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
-public abstract class BaseVariableModel implements Serializable
-{
+@Access(AccessType.FIELD)
+@XmlAccessorType(XmlAccessType.FIELD)
+public abstract class BaseVariableModel implements Serializable {
 	private static final long serialVersionUID = 3239024926806006588L;
 
 	@Id

@@ -6,14 +6,18 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="user_session")
+@XmlRootElement(name="userSession")
 public class UserSession extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 7367026694851772455L;
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="UserDataRowId", insertable=true, updatable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private UserData userData;
 	
 	@Column(nullable=false, length=50)

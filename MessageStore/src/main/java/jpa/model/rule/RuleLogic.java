@@ -17,11 +17,13 @@ import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import jpa.constant.RuleCategory;
 import jpa.model.BaseModel;
+import jpa.msgui.vo.TimestampAdapter;
 
 @Entity
 @Table(name="rule_logic", uniqueConstraints=@UniqueConstraint(columnNames = {"ruleName"}))
@@ -57,6 +59,7 @@ public class RuleLogic extends BaseModel implements Serializable {
 	@Column(length=8, nullable=false)
 	private String ruleType = "";
 	@Column(nullable=false)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp startTime;
 	@Column(length=8, nullable=false)
 	private String mailType = "";

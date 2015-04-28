@@ -16,6 +16,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import jpa.msgui.vo.TimestampAdapter;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 		 @EntityResult(entityClass=SubscriberData.class),
 	  	}),
 	})
+@XmlRootElement(name="subscriberData")
 public class SubscriberData extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -2242214285799087578L;
 
@@ -35,10 +41,12 @@ public class SubscriberData extends BaseModel implements java.io.Serializable {
 
 	@ManyToOne(fetch=FetchType.LAZY, optional=false, targetEntity=SenderData.class)
 	@JoinColumn(name="SenderDataRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private SenderData senderData;
 
 	@OneToOne(fetch=FetchType.LAZY, optional=false, targetEntity=EmailAddress.class)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
+	@XmlTransient
 	private EmailAddress emailAddr;
 
 	@Column(nullable=false, length=20, unique=true)
@@ -105,6 +113,7 @@ public class SubscriberData extends BaseModel implements java.io.Serializable {
 	@Column(length=255)
 	private String memoText = null;
 	@Column(nullable=true)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp passwordChangeTime = null;
 	@Column(length=32)
 	private String userPassword = null;
@@ -114,6 +123,7 @@ public class SubscriberData extends BaseModel implements java.io.Serializable {
 	private String securityAnswer = null;
 
 	@Transient
+	@XmlTransient
 	private String origSubrId = null;
 //	@Transient
 //	private String emailAddress = null;

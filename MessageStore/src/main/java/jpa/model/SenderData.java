@@ -11,6 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import jpa.constant.Constants;
 
@@ -18,6 +19,7 @@ import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 @Entity
 @Table(name="sender_data")
+@XmlRootElement(name="senderData")
 public class SenderData extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 8789436921442107499L;
 

@@ -3,6 +3,8 @@ package jpa.model;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,9 +13,14 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
+import jpa.msgui.vo.TimestampAdapter;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -23,6 +30,8 @@ import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 
 @MappedSuperclass
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@Access(AccessType.FIELD)
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = -3737571995910644181L;
 	
@@ -35,16 +44,20 @@ public abstract class BaseModel implements java.io.Serializable {
 	private String statusId = StatusId.ACTIVE.getValue();
 	@Column(name="UpdtTime", nullable=false)
 	//@Version // revisit until JPA knows transaction boundary with Optimistic Locking
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	protected Timestamp updtTime = new Timestamp(System.currentTimeMillis());
 	@Column(name="UpdtUserId", length=10, nullable=false)
 	protected String updtUserId = Constants.DEFAULT_USER_ID;
 	
 	/* Define transient fields for UI application */
 	@Transient
+	@XmlTransient
 	protected boolean editable = true;
 	@Transient
+	@XmlTransient
 	protected boolean markedForDeletion = false;
 	@Transient
+	@XmlTransient
 	protected boolean markedForEdition = false;
 
 	public boolean isEditable() {

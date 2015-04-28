@@ -16,10 +16,12 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.model.BaseModel;
 import jpa.model.SenderData;
 import jpa.model.SubscriberData;
+import jpa.msgui.vo.TimestampAdapter;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
@@ -68,6 +70,7 @@ public class MessageRendered extends BaseModel implements Serializable {
 	private SubscriberData subscriberData;
 
 	@Column(nullable=false)
+	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp startTime;
 
 	@Column(nullable=true)

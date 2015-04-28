@@ -3,11 +3,13 @@ package jpa.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import jpa.constant.EmailVariableType;
 
 @Entity
 @Table(name="email_variable")
+@XmlRootElement(name="emailVariable")
 public class EmailVariable extends BaseModel implements java.io.Serializable {
 	private static final long serialVersionUID = 3479703348151037887L;
 
