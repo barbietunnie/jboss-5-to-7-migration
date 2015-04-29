@@ -19,11 +19,11 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.eclipse.persistence.annotations.CascadeOnDelete;
-
 import jpa.constant.RuleCategory;
 import jpa.model.BaseModel;
 import jpa.msgui.vo.TimestampAdapter;
+
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 @Entity
 @Table(name="rule_logic", uniqueConstraints=@UniqueConstraint(columnNames = {"ruleName"}))

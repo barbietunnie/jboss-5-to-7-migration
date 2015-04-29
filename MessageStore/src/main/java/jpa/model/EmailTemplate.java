@@ -10,9 +10,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.constant.MailingListDeliveryType;
 import jpa.constant.MailingListType;
+import jpa.msgui.vo.BooleanAdapter;
 
 @Entity
 @Table(name="email_template")
@@ -46,6 +48,7 @@ public class EmailTemplate extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true, length=100)
 	private String selectCriteria = null;
 	@Column(nullable=true, length=1, columnDefinition="Boolean")
+	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isEmbedEmailId = null; // use system default
 	@Column(nullable=false, length=1, columnDefinition="boolean not null")
 	private boolean isBuiltin = false;

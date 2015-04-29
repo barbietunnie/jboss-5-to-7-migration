@@ -72,25 +72,7 @@ public class MailingListService implements java.io.Serializable {
 		}
 	}
 
-	/*
-	 * @deprecated - works with EclipseLink, but causes TypeMismatchException with Hibernate
-	 */
-	public List<MailingList> getByEmailAddress_v0(String address) throws NoResultException {
-		String sql =
-			"select t from MailingList t, Subscription sub, EmailAddress ea " +
-				" where sub=t.subscriptions and sub.emailAddr=ea and ea.address=:address ";
-		try {
-			Query query = em.createQuery(sql);
-			query.setParameter("address", address);
-			@SuppressWarnings("unchecked")
-			List<MailingList> list = query.getResultList();
-			return list;
-		}
-		finally {
-		}
-	}
-
-	public List<MailingList> getByEmailAddress(String address) throws NoResultException {
+	public List<MailingList> getByAddressWithCounts(String address) throws NoResultException {
 		String sql =
 			"select a.*, b.isSubscribed, " +
 			" sum(b.SentCount) as sentCount, " +

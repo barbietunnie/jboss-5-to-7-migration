@@ -19,6 +19,7 @@ import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.constant.CarrierCode;
@@ -200,18 +201,25 @@ public class MessageInbox extends BaseModel implements Serializable {
 	 * define properties for UI components 
 	 */
 	@Transient
+	@XmlTransient
 	private boolean isReply = false;
 	@Transient
+	@XmlTransient
 	private boolean isForward = false;
 	@Transient
+	@XmlTransient
 	private String composeFromAddress = null;
 	@Transient
+	@XmlTransient
 	private String composeToAddress = null;
 	@Transient
+	@XmlTransient
 	private int threadLevel = -1; // don't change
 	@Transient
+	@XmlTransient
 	private boolean showAllHeaders = false;
 	@Transient
+	@XmlTransient
 	private boolean showRawMessage = false;
 	
 	public boolean isReply() {

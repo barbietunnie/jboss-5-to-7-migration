@@ -9,9 +9,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.apache.commons.lang3.StringUtils;
-
 import jpa.model.BaseModel;
+
+import org.apache.commons.lang3.StringUtils;
 
 @Entity
 @Table(name="rule_element", uniqueConstraints=@UniqueConstraint(columnNames = {"RuleLogicRowId", "elementSequence"}))

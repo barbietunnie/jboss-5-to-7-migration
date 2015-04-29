@@ -21,10 +21,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.eclipse.persistence.annotations.CascadeOnDelete;
-
 import jpa.constant.StatusId;
 import jpa.msgui.vo.TimestampAdapter;
+
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 @Entity
 @Table(name="mailing_list", uniqueConstraints=@UniqueConstraint(columnNames = {"SenderDataRowId", "acctUserName"}))
@@ -85,15 +85,20 @@ public class MailingList extends BaseModel implements java.io.Serializable {
 	private String listMasterEmailAddr = "";
 
 	@Transient
+	@XmlTransient
 	private String origListId = null;
 
 	@Transient
+	@XmlTransient
 	private Boolean isSubscribed;
 	@Transient
+	@XmlTransient
 	private Integer sentCount;
 	@Transient
+	@XmlTransient
 	private Integer openCount;
 	@Transient
+	@XmlTransient
 	private Integer clickCount;
 
 	public MailingList() {

@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.constant.CodeType;
+import jpa.msgui.vo.BooleanAdapter;
 import jpa.msgui.vo.TimestampAdapter;
 import jpa.util.StringUtil;
 
@@ -49,6 +50,7 @@ public class Subscription extends BaseModel implements java.io.Serializable {
 	@Column(length=1,nullable=false,columnDefinition="boolean not null")
 	private boolean isSubscribed = true;
 	@Column(nullable=true,columnDefinition="Boolean")
+	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isOptIn = null;
 	@Column(nullable=false)
 	@XmlJavaTypeAdapter(TimestampAdapter.class)

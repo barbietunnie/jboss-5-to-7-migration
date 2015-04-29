@@ -12,8 +12,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.constant.Constants;
+import jpa.msgui.vo.BooleanAdapter;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
@@ -96,12 +98,15 @@ public class SenderData extends BaseModel implements Serializable {
 	@Column(length=30)
 	private String systemKey = null;
 	@Column(length=1, columnDefinition="Boolean")
+	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isDikm = null;
 	@Column(length=1, columnDefinition="Boolean")
+	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isDomainKey = null;
 	@Column(length=200)
 	private String keyFilePath = null;
 	@Column(length=1, columnDefinition="Boolean")
+	@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isSpf = null;
 
 	@Transient
