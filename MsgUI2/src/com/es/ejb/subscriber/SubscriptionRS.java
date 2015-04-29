@@ -18,6 +18,7 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import jpa.model.SubscriberData;
@@ -25,8 +26,11 @@ import jpa.model.Subscription;
 import jpa.util.ExceptionUtil;
 import jpa.util.StringUtil;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.apache.log4j.Logger;
 
+import com.es.jaxrs.common.ErrorResponse;
 import com.es.tomee.util.TomeeCtxUtil;
 
 @Path("/msgapi/subscription")
@@ -51,16 +55,30 @@ public class SubscriptionRS {
 	
 	@Path("/getSubscriber")
 	@GET
-	@Produces("application/json")
-	public Response getSubscriberByEmailAddress(@QueryParam("emailAddr") String emailAddr) {
+	@Produces({"application/json", "application/xml"})
+	public Response getSubscriberByEmailAddress(@QueryParam("emailAddr") String emailAddr, @Context HttpHeaders hh) {
 		try {
 			SubscriberData sd = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
 			if (sd != null) {
-				logger.info(StringUtil.prettyPrint(sd));
+				logger.info(StringUtil.prettyPrint(sd, 1));
 				return Response.ok(sd).build();
 			}
 			else {
-				return Response.ok("Subscriber not found").build();
+				boolean acceptXml = false;
+				MultivaluedMap<String, String> headerParams = hh.getRequestHeaders();
+				if (headerParams.containsKey("Accept")) {
+					if (StringUtils.containsIgnoreCase(headerParams.getFirst("Accept"), "/xml")) {
+						acceptXml = true;
+					}
+				}
+				String rsp;
+				if (acceptXml) {
+					rsp = "<subscriberData>Subscriber not found</subscriberData>";
+				}
+				else {
+					rsp = "{\"subscriberData\": \"not found\"}";
+				}
+				return Response.ok(rsp).build();
 			}
 		}
 		catch (NamingException e) {
@@ -80,7 +98,7 @@ public class SubscriptionRS {
 				return sd;
 			}
 			else {
-				throw new WebApplicationException(Response.ok("Subscriber not found").build());
+				throw new WebApplicationException(Response.ok("<subscriberData>Subscriber not found</subscriberData>").build());
 			}
 		}
 		catch (NamingException e) {
@@ -88,10 +106,30 @@ public class SubscriptionRS {
 		}
 	}
 
+	@Path("/getsbsr")
 	@GET
 	@Produces({"application/xml", "application/json"})
-	public String getAsXmlOrJson(@QueryParam("emailAddr") String emailAddr) {
-		return null;
+	public Response getAsXmlOrJson(@QueryParam("emailAddr") String emailAddr) {
+		try {
+			SubscriberData sd = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
+			if (sd != null) {
+				return Response.ok(sd).build();
+			}
+			else {
+				ErrorResponse er = new ErrorResponse();
+				er.setHttpStatus(404);
+				er.setErrorCode(102);
+				er.setErrorMessage("Subscriber not found");
+				ResponseBuilder rb = new ResponseBuilderImpl();
+				rb.status(404);
+				rb.entity(er);
+				return rb.build();
+			}
+		}
+		catch (NamingException e) {
+			throw new WebApplicationException(Response.serverError().build());
+		}
+
 	}
 
 	@Path("/subscribe")
@@ -135,7 +173,7 @@ public class SubscriptionRS {
 	@Path("/update")
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
-	public Subscription update(@Context UriInfo ui, @Context HttpHeaders hh, MultivaluedMap<String, String> formParams) {
+	public Response update(@Context UriInfo ui, @Context HttpHeaders hh, MultivaluedMap<String, String> formParams) {
 		// print out UriInfo
 		MultivaluedMap<String, String> pathParams = ui.getPathParameters();
 		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
@@ -151,8 +189,7 @@ public class SubscriptionRS {
 		
 		// print out headers and cookies
 		MultivaluedMap<String, String> headerParams = hh.getRequestHeaders();
-		for (Iterator<String> it = headerParams.keySet().iterator(); it
-				.hasNext();) {
+		for (Iterator<String> it = headerParams.keySet().iterator(); it.hasNext();) {
 			String key = it.next();
 			logger.info("Header Key: " + key + ", Values: " + headerParams.get(key));
 		}
@@ -167,7 +204,7 @@ public class SubscriptionRS {
 			String key = it.next();
 			logger.info("Form Key: " + key + ", Values: " + formParams.get(key));
 		}
-		return null;
+		return Response.ok("Success").build();
 	}
 
 }
