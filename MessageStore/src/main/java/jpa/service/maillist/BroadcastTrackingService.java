@@ -93,6 +93,39 @@ public class BroadcastTrackingService implements java.io.Serializable {
 		}
 	}
 
+	public int updateSentCount(int rowId, int count) {
+		String sql = "update BroadcastTracking t set t.sentCount = (t.sentCount + :count) where t.rowId = :rowId";
+		Query query = em.createQuery(sql);
+		query.setParameter("count", count);
+		query.setParameter("rowId", rowId);
+		int rowsupdated = query.executeUpdate();
+		return rowsupdated;
+	}
+	
+	public int updateSentCount(int rowId) {
+		return updateSentCount(rowId, 1);
+	}
+
+	public int updateOpenCount(int rowId) {
+		String sql = "update BroadcastTracking t set t.openCount = (t.openCount + 1), t.lastOpenTime = :time "
+				+ " where t.rowId = :rowId";
+		Query query = em.createQuery(sql);
+		query.setParameter("rowId", rowId);
+		query.setParameter("time", new java.sql.Timestamp(System.currentTimeMillis()));
+		int rowsupdated = query.executeUpdate();
+		return rowsupdated;
+	}
+
+	public int updateClickCount(int rowId) {
+		String sql = "update BroadcastTracking t set t.clickCount = (t.clickCount + 1), t.lastClickTime = :time "
+				+ " where t.rowId = :rowId";
+		Query query = em.createQuery(sql);
+		query.setParameter("rowId", rowId);
+		query.setParameter("time", new java.sql.Timestamp(System.currentTimeMillis()));
+		int rowsupdated = query.executeUpdate();
+		return rowsupdated;
+	}
+
 	public void delete(BroadcastTracking broadcast) {
 		if (broadcast == null) return;
 		try {
