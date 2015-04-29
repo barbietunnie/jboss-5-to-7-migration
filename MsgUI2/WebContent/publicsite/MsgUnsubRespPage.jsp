@@ -65,31 +65,31 @@ UnsubCommentService getUnsubCommentService(ServletContext ctx) {
 		addrVo = getEmailAddressService(ctx).getByRowId(Integer.parseInt(sbsrId));
 		listVo = getMailingListService(ctx).getByListId(listId);
 		if (submit != null && submit.length() > 0 && addrVo != null && listVo != null) {
-			Subscription sub = getSubscriptionService(ctx).unsubscribe(addrVo.getAddress(), listId);
-			if (sub != null) {
-				try {
-					MailingList vo = getMailingListService(ctx).getByListId(listId);
-					unsubListName += " - " + vo.getDisplayName();
-				}
-				catch (NoResultException e) {
-					logger.error("MsgUnsubRespPage.jsp - Failed to find mailing list by Id: " + listId);
-				}
-			}
-			pageContext.setAttribute("unsubListName", unsubListName);
-			// add user comments
-			if (unsubscribed > 0 && comments != null && comments.trim().length() > 0) {
-				try {
-					UnsubComment commVo = new UnsubComment();
-					commVo.setEmailAddr(addrVo);
-					commVo.setMailingList(listVo);
-					commVo.setComments(comments.trim());
-					getUnsubCommentService(ctx).insert(commVo);
-					logger.info("MsgUnsubRespPage.jsp - unsubcription commonts added: " + 1);
-				}
-			 	catch (Exception e) {
-			 		logger.error("MsgUnsubRespPage.jsp - add comments: " + e.toString());
-			 	}
-			}
+	Subscription sub = getSubscriptionService(ctx).unsubscribe(addrVo.getAddress(), listId);
+	if (sub != null) {
+		try {
+			MailingList vo = getMailingListService(ctx).getByListId(listId);
+			unsubListName += " - " + vo.getDisplayName();
+		}
+		catch (NoResultException e) {
+			logger.error("MsgUnsubRespPage.jsp - Failed to find mailing list by Id: " + listId);
+		}
+	}
+	pageContext.setAttribute("unsubListName", unsubListName);
+	// add user comments
+	if (unsubscribed > 0 && comments != null && comments.trim().length() > 0) {
+		try {
+			UnsubComment commVo = new UnsubComment();
+			commVo.setEmailAddress(addrVo);
+			commVo.setMailingList(listVo);
+			commVo.setComments(comments.trim());
+			getUnsubCommentService(ctx).insert(commVo);
+			logger.info("MsgUnsubRespPage.jsp - unsubcription commonts added: " + 1);
+		}
+	 	catch (Exception e) {
+	 		logger.error("MsgUnsubRespPage.jsp - add comments: " + e.toString());
+	 	}
+	}
 		}
 	}
 	catch (Exception e) {
@@ -102,7 +102,7 @@ UnsubCommentService getUnsubCommentService(ServletContext ctx) {
 		bmsg.setUnsubscribeCount(bmsg.getUnsubscribeCount()+1);
 		getBroadcastMessageService(ctx).update(bmsg);
 		try {
-			countVo = getBroadcastTrackingService(ctx).getByPrimaryKey(addrVo.getRowId(), bmsg.getRowId());
+	countVo = getBroadcastTrackingService(ctx).getByPrimaryKey(addrVo.getRowId(), bmsg.getRowId());
 		}
 	 	catch (NoResultException e1) {
 	 		logger.error("MsgUnsubPage.jsp - Failed to find broadcast tracking by emailAddrRowId/broadcastMsgRowId: " + sbsrId + "/" + msgId);
@@ -118,7 +118,7 @@ UnsubCommentService getUnsubCommentService(ServletContext ctx) {
 		listMap.put("_UnsubscribedMailingLists", unsubListName);
 		//listMap.put("SubscriberAddressId", addrVo.getEmailAddrId());
 		getMailingListBo(ctx).send(addrVo.getAddress(), listMap, "UnsubscriptionLetter");
-	%>
+%>
  	<tr>
 	 	<td align="center" colspan="2">
 		 	<table width="90%" border="0">
