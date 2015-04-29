@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
 public class MessageBeanUtilTest {
-	static final Logger logger = Logger.getLogger( MessageBeanUtilTest.class);
+	static final Logger logger = Logger.getLogger(MessageBeanUtilTest.class);
 	static final String LF = System.getProperty("line.separator", "\n");
 
 	@BeforeClass
