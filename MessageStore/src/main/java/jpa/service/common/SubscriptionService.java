@@ -209,7 +209,27 @@ public class SubscriptionService implements java.io.Serializable {
 		}
 		return sub;
 	}
-
+	
+	public Subscription addToList(String sbsrEmailAddr, String listEmailAddr) {
+		try {
+			MailingList mlist = mailingListService.getByListAddress(listEmailAddr);
+			return subscribe(sbsrEmailAddr, mlist.getListId());
+		}
+		catch (NoResultException e) {
+			throw new IllegalArgumentException("Mailing List Email Address (" + listEmailAddr + ") not found.");
+		}
+	}
+	
+	public Subscription removeFromList(String sbsrEmailAddr, String listEmailAddr) {
+		try {
+			MailingList mlist = mailingListService.getByListAddress(listEmailAddr);
+			return unsubscribe(sbsrEmailAddr, mlist.getListId());
+		}
+		catch (NoResultException e) {
+			throw new IllegalArgumentException("Mailing List Email Address (" + listEmailAddr + ") not found.");
+		}
+	}
+	
 	public Subscription optInRequest(String address, String listId) {
 		EmailAddress emailAddr = emailAddrService.findSertAddress(address);
 		MailingList list = null;
