@@ -35,7 +35,7 @@ UnsubCommentService getUnsubCommentsDao(ServletContext ctx) {
 }
 %>
 <%
-Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
+	Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
 	ServletContext ctx = application;
 	
 	String encodedSbsrId = request.getParameter("sbsrid");
@@ -51,54 +51,54 @@ Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
 		addrVo = getEmailAddressService(ctx).getByRowId(sbsrId);
 		String submit = request.getParameter("submit");
 		if (submit != null && submit.length() > 0 && addrVo != null) {
-			String[] chosens = request.getParameterValues("chosen");
-			for (int i=0; i<chosens.length; i++) {
-				String listId = chosens[i];
-				Subscription sub = getSubscriptionService(ctx).unsubscribe(addrVo.getAddress(), listId);
-				if (sub != null) {
-					try {
-						MailingList vo = getMailingListService(ctx).getByListId(listId);
-						unsubedList.add(listId + " - " + vo.getDisplayName());
-						if (unsubscribed > 0) {
-							sbListNames.append(" \n");
-						}
-						sbListNames.append(vo.getDisplayName());
-					}
-					catch (NoResultException e) {
-						logger.error("unsubscribeResp.jsp - Failed to find mailing list by Id: " + listId);
-					}
+	String[] chosens = request.getParameterValues("chosen");
+	for (int i=0; i<chosens.length; i++) {
+		String listId = chosens[i];
+		Subscription sub = getSubscriptionService(ctx).unsubscribe(addrVo.getAddress(), listId);
+		if (sub != null) {
+			try {
+				MailingList vo = getMailingListService(ctx).getByListId(listId);
+				unsubedList.add(listId + " - " + vo.getDisplayName());
+				if (unsubscribed > 0) {
+					sbListNames.append(" \n");
 				}
-				unsubscribed += 1;
+				sbListNames.append(vo.getDisplayName());
 			}
-			pageContext.setAttribute("subedList", unsubedList);
-			// add user comments
-			if (unsubscribed > 0 && comments != null && comments.trim().length() > 0) {
+			catch (NoResultException e) {
+				logger.error("unsubscribeResp.jsp - Failed to find mailing list by Id: " + listId);
+			}
+		}
+		unsubscribed += 1;
+	}
+	pageContext.setAttribute("subedList", unsubedList);
+	// add user comments
+	if (unsubscribed > 0 && comments != null && comments.trim().length() > 0) {
+		try {
+			UnsubComment commVo = new UnsubComment();
+			commVo.setEmailAddress(addrVo);
+			if (unsubedList.size() > 0) {
+				String unsubed = (String) unsubedList.get(0);
+				String unsubdListId = unsubed.substring(0, unsubed.indexOf(" "));
 				try {
-					UnsubComment commVo = new UnsubComment();
-					commVo.setEmailAddr(addrVo);
-					if (unsubedList.size() > 0) {
-						String unsubed = (String) unsubedList.get(0);
-						String unsubdListId = unsubed.substring(0, unsubed.indexOf(" "));
-						try {
-							MailingList vo = getMailingListService(ctx).getByListId(unsubdListId);
-							commVo.setMailingList(vo);
-							commVo.setComments(comments.trim());
-							getUnsubCommentsDao(ctx).insert(commVo);
-							logger.info("unsubscribeResp.jsp - unsubcription commonts added: " + 1);
-						}
-						catch (NoResultException e) {}
-					}
+					MailingList vo = getMailingListService(ctx).getByListId(unsubdListId);
+					commVo.setMailingList(vo);
+					commVo.setComments(comments.trim());
+					getUnsubCommentsDao(ctx).insert(commVo);
+					logger.info("unsubscribeResp.jsp - unsubcription commonts added: " + 1);
 				}
-			 	catch (Exception e) {
-			 		logger.error("unsubscribeResp.jsp - add comments: " + e.toString());
-			 	}
+				catch (NoResultException e) {}
 			}
+		}
+	 	catch (Exception e) {
+	 		logger.error("unsubscribeResp.jsp - add comments: " + e.toString());
+	 	}
+	}
 		}
 	}
 	catch (Exception e) {
 		logger.error("unsubscribeResp.jsp", e);
 	}
-	%>
+%>
 
 <table width="100%" class="headerMenuContent" style="background: white;" border="0" cellspacing="1" cellpadding="1">
 	<tr>
