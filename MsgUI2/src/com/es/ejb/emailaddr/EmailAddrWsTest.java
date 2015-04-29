@@ -18,6 +18,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.es.ejb.vo.EmailAddrVo;
+
 public class EmailAddrWsTest {
 	protected final static Logger logger = Logger.getLogger(EmailAddrWsTest.class);
 

@@ -3,6 +3,8 @@ package com.es.ejb.emailaddr;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 
+import com.es.ejb.vo.EmailAddrVo;
+
 @WebService (targetNamespace = "http://com.es.ws.emailaddr/wsdl")
 public interface EmailAddrWs {
 

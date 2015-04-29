@@ -11,8 +11,8 @@ import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 
-import com.es.ejb.emailaddr.EmailAddrVo;
 import com.es.ejb.emailaddr.EmailAddrWs;
+import com.es.ejb.vo.EmailAddrVo;
 import com.es.tomee.util.TomeeCtxUtil;
 
 public class EmailAddrWsClient {

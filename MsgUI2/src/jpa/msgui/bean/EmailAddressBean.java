@@ -230,7 +230,7 @@ public class EmailAddressBean implements java.io.Serializable {
 		logger.info("viewEmailAddr() - EmailAddr to be edited: " + emailAddr.getAddress());
 		emailAddr.setMarkedForEdition(true);
 		editMode = true;
-		mailingLists = getMailingListService().getByEmailAddress(emailAddr.getAddress());
+		mailingLists = getMailingListService().getByAddressWithCounts(emailAddr.getAddress());
 		if (isDebugEnabled) {
 			logger.debug("viewEmailAddr() - EmailAddress to be passed to jsp: " + emailAddr);
 		}

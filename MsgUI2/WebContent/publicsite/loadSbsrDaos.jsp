@@ -16,8 +16,7 @@
 <%@page import="java.util.*" %>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 
-<%!
-	MailingListService mailingListDao = null;
+<%!MailingListService mailingListDao = null;
 	MailingListService getMailingListService(ServletContext ctx) {
 		if (mailingListDao == null) {
 			mailingListDao = SpringUtil.getWebAppContext(ctx).getBean(MailingListService.class);
@@ -90,7 +89,7 @@
 	}
 
 	List<MailingList> getSbsrMailingLists(ServletContext ctx, String emailAddr) {
-		List<MailingList> subedList = getMailingListService(ctx).getByEmailAddress(emailAddr);
+		List<MailingList> subedList = getMailingListService(ctx).getByAddressWithCounts(emailAddr);
 		HashMap<String, MailingList> map = new HashMap<String, MailingList>();
 		for (Iterator<MailingList> it = subedList.iterator(); it.hasNext();) {
 			MailingList vo = it.next();
@@ -172,5 +171,4 @@
 			return "";
 		else
 			return str;
-	}
-	%>
+	}%>

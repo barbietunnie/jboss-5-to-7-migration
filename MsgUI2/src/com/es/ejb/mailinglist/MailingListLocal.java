@@ -1,4 +1,5 @@
 package com.es.ejb.mailinglist;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Local;
@@ -9,6 +10,8 @@ import jpa.exception.TemplateNotFoundException;
 
 @Local
 public interface MailingListLocal {
+	public List<jpa.model.MailingList> getActiveLists();
+	
 	public int sendMail(String toAddr, Map<String, String> variables,
 			String templateId) throws DataValidationException,
 			TemplateNotFoundException, OutOfServiceException;

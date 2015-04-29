@@ -134,4 +134,16 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
 		Subscription emailOptIned = subscriptionBo.optInConfirm(emailAddr, listId);
 		return emailOptIned;
 	}
+
+	@Override
+	public Subscription addToList(String sbsrEmailAddr, String listEmailAddr) {
+		Subscription sub = subscriptionBo.addToList(sbsrEmailAddr, listEmailAddr);
+		return sub;
+	}
+
+	@Override
+	public Subscription removeFromList(String sbsrEmailAddr, String listEmailAddr) {
+		Subscription sub = subscriptionBo.removeFromList(sbsrEmailAddr, listEmailAddr);
+		return sub;
+	}
 }

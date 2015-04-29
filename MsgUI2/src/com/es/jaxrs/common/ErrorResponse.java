@@ -8,13 +8,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="errorResponse")
 public class ErrorResponse implements java.io.Serializable {
-	private static final long serialVersionUID = -5392895881239058633L;
-
+	private static final long serialVersionUID = -4979071654876173539L;
+	
 	@XmlElement(required=true)
-	private int httpStatus;
-	@XmlElement(required=true)
-	private int errorCode;
-	@XmlElement(required=true)
+	private int httpStatus = 200;
+	private Integer errorCode;
 	private String errorMessage;
 	
 	public ErrorResponse() {}
@@ -25,10 +23,10 @@ public class ErrorResponse implements java.io.Serializable {
 	public void setHttpStatus(int httpStatus) {
 		this.httpStatus = httpStatus;
 	}
-	public int getErrorCode() {
+	public Integer getErrorCode() {
 		return errorCode;
 	}
-	public void setErrorCode(int errorCode) {
+	public void setErrorCode(Integer errorCode) {
 		this.errorCode = errorCode;
 	}
 	public String getErrorMessage() {

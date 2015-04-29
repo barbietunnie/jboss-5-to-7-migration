@@ -1,5 +1,6 @@
 package com.es.ejb.mailinglist;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -17,6 +18,7 @@ import jpa.exception.DataValidationException;
 import jpa.exception.OutOfServiceException;
 import jpa.exception.TemplateNotFoundException;
 import jpa.service.maillist.MailingListBo;
+import jpa.service.maillist.MailingListService;
 import jpa.util.SpringUtil;
 
 import org.apache.log4j.Logger;
@@ -37,11 +39,19 @@ public class MailingList implements MailingListRemote, MailingListLocal {
 	@Resource
 	SessionContext context;
 	private MailingListBo mailingListBo;
+	private MailingListService mlistService;
     /**
      * Default constructor. 
      */
     public MailingList() {
     	mailingListBo = SpringUtil.getAppContext().getBean(MailingListBo.class);
+    	mlistService = SpringUtil.getAppContext().getBean(MailingListService.class);
+    }
+    
+    @Override
+    public List<jpa.model.MailingList> getActiveLists() {
+    	List<jpa.model.MailingList> list = mlistService.getAll(true);
+    	return list;
     }
 
     @Override

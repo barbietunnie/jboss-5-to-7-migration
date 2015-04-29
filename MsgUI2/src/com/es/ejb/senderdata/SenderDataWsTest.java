@@ -20,6 +20,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.es.ejb.vo.SenderDataVo;
+
 public class SenderDataWsTest {
 
 	protected final static Logger logger = Logger.getLogger(SenderDataWsTest.class);

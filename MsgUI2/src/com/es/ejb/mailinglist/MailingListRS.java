@@ -1,9 +1,12 @@
 package com.es.ejb.mailinglist;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.MimeMultipart;
+import javax.naming.NamingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -13,18 +16,68 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
+
+import com.es.ejb.vo.MailingListVo;
+import com.es.tomee.util.TomeeCtxUtil;
 
 @Path("/msgapi/mailinglist")
 public class MailingListRS {
 	static final Logger logger = Logger.getLogger(MailingListRS.class);
 
+	@javax.ejb.EJB
+	private MailingListLocal maillist;
+	
+	public MailingListRS() {
+		TomeeCtxUtil.registerBeanUtilsConverters();
+	}
+	
+	MailingListLocal getMailingListLocal() throws NamingException {
+		if (maillist == null) {
+			javax.naming.Context context = TomeeCtxUtil.getLocalContext();
+			maillist = (MailingListLocal) context.lookup("MailingListLocal");
+		}
+		return maillist;
+	}
+
+	@Path("/list")
+	@GET
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response getAllMailingLists() {
+		logger.info("Entering getAllMailingLists() method...");
+		try {
+			List<jpa.model.MailingList> list = getMailingListLocal().getActiveLists();
+			logger.info("Number of lists: " + list.size());
+			List<MailingListVo> volist = new ArrayList<MailingListVo>();
+			for (jpa.model.MailingList ml : list) {
+				MailingListVo vo = new MailingListVo();
+				try {
+					BeanUtils.copyProperties(vo, ml);
+					String listaddr = ml.getAcctUserName() + "@" + ml.getSenderData().getDomainName();
+					vo.setListEmailAddr(listaddr);
+					volist.add(vo);
+				}
+				catch (Exception e) {
+					throw new RuntimeException("Failed to copy properties", e);
+				}
+			}
+			GenericEntity<List<MailingListVo>> entity = new GenericEntity<List<MailingListVo>>(volist) {};
+			return Response.ok(entity).build();
+		}
+		catch (NamingException e) {
+			throw new WebApplicationException(Response.serverError().build());
+		}
+	}
+	
 	@Path("/get1")
 	@GET
 	public String getWithContext1(@Context UriInfo uri) {
