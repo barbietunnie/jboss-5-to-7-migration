@@ -27,7 +27,7 @@ public class UnsubCommentService implements java.io.Serializable {
 	public List<UnsubComment> getByAddress(String address) {
 		try {
 			Query query = em.createQuery("select t from UnsubComment t, EmailAddress e " +
-					"where e=t.emailAddr and e.address=:address ");
+					"where e=t.emailAddress and e.address=:address ");
 			query.setParameter("address", address);
 			@SuppressWarnings("unchecked")
 			List<UnsubComment> list = query.getResultList();
@@ -54,6 +54,20 @@ public class UnsubCommentService implements java.io.Serializable {
 			Query query = em.createQuery("select t from UnsubComment t, MailingList ml " +
 					"where t.mailingList=ml and ml.listId=:listId ");
 			query.setParameter("listId", listId);
+			@SuppressWarnings("unchecked")
+			List<UnsubComment> list = query.getResultList();
+			return list;
+		}
+		finally {
+		}
+	}
+	
+	public List<UnsubComment> getByAddressAndListId(String address, String listId) {
+		try {
+			Query query = em.createQuery("select t from UnsubComment t, MailingList ml, EmailAddress ea " +
+					"where t.mailingList=ml and ml.listId=:listId and ea=t.emailAddress and ea.address=:address ");
+			query.setParameter("listId", listId);
+			query.setParameter("address", address);
 			@SuppressWarnings("unchecked")
 			List<UnsubComment> list = query.getResultList();
 			return list;

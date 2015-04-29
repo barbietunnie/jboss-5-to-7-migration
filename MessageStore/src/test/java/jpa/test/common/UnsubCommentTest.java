@@ -68,17 +68,20 @@ public class UnsubCommentTest {
 	public void testUnsubCommentService() {
 		// test insert
 		UnsubComment rcd1 = new UnsubComment();
-		rcd1.setEmailAddr(emailAddr);
+		rcd1.setEmailAddress(emailAddr);
 		rcd1.setMailingList(mlist);
 		rcd1.setComments(testUnsubComment1);
 		rcd1.setStatusId(StatusId.ACTIVE.getValue());
 		rcd1.setUpdtUserId(Constants.DEFAULT_USER_ID);
 		service.insert(rcd1);
 		
-		List<UnsubComment> lst0 = service.getByAddress(emailAddr.getAddress());
-		assertFalse(lst0.isEmpty());
-		UnsubComment rcd2 = lst0.get(0);
+		List<UnsubComment> lst1 = service.getByAddress(emailAddr.getAddress());
+		assertFalse(lst1.isEmpty());
+		UnsubComment rcd2 = lst1.get(0);
 		assertNotNull(rcd2);
+		
+		List<UnsubComment> lst2 = service.getByAddressAndListId(emailAddr.getAddress(), lst1.get(0).getMailingList().getListId());
+		assertFalse(lst2.isEmpty());
 		
 		// test update
 		rcd2.setUpdtUserId("JpaTest");
@@ -99,11 +102,11 @@ public class UnsubCommentTest {
 		rcd4.setComments(testUnsubComment2);
 		service.insert(rcd4);
 		
-		List<UnsubComment> lst2 = service.getByAddress(rcd4.getEmailAddr().getAddress());
-		assertTrue(lst2.size()==2);
+		List<UnsubComment> lst3 = service.getByAddress(rcd4.getEmailAddress().getAddress());
+		assertTrue(lst3.size()==2);
 		
 		// test delete
 		service.delete(rcd4);
-		assertTrue(1<=service.deleteByAddress(rcd2.getEmailAddr().getAddress()));
+		assertTrue(1<=service.deleteByAddress(rcd2.getEmailAddress().getAddress()));
 	}
 }

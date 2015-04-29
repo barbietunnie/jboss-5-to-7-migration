@@ -6,9 +6,12 @@ import jpa.model.BroadcastMessage;
 import jpa.model.BroadcastTracking;
 import jpa.model.EmailAddress;
 import jpa.model.Subscription;
+import jpa.model.UnsubComment;
 import jpa.service.common.EmailAddressService;
 import jpa.service.common.SubscriptionService;
+import jpa.service.common.UnsubCommentService;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,6 +33,8 @@ public class BroadcastTrackingBo implements java.io.Serializable {
 	private SubscriptionService subService;
 	@Autowired
 	private EmailAddressService emailService;
+	@Autowired
+	private UnsubCommentService unsubCmtService;
 	
 	public Subscription removeFromList(int bcstMsgRowId, int emailAddrRowId) {
 		try {
@@ -51,10 +56,21 @@ public class BroadcastTrackingBo implements java.io.Serializable {
 	}
 
 	public Subscription removeFromList(int bcstTrkRowId) {
+		return removeFromList(bcstTrkRowId, null);
+	}
+
+	public Subscription removeFromList(int bcstTrkRowId, String comment) {
 		try {
 			BroadcastTracking bt = trackingService.getByRowId(bcstTrkRowId);
 			EmailAddress ea = bt.getEmailAddress();
 			BroadcastMessage bm  = bt.getBroadcastMessage();
+			if (StringUtils.isNotBlank(comment)) {
+				UnsubComment uc = new UnsubComment();
+				uc.setEmailAddress(ea);
+				uc.setMailingList(bm.getMailingList());
+				uc.setComments(comment);
+				unsubCmtService.insert(uc);
+			}
 			return removeFromList(bm.getRowId(), ea.getRowId());
 		}
 		catch (NoResultException e) {
