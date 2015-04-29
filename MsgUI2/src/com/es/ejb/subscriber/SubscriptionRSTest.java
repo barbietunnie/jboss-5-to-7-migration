@@ -23,7 +23,7 @@ public class SubscriptionRSTest {
 
     @Test
     public void get() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/msgapi/subscription/getSubscriber?emailAddr=testto@test.com/").get(String.class);
+        final String message = WebClient.create("http://localhost:4204").path("/msgapi/subscription/getSubscriber?emailAddr=jsmith@test.com/").get(String.class);
         logger.info("Message: " + message);
         //assertEquals("Hi REST!", message);
     }
