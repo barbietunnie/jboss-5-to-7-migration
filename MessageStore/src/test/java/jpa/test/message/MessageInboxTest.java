@@ -32,6 +32,7 @@ import jpa.service.message.MessageInboxService;
 import jpa.service.rule.RuleLogicService;
 import jpa.util.StringUtil;
 
+import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TransactionConfiguration(transactionManager="msgTransactionManager", defaultRollback=true)
 @Transactional(propagation=Propagation.REQUIRED)
 public class MessageInboxTest {
+	static final Logger logger = Logger.getLogger(MessageInboxTest.class);
 
 	@BeforeClass
 	public static void MessageInboxPrepare() {
@@ -123,7 +125,7 @@ public class MessageInboxTest {
 		int readcount = msg1.getReadCount();
 		msg1.setReadCount(msg1.getReadCount()+1);
 		service.update(msg1);
-		System.out.println(StringUtil.prettyPrint(msg1,2));
+		logger.info(StringUtil.prettyPrint(msg1,2));
 		msg1 = service.getByPrimaryKey(msg1.getRowId());
 		assertTrue(msg1.getReadCount()>readcount);
 		
@@ -151,9 +153,9 @@ public class MessageInboxTest {
 		assertFalse(lst5.isEmpty());
 		
 		MessageInbox msg2  =service.getLastRecord();
-		System.out.println("Message with basic data:\n" + StringUtil.prettyPrint(msg2,2));
+		logger.info("Message with basic data:" + StringUtil.prettyPrint(msg2,2));
 		MessageInbox msg22  =service.getAllDataByPrimaryKey(msg2.getRowId());
-		System.out.println("Message with all data:\n" + StringUtil.prettyPrint(msg22,2));
+		logger.info("Message with all data:" + StringUtil.prettyPrint(msg22,2));
 		
 		try {
 			service.getNextRecord(msg2);
@@ -163,7 +165,7 @@ public class MessageInboxTest {
 		
 		try {
 			MessageInbox msg3  =service.getPrevoiusRecord(msg2);
-			System.out.println(StringUtil.prettyPrint(msg3,1));
+			logger.info(StringUtil.prettyPrint(msg3,1));
 			
 			assertFalse(msg1.equals(msg3));
 	
@@ -187,14 +189,17 @@ public class MessageInboxTest {
 		assertTrue(listweb.size()>0);
 		int count = service.getRowCountForWeb(vo);
 		assertTrue(count>=listweb.size());
+		int allUnreadCount = service.getAllUnreadCount();
 		assertTrue(0<service.updateStatusIdByLeadMsgId(listweb.get(0)));
 		int receivedUnredCount = service.getReceivedUnreadCount();
 		assertTrue(0<receivedUnredCount);
 		int sentUnredCount = service.getSentUnreadCount();
-		assertTrue(0<sentUnredCount);
+		if (allUnreadCount > receivedUnredCount) {
+			assertTrue(0<sentUnredCount);
+		}
 		assertTrue((receivedUnredCount+sentUnredCount)==service.getAllUnreadCount());
-		System.out.println("Received unread count = " + receivedUnredCount + ", Sent unred count = " + sentUnredCount);
-		System.out.println("All unread count = " + service.getAllUnreadCount());
+		logger.info("Received unread count = " + receivedUnredCount + ", Sent unred count = " + sentUnredCount);
+		logger.info("All unread count = " + service.getAllUnreadCount());
 		
 		// test delete
 		assertTrue(1==service.deleteByRowId(msg2.getRowId()));
