@@ -16,6 +16,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -34,7 +35,7 @@ import com.es.jaxrs.common.ErrorResponse;
 import com.es.tomee.util.TomeeCtxUtil;
 
 @Path("/msgapi/subscription")
-@Produces({"application/xml", "application/json"})
+@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 public class SubscriptionRS {
 	static final Logger logger = Logger.getLogger(SubscriptionRS.class);
 
@@ -55,7 +56,6 @@ public class SubscriptionRS {
 	
 	@Path("/getSubscriber")
 	@GET
-	@Produces({"application/xml", "application/json"})
 	public Response getSubscriberAsXmlOrJson(@QueryParam("emailAddr") String emailAddr) {
 		logger.info("Entering getSubscriberAsXmlOrJson() method..."); 
 		ResponseBuilder rb = new ResponseBuilderImpl();
@@ -185,7 +185,6 @@ public class SubscriptionRS {
 
 	@Path("/getsbsr")
 	@GET
-	@Produces({"application/json", "application/xml"})
 	public Response getSubscriberByEmailAddress(@QueryParam("emailAddr") String emailAddr, @Context HttpHeaders hh) {
 		logger.info("Entering getSubscriberByEmailAddress() method..."); 
 		try {
