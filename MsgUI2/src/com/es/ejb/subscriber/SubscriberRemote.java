@@ -15,6 +15,9 @@ public interface SubscriberRemote {
 	public Subscription subscribe(String emailAddr, String listId);
 	public Subscription unSubscriber(String emailAddr, String listId);
 
+	public Subscription addToList(String sbsrEmailAddr, String listEmailAddr);
+	public Subscription removeFromList(String sbsrEmailAddr, String listEmailAddr);
+
 	public void insertSubscriber(SubscriberData vo);
 	public void updateSubscriber(SubscriberData vo);
 	public void deleteSubscriber(SubscriberData vo);

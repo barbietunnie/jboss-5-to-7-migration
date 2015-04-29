@@ -34,7 +34,7 @@ import com.es.jaxrs.common.ErrorResponse;
 import com.es.tomee.util.TomeeCtxUtil;
 
 @Path("/msgapi/subscription")
-@Produces({"text/xml", "application/json"})
+@Produces({"application/xml", "application/json"})
 public class SubscriptionRS {
 	static final Logger logger = Logger.getLogger(SubscriptionRS.class);
 
@@ -55,8 +55,139 @@ public class SubscriptionRS {
 	
 	@Path("/getSubscriber")
 	@GET
+	@Produces({"application/xml", "application/json"})
+	public Response getSubscriberAsXmlOrJson(@QueryParam("emailAddr") String emailAddr) {
+		logger.info("Entering getSubscriberAsXmlOrJson() method..."); 
+		ResponseBuilder rb = new ResponseBuilderImpl();
+		try {
+			SubscriberData sd = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
+			if (sd != null) {
+				rb.status(200);
+				rb.entity(sd);
+			}
+			else {
+				ErrorResponse er = new ErrorResponse();
+				er.setHttpStatus(404);
+				er.setErrorCode(102);
+				er.setErrorMessage("Subscriber not found");
+				rb.status(404);
+				rb.entity(er);
+			}
+			return rb.build();
+		}
+		catch (NamingException e) {
+			throw new WebApplicationException(Response.serverError().build());
+		}
+	}
+
+	@Path("/subscribe")
+    @PUT
+	public Response subscribe(@QueryParam("emailAddr") String emailAddr, @QueryParam("listId") String listId) {
+		logger.info("Entering subscriber() method..."); 
+		ResponseBuilder rb = new ResponseBuilderImpl();
+		try {
+			Subscription sub = getSubscriberLocal().subscribe(emailAddr, listId);
+			rb.status(200);
+			rb.entity(sub);
+		}
+		catch (NamingException e) {
+			throw new WebApplicationException(Response.serverError().build());
+		}
+		catch (Exception e) {
+			Exception cause = ExceptionUtil.findRootCause(e);
+			if (cause instanceof IllegalArgumentException) {
+				ErrorResponse er = new ErrorResponse();
+				er.setHttpStatus(404);
+				er.setErrorCode(122);
+				er.setErrorMessage(cause.getMessage());
+				rb.status(404);
+				rb.entity(er);
+			}
+			else {
+				logger.error("Unchecked exception caught", e);
+				throw new WebApplicationException(Response.serverError().build());
+			}
+		}
+		return rb.build();
+	}
+
+	@Path("/unsubscribe")
+	@PUT
+	public Response unSubscribe(@QueryParam("emailAddr") String emailAddr, @QueryParam("listId") String listId) {
+		logger.info("Entering unSubscriber() method..."); 
+		ResponseBuilder rb = new ResponseBuilderImpl();
+		try {
+			Subscription sub = getSubscriberLocal().unSubscriber(emailAddr, listId);
+			rb.status(200);
+			rb.entity(sub);
+		}
+		catch (NamingException e) {
+			throw new WebApplicationException(Response.serverError().build());
+		}
+		catch (Exception e) {
+			Exception cause = ExceptionUtil.findRootCause(e);
+			if (cause instanceof IllegalArgumentException) {
+				ErrorResponse er = new ErrorResponse();
+				er.setHttpStatus(404);
+				er.setErrorCode(122);
+				er.setErrorMessage(cause.getMessage());
+				rb.status(404);
+				rb.entity(er);
+			}
+			else {
+				logger.error("Unchecked exception caught", e);
+				throw new WebApplicationException(Response.serverError().build());
+			}
+		}
+		return rb.build();
+	}
+
+	@Path("/addtolist")
+    @PUT
+	public Subscription addToList(@QueryParam("sbsrEmailAddr") String sbsrEmailAddr, @QueryParam("listEmailAddr") String listEmailAddr) {
+		logger.info("Entering addToList() method..."); 
+		try {
+			Subscription sub = getSubscriberLocal().addToList(sbsrEmailAddr, listEmailAddr);
+			return sub;
+		}
+		catch (NamingException e) {
+			throw new WebApplicationException(Response.serverError().build());
+		}
+		catch (Exception e) {
+			Exception cause = ExceptionUtil.findRootCause(e);
+			if (cause instanceof IllegalArgumentException) {
+				throw new WebApplicationException(Response.ok(cause.getMessage()).build());
+			}
+			throw new WebApplicationException(Response.serverError().build());
+		}
+	}
+
+	@Path("/removefromlist")
+	@PUT
+	public Subscription removeFromList(@QueryParam("sbsrEmailAddr") String sbsrEmailAddr, @QueryParam("listEmailAddr") String listEmailAddr) {
+		logger.info("Entering removeFromList() method..."); 
+		try {
+			Subscription sub = getSubscriberLocal().removeFromList(sbsrEmailAddr, listEmailAddr);
+			return sub;
+		}
+		catch (NamingException e) {
+			throw new WebApplicationException(Response.serverError().build());
+		}
+		catch (Exception e) {
+			Exception cause = ExceptionUtil.findRootCause(e);
+			if (cause instanceof IllegalArgumentException) {
+				throw new WebApplicationException(Response.ok(cause.getMessage()).build());
+			}
+			throw new WebApplicationException(Response.serverError().build());
+		}
+	}
+	
+
+	@Path("/getsbsr")
+	@GET
 	@Produces({"application/json", "application/xml"})
 	public Response getSubscriberByEmailAddress(@QueryParam("emailAddr") String emailAddr, @Context HttpHeaders hh) {
+		logger.info("Entering getSubscriberByEmailAddress() method..."); 
 		try {
 			SubscriberData sd = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
 			if (sd != null) {
@@ -91,6 +222,7 @@ public class SubscriptionRS {
 	@GET
 	@Produces("application/xml")
 	public SubscriberData getSubscriberByEmailAddressAsXml(@PathParam("emailAddr") String emailAddr) {
+		logger.info("Entering getSubscriberByEmailAddressAsXml() method..."); 
 		try {
 			SubscriberData sd = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
 			if (sd != null) {
@@ -98,82 +230,26 @@ public class SubscriptionRS {
 				return sd;
 			}
 			else {
-				throw new WebApplicationException(Response.ok("<subscriberData>Subscriber not found</subscriberData>").build());
-			}
-		}
-		catch (NamingException e) {
-			throw new WebApplicationException(Response.serverError().build());
-		}
-	}
-
-	@Path("/getsbsr")
-	@GET
-	@Produces({"application/xml", "application/json"})
-	public Response getAsXmlOrJson(@QueryParam("emailAddr") String emailAddr) {
-		try {
-			SubscriberData sd = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
-			if (sd != null) {
-				return Response.ok(sd).build();
-			}
-			else {
+				ResponseBuilder rb = new ResponseBuilderImpl();
 				ErrorResponse er = new ErrorResponse();
 				er.setHttpStatus(404);
 				er.setErrorCode(102);
 				er.setErrorMessage("Subscriber not found");
-				ResponseBuilder rb = new ResponseBuilderImpl();
 				rb.status(404);
 				rb.entity(er);
-				return rb.build();
+				throw new WebApplicationException(rb.build());
 			}
 		}
 		catch (NamingException e) {
 			throw new WebApplicationException(Response.serverError().build());
 		}
-
 	}
 
-	@Path("/subscribe")
-    @PUT
-	public Subscription subscribe(@QueryParam("emailAddr") String emailAddr, @QueryParam("listId") String listId) {
-		try {
-			Subscription sub = getSubscriberLocal().subscribe(emailAddr, listId);
-			return sub;
-		}
-		catch (NamingException e) {
-			throw new WebApplicationException(Response.serverError().build());
-		}
-		catch (Exception e) {
-			Exception cause = ExceptionUtil.findRootCause(e);
-			if (cause instanceof IllegalArgumentException) {
-				throw new WebApplicationException(Response.ok(cause.getMessage()).build());
-			}
-			throw new WebApplicationException(Response.serverError().build());
-		}
-	}
-
-	@Path("/unsubscribe")
-	@PUT
-	public Subscription unSubscribe(@QueryParam("emailAddr") String emailAddr, @QueryParam("listId") String listId) {
-		try {
-			Subscription sub = getSubscriberLocal().unSubscriber(emailAddr, listId);
-			return sub;
-		}
-		catch (NamingException e) {
-			throw new WebApplicationException(Response.serverError().build());
-		}
-		catch (Exception e) {
-			Exception cause = ExceptionUtil.findRootCause(e);
-			if (cause instanceof IllegalArgumentException) {
-				throw new WebApplicationException(Response.ok(cause.getMessage()).build());
-			}
-			throw new WebApplicationException(Response.serverError().build());
-		}
-	}
-	
 	@Path("/update")
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	public Response update(@Context UriInfo ui, @Context HttpHeaders hh, MultivaluedMap<String, String> formParams) {
+		logger.info("Entering update() method..."); 
 		// print out UriInfo
 		MultivaluedMap<String, String> pathParams = ui.getPathParameters();
 		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();

@@ -1,4 +1,4 @@
-package com.es.ejb.emailaddr;
+package com.es.ejb.vo;
 
 import java.sql.Timestamp;
 
@@ -6,11 +6,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.msgui.vo.TimestampAdapter;
-
-import com.es.ejb.vo.BaseWsVo;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "EmailAddrVo")
@@ -32,6 +31,7 @@ public class EmailAddrVo extends BaseWsVo {
 	private Timestamp lastRcptTime;
 	@XmlElement(required=true)
 	private boolean isAcceptHtml;
+	@XmlTransient
 	private String origAddress;
 
 	public EmailAddrVo() {

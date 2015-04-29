@@ -21,6 +21,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.es.ejb.vo.IdTokensVo;
+
 public class IdTokensWsTest {
 
 	protected final static Logger logger = Logger.getLogger(IdTokensWsTest.class);

@@ -1,11 +1,9 @@
-package com.es.ejb.idtokens;
+package com.es.ejb.vo;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.es.ejb.vo.BaseWsVo;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "IdTokensVo")

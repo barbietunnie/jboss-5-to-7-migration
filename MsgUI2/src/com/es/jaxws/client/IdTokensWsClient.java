@@ -15,8 +15,8 @@ import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 
-import com.es.ejb.idtokens.IdTokensVo;
 import com.es.ejb.idtokens.IdTokensWs;
+import com.es.ejb.vo.IdTokensVo;
 import com.es.tomee.util.TomeeCtxUtil;
 
 public class IdTokensWsClient {
