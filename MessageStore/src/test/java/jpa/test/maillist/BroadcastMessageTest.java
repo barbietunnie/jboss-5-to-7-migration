@@ -66,6 +66,9 @@ public class BroadcastMessageTest {
 		service.update(bd1);
 		
 		assertTrue(1<=service.updateReferalCount(bd1.getRowId()));
+		assertTrue(1<=service.updateSentCount(bd1.getRowId(), 2));
+		assertTrue(1<=service.updateOpenCount(bd1.getRowId()));
+		assertTrue(1<=service.updateClickCount(bd1.getRowId()));
 		
 		BroadcastMessage bd2 = service.getByRowId(bd1.getRowId());
 		assertTrue(ts.equals(bd2.getUpdtTime()));

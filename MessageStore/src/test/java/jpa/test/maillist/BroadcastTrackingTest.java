@@ -73,6 +73,10 @@ public class BroadcastTrackingTest {
 		eb1.setLastOpenTime(ts);
 		service.update(eb1);
 		
+		assertTrue(1<=service.updateSentCount(eb1.getRowId(), 2));
+		assertTrue(1<=service.updateOpenCount(eb1.getRowId()));
+		assertTrue(1<=service.updateClickCount(eb1.getRowId()));
+		
 		BroadcastTracking eb2 = service.getByRowId(eb1.getRowId());
 		assertTrue(ts.equals(eb2.getUpdtTime()));
 		System.out.println(StringUtil.prettyPrint(eb2, 2));

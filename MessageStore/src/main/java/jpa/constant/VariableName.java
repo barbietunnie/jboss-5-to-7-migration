@@ -42,6 +42,6 @@ public enum VariableName {
 	}
 
 	public static enum LIST_VARIABLE_NAME {
-		MailingListAddress, MailingListId, MailingListName, SubscriberAddress, SubscriberAddressId, BroadcastMsgId
+		MailingListAddress, MailingListId, MailingListName, SubscriberAddress, SubscriberAddressId, BroadcastMsgId, BroadcastTrkId
 	}
 }

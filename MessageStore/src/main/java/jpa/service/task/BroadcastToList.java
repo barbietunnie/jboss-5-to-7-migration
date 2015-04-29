@@ -66,9 +66,9 @@ public class BroadcastToList extends TaskBaseAdapter {
 	@Autowired
 	private MailSenderBo mailSenderBo;
 	@Autowired
-	private BroadcastMessageService broardcastMsgDao;
+	private BroadcastMessageService bcstMsgDao;
 	@Autowired
-	private BroadcastTrackingService broadcastTrackingDao;
+	private BroadcastTrackingService bcstTrackingDao;
 
 	/**
 	 * Send the email to the addresses on the Mailing List.
@@ -103,7 +103,7 @@ public class BroadcastToList extends TaskBaseAdapter {
 		}
 		
 		messageBean.setIsReceived(false);
-		int mailsSent = 0;
+		int mailsSentTotal = 0;
 		Boolean saveEmbedEmailId = messageBean.getEmBedEmailId();
 		String listId = messageBean.getMailingListId();
 		MailingList listVo = null;
@@ -154,7 +154,7 @@ public class BroadcastToList extends TaskBaseAdapter {
 		broadcast.setStartTime(currTime);
 		broadcast.setUpdtTime(currTime);
 		broadcast.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		broardcastMsgDao.insert(broadcast);
+		bcstMsgDao.insert(broadcast);
 		// end of BroadcastMessage
 		
 		/* 
@@ -188,22 +188,34 @@ public class BroadcastToList extends TaskBaseAdapter {
 		}
 		// sending email to each subscriber
 		for (Subscription subr : subrs) {
+			// construct BroadcastTracking and save the record
+			BroadcastTracking tracking = new BroadcastTracking();
+			tracking.setBroadcastMessage(broadcast);
+			tracking.setEmailAddress(subr.getEmailAddr());
+			tracking.setStatusId(StatusId.ACTIVE.getValue());
+			tracking.setUpdtUserId(Constants.DEFAULT_USER_ID);
+			tracking.setUpdtTime(new java.sql.Timestamp(System.currentTimeMillis()));
+			bcstTrackingDao.insert(tracking);
+			
 			//messageBean.setSubject(subjText);
 			//messageBean.getBodyNode().setValue(bodyText);
-			mailsSent += constructAndSendMessage(ctx, broadcast, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, false);
+			int mailsSent = constructAndSendMessage(ctx, tracking, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, false);
 			if (listVo.isSendText()) {
-				mailsSent += constructAndSendMessage(ctx, broadcast, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, true);
+				mailsSent += constructAndSendMessage(ctx, tracking, subr, listVo, subjText, bodyText, varNames, saveEmbedEmailId, true);
+			}
+			mailsSentTotal += mailsSent;
+			if (mailsSent > 0) {
+				bcstTrackingDao.updateSentCount(tracking.getRowId(), mailsSent);
 			}
 		}
-		if (mailsSent > 0) {
+		if (mailsSentTotal > 0) {
 			// update sent count to the Broadcasted message
-			broadcast.setSentCount(mailsSent);
-			broardcastMsgDao.update(broadcast);
+			bcstMsgDao.updateSentCount(broadcast.getRowId(), mailsSentTotal);
 		}
-		return Integer.valueOf(mailsSent);
+		return Integer.valueOf(mailsSentTotal);
 	}
 	
-	private int constructAndSendMessage(MessageContext ctx, BroadcastMessage broadcast, Subscription subr,
+	private int constructAndSendMessage(MessageContext ctx, BroadcastTracking bcstTrk, Subscription subr,
 			MailingList listVo, String subjText, String bodyText, List<String> varNames,
 			Boolean saveEmbedEmailId, boolean isText)
 			throws DataValidationException, TemplateException, IOException {
@@ -260,8 +272,8 @@ public class BroadcastToList extends TaskBaseAdapter {
 		}
 		*/
 		Map<String, String> variables = new HashMap<String, String>();
-		String varName = VariableName.LIST_VARIABLE_NAME.BroadcastMsgId.name();
-		variables.put(varName, String.valueOf(broadcast.getRowId()));
+		String varName = VariableName.LIST_VARIABLE_NAME.BroadcastMsgId.name(); // TODO change to tracking id
+		variables.put(varName, String.valueOf(bcstTrk.getBroadcastMessage().getRowId())); // TODO
 		logger.info("Sending Broadcast Email to: " + toAddress);
 		TemplateRenderVo renderVo = null;
 		renderVo = emailTemplateBo.renderEmailText(toAddress, variables, subjText,
@@ -294,15 +306,6 @@ public class BroadcastToList extends TaskBaseAdapter {
 		else {
 			msgBean.setEmBedEmailId(saveEmbedEmailId);
 			subscriptionDao.updateSentCount(subr.getRowId());
-			// construct BroadcastTracking and save the record
-			// it seems that BroadcastTracking serves same purpose as Subscription
-			BroadcastTracking tracking = new BroadcastTracking();
-			tracking.setBroadcastMessage(broadcast);
-			tracking.setEmailAddress(subr.getEmailAddr());
-			tracking.setStatusId(StatusId.ACTIVE.getValue());
-			tracking.setUpdtUserId(Constants.DEFAULT_USER_ID);
-			tracking.setUpdtTime(new java.sql.Timestamp(System.currentTimeMillis()));
-			broadcastTrackingDao.insert(tracking);
 		}
 		// invoke mail sender to send the mail off
 		try {
