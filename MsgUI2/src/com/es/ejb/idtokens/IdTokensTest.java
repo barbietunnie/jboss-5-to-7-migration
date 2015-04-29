@@ -38,10 +38,17 @@ public class IdTokensTest extends TestCase {
 		 logger.info("Time lapsed: " + cd.get());
 		 
 		 try {
-			 idTokens.findBySenderId(Constants.DEFAULT_SENDER_ID);
+			 assertNotNull(idTokens.findBySenderId(Constants.DEFAULT_SENDER_ID));
 		 }
 		 catch (Exception e) {
 			 fail("Failed to find Sender by Id: " + Constants.DEFAULT_SENDER_ID);
+		 }
+		 
+		 try {
+			 assertNull(idTokens.findBySenderId(""));
+		 }
+		 catch (Exception e) {
+			 fail();
 		 }
 		 
 		 List<jpa.model.IdTokens> list = idTokens.findAll();

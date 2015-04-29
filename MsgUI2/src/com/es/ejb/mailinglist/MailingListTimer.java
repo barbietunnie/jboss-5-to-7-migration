@@ -24,9 +24,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 
-import jpa.exception.DataValidationException;
-import jpa.exception.OutOfServiceException;
-import jpa.exception.TemplateNotFoundException;
 import jpa.model.EmailTemplate;
 import jpa.model.SchedulesBlob;
 import jpa.model.SchedulesBlob.DateWrapper;
@@ -276,14 +273,8 @@ public class MailingListTimer {
 				logger.info("ejbTimeout() - invoking broadcaseBo for templateId: " + timer.getInfo());
 				mailingList.broadcast((String) timer.getInfo());
 			}
-			catch (TemplateNotFoundException e) {
-				throw new EJBException("TemplateNotFoundException caught", e);
-			}
-			catch (DataValidationException e) {
-				throw new EJBException("DataValidationExceptionn caught", e);
-			}
-			catch (OutOfServiceException e) {
-				throw new EJBException("OutOfServiceException caught", e);
+			catch (Exception e) {
+				throw new EJBException("Exception caught", e);
 			}
 			return;
 		}
@@ -325,14 +316,8 @@ public class MailingListTimer {
 					+ blob.getTemplateId());
 			mailingList.broadcast(blob.getTemplateId());
 		}
-		catch (TemplateNotFoundException e) {
-			throw new EJBException("TemplateNotFoundException caught", e);
-		}
-		catch (DataValidationException e) {
-			throw new EJBException("DataValidationExceptionn caught", e);
-		}
-		catch (OutOfServiceException e) {
-			throw new EJBException("OutOfServiceException caught", e);
+		catch (Exception e) {
+			throw new EJBException("Exception caught", e);
 		}
 	}
 }

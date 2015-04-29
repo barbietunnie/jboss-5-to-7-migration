@@ -62,8 +62,13 @@ public class SenderData implements SenderDataLocal, SenderDataRemote, SenderData
 
 	@Override
 	public jpa.model.SenderData findBySenderId(String senderId) {
-		jpa.model.SenderData sender = senderDataDao.getBySenderId(senderId);
-		return sender;
+		try {
+			jpa.model.SenderData sender = senderDataDao.getBySenderId(senderId);
+			return sender;
+		}
+		catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -89,7 +94,7 @@ public class SenderData implements SenderDataLocal, SenderDataRemote, SenderData
 	@Override
 	public SenderDataVo getBySenderId(String senderId) {
 		try {
-			jpa.model.SenderData sender = findBySenderId(senderId);
+			jpa.model.SenderData sender = senderDataDao.getBySenderId(senderId);
 			SenderDataVo vo = new SenderDataVo();
 			try {
 				BeanUtils.copyProperties(vo, sender);

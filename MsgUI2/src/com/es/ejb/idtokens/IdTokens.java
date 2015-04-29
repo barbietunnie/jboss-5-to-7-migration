@@ -23,6 +23,13 @@ import javax.ejb.TransactionManagementType;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.persistence.NoResultException;
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPFault;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import jpa.service.common.IdTokensService;
 import jpa.util.SpringUtil;
@@ -81,8 +88,13 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
     @AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
     @Override
 	public jpa.model.IdTokens findBySenderId(String senderId) {
-		jpa.model.IdTokens idTokens = idTokensDao.getBySenderId(senderId);
-		return idTokens;
+    	try {
+			jpa.model.IdTokens idTokens = idTokensDao.getBySenderId(senderId);
+			return idTokens;
+    	}
+    	catch (NoResultException e) {
+    		return null;
+    	}
 	}
 
     @AccessTimeout(value = 10, unit = TimeUnit.SECONDS)
@@ -114,6 +126,18 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
     @Override
 	public IdTokensVo getBySenderId(String senderId) {
 		jpa.model.IdTokens idTokens = findBySenderId(senderId);
+		if (idTokens == null) {
+			try {
+				SOAPFault soapFault = SOAPFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL).createFault();
+				QName faultName = new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "Service");
+				soapFault.setFaultCode(faultName);
+				soapFault.setFaultString("SenderId (" + senderId + ") not found");
+				throw new SOAPFaultException(soapFault);
+			}
+			catch (SOAPException e1) {
+				throw new RuntimeException("Failed to create a SOAP Fault instance", e1);
+			}
+		}
 		IdTokensVo idTokensVo = new IdTokensVo();
 		try {
 			BeanUtils.copyProperties(idTokensVo, idTokens);
@@ -148,6 +172,18 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
 	@Override
 	public void update(IdTokensVo vo) {
 		jpa.model.IdTokens id = findBySenderId(vo.getSenderId());
+		if (id == null) {
+			try {
+				SOAPFault soapFault = SOAPFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL).createFault();
+				QName faultName = new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "Service");
+				soapFault.setFaultCode(faultName);
+				soapFault.setFaultString("SenderId (" + vo.getSenderId() + ") not found");
+				throw new SOAPFaultException(soapFault);
+			}
+			catch (SOAPException e1) {
+				throw new RuntimeException("Failed to create a SOAP Fault instance", e1);
+			}
+		}
 		try {
 			BeanUtils.copyProperties(id, vo);
 			update(id);

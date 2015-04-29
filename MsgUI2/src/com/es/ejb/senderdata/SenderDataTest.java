@@ -1,6 +1,7 @@
 package com.es.ejb.senderdata;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
-import javax.persistence.NoResultException;
 
 import jpa.model.SenderData;
 
@@ -43,12 +43,13 @@ public class SenderDataTest {
 					"java:global/WebContent/SenderData!com.es.ejb.senderdata.SenderDataLocal");
 			
 			try {
-				senderDao.findBySenderId("");
-				fail();
+				SenderData sd = senderDao.findBySenderId("");
+				assertNull(sd);
 			}
 			catch (EJBException e) {
-				assertNotNull(e.getCause());
-				assert(e.getCause() instanceof NoResultException);
+				//assertNotNull(e.getCause());
+				//assert(e.getCause() instanceof NoResultException);
+				fail();
 			}
 			
 			List<SenderData> list = senderDao.findAll();

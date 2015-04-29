@@ -65,7 +65,6 @@ public class SenderDataWsTest {
 			}
 			catch (SOAPFaultException se) {
 				// expected
-				logger.error("SOAPFaultException caught", se);
 			}
 			
 			java.sql.Timestamp updtTime = new java.sql.Timestamp(System.currentTimeMillis());

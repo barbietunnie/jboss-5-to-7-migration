@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
-import javax.persistence.NoResultException;
 
 import jpa.constant.Constants;
 import jpa.message.MessageBean;
@@ -49,11 +48,11 @@ public class MailSenderTest {
 			try {
 				EmailAddress ea = rmt.findByAddress("test@test.com");
 				assertNotNull(ea);
-				//fail();
 			}
 			catch (EJBException e) {
-				assertNotNull(e.getCause());
-				assert(e.getCause() instanceof NoResultException);
+				//assertNotNull(e.getCause());
+				//assert(e.getCause() instanceof NoResultException);
+				fail();
 			}
 			
 			try {

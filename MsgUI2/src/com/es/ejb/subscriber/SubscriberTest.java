@@ -1,15 +1,17 @@
 package com.es.ejb.subscriber;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
 import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
-import javax.persistence.NoResultException;
 
 import jpa.model.SubscriberData;
+import jpa.util.ExceptionUtil;
 import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
@@ -51,12 +53,12 @@ public class SubscriberTest {
 	@Test
 	public void testSubscriber() {
 		try {
-			subscriber.getSubscriberById("");
-			fail();
+			assertNull(subscriber.getSubscriberById(""));
 		}
 		catch (EJBException e) {
-			assertNotNull(e.getCause());
-			assert(e.getCause() instanceof NoResultException);
+			//assertNotNull(e.getCause());
+			//assert(e.getCause() instanceof NoResultException);
+			fail();
 		}
 		
 		List<SubscriberData> subrList = subscriber.getAllSubscribers();
@@ -68,7 +70,7 @@ public class SubscriberTest {
 		SubscriberData subr2 = subscriber.getSubscriberByEmailAddress(subrList.get(0).getEmailAddr().getAddress());
 		assertNotNull(subr2);
 		
-		logger.info(StringUtil.prettyPrint(subr2));
+		logger.info(StringUtil.prettyPrint(subr2, 1));
 	}
 	
 	@Test
@@ -92,7 +94,13 @@ public class SubscriberTest {
 			List<SubscriberData> subrList = subr.getAllSubscribers();
 			assert(!subrList.isEmpty());
 			
-			subr.subscribe("", "");
+			try {
+				subr.subscribe("", "");
+				fail();
+			}
+			catch (EJBException e) {
+				assert(ExceptionUtil.findRootCause(e) instanceof IllegalArgumentException);
+			}
 		}
 		catch (NamingException e) {
 			fail();

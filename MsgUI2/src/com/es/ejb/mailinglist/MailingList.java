@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.annotation.Resource.AuthenticationType;
+import javax.ejb.EJBException;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
@@ -14,9 +15,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 
-import jpa.exception.DataValidationException;
-import jpa.exception.OutOfServiceException;
-import jpa.exception.TemplateNotFoundException;
+import jpa.service.maillist.BroadcastTrackingBo;
 import jpa.service.maillist.MailingListBo;
 import jpa.service.maillist.MailingListService;
 import jpa.util.SpringUtil;
@@ -40,12 +39,14 @@ public class MailingList implements MailingListRemote, MailingListLocal {
 	SessionContext context;
 	private MailingListBo mailingListBo;
 	private MailingListService mlistService;
+	private BroadcastTrackingBo bcstTrackingBo;
     /**
      * Default constructor. 
      */
     public MailingList() {
     	mailingListBo = SpringUtil.getAppContext().getBean(MailingListBo.class);
     	mlistService = SpringUtil.getAppContext().getBean(MailingListService.class);
+    	bcstTrackingBo = SpringUtil.getAppContext().getBean(BroadcastTrackingBo.class);
     }
     
     @Override
@@ -55,24 +56,40 @@ public class MailingList implements MailingListRemote, MailingListLocal {
     }
 
     @Override
-	public int sendMail(String toAddr, Map<String, String> variables, String templateId)
-			throws DataValidationException, TemplateNotFoundException, OutOfServiceException {
-		int mailsSent = mailingListBo.send(toAddr, variables, templateId);
-		return mailsSent;
+	public int sendMail(String toAddr, Map<String, String> variables, String templateId) {
+    	try {
+			int mailsSent = mailingListBo.send(toAddr, variables, templateId);
+			return mailsSent;
+    	}
+    	catch (Exception e) {
+    		throw new EJBException("in sendMail(...) method", e);
+    	}
 	}
 
     @Override
-	public int broadcast(String templateId) throws OutOfServiceException,
-			TemplateNotFoundException, DataValidationException {
-		int mailsSent = mailingListBo.broadcast(templateId);
-		return mailsSent;
+	public int broadcast(String templateId) {
+    	try {
+			int mailsSent = mailingListBo.broadcast(templateId);
+			return mailsSent;
+	    }
+    	catch (Exception e) {
+    		throw new EJBException("in broadcast(templateId) method", e);
+    	}
+    }
+
+    @Override
+	public int broadcast(String templateId, String listId) {
+    	try {
+			int mailsSent = mailingListBo.broadcast(templateId, listId);
+			return mailsSent;
+	    }
+    	catch (Exception e) {
+    		throw new EJBException("in broadcast(templateId, listId) method", e);
+    	}
 	}
 
     @Override
-	public int broadcast(String templateId, String listId) throws OutOfServiceException,
-			TemplateNotFoundException, DataValidationException {
-		int mailsSent = mailingListBo.broadcast(templateId, listId);
-		return mailsSent;
-	}
-
+    public void removeFromList(int bcstTrkRowId) {
+    	bcstTrackingBo.removeFromList(bcstTrkRowId);
+    }
 }
