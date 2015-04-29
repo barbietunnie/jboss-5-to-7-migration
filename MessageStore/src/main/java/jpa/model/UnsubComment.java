@@ -18,7 +18,7 @@ public class UnsubComment extends BaseModel implements java.io.Serializable {
 	@ManyToOne(targetEntity=EmailAddress.class, fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="EmailAddrRowId", insertable=true, referencedColumnName="Row_Id", nullable=false)
 	@XmlTransient
-	private EmailAddress emailAddr;
+	private EmailAddress emailAddress;
 
 	@ManyToOne(targetEntity=MailingList.class, fetch=FetchType.LAZY, optional=false)
 	@JoinColumn(name="MailingListRowId", insertable=true, referencedColumnName="Row_Id", nullable=true)
@@ -32,12 +32,12 @@ public class UnsubComment extends BaseModel implements java.io.Serializable {
 		// must have a no-argument constructor
 	}
 
-	public EmailAddress getEmailAddr() {
-		return emailAddr;
+	public EmailAddress getEmailAddress() {
+		return emailAddress;
 	}
 
-	public void setEmailAddr(EmailAddress emailAddr) {
-		this.emailAddr = emailAddr;
+	public void setEmailAddress(EmailAddress emailAddr) {
+		this.emailAddress = emailAddr;
 	}
 
 	public MailingList getMailingList() {
