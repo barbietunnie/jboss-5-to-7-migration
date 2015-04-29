@@ -31,6 +31,7 @@ import com.es.ejb.vo.MailingListVo;
 import com.es.tomee.util.TomeeCtxUtil;
 
 @Path("/msgapi/mailinglist")
+@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 public class MailingListRS {
 	static final Logger logger = Logger.getLogger(MailingListRS.class);
 
@@ -51,7 +52,6 @@ public class MailingListRS {
 
 	@Path("/list")
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response getAllMailingLists() {
 		logger.info("Entering getAllMailingLists() method...");
 		try {
