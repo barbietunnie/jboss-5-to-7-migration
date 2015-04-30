@@ -33,7 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.apache.log4j.Logger;
 
-import com.es.ejb.vo.SubscriptionVo;
+import com.es.ejb.ws.vo.SubscriptionVo;
 import com.es.jaxrs.common.ErrorResponse;
 import com.es.tomee.util.TomeeCtxUtil;
 

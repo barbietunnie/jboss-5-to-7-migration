@@ -1,4 +1,4 @@
-package com.es.ejb.vo;
+package com.es.ejb.ws.vo;
 
 import java.sql.Timestamp;
 
@@ -25,7 +25,7 @@ public class SubscriptionVo extends BaseWsVo {
 
 	@XmlTransient
 	private String address;
-	//@XmlJavaTypeAdapter(BooleanAdapter.class)
+	@XmlTransient
 	private Boolean isOptIn = null;
 	@XmlJavaTypeAdapter(TimestampAdapter.class)
 	private Timestamp CreateTime;

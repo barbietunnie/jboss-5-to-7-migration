@@ -16,7 +16,7 @@ import jpa.util.StringUtil;
 import org.apache.log4j.Logger;
 
 import com.es.ejb.senderdata.SenderDataWs;
-import com.es.ejb.vo.SenderDataVo;
+import com.es.ejb.ws.vo.SenderDataVo;
 import com.es.tomee.util.TomeeCtxUtil;
 
 public class SenderDataWsClient {

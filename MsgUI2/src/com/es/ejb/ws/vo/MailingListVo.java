@@ -1,4 +1,4 @@
-package com.es.ejb.vo;
+package com.es.ejb.ws.vo;
 
 import java.sql.Timestamp;
 
