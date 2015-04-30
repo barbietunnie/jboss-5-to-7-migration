@@ -406,12 +406,14 @@ public class SubscriptionService implements java.io.Serializable {
 	public int updateSentCount(int rowId, int mailsSent) {
 		String sql = 
 				"update Subscription t " +
-				" set t.sentCount = (t.sentCount + :mailsSent) " +
+				" set t.sentCount = (t.sentCount + :mailsSent), t.updtUserId = :user, t.updtTime = :time " +
 				"where t.rowId=:rowId";
 		try {
 			Query query = em.createQuery(sql);
 			query.setParameter("mailsSent", mailsSent);
 			query.setParameter("rowId", rowId);
+			query.setParameter("user", Constants.DEFAULT_USER_ID);
+			query.setParameter("time", new java.sql.Timestamp(System.currentTimeMillis()));
 			int rows = query.executeUpdate();
 			return rows;
 		}
@@ -422,13 +424,15 @@ public class SubscriptionService implements java.io.Serializable {
 	public int updateClickCount(int emailAddrRowId, String listId) {
 		String sql = 
 				"update Subscription " +
-				" set clickCount = (clickCount + 1) " +
+				" set clickCount = (clickCount + 1), updtUserId = ?3, updtTime = ?4 " +
 				"where emailAddrRowId = ?1 "
 				+ "and mailingListRowId = (select row_id from mailing_list where listId = ?2)";
 		try {
 			Query query = em.createNativeQuery(sql);
 			query.setParameter(1, emailAddrRowId);
 			query.setParameter(2, listId);
+			query.setParameter(3, Constants.DEFAULT_USER_ID);
+			query.setParameter(4, new java.sql.Timestamp(System.currentTimeMillis()));
 			int rows = query.executeUpdate();
 			return rows;
 		}
@@ -439,13 +443,15 @@ public class SubscriptionService implements java.io.Serializable {
 	public int updateOpenCount(int emailAddrRowId, String listId) {
 		String sql = 
 				"update Subscription " +
-				" set openCount = (openCount + 1) " +
+				" set openCount = (openCount + 1), updtUserId = ?3, updtTime = ?4 " +
 				"where emailAddrRowId = ?1 "
 				+ "and mailingListRowId = (select row_id from mailing_list where listId = ?2)";
 		try {
 			Query query = em.createNativeQuery(sql);
 			query.setParameter(1, emailAddrRowId);
 			query.setParameter(2, listId);
+			query.setParameter(3, Constants.DEFAULT_USER_ID);
+			query.setParameter(4, new java.sql.Timestamp(System.currentTimeMillis()));
 			int rows = query.executeUpdate();
 			return rows;
 		}
