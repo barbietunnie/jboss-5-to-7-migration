@@ -5,7 +5,7 @@ import java.util.List;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 
-import com.es.ejb.vo.IdTokensVo;
+import com.es.ejb.ws.vo.IdTokensVo;
 
 @WebService (targetNamespace = "http://com.es.ws.idtokens/wsdl")
 public interface IdTokensWs {
