@@ -4,9 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import jpa.msgui.vo.BooleanAdapter;
 
 @Entity
 @Table(name="smtp_server")
@@ -25,7 +22,7 @@ public class SmtpServer extends BaseModel implements java.io.Serializable {
 	@Column(nullable=false, columnDefinition="boolean")
 	private boolean isUseSsl = false;
 	@Column(nullable=true, columnDefinition="Boolean")
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
+	//@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isUseAuth = null;
 	@Column(nullable=false, length=30)
 	private String userId = ""; 

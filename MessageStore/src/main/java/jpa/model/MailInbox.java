@@ -8,11 +8,9 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.constant.CarrierCode;
 import jpa.constant.MailServerType;
-import jpa.msgui.vo.BooleanAdapter;
 
 @Entity
 @Table(name="mail_inbox", uniqueConstraints=@UniqueConstraint(columnNames = {"userId", "hostName"}))
@@ -38,7 +36,7 @@ public class MailInbox extends BaseModel implements java.io.Serializable {
 	@Column(nullable=false, length=1, columnDefinition="char")
 	private String carrierCode = CarrierCode.SMTPMAIL.getValue();
 	@Column(nullable=true, columnDefinition="Boolean")
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
+	//@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isInternalOnly = null;
 	@Column(nullable=false, columnDefinition="int")
 	private int readPerPass = -1;
@@ -53,18 +51,18 @@ public class MailInbox extends BaseModel implements java.io.Serializable {
 	@Column(nullable=true, columnDefinition="Integer")
 	private int messageCount;
 	@Column(nullable=true, columnDefinition="Boolean")
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
+	//@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isToPlainText = null;
 	@Column(nullable=true, length=500)
 	private String toAddressDomain = null;
 	@Column(nullable=true, columnDefinition="Boolean")
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
+	//@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isCheckDuplicate = null;
 	@Column(nullable=true, columnDefinition="Boolean")
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
+	//@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isAlertDuplicate = null;
 	@Column(nullable=true, columnDefinition="Boolean")
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
+	//@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isLogDuplicate = null;
 	@Column(nullable=true, columnDefinition="Integer")
 	private Integer purgeDupsAfter = null;
