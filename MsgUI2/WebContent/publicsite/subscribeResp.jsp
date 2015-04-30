@@ -101,7 +101,7 @@
 			if ("text".equals(emailType)) {
 				acceptHtml = false;
 			}
-			if (!acceptHtml != addrVo.isAcceptHtml()) {
+			if (acceptHtml != addrVo.isAcceptHtml()) {
 				addrVo.setAcceptHtml(acceptHtml);
 				getEmailAddressService(ctx).update(addrVo);
 			}
