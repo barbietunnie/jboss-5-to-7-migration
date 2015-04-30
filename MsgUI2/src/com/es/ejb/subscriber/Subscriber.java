@@ -1,5 +1,6 @@
 package com.es.ejb.subscriber;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -26,8 +27,10 @@ import jpa.service.common.SubscriptionService;
 import jpa.util.SpringUtil;
 import jpa.util.StringUtil;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 
+import com.es.ejb.vo.SubscriptionVo;
 import com.es.tomee.util.TomeeCtxUtil;
 
 /**
@@ -47,7 +50,7 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
 	@Resource
 	SessionContext context;
 	private SubscriberDataService subscriberDao;
-	private SubscriptionService subscriptionBo;
+	private SubscriptionService subscriptionDao;
 	private EmailAddressService emailAddrDao;
 
 	/**
@@ -55,7 +58,7 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
      */
     public Subscriber() {
 		subscriberDao = SpringUtil.getAppContext().getBean(SubscriberDataService.class);
-		subscriptionBo = SpringUtil.getAppContext().getBean(SubscriptionService.class);
+		subscriptionDao = SpringUtil.getAppContext().getBean(SubscriptionService.class);
 		emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
     }
 
@@ -77,11 +80,12 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
 		}
     }
 	
-    
+    @Override
     public List<SubscriberData> getAllSubscribers() {
     	return subscriberDao.getAll();
     }
     
+    @Override
     public SubscriberData getSubscriberById(String subrId) {
     	try {
     		SubscriberData vo = subscriberDao.getBySubscriberId(subrId);
@@ -92,6 +96,7 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
 		}
 	}
 
+    @Override
 	public SubscriberData getSubscriberByEmailAddress(String emailAddr) {
 		EmailAddress emailAddrVo = emailAddrDao.findSertAddress(emailAddr);
 		try {
@@ -103,47 +108,75 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
 		}
 	}
 
+	@Override
+	public List<SubscriptionVo> getSubscribedList(String emailAddr) {
+		List<Subscription> sublist = subscriptionDao.getByAddress(emailAddr);
+		List<SubscriptionVo> volist = new ArrayList<SubscriptionVo>();
+		for (Subscription sub : sublist) {
+			SubscriptionVo vo = new SubscriptionVo();
+			try {
+				BeanUtils.copyProperties(vo, sub);
+				vo.setListId(sub.getMailingList().getListId());
+				vo.setDescription(sub.getMailingList().getDescription());
+				vo.setAddress(sub.getEmailAddr().getAddress());
+				volist.add(vo);
+			}
+			catch (Exception e) {
+				throw new RuntimeException("Failed to copy properties", e);
+			}
+		}
+		return volist;
+	}
+
+	@Override
 	public Subscription subscribe(String emailAddr, String listId) {
-		Subscription emailAdded = subscriptionBo.subscribe(emailAddr, listId);
+		Subscription emailAdded = subscriptionDao.subscribe(emailAddr, listId);
 		return emailAdded;
 	}
 
+	@Override
 	public Subscription unSubscriber(String emailAddr, String listId) {
-		Subscription emailRemoved = subscriptionBo.unsubscribe(emailAddr, listId);
+		Subscription emailRemoved = subscriptionDao.unsubscribe(emailAddr, listId);
 		return emailRemoved;
 	}
 
+	@Override
 	public void insertSubscriber(SubscriberData vo) {
 		subscriberDao.insert(vo);
 	}
 
+	@Override
 	public void updateSubscriber(SubscriberData vo) {
 		subscriberDao.update(vo);
 	}
 
+	@Override
 	public void deleteSubscriber(SubscriberData vo) {
 		subscriberDao.delete(vo);
 	}
 	
+	@Override
 	public Subscription optInRequest(String emailAddr, String listId) {
-		Subscription emailOptIned = subscriptionBo.optInRequest(emailAddr, listId);
+		Subscription emailOptIned = subscriptionDao.optInRequest(emailAddr, listId);
 		return emailOptIned;
 	}
 
+	@Override
 	public Subscription optInConfirm(String emailAddr, String listId) {
-		Subscription emailOptIned = subscriptionBo.optInConfirm(emailAddr, listId);
+		Subscription emailOptIned = subscriptionDao.optInConfirm(emailAddr, listId);
 		return emailOptIned;
 	}
 
 	@Override
 	public Subscription addToList(String sbsrEmailAddr, String listEmailAddr) {
-		Subscription sub = subscriptionBo.addToList(sbsrEmailAddr, listEmailAddr);
+		Subscription sub = subscriptionDao.addToList(sbsrEmailAddr, listEmailAddr);
 		return sub;
 	}
 
 	@Override
 	public Subscription removeFromList(String sbsrEmailAddr, String listEmailAddr) {
-		Subscription sub = subscriptionBo.removeFromList(sbsrEmailAddr, listEmailAddr);
+		Subscription sub = subscriptionDao.removeFromList(sbsrEmailAddr, listEmailAddr);
 		return sub;
 	}
+
 }
