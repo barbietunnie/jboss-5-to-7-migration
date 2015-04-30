@@ -4,9 +4,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import jpa.msgui.vo.BooleanAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "SenderDataVo")
@@ -55,12 +52,12 @@ public class SenderDataVo extends BaseWsVo {
 	@XmlElement(required=true)
 	private String systemId;
 	private String systemKey;
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
+	//@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isDikm;
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
+	//@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isDomainKey;
 	private String keyFilePath;
-	@XmlJavaTypeAdapter(BooleanAdapter.class)
+	//@XmlJavaTypeAdapter(BooleanAdapter.class)
 	private Boolean isSpf;
 	
 	public SenderDataVo() {}

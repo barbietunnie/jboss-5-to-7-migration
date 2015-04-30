@@ -1,6 +1,7 @@
 package com.es.ejb.subscriber;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -15,6 +16,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -31,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.apache.log4j.Logger;
 
+import com.es.ejb.vo.SubscriptionVo;
 import com.es.jaxrs.common.ErrorResponse;
 import com.es.tomee.util.TomeeCtxUtil;
 
@@ -183,30 +186,31 @@ public class SubscriptionRS {
 	}
 	
 
-	@Path("/getsbsr")
+	@Path("/subscribedlist")
 	@GET
 	public Response getSubscriberByEmailAddress(@QueryParam("emailAddr") String emailAddr, @Context HttpHeaders hh) {
 		logger.info("Entering getSubscriberByEmailAddress() method..."); 
 		try {
-			SubscriberData sd = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
-			if (sd != null) {
-				logger.info(StringUtil.prettyPrint(sd, 1));
-				return Response.ok(sd).build();
+			List<SubscriptionVo> sublist = getSubscriberLocal().getSubscribedList(emailAddr);
+			if (!sublist.isEmpty()) {
+				logger.info(StringUtil.prettyPrint(sublist.get(0), 1));
+				GenericEntity<List<SubscriptionVo>> entity = new GenericEntity<List<SubscriptionVo>>(sublist) {};
+				return Response.ok(entity).build();
 			}
 			else {
-				boolean acceptXml = false;
+				boolean acceptJson = false;
 				MultivaluedMap<String, String> headerParams = hh.getRequestHeaders();
 				if (headerParams.containsKey("Accept")) {
-					if (StringUtils.containsIgnoreCase(headerParams.getFirst("Accept"), "/xml")) {
-						acceptXml = true;
+					if (StringUtils.containsIgnoreCase(headerParams.getFirst("Accept"), "/json")) {
+						acceptJson = true;
 					}
 				}
 				String rsp;
-				if (acceptXml) {
-					rsp = "<subscriberData>Subscriber not found</subscriberData>";
+				if (acceptJson) {
+					rsp = "{\"subscriptions\": \"not found\"}";
 				}
 				else {
-					rsp = "{\"subscriberData\": \"not found\"}";
+					rsp = "<subscriptions>Subscriber not found</subscriptions>";
 				}
 				return Response.ok(rsp).build();
 			}

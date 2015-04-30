@@ -13,6 +13,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.persistence.NoResultException;
@@ -91,6 +92,7 @@ public class SenderData implements SenderDataLocal, SenderDataRemote, SenderData
 		return senderDataDao.deleteBySenderId(senderId);
 	}
 
+	@WebMethod
 	@Override
 	public SenderDataVo getBySenderId(String senderId) {
 		try {
@@ -122,6 +124,7 @@ public class SenderData implements SenderDataLocal, SenderDataRemote, SenderData
 		}
 	}
 
+	@WebMethod
 	@Override
 	public List<SenderDataVo> getAll() {
 		List<jpa.model.SenderData> list = findAll();
@@ -139,6 +142,7 @@ public class SenderData implements SenderDataLocal, SenderDataRemote, SenderData
 		return volist;
 	}
 
+	@WebMethod
 	@Override
 	public void update(SenderDataVo vo) {
 		jpa.model.SenderData sender = findBySenderId(vo.getSenderId());

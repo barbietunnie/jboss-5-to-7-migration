@@ -6,12 +6,15 @@ import javax.ejb.Local;
 import jpa.model.SubscriberData;
 import jpa.model.Subscription;
 
+import com.es.ejb.vo.SubscriptionVo;
+
 @Local
 public interface SubscriberLocal {
 	public List<SubscriberData> getAllSubscribers();
 	public SubscriberData getSubscriberById(String subrId);
 	public SubscriberData getSubscriberByEmailAddress(String emailAddr);
 
+	public List<SubscriptionVo> getSubscribedList(String emailAddr);
 	public Subscription subscribe(String emailAddr, String listId);
 	public Subscription unSubscriber(String emailAddr, String listId);
 	

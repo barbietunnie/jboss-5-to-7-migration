@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import jpa.msgui.vo.TimestampAdapter;
@@ -22,17 +21,7 @@ public class EmailAddrVo extends BaseWsVo {
 	private Timestamp statusChangeTime;
  	private String statusChangeUserId;
 	@XmlElement(required=true)
-	private int bounceCount = 0;
-	@XmlJavaTypeAdapter(TimestampAdapter.class)
-	private Timestamp lastBounceTime;
-	@XmlJavaTypeAdapter(TimestampAdapter.class)
-	private Timestamp lastSentTime;
-	@XmlJavaTypeAdapter(TimestampAdapter.class)
-	private Timestamp lastRcptTime;
-	@XmlElement(required=true)
 	private boolean isAcceptHtml;
-	@XmlTransient
-	private String origAddress;
 
 	public EmailAddrVo() {
 		// must have a no-argument constructor
@@ -44,14 +33,6 @@ public class EmailAddrVo extends BaseWsVo {
 
 	public void setAddress(String address) {
 		this.address = address;
-	}
-
-	public String getOrigAddress() {
-		return origAddress;
-	}
-
-	public void setOrigAddress(String origAddress) {
-		this.origAddress = origAddress;
 	}
 
 	public Timestamp getStatusChangeTime() {
@@ -68,38 +49,6 @@ public class EmailAddrVo extends BaseWsVo {
 
 	public void setStatusChangeUserId(String statusChangeUserId) {
 		this.statusChangeUserId = statusChangeUserId;
-	}
-
-	public int getBounceCount() {
-		return bounceCount;
-	}
-
-	public void setBounceCount(int bounceCount) {
-		this.bounceCount = bounceCount;
-	}
-
-	public Timestamp getLastBounceTime() {
-		return lastBounceTime;
-	}
-
-	public void setLastBounceTime(Timestamp lastBounceTime) {
-		this.lastBounceTime = lastBounceTime;
-	}
-
-	public Timestamp getLastSentTime() {
-		return lastSentTime;
-	}
-
-	public void setLastSentTime(Timestamp lastSentTime) {
-		this.lastSentTime = lastSentTime;
-	}
-
-	public Timestamp getLastRcptTime() {
-		return lastRcptTime;
-	}
-
-	public void setLastRcptTime(Timestamp lastRcptTime) {
-		this.lastRcptTime = lastRcptTime;
 	}
 
 	public boolean isAcceptHtml() {
