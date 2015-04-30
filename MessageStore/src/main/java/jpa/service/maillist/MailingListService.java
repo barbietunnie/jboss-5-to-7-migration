@@ -42,7 +42,6 @@ public class MailingListService implements java.io.Serializable {
 				" a.UpdtTime, " +
 				" a.SenderDataRowId, " +
 				" a.ListMasterEmailAddr ";
-				//" b.isSubscribed ";
 	
 	public MailingList getByListId(String listId) throws NoResultException {
 		try {
@@ -82,7 +81,7 @@ public class MailingListService implements java.io.Serializable {
 			"left outer join Subscription b on a.Row_Id = b.MailingListRowId " +
 			"join Email_Address e on e.Row_Id = b.EmailAddrRowId " +
 				" where e.address=? ";
-		sql += GroupBy;
+		sql += GroupBy + ", b.isSubscribed ";
 		try {
 			Query query = em.createNativeQuery(sql,MailingList.MAPPING_MAILING_LIST_WITH_COUNTS);
 			query.setParameter(1, address);
@@ -108,7 +107,7 @@ public class MailingListService implements java.io.Serializable {
 	 * 2) through 4) BigDecimal (MySQL) or BigInteger (PostgreSQL)
 	 */
 	public MailingList getByListIdWithCounts(String listId) throws NoResultException {
-		String sql = "select a.*, '' as isSubscribed, " +
+		String sql = "select a.*, " +
 				" sum(b.SentCount) as sentCount, sum(b.OpenCount) as openCount," +
 				" sum(b.ClickCount) as clickCount " +
 				"from Mailing_List a " +

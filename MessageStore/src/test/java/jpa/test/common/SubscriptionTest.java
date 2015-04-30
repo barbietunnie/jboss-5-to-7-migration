@@ -122,6 +122,7 @@ public class SubscriptionTest {
 		assertNotNull(rcd2);
 		
 		assert(1<=service.updateClickCount(emailAddr1.getRowId(), list.get(0).getListId()));
+		assert(1<=service.updateOpenCount(emailAddr1.getRowId(), list.get(0).getListId()));
 		
 		// test paging for UI application
 		PagingVo vo = new PagingVo();
@@ -150,13 +151,13 @@ public class SubscriptionTest {
 		// test update
 		rcd2.setUpdtUserId("JpaTest");
 		service.update(rcd2);
-		assertTrue(1==service.updateSentCount(rcd2.getRowId(), 1));
 		
 		emService.detach(rcd2); /* added to work around following Derby error:
 		 			"cannot be updated because it has changed or been deleted since it was last read." */
 		Subscription rcd3 = service.getByRowId(rcd2.getRowId());
 		assertTrue("JpaTest".equals(rcd3.getUpdtUserId()));
 		// end of test update
+		assertTrue(1==service.updateSentCount(rcd2.getRowId(), 1));
 
 		// test insert 2
 		Subscription rcd4 = new Subscription();

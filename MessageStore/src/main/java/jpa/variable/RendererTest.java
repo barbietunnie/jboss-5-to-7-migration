@@ -24,9 +24,9 @@ public final class RendererTest {
 		String template = "BeginTemplate\n"
 			+ "Current Date: ${CurrentDate} ${0}\n"
 			+ "${name1}, ${name2} Some Text ${name3} More Text\n"
-			+ "Some Numberic values: ${numeric1}, ${numeric2}, ${numeric3}\n"
+			+ "Some Numberic values: ${numeric1}, ${numeric2}${numeric3}\n"
 			+ "Some Datetime values: ${datetime1}, ${datetime2}, ${datetime3}, ${datetime4}\n"
-			+ "${name4.recurrsive}\n"
+			+ "${name4.recurrsive.long.name}\n"
 			+ "$EndTemplate\n";
 		
 		java.util.Date currDate = new java.util.Date();
@@ -35,7 +35,7 @@ public final class RendererTest {
 		String expected = "BeginTemplate\n"
 			+ "Current Date: " + fmt.format(currDate) + " ${0}\n"
 			+ "Jack Wang, John Lin Some Text Ramana More Text\n"
-			+ "Some Numberic values: 12,345.678, (-000,012,345.68), -$99,999.99\n"
+			+ "Some Numberic values: 12,345.678, (-000,012,345.68)-$99,999.99\n"
 			+ "Some Datetime values: 2007-10-01 15:23:12, 12/01/2007, , 2009-07-29 13.04\n"
 			+ "Recursive Variable Jack Wang End\n"
 			+ "$EndTemplate\n";
@@ -135,7 +135,7 @@ public final class RendererTest {
 				"Ramana"
 			);
 		RenderVariableVo req4 = new RenderVariableVo(
-				"name4.recurrsive", 
+				"name4.recurrsive.long.name", 
 				"Recursive Variable ${name1} End", 
 				VariableType.TEXT
 			);
