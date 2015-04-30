@@ -6,7 +6,7 @@ import javax.ejb.Local;
 import jpa.model.SubscriberData;
 import jpa.model.Subscription;
 
-import com.es.ejb.vo.SubscriptionVo;
+import com.es.ejb.ws.vo.SubscriptionVo;
 
 @Local
 public interface SubscriberLocal {

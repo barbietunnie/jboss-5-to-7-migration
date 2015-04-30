@@ -31,7 +31,7 @@ import jpa.util.SpringUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 
-import com.es.ejb.vo.SenderDataVo;
+import com.es.ejb.ws.vo.SenderDataVo;
 import com.es.tomee.util.TomeeCtxUtil;
 
 /**

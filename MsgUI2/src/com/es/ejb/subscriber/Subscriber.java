@@ -30,7 +30,7 @@ import jpa.util.StringUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 
-import com.es.ejb.vo.SubscriptionVo;
+import com.es.ejb.ws.vo.SubscriptionVo;
 import com.es.tomee.util.TomeeCtxUtil;
 
 /**

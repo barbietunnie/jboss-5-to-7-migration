@@ -21,7 +21,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.es.ejb.vo.IdTokensVo;
+import com.es.ejb.ws.vo.IdTokensVo;
 
 public class IdTokensWsTest {
 

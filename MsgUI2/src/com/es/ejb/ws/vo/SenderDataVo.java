@@ -1,4 +1,4 @@
-package com.es.ejb.vo;
+package com.es.ejb.ws.vo;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
