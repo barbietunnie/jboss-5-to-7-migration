@@ -89,8 +89,11 @@ function checkLength(element, maxvalue) {
 		</table>
 		</td>
 	</tr>
+<%@page import="javax.persistence.NoResultException"%>
 <%@page import="jpa.model.EmailAddress"%>
+<%@page import="jpa.model.Subscription"%>
 <%@page import="jpa.message.util.MsgIdCipher"%>
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
 	Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
 	ServletContext ctx = application;
@@ -104,37 +107,50 @@ function checkLength(element, maxvalue) {
 	int listCount = 0;
 	try {
 		int sbsrId = MsgIdCipher.decode(encodedSbsrId);
-		addrVo = getEmailAddressService(ctx).getByRowId(sbsrId);
-		if (listIds != null && listIds.length() > 0 && addrVo != null) {
-			StringTokenizer st = new StringTokenizer(listIds, ",");
-			listCount = st.countTokens();
-			int count = 0;
-			while (st.hasMoreTokens()) {
-				String listId = st.nextToken();
-				MailingList vo = getMailingListService(ctx).getByListId(listId);
-				if (count > 0) {
-					sbListIds.append(",");
-				}
-				sbListIds.append(listId);
-				if (vo != null) {
-					subedList.add(vo);
-					if (count > 0) {
-						sbListNames.append(" \n");
+		try {
+			addrVo = getEmailAddressService(ctx).getByRowId(sbsrId);
+			if (StringUtils.isBlank(listIds)) {
+				logger.info("unsubscribe.jsp - input listids is empty, retrieving from database by sbsr address...");
+				List<Subscription> sub_list = getSubscriptionService(ctx).getByAddress(addrVo.getAddress());
+				listIds = "";
+				for (Subscription sub : sub_list) {
+					if (StringUtils.isNotBlank(listIds)) {
+						listIds += ",";
 					}
-					sbListNames.append(vo.getDisplayName());
-				}
-				else {
-					logger.error("unsubscribe.jsp - Failed to find mailing list by Id: " + listId);
+					listIds += sub.getMailingList().getListId();
 				}
 			}
-			pageContext.setAttribute("subList", subedList);
- 		}
- 		else {
- 			logger.error("unsubscribe.jsp - Subscriber Id " + sbsrId + " not found");
- 		}
- 	}
- 	catch (NumberFormatException e) {
- 		logger.error("unsubscribe.jsp - " + e.toString());
+			if (StringUtils.isNotBlank(listIds)) {
+				StringTokenizer st = new StringTokenizer(listIds, ",");
+				listCount = st.countTokens();
+				int count = 0;
+				while (st.hasMoreTokens()) {
+					String listId = st.nextToken();
+					try {
+						MailingList vo = getMailingListService(ctx).getByListId(listId);
+						if (count > 0) {
+							sbListIds.append(",");
+						}
+						sbListIds.append(listId);
+						subedList.add(vo);
+						if (count > 0) {
+							sbListNames.append(" \n");
+						}
+						sbListNames.append(vo.getDisplayName());
+					}
+					catch (NoResultException e) {
+						logger.error("unsubscribe.jsp - Failed to find mailing list by Id: " + listId);
+					}
+				}
+				pageContext.setAttribute("subList", subedList);
+	 		}
+	 		else {
+	 			logger.error("unsubscribe.jsp - listids is empty");
+	 		}
+		}
+		catch (NoResultException e) {
+			logger.error("unsubscribe.jsp - Subscriber Id " + sbsrId + " not found");
+		}
  	}
  	catch (Exception e) {
  		logger.error("unsubscribe.jsp - " + e.toString());

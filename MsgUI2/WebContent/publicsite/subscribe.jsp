@@ -53,17 +53,17 @@ function validateListSelection(myform) {
 	//document.write("The number of pages visited before this page is " +histLen+ " pages!!!.<br>");
 </script>
 <div align="center">
-<jsp:useBean id="subscribersBean"
+<jsp:useBean id="sbsrEditBean"
 	class="jpa.msgui.publicsite.SubscriberEditBean" scope="request" />
-<jsp:setProperty name="subscribersBean" property="*" />
+<jsp:setProperty name="sbsrEditBean" property="*" />
 
 <%@ include file="./loadSbsrDaos.jsp" %>
 
 <form action="subscribeResp.jsp" method="post" onsubmit="return checkEmail(this);">
 <input type="hidden" name="frompage" value="<c:out value="${param.frompage}"/>">
-<input type="hidden" name="editMode" value="<%= subscribersBean.getEditMode() %>">
-<input type="hidden" name="listid" value="<%= subscribersBean.getListid() %>">
-<input type="hidden" name="sbsrid" value="<%= subscribersBean.getSbsrid() %>">
+<input type="hidden" name="editMode" value="<%= sbsrEditBean.getEditMode() %>">
+<input type="hidden" name="listid" value="<%= sbsrEditBean.getListid() %>">
+<input type="hidden" name="sbsrid" value="<%= sbsrEditBean.getSbsrid() %>">
 
 <%
 	Logger logger = Logger.getLogger("jpa.msgui.publicsite.jsp");
@@ -73,7 +73,7 @@ function validateListSelection(myform) {
 	String emailAddr = "";
 	EmailAddress sbsrAddrVo = null;
 	try {
- 		int emailAddrId = Integer.parseInt(subscribersBean.getSbsrid());
+ 		int emailAddrId = Integer.parseInt(sbsrEditBean.getSbsrid());
  		try {
 			sbsrAddrVo = getEmailAddressService(ctx).getByRowId(emailAddrId);
  			emailAddr = sbsrAddrVo.getAddress();
@@ -140,7 +140,7 @@ function validateListSelection(myform) {
 	List<MailingList> subList = null;
 	int sbsrId = 0;
  	try {
- 		int emailAddrId = Integer.parseInt(subscribersBean.getSbsrid());
+ 		int emailAddrId = Integer.parseInt(sbsrEditBean.getSbsrid());
  		sbsrId = emailAddrId;
  		try {
  			sbsrAddrVo = getEmailAddressService(ctx).getByRowId(emailAddrId);
