@@ -489,8 +489,8 @@ public class StaticCodes {
 		new SelectItem(RuleCriteria.EQUALS.getValue(), "Equals"),
 		new SelectItem(RuleCriteria.GREATER_THAN.getValue(), "Greater Than"),
 		new SelectItem(RuleCriteria.LESS_THAN.getValue(), "Less Than"),
-		new SelectItem(RuleCriteria.VALUED.getValue(), "Valued"),
-		new SelectItem(RuleCriteria.NOT_VALUED.getValue(), "Not Valued"),
+		new SelectItem(RuleCriteria.IS_NOT_BLANK.getValue(), "Is Not Blank"),
+		new SelectItem(RuleCriteria.IS_BLANK.getValue(), "Is Blank"),
 		new SelectItem(RuleCriteria.REG_EX.getValue(), "Regular Expression")
 	};
 
