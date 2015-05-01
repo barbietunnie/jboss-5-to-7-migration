@@ -31,7 +31,7 @@
 				</td>
 				<td width="15%" style="text-align: right; vertical-align: bottom;">&nbsp;<br/>
 					<a style="color: blue;" class="headerLinkText" href="../main.faces">Main</a>
-					<img src="/MsgUI/images/space.gif" height="1" style="border: 0px" width="40" />
+					<img src="/MsgUI2/images/space.gif" height="1" style="border: 0px" width="40" />
 				</td>
 			</tr>
 		</table>
@@ -40,7 +40,7 @@
 	<tr>
 		<td>
 			<span style="text-align: left;">
-			<img src="/MsgUI/images/space.gif" height="1" style="border: 0px" width="10" />
+			<img src="/MsgUI2/images/space.gif" height="1" style="border: 0px" width="10" />
 			</span>
 			<span class="gridHeader">
 			<fmt:message key="uploadEmailAddressFile" bundle="${bndl}"/>
@@ -50,7 +50,7 @@
 	<tr>
 		<td>
 			<span style="text-align: left;">
-			<img src="/MsgUI/images/space.gif" height="1" style="border: 0px" width="10" />
+			<img src="/MsgUI2/images/space.gif" height="1" style="border: 0px" width="10" />
 			</span>
 			<span style="color: black; font-size: 1.1em;">
 			<fmt:message key="uploadFileToListLabel" bundle="${bndl}"/>
@@ -77,13 +77,13 @@
 				</tr>
 				<tr>
 					<td colspan="3">
-					<img src="/MsgUI/images/space.gif" height="10" style="border: 0px"/>
+					<img src="/MsgUI2/images/space.gif" height="10" style="border: 0px"/>
 					</td>
 				</tr>
 				<tr>
 					<td colspan="3">
 						<span style="text-align: left;">
-						<img src="/MsgUI/images/space.gif" height="1" style="border: 0px" width="10" />
+						<img src="/MsgUI2/images/space.gif" height="1" style="border: 0px" width="10" />
 						</span>
 						<span style="font-size: large;">
 						<fmt:message key="browseAndSelectFileLabel" bundle="${bndl}"/>
@@ -92,7 +92,7 @@
 				</tr>
 				<tr>
 					<td colspan="3">
-					<img src="/MsgUI/images/space.gif" height="10" style="border: 0px"/>
+					<img src="/MsgUI2/images/space.gif" height="10" style="border: 0px"/>
 					</td>
 				</tr>
 				<tr>
@@ -170,13 +170,13 @@
 		<table class="smtpBody" style="padding: 2px;">
 			<tr>
 				<td colspan="3">
-				<img src="/MsgUI/images/space.gif" height="10" style="border: 0px"/>
+				<img src="/MsgUI2/images/space.gif" height="10" style="border: 0px"/>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="3">
 					<span style="text-align: left;">
-					<img src="/MsgUI/images/space.gif" height="1" style="border: 0px" width="10" />
+					<img src="/MsgUI2/images/space.gif" height="1" style="border: 0px" width="10" />
 					</span>
 					<span style="font-size: large;">
 					<fmt:message key="importFromListLabel" bundle="${bndl}"/>
@@ -185,7 +185,7 @@
 			</tr>
 			<tr>
 				<td colspan="3">
-				<img src="/MsgUI/images/space.gif" height="10" style="border: 0px"/>
+				<img src="/MsgUI2/images/space.gif" height="10" style="border: 0px"/>
 				</td>
 			</tr>
 			<tr>
@@ -201,7 +201,7 @@
 			</tr>
 			<tr>
 				<td colspan="3">
-				<img src="/MsgUI/images/space.gif" height="10" style="border: 0px"/>
+				<img src="/MsgUI2/images/space.gif" height="10" style="border: 0px"/>
 				</td>
 			</tr>
 			<c:if test="${fn:length(uploadForm.errors) > 0 and param.submit == 'Import From List'}">
