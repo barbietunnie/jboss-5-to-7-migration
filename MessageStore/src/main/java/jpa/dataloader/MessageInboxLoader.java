@@ -106,8 +106,6 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		data1.setPurgeDate(null);
 		data1.setUpdtTime(updtTime);
 		data1.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		data1.setLockTime(null);
-		data1.setLockId(null);
 		
 		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.getValue());
 		data1.setRuleLogicRowId(logic.getRowId());
@@ -136,8 +134,6 @@ public class MessageInboxLoader extends AbstractDataLoader {
 		data2.setPurgeDate(null);
 		data2.setUpdtTime(updtTime);
 		data2.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		data2.setLockTime(null);
-		data2.setLockId(null);
 		
 		logic = logicService.getByRuleName(RuleNameEnum.BROADCAST.getValue());
 		data2.setRuleLogicRowId(logic.getRowId());

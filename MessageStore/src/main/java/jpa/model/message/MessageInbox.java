@@ -156,11 +156,6 @@ public class MessageInbox extends BaseModel implements Serializable {
 	private Timestamp receivedTime;
 	@Column(nullable=true)
 	private java.sql.Date purgeDate = null;
-	@Column(nullable=true)
-	@XmlJavaTypeAdapter(TimestampAdapter.class)
-	private Timestamp lockTime = null;
-	@Column(nullable=true,length=26)
-	private String lockId = null;
 	@Column(nullable=false,columnDefinition="smallint")
 	private int readCount = 0;
 	@Column(nullable=false,columnDefinition="smallint")
@@ -193,8 +188,10 @@ public class MessageInbox extends BaseModel implements Serializable {
 	private String msgBody = null;
 
 	@Transient
+	@XmlTransient
 	private int origReadCount = -1;
 	@Transient
+	@XmlTransient
 	private String origStatusId = null;
 
 	/*
@@ -535,22 +532,6 @@ public class MessageInbox extends BaseModel implements Serializable {
 
 	public void setPurgeDate(java.sql.Date purgeDate) {
 		this.purgeDate = purgeDate;
-	}
-
-	public Timestamp getLockTime() {
-		return lockTime;
-	}
-
-	public void setLockTime(Timestamp lockTime) {
-		this.lockTime = lockTime;
-	}
-
-	public String getLockId() {
-		return lockId;
-	}
-
-	public void setLockId(String lockId) {
-		this.lockId = lockId;
 	}
 
 	public int getReadCount() {

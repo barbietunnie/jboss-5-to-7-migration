@@ -260,8 +260,6 @@ public class MessageInboxBo implements java.io.Serializable {
 		
 		msgVo.setUpdtTime(updtTime);
 		msgVo.setUpdtUserId(StringUtils.left(Constants.DEFAULT_USER_ID,10));
-		msgVo.setLockTime(null); // lock time
-		msgVo.setLockId(null); // lock id
 		
 		// retrieve attachment count and size, and gathers delivery reports
 		BodypartUtil.retrieveAttachments(msgBean);
