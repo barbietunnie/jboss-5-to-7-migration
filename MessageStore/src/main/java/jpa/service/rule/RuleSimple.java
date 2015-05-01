@@ -102,12 +102,16 @@ public class RuleSimple extends RuleBase {
 	}
 
 	public String match(String mail_type, String data_type, String data) {
-		if (mail_type==null || !mail_type.equals(mailType))
+		if (mail_type==null || !mail_type.equals(mailType)) {
 			return null;
-		if (data_type==null || !data_type.equals(dataName))
+		}
+		if (data_type==null || !data_type.equals(dataName)) {
 			return null;
+		}
 		
-		if (data == null) data = ""; // just for safety
+		if (data == null) {
+			data = ""; // just for safety
+		}
 		if (!isCaseSensitive) {
 			data = data.toLowerCase();
 		}
@@ -118,41 +122,50 @@ public class RuleSimple extends RuleBase {
 		boolean criteria_met = false;
 
 		if (criteria.equals(RuleCriteria.STARTS_WITH)) {
-			if (data.startsWith(targetText))
+			if (data.startsWith(targetText)) {
 				criteria_met = true;
+			}
 		}
 		else if (criteria.equals(RuleCriteria.ENDS_WITH)) {
-			if (data.endsWith(targetText))
+			if (data.endsWith(targetText)) {
 				criteria_met = true;
+			}
 		}
 		else if (criteria.equals(RuleCriteria.CONTAINS)) {
-			if (data.indexOf(targetText) >= 0)
+			if (data.indexOf(targetText) >= 0) {
 				criteria_met = true;
+			}
 		}
 		else if (criteria.equals(RuleCriteria.EQUALS)) {
-			if (data.equals(targetText))
+			if (data.equals(targetText)) {
 				criteria_met = true;
+			}
 		}
 		else if (criteria.equals(RuleCriteria.GREATER_THAN)) {
-			if (data.compareTo(targetText)>0)
+			if (data.compareTo(targetText)>0) {
 				criteria_met = true;
+			}
 		}
 		else if (criteria.equals(RuleCriteria.LESS_THAN)) {
-			if (data.compareTo(targetText)<0)
+			if (data.compareTo(targetText)<0) {
 				criteria_met = true;
+			}
 		}
-		else if (criteria.equals(RuleCriteria.VALUED)) {
-			if (data.trim().length() > 0)
+		else if (criteria.equals(RuleCriteria.IS_NOT_BLANK)) {
+			if (StringUtils.isNotBlank(data)) {
 				criteria_met = true;
+			}
 		}
-		else if (criteria.equals(RuleCriteria.NOT_VALUED)) {
-			if (data.trim().length() == 0)
+		else if (criteria.equals(RuleCriteria.IS_BLANK)) {
+			if (StringUtils.isBlank(data)) {
 				criteria_met = true;
+			}
 		}
 		else if (criteria.equals(RuleCriteria.REG_EX)) {
 			Matcher matcher = pattern.matcher(data);
-			if (matcher.find())
+			if (matcher.find()) {
 				criteria_met = true;
+			}
 		}
 
 		if (criteria_met) {
