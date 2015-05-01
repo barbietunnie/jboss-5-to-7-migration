@@ -9,6 +9,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.Query;
 
+import jpa.constant.Constants;
 import jpa.model.BroadcastMessage;
 import jpa.msgui.vo.PagingVo;
 
@@ -80,11 +81,12 @@ public class BroadcastMessageService implements java.io.Serializable {
 	}
 	
 	public int updateSentCount(int rowId, int count) {
-		String sql = "update BroadcastMessage t set t.sentCount = (t.sentCount + :count) "
+		String sql = "update BroadcastMessage t set t.sentCount = (t.sentCount + :count), t.updtTime = :time "
 				+ " where t.rowId = :rowId";
 		Query query = em.createQuery(sql);
 		query.setParameter("count", count);
 		query.setParameter("rowId", rowId);
+		query.setParameter("time", new java.sql.Timestamp(System.currentTimeMillis()));
 		int rowsupdated = query.executeUpdate();
 		return rowsupdated;
 	}
@@ -95,16 +97,30 @@ public class BroadcastMessageService implements java.io.Serializable {
 	
 	public int updateOpenCount(int rowId) {
 		String sql = "update BroadcastMessage t set t.openCount = (t.openCount + 1), t.lastOpenTime = :time "
+				+ ", t.updtTime = :time, t.updtUserId = :user "
 				+ " where t.rowId = :rowId";
 		Query query = em.createQuery(sql);
 		query.setParameter("rowId", rowId);
 		query.setParameter("time", new java.sql.Timestamp(System.currentTimeMillis()));
+		query.setParameter("user", Constants.DEFAULT_USER_ID);
 		int rowsupdated = query.executeUpdate();
 		return rowsupdated;
 	}
 	
 	public int updateClickCount(int rowId) {
 		String sql = "update BroadcastMessage t set t.clickCount = (t.clickCount + 1), t.lastClickTime = :time "
+				+ ", t.updtTime = :time, t.updtUserId = :user "
+				+ " where t.rowId = :rowId";
+		Query query = em.createQuery(sql);
+		query.setParameter("rowId", rowId);
+		query.setParameter("time", new java.sql.Timestamp(System.currentTimeMillis()));
+		query.setParameter("user", Constants.DEFAULT_USER_ID);
+		int rowsupdated = query.executeUpdate();
+		return rowsupdated;
+	}
+	
+	public int updateReferalCount(int rowId) {
+		String sql = "update BroadcastMessage t set t.referralCount = (t.referralCount + 1), t.updtTime = :time "
 				+ " where t.rowId = :rowId";
 		Query query = em.createQuery(sql);
 		query.setParameter("rowId", rowId);
@@ -113,20 +129,12 @@ public class BroadcastMessageService implements java.io.Serializable {
 		return rowsupdated;
 	}
 	
-	public int updateReferalCount(int rowId) {
-		String sql = "update BroadcastMessage t set t.referralCount = (t.referralCount + 1) "
-				+ " where t.rowId = :rowId";
-		Query query = em.createQuery(sql);
-		query.setParameter("rowId", rowId);
-		int rowsupdated = query.executeUpdate();
-		return rowsupdated;
-	}
-	
 	public int updateUnsubscribeCount(int rowId) {
-		String sql = "update BroadcastMessage t set t.unsubscribeCount = (t.unsubscribeCount + 1) "
+		String sql = "update BroadcastMessage t set t.unsubscribeCount = (t.unsubscribeCount + 1), t.updtTime = :time "
 				+ " where t.rowId = :rowId";
 		Query query = em.createQuery(sql);
 		query.setParameter("rowId", rowId);
+		query.setParameter("time", new java.sql.Timestamp(System.currentTimeMillis()));
 		int rowsupdated = query.executeUpdate();
 		return rowsupdated;
 	}
