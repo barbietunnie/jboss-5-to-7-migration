@@ -16,6 +16,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.log4j.Logger;
 
+import com.es.ejb.ws.vo.MailingListVo;
+
 public class ReflectionUtil {
 	protected final static Logger logger = Logger.getLogger(ReflectionUtil.class);
 
@@ -105,6 +107,84 @@ public class ReflectionUtil {
 		}
 	}
 
+	static void fieldsDiff(Object dest, Object orig) {
+		Map<String, Method> method1GetMap = new LinkedHashMap<String, Method>();
+		Map<String, Method> method1SetMap = new LinkedHashMap<String, Method>();
+		Map<String, Method> method2GetMap = new LinkedHashMap<String, Method>();
+		Method methods[] = dest.getClass().getDeclaredMethods();
+		
+		// retrieve method getters
+		for (Method method1 : methods) {
+			String methodName = method1.getName();
+			if (Modifier.isPublic(method1.getModifiers())
+					&& !Modifier.isStatic(method1.getModifiers())) {
+				if (methodName.length() > 3 && methodName.startsWith("get")) {
+					try {
+						Method method2 = orig.getClass().getMethod(methodName, method1.getParameterTypes());
+						if (!method1.getReturnType().equals(method2.getReturnType())) {
+							continue;
+						}
+						if (method1.getParameterTypes().length == 0) {
+							method1GetMap.put(methodName, method1);
+							method2GetMap.put(methodName, method2);
+							logger.info("Method getter added: " + methodName);
+						}
+					}
+					catch (Exception e) {
+						//logger.info("Method name obj1." + methodName + " not found in obj2, ignored.");
+						continue;
+					}
+				}
+				else if (methodName.length() > 3 && methodName.startsWith("set")) {
+					try {
+						Method method2 = orig.getClass().getMethod(methodName, method1.getParameterTypes());
+						if (!method1.getReturnType().equals(method2.getReturnType())) {
+							continue;
+						}
+						if (method1.getParameterTypes().length == 1) {
+							method1SetMap.put(methodName, method1);
+							logger.info("Method setter added: " + methodName);
+						}
+					}
+					catch (Exception e) {
+						//logger.info("Method name obj1." + methodName + " not found in obj2, ignored.");
+						continue;
+					}
+				}
+			}
+		}
+		
+		Object [] params = {};
+		for (Iterator<String> it=method1GetMap.keySet().iterator(); it.hasNext();) {
+			String methodName = it.next();
+			String setterName = methodName.replaceFirst("get", "set");
+			if (!method1SetMap.containsKey(setterName)) {
+				continue;
+			}
+			Method method1 = method1GetMap.get(methodName);
+			Method method2 = method2GetMap.get(methodName);
+			Method setter = method1SetMap.get(setterName);
+			try {
+				Object rst1 = method1.invoke(dest, params);
+				Object rst2 = method2.invoke(orig, params);
+				String setMethod = setter.getClass().getSimpleName() + "." + setterName + "(" + rst2 + ")";
+				if (rst1 == null) {
+					if (rst2 != null) {
+						logger.info("Invoking.1 " + setMethod);
+						setter.invoke(dest, rst2);
+					}
+				}
+				else if (!rst1.equals(rst2)) {
+					logger.info("Invoking.2 " + setMethod);
+					setter.invoke(dest, rst2);
+				}
+			}
+			catch (Exception e) {
+				logger.error("Exception caught", e);
+			}
+		}
+	}
+	
 	public static void main(String[] args) {
 		Map<String, String> formMap = new LinkedHashMap<String, String>();
 		formMap.put("address", "mynewaddress@test.com");
@@ -116,5 +196,13 @@ public class ReflectionUtil {
 		EmailAddress obj = new EmailAddress();
 		updateObject(obj, formMap);
 		logger.info(StringUtil.prettyPrint(obj));
+		
+		// test fieldsDiff
+		jpa.model.MailingList ml = new jpa.model.MailingList();
+		MailingListVo vo = new MailingListVo();
+		ml.setDisplayName("Display name 1");
+		vo.setDisplayName("Display Name 2");
+		vo.setListId("SMPLLST1");
+		fieldsDiff(ml, vo);
 	}
 }
