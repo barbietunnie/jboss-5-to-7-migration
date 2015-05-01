@@ -155,6 +155,7 @@ public class SubscriptionService implements java.io.Serializable {
 				sub.setSubscribed(true);
 				sub.setStatusId(StatusId.ACTIVE.getValue());
 				sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
+				sub.setUpdtTime(new java.sql.Timestamp(System.currentTimeMillis()));
 				update(sub);
 			}
 		}
@@ -191,6 +192,7 @@ public class SubscriptionService implements java.io.Serializable {
 				sub.setSubscribed(false);
 				sub.setStatusId(StatusId.INACTIVE.getValue());
 				sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
+				sub.setUpdtTime(new java.sql.Timestamp(System.currentTimeMillis()));
 				update(sub);
 			}
 		}
@@ -245,6 +247,7 @@ public class SubscriptionService implements java.io.Serializable {
 			if (!sub.isSubscribed() && !Boolean.TRUE.equals(sub.getIsOptIn())) {
 				sub.setIsOptIn(Boolean.TRUE);
 				sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
+				sub.setUpdtTime(new java.sql.Timestamp(System.currentTimeMillis()));
 				update(sub);
 			}
 		}
@@ -281,6 +284,7 @@ public class SubscriptionService implements java.io.Serializable {
 				sub.setSubscribed(true);
 				sub.setStatusId(StatusId.ACTIVE.getValue());
 				sub.setUpdtUserId(Constants.DEFAULT_USER_ID);
+				sub.setUpdtTime(new java.sql.Timestamp(System.currentTimeMillis()));
 				update(sub);
 			}
 		}
