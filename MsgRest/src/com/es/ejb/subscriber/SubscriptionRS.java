@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 
 import com.es.ejb.ws.vo.SubscriptionVo;
 import com.es.jaxrs.common.ErrorResponse;
+import com.es.tomee.util.ReflectionUtil;
 import com.es.tomee.util.TomeeCtxUtil;
 
 @Path("/msgapi/subscription")
@@ -248,10 +249,11 @@ public class SubscriptionRS {
 		}
 	}
 
-	@Path("/update")
+	@Path("/update/{emailAddr}")
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
-	public Response update(@Context UriInfo ui, @Context HttpHeaders hh, MultivaluedMap<String, String> formParams) {
+	public Response update(@Context UriInfo ui, @Context HttpHeaders hh, MultivaluedMap<String, String> formParams,
+			@PathParam("emailAddr") String emailAddr) {
 		logger.info("Entering update() method..."); 
 		// print out UriInfo
 		MultivaluedMap<String, String> pathParams = ui.getPathParameters();
@@ -283,7 +285,14 @@ public class SubscriptionRS {
 			String key = it.next();
 			logger.info("Form Key: " + key + ", Values: " + formParams.get(key));
 		}
-		return Response.ok("Success").build();
+		try {
+			SubscriberData sbsrdata = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
+			ReflectionUtil.updateObject(sbsrdata, formParams);
+			getSubscriberLocal().updateSubscriber(sbsrdata);
+			return Response.ok("Success").build();
+		}
+		catch (NamingException e) {
+			throw new WebApplicationException(Response.serverError().build());
+		}
 	}
-
 }
