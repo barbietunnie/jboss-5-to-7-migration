@@ -36,7 +36,7 @@ import com.es.tomee.util.TomeeCtxUtil;
 /**
  * Session Bean implementation class Subscriber
  */
-@Stateless (name="subscriber", mappedName = "ejb/Subscriber")
+@Stateless (name="subscriberBean", mappedName = "ejb/SubscriberBean")
 @TransactionManagement(TransactionManagementType.CONTAINER)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Resource(name = "msgdb_pool", mappedName = "jdbc/MessageDS", 
