@@ -12,6 +12,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
@@ -23,6 +24,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
@@ -78,6 +81,37 @@ public class MailingListRS {
 		}
 	}
 	
+	@Path("/update/{listId}")
+	@POST
+	@Consumes(MediaType.APPLICATION_XML)
+	public Response updateList(@Context Request req, @PathParam("listId") String listId, MailingListVo vo) {
+		logger.info("Entering updateList() method...  list to update: " + listId);
+		logger.info("Input MailingListVo:" + StringUtil.prettyPrint(vo));
+		if (!req.getMethod().equals("POST")) {
+			Response.noContent().build();
+		}
+		Response.ResponseBuilder rb = req.evaluatePreconditions();
+		if (rb != null) {
+			rb.build();
+        }
+		try {
+			jpa.model.MailingList ml = getMailingListLocal().getByListId(listId);
+			vo.setListId(listId); // make sure listId is not changed
+			try {
+				BeanUtils.copyProperties(ml, vo);
+				getMailingListLocal().update(ml);
+				logger.info("MailingList updated: " + StringUtil.prettyPrint(ml, 1));
+				return Response.ok("Success").build();
+			}
+			catch (Exception e) {
+				throw new RuntimeException("Failed to copy properties", e);
+			}
+		}
+		catch (NamingException e) {
+			return Response.serverError().build();
+		}
+	}
+
 	@Path("/get1")
 	@GET
 	public String getWithContext1(@Context UriInfo uri) {

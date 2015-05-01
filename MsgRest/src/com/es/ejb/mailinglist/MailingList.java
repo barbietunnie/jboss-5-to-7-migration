@@ -14,6 +14,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.persistence.NoResultException;
 
 import jpa.service.maillist.BroadcastTrackingBo;
 import jpa.service.maillist.MailingListBo;
@@ -55,7 +56,23 @@ public class MailingList implements MailingListRemote, MailingListLocal {
     	return list;
     }
 
-    @Override
+	@Override
+	public jpa.model.MailingList getByListId(String listId) {
+		try {
+			jpa.model.MailingList ml = mlistService.getByListId(listId);
+			return ml;
+		}
+		catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public void update(jpa.model.MailingList mailingList) {
+		mlistService.update(mailingList);
+	}
+
+	@Override
 	public int sendMail(String toAddr, Map<String, String> variables, String templateId) {
     	try {
 			int mailsSent = mailingListBo.send(toAddr, variables, templateId);
@@ -92,4 +109,5 @@ public class MailingList implements MailingListRemote, MailingListLocal {
     public void removeFromList(int bcstTrkRowId) {
     	bcstTrackingBo.removeFromList(bcstTrkRowId);
     }
+
 }
