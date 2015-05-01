@@ -36,7 +36,7 @@ public class SubscriberTest {
 
 	@Before
 	public void lookupABean() throws NamingException {
-		Object object = ejbContainer.getContext().lookup("java:global/WebContent/subscriber"); //"java:global/WebContent/subscriber!com.es.ejb.subscriber.Subscriber");
+		Object object = ejbContainer.getContext().lookup("java:global/MsgRest/subscriber"); //"java:global/MsgRest/subscriber!com.es.ejb.subscriber.Subscriber");
 
 		assert(object instanceof Subscriber);
 
@@ -77,7 +77,7 @@ public class SubscriberTest {
 	public void testSubscriberRemote() {
 		try {
 			SubscriberRemote rmt = (SubscriberRemote) TomeeCtxUtil.getLocalContext().lookup(
-					"java:global/WebContent/subscriber!com.es.ejb.subscriber.SubscriberRemote");
+					"java:global/MsgRest/subscriber!com.es.ejb.subscriber.SubscriberRemote");
 			List<SubscriberData> subrList = rmt.getAllSubscribers();
 			assert(!subrList.isEmpty());
 		}
@@ -90,7 +90,7 @@ public class SubscriberTest {
 	public void testSubscriberLocal() {
 		try {
 			SubscriberLocal subr = (SubscriberLocal) TomeeCtxUtil.getLocalContext().lookup(
-					"java:global/WebContent/subscriber!com.es.ejb.subscriber.SubscriberLocal");
+					"java:global/MsgRest/subscriber!com.es.ejb.subscriber.SubscriberLocal");
 			List<SubscriberData> subrList = subr.getAllSubscribers();
 			assert(!subrList.isEmpty());
 			
