@@ -53,7 +53,7 @@ public class SubscriptionRS {
 	SubscriberLocal getSubscriberLocal() throws NamingException {
 		if (subscriber == null) {
 			javax.naming.Context context = TomeeCtxUtil.getLocalContext();
-			subscriber = (SubscriberLocal) context.lookup("subscriberLocal");
+			subscriber = (SubscriberLocal) context.lookup("SubscriberLocal");
 		}
 		return subscriber;
 	}
