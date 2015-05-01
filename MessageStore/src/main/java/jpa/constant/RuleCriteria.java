@@ -8,8 +8,8 @@ public enum RuleCriteria {
 	EQUALS("equals"),
 	GREATER_THAN("greater_than"),
 	LESS_THAN("less_than"),
-	VALUED("valued"),
-	NOT_VALUED("not_valued"),
+	IS_NOT_BLANK("is_not_blank"),
+	IS_BLANK("is_blank"),
 	REG_EX("reg_ex");
 
 	private String value;
