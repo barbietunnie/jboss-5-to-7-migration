@@ -92,8 +92,6 @@ public class MessageInboxTest {
 		in.setPurgeDate(null);
 		in.setUpdtTime(updtTime);
 		in.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		in.setLockTime(null);
-		in.setLockId(null);
 		
 		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.getValue());
 		in.setRuleLogicRowId(logic.getRowId());

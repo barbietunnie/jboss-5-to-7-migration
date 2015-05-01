@@ -91,8 +91,6 @@ public class MessageUnsubCommentTest {
 		inbox1.setPurgeDate(null);
 		inbox1.setUpdtTime(updtTime);
 		inbox1.setUpdtUserId(Constants.DEFAULT_USER_ID);
-		inbox1.setLockTime(null);
-		inbox1.setLockId(null);
 		
 		RuleLogic logic = logicService.getByRuleName(RuleNameEnum.GENERIC.getValue());
 		inbox1.setRuleLogicRowId(logic.getRowId());
