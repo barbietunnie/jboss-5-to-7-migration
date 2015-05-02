@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 
 import com.es.ejb.ws.vo.SubscriptionVo;
 import com.es.jaxrs.common.ErrorResponse;
-import com.es.tomee.util.ReflectionUtil;
+import com.es.tomee.util.BeanReflUtil;
 import com.es.tomee.util.TomeeCtxUtil;
 
 @Path("/msgapi/subscription")
@@ -75,15 +75,15 @@ public class SubscriptionRS {
 				er.setHttpStatus(404);
 				er.setErrorCode(102);
 				er.setErrorMessage("Subscriber not found");
-				rb.status(Status.NOT_FOUND);
+				rb.status(404); //Status.NOT_FOUND);
 				rb.entity(er);
 			}
 			return rb.build();
 		}
 		catch (NamingException e) {
 			rb.status(Status.INTERNAL_SERVER_ERROR);
+			rb.entity("NamingException caught");
 			return rb.build();
-			//throw new WebApplicationException(Response.serverError().build());
 		}
 	}
 
@@ -98,7 +98,7 @@ public class SubscriptionRS {
 			rb.entity(sub);
 		}
 		catch (NamingException e) {
-			throw new WebApplicationException(Response.serverError().build());
+			return Response.serverError().build();
 		}
 		catch (Exception e) {
 			Exception cause = ExceptionUtil.findRootCause(e);
@@ -107,12 +107,12 @@ public class SubscriptionRS {
 				er.setHttpStatus(404);
 				er.setErrorCode(122);
 				er.setErrorMessage(cause.getMessage());
-				rb.status(Status.NOT_FOUND);
+				rb.status(404);
 				rb.entity(er);
 			}
 			else {
 				logger.error("Unchecked exception caught", e);
-				throw new WebApplicationException(Response.serverError().build());
+				return Response.serverError().build();
 			}
 		}
 		return rb.build();
@@ -129,7 +129,7 @@ public class SubscriptionRS {
 			rb.entity(sub);
 		}
 		catch (NamingException e) {
-			throw new WebApplicationException(Response.serverError().build());
+			return Response.serverError().build();
 		}
 		catch (Exception e) {
 			Exception cause = ExceptionUtil.findRootCause(e);
@@ -138,12 +138,12 @@ public class SubscriptionRS {
 				er.setHttpStatus(404);
 				er.setErrorCode(122);
 				er.setErrorMessage(cause.getMessage());
-				rb.status(Status.NOT_FOUND);
+				rb.status(404);
 				rb.entity(er);
 			}
 			else {
 				logger.error("Unchecked exception caught", e);
-				throw new WebApplicationException(Response.serverError().build());
+				return Response.serverError().build();
 			}
 		}
 		return rb.build();
@@ -221,7 +221,7 @@ public class SubscriptionRS {
 		}
 		catch (NamingException e) {
 			// produce HTTP 500 Internal Server Error
-			throw new WebApplicationException(Response.serverError().build());
+			return Response.serverError().build();
 		}
 	}
 	
@@ -242,7 +242,7 @@ public class SubscriptionRS {
 				er.setHttpStatus(404);
 				er.setErrorCode(102);
 				er.setErrorMessage("Subscriber not found");
-				rb.status(Status.NOT_FOUND);
+				rb.status(404);
 				rb.entity(er);
 				throw new WebApplicationException(rb.build());
 			}
@@ -290,12 +290,20 @@ public class SubscriptionRS {
 		}
 		try {
 			SubscriberData sbsrdata = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
-			ReflectionUtil.updateObject(sbsrdata, formParams);
-			getSubscriberLocal().updateSubscriber(sbsrdata);
-			return Response.ok("Success").build();
+			if (sbsrdata != null) {
+				BeanReflUtil.copyProperties(sbsrdata, formParams);
+				getSubscriberLocal().updateSubscriber(sbsrdata);
+				return Response.ok("Success").build();
+			}
+			else {
+				ResponseBuilder rb = new ResponseBuilderImpl();
+				rb.status(404);
+				rb.entity("Subscriber not found");
+				return rb.build();
+			}
 		}
 		catch (NamingException e) {
-			throw new WebApplicationException(Response.serverError().build());
+			return Response.serverError().build();
 		}
 	}
 }
