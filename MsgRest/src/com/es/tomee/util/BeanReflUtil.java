@@ -18,33 +18,32 @@ import org.apache.log4j.Logger;
 
 import com.es.ejb.ws.vo.MailingListVo;
 
-public class ReflectionUtil {
-	protected final static Logger logger = Logger.getLogger(ReflectionUtil.class);
+public class BeanReflUtil {
+	protected final static Logger logger = Logger.getLogger(BeanReflUtil.class);
 
 	/*
-	 * update the object from form parameters by invoking its setters using reflection.
+	 * copy properties from form parameters by invoking its setters using reflection.
 	 */
-	public static void updateObject(Object obj, MultivaluedMap<String, String> formParams) {
+	public static void copyProperties(Object dest, MultivaluedMap<String, String> formParams) {
 		Map<String, String> methodMap = new LinkedHashMap<String, String>();
 		for (Iterator<String> it = formParams.keySet().iterator(); it.hasNext();) {
 			String key = it.next();
 			List<String> values = formParams.get(key);
 			methodMap.put(key, StringUtils.join(values.toArray()));
 		}
-		updateObject(obj, methodMap);
+		copyProperties(dest, methodMap);
 	}
 	
-	public static void updateObject(Object obj, Map<String, String> formParams) {
+	public static void copyProperties(Object dest, Map<String, String> formParams) {
 		Map<String, Method> settersMap = new LinkedHashMap<String, Method>();
-		Method methods[] = obj.getClass().getMethods();
+		Method methods[] = dest.getClass().getMethods();
 		
 		// retrieve method setters
-		for (int i = 0; i< methods.length; i++) {
-			String methodName = methods[i].getName();
-			if (Modifier.isPublic(methods[i].getModifiers())
-					&& !Modifier.isStatic(methods[i].getModifiers())
+		for (Method method : methods) {
+			String methodName = method.getName();
+			if (Modifier.isPublic(method.getModifiers())
+					&& !Modifier.isStatic(method.getModifiers())
 					&& (methodName.length() > 3 && methodName.startsWith("set"))) {
-				Method method = methods[i];
 				if (method.getParameterTypes().length == 1) {
 					settersMap.put(methodName, method);
 					//logger.info("Method setter added: " + methodName);
@@ -62,42 +61,42 @@ public class ReflectionUtil {
 				Method setter = settersMap.get(setterName);
 				Class<?> paramType = setter.getParameterTypes()[0];
 				if (paramType.isAssignableFrom(String.class)) {
-					String setDisp =  obj.getClass().getSimpleName() + "." + setterName + "(\"" + value + "\")";
+					String setDisp =  dest.getClass().getSimpleName() + "." + setterName + "(\"" + value + "\")";
 					try {
 						logger.info("Executing: " + setDisp);
-						setter.invoke(obj, value);
+						setter.invoke(dest, value);
 					} catch (Exception e) {
 						logger.error("Failed to execute: " + setDisp, e);
 					}
 				}
 				else if ("int".equals(paramType.getName()) || paramType.isAssignableFrom(Integer.class)) {
-					String setDisp =  obj.getClass().getSimpleName() + "." + setterName + "(" + value + ")";
+					String setDisp =  dest.getClass().getSimpleName() + "." + setterName + "(" + value + ")";
 					if (StringUtils.isNotBlank(value)) {
 						try {
 							logger.info("Executing: " + setDisp);
-							setter.invoke(obj, Integer.valueOf(value));
+							setter.invoke(dest, Integer.valueOf(value));
 						} catch (Exception e) {
 							logger.error("Failed to execute:" + setDisp, e);
 						}
 					}
 				}
 				else if ("boolean".equals(paramType.getName()) || paramType.isAssignableFrom(Boolean.class)) {
-					String setDisp =  obj.getClass().getSimpleName() + "." + setterName + "(" + value + ")";
+					String setDisp =  dest.getClass().getSimpleName() + "." + setterName + "(" + value + ")";
 					if (StringUtils.isNotBlank(value)) {
 						try {
 							logger.info("Executing: " + setDisp);
-							setter.invoke(obj, Boolean.valueOf(value));
+							setter.invoke(dest, Boolean.valueOf(value));
 						} catch (Exception e) {
 							logger.error("Failed to execute:" + setDisp, e);
 						}
 					}
 				}
 				else if (paramType.isAssignableFrom(java.sql.Timestamp.class)) {
-					String setDisp =  obj.getClass().getSimpleName() + "." + setterName + "(" + value + ")";
+					String setDisp =  dest.getClass().getSimpleName() + "." + setterName + "(" + value + ")";
 					if (StringUtils.isNotBlank(value)) {
 						try {
 							logger.info("Executing: " + setDisp);
-							setter.invoke(obj, java.sql.Timestamp.valueOf(value));
+							setter.invoke(dest, java.sql.Timestamp.valueOf(value));
 						} catch (Exception e) {
 							logger.error("Failed to execute:" + setDisp, e);
 						}
@@ -196,7 +195,7 @@ public class ReflectionUtil {
 		formMap.put("lastSentTime", "2015-04-30 13:12:34.123456");
 		formMap.put("updtTime", "2015-04-30 13:12:34.123456789");
 		EmailAddress obj = new EmailAddress();
-		updateObject(obj, formMap);
+		copyProperties(obj, formMap);
 		logger.info(StringUtil.prettyPrint(obj));
 		
 		// test fieldsDiff
