@@ -22,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import jpa.model.SubscriberData;
@@ -66,7 +67,7 @@ public class SubscriptionRS {
 		try {
 			SubscriberData sd = getSubscriberLocal().getSubscriberByEmailAddress(emailAddr);
 			if (sd != null) {
-				rb.status(200);
+				rb.status(Status.OK);
 				rb.entity(sd);
 			}
 			else {
@@ -74,13 +75,15 @@ public class SubscriptionRS {
 				er.setHttpStatus(404);
 				er.setErrorCode(102);
 				er.setErrorMessage("Subscriber not found");
-				rb.status(404);
+				rb.status(Status.NOT_FOUND);
 				rb.entity(er);
 			}
 			return rb.build();
 		}
 		catch (NamingException e) {
-			throw new WebApplicationException(Response.serverError().build());
+			rb.status(Status.INTERNAL_SERVER_ERROR);
+			return rb.build();
+			//throw new WebApplicationException(Response.serverError().build());
 		}
 	}
 
@@ -91,7 +94,7 @@ public class SubscriptionRS {
 		ResponseBuilder rb = new ResponseBuilderImpl();
 		try {
 			Subscription sub = getSubscriberLocal().subscribe(emailAddr, listId);
-			rb.status(200);
+			rb.status(Status.OK);
 			rb.entity(sub);
 		}
 		catch (NamingException e) {
@@ -104,7 +107,7 @@ public class SubscriptionRS {
 				er.setHttpStatus(404);
 				er.setErrorCode(122);
 				er.setErrorMessage(cause.getMessage());
-				rb.status(404);
+				rb.status(Status.NOT_FOUND);
 				rb.entity(er);
 			}
 			else {
@@ -122,7 +125,7 @@ public class SubscriptionRS {
 		ResponseBuilder rb = new ResponseBuilderImpl();
 		try {
 			Subscription sub = getSubscriberLocal().unSubscriber(emailAddr, listId);
-			rb.status(200);
+			rb.status(Status.OK);
 			rb.entity(sub);
 		}
 		catch (NamingException e) {
@@ -135,7 +138,7 @@ public class SubscriptionRS {
 				er.setHttpStatus(404);
 				er.setErrorCode(122);
 				er.setErrorMessage(cause.getMessage());
-				rb.status(404);
+				rb.status(Status.NOT_FOUND);
 				rb.entity(er);
 			}
 			else {
@@ -239,7 +242,7 @@ public class SubscriptionRS {
 				er.setHttpStatus(404);
 				er.setErrorCode(102);
 				er.setErrorMessage("Subscriber not found");
-				rb.status(404);
+				rb.status(Status.NOT_FOUND);
 				rb.entity(er);
 				throw new WebApplicationException(rb.build());
 			}

@@ -35,7 +35,7 @@ public class ReflectionUtil {
 	}
 	
 	public static void updateObject(Object obj, Map<String, String> formParams) {
-		Map<String, Method> methodMap = new LinkedHashMap<String, Method>();
+		Map<String, Method> settersMap = new LinkedHashMap<String, Method>();
 		Method methods[] = obj.getClass().getMethods();
 		
 		// retrieve method setters
@@ -46,7 +46,7 @@ public class ReflectionUtil {
 					&& (methodName.length() > 3 && methodName.startsWith("set"))) {
 				Method method = methods[i];
 				if (method.getParameterTypes().length == 1) {
-					methodMap.put(methodName, method);
+					settersMap.put(methodName, method);
 					//logger.info("Method setter added: " + methodName);
 				}
 			}
@@ -56,50 +56,50 @@ public class ReflectionUtil {
 			String key = it.next();
 			String value = formParams.get(key);
 			//logger.info("Form Key: " + key + ", Values: " + formParams.get(key));
-			String methodName = "set" + WordUtils.capitalize(key);
+			String setterName = "set" + WordUtils.capitalize(key);
 			//logger.info("Method name constructed: " + methodName);
-			if (methodMap.containsKey(methodName)) {
-				Method method = methodMap.get(methodName);
-				Class<?> paramType = method.getParameterTypes()[0];
+			if (settersMap.containsKey(setterName)) {
+				Method setter = settersMap.get(setterName);
+				Class<?> paramType = setter.getParameterTypes()[0];
 				if (paramType.isAssignableFrom(String.class)) {
-					String setter =  obj.getClass().getSimpleName() + "." + methodName + "(\"" + value + "\")";
+					String setDisp =  obj.getClass().getSimpleName() + "." + setterName + "(\"" + value + "\")";
 					try {
-						logger.info("Executing: " + setter);
-						method.invoke(obj, value);
+						logger.info("Executing: " + setDisp);
+						setter.invoke(obj, value);
 					} catch (Exception e) {
-						logger.error("Failed to execute: " + setter, e);
+						logger.error("Failed to execute: " + setDisp, e);
 					}
 				}
 				else if ("int".equals(paramType.getName()) || paramType.isAssignableFrom(Integer.class)) {
-					String setter =  obj.getClass().getSimpleName() + "." + methodName + "(" + value + ")";
+					String setDisp =  obj.getClass().getSimpleName() + "." + setterName + "(" + value + ")";
 					if (StringUtils.isNotBlank(value)) {
 						try {
-							logger.info("Executing: " + setter);
-							method.invoke(obj, Integer.valueOf(value));
+							logger.info("Executing: " + setDisp);
+							setter.invoke(obj, Integer.valueOf(value));
 						} catch (Exception e) {
-							logger.error("Failed to execute:" + setter, e);
+							logger.error("Failed to execute:" + setDisp, e);
 						}
 					}
 				}
 				else if ("boolean".equals(paramType.getName()) || paramType.isAssignableFrom(Boolean.class)) {
-					String setter =  obj.getClass().getSimpleName() + "." + methodName + "(" + value + ")";
+					String setDisp =  obj.getClass().getSimpleName() + "." + setterName + "(" + value + ")";
 					if (StringUtils.isNotBlank(value)) {
 						try {
-							logger.info("Executing: " + setter);
-							method.invoke(obj, Boolean.valueOf(value));
+							logger.info("Executing: " + setDisp);
+							setter.invoke(obj, Boolean.valueOf(value));
 						} catch (Exception e) {
-							logger.error("Failed to execute:" + setter, e);
+							logger.error("Failed to execute:" + setDisp, e);
 						}
 					}
 				}
 				else if (paramType.isAssignableFrom(java.sql.Timestamp.class)) {
-					String setter =  obj.getClass().getSimpleName() + "." + methodName + "(" + value + ")";
+					String setDisp =  obj.getClass().getSimpleName() + "." + setterName + "(" + value + ")";
 					if (StringUtils.isNotBlank(value)) {
 						try {
-							logger.info("Executing: " + setter);
-							method.invoke(obj, java.sql.Timestamp.valueOf(value));
+							logger.info("Executing: " + setDisp);
+							setter.invoke(obj, java.sql.Timestamp.valueOf(value));
 						} catch (Exception e) {
-							logger.error("Failed to execute:" + setter, e);
+							logger.error("Failed to execute:" + setDisp, e);
 						}
 					}
 				}
@@ -107,26 +107,27 @@ public class ReflectionUtil {
 		}
 	}
 
-	static void fieldsDiff(Object dest, Object orig) {
-		Map<String, Method> method1GetMap = new LinkedHashMap<String, Method>();
-		Map<String, Method> method1SetMap = new LinkedHashMap<String, Method>();
-		Map<String, Method> method2GetMap = new LinkedHashMap<String, Method>();
-		Method methods[] = dest.getClass().getDeclaredMethods();
+	public static void copyProperties(Object dest, Object orig) {
+		Map<String, Method> gettersDestMap = new LinkedHashMap<String, Method>();
+		Map<String, Method> settersDestMap = new LinkedHashMap<String, Method>();
+		Map<String, Method> gettersOrigMap = new LinkedHashMap<String, Method>();
+		Method destMethods[] = dest.getClass().getDeclaredMethods();
 		
-		// retrieve method getters
-		for (Method method1 : methods) {
-			String methodName = method1.getName();
-			if (Modifier.isPublic(method1.getModifiers())
-					&& !Modifier.isStatic(method1.getModifiers())) {
+		// retrieve method getters and setters
+		for (Method destMethod : destMethods) {
+			String methodName = destMethod.getName();
+			if (Modifier.isPublic(destMethod.getModifiers())
+					&& !Modifier.isStatic(destMethod.getModifiers())) {
 				if (methodName.length() > 3 && methodName.startsWith("get")) {
 					try {
-						Method method2 = orig.getClass().getMethod(methodName, method1.getParameterTypes());
-						if (!method1.getReturnType().equals(method2.getReturnType())) {
+						Method origMethod = orig.getClass().getMethod(methodName, destMethod.getParameterTypes());
+						if (!destMethod.getReturnType().equals(origMethod.getReturnType())
+								|| !Modifier.isPublic(origMethod.getModifiers())) {
 							continue;
 						}
-						if (method1.getParameterTypes().length == 0) {
-							method1GetMap.put(methodName, method1);
-							method2GetMap.put(methodName, method2);
+						if (destMethod.getParameterTypes().length == 0) {
+							gettersDestMap.put(methodName, destMethod);
+							gettersOrigMap.put(methodName, origMethod);
 							logger.info("Method getter added: " + methodName);
 						}
 					}
@@ -137,12 +138,12 @@ public class ReflectionUtil {
 				}
 				else if (methodName.length() > 3 && methodName.startsWith("set")) {
 					try {
-						Method method2 = orig.getClass().getMethod(methodName, method1.getParameterTypes());
-						if (!method1.getReturnType().equals(method2.getReturnType())) {
+						Method origMethod = orig.getClass().getMethod(methodName, destMethod.getParameterTypes());
+						if (!destMethod.getReturnType().equals(origMethod.getReturnType())) {
 							continue;
 						}
-						if (method1.getParameterTypes().length == 1) {
-							method1SetMap.put(methodName, method1);
+						if (destMethod.getParameterTypes().length == 1) {
+							settersDestMap.put(methodName, destMethod);
 							logger.info("Method setter added: " + methodName);
 						}
 					}
@@ -155,28 +156,29 @@ public class ReflectionUtil {
 		}
 		
 		Object [] params = {};
-		for (Iterator<String> it=method1GetMap.keySet().iterator(); it.hasNext();) {
-			String methodName = it.next();
-			String setterName = methodName.replaceFirst("get", "set");
-			if (!method1SetMap.containsKey(setterName)) {
+		// loop through getters and copy data from orig to dest if their values are different
+		for (Iterator<String> it=gettersDestMap.keySet().iterator(); it.hasNext();) {
+			String getterName = it.next();
+			String setterName = getterName.replaceFirst("get", "set");
+			if (!settersDestMap.containsKey(setterName)) {
 				continue;
 			}
-			Method method1 = method1GetMap.get(methodName);
-			Method method2 = method2GetMap.get(methodName);
-			Method setter = method1SetMap.get(setterName);
+			Method destMethod = gettersDestMap.get(getterName);
+			Method origMethod = gettersOrigMap.get(getterName);
+			Method destSetter = settersDestMap.get(setterName);
 			try {
-				Object rst1 = method1.invoke(dest, params);
-				Object rst2 = method2.invoke(orig, params);
-				String setMethod = setter.getClass().getSimpleName() + "." + setterName + "(" + rst2 + ")";
-				if (rst1 == null) {
-					if (rst2 != null) {
-						logger.info("Invoking.1 " + setMethod);
-						setter.invoke(dest, rst2);
+				Object destRst = destMethod.invoke(dest, params);
+				Object origRst = origMethod.invoke(orig, params);
+				String setDisp = destSetter.getClass().getSimpleName() + "." + setterName + "(" + origRst + ")";
+				if (destRst == null) {
+					if (origRst != null) {
+						logger.info("Invoking.1 " + setDisp);
+						destSetter.invoke(dest, origRst);
 					}
 				}
-				else if (!rst1.equals(rst2)) {
-					logger.info("Invoking.2 " + setMethod);
-					setter.invoke(dest, rst2);
+				else if (!destRst.equals(origRst)) {
+					logger.info("Invoking.2 " + setDisp);
+					destSetter.invoke(dest, origRst);
 				}
 			}
 			catch (Exception e) {
@@ -203,6 +205,6 @@ public class ReflectionUtil {
 		ml.setDisplayName("Display name 1");
 		vo.setDisplayName("Display Name 2");
 		vo.setListId("SMPLLST1");
-		fieldsDiff(ml, vo);
+		copyProperties(ml, vo);
 	}
 }
