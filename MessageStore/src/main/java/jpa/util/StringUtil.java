@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -37,12 +38,15 @@ public final class StringUtil {
 	 * @return string with maximum size of "len" plus three dots.
 	 */
 	public static String cutWithDots(String str, int len) {
-		if (str == null || str.length() <= len || len < 0)
+		if (str == null || str.length() <= len || len < 0) {
 			return str;
-		else if (str.length() > len)
+		}
+		else if (str.length() > len) {
 			return str.substring(0, len) + "...";
-		else
+		}
+		else {
 			return str;
+		}
 	}
 
 	/**
@@ -53,12 +57,14 @@ public final class StringUtil {
 	 * @return string with quotes removed, or null if input is null
 	 */
 	public static String removeQuotes(String data) {
-		if (data == null) return data;
+		if (StringUtils.isBlank(data)) {
+			return data;
+		}
 		StringTokenizer st = new StringTokenizer(data, "\"\'");
 		StringBuffer sb = new StringBuffer();
-		while (st.hasMoreTokens())
+		while (st.hasMoreTokens()) {
 			sb.append(st.nextToken());
-
+		}
 		return sb.toString();
 	}
 
@@ -68,12 +74,15 @@ public final class StringUtil {
 	 * @param list -
 	 *            a list objects
 	 */
-	public static void stripAll(ArrayList<Object> list) {
-		if (list==null) return;
+	public static void stripAll(List<Object> list) {
+		if (list==null) {
+			return;
+		}
 		for (int i=0; i<list.size(); i++) {
 			Object obj = list.get(i);
-			if (obj!=null && obj instanceof String)
+			if (obj!=null && obj instanceof String) {
 				list.set(i,((String)obj).trim());
+			}
 		}
 	}
 
@@ -84,11 +93,14 @@ public final class StringUtil {
 	 *            a list of objects
 	 */
 	public static void stripAll(Object[] list) {
-		if (list==null) return;
+		if (list==null) {
+			return;
+		}
 		for (int i=0; i<list.length; i++) {
 			Object obj = list[i];
-			if (obj!=null && obj instanceof String)
+			if (obj!=null && obj instanceof String) {
 				list[i]=((String)obj).trim();
+			}
 		}
 	}
 
@@ -106,28 +118,25 @@ public final class StringUtil {
 		Method methods[] = obj.getClass().getDeclaredMethods();
 		try {
 			Class<?> setParms[] = { Class.forName("java.lang.String") };
-			for (int i = 0; i < methods.length; i++) {
-				Method method = (Method) methods[i];
-				Class<?> parmTypes[] = method.getParameterTypes();
+			for (Method method : methods) {
 				int mod = method.getModifiers();
-				if (Modifier.isPublic(mod) && !Modifier.isAbstract(mod) && !Modifier.isStatic(mod)) {
-					if (method.getName().startsWith("get") && parmTypes.length == 0
-							&& method.getReturnType().getName().equals("java.lang.String")) {
-						// invoke the get method
-						String str = (String) method.invoke(obj, (Object[])parmTypes);
-						if (str != null) { // trim the string
-							String setMethodName = "set" + method.getName().substring(3);
-							try {
-								Method setMethod = obj.getClass()
-										.getMethod(setMethodName, setParms);
-								if (setMethod != null) {
-									String strParms[] = { str.trim() };
-									setMethod.invoke(obj, (Object[])strParms);
-								}
-							}
-							catch (Exception e) {
-								// no corresponding set method, ignore.
-							}
+				if (!Modifier.isPublic(mod) || Modifier.isAbstract(mod) || Modifier.isStatic(mod)) {
+					continue;
+				}
+				Class<?> parmTypes[] = method.getParameterTypes();
+				if (method.getName().startsWith("get") && parmTypes.length == 0
+						&& method.getReturnType().isAssignableFrom(String.class)) {
+					// invoke the get method
+					String str = (String) method.invoke(obj, (Object[])parmTypes);
+					if (str != null) { // trim the string
+						String setMethodName = method.getName().replaceFirst("get", "set");
+						try {
+							Method setMethod = obj.getClass().getMethod(setMethodName, setParms);
+							String strParms[] = { str.trim() };
+							setMethod.invoke(obj, (Object[])strParms);
+						}
+						catch (Exception e) {
+							// no corresponding set method, ignore.
 						}
 					}
 				}
@@ -140,9 +149,10 @@ public final class StringUtil {
 	}
 
 	final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	final static int MAX_LEVELS = 12;
 
 	public static String prettyPrint(Object obj) {
-		return prettyPrint(obj, 12); // default to maximum 12 levels
+		return prettyPrint(obj, 10); // default to maximum 10 levels
 	}
 
 	public static String prettyPrint(Object obj, int levels) {
@@ -164,7 +174,7 @@ public final class StringUtil {
 		   return ("-null");
 		}
 		boolean sortByMethodName = true;
-		if (level > 10) {
+		if (level > MAX_LEVELS) {
 			System.err.println("StringUtil.prettyPrint - has reached nested level of " + level + ", exit.");
 			return (obj.getClass().getCanonicalName() + " - (more)...");
 		}
@@ -182,7 +192,7 @@ public final class StringUtil {
 		stack.push(obj);
 		Object [] params = {};
 		StringBuffer sb = new StringBuffer();
-		HashMap<String, Object> methodMap = new HashMap<String, Object>();
+		Map<String, Object> methodMap = new HashMap<String, Object>();
 		List<String> methodNamelist = new ArrayList<String>();
 		Method methods[] = obj.getClass().getMethods();
 		
@@ -321,20 +331,6 @@ public final class StringUtil {
 							sb.append("null");
 						}
 					}
-					else if (method.getName().indexOf("Bean") > 0) {
-						// don't try to call the getMapOfBean method - this is
-						// used only for printing
-						if (method.getName().equals("getMapOfBean")) {
-							continue;
-						}
-						Object rtnObj = method.invoke(obj, params);
-						if (rtnObj == null) {
-							sb.append("null");
-						}
-						else if (rtnObj.getClass().getName().startsWith(pkgName)) {
-							sb.append(prettyPrint(rtnObj, stack, level + 1, pkgName, levels));
-						}
-					}
 					else {
 						Class<?> cls = method.getReturnType();
 						if (cls.getName().startsWith("[L")) {
@@ -368,7 +364,7 @@ public final class StringUtil {
 					sb.append(LF + " ");
 					sb.append("     " + dots(level) + paramClassName + "." + methodName);
 					sb.append("=");
-					if (method.getReturnType().equals(Class.forName("java.lang.Boolean"))
+					if (method.getReturnType().isAssignableFrom(java.lang.Boolean.class)
 							|| method.getReturnType().getName().equals("boolean")) {
 						Object rtnObj = method.invoke(obj, params);
 						if (rtnObj == null) {
@@ -391,8 +387,9 @@ public final class StringUtil {
 
 	private static String dots(int level) {
 		StringBuffer sb = new StringBuffer();
-		for (int i=0; i<level; i++)
+		for (int i=0; i<level; i++) {
 			sb.append(".");
+		}
 		return sb.toString();
 	}
 
@@ -481,7 +478,9 @@ public final class StringUtil {
 		 * We could also do this: ("A" + text).trim().substring(1)
 		 * but the performance is poor.
 		 */
-		if (StringUtils.isEmpty(text)) return text; 
+		if (StringUtils.isEmpty(text)) {
+			return text; 
+		}
 		int idx = text.length() - 1;
 		while (idx >= 0 && Character.isWhitespace(text.charAt(idx))) {
 			idx--;
@@ -532,7 +531,9 @@ public final class StringUtil {
 	 * @return new message text
 	 */
 	public static String getHtmlDisplayText(String text) {
-		if (text == null) return null;
+		if (text == null) {
+			return null;
+		}
 		if (text.startsWith("<pre>") && text.endsWith("</pre>")) {
 			return text;
 		}
@@ -542,7 +543,7 @@ public final class StringUtil {
 
 	public static void main(String[] args) {
 		logger.info(removeStringFirst("<pre>12345abcdefklqhdkh</pre>", "<pre>"));
-		String str1 = "methodtest stringutil.trim()-methodmethod";
+		String str1 = "methodtest Stringutil.trim()-methodmethod";
 		logger.info(trim(str1,"method"));
 	}
 }
