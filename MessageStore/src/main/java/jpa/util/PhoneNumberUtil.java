@@ -50,7 +50,9 @@ public class PhoneNumberUtil {
      * Matches: 2405525009 | (240)552-5009 | 1(240) 552-5009 | 240 JOE-CELL
      */
     public static boolean isValidPhoneNumber(String phoneNumber) {
-    	if (StringUtils.isBlank(phoneNumber)) return false;
+    	if (StringUtils.isBlank(phoneNumber)) {
+    		return false;
+    	}
     	Matcher matcher = phonePattern.matcher(phoneNumber);
     	return matcher.matches();
     }
@@ -62,7 +64,9 @@ public class PhoneNumberUtil {
 	 * @return phone number with only numeric numbers
 	 */
 	public static String convertPhoneLetters(String phoneNumber) {
-		if (StringUtils.isBlank(phoneNumber)) return phoneNumber;
+		if (StringUtils.isBlank(phoneNumber)) {
+			return phoneNumber;
+		}
 		StringBuffer sb = new StringBuffer();
 		for (int i=0; i<phoneNumber.length(); i++) {
 			String letter = Character.toString(phoneNumber.charAt(i)).toUpperCase();

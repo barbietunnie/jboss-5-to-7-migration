@@ -109,10 +109,12 @@ public class EmailAddrUtil {
 				addr = addr.substring(pos1 + 1, pos2);
 			}
 		}
-		if (toLowerCase)
+		if (toLowerCase) {
 			return addr.toLowerCase();
-		else
+		}
+		else {
 			return addr;
+		}
 	}
 
 	/**
@@ -123,7 +125,9 @@ public class EmailAddrUtil {
 	 * @return true if it has a display name
 	 */
 	public static boolean hasDisplayName(String addr) {
-		if (StringUtils.isBlank(addr)) return false;
+		if (StringUtils.isBlank(addr)) {
+			return false;
+		}
 		return addr.matches("^\\s*\\S+.{0,250}\\<.+\\>\\s*$");
 	}
 
@@ -225,7 +229,9 @@ public class EmailAddrUtil {
 	 * @return True if string is an valid email address. False if not.
 	 */
 	public static boolean isInternetEmailAddress(String string) {
-		if (string == null) return false;
+		if (string == null) {
+			return false;
+		}
 		Matcher matcher = remotePattern.matcher(string);
 		return matcher.matches();
 	    //return string.matches(
@@ -242,8 +248,12 @@ public class EmailAddrUtil {
 	 * @return True if string is an valid email address. False if not.
 	 */
 	public static boolean isRemoteEmailAddress(String string) {
-		if (string == null) return false;
-		if (isInternetEmailAddress(string)) return true;
+		if (string == null) {
+			return false;
+		}
+		if (isInternetEmailAddress(string)) {
+			return true;
+		}
 		Matcher matcher = intraPattern.matcher(string);
 		return matcher.matches();
 	    //return string.matches(
@@ -259,8 +269,12 @@ public class EmailAddrUtil {
 	 * @return true if it's a valid email address
 	 */
 	public static boolean isRemoteOrLocalEmailAddress(String string) {
-		if (string == null) return false;
-		if (isRemoteEmailAddress(string)) return true;
+		if (string == null) {
+			return false;
+		}
+		if (isRemoteEmailAddress(string)) {
+			return true;
+		}
 		Matcher matcher = localPattern.matcher(string);
 		return matcher.matches();
 	}

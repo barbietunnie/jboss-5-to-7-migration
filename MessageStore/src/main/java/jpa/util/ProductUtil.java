@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 public class ProductUtil {
 	static final Logger logger = Logger.getLogger(ProductUtil.class);
+	
 	public static boolean isProductKeyValid() {
 		if (ProductUtil.isKeyValid == null) {
 			boolean isValid = ProductKey.validateKey(getProductKeyFromFile());

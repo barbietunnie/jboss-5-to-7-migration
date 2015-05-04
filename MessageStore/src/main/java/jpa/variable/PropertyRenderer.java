@@ -97,7 +97,7 @@ public final class PropertyRenderer implements java.io.Serializable {
 		int nextPos;
 		if ((varProps.bgnPos = text.indexOf(OpenDelimiter, pos)) >= 0) {
 			if ((nextPos = text.indexOf(CloseDelimiter, varProps.bgnPos + OpenDelimiter.length())) > 0
-					&& (nextPos + OpenDelimiter.length() - varProps.bgnPos) <= VARIABLE_NAME_LENGTH) {
+					&& (nextPos - OpenDelimiter.length() - varProps.bgnPos) <= VARIABLE_NAME_LENGTH) {
 				varProps.endPos = nextPos + CloseDelimiter.length();
 				varProps.name = text.substring(varProps.bgnPos + OpenDelimiter.length(), nextPos);
 				if (varProps.name.indexOf(OpenDelimiter) >= 0) {
