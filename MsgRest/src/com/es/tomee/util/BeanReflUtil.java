@@ -117,7 +117,8 @@ public class BeanReflUtil {
 			String methodName = destMethod.getName();
 			if (Modifier.isPublic(destMethod.getModifiers())
 					&& !Modifier.isStatic(destMethod.getModifiers())) {
-				if (methodName.length() > 3 && methodName.startsWith("get")) {
+				if (methodName.length() > 3 && methodName.startsWith("get")
+						|| methodName.length() > 2 && methodName.startsWith("is")) {
 					try {
 						Method origMethod = orig.getClass().getMethod(methodName, destMethod.getParameterTypes());
 						if (!destMethod.getReturnType().equals(origMethod.getReturnType())
@@ -127,7 +128,7 @@ public class BeanReflUtil {
 						if (destMethod.getParameterTypes().length == 0) {
 							gettersDestMap.put(methodName, destMethod);
 							gettersOrigMap.put(methodName, origMethod);
-							logger.info("Method getter added: " + methodName);
+							//logger.info("Method getter added: " + methodName);
 						}
 					}
 					catch (Exception e) {
@@ -143,7 +144,7 @@ public class BeanReflUtil {
 						}
 						if (destMethod.getParameterTypes().length == 1) {
 							settersDestMap.put(methodName, destMethod);
-							logger.info("Method setter added: " + methodName);
+							//logger.info("Method setter added: " + methodName);
 						}
 					}
 					catch (Exception e) {
@@ -158,7 +159,13 @@ public class BeanReflUtil {
 		// loop through getters and copy data from orig to dest if their values are different
 		for (Iterator<String> it=gettersDestMap.keySet().iterator(); it.hasNext();) {
 			String getterName = it.next();
-			String setterName = getterName.replaceFirst("get", "set");
+			String setterName = null;
+			if (getterName.startsWith("get")) {
+				setterName = getterName.replaceFirst("get", "set");
+			}
+			else {
+				setterName = getterName.replaceFirst("is", "set");
+			}
 			if (!settersDestMap.containsKey(setterName)) {
 				continue;
 			}
@@ -204,6 +211,9 @@ public class BeanReflUtil {
 		ml.setDisplayName("Display name 1");
 		vo.setDisplayName("Display Name 2");
 		vo.setListId("SMPLLST1");
+		vo.setBuiltin(true);
+		vo.setCreateTime(new java.sql.Timestamp(System.currentTimeMillis()));
 		copyProperties(ml, vo);
+		logger.info(StringUtil.prettyPrint(ml));
 	}
 }
