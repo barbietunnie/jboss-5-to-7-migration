@@ -18,7 +18,7 @@ public final class PropertyRendererTest {
 		PropertyRenderer renderer = PropertyRenderer.getInstance();
 
 		Properties map = loadVariableMap();
-		String template = (String) map.get("dataSource.url");
+		String template = map.getProperty("dataSource.url");
 		try {
 			String renderedText = renderer.render(template, map);
 			logger.info("\n++++++++++ Template Text++++++++++\n" + template);
@@ -29,7 +29,7 @@ public final class PropertyRendererTest {
 			logger.error("Exception caught", e);
 			throw e;
 		}
-		template = (String) map.get("jndi.url");
+		template = map.getProperty("jndi.url");
 		try {
 			String renderedText = renderer.render(template, map);
 			logger.info("\n++++++++++ Template Text++++++++++\n" + template);
@@ -40,7 +40,7 @@ public final class PropertyRendererTest {
 			logger.error("Exception caught", e);
 			throw e;
 		}
-		template = (String) map.get("jdbc.host");
+		template = map.getProperty("jdbc.host");
 		try {
 			String renderedText = renderer.render(template, map);
 			logger.info("\n++++++++++ Template Text++++++++++\n" + template);
@@ -63,6 +63,30 @@ public final class PropertyRendererTest {
 			logger.error("Exception caught", e);
 			throw e;
 		}
+		
+		template = "Variable with maximum length test ${loooooooooooooooooooooooonnnnnnnnnnnnnnnnnnnnnnnng} 50 letters variable.";
+		map.put("loooooooooooooooooooooooonnnnnnnnnnnnnnnnnnnnnnnng",  "rendered");
+		try {
+			String renderedText = renderer.render(template, map);
+			logger.info("\n++++++++++ Template Text++++++++++\n" + template);
+			logger.info("\n++++++++++ Rendered Text++++++++++\n" + renderedText);
+			String expected = "Variable with maximum length test rendered 50 letters variable.";
+			assertEquals(renderedText, expected);
+		}
+		catch (Exception e) {
+			logger.error("Exception caught", e);
+			throw e;
+		}
+
+		template = "Variable name too long test ${loooooooooooooooooooooooonnnnnnnnnnnnnnnnnnnnnnnng1} 51 letters variable.";
+		try {
+			renderer.render(template, map);
+			fail();
+		}
+		catch (Exception e) {
+			// expected
+		}
+
 	}
 
 	@Test

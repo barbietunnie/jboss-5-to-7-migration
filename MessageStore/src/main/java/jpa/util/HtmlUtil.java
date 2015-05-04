@@ -62,14 +62,17 @@ public class HtmlUtil extends LinkedHashMap<String, Boolean> {
 	 * @return true if contains any HTML tag
 	 */
 	public static boolean isHTML(String text) {
-		if (StringUtils.isBlank(text)) return false;
+		if (StringUtils.isBlank(text)) {
+			return false;
+		}
 		Matcher m1 = matchedPairs.matcher(text);
 		int count = 0;
 		while (m1.find() && count++ < 1) {
 			String tag = m1.group(1).toUpperCase();
 			if (getHtmlTagNames().containsKey(tag)) {
-				if (debug && isDebugEnabled)
+				if (debug && isDebugEnabled) {
 					logger.debug("isHTML() - Found Tag With Closing tag: " + m1.group(0));
+				}
 				return true;
 			}
 			else {
@@ -81,8 +84,9 @@ public class HtmlUtil extends LinkedHashMap<String, Boolean> {
 		while (m2.find() && count++ < 2) { // allow one non-HTML tags
 			String tag = m2.group(m2.groupCount()).toUpperCase();
 			if (getHtmlTagNames().containsKey(tag)) {
-				if (debug && isDebugEnabled)
+				if (debug && isDebugEnabled) {
 					logger.debug("isHTML() - Found Tag-Only Tag: " + m2.group(0));
+				}
 				return true;
 			}
 			else {
@@ -95,8 +99,9 @@ public class HtmlUtil extends LinkedHashMap<String, Boolean> {
 			String tag = m3.group(m3.groupCount()).toUpperCase();
 			if (getHtmlTagNames().containsKey(tag)) {
 				if (getHtmlTagNames().get(tag)) {
-					if (debug && isDebugEnabled)
+					if (debug && isDebugEnabled) {
 						logger.debug("isHTML() - Found Tag With Attributes: " + m3.group(0));
+					}
 					return true;
 				}
 				else {

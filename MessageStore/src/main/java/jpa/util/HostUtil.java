@@ -19,8 +19,9 @@ public class HostUtil {
 		if (hostIPAddr == null) {
 			try {
 				hostIPAddr = java.net.InetAddress.getLocalHost().getHostAddress();
-				if (isDebugEnabled)
+				if (isDebugEnabled) {
 					logger.debug("Host IP Address: " + hostIPAddr);
+				}
 			}
 			catch (UnknownHostException e) {
 				logger.warn("UnknownHostException caught, use 127.0.0.1", e);
@@ -37,8 +38,9 @@ public class HostUtil {
 		if (hostName == null) {
 			try {
 				hostName = java.net.InetAddress.getLocalHost().getHostName();
-				if (isDebugEnabled)
+				if (isDebugEnabled) {
 					logger.debug("Host Name: " + hostName);
+				}
 			}
 			catch (UnknownHostException e) {
 				logger.warn("UnknownHostException caught, use localhost", e);
