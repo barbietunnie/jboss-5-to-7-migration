@@ -14,6 +14,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 import javax.naming.InitialContext;
 import javax.persistence.NoResultException;
 import javax.sql.DataSource;
@@ -45,7 +48,9 @@ import com.es.tomee.util.TomeeCtxUtil;
 @Remote(SubscriberRemote.class)
 @Local(SubscriberLocal.class)
 @LocalBean
-public class Subscriber implements SubscriberRemote, SubscriberLocal {
+@WebService (portName = "Subscriber", serviceName = "SubscriberService", targetNamespace = "http://com.es.ws.subscriber/wsdl")
+@SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
+public class Subscriber implements SubscriberRemote, SubscriberLocal, SubscriberWs {
 	protected static final Logger logger = Logger.getLogger(Subscriber.class);
 	@Resource
 	SessionContext context;
@@ -128,14 +133,18 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
 		return volist;
 	}
 
+	@WebMethod
 	@Override
 	public Subscription subscribe(String emailAddr, String listId) {
+		logger.info("in subscribe() - emailAddr/listId: " + emailAddr + "/" + listId);
 		Subscription emailAdded = subscriptionDao.subscribe(emailAddr, listId);
 		return emailAdded;
 	}
 
+	@WebMethod
 	@Override
-	public Subscription unSubscriber(String emailAddr, String listId) {
+	public Subscription unSubscribe(String emailAddr, String listId) {
+		logger.info("in unSubscribe() - emailAddr/listId: " + emailAddr + "/" + listId);
 		Subscription emailRemoved = subscriptionDao.unsubscribe(emailAddr, listId);
 		return emailRemoved;
 	}

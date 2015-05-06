@@ -124,7 +124,7 @@ public class SubscriptionRS {
 		logger.info("Entering unSubscriber() method..."); 
 		ResponseBuilder rb = new ResponseBuilderImpl();
 		try {
-			Subscription sub = getSubscriberLocal().unSubscriber(emailAddr, listId);
+			Subscription sub = getSubscriberLocal().unSubscribe(emailAddr, listId);
 			rb.status(Status.OK);
 			rb.entity(sub);
 		}

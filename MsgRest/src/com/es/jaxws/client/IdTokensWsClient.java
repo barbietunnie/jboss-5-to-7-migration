@@ -29,7 +29,7 @@ public class IdTokensWsClient {
 	static void testIdTokensWs() {
 		int port = TomeeCtxUtil.findHttpPort(new int[] {8181, 8080});
 		try {
-			Service service = Service.create(new URL("http://localhost:" + port + "/MsgUI2/webservices/IdTokens?wsdl"),
+			Service service = Service.create(new URL("http://localhost:" + port + "/MsgRest/webservices/IdTokens?wsdl"),
 				new QName("http://com.es.ws.idtokens/wsdl", "IdTokensService"));
 			assertNotNull(service);
 			IdTokensWs idtkn = service.getPort(IdTokensWs.class);

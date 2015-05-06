@@ -29,7 +29,7 @@ public class SenderDataWsClient {
 	static void testSenderDataWs() {
 		int port = TomeeCtxUtil.findHttpPort(new int[] {8181, 8080});
 		try {
-			Service service = Service.create(new URL("http://localhost:" + port + "/MsgUI2/webservices/SenderData?wsdl"),
+			Service service = Service.create(new URL("http://localhost:" + port + "/MsgRest/webservices/SenderData?wsdl"),
 				new QName("http://com.es.ws.senderdata/wsdl", "SenderDataService"));
 			assertNotNull(service);
 			SenderDataWs senderDao = service.getPort(SenderDataWs.class);
