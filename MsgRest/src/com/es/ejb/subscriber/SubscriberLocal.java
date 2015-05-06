@@ -16,7 +16,7 @@ public interface SubscriberLocal {
 
 	public List<SubscriptionVo> getSubscribedList(String emailAddr);
 	public Subscription subscribe(String emailAddr, String listId);
-	public Subscription unSubscriber(String emailAddr, String listId);
+	public Subscription unSubscribe(String emailAddr, String listId);
 	
 	public Subscription addToList(String sbsrEmailAddr, String listEmailAddr);
 	public Subscription removeFromList(String sbsrEmailAddr, String listEmailAddr);

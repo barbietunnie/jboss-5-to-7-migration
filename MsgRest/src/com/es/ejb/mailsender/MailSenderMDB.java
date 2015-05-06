@@ -1,7 +1,6 @@
 package com.es.ejb.mailsender;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +32,6 @@ import javax.jms.TextMessage;
 import javax.naming.NamingException;
 
 import jpa.message.MessageBean;
-import jpa.service.msgout.SmtpException;
 
 import org.apache.activemq.command.ActiveMQMessage;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -173,11 +171,6 @@ public class MailSenderMDB implements MessageListener {
 			messageContext.setRollbackOnly();
 			throw new EJBException("Failed to lookup jndi: " + jndiName, ne);
 		}
-		catch (IOException ie) {
-			logger.error("IOException caught", ie);
-			messageContext.setRollbackOnly();
-			throw new EJBException(ie.toString(), ie);
-		}
 		catch (JMSException je) {
 			logger.error("JMSException caught", je);
 			Exception e = je.getLinkedException();
@@ -186,12 +179,6 @@ public class MailSenderMDB implements MessageListener {
 			}
 			messageContext.setRollbackOnly();
 			throw new EJBException(je.getMessage(), je);
-		}
-		catch (SmtpException se) {
-			logger.error("SmtpException caught", se);
-			messageContext.setRollbackOnly();
-			// SMTP error, exiting MailSender
-			throw new EJBException(se.getMessage(), se);
 		}
     }
     

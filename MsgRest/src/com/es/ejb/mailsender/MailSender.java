@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 import javax.annotation.Resource.AuthenticationType;
+import javax.ejb.EJBException;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
@@ -55,17 +56,27 @@ public class MailSender implements MailSenderRemote, MailSenderLocal {
     }
 
     @Override
-	public void send(MessageBean msgBean) throws IOException, SmtpException {
-		mailSenderBo.process(new MessageContext(msgBean));
+	public void send(MessageBean msgBean) {
+		try {
+			mailSenderBo.process(new MessageContext(msgBean));
+		}
+		catch (SmtpException | IOException e) {
+			throw new EJBException("Exception caught", e);
+		}
 	}
 
     @Override
-	public void send(byte[] msgStream) throws IOException, SmtpException {
-		mailSenderBo.process(new MessageContext(msgStream));
+	public void send(byte[] msgStream) {
+		try {
+			mailSenderBo.process(new MessageContext(msgStream));
+		}
+		catch (SmtpException | IOException e) {
+			throw new EJBException("Exception caught", e);
+		}
 	}
 
     @Override
-	public void send(String fromAddr, String toAddr, String subject, String body) throws IOException, SmtpException {
+	public void send(String fromAddr, String toAddr, String subject, String body) {
 		MessageBean msgBean = new MessageBean();
 		try {
 		msgBean.setFrom(InternetAddress.parse(fromAddr));
