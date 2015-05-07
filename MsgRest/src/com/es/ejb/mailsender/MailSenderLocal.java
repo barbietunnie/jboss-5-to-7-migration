@@ -12,7 +12,7 @@ public interface MailSenderLocal {
 
 	public void send(String fromAddr, String toAddr, String subject, String body);
 	
-	public void sendMailToSite(String siteId, String fromAddr, String subject, String body);
+	public Boolean sendMailToSite(String siteId, String fromAddr, String subject, String body);
 	
 	public EmailAddress findByAddress(String address);
 }

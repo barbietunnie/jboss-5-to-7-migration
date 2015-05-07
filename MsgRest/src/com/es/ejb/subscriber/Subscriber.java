@@ -21,6 +21,7 @@ import javax.naming.InitialContext;
 import javax.persistence.NoResultException;
 import javax.sql.DataSource;
 
+import jpa.constant.Constants;
 import jpa.model.EmailAddress;
 import jpa.model.SubscriberData;
 import jpa.model.Subscription;
@@ -31,6 +32,7 @@ import jpa.util.SpringUtil;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.es.ejb.emailaddr.EmailAddrLocal;
@@ -135,13 +137,13 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal, Subscriber
 		SubscriberDataVo vo = new SubscriberDataVo();
 		try {
 			BeanUtils.copyProperties(vo, sd);
-			vo.setSenderId(sd.getSenderData().getSenderId());
-			vo.setEmailAddress(sd.getEmailAddr().getAddress());
-			return vo;
 		}
 		catch (Exception e) {
 			throw new RuntimeException("Failed to copy properties", e);
 		}
+		vo.setSenderId(sd.getSenderData().getSenderId());
+		vo.setEmailAddress(sd.getEmailAddr().getAddress());
+		return vo;
 	}
 
 	@Override
@@ -152,14 +154,14 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal, Subscriber
 			SubscriptionVo vo = new SubscriptionVo();
 			try {
 				BeanUtils.copyProperties(vo, sub);
-				vo.setListId(sub.getMailingList().getListId());
-				vo.setDescription(sub.getMailingList().getDescription());
-				vo.setAddress(sub.getEmailAddr().getAddress());
-				volist.add(vo);
 			}
 			catch (Exception e) {
 				throw new RuntimeException("Failed to copy properties", e);
 			}
+			vo.setListId(sub.getMailingList().getListId());
+			vo.setDescription(sub.getMailingList().getDescription());
+			vo.setAddress(sub.getEmailAddr().getAddress());
+			volist.add(vo);
 		}
 		return volist;
 	}
@@ -168,33 +170,52 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal, Subscriber
 	@Override
 	public Subscription subscribe(String emailAddr, String listId) {
 		logger.info("in subscribe() - emailAddr/listId: " + emailAddr + "/" + listId);
-		Subscription emailAdded = subscriptionDao.subscribe(emailAddr, listId);
-		return emailAdded;
+		Subscription sub = subscriptionDao.subscribe(emailAddr, listId);
+		return sub;
 	}
 
 	@WebMethod
 	@Override
 	public Subscription unSubscribe(String emailAddr, String listId) {
 		logger.info("in unSubscribe() - emailAddr/listId: " + emailAddr + "/" + listId);
-		Subscription emailRemoved = subscriptionDao.unsubscribe(emailAddr, listId);
-		return emailRemoved;
+		Subscription sub = subscriptionDao.unsubscribe(emailAddr, listId);
+		return sub;
 	}
 
 	@WebMethod
 	@Override
-	public void addSubscriber(SubscriberDataVo vo) {
+	public Boolean addSubscriber(SubscriberDataVo vo) {
+		if (StringUtils.isBlank(vo.getSenderId())) {
+			vo.setSenderId(Constants.DEFAULT_SENDER_ID);
+		}
 		jpa.model.SenderData senderData = sender.findBySenderId(vo.getSenderId());
 		if (senderData == null) {
-			
+			logger.info("Failed to find Sender by (" + vo.getSenderId() + "), exit.");
+			return false;
 		}
 		jpa.model.SubscriberData sd = new jpa.model.SubscriberData();
 		try {
 			BeanUtils.copyProperties(sd, vo);
-			sd.setSenderData(sender.findBySenderId(vo.getSenderId()));
 		}
 		catch (Exception e) {
 			throw new RuntimeException("Failed to copy properties", e);
 		}
+		sd.setSenderData(sender.findBySenderId(vo.getSenderId()));
+		sd.setEmailAddr(emailService.findSertAddress(vo.getEmailAddress()));
+		sd.setStartDate(new java.util.Date());
+		insertSubscriber(sd);
+		return true;
+	}
+
+	@WebMethod
+	@Override
+	public Boolean addAndSubscribe(SubscriberDataVo vo, String listId) {
+		Boolean isSuccess = addSubscriber(vo);
+		Subscription sub = null;
+		if (isSuccess) {
+			sub = subscribe(vo.getEmailAddress(), listId);
+		}
+		return (isSuccess && sub != null);
 	}
 
 	@Override

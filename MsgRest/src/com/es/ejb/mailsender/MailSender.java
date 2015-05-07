@@ -116,14 +116,15 @@ public class MailSender implements MailSenderRemote, MailSenderLocal, MailSender
 
 	@WebMethod
 	@Override
-	public void sendMail(String fromAddr, String toAddr, String subject, String body) {
+	public Boolean sendMail(String fromAddr, String toAddr, String subject, String body) {
     	logger.info("in sendMail() - from/to: " + fromAddr + "/" + toAddr); 
 		send(fromAddr, toAddr, subject, body);
+		return true;
 	}
 	
 	@WebMethod
 	@Override
-	public void sendMailToSite(String siteId, String fromAddr, String subject, String body) {
+	public Boolean sendMailToSite(String siteId, String fromAddr, String subject, String body) {
     	logger.info("in sendMailToSite() - siteId/from: " + siteId + "/" + fromAddr);
     	if (StringUtils.isBlank(siteId)) {
     		siteId = Constants.DEFAULT_SENDER_ID;
@@ -131,11 +132,12 @@ public class MailSender implements MailSenderRemote, MailSenderLocal, MailSender
 		jpa.model.SenderData sd = sender.findBySenderId(siteId);
 		if (sd == null) {
 			logger.info("Failed to find Sender by SenderId (" + siteId + "), exit.");
-			return;
+			return false;
 		}
 		String to = sd.getReturnPathLeft() + "@" + sd.getDomainName() + "," + sd.getSubrCareEmail();
 		logger.info("Email address from senderId: " + to);
 		send(fromAddr, to, subject, body);
+		return true;
 	}
 
 }
