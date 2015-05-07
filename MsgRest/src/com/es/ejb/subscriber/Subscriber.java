@@ -33,6 +33,9 @@ import jpa.util.StringUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 
+import com.es.ejb.emailaddr.EmailAddrLocal;
+import com.es.ejb.senderdata.SenderDataLocal;
+import com.es.ejb.ws.vo.SubscriberDataVo;
 import com.es.ejb.ws.vo.SubscriptionVo;
 import com.es.tomee.util.TomeeCtxUtil;
 
@@ -54,6 +57,12 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal, Subscriber
 	protected static final Logger logger = Logger.getLogger(Subscriber.class);
 	@Resource
 	SessionContext context;
+	
+	@javax.ejb.EJB
+	private SenderDataLocal sender;
+	@javax.ejb.EJB
+	private EmailAddrLocal emailService;
+	
 	private SubscriberDataService subscriberDao;
 	private SubscriptionService subscriptionDao;
 	private EmailAddressService emailAddrDao;
@@ -65,6 +74,7 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal, Subscriber
 		subscriberDao = SpringUtil.getAppContext().getBean(SubscriberDataService.class);
 		subscriptionDao = SpringUtil.getAppContext().getBean(SubscriptionService.class);
 		emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
+		TomeeCtxUtil.registerBeanUtilsConverters();
     }
 
     public void getResources() {
@@ -113,6 +123,27 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal, Subscriber
 		}
 	}
 
+    @WebMethod
+	@Override
+	public SubscriberDataVo getSubscriberData(String emailAddr) {
+    	logger.info("in getSubscriber() - emailAddr: " + emailAddr);
+		jpa.model.SubscriberData sd = getSubscriberByEmailAddress(emailAddr);
+		if (sd == null) {
+			logger.info("Failed to find SubscriberData by emailAddr: " + emailAddr);
+			return null; 
+		}
+		SubscriberDataVo vo = new SubscriberDataVo();
+		try {
+			BeanUtils.copyProperties(vo, sd);
+			vo.setSenderId(sd.getSenderData().getSenderId());
+			vo.setEmailAddress(sd.getEmailAddr().getAddress());
+			return vo;
+		}
+		catch (Exception e) {
+			throw new RuntimeException("Failed to copy properties", e);
+		}
+	}
+
 	@Override
 	public List<SubscriptionVo> getSubscribedList(String emailAddr) {
 		List<Subscription> sublist = subscriptionDao.getByAddress(emailAddr);
@@ -147,6 +178,23 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal, Subscriber
 		logger.info("in unSubscribe() - emailAddr/listId: " + emailAddr + "/" + listId);
 		Subscription emailRemoved = subscriptionDao.unsubscribe(emailAddr, listId);
 		return emailRemoved;
+	}
+
+	@WebMethod
+	@Override
+	public void addSubscriber(SubscriberDataVo vo) {
+		jpa.model.SenderData senderData = sender.findBySenderId(vo.getSenderId());
+		if (senderData == null) {
+			
+		}
+		jpa.model.SubscriberData sd = new jpa.model.SubscriberData();
+		try {
+			BeanUtils.copyProperties(sd, vo);
+			sd.setSenderData(sender.findBySenderId(vo.getSenderId()));
+		}
+		catch (Exception e) {
+			throw new RuntimeException("Failed to copy properties", e);
+		}
 	}
 
 	@Override

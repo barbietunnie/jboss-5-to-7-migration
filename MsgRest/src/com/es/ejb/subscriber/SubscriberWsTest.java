@@ -53,6 +53,8 @@ public class SubscriberWsTest {
 			sub = sbsr.unSubscribe("test@test.com", "SMPLLST1");
 			assertNotNull(sub);
 			assertFalse(sub.isSubscribed());
+			
+			assertNotNull(sbsr.getSubscriberData("jsmith@test.com"));
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);
