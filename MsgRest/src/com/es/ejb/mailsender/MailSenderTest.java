@@ -69,9 +69,9 @@ public class MailSenderTest {
 	@Test
 	public void testMailSenderLocal() {
 		try {
-			MailSenderLocal lcl = (MailSenderLocal) TomeeCtxUtil.getLocalContext().lookup(
+			MailSenderLocal sender = (MailSenderLocal) TomeeCtxUtil.getLocalContext().lookup(
 					"java:global/MsgRest/MailSender!com.es.ejb.mailsender.MailSenderLocal");
-			EmailAddress addr = lcl.findByAddress("test@test.com");
+			EmailAddress addr = sender.findByAddress("test@test.com");
 			assertNotNull(addr);
 			
 			String filePath = "bouncedmails";
@@ -80,11 +80,13 @@ public class MailSenderTest {
 				byte[] mailStream = FileUtil.loadFromFile(filePath, fileName);
 				MessageBean msgBean = MessageBeanUtil.createBeanFromStream(mailStream);
 				msgBean.setSenderId(Constants.DEFAULT_SENDER_ID);
-				lcl.send(msgBean);
+				sender.send(msgBean);
 			}
 			catch (Exception te) {
 				logger.error("Exception caught", te);
 			}
+			
+			sender.sendMailToSite("", "testfrom@test.com", "test subject from MailSender EJB", "Test message");
 		}
 		catch (NamingException e) {
 			fail();
