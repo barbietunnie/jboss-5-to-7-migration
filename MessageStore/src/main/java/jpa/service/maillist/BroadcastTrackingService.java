@@ -52,7 +52,7 @@ public class BroadcastTrackingService implements java.io.Serializable {
 		}
 	}
 	
-	public List<BroadcastTracking> getByEmailAddress(String address) throws NoResultException {
+	public List<BroadcastTracking> getByEmailAddress(String address) {
 		try {
 			Query query = em.createQuery("select t from BroadcastTracking t, EmailAddress ea " +
 					" where ea=t.emailAddress and ea.address = :address");
@@ -66,7 +66,7 @@ public class BroadcastTrackingService implements java.io.Serializable {
 		}
 	}
 
-	public List<BroadcastTracking> getByEmailAddrRowId(int emailAddrRowId) throws NoResultException {
+	public List<BroadcastTracking> getByEmailAddrRowId(int emailAddrRowId) {
 		try {
 			Query query = em.createQuery("select t from BroadcastTracking t, EmailAddress ea " +
 					" where ea=t.emailAddress and ea.rowId = :rowId");
@@ -80,11 +80,11 @@ public class BroadcastTrackingService implements java.io.Serializable {
 		}
 	}
 
-	public List<BroadcastTracking> getByBroadcastDataRowId(int broadcastDataRowId) throws NoResultException {
+	public List<BroadcastTracking> getByBroadcastMessageRowId(int bcstMsgRowId) {
 		try {
 			Query query = em.createQuery("select t from BroadcastTracking t, BroadcastMessage bd " +
 					" where bd=t.broadcastMessage and bd.rowId=:rowId ");
-			query.setParameter("rowId", broadcastDataRowId);
+			query.setParameter("rowId", bcstMsgRowId);
 			@SuppressWarnings("unchecked")
 			List<BroadcastTracking> list = (List<BroadcastTracking>) query.getResultList();
 			return list;

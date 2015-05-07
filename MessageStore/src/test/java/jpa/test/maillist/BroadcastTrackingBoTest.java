@@ -61,7 +61,7 @@ public class BroadcastTrackingBoTest {
 		
 		BroadcastMessage bd1 = bmlist.get(0);
 		
-		List<BroadcastTracking> btlist = service.getByBroadcastDataRowId(bd1.getRowId());
+		List<BroadcastTracking> btlist = service.getByBroadcastMessageRowId(bd1.getRowId());
 		assertFalse(btlist.isEmpty());
 		
 		BroadcastTracking bt1 = btlist.get(0);

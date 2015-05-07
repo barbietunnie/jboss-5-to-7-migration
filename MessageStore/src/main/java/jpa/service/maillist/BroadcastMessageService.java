@@ -41,7 +41,7 @@ public class BroadcastMessageService implements java.io.Serializable {
 		}
 	}
 	
-	public List<BroadcastMessage> getByMailingListId(String listId) throws NoResultException {
+	public List<BroadcastMessage> getByMailingListId(String listId) {
 		try {
 			Query query = em.createQuery("select t from BroadcastMessage t, MailingList ml " +
 					" where ml=t.mailingList and ml.listId = :listId");
@@ -55,7 +55,7 @@ public class BroadcastMessageService implements java.io.Serializable {
 		}
 	}
 
-	public List<BroadcastMessage> getByEmailTemplateId(String templateId) throws NoResultException {
+	public List<BroadcastMessage> getByEmailTemplateId(String templateId) {
 		try {
 			Query query = em.createQuery("select t from BroadcastMessage t, EmailTemplate et " +
 					" where et=t.emailTemplate and et.templateId=:templateId ");
