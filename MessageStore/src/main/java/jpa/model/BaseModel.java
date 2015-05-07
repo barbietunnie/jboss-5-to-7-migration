@@ -21,12 +21,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
 import jpa.msgui.vo.TimestampAdapter;
+import jpa.util.BeanCopyUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.SqlDateConverter;
-import org.apache.commons.beanutils.converters.SqlTimeConverter;
-import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 
 @MappedSuperclass
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
@@ -98,12 +95,7 @@ public abstract class BaseModel implements java.io.Serializable {
 	}
 
 	public void copyPropertiesTo(BaseModel dest) {
-		SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
-		ConvertUtils.register(converter1, java.sql.Timestamp.class);
-		SqlDateConverter converter2 = new SqlDateConverter(null);
-		ConvertUtils.register(converter2, java.sql.Date.class);
-		SqlTimeConverter converter3 = new SqlTimeConverter(null);
-		ConvertUtils.register(converter3, java.sql.Time.class);
+		BeanCopyUtil.registerBeanUtilsConverters();
 		try {
 			BeanUtils.copyProperties(dest, this);
 		}

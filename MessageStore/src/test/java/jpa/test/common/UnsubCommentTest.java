@@ -1,6 +1,9 @@
 package jpa.test.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -14,10 +17,9 @@ import jpa.model.UnsubComment;
 import jpa.service.common.EmailAddressService;
 import jpa.service.common.UnsubCommentService;
 import jpa.service.maillist.MailingListService;
+import jpa.util.BeanCopyUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -90,9 +92,8 @@ public class UnsubCommentTest {
 		assertTrue("JpaTest".equals(rcd2.getUpdtUserId()));
 		
 		UnsubComment rcd4 = new UnsubComment();
+		BeanCopyUtil.registerBeanUtilsConverters();
 		try {
-			SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
-			ConvertUtils.register(converter1, java.sql.Timestamp.class);
 			BeanUtils.copyProperties(rcd4, rcd3);
 		}
 		catch (Exception e) {

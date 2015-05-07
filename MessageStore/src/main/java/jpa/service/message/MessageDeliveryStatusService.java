@@ -8,11 +8,10 @@ import javax.persistence.Query;
 
 import jpa.model.message.MessageDeliveryStatus;
 import jpa.model.message.MessageDeliveryStatusPK;
+import jpa.util.BeanCopyUtil;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -152,9 +151,8 @@ public class MessageDeliveryStatusService implements java.io.Serializable {
 		try {
 			MessageDeliveryStatus status = getByPrimaryKey(dlvrStatus.getMessageDeliveryStatusPK());
 			int receivedCount = status.getReceivedCount();
+			BeanCopyUtil.registerBeanUtilsConverters();
 			try {
-				SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
-				ConvertUtils.register(converter1, java.sql.Timestamp.class);
 				BeanUtils.copyProperties(status, dlvrStatus);
 			}
 			catch (Exception e) {

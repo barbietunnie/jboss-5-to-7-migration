@@ -14,12 +14,10 @@ import jpa.msgui.vo.PagingSubscriberData;
 import jpa.service.common.EmailAddressService;
 import jpa.service.common.SenderDataService;
 import jpa.service.common.SubscriberDataService;
+import jpa.util.BeanCopyUtil;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.DateConverter;
-import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -93,13 +91,8 @@ public class SubscriberDataTest {
 		// test insert
 		SenderData cd2 = cdService.getBySenderId(rcd0.getSenderData().getSenderId());
 		SubscriberData rcd2 = new SubscriberData();
+		BeanCopyUtil.registerBeanUtilsConverters();
 		try {
-			// allow null sql timestamp to be copied
-			SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
-			ConvertUtils.register(converter1, java.sql.Timestamp.class);
-			// allow null util date to be copied
-			DateConverter converter2 = new DateConverter(null);
-			ConvertUtils.register(converter2, java.util.Date.class);
 			// copy properties from rcd1 to rcd2
 			BeanUtils.copyProperties(rcd2, rcd1);
 		}

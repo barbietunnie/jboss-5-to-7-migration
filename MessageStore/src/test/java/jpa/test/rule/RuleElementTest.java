@@ -19,11 +19,10 @@ import jpa.model.rule.RuleElementPK;
 import jpa.model.rule.RuleLogic;
 import jpa.service.rule.RuleElementService;
 import jpa.service.rule.RuleLogicService;
+import jpa.util.BeanCopyUtil;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,9 +60,8 @@ public class RuleElementTest {
 		// test insert
 		int size = logic.getRuleElements().size();
 		RuleElement obj1 = new RuleElement();
+		BeanCopyUtil.registerBeanUtilsConverters();
 		try {
-			SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
-			ConvertUtils.register(converter1, java.sql.Timestamp.class);
 			BeanUtils.copyProperties(obj1, logic.getRuleElements().get(size-1));
 		}
 		catch (Exception e) {

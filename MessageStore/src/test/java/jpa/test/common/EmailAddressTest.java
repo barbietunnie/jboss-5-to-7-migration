@@ -1,6 +1,9 @@
 package jpa.test.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -8,16 +11,15 @@ import javax.persistence.EntityManager;
 
 import jpa.constant.Constants;
 import jpa.constant.StatusId;
-import jpa.model.SubscriberData;
 import jpa.model.EmailAddress;
+import jpa.model.SubscriberData;
 import jpa.msgui.vo.PagingVo;
 import jpa.service.common.EmailAddressService;
 import jpa.service.common.SubscriberDataService;
+import jpa.util.BeanCopyUtil;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -102,9 +104,8 @@ public class EmailAddressTest {
 		assertFalse(lst1.isEmpty());
 		
 		EmailAddress rcd4 = new EmailAddress();
+		BeanCopyUtil.registerBeanUtilsConverters();
 		try {
-			SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
-			ConvertUtils.register(converter1, java.sql.Timestamp.class);
 			BeanUtils.copyProperties(rcd4, rcd3);
 		}
 		catch (Exception e) {
