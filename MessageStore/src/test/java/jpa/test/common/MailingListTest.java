@@ -18,11 +18,10 @@ import jpa.model.MailingList;
 import jpa.model.Subscription;
 import jpa.service.common.EmailAddressService;
 import jpa.service.maillist.MailingListService;
+import jpa.util.BeanCopyUtil;
 import jpa.util.StringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.SqlTimestampConverter;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -100,9 +99,8 @@ public class MailingListTest {
 		
 		// test insert
 		MailingList rcd1 = new MailingList();
+		BeanCopyUtil.registerBeanUtilsConverters();
 		try {
-			SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
-			ConvertUtils.register(converter1, java.sql.Timestamp.class);
 			BeanUtils.copyProperties(rcd1, list.get(0));
 		}
 		catch (Exception e) {
@@ -131,8 +129,6 @@ public class MailingListTest {
 		// test insert 2
 		MailingList rcd4 = new MailingList();
 		try {
-			SqlTimestampConverter converter1 = new SqlTimestampConverter(null);
-			ConvertUtils.register(converter1, java.sql.Timestamp.class);
 			BeanUtils.copyProperties(rcd4, rcd3);
 		}
 		catch (Exception e) {
