@@ -65,13 +65,13 @@ public class MailingListRS {
 				MailingListVo vo = new MailingListVo();
 				try {
 					BeanUtils.copyProperties(vo, ml);
-					String listaddr = ml.getAcctUserName() + "@" + ml.getSenderData().getDomainName();
-					vo.setListEmailAddr(listaddr);
-					volist.add(vo);
 				}
 				catch (Exception e) {
 					throw new RuntimeException("Failed to copy properties", e);
 				}
+				String listaddr = ml.getAcctUserName() + "@" + ml.getSenderData().getDomainName();
+				vo.setListEmailAddr(listaddr);
+				volist.add(vo);
 			}
 			GenericEntity<List<MailingListVo>> entity = new GenericEntity<List<MailingListVo>>(volist) {};
 			return Response.ok(entity).build();
@@ -99,13 +99,13 @@ public class MailingListRS {
 			vo.setListId(listId); // make sure listId is not changed
 			try {
 				BeanUtils.copyProperties(ml, vo);
-				getMailingListLocal().update(ml);
-				logger.info("MailingList updated: " + StringUtil.prettyPrint(ml, 1));
-				return Response.ok("Success").build();
 			}
 			catch (Exception e) {
 				throw new RuntimeException("Failed to copy properties", e);
 			}
+			getMailingListLocal().update(ml);
+			logger.info("MailingList updated: " + StringUtil.prettyPrint(ml, 1));
+			return Response.ok("Success").build();
 		}
 		catch (NamingException e) {
 			return Response.serverError().build();

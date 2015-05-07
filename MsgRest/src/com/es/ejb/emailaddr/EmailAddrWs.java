@@ -1,6 +1,8 @@
 package com.es.ejb.emailaddr;
 
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 
 import com.es.ejb.ws.vo.EmailAddrVo;
@@ -9,8 +11,9 @@ import com.es.ejb.ws.vo.EmailAddrVo;
 public interface EmailAddrWs {
 
 	@WebMethod
-	public EmailAddrVo getOrAddAddress(String address);
+	@WebResult(name="EmailAddress")
+	public EmailAddrVo getOrAddAddress(@WebParam(name="emailAddr") String address);
 	
 	@WebMethod
-	public int delete(String address);
+	public int delete(@WebParam(name="emailAddr") String address);
 }

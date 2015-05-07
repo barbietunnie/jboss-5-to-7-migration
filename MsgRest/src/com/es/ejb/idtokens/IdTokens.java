@@ -186,11 +186,11 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
 		}
 		try {
 			BeanUtils.copyProperties(id, vo);
-			update(id);
 		}
 		catch (Exception e) {
 			throw new RuntimeException("Failed to copy properties", e);
 		}
+		update(id);
 	}
 
 }
