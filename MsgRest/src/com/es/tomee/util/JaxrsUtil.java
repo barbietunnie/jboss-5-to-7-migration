@@ -47,13 +47,13 @@ public class JaxrsUtil {
 		MultivaluedMap<String, String> headerParams = hh.getRequestHeaders();
 		for (Iterator<String> it = headerParams.keySet().iterator(); it.hasNext();) {
 			String key = it.next();
-			logger.info("Header Key: " + key + ", Values: " + headerParams.get(key));
+			logger.info("HTTP Header: " + key + " => " + headerParams.get(key));
 		}
 		// print out cookies
 		Map<String, Cookie> cookieParams = hh.getCookies();
 		for (Iterator<String> it = cookieParams.keySet().iterator(); it.hasNext();) {
 			String key = it.next();
-			logger.info("Cookie Key: " + key + ", Values: " + cookieParams.get(key));
+			logger.info("Cookie: " + key + " => " + cookieParams.get(key));
 		}
 	}
 
