@@ -66,6 +66,17 @@ public class MailingList implements MailingListRemote, MailingListLocal {
 			return null;
 		}
 	}
+	
+	@Override
+	public jpa.model.MailingList getByListAddress(String address) {
+		try {
+			jpa.model.MailingList ml = mlistService.getByListAddress(address);
+			return ml;
+		}
+		catch (NoResultException e) {
+			return null;
+		}
+	}
 
 	@Override
 	public void update(jpa.model.MailingList mailingList) {

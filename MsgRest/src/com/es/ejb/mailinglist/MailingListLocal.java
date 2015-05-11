@@ -12,6 +12,8 @@ public interface MailingListLocal {
 	
 	public MailingList getByListId(String listId);
 	
+	public MailingList getByListAddress(String address);
+	
 	public void update(MailingList mailingList);
 	
 	public int sendMail(String toAddr, Map<String, String> variables, String templateId);

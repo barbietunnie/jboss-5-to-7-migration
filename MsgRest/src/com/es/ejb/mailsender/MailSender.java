@@ -1,6 +1,7 @@
 package com.es.ejb.mailsender;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import javax.annotation.Resource;
 import javax.annotation.Resource.AuthenticationType;
@@ -20,11 +21,16 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import jpa.constant.Constants;
+import jpa.exception.TemplateException;
 import jpa.message.MessageBean;
 import jpa.message.MessageContext;
 import jpa.model.EmailAddress;
 import jpa.service.common.EmailAddressService;
+import jpa.service.maillist.RenderBo;
+import jpa.service.maillist.RenderRequest;
+import jpa.service.maillist.RenderResponse;
 import jpa.service.msgout.MailSenderBo;
+import jpa.service.msgout.MsgOutboxBo;
 import jpa.service.msgout.SmtpException;
 import jpa.util.SpringUtil;
 
@@ -55,6 +61,8 @@ public class MailSender implements MailSenderRemote, MailSenderLocal, MailSender
 	SessionContext ctx;
 	private MailSenderBo mailSenderBo;
 	private EmailAddressService emailAddrDao;
+	private RenderBo renderBo;
+	private MsgOutboxBo outboxBo;
 	
 	@javax.ejb.EJB
 	private SenderDataLocal sender;
@@ -65,6 +73,8 @@ public class MailSender implements MailSenderRemote, MailSenderLocal, MailSender
     public MailSender() {
     	mailSenderBo = SpringUtil.getAppContext().getBean(MailSenderBo.class);
     	emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
+    	renderBo = SpringUtil.getAppContext().getBean(RenderBo.class);
+    	outboxBo = SpringUtil.getAppContext().getBean(MsgOutboxBo.class);
     }
 
     @Override
@@ -78,11 +88,38 @@ public class MailSender implements MailSenderRemote, MailSenderLocal, MailSender
 	}
 
     @Override
+    public int renderAndSend(RenderRequest req) {
+		try {
+			RenderResponse rsp = renderBo.getRenderedEmail(req);
+			int renderId = outboxBo.saveRenderData(rsp);
+			send(rsp.getMessageBean());
+	    	return renderId;
+		}
+		catch (AddressException | ParseException | TemplateException e) {
+			logger.error("Exception caught", e);
+			throw new EJBException("Exception caught", e);
+		}
+    }
+    
+    @Override
+    public MessageBean getMessageByRenderId(int renderId) {
+    	try {
+			MessageBean msgBean = outboxBo.getMessageByPK(renderId);
+			return msgBean;
+		}
+    	catch (AddressException | ParseException | TemplateException e) {
+    		logger.error("Exception caught", e);
+    		throw new EJBException("Exception caught", e);
+		}
+    }
+
+    @Override
 	public void send(byte[] msgStream) {
 		try {
 			mailSenderBo.process(new MessageContext(msgStream));
 		}
 		catch (SmtpException | IOException e) {
+			logger.error("Exception caught", e);
 			throw new EJBException("Exception caught", e);
 		}
 	}

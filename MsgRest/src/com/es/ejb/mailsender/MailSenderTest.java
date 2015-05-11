@@ -1,6 +1,7 @@
 package com.es.ejb.mailsender;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import javax.ejb.EJBException;
@@ -8,11 +9,20 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 
 import jpa.constant.Constants;
+import jpa.constant.EmailAddrType;
+import jpa.constant.VariableType;
 import jpa.message.MessageBean;
 import jpa.message.MessageBeanUtil;
 import jpa.model.EmailAddress;
+import jpa.model.message.MessageRendered;
+import jpa.service.maillist.RenderRequest;
+import jpa.service.message.MessageRenderedService;
+import jpa.service.msgout.MsgOutboxBo;
 import jpa.util.FileUtil;
+import jpa.util.SpringUtil;
+import jpa.variable.RenderVariableVo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -57,7 +67,8 @@ public class MailSenderTest {
 			
 			try {
 				rmt.send("testfrom@localhost", "testto@localhost", "Test from MailSender", "Message from MailSender EJB.");
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				fail();
 			}
 		}
@@ -84,9 +95,41 @@ public class MailSenderTest {
 			}
 			catch (Exception te) {
 				logger.error("Exception caught", te);
+				fail();
 			}
 			
-			sender.sendMailToSite("", "testfrom@test.com", "test subject from MailSender EJB", "Test message");
+			try {
+				sender.sendMailToSite("", "testfrom@test.com", "test subject from MailSender EJB", "Test message");
+			}
+			catch (Exception e) {
+				fail();
+			}
+			
+			// test render function
+			assertNotNull(SpringUtil.getAppContext());
+			MessageRenderedService renderedService = SpringUtil.getAppContext().getBean(MessageRenderedService.class);
+			MsgOutboxBo outboxBo = SpringUtil.getAppContext().getBean(MsgOutboxBo.class);
+			MessageRendered mr = renderedService.getFirstRecord();
+			RenderRequest req = outboxBo.getRenderRequestByPK(mr.getRowId());
+			assertTrue(StringUtils.isNotBlank(req.getMsgSourceId()));
+			assertTrue(StringUtils.isNotBlank(req.getSenderId()));
+			RenderVariableVo vo = new RenderVariableVo(
+					EmailAddrType.TO_ADDR.getValue(),
+					"testto@test.com",
+					VariableType.ADDRESS);
+			req.getVariableOverrides().put(vo.getVariableName(), vo);
+			try {
+				int renderId = sender.renderAndSend(req);
+				assert(renderId>0);
+				MessageBean msgBean = sender.getMessageByRenderId(renderId);
+				assertNotNull(msgBean);
+				assertNotNull(msgBean.getRenderId());
+				assert(renderId==msgBean.getRenderId());
+				assert(StringUtils.equals(msgBean.getToAsString(), (String)vo.getVariableValue()));
+			}
+			catch (Exception e) {
+				fail();
+			}
 		}
 		catch (NamingException e) {
 			fail();

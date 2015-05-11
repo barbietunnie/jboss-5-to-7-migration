@@ -32,6 +32,7 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import jpa.service.common.IdTokensService;
+import jpa.util.BeanCopyUtil;
 import jpa.util.SpringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -39,7 +40,6 @@ import org.apache.log4j.Logger;
 
 import com.es.ejb.ws.vo.IdTokensVo;
 import com.es.tomee.util.AccessTimeout;
-import com.es.tomee.util.TomeeCtxUtil;
 
 /**
  * Session Bean implementation class IdTokens
@@ -66,7 +66,7 @@ public class IdTokens implements IdTokensRemote, IdTokensLocal, IdTokensWs {
      */
     public IdTokens() {
     	idTokensDao = SpringUtil.getAppContext().getBean(IdTokensService.class);
-    	TomeeCtxUtil.registerBeanUtilsConverters();
+    	BeanCopyUtil.registerBeanUtilsConverters();
     }
 
     @Asynchronous

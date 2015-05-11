@@ -28,6 +28,7 @@ import jpa.model.Subscription;
 import jpa.service.common.EmailAddressService;
 import jpa.service.common.SubscriberDataService;
 import jpa.service.common.SubscriptionService;
+import jpa.util.BeanCopyUtil;
 import jpa.util.SpringUtil;
 import jpa.util.StringUtil;
 
@@ -76,7 +77,7 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal, Subscriber
 		subscriberDao = SpringUtil.getAppContext().getBean(SubscriberDataService.class);
 		subscriptionDao = SpringUtil.getAppContext().getBean(SubscriptionService.class);
 		emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
-		TomeeCtxUtil.registerBeanUtilsConverters();
+		BeanCopyUtil.registerBeanUtilsConverters();
     }
 
     public void getResources() {

@@ -16,13 +16,13 @@ import javax.jws.soap.SOAPBinding;
 
 import jpa.model.EmailAddress;
 import jpa.service.common.EmailAddressService;
+import jpa.util.BeanCopyUtil;
 import jpa.util.SpringUtil;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 
 import com.es.ejb.ws.vo.EmailAddrVo;
-import com.es.tomee.util.TomeeCtxUtil;
 
 /**
  * Session Bean implementation class EmailAddr
@@ -52,7 +52,7 @@ public class EmailAddr implements EmailAddrRemote, EmailAddrLocal, EmailAddrWs {
     public EmailAddr() {
 		emailAddrDao = SpringUtil.getAppContext().getBean(EmailAddressService.class);
 		// setup for BeanUtils.copyProperties() to handle null value
-		TomeeCtxUtil.registerBeanUtilsConverters();
+		BeanCopyUtil.registerBeanUtilsConverters();
     }
 
     @Override
