@@ -25,6 +25,7 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import jpa.service.common.SenderDataService;
+import jpa.util.BeanCopyUtil;
 import jpa.util.ExceptionUtil;
 import jpa.util.SpringUtil;
 
@@ -32,7 +33,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 
 import com.es.ejb.ws.vo.SenderDataVo;
-import com.es.tomee.util.TomeeCtxUtil;
 
 /**
  * Session Bean implementation class EmailAddr
@@ -58,7 +58,7 @@ public class SenderData implements SenderDataLocal, SenderDataRemote, SenderData
 	
 	public SenderData() {
 		senderDataDao = SpringUtil.getAppContext().getBean(SenderDataService.class);
-		TomeeCtxUtil.registerBeanUtilsConverters();
+		BeanCopyUtil.registerBeanUtilsConverters();
 	}
 
 	@Override

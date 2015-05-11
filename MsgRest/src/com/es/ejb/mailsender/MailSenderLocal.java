@@ -3,6 +3,7 @@ import javax.ejb.Local;
 
 import jpa.message.MessageBean;
 import jpa.model.EmailAddress;
+import jpa.service.maillist.RenderRequest;
 
 @Local
 public interface MailSenderLocal {
@@ -15,4 +16,8 @@ public interface MailSenderLocal {
 	public Boolean sendMailToSite(String siteId, String fromAddr, String subject, String body);
 	
 	public EmailAddress findByAddress(String address);
+	
+	public int renderAndSend(RenderRequest req);
+	
+    public MessageBean getMessageByRenderId(int renderId);
 }

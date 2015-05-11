@@ -27,6 +27,7 @@ import javax.ws.rs.core.UriInfo;
 
 import jpa.model.SubscriberData;
 import jpa.model.Subscription;
+import jpa.util.BeanCopyUtil;
 import jpa.util.ExceptionUtil;
 import jpa.util.StringUtil;
 
@@ -48,7 +49,7 @@ public class SubscriptionRS {
 	private SubscriberLocal subscriber;
 	
 	public SubscriptionRS() {
-		TomeeCtxUtil.registerBeanUtilsConverters();
+		BeanCopyUtil.registerBeanUtilsConverters();
 	}
 	
 	SubscriberLocal getSubscriberLocal() throws NamingException {
