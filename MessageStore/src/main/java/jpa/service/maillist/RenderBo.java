@@ -119,11 +119,12 @@ public class RenderBo implements java.io.Serializable {
 	public RenderResponse getRenderedEmail(RenderRequest req)
 			throws ParseException, AddressException, TemplateException {
 		logger.info("in getRenderedEmail(RenderRequest)...");
-		if (req == null)
+		if (req == null) {
 			throw new IllegalArgumentException("RenderRequest is null");
-		if (req.startTime==null)
+		}
+		if (req.startTime==null) {
 			req.startTime = new Timestamp(new java.util.Date().getTime());
-
+		}
 		RenderResponse rsp = initRenderResponse(req);
 		buildRenderVariableVos(req, rsp);
 		buildRenderedBody(req, rsp);
@@ -139,7 +140,7 @@ public class RenderBo implements java.io.Serializable {
 	private RenderResponse initRenderResponse(RenderRequest req) throws DataValidationException {
 		MessageSource vo = null;
 		try {
-			vo = (MessageSource) msgSourceDao.getByMsgSourceId(req.msgSourceId);
+			vo = msgSourceDao.getByMsgSourceId(req.msgSourceId);
 		}
 		catch (NoResultException e) {
 			throw new DataValidationException("MsgSource record not found for " + req.msgSourceId);
@@ -155,7 +156,7 @@ public class RenderBo implements java.io.Serializable {
 		return rsp;
 	}
 	
-	public RenderResponse getRenderedBody(RenderRequest req) throws ParseException, TemplateException {
+	RenderResponse getRenderedBody(RenderRequest req) throws ParseException, TemplateException {
 		RenderResponse rsp = initRenderResponse(req);
 		buildRenderVariableVos(req, rsp);
 		buildRenderedBody(req, rsp);
@@ -163,7 +164,7 @@ public class RenderBo implements java.io.Serializable {
 		return rsp;
 	}
 	
-	public RenderResponse getRenderedMisc(RenderRequest req) {
+	RenderResponse getRenderedMisc(RenderRequest req) {
 		RenderResponse rsp = initRenderResponse(req);
 		buildRenderVariableVos(req, rsp);
 		buildRenderedMisc(req, rsp);
@@ -171,7 +172,7 @@ public class RenderBo implements java.io.Serializable {
 		return rsp;
 	}
 	
-	public RenderResponse getRenderedSubj(RenderRequest req)
+	RenderResponse getRenderedSubj(RenderRequest req)
 			throws ParseException, TemplateException {
 		RenderResponse rsp = initRenderResponse(req);
 		buildRenderVariableVos(req, rsp);
@@ -180,7 +181,7 @@ public class RenderBo implements java.io.Serializable {
 		return rsp;
 	}
 
-	public RenderResponse getRenderedAddrs(RenderRequest req) throws AddressException {
+	RenderResponse getRenderedAddrs(RenderRequest req) throws AddressException {
 		RenderResponse rsp = initRenderResponse(req);
 		buildRenderVariableVos(req, rsp);
 		buildRenderedAddrs(req, rsp);
@@ -188,7 +189,7 @@ public class RenderBo implements java.io.Serializable {
 		return rsp;
 	}
 
-	public RenderResponse getRenderedXHdrs(RenderRequest req) {
+	RenderResponse getRenderedXHdrs(RenderRequest req) {
 		RenderResponse rsp = initRenderResponse(req);
 		buildRenderVariableVos(req, rsp);
 		buildRenderedXHdrs(req, rsp);
