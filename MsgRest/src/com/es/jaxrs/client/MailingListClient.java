@@ -36,6 +36,10 @@ public class MailingListClient {
 		List<Attachment> atts = new LinkedList<Attachment>();
 		byte[] txtfile = FileUtil.loadFromFile("META-INF", "openejb.xml");
 		atts.add(new Attachment("root", "text/xml", txtfile));
+		if (StringUtils.contains(part, "part")) {
+			byte[] txtfile2 = FileUtil.loadFromFile("META-INF", "ejb-jar.xml");
+			atts.add(new Attachment("ejbjar", "text/xml", txtfile2));
+		}
 		Collection<?> attlist = client.postAndGetCollection(atts, Attachment.class);
 		for (Object obj : attlist) {
 			if (!(obj instanceof Attachment)) {
