@@ -69,9 +69,9 @@ public class SubscriberDataBean implements java.io.Serializable {
 	private transient UIInput mobileCarrierInput = null;
 	
 	private static String TO_SELF = null;
-	private static String TO_EDIT = "subscriberEdit";
+	private static String TO_EDIT = "subscriberEdit.xhtml";
 	private static String TO_FAILED = TO_SELF;
-	private static String TO_LIST = "subscribersList";
+	private static String TO_LIST = "subscribersList.xhtml";
 	private static String TO_SAVED = TO_LIST;
 	private static String TO_CANCELED = TO_LIST;
 

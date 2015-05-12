@@ -1,5 +1,6 @@
 package jpa.msgui.bean;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -105,7 +106,7 @@ public class SenderDataBean implements java.io.Serializable {
 	
 	public SenderDataService getSenderDataService() {
 		if (senderDao == null) {
-			senderDao = (SenderDataService) SpringUtil.getWebAppContext().getBean("senderDataService");
+			senderDao = SpringUtil.getWebAppContext().getBean(SenderDataService.class);
 		}
 		return senderDao;
 	}
@@ -171,6 +172,12 @@ public class SenderDataBean implements java.io.Serializable {
 
 	public void saveSenderListener(AjaxBehaviorEvent event) {
 		saveSender();
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect(TO_SAVED);
+		}
+		catch (IOException e) {
+			logger.error("IOException caught during Faces redirect", e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

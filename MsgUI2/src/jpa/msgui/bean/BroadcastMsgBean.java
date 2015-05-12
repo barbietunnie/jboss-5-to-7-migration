@@ -38,13 +38,13 @@ public class BroadcastMsgBean implements java.io.Serializable {
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	static final String TO_VIEW = "broadcastMsgView";
+	static final String TO_VIEW = "broadcastMsgView.xhtml";
 	static final String TO_SELF = null; // null -> remains in the same view
 	static final String TO_PAGING = TO_SELF;
 	static final String TO_FAILED = null;
 	static final String TO_DELETED = TO_SELF;
-	static final String TO_SAVED = "broadcastsList";
-	static final String TO_CANCELED = "main";
+	static final String TO_SAVED = "broadcastsList.xhtml";
+	static final String TO_CANCELED = "main.xhtml";
 	static final String TO_CANCELED_FROM_VIEW = TO_SAVED;
 
 	@SuppressWarnings("unchecked")
