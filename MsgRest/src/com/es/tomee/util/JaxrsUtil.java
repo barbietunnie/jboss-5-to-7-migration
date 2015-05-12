@@ -39,7 +39,7 @@ public class JaxrsUtil {
 		}
 	}
 	
-	public static void printOutHeaders(HttpHeaders hh) {
+	public static void printOutHttpHeaders(HttpHeaders hh) {
 		if (hh == null) {
 			return;
 		}

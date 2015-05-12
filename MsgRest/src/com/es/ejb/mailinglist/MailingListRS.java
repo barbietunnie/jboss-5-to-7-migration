@@ -103,14 +103,14 @@ public class MailingListRS {
 	 */
 	@Path("/getBy/{keytype}")
 	@GET
-	@Produces("application/xml")
+	@Produces(MediaType.APPLICATION_XML)
 	public Response getByListIdOrAddress(@Context UriInfo uriInfo, @Context Request req, @Context HttpHeaders hh) {
 		logger.info("Entering getByListIdOrAddress() method...");
 		java.net.URI uri = uriInfo.getRequestUri();
 		logger.info("URI: " + StringUtil.prettyPrint(uri));
 		
 		// print out HTTP headers
-		JaxrsUtil.printOutHeaders(hh);
+		JaxrsUtil.printOutHttpHeaders(hh);
 
 		// verify the request method
 		if (req.getMethod().equals("GET")) {
@@ -126,7 +126,7 @@ public class MailingListRS {
 		String keyType = null;
 		for (Iterator<String> it = pathParams.keySet().iterator(); it.hasNext();) {
 			String key = it.next();
-			logger.info("Path Key: " + key + ", Values: " + pathParams.get(key));
+			logger.info("Path Key/Values: " + key + " => " + pathParams.get(key));
 			if (StringUtils.equals("keytype", key)) {
 				keyType = StringUtils.join(pathParams.get(key), ",");
 			}
@@ -134,7 +134,7 @@ public class MailingListRS {
 		String keyValue = null;
 		for (Iterator<String> it = queryParams.keySet().iterator(); it.hasNext();) {
 			String key = it.next();
-			logger.info("Query Key: " + key + ", Values: " + queryParams.get(key));
+			logger.info("Query Key/Values: " + key + " => " + queryParams.get(key));
 			if (StringUtils.equals("value", key)) {
 				keyValue = queryParams.getFirst(key);
 			}
@@ -218,12 +218,12 @@ public class MailingListRS {
 
 	@Path("/updateform")
 	@POST
-	@Consumes("application/x-www-form-urlencoded")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED) //"application/x-www-form-urlencoded"
 	public Response updateForm(MultivaluedMap<String, String> formParams, @FormParam("listId") String listId) {
 		logger.info("Entering updateForm() method...");
 		for (Iterator<String> it = formParams.keySet().iterator(); it.hasNext();) {
 			String key = it.next();
-			logger.info("Form Key: " + key + ", Values: " + formParams.get(key));
+			logger.info("Form Key/Values: " + key + " => " + formParams.get(key));
 		}
 		try {
 			jpa.model.MailingList ml = getMailingListLocal().getByListId(listId);
@@ -242,14 +242,14 @@ public class MailingListRS {
 
 	@Path("/uploadpart")
 	@POST
-	@Consumes("multipart/form-data")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces("multipart/mixed")
-	public Map<String, Object> saveAttachments(MultipartBody multipartBody,
+	public Map<String, Object> saveMultipart(MultipartBody multipartBody,
 			@Multipart(value="fileUpload", required=false, type="text/*") java.io.File file) {
-		logger.info("Entering saveAttachments() method..."); 
+		logger.info("Entering saveMultipart() method..."); 
 		Attachment root = multipartBody.getRootAttachment();
 		if (root != null) {
-			logger.info("Root attachment content type: " + root.getContentType());
+			logger.info("Root attachment content type/id: " + root.getContentType() + ", " + root.getContentId());
 			boolean isTextContent = StringUtils.contains(root.getContentType().toString(), "text");
 			try {
 				byte[] content = JaxrsUtil.getBytesFromDataHandler(root.getDataHandler());
@@ -265,7 +265,7 @@ public class MailingListRS {
 			}
 		}
 		for (Attachment attch : multipartBody.getAllAttachments()) {
-			logger.info("Attachment content type: " + attch.getContentType());
+			logger.info("Attachment content type/id: " + attch.getContentType() + ", " + attch.getContentId());
 			boolean isTextContent = StringUtils.contains(attch.getContentType().toString(), "text");
 			try {
 				byte[] content = JaxrsUtil.getBytesFromDataHandler(attch.getDataHandler());
@@ -280,7 +280,7 @@ public class MailingListRS {
 				throw new WebApplicationException(e);
 			}
 		}
-		if (file != null) { // does not work
+		if (file != null) { // @Multipart annotation does not work
 			logger.info("Attachment file name: " + file.getName());
 		}
 		
@@ -294,15 +294,14 @@ public class MailingListRS {
 
 	@Path("/uploadfile")
 	@POST
-	@Consumes("multipart/form-data")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces("multipart/mixed;type=text/xml")
-	public MultipartBody saveFiles(List<Attachment> attachments, @Context HttpHeaders hh) {
+	public MultipartBody saveAttachments(List<Attachment> attachments, @Context HttpHeaders hh) {
 		// type="application/octet-stream"
-		logger.info("Entering saveFiles() method...");
-		JaxrsUtil.printOutHeaders(hh);
-		List<Attachment> atts = new LinkedList<Attachment>();
+		logger.info("Entering  saveAttachments() method...");
+		JaxrsUtil.printOutHttpHeaders(hh);
 		for (Attachment attch : attachments) {
-			logger.info("Attachment content type: " + attch.getContentType());
+			logger.info("Attachment content type/id: " + attch.getContentType() + ", " + attch.getContentId());
 			boolean isTextContent = StringUtils.contains(attch.getContentType().toString(), "text");
 			try {
 				byte[] content = JaxrsUtil.getBytesFromDataHandler(attch.getDataHandler());
@@ -317,6 +316,8 @@ public class MailingListRS {
 				throw new WebApplicationException(e);
 			}
 		}
+		// build Multipart output
+		List<Attachment> atts = new LinkedList<Attachment>();
 		byte[] txtfile = FileUtil.loadFromFile("META-INF", "openejb.xml");
 		byte[] txtfile2 = FileUtil.loadFromFile("META-INF", "ejb-jar.xml");
 		//byte[] pdffile = FileUtil.loadFromFile("META-INF", "ErrorCodes.pdf");
