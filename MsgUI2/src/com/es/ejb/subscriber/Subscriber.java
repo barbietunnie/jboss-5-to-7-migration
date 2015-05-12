@@ -116,14 +116,14 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal {
 			SubscriptionVo vo = new SubscriptionVo();
 			try {
 				BeanUtils.copyProperties(vo, sub);
-				vo.setListId(sub.getMailingList().getListId());
-				vo.setDescription(sub.getMailingList().getDescription());
-				vo.setAddress(sub.getEmailAddr().getAddress());
-				volist.add(vo);
 			}
 			catch (Exception e) {
 				throw new RuntimeException("Failed to copy properties", e);
 			}
+			vo.setListId(sub.getMailingList().getListId());
+			vo.setDescription(sub.getMailingList().getDescription());
+			vo.setAddress(sub.getEmailAddr().getAddress());
+			volist.add(vo);
 		}
 		return volist;
 	}
