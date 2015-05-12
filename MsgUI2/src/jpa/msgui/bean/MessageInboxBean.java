@@ -97,9 +97,9 @@ public class MessageInboxBean implements java.io.Serializable {
 	
 	private static String TO_SELF = null;
 	private static String TO_FAILED = TO_SELF;
-	private static String TO_EDIT = "msgInboxView";
-	private static String TO_LIST = "msgInboxList";
-	private static String TO_SEND = "msgInboxSend";
+	private static String TO_EDIT = "msgInboxView.xhtml";
+	private static String TO_LIST = "msgInboxList.xhtml";
+	private static String TO_SEND = "msgInboxSend.xhtml";
 	private static String TO_DELETED = TO_LIST;
 	private static String TO_CANCELED = TO_LIST;
 	private static String TO_FORWARD = TO_SEND;

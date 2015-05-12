@@ -86,9 +86,9 @@ public class MailingListComposeBean implements java.io.Serializable {
 
 	private static String TO_SELF = null;
 	private static String TO_FAILED = TO_SELF;
-	private static String TO_CANCELED = "main";
-	private static String TO_SENT = "main";
-	private static String TO_PREVIEW = "mailingListPreview";
+	private static String TO_CANCELED = "main.xhtml";
+	private static String TO_SENT = "main.xhtml";
+	private static String TO_PREVIEW = "mailingListPreview.xhtml";
 	
 	public MailingListComposeBean() {
 		//

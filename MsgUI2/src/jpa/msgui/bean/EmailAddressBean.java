@@ -52,10 +52,10 @@ public class EmailAddressBean implements java.io.Serializable {
 
 	private static String TO_SELF = null;
 	private static String TO_FAILED = TO_SELF;
-	private static String TO_LIST = "emailAddressList";
-	private static String TO_EDIT = "emailAddressEdit";
+	private static String TO_LIST = "emailAddressList.xhtml";
+	private static String TO_EDIT = "emailAddressEdit.xhtml";
 	private static String TO_SAVED = TO_LIST;
-	private static String TO_CANCELED = "main";
+	private static String TO_CANCELED = "main.xhtml";
 	
 	@SuppressWarnings("unchecked")
 	public DataModel<EmailAddress> getEmailAddrs() {

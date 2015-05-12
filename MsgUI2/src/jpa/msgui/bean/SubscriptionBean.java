@@ -53,8 +53,8 @@ public class SubscriptionBean implements java.io.Serializable {
 	static final String TO_PAGING = TO_SELF;
 	static final String TO_DELETED = TO_SELF;
 	static final String TO_SAVED = TO_SELF;
-	static final String TO_EDIT = "subscriptions";
-	static final String TO_CANCELED = "configureMailingLists";
+	static final String TO_EDIT = "subscriptions.xhtml";
+	static final String TO_CANCELED = "configureMailingLists.xhtml";
 
 	@SuppressWarnings("unchecked")
 	public DataModel<Subscription> getSubscriptions() {

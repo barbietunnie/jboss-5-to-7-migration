@@ -81,13 +81,13 @@ public class RuleLogicBean implements java.io.Serializable {
 	protected static final String TO_SELF = null;
 	protected static final String TO_CANCELED = "cancel";
 	protected static final String TO_FAILED = null;
-	protected static final String TO_EDIT_LOGIC = "ruleLogicEdit";
-	protected static final String TO_EDIT_ELEMENT = "ruleElementEdit";
-	protected static final String TO_EDIT_SUBRULE = "ruleSubruleEdit";
-	protected static final String TO_EDIT_ACTION = "ruleActionEdit";
+	protected static final String TO_EDIT_LOGIC = "ruleLogicEdit.xhtml";
+	protected static final String TO_EDIT_ELEMENT = "ruleElementEdit.xhtml";
+	protected static final String TO_EDIT_SUBRULE = "ruleSubruleEdit.xhtml";
+	protected static final String TO_EDIT_ACTION = "ruleActionEdit.xhtml";
 	
-	protected static final String TO_CONFIG_CUSTOM_RULES = "configureCustomRules";
-	protected static final String TO_CUSTOMIZE_BUILTIN_RULES = "customizeBuiltinRules";
+	protected static final String TO_CONFIG_CUSTOM_RULES = "configureCustomRules.xhtml";
+	protected static final String TO_CUSTOMIZE_BUILTIN_RULES = "customizeBuiltinRules.xhtml";
 	protected static final String RULE_ACTION_SAVED = TO_CONFIG_CUSTOM_RULES;
 	
 	protected String sourcePage; // f:setPropertyActionListener tag

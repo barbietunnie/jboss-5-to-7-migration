@@ -1,5 +1,6 @@
 package jpa.msgui.bean;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -52,9 +53,9 @@ public class MailInboxBean implements java.io.Serializable {
 	private String testResult = null;
 	private String actionFailure = null;
 	
-	private static String TO_EDIT = "mailboxEdit";
+	private static String TO_EDIT = "mailboxEdit.xhtml";
 	private static String TO_FAILED = null;
-	private static String TO_SAVED = "configureMailboxes";
+	private static String TO_SAVED = "configureMailboxes.xhtml";
 	private static String TO_DELETED = TO_SAVED;
 	private static String TO_CANCELED = TO_SAVED;
 
@@ -145,6 +146,12 @@ public class MailInboxBean implements java.io.Serializable {
 
 	public void saveMailboxListener(AjaxBehaviorEvent event) {
 		saveMailbox();
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect(TO_SAVED);
+		}
+		catch (IOException e) {
+			logger.error("IOException caught during Faces redirect", e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -224,7 +231,7 @@ public class MailInboxBean implements java.io.Serializable {
 		/* Add to Face message queue. Not working. */
         FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
 				"jpa.msgui.messages", testResult, null);
-		FacesContext.getCurrentInstance().addMessage(null, message);
+		FacesContext.getCurrentInstance().addMessage("testResult", message);
 	}
 	
 	public String copyMailbox() {
