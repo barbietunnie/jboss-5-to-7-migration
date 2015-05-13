@@ -191,6 +191,8 @@ public class MailInboxBean implements java.io.Serializable {
 			logger.debug("testMailbox() - Entering...");
 		if (mailbox == null) {
 			logger.warn("testMailbox() - MailInbox is null.");
+			testResult = "internalServerError";
+			return;
 		}
 		Properties m_props = (Properties) System.getProperties().clone();
 		Session session = null;
@@ -229,9 +231,9 @@ public class MailInboxBean implements java.io.Serializable {
 			}
 		}
 		/* Add to Face message queue. Not working. */
-        FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
+		FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
 				"jpa.msgui.messages", testResult, null);
-		FacesContext.getCurrentInstance().addMessage("testResult", message);
+		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
 	
 	public String copyMailbox() {

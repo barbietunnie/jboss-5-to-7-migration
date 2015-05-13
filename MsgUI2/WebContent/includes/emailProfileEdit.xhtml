@@ -142,7 +142,7 @@
 		<h:selectOneMenu id="usetest" value="#{senderData.sender.useTestAddr}"
 			binding="#{senderData.useTestAddrInput}"
 			required="true" label="#{msgs.useTestAddressPrompt}">
-			<f:ajax event="change" render="@form"/>
+			<f:ajax event="change" render="@this"/>
 			<f:selectItems value="#{codes.yesNoItems}"/>
 		</h:selectOneMenu>
 		<h:message for="usetest" styleClass="errorMessage"/>
@@ -178,7 +178,7 @@
 		<h:selectOneMenu id="useverp" value="#{senderData.sender.verpEnabled}"
 			binding="#{senderData.verpEnabledInput}"
 			required="true" label="#{msgs.isVerpEnabledPrompt}">
-			<f:ajax event="change" render="@form"/>
+			<f:ajax event="change" render="@this"/>
 			<f:selectItems value="#{codes.yesNoItems}"/>
 		</h:selectOneMenu>
 		<h:message for="useverp" styleClass="errorMessage"/>
