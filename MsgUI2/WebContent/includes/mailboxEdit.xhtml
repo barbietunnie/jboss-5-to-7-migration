@@ -167,12 +167,13 @@
 			rendered="#{mailInbox.testResult != null}" styleClass="errorMessage"/>
 	</h:panelGroup>
 	<f:verbatim><p/></f:verbatim>
+	<h:messages id="testResultMessage" globalOnly="true" showDetail="false"/>
 	<h:panelGrid columns="2" styleClass="commandBar"
 		columnClasses="alignLeft70, alignRight30">
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.testButtonText}"
 				title="Test mailbox configuration" id="testmbox" >
-				<f:ajax event="click" listener="#{mailInbox.testMailboxListener}" render="testResult"/>
+				<f:ajax event="click" listener="#{mailInbox.testMailboxListener}" render="testResult testResultMessage"/>
 			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
