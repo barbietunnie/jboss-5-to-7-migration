@@ -136,16 +136,18 @@
 		</h:inputText>
 		<h:message for="threads" styleClass="errorMessage"/>
 	</h:panelGrid>
-	<h:outputText value="#{msgs[smtpServer.testResult]}"
-		rendered="#{smtpServer.testResult != null}" styleClass="errorMessage"
-		id="testResult" />
+	<h:panelGroup id="testResult">
+		<h:outputText value="#{msgs[smtpServer.testResult]}"
+			rendered="#{smtpServer.testResult != null}" styleClass="errorMessage"/>
+	</h:panelGroup>
 	<f:verbatim><p/></f:verbatim>
 	<h:panelGrid columns="2" styleClass="commandBar"
 		columnClasses="alignLeft70, alignRight30">
 		<h:panelGroup>
 			<h:commandButton value="#{msgs.testButtonText}"
-				title="Test SMTP server configuration" id="testsmtp"
-				action="#{smtpServer.testSmtpServer}" />
+				title="Test SMTP server configuration" id="testsmtp">
+				<f:ajax event="click" listener="#{smtpServer.testSmtpServerListener}" render="testResult"/>
+			</h:commandButton>
 			<f:verbatim>&nbsp;</f:verbatim>
 			<h:commandButton value="#{msgs.submitButtonText}" title="Submit changes"
 				action="#{smtpServer.saveSmtpServer}"

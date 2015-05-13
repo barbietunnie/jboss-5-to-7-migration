@@ -12,6 +12,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -166,12 +167,13 @@ public class SmtpServerBean implements java.io.Serializable {
 		return TO_DELETED;
 	}
 	
-	public String testSmtpServer() {
+	public void testSmtpServerListener(AjaxBehaviorEvent event) {
 		if (isDebugEnabled)
 			logger.debug("testSmtpServer() - Entering...");
 		if (smtpServer == null) {
 			logger.warn("testSmtpServer() - SmtpServer is null.");
-			return TO_FAILED;
+			testResult = "internalServerError";
+			return;
 		}
 		String smtpHost = smtpServer.getSmtpHostName();
 		int smtpPort = smtpServer.getSmtpPortNumber();
@@ -222,8 +224,6 @@ public class SmtpServerBean implements java.io.Serializable {
 				catch (MessagingException e) {}
 			}
 		}
-		
-		return null;
 	}
 	
 	public String copySmtpServer() {
