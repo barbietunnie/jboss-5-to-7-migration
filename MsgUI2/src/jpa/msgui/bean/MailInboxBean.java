@@ -230,7 +230,12 @@ public class MailInboxBean implements java.io.Serializable {
 				catch (Exception e) {}
 			}
 		}
-		/* Add to Face message queue. Not working. */
+		/* 
+		 * Add to Face message queue. Works with h:message tag, for example:
+		 * 
+		 * <h:messages id="myMessage" globalOnly="true" showDetail="false"/>
+		 * 
+		 */
 		FacesMessage message = jpa.msgui.util.MessageUtil.getMessage(
 				"jpa.msgui.messages", testResult, null);
 		FacesContext.getCurrentInstance().addMessage(null, message);
