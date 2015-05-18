@@ -57,4 +57,13 @@ public class JaxrsUtil {
 		}
 	}
 
+	public static void printOutMultivaluedMap(MultivaluedMap<String, String> headers) {
+		if (headers == null) {
+			return;
+		}
+		for (Iterator<String> it = headers.keySet().iterator(); it.hasNext();) {
+			String key = it.next();
+			logger.info("Key/Values: " + key + " => " + headers.get(key));
+		}
+	}
 }

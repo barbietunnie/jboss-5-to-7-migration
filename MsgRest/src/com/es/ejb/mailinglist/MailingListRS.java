@@ -244,12 +244,15 @@ public class MailingListRS {
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces("multipart/mixed")
-	public Map<String, Object> saveMultipart(MultipartBody multipartBody,
-			@Multipart(value="fileUpload", required=false, type="text/*") java.io.File file) {
-		logger.info("Entering saveMultipart() method..."); 
+	public Map<String, Object> saveMultipart(MultipartBody multipartBody, @Context HttpHeaders hh,
+			@Multipart("listId") String listId,
+			@Multipart(value="fileUpload", required=false, type="text/*") String file) {
+		logger.info("Entering saveMultipart() method..., listId = " + listId); 
+		JaxrsUtil.printOutHttpHeaders(hh);
 		Attachment root = multipartBody.getRootAttachment();
 		if (root != null) {
 			logger.info("Root attachment content type/id: " + root.getContentType() + ", " + root.getContentId());
+			JaxrsUtil.printOutMultivaluedMap(root.getHeaders());
 			boolean isTextContent = StringUtils.contains(root.getContentType().toString(), "text");
 			try {
 				byte[] content = JaxrsUtil.getBytesFromDataHandler(root.getDataHandler());
@@ -266,6 +269,7 @@ public class MailingListRS {
 		}
 		for (Attachment attch : multipartBody.getAllAttachments()) {
 			logger.info("Attachment content type/id: " + attch.getContentType() + ", " + attch.getContentId());
+			JaxrsUtil.printOutMultivaluedMap(attch.getHeaders());
 			boolean isTextContent = StringUtils.contains(attch.getContentType().toString(), "text");
 			try {
 				byte[] content = JaxrsUtil.getBytesFromDataHandler(attch.getDataHandler());
@@ -280,8 +284,8 @@ public class MailingListRS {
 				throw new WebApplicationException(e);
 			}
 		}
-		if (file != null) { // @Multipart annotation does not work
-			logger.info("Attachment file name: " + file.getName());
+		if (file != null) { // @Multipart annotation does not work with java.io.File type parameter
+			logger.info("Attachment text file: " + file);
 		}
 		
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
@@ -296,9 +300,10 @@ public class MailingListRS {
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces("multipart/mixed;type=text/xml")
-	public MultipartBody saveAttachments(List<Attachment> attachments, @Context HttpHeaders hh) {
+	public MultipartBody saveAttachments(List<Attachment> attachments, @Context HttpHeaders hh,
+			@Multipart(value="fileUpload", required=false, type="text/html") String file) {
 		// type="application/octet-stream"
-		logger.info("Entering  saveAttachments() method...");
+		logger.info("Entering  saveAttachments() method..., fileUpload = " + file);
 		JaxrsUtil.printOutHttpHeaders(hh);
 		for (Attachment attch : attachments) {
 			logger.info("Attachment content type/id: " + attch.getContentType() + ", " + attch.getContentId());
