@@ -51,6 +51,8 @@ import com.es.tomee.util.TomeeCtxUtil;
 @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 public class MailingListRS {
 	static final Logger logger = Logger.getLogger(MailingListRS.class);
+	
+	final String LF = System.getProperty("line.separator", "\n");
 
 	@javax.ejb.EJB
 	private MailingListLocal maillist;
@@ -245,7 +247,7 @@ public class MailingListRS {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces("multipart/mixed")
 	public Map<String, Object> saveMultipart(MultipartBody multipartBody, @Context HttpHeaders hh,
-			@Multipart("listId") String listId,
+			@Multipart(value="listId", required=false) String listId,
 			@Multipart(value="fileUpload", required=false, type="text/*") String file) {
 		logger.info("Entering saveMultipart() method..., listId = " + listId); 
 		JaxrsUtil.printOutHttpHeaders(hh);
@@ -257,7 +259,7 @@ public class MailingListRS {
 			try {
 				byte[] content = JaxrsUtil.getBytesFromDataHandler(root.getDataHandler());
 				if (isTextContent) {
-					logger.info("     Content: " + new String(content));
+					logger.info("     Content: " + LF + new String(content));
 				}
 				else {
 					logger.info("     Content name: " + root.getDataHandler().getName());
@@ -274,7 +276,7 @@ public class MailingListRS {
 			try {
 				byte[] content = JaxrsUtil.getBytesFromDataHandler(attch.getDataHandler());
 				if (isTextContent) {
-					logger.info("     Content: " + new String(content));
+					logger.info("     Content: " + LF + new String(content));
 				}
 				else {
 					logger.info("     Content name: " + attch.getDataHandler().getName());
@@ -285,7 +287,7 @@ public class MailingListRS {
 			}
 		}
 		if (file != null) { // @Multipart annotation does not work with java.io.File type parameter
-			logger.info("Attachment text file: " + file);
+			logger.info("Attachment text file: " + LF + file);
 		}
 		
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
@@ -303,7 +305,7 @@ public class MailingListRS {
 	public MultipartBody saveAttachments(List<Attachment> attachments, @Context HttpHeaders hh,
 			@Multipart(value="fileUpload", required=false, type="text/html") String file) {
 		// type="application/octet-stream"
-		logger.info("Entering  saveAttachments() method..., fileUpload = " + file);
+		logger.info("Entering  saveAttachments() method..., fileUpload = " + LF + file);
 		JaxrsUtil.printOutHttpHeaders(hh);
 		for (Attachment attch : attachments) {
 			logger.info("Attachment content type/id: " + attch.getContentType() + ", " + attch.getContentId());
@@ -311,7 +313,7 @@ public class MailingListRS {
 			try {
 				byte[] content = JaxrsUtil.getBytesFromDataHandler(attch.getDataHandler());
 				if (isTextContent) {
-					logger.info("     Content: " + new String(content));
+					logger.info("     Content: " + LF + new String(content));
 				}
 				else {
 					logger.info("     Content name: " + attch.getDataHandler().getName());
