@@ -194,7 +194,7 @@ public class MailSenderMDB implements MessageListener {
 			final Connection connection = connectionFactory.createConnection();
 			
 			connection.start();
-			logger.info("In MailSenderMDBTest.testMDB() - JMS Connection started");
+			logger.info("In MailSenderMDB.sendToErrorQueue() - JMS Connection started");
 			
 	        final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
