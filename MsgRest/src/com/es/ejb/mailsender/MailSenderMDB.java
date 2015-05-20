@@ -185,29 +185,80 @@ public class MailSenderMDB implements MessageListener {
 	private void sendToErrorQueue(javax.jms.Message message, Exception exception) {
 		logger.info("Entering sendToErrorQueue()..., " + exception);
 		
+		Connection connection = null;
+		Session session = null;
+		MessageProducer producer = null;
 		try {
 			message.setJMSCorrelationID(message.getJMSMessageID());
 
 			message.clearProperties();
 			message.setStringProperty("UnhandledError", ExceptionUtils.getFullStackTrace(exception));
 			
-			final Connection connection = connectionFactory.createConnection();
+			connection = connectionFactory.createConnection();
 			
 			connection.start();
 			logger.info("In MailSenderMDB.sendToErrorQueue() - JMS Connection started");
 			
-	        final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+	        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-	        final MessageProducer producer = session.createProducer(errorQueue);
+	        producer = session.createProducer(errorQueue);
 	        producer.setDeliveryMode(DeliveryMode.PERSISTENT);
 	        
 	        producer.send(message);
 
-			logger.info("Message written to Error Queue");
-		}
+			logger.info("Message written to Error Queue: " + producer.getDestination());
+		} 
 		catch (JMSException e) {
 			logger.error("Failled to send message to error queue - ", e);
 		}
+		finally {
+			if (producer!=null) {
+				try {
+					producer.close();
+				}
+				catch (JMSException e) {}
+			}
+			if (session!=null) {
+				try {
+					session.close();
+				}
+				catch (JMSException e) {}
+			}
+			if (connection!=null) {
+				try {
+					connection.close();
+				}
+				catch (JMSException e) {}
+			}
+		}
 	}
+
+//	private void sendToErrorQueue(javax.jms.Message message, Exception exception) {
+//		logger.info("Entering sendToErrorQueue()..., " + exception);
+//
+//		try {
+//			message.setJMSCorrelationID(message.getJMSMessageID());
+//
+//			message.clearProperties();
+//			message.setStringProperty("UnhandledError", ExceptionUtils.getFullStackTrace(exception));
+//
+//			final Connection connection = connectionFactory.createConnection();
+//
+//			connection.start();
+//			logger.info("In MailSenderMDB.sendToErrorQueue() - JMS Connection started");
+//
+//			final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+//
+//			final MessageProducer producer = session.createProducer(errorQueue);
+//			producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+//
+//			producer.send(message);
+//
+//			logger.info("Message written to Error Queue: " + producer.getDestination());
+//		}
+//		catch (JMSException e) {
+//			logger.error("Failled to send message to error queue - ", e);
+//		}
+//	}
 
 }
