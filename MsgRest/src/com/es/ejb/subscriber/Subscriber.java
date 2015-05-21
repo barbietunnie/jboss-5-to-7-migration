@@ -167,7 +167,6 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal, Subscriber
 		return volist;
 	}
 
-	@WebMethod
 	@Override
 	public Subscription subscribe(String emailAddr, String listId) {
 		logger.info("in subscribe() - emailAddr/listId: " + emailAddr + "/" + listId);
@@ -175,12 +174,45 @@ public class Subscriber implements SubscriberRemote, SubscriberLocal, Subscriber
 		return sub;
 	}
 
-	@WebMethod
 	@Override
 	public Subscription unSubscribe(String emailAddr, String listId) {
 		logger.info("in unSubscribe() - emailAddr/listId: " + emailAddr + "/" + listId);
 		Subscription sub = subscriptionDao.unsubscribe(emailAddr, listId);
 		return sub;
+	}
+
+	@WebMethod
+	@Override
+	public SubscriptionVo addEmailToList(String emailAddr, String listId) {
+		logger.info("in addEmailToList() - emailAddr/listId: " + emailAddr + "/" + listId);
+		Subscription sub = subscriptionDao.subscribe(emailAddr, listId);
+		SubscriptionVo vo = new SubscriptionVo();
+		try {
+			BeanUtils.copyProperties(vo, sub);
+			vo.setAddress(sub.getEmailAddr().getAddress());
+			vo.setListId(sub.getMailingList().getListId());
+		}
+		catch (Exception e) {
+			throw new RuntimeException("Failed to copy properties", e);
+		}
+		return vo;
+	}
+
+	@WebMethod
+	@Override
+	public SubscriptionVo removeEmailFromList(String emailAddr, String listId) {
+		logger.info("in removeEmailFromList() - emailAddr/listId: " + emailAddr + "/" + listId);
+		Subscription sub = subscriptionDao.unsubscribe(emailAddr, listId);
+		SubscriptionVo vo = new SubscriptionVo();
+		try {
+			BeanUtils.copyProperties(vo, sub);
+			vo.setAddress(sub.getEmailAddr().getAddress());
+			vo.setListId(sub.getMailingList().getListId());
+		}
+		catch (Exception e) {
+			throw new RuntimeException("Failed to copy properties", e);
+		}
+		return vo;
 	}
 
 	@WebMethod

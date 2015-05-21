@@ -9,11 +9,12 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
-import jpa.model.Subscription;
+import jpa.util.StringUtil;
 
 import org.apache.log4j.Logger;
 
 import com.es.ejb.subscriber.SubscriberWs;
+import com.es.ejb.ws.vo.SubscriptionVo;
 import com.es.tomee.util.TomeeCtxUtil;
 
 public class SubscriberWsClient {
@@ -31,13 +32,15 @@ public class SubscriberWsClient {
 			assertNotNull(service);
 			SubscriberWs sbsr = service.getPort(SubscriberWs.class);
 			
-			Subscription sub = sbsr.subscribe("test@test.com", "SMPLLST1");
+			SubscriptionVo sub = sbsr.addEmailToList("test@test.com", "SMPLLST1");
 			assertNotNull(sub);
 			assertTrue(sub.isSubscribed());
+			logger.info("Subscription subed:" + StringUtil.prettyPrint(sub));
 			
-			sub = sbsr.unSubscribe("test@test.com", "SMPLLST1");
+			sub = sbsr.removeEmailFromList("test@test.com", "SMPLLST1");
 			assertNotNull(sub);
 			assertFalse(sub.isSubscribed());
+			logger.info("Subscription unsubed:" + StringUtil.prettyPrint(sub));
 		}
 		catch (Exception e) {
 			logger.error("Exception caught", e);

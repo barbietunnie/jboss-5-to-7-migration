@@ -51,7 +51,7 @@ public class IdTokensWsClient {
 					logger.error("NoResultException caught: " + error);
 				}
 				else {
-					logger.error("Exception caught", e);
+					logger.error("SOAPFaultException caught as expected", e);
 				}
 			}
 		}

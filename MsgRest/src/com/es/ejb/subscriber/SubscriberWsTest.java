@@ -1,6 +1,9 @@
 package com.es.ejb.subscriber;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URL;
 import java.util.Properties;
@@ -10,12 +13,12 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
-import jpa.model.Subscription;
-
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.es.ejb.ws.vo.SubscriptionVo;
 
 public class SubscriberWsTest {
 	protected final static Logger logger = Logger.getLogger(SubscriberWsTest.class);
@@ -46,11 +49,11 @@ public class SubscriberWsTest {
 			assertNotNull(service);
 			SubscriberWs sbsr = service.getPort(SubscriberWs.class);
 			
-			Subscription sub = sbsr.subscribe("test@test.com", "SMPLLST1");
+			SubscriptionVo sub = sbsr.addEmailToList("test@test.com", "SMPLLST1");
 			assertNotNull(sub);
 			assertTrue(sub.isSubscribed());
 			
-			sub = sbsr.unSubscribe("test@test.com", "SMPLLST1");
+			sub = sbsr.removeEmailFromList("test@test.com", "SMPLLST1");
 			assertNotNull(sub);
 			assertFalse(sub.isSubscribed());
 			
