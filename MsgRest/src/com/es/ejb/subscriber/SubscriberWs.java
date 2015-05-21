@@ -5,20 +5,19 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 
-import jpa.model.Subscription;
-
 import com.es.ejb.ws.vo.SubscriberDataVo;
+import com.es.ejb.ws.vo.SubscriptionVo;
 
 @WebService (targetNamespace = "http://com.es.ws.subscriber/wsdl")
 public interface SubscriberWs {
 
 	@WebMethod
 	@WebResult(name="Subscription")
-	public Subscription subscribe(@WebParam(name="emailAddr") String emailAddr, @WebParam(name="listId") String listId);
+	public SubscriptionVo addEmailToList(@WebParam(name="emailAddr") String emailAddr, @WebParam(name="listId") String listId);
 	
 	@WebMethod
 	@WebResult(name="Subscription")
-	public Subscription unSubscribe(@WebParam(name="emailAddr") String emailAddr, @WebParam(name="listId") String listId);
+	public SubscriptionVo removeEmailFromList(@WebParam(name="emailAddr") String emailAddr, @WebParam(name="listId") String listId);
 	
 	@WebMethod
 	@WebResult(name="SubscriberData")

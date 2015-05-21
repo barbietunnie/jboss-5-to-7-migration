@@ -46,7 +46,7 @@ public class SenderDataWsClient {
 			}
 			catch (SOAPFaultException se) {
 				// expected
-				logger.error("SOAPFaultException caught", se);
+				logger.error("SOAPFaultException caught as expected", se);
 			}
 		}
 		catch (Exception e) {
