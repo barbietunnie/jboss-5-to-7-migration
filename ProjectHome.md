@@ -1,0 +1,1 @@
+An effort to migrate JEE projects from JBoss 5.1 to JBoss 7.1 Final, four ear files are included in this effort. One ear contains only a war, one only an EJB jar. The other two ear contains an EJB jar, and a war. They all share a common application core jar file.
